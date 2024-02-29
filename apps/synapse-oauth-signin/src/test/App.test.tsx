@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { server } from '../mocks/server'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import React from 'react'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import App from '../App'
@@ -75,9 +75,9 @@ describe('App integration tests', () => {
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=expired`
     // Backend should return with an invalid_token response
     server.use(
-      rest.get(
+      http.get(
         'https://repo-prod.prod.sagebase.org/repo/v1/userProfile',
-        (req, res, ctx) => {
+        ({ request, params }) => {
           return res(
             ctx.status(401),
             ctx.json({
@@ -204,9 +204,9 @@ describe('App integration tests', () => {
     // Consent has already been granted:
     const hasGrantedConsent = true
     server.use(
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck',
-        (req, res, ctx) => {
+        ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -252,10 +252,10 @@ describe('App integration tests', () => {
     const authenticationReciept = 'imv890vm0ewvmim3'
 
     server.use(
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/session2',
-        async (req, res, ctx) => {
-          const requestBody = await req.json()
+        async ({ request, params }) => {
+          const requestBody = await request.json()
           onOAuthSignIn(requestBody)
 
           return res(
@@ -271,17 +271,17 @@ describe('App integration tests', () => {
           )
         },
       ),
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/2fa/token',
-        async (req, res, ctx) => {
-          const requestBody = await req.json()
+        async ({ request, params }) => {
+          const requestBody = await request.json()
           on2FASignIn(requestBody)
           const responseBody: LoginResponse = {
             accessToken: accessToken,
             authenticationReceipt: authenticationReciept,
             acceptsTermsOfUse: true,
           }
-          return res(ctx.status(201), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 201 })
         },
       ),
     )

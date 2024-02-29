@@ -1,34 +1,42 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../../utils/APIConstants'
 import { FileHandleResults, WikiPage } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import { mockWikiPages } from '../../mockWiki'
 
 export const getWikiHandlers = (backendOrigin: string) => [
-  rest.get(
+  http.get<
+    { arId: string; wikiId: string },
+    never,
+    SynapseApiResponse<WikiPage>
+  >(
     `${backendOrigin}${ACCESS_REQUIREMENT_WIKI_PAGE(':arId', ':wikiId')}`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<WikiPage> = {
-        reason: `Mock Service worker could not find a wiki page with ID ${req.params.wikiId}`,
+        reason: `Mock Service worker could not find a wiki page with ID ${params.wikiId}`,
       }
 
-      const wikiPage = mockWikiPages.find(wp => wp.id === req.params.wikiId)
+      const wikiPage = mockWikiPages.find(wp => wp.id === params.wikiId)
       if (wikiPage) {
         response = wikiPage
         status = 200
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
-  rest.get(
+  http.get<
+    { objectType: string; objectId: string; wikiId: string },
+    never,
+    SynapseApiResponse<FileHandleResults>
+  >(
     `${backendOrigin}/repo/v1/:objectType/:objectId/wiki2/:wikiId/attachmenthandles`,
-    async (req, res, ctx) => {
-      let status = 200
-      let response: SynapseApiResponse<FileHandleResults> = {
+    () => {
+      const status = 200
+      const response: SynapseApiResponse<FileHandleResults> = {
         list: [],
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]

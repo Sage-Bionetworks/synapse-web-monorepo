@@ -16,6 +16,7 @@ const shared = {
   transformIgnorePatterns: [
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
   ],
+  setupFiles: ['./jest.polyfills.js'],
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   resetMocks: false,
 }
@@ -51,4 +52,5 @@ module.exports = {
     ],
   ],
   coverageReporters: ['text-summary', 'html'],
+  resolver: './jest.resolver.js'
 }

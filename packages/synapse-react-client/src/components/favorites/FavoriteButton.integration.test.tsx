@@ -2,18 +2,13 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import FavoriteButton from './FavoriteButton'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { FAVORITES } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { DeferredPromise } from '@open-draft/deferred-promise'
+import { setCurrentFavoritesOnServer } from '../../mocks/msw/handlers/favoritesHandlers'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(<FavoriteButton entityId={mockFileEntityData.id} />, {
@@ -24,64 +19,16 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 const onAddFavoriteCalled = jest.fn()
 const onDeleteFavoriteCalled = jest.fn()
 
-function useIsInFavorites() {
-  server.use(
-    rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
-
-      async (req, res, ctx) => {
-        const response: PaginatedResults<EntityHeader> = {
-          results: [mockFileEntityData.entityHeader],
-        }
-
-        return res(ctx.status(200), ctx.json(response))
-      },
-    ),
-  )
-}
-function useIsNotInFavorites() {
-  server.use(
-    rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
-
-      async (req, res, ctx) => {
-        const response: PaginatedResults<EntityHeader> = {
-          results: [],
-        }
-
-        return res(ctx.status(200), ctx.json(response))
-      },
-    ),
-  )
-}
-
-server.use(
-  rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-    async (req, res, ctx) => {
-      onAddFavoriteCalled(req.params.id)
-      useIsInFavorites()
-      return res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader))
-    },
-  ),
-  rest.delete(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-    async (req, res, ctx) => {
-      onDeleteFavoriteCalled(req.params.id)
-      useIsNotInFavorites()
-      return res(ctx.status(200))
-    },
-  ),
-)
-
 describe('FavoriteButton tests', () => {
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    // Reset the server state before each test
+    setCurrentFavoritesOnServer(new Set())
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
   it('Clicking the button adds/removes from favorites', async () => {
-    useIsNotInFavorites()
-
     renderComponent()
 
     await screen.findByLabelText('Add to Favorites')
@@ -111,20 +58,6 @@ describe('FavoriteButton tests', () => {
   it('Disables the button while toggling the favorite', async () => {
     // Create a function that we'll use to delay the response from the mock server
     const deferResponse = new DeferredPromise<void>()
-    server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-        async (req, res, ctx) => {
-          onAddFavoriteCalled(req.params.id)
-          useIsInFavorites()
-          await deferResponse
-          return res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader))
-        },
-      ),
-    )
-
-    // Start with the button not in favorites
-    useIsNotInFavorites()
 
     renderComponent()
 

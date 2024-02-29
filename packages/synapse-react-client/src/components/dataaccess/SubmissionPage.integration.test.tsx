@@ -32,7 +32,8 @@ import {
   mockSubmittedSubmission,
 } from '../../mocks/dataaccess/MockSubmission'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
@@ -85,46 +86,48 @@ describe('Submission Page tests', () => {
     // Configure MSW
     server.use(
       // Return submission based on ID
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const submission = mockSubmissions.find(
-            submission => req.params.id === submission.id,
+            submission => params.id === submission.id,
           )
-          return res(ctx.status(200), ctx.json(submission))
+          return HttpResponse.json(submission, { status: 200 })
         },
       ),
 
       // Return a mocked access requirement
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockManagedACTAccessRequirement))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockManagedACTAccessRequirement, {
+            status: 200,
+          })
         },
       ),
       // Return a 404 for the AR's ACL (there are no designated reviewers)
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_ACL(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(ctx.status(404), ctx.json({ status: 'Not Found' }))
         },
       ),
       // Return a wiki page key for the AR (we'll mock out the actual wiki part)
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -135,12 +138,12 @@ describe('Submission Page tests', () => {
           )
         },
       ),
-      rest.put(
+      http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
-        async (req, res, ctx) => {
-          onServerReceivedUpdate(await req.json())
+        async ({ request, params }) => {
+          onServerReceivedUpdate(await request.json())
           return res(ctx.status(200))
         },
       ),
@@ -300,12 +303,12 @@ describe('Submission Page tests', () => {
   it.skip('Renders a user card if the AR has an ACL', async () => {
     // Fetching the AR's ACL will yield a designated reviewer
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_ACL(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const responseBody: AccessControlList = {
             id: '1234',
             resourceAccess: [
@@ -315,7 +318,7 @@ describe('Submission Page tests', () => {
               },
             ],
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )

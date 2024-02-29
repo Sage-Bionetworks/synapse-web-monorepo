@@ -7,7 +7,7 @@ import {
 import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { TableBundle } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import mockTableEntityData from '../../mocks/entity/mockTableEntity'
 import mockEntities from '../../mocks/entity'
@@ -36,11 +36,11 @@ export const Demo: Story = {
           MOCK_ANNOTATION_COLUMNS,
           MOCK_REPO_ORIGIN,
         ),
-        rest.post(
+        http.post(
           `${MOCK_REPO_ORIGIN}${ENTITY_BUNDLE_V2(':entityId')}`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             const entity =
-              mockEntities.find(entity => entity.id === req.params.entityId) ||
+              mockEntities.find(entity => entity.id === params.entityId) ||
               mockTableEntityData
             return res(
               ctx.status(200),

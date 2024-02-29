@@ -3,93 +3,23 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { TrashCanList } from './TrashCanList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  TRASHCAN_PURGE,
-  TRASHCAN_RESTORE,
-  TRASHCAN_VIEW,
-} from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  PaginatedResults,
-  TrashedEntity,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
-import mockDatasetData from '../../mocks/entity/mockDataset'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { server } from '../../mocks/msw/server'
+import { trashCanPages } from '../../mocks/mockTrashCan'
+import SynapseClient from '../../synapse-client'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { getTrashCanRestoreErrorHandler } from '../../mocks/msw/handlers/trashCanHandlers'
 
 function renderComponent() {
   return render(<TrashCanList />, { wrapper: createWrapper() })
 }
 
-const trashCanPages: PaginatedResults<TrashedEntity>[] = [
-  {
-    totalNumberOfResults: 2,
-    results: [
-      {
-        entityId: mockFileEntityData.id,
-        entityName: mockFileEntityData.name,
-        entityType: EntityType.FILE,
-        deletedByPrincipalId: MOCK_USER_ID.toString(),
-        deletedOn: '2020-01-01T00:00:00.000Z',
-        originalParentId: mockFileEntityData.entity.parentId!,
-      },
-    ],
-  },
-  {
-    totalNumberOfResults: 2,
-    results: [
-      {
-        entityId: mockDatasetData.id,
-        entityName: mockDatasetData.name,
-        entityType: EntityType.FILE,
-        deletedByPrincipalId: MOCK_USER_ID.toString(),
-        deletedOn: '2020-01-01T00:00:00.000Z',
-        originalParentId: mockDatasetData.entity.parentId!,
-      },
-    ],
-  },
-]
-
-const onServerReceivedRestore = jest.fn()
-const onServerReceivedPurge = jest.fn()
+const restoreFromTrashCanSpy = jest.spyOn(SynapseClient, 'restoreFromTrashCan')
+const purgeFromTrashCanSpy = jest.spyOn(SynapseClient, 'purgeFromTrashCan')
 
 describe('TrashCanList', () => {
   beforeAll(() => server.listen())
-  beforeEach(() => {
-    server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_VIEW}`,
-        async (req, res, ctx) => {
-          const offset = req.url.searchParams.get('offset') ?? '0'
-          const result = trashCanPages[parseInt(offset)]
-          return res(ctx.status(200), ctx.json(result))
-        },
-      ),
-      rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_RESTORE(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          onServerReceivedRestore(req.params.entityId)
-          return res(ctx.status(200))
-        },
-      ),
-      rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_PURGE(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          onServerReceivedPurge(req.params.entityId)
-          return res(ctx.status(200))
-        },
-      ),
-    )
-  })
+  beforeEach(() => jest.clearAllMocks())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
@@ -186,8 +116,9 @@ describe('TrashCanList', () => {
     await userEvent.click(restoreButton)
 
     await waitFor(() =>
-      expect(onServerReceivedRestore).toHaveBeenCalledWith(
+      expect(restoreFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[0].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       ),
     )
   })
@@ -221,11 +152,13 @@ describe('TrashCanList', () => {
 
     // Restore should have been called for each item
     await waitFor(() => {
-      expect(onServerReceivedRestore).toHaveBeenCalledWith(
+      expect(restoreFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[0].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
-      expect(onServerReceivedRestore).toHaveBeenCalledWith(
+      expect(restoreFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[1].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
     })
 
@@ -236,21 +169,8 @@ describe('TrashCanList', () => {
   test('Bulk restore with an error', async () => {
     // For only one of the items, the restore should fail
     server.use(
-      rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_RESTORE(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          onServerReceivedRestore(req.params.entityId)
-          if (req.params.entityId === mockFileEntityData.id) {
-            return res(
-              ctx.status(400),
-              ctx.json({ reason: 'Some error returned by the server' }),
-            )
-          } else {
-            return res(ctx.status(200))
-          }
-        },
+      getTrashCanRestoreErrorHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
       ),
     )
 
@@ -282,11 +202,13 @@ describe('TrashCanList', () => {
 
     // Restore should have been called for each item
     await waitFor(() => {
-      expect(onServerReceivedRestore).toHaveBeenCalledWith(
+      expect(restoreFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[0].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
-      expect(onServerReceivedRestore).toHaveBeenCalledWith(
+      expect(restoreFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[1].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
     })
 
@@ -331,11 +253,13 @@ describe('TrashCanList', () => {
 
     // Purge should have been called for each item
     await waitFor(() => {
-      expect(onServerReceivedPurge).toHaveBeenCalledWith(
+      expect(purgeFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[0].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
-      expect(onServerReceivedPurge).toHaveBeenCalledWith(
+      expect(purgeFromTrashCanSpy).toHaveBeenCalledWith(
         trashCanPages[1].results[0].entityId,
+        MOCK_ACCESS_TOKEN,
       )
     })
 

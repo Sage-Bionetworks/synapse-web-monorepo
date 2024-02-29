@@ -1,24 +1,24 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import mockOauthClient from './MockOAuthClient'
 
 export const handlers = [
-  rest.get(
+  http.get(
     'https://repo-prod.prod.sagebase.org/repo/v1/userProfile',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(ctx.status(200), ctx.json({}))
     },
   ),
 
-  rest.get(
+  http.get(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/client/:id',
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockOauthClient))
+    ({ request, params }) => {
+      return HttpResponse.json(mockOauthClient, { status: 200 })
     },
   ),
 
-  rest.post(
+  http.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/description',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(
         ctx.status(200),
         ctx.json({
@@ -32,9 +32,9 @@ export const handlers = [
     },
   ),
 
-  rest.post(
+  http.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/login2',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(
         ctx.status(200),
         ctx.json({
@@ -45,9 +45,9 @@ export const handlers = [
     },
   ),
 
-  rest.post(
+  http.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(
         ctx.status(200),
         ctx.json({
@@ -57,9 +57,9 @@ export const handlers = [
     },
   ),
 
-  rest.post(
+  http.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(
         ctx.status(200),
         ctx.json({

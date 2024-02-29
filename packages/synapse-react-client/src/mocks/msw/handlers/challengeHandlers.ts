@@ -6,7 +6,7 @@ import {
   PaginatedIds,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   MOCK_CHALLENGE_ID,
   mockChallengeTeam,
@@ -35,60 +35,66 @@ const registeredChallengeTeams = [
 ]
 
 export function getChallengeHandler(backendOrigin: string) {
-  return rest.get(
+  return http.get<{ id: string }, never, SynapseApiResponse<Challenge>>(
     `${backendOrigin}/repo/v1/entity/:id/challenge`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       const response: SynapseApiResponse<Challenge> = {
         id: MOCK_CHALLENGE_ID,
         etag: 'f5e9df54-360b-4ede-9a17-f7f5680c8dd4',
-        projectId: req.params.id as string,
+        projectId: params.id,
         participantTeamId: String(MOCK_CHALLENGE_PARTICIPANT_TEAM_ID),
       }
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }
 
 export function getRegisteredChallengeTeamsHandler(backendOrigin: string) {
-  return rest.get(
-    `${backendOrigin}/repo/v1/challenge/:challengeId/challengeTeam`,
-    async (req, res, ctx) => {
-      const response: SynapseApiResponse<ChallengeTeamPagedResults> = {
-        results: registeredChallengeTeams,
-        totalNumberOfResults: registeredChallengeTeams.length,
-      }
-      return res(ctx.status(200), ctx.json(response))
-    },
-  )
+  return http.get<
+    { challengeId: string },
+    never,
+    SynapseApiResponse<ChallengeTeamPagedResults>
+  >(`${backendOrigin}/repo/v1/challenge/:challengeId/challengeTeam`, () => {
+    const response: SynapseApiResponse<ChallengeTeamPagedResults> = {
+      results: registeredChallengeTeams,
+      totalNumberOfResults: registeredChallengeTeams.length,
+    }
+    return HttpResponse.json(response, { status: 200 })
+  })
 }
 
 export function getRegisterTeamForChallengeHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<
+    { challengeId: string },
+    CreateChallengeTeamRequest,
+    SynapseApiResponse<ChallengeTeam>
+  >(
     `${backendOrigin}/repo/v1/challenge/:challengeId/challengeTeam`,
-    async (req, res, ctx) => {
-      const request: CreateChallengeTeamRequest = await req.json()
+    async ({ request }) => {
+      const requestBody = await request.json()
       const response: SynapseApiResponse<ChallengeTeam> = {
-        ...request,
+        ...requestBody,
         id: uniqueId(),
         etag: 'abcdef0987654321',
       }
       registeredChallengeTeams.push(response)
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }
 
 export function getSubmissionTeamsHandler(backendOrigin: string) {
-  return rest.get(
-    `${backendOrigin}/repo/v1/challenge/:challengeId/submissionTeams`,
-    async (req, res, ctx) => {
-      const response: SynapseApiResponse<PaginatedIds> = {
-        results: [],
-        totalNumberOfResults: 0,
-      }
-      return res(ctx.status(200), ctx.json(response))
-    },
-  )
+  return http.get<
+    { challengeId: string },
+    never,
+    SynapseApiResponse<PaginatedIds>
+  >(`${backendOrigin}/repo/v1/challenge/:challengeId/submissionTeams`, () => {
+    const response: SynapseApiResponse<PaginatedIds> = {
+      results: [],
+      totalNumberOfResults: 0,
+    }
+    return HttpResponse.json(response, { status: 200 })
+  })
 }
 
 export default function getAllChallengeHandlers(backendOrigin: string) {

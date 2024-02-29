@@ -28,13 +28,13 @@ function renderComponent() {
 
 const onApplyLock = jest.fn()
 server.use(
-  rest.post(
+  http.post(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}/repo/v1/entity/:id/lockAccessRequirement`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       onApplyLock()
-      return res(ctx.status(201), ctx.json(mockLockAccessRequirement))
+      return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
     },
   ),
 )

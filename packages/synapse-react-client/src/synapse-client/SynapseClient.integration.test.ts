@@ -1,11 +1,9 @@
 import SynapseClient from './index'
 import { ASYNCHRONOUS_JOB_TOKEN } from '../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../utils/functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
 import { AsynchronousJobStatus } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../mocks/msw/server'
+import { server } from '../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 
 describe('SynapseClient integration tests', () => {
   beforeAll(() => server.listen())
@@ -42,16 +40,16 @@ describe('SynapseClient integration tests', () => {
     it('Returns a complete response', async () => {
       // The first call returns a successful response.
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
 
-          (req, res, ctx) => {
-            requestCaptor(req)
+          ({ request }) => {
+            requestCaptor(request)
             const status = 200
             const response = completeJob
-            return res(ctx.status(status), ctx.json(response))
+            return HttpResponse.json(response, { status })
           },
         ),
       )
@@ -80,21 +78,21 @@ describe('SynapseClient integration tests', () => {
     it('Re-fetches a processing response until complete', async () => {
       // The first two calls return "PROCESSING" response, and the third call will return a "COMPLETE" response.
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
           // Use a generator to simulate returning a processing result twice followed by a complete result
-          function* (req, res, ctx) {
+          function* ({ request }) {
             const status = 200
             let count = 0
             while (count < 2) {
               count++
-              requestCaptor(req)
-              yield res(ctx.status(status), ctx.json(processingJob))
+              requestCaptor(request)
+              yield HttpResponse.json(processingJob, { status })
             }
-            requestCaptor(req)
-            yield res(ctx.status(status), ctx.json(completeJob))
+            requestCaptor(request)
+            yield HttpResponse.json(completeJob, { status })
           },
         ),
       )
@@ -128,22 +126,21 @@ describe('SynapseClient integration tests', () => {
       const errorObject = { reason: 'bad request' }
 
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
-          function (req, res, ctx) {
+          function () {
             const status = 200
-            return res(ctx.status(status), ctx.json(failedJob))
+            return HttpResponse.json(failedJob, { status: status })
           },
         ),
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${responseBodyServerEndpoint}`,
-          function (req, res, ctx) {
-            const status = errorStatus
-            return res(ctx.status(status), ctx.json(errorObject))
+          function () {
+            return HttpResponse.json(errorObject, { status: errorStatus })
           },
         ),
       )

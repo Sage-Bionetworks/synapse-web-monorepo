@@ -179,11 +179,11 @@ describe('Download Options tests', () => {
   it('Shows correct options for a stable version of a dataset', async () => {
     const isStableVersion = true
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${mockDatasetEntity.id!}`,
-        (req, res, ctx) => {
+        ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -221,11 +221,11 @@ describe('Download Options tests', () => {
   it('Shows correct options for a draft Dataset', async () => {
     const isStableVersion = false
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${mockDatasetEntity.id!}`,
-        (req, res, ctx) => {
+        ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.json({

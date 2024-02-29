@@ -59,15 +59,15 @@ const renderComponent = (
 
 function mockGetEntityWiki(markdown: string) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}/repo/v1/entity/:id/wiki/:wikiId`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         const response: WikiPage = {
           markdown,
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
   )

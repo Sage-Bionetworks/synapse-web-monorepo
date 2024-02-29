@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { HttpResponse, http } from 'msw'
 import {
   ENTITY,
   ENTITY_BUNDLE_V2,
@@ -12,9 +12,11 @@ import {
 import {
   Entity,
   EntityBundle,
+  EntityBundleRequest,
   EntityHeader,
   EntityJson,
   EntityPath,
+  JsonSchemaObjectBinding,
   PaginatedResults,
   ProjectHeaderList,
   Reference,
@@ -35,39 +37,44 @@ export function getEntityBundleHandler(
   backendOrigin: string,
   bundle?: Partial<EntityBundle>,
 ) {
-  return rest.post(
-    `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId')}`,
-    async (req, res, ctx) => {
-      let status = 404
-      let response: SynapseApiResponse<EntityBundle> = {
-        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
-      }
-      if (bundle) {
-        response = bundle as EntityBundle
+  return http.post<
+    { entityId: string },
+    EntityBundleRequest,
+    SynapseApiResponse<EntityBundle>
+  >(`${backendOrigin}${ENTITY_BUNDLE_V2(':entityId')}`, ({ params }) => {
+    let status = 404
+    let response: SynapseApiResponse<EntityBundle> = {
+      reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
+    }
+    if (bundle) {
+      response = bundle as EntityBundle
+      status = 200
+    } else {
+      const entityData = mockEntities.find(
+        entity => entity.id === params.entityId,
+      )
+      if (entityData?.bundle) {
+        response = entityData.bundle
         status = 200
-      } else {
-        const entityData = mockEntities.find(
-          entity => entity.id === req.params.entityId,
-        )
-        if (entityData?.bundle) {
-          response = entityData.bundle
-          status = 200
-        }
       }
-      return res(ctx.status(status), ctx.json(response))
-    },
-  )
+    }
+    return HttpResponse.json(response, { status })
+  })
 }
 
 export function getVersionedEntityBundleHandler(
   backendOrigin: string,
   bundle?: Partial<EntityBundle>,
 ) {
-  return rest.post(
+  return http.post<
+    { entityId: string; versionNumber: string },
+    EntityBundleRequest,
+    SynapseApiResponse<EntityBundle>
+  >(
     `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
-    async (req, res, ctx) => {
-      const entityId = req.params.entityId
-      const versionNumber = parseInt(req.params.versionNumber as string)
+    ({ params }) => {
+      const entityId = params.entityId
+      const versionNumber = parseInt(params.versionNumber)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
         reason: `Mock Service worker could not find a mock entity bundle with ID ${entityId}`,
@@ -90,7 +97,7 @@ export function getVersionedEntityBundleHandler(
           status = 200
         }
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
@@ -99,76 +106,84 @@ export const getEntityHandlers = (backendOrigin: string) => [
   /**
    * Create a new entity
    */
-  rest.post(`${backendOrigin}${ENTITY}`, async (req, res, ctx) => {
-    let status = 200
-    const requestBody = await req.json<Entity>()
-    let response: SynapseApiResponse<Entity> = { reason: '...' }
-    if (!requestBody) {
-      status = 400
-      response = {
-        reason: `Mock service worker received the following malformed body for PUT ${ENTITY} : ${JSON.stringify(
-          requestBody,
-        )}`,
-      }
-    } else {
-      if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
-        response.reason = 'Invalid project name'
-        status = 403
+  http.post<never, Entity, SynapseApiResponse<Entity>>(
+    `${backendOrigin}${ENTITY}`,
+    async ({ request }) => {
+      let status = 200
+      const requestBody = await request.json()
+      let response: SynapseApiResponse<Entity> = { reason: '...' }
+      if (!requestBody) {
+        status = 400
+        response = {
+          reason: `Mock service worker received the following malformed body for PUT ${ENTITY} : ${JSON.stringify(
+            requestBody,
+          )}`,
+        }
       } else {
-        response = { id: uniqueId('syn'), ...requestBody }
+        if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+          response.reason = 'Invalid project name'
+          status = 403
+        } else {
+          response = { id: uniqueId('syn'), ...requestBody }
+        }
       }
-    }
 
-    return res(ctx.status(status), ctx.json(response))
-  }),
+      return HttpResponse.json(response, { status })
+    },
+  ),
 
   /**
    * Get entity by ID
    */
-  rest.get(
+  http.get<{ entityId: string }, never, SynapseApiResponse<Entity>>(
     `${backendOrigin}${ENTITY_ID(':entityId')}`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<Entity> = {
-        reason: `Mock Service worker could not find a mock entity with ID ${req.params.entityId}`,
+        reason: `Mock Service worker could not find a mock entity with ID ${params.entityId}`,
       }
 
       const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
+        entity => entity.id === params.entityId,
       )
       if (entityData) {
         response = entityData.entity
         status = 200
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
-  rest.get(
-    `${backendOrigin}${ENTITY_ID_VERSIONS(':entityId')}`,
-    async (req, res, ctx) => {
-      let status = 404
-      let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
-        reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
-      }
+  http.get<
+    { entityId: string },
+    never,
+    SynapseApiResponse<PaginatedResults<VersionInfo>>
+  >(`${backendOrigin}${ENTITY_ID_VERSIONS(':entityId')}`, ({ params }) => {
+    let status = 404
+    let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
+      reason: `Mock Service worker could not find mock entity versions for ID ${params.entityId}`,
+    }
 
-      const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
-      )
-      if (entityData && entityData.versionInfo) {
-        response = { results: entityData.versionInfo }
-        status = 200
-      }
-      return res(ctx.status(status), ctx.json(response))
-    },
-  ),
+    const entityData = mockEntities.find(
+      entity => entity.id === params.entityId,
+    )
+    if (entityData && entityData.versionInfo) {
+      response = { results: entityData.versionInfo }
+      status = 200
+    }
+    return HttpResponse.json(response, { status })
+  }),
 
-  rest.get(
+  http.get<
+    { entityId: string; versionNumber: string },
+    never,
+    SynapseApiResponse<VersionableEntity>
+  >(
     `${backendOrigin}${ENTITY_ID_VERSION(':entityId', ':versionNumber')}`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
-      const entityId = req.params.entityId
-      const versionNumber = req.params.versionNumber.toString()
+      const entityId = params.entityId
+      const versionNumber = String(params.versionNumber)
       const requestedVersionNumber = parseInt(versionNumber)
 
       let response: SynapseApiResponse<VersionableEntity> = {
@@ -176,7 +191,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
 
       const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
+        entity => entity.id === params.entityId,
       )
       if (
         entityData &&
@@ -188,49 +203,58 @@ export const getEntityHandlers = (backendOrigin: string) => [
         ] as VersionableEntity
         status = 200
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
   getEntityBundleHandler(backendOrigin),
   getVersionedEntityBundleHandler(backendOrigin),
 
-  rest.get(
-    `${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockSchemaBinding))
-    },
-  ),
-  rest.get(
+  http.get<
+    { entityId: string },
+    never,
+    SynapseApiResponse<JsonSchemaObjectBinding>
+  >(`${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`, () => {
+    return HttpResponse.json(mockSchemaBinding, { status: 200 })
+  }),
+  http.get<{ entityId: string }, never, SynapseApiResponse<EntityJson>>(
     `${backendOrigin}${ENTITY_JSON(':entityId')}`,
 
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<EntityJson> = {
-        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
       const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
+        entity => entity.id === params.entityId,
       )
       if (entityData?.json) {
         response = entityData.json
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
-  rest.post(
+  http.post<
+    { entityId: string },
+    {
+      references: Reference[]
+    },
+    SynapseApiResponse<PaginatedResults<EntityHeader>>
+  >(
     `${backendOrigin}${ENTITY_HEADERS}`,
 
-    async (req, res, ctx) => {
+    async ({ params, request }) => {
       let status = 404
       let response: SynapseApiResponse<PaginatedResults<EntityHeader>> = {
-        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
 
-      const referenceList = req.body as { references: Reference[] }
+      const referenceList = (await request.json()) as {
+        references: Reference[]
+      }
       const entityData = mockEntities
         .filter(entity =>
           referenceList.references.find(ref => ref.targetId === entity.id),
@@ -243,51 +267,55 @@ export const getEntityHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
-  rest.get(
+  http.get<{ entityId: string }, never, SynapseApiResponse<EntityPath>>(
     `${backendOrigin}${ENTITY_ID(':entityId')}/path`,
 
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<EntityPath> = {
-        reason: `Mock Service worker could not find a mock entity path using ID ${req.params.entityId}`,
+        reason: `Mock Service worker could not find a mock entity path using ID ${params.entityId}`,
       }
-      const entityData = mockEntities.find(e => req.params.entityId === e.id)
+      const entityData = mockEntities.find(e => params.entityId === e.id)
 
       if (entityData && entityData.path) {
         response = entityData.path
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
-  rest.get(
+  http.get<{ id: string }, never, SynapseApiResponse<UploadDestination>>(
     `${backendOrigin}/file/v1/entity/:id/uploadDestination`,
-    async (req, res, ctx) => {
+    () => {
       const response: UploadDestination = {
         banner: '',
         storageLocationId: 1,
         uploadType: UploadType.S3,
         concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
       }
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   ),
 
-  rest.get(
+  http.get<
+    { id: string; storageLocationId: string },
+    never,
+    SynapseApiResponse<UploadDestination>
+  >(
     `${backendOrigin}/file/v1/entity/:id/uploadDestination/:storageLocationId`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<UploadDestination> = {
-        reason: `Mock Service worker could not find an uploadDestination using storageLocationId ${req.params.storageLocationId}`,
+        reason: `Mock Service worker could not find an uploadDestination using storageLocationId ${params.storageLocationId}`,
       }
       const uploadDestination = mockUploadDestinations.find(
-        e => Number(req.params.storageLocationId) === e.storageLocationId,
+        e => Number(params.storageLocationId) === e.storageLocationId,
       )
 
       if (uploadDestination) {
@@ -295,20 +323,23 @@ export const getEntityHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 
-  rest.get(`${backendOrigin}/repo/v1/projects`, async (req, res, ctx) => {
-    const response: ProjectHeaderList = {
-      results: mockProjectsEntityData.map(p => ({
-        name: p.name,
-        id: p.id,
-        lastActivity: '2024-01-04T21:11:59.000Z',
-        modifiedBy: parseInt(p.entity.modifiedBy!),
-        modifiedOn: p.entity.modifiedOn!,
-      })),
-    }
-    return res(ctx.status(200), ctx.json(response))
-  }),
+  http.get<never, never, SynapseApiResponse<ProjectHeaderList>>(
+    `${backendOrigin}/repo/v1/projects`,
+    () => {
+      const response: ProjectHeaderList = {
+        results: mockProjectsEntityData.map(p => ({
+          name: p.name,
+          id: p.id,
+          lastActivity: '2024-01-04T21:11:59.000Z',
+          modifiedBy: parseInt(p.entity.modifiedBy!),
+          modifiedOn: p.entity.modifiedOn!,
+        })),
+      }
+      return HttpResponse.json(response, { status: 200 })
+    },
+  ),
 ]

@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { ENTITY_HEADERS } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -25,10 +26,10 @@ const defaultProps: RequestDownloadCardProps = {
 const mockEntityHeaderResult = { results: [{ id: ENTITY_ID }] }
 const setupEntityHeaderResponse = () => {
   server.use(
-    rest.post(
+    http.post(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(mockEntityHeaderResult))
+      async ({ request, params }) => {
+        return HttpResponse.json(mockEntityHeaderResult, { status: 200 })
       },
     ),
   )

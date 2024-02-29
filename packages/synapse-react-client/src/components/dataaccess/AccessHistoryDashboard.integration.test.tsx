@@ -4,7 +4,8 @@ import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { createMemoryHistory, MemoryHistory } from 'history'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { Router } from 'react-router-dom'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -46,15 +47,15 @@ const mockAccessRequestSubmissionTable = jest
 const onServiceReceivedRequest = jest.fn()
 
 function getUserBundleHandler(isACTMember: boolean, isARReviewer: boolean) {
-  return rest.get(
+  return http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response: UserBundle = {
         userId: MOCK_USER_ID.toString(),
         isACTMember: isACTMember,
         isARReviewer: isARReviewer,
       }
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }
@@ -85,25 +86,25 @@ describe('AccessHistoryDashboard tests', () => {
 
     server.use(
       getUserBundleHandler(isACTMember, isARReviewer),
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResults))
+          return HttpResponse.json(mockSearchResults, { status: 200 })
         },
       ),
 
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+          return HttpResponse.json(mockAccessRequirement, { status: 200 })
         },
       ),
     )

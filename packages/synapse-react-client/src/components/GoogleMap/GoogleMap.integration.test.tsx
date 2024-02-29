@@ -5,7 +5,7 @@ import React, { MouseEventHandler } from 'react'
 import { GeoData } from '../../synapse-client'
 import GoogleMap, { MapProps } from './GoogleMap'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -55,21 +55,21 @@ const mockGeoData: GeoData[] = [
 ]
 
 const geoDataHandlers = [
-  rest.get(
+  http.get(
     'https://s3.amazonaws.com/geoloc.sagebase.org/googlemap.txt',
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(ctx.status(200), ctx.text('mockApiKey'))
     },
   ),
-  rest.get(
+  http.get(
     'https://s3.amazonaws.com/geoloc.sagebase.org/allPoints.json',
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockGeoData))
+    ({ request, params }) => {
+      return HttpResponse.json(mockGeoData, { status: 200 })
     },
   ),
-  rest.get(
+  http.get(
     `https://s3.amazonaws.com/geoloc.sagebase.org/${MOCK_TEAM_ID}.json`,
-    (req, res, ctx) => {
+    ({ request, params }) => {
       return res(ctx.status(200), ctx.json([mockGeoData[0]]))
     },
   ),

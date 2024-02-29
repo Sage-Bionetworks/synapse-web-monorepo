@@ -12,7 +12,8 @@ import {
   SubmissionSearchResponse,
 } from '@sage-bionetworks/synapse-types'
 import { AccessType, SubmissionState } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -74,12 +75,12 @@ describe('Access Request Submission Table tests', () => {
 
     // Configure MSW
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUEST_SUBMISSION_SEARCH}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceReceivedRequest(req.body)
           let response
           if (
@@ -94,7 +95,7 @@ describe('Access Request Submission Table tests', () => {
               nextPageToken: nextPageToken,
             }
           }
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )

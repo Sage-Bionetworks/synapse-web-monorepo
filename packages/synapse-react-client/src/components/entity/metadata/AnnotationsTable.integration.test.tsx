@@ -57,18 +57,18 @@ describe('AnnotationsTable tests', () => {
 
   it('Displays a placeholder when there are no annotations', async () => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
           ':entityId',
         )}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const response = mockFileEntityJson
           // Delete the annotation keys
           delete response.myStringKey
           delete response.myIntegerKey
           delete response.myFloatKey
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )

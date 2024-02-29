@@ -10,7 +10,8 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 
 describe('test EvaluationEditor', () => {
@@ -54,40 +55,40 @@ describe('test EvaluationEditor', () => {
 
     server.use(
       // getEvaluation
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(evaluation))
+        async ({ request, params }) => {
+          return HttpResponse.json(evaluation, { status: 200 })
         },
       ),
       // updateEvaluation
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onUpdateEvaluation()
-          return res(ctx.status(200), ctx.json(evaluation))
+          return HttpResponse.json(evaluation, { status: 200 })
         },
       ),
 
       // createEvaluation
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onCreateEvaluation()
-          return res(ctx.status(201), ctx.json(evaluation))
+          return HttpResponse.json(evaluation, { status: 201 })
         },
       ),
 
       // deleteEvaluation
-      rest.delete(
+      http.delete(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onDeleteEvaluation()
           return res(ctx.status(202))
         },
@@ -125,11 +126,11 @@ describe('test EvaluationEditor', () => {
 
   test('retrieve evaluation from API failed', async () => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(
             ctx.status(400),
             ctx.json({ reason: 'GetEvaluation error' }),
@@ -207,11 +208,11 @@ describe('test EvaluationEditor', () => {
 
   test('save button clicked - save failure', async () => {
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onUpdateEvaluation()
           return res(
             ctx.status(404),
@@ -297,11 +298,11 @@ describe('test EvaluationEditor', () => {
 
   test('dropdown menu evaluation has id - delete failed', async () => {
     server.use(
-      rest.delete(
+      http.delete(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onDeleteEvaluation()
           return res(
             ctx.status(400),

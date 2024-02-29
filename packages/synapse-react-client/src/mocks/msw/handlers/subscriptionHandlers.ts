@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   SortDirection,
   SubscriberPagedResults,
@@ -54,18 +54,18 @@ function getSubscriptions(
 
 export function getSubscriptionHandlers(backendOrigin: string) {
   return [
-    rest.get(
+    http.get<never, never, SynapseApiResponse<SubscriptionPagedResults>>(
       `${backendOrigin}/repo/v1/subscription/all`,
-      async (req, res, ctx) => {
+      ({ request }) => {
+        const url = new URL(request.url)
         const objectType =
-          (req.url.searchParams.get('objectType') as SubscriptionObjectType) ??
+          (url.searchParams.get('objectType') as SubscriptionObjectType) ??
           undefined
         const sortDirection =
-          (req.url.searchParams.get('sortDirection') as SortDirection) ??
-          undefined
-        const offsetParam = req.url.searchParams.get('offset')
+          (url.searchParams.get('sortDirection') as SortDirection) ?? undefined
+        const offsetParam = url.searchParams.get('offset')
         const offset = offsetParam ? parseInt(offsetParam) : undefined
-        const limitParam = req.url.searchParams.get('limit')
+        const limitParam = url.searchParams.get('limit')
         const limit = limitParam ? parseInt(limitParam) : undefined
 
         const resp: SynapseApiResponse<SubscriptionPagedResults> =
@@ -76,30 +76,31 @@ export function getSubscriptionHandlers(backendOrigin: string) {
             limit,
           )
 
-        return res(ctx.status(200), ctx.json(resp))
+        return HttpResponse.json(resp, { status: 200 })
       },
     ),
-    rest.post(
-      `${backendOrigin}/repo/v1/subscription/list`,
-      async (req, res, ctx) => {
-        const request: SubscriptionRequest = await req.json()
+    http.post<
+      never,
+      SubscriptionRequest,
+      SynapseApiResponse<SubscriptionPagedResults>
+    >(`${backendOrigin}/repo/v1/subscription/list`, async ({ request }) => {
+      const requestBody = await request.json()
 
-        const resp: SynapseApiResponse<SubscriptionPagedResults> =
-          getSubscriptions(
-            request.objectType,
-            request.sortDirection,
-            undefined,
-            undefined,
-            request.idList,
-          )
+      const resp: SynapseApiResponse<SubscriptionPagedResults> =
+        getSubscriptions(
+          requestBody.objectType,
+          requestBody.sortDirection,
+          undefined,
+          undefined,
+          requestBody.idList,
+        )
 
-        return res(ctx.status(200), ctx.json(resp))
-      },
-    ),
-    rest.post(
+      return HttpResponse.json(resp, { status: 200 })
+    }),
+    http.post<never, Topic, SynapseApiResponse<Subscription>>(
       `${backendOrigin}/repo/v1/subscription`,
-      async (req, res, ctx) => {
-        const requestBody: Topic = await req.json()
+      async ({ request }) => {
+        const requestBody: Topic = await request.json()
 
         const newSubscription: Subscription = {
           subscriptionId: uniqueId(),
@@ -110,21 +111,21 @@ export function getSubscriptionHandlers(backendOrigin: string) {
         }
 
         subscriptions.push(newSubscription)
-        return res(ctx.status(201), ctx.json(newSubscription))
+        return HttpResponse.json(newSubscription, { status: 201 })
       },
     ),
-    rest.delete(
+    http.delete<{ id: string }, never, SynapseApiResponse<''>>(
       `${backendOrigin}/repo/v1/subscription/:id`,
-      async (req, res, ctx) => {
-        const subscriptionId = req.params.id as string
+      ({ params }) => {
+        const subscriptionId = params.id
         remove(subscriptions, s => s.subscriptionId === subscriptionId)
-        return res(ctx.status(200), ctx.body(''))
+        return HttpResponse.text('', { status: 200 })
       },
     ),
-    rest.post(
+    http.post<never, Topic, SynapseApiResponse<SubscriberPagedResults>>(
       `${backendOrigin}/repo/v1/subscription/subscribers`,
-      async (req, res, ctx) => {
-        const topic: Topic = await req.json()
+      async ({ request }) => {
+        const topic = await request.json()
 
         const matchingSubscriptions = subscriptions.filter(
           s =>
@@ -134,7 +135,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
         const resp: SubscriberPagedResults = {
           subscribers: matchingSubscriptions.map(s => s.subscriberId),
         }
-        return res(ctx.status(200), ctx.json(resp))
+        return HttpResponse.json(resp, { status: 200 })
       },
     ),
   ]

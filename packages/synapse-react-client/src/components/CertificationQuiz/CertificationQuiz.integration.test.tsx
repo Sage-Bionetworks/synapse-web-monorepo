@@ -20,7 +20,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { mockUserBundle } from '../../mocks/user/mock_user_profile'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -51,12 +52,12 @@ const mockToastFn = jest
 const gettingStartedUrl =
   'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
-const getQuizHandler = rest.get(
+const getQuizHandler = http.get(
   `${getEndpoint(
     BackendDestinationEnum.REPO_ENDPOINT,
   )}/repo/v1/certifiedUserTest`,
-  async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockQuiz))
+  async ({ request, params }) => {
+    return HttpResponse.json(mockQuiz, { status: 200 })
   },
 )
 

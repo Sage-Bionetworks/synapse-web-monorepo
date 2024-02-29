@@ -37,7 +37,8 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '../../mocks/mockAccessRequirements'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
 
 const MOCK_PROJECT_ID = mockProjectData.id
@@ -87,12 +88,12 @@ describe('Access Requirement Table tests', () => {
 
     // Configure MSW
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceRecievedRequest(req.body)
           let response
           if (
@@ -108,7 +109,7 @@ describe('Access Requirement Table tests', () => {
             }
           }
 
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )

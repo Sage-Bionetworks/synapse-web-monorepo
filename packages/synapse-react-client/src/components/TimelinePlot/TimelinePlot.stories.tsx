@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import TimelinePlot from './TimelinePlot'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
@@ -28,9 +28,9 @@ export const Demo: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get(
+        http.get(
           MOCK_REPO_ORIGIN + '/repo/v1/entity/syn51735464',
-          (req, res, ctx) => {
+          ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json({ ...mockTableEntity, id: 'syn51735464' }),

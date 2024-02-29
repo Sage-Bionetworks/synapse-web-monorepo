@@ -26,7 +26,7 @@ import {
 } from '../../mocks/MockSynapseContext'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
@@ -674,16 +674,16 @@ describe('CreateTableWizard integration tests', () => {
   it('Shows an error when column model creation fails', async () => {
     const errorMessage = 'Mocked error in POST /column/batch'
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/column/batch`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
+        async () => {
+          return HttpResponse.json(
+            {
               reason: errorMessage,
-            }),
+            },
+            { status: 400 },
           )
         },
       ),
@@ -746,14 +746,14 @@ describe('CreateTableWizard integration tests', () => {
   it('Shows an error when entity creation fails', async () => {
     const errorMessage = 'Mocked error in POST /entity'
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/entity`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
+        async () => {
+          return HttpResponse.json(
+            {
               reason: errorMessage,
-            }),
+            },
+            { status: 400 },
           )
         },
       ),

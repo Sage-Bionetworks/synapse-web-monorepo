@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { ACCESS_APPROVAL } from '../../utils/APIConstants'
 import {
@@ -69,15 +69,15 @@ type Story = StoryObj<typeof meta>
 
 function getTwoFactorAuthStatusHandler(enabled: boolean) {
   return [
-    rest.get(
+    http.get(
       `${MOCK_REPO_ORIGIN}/auth/v1/2fa`,
 
-      async (req, res, ctx) => {
+      async () => {
         const status = 200
         const response: TwoFactorAuthStatus = {
           status: enabled ? 'ENABLED' : 'DISABLED',
         }
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status: status })
       },
     ),
   ]
@@ -196,24 +196,21 @@ export const HasUnmetRequirements: Story = {
         ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockACTAccessRequirement.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`, async () => {
+          const response: AccessApproval = {
+            requirementId: mockACTAccessRequirement.id,
+            submitterId: MOCK_USER_ID.toString(),
+            accessorId: MOCK_USER_ID.toString(),
+            state: ApprovalState.APPROVED,
+            id: 123,
+            etag: 'etag',
+            createdOn: new Date().toISOString(),
+            modifiedOn: new Date().toISOString(),
+            createdBy: String(MOCK_USER_ID),
+            modifiedBy: String(MOCK_USER_ID),
+          }
+          return HttpResponse.json(response, { status: 201 })
+        }),
       ],
     },
   },
@@ -242,24 +239,21 @@ export const NotValidated: Story = {
           },
         ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockSelfSignAccessRequirement.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`, async () => {
+          const response: AccessApproval = {
+            requirementId: mockSelfSignAccessRequirement.id,
+            submitterId: MOCK_USER_ID.toString(),
+            accessorId: MOCK_USER_ID.toString(),
+            state: ApprovalState.APPROVED,
+            id: 123,
+            etag: 'etag',
+            createdOn: new Date().toISOString(),
+            modifiedOn: new Date().toISOString(),
+            createdBy: String(MOCK_USER_ID),
+            modifiedBy: String(MOCK_USER_ID),
+          }
+          return HttpResponse.json(response, { status: 201 })
+        }),
       ],
     },
   },
@@ -288,24 +282,21 @@ export const NotCertified: Story = {
           },
         ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockSelfSignAccessRequirement.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`, async () => {
+          const response: AccessApproval = {
+            requirementId: mockSelfSignAccessRequirement.id,
+            submitterId: MOCK_USER_ID.toString(),
+            accessorId: MOCK_USER_ID.toString(),
+            state: ApprovalState.APPROVED,
+            id: 123,
+            etag: 'etag',
+            createdOn: new Date().toISOString(),
+            modifiedOn: new Date().toISOString(),
+            createdBy: String(MOCK_USER_ID),
+            modifiedBy: String(MOCK_USER_ID),
+          }
+          return HttpResponse.json(response, { status: 201 })
+        }),
       ],
     },
   },

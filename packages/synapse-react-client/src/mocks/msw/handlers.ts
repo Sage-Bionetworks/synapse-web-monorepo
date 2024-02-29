@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { getEntityHandlers } from './handlers/entityHandlers'
 import {
   getCurrentUserCertifiedValidatedHandler,
@@ -26,23 +26,21 @@ import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import getAllChallengeHandlers from './handlers/challengeHandlers'
 import getAllTeamHandlers from './handlers/teamHandlers'
+import getTrashCanHandlers from './handlers/trashCanHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
 
 const getHandlers = (backendOrigin: string) => [
-  rest.options('*', async (req, res, ctx) => {
-    return res(ctx.status(200))
+  http.options('*', () => {
+    return HttpResponse.json(null, { status: 200 })
   }),
-  rest.get(
-    `${backendOrigin}/auth/v1/authenticatedOn`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ authenticatedOn: new Date().toISOString() }),
-      )
-    },
-  ),
+  http.get(`${backendOrigin}/auth/v1/authenticatedOn`, () => {
+    return HttpResponse.json(
+      { authenticatedOn: new Date().toISOString() },
+      { status: 200 },
+    )
+  }),
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),
   getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),
@@ -60,6 +58,7 @@ const getHandlers = (backendOrigin: string) => [
   ...getPersonalAccessTokenHandlers(backendOrigin),
   ...getAllTeamHandlers(backendOrigin),
   ...getAllChallengeHandlers(backendOrigin),
+  ...getTrashCanHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

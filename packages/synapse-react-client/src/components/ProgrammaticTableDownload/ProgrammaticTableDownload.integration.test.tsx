@@ -8,7 +8,8 @@ import {
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { TABLE_QUERY_ASYNC_START } from '../../utils/APIConstants'
 
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import ProgrammaticTableDownload, {
@@ -44,11 +45,11 @@ const COMBINED_SQL_RESULT = 'SELECT * FROM syn12345'
 
 function getErrorMSWHandler() {
   return [
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${TABLE_QUERY_ASYNC_START(':id')}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         return res(ctx.status(401), ctx.text('Unable to start query'))
       },
     ),

@@ -42,25 +42,25 @@ describe('Access Requirement Search Box tests', () => {
     // Configure MSW
     server.use(
       // Return mocked access requirement search results
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceRecievedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResults))
+          return HttpResponse.json(mockSearchResults, { status: 200 })
         },
       ),
       // Return an access requirement specified by ID
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceRecievedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+          return HttpResponse.json(mockAccessRequirement, { status: 200 })
         },
       ),
     )

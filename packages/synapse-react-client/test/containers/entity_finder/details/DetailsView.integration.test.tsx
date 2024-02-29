@@ -145,12 +145,12 @@ describe('DetailsView tests', () => {
     jest.clearAllMocks()
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSIONS(entityHeaders[0].id)}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(versionResult))
+        async ({ request, params }) => {
+          return HttpResponse.json(versionResult, { status: 200 })
         },
       ),
     )

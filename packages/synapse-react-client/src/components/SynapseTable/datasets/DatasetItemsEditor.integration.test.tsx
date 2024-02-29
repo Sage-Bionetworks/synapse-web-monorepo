@@ -203,38 +203,38 @@ function getDatasetHandlerWithItems(
   type: 'dataset' | 'datasetcollection',
   items?: Array<EntityRef>,
 ) {
-  return rest.get(
+  return http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(
         type === 'dataset'
           ? mockDatasetEntityData.entity
           : mockDatasetCollectionData.entity,
       )
       response.items = items
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }
 
-const successfulUpdateHandler = rest.put(
+const successfulUpdateHandler = http.put(
   `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
     ':entityId',
   )}`,
-  async (req, res, ctx) => {
+  async ({ request, params }) => {
     updatedEntityCaptor(req.body)
     return res(ctx.status(200), ctx.json(req.body))
   },
 )
 
-const unsuccessfulUpdateHandler = rest.put(
+const unsuccessfulUpdateHandler = http.put(
   `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
     ':entityId',
   )}`,
-  async (req, res, ctx) => {
+  async ({ request, params }) => {
     const status = 500
     return res(
       ctx.status(status),

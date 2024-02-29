@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { FORUM, FORUM_THREAD, THREAD } from '../../../utils/APIConstants'
 import {
   CreateDiscussionThread,
@@ -38,50 +38,60 @@ function getAllThreadsMatchingForum(forumId: string, filter: DiscussionFilter) {
 
 export function getDiscussionHandlers(backendOrigin: string) {
   return [
-    rest.get(`${backendOrigin}${FORUM}/:id`, async (req, res, ctx) => {
-      let status = 404
-      let resp: SynapseApiResponse<Forum> = {
-        reason: `MSW could not find a mock forum object with ID ${req.params.id}`,
-      }
-
-      const match = forums.find(f => f.id === req.params.id)
-      if (match) {
-        status = 200
-        resp = match
-      }
-
-      return res(ctx.status(status), ctx.json(resp))
-    }),
-
-    rest.get(`${backendOrigin}${THREAD}/:id`, async (req, res, ctx) => {
-      let status = 404
-      let resp: SynapseApiResponse<Forum> = {
-        reason: `MSW could not find a mock discussion thread bundle object with ID ${req.params.id}`,
-      }
-      if (req.params.id === 'messageUrl') {
-        // This is a different endpoint
-        resp = {
-          reason: 'GET /thread/messageUrl is not yet implemented',
+    http.get<{ id: string }, never, SynapseApiResponse<Forum>>(
+      `${backendOrigin}${FORUM}/:id`,
+      ({ params }) => {
+        let status = 404
+        let resp: SynapseApiResponse<Forum> = {
+          reason: `MSW could not find a mock forum object with ID ${params.id}`,
         }
-      }
 
-      const match = threads.find(dtb => dtb.id === req.params.id)
-      if (match) {
-        status = 200
-        resp = match
-      }
+        const match = forums.find(f => f.id === params.id)
+        if (match) {
+          status = 200
+          resp = match
+        }
 
-      return res(ctx.status(status), ctx.json(resp))
-    }),
+        return HttpResponse.json(resp, { status: status })
+      },
+    ),
 
-    rest.post(`${backendOrigin}${THREAD}`, async (req, res, ctx) => {
-      const request: CreateDiscussionThread = await req.json()
+    http.get<{ id: string }, never, SynapseApiResponse<DiscussionThreadBundle>>(
+      `${backendOrigin}${THREAD}/:id`,
+      ({ params }) => {
+        let status = 404
+        let resp: SynapseApiResponse<DiscussionThreadBundle> = {
+          reason: `MSW could not find a mock discussion thread bundle object with ID ${params.id}`,
+        }
+        if (params.id === 'messageUrl') {
+          // This is a different endpoint
+          resp = {
+            reason: 'GET /thread/messageUrl is not yet implemented',
+          }
+        }
+
+        const match = threads.find(dtb => dtb.id === params.id)
+        if (match) {
+          status = 200
+          resp = match
+        }
+
+        return HttpResponse.json(resp, { status: status })
+      },
+    ),
+
+    http.post<
+      never,
+      CreateDiscussionThread,
+      SynapseApiResponse<DiscussionThreadBundle>
+    >(`${backendOrigin}${THREAD}`, async ({ request }) => {
+      const requestBody: CreateDiscussionThread = await request.json()
 
       const newDiscussionThreadBundle: DiscussionThreadBundle = {
         id: uniqueId(),
-        forumId: request.forumId,
+        forumId: requestBody.forumId,
         projectId: mockProject.id,
-        title: request.title,
+        title: requestBody.title,
         createdOn: new Date().toISOString(),
         createdBy: String(MOCK_USER_ID),
         modifiedOn: new Date().toISOString(),
@@ -97,42 +107,44 @@ export function getDiscussionHandlers(backendOrigin: string) {
       }
 
       threads.push(newDiscussionThreadBundle)
-      return res(ctx.status(201), ctx.json(newDiscussionThreadBundle))
+      return HttpResponse.json(newDiscussionThreadBundle, { status: 201 })
     }),
 
-    rest.get(
-      `${backendOrigin}${FORUM_THREAD(':forumId')}`,
-      async (req, res, ctx) => {
-        const offsetParam = req.url.searchParams.get('offset')
-        const offset = offsetParam ? parseInt(offsetParam) : 0
-        const limitParam = req.url.searchParams.get('limit')
-        const limit = limitParam ? parseInt(limitParam) : 10
-        const filter: DiscussionFilter =
-          (req.params.filter as DiscussionFilter) ??
-          DiscussionFilter.EXCLUDE_DELETED
+    http.get<
+      { forumId: string },
+      never,
+      SynapseApiResponse<PaginatedResults<DiscussionThreadBundle>>
+    >(`${backendOrigin}${FORUM_THREAD(':forumId')}`, ({ request, params }) => {
+      const url = new URL(request.url)
+      const offsetParam = url.searchParams.get('offset')
+      const offset = offsetParam ? parseInt(offsetParam) : 0
+      const limitParam = url.searchParams.get('limit')
+      const limit = limitParam ? parseInt(limitParam) : 10
+      const filter: DiscussionFilter =
+        (url.searchParams.get('filter') as DiscussionFilter) ??
+        DiscussionFilter.EXCLUDE_DELETED
 
-        const matchingThreads = getAllThreadsMatchingForum(
-          req.params.forumId as string,
-          filter,
-        )
+      const matchingThreads = getAllThreadsMatchingForum(
+        params.forumId as string,
+        filter,
+      )
 
-        const response: SynapseApiResponse<
-          PaginatedResults<DiscussionThreadBundle>
-        > = {
-          results: matchingThreads.slice(offset, offset + limit),
-          totalNumberOfResults: matchingThreads.length,
-        }
-        return res(ctx.status(200), ctx.json(response))
-      },
-    ),
-    rest.get(
+      const response: SynapseApiResponse<
+        PaginatedResults<DiscussionThreadBundle>
+      > = {
+        results: matchingThreads.slice(offset, offset + limit),
+        totalNumberOfResults: matchingThreads.length,
+      }
+      return HttpResponse.json(response, { status: 200 })
+    }),
+    http.get<{ id: string }, never, SynapseApiResponse<PaginatedIds>>(
       `${backendOrigin}${FORUM}/:id/moderators`,
-      async (req, res, ctx) => {
+      () => {
         const resp: PaginatedIds = {
           results: [String(MOCK_USER_ID)],
           totalNumberOfResults: 1,
         }
-        return res(ctx.status(200), ctx.json(resp))
+        return HttpResponse.json(resp, { status: 200 })
       },
     ),
   ]

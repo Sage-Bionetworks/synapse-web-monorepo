@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,
@@ -62,9 +62,9 @@ type Story = StoryObj<typeof meta>
 
 function listFormDataHandlers() {
   return [
-    rest.post(
+    http.post(
       `${MOCK_REPO_ORIGIN}/repo/v1/form/data/list`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         const listRequest = req.body as ListRequest
         const status = ctx.status(200)
         if (
@@ -83,9 +83,9 @@ export const NoSubmissions: Story = {
     msw: {
       handlers: [
         getHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
+        http.post(
           `${MOCK_REPO_ORIGIN}/repo/v1/form/data/list`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(ctx.status(200), ctx.json({ page: [] }))
           },
         ),

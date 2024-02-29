@@ -22,7 +22,8 @@ import {
   mockUnmetControlledDataRestrictionInformationACT,
   mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../mocks/mock_has_access_data'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { getEntityBundleHandler } from '../../mocks/msw/handlers/entityHandlers'
 
 const entityId = mockFileEntityData.id
@@ -71,13 +72,13 @@ function useMswRestrictionInformation(
   restrictionInformation: RestrictionInformationResponse,
 ) {
   server.use(
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}/repo/v1/restrictionInformation`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         onGetRestrictionInformation(req.body)
-        return res(ctx.status(200), ctx.json(restrictionInformation))
+        return HttpResponse.json(restrictionInformation, { status: 200 })
       },
     ),
   )

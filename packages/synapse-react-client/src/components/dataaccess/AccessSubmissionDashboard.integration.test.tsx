@@ -9,7 +9,8 @@ import {
   getReviewerFilterID,
 } from './AccessSubmissionDashboard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
@@ -62,25 +63,25 @@ describe('AccessSubmissionDashboard tests', () => {
     server.listen()
 
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResults))
+          return HttpResponse.json(mockSearchResults, { status: 200 })
         },
       ),
       // Return an access requirement specified by ID
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+          return HttpResponse.json(mockAccessRequirement, { status: 200 })
         },
       ),
     )

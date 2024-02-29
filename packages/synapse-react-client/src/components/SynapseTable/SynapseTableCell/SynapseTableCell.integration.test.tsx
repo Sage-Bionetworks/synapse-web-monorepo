@@ -116,19 +116,19 @@ describe('SynapseTableCell tests', () => {
     server.listen()
     server.use(
       ...getHandlersForTableQuery(queryResultBundle),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/syn16787123`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockTableEntity))
+        ({ request, params }) => {
+          return HttpResponse.json(mockTableEntity, { status: 200 })
         },
       ),
 
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const requestBody: ReferenceList = (await req.json())
+        async ({ request, params }) => {
+          const requestBody: ReferenceList = (await request.json())
             .references as ReferenceList
           const responseBody: PaginatedResults<EntityHeader> = {
             results: requestBody.map((reference: Reference) => {
@@ -145,26 +145,26 @@ describe('SynapseTableCell tests', () => {
               }
             }),
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const responseBody: VersionableEntity = {
-            id: req.params.id as string,
-            name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: parseInt(req.params.version as string),
-            versionLabel: `v${req.params.version}`,
+            id: params.id as string,
+            name: `Mock Entity with Id ${params.id}`,
+            versionNumber: parseInt(params.version as string),
+            versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )
@@ -213,12 +213,12 @@ describe('SynapseTableCell tests', () => {
 
   it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/syn16787123`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        ({ request, params }) => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
     )

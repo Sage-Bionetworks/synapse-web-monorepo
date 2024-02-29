@@ -4,7 +4,8 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   CreateOAuthModal,
   CreateOAuthModalProps,
@@ -82,11 +83,11 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
 }
 
 function mockVerificationPrecheckService(reverificationRequired: boolean) {
-  return rest.put(
+  return http.put(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}/auth/v1/oauth2/client/${mockClient.client_id!}/verificationPrecheck`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       return res(
         ctx.status(200),
         ctx.json({ reverificationRequired: reverificationRequired }),
@@ -99,19 +100,19 @@ describe('Create OAuth Client', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/auth/v1/oauth2/client`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(ctx.status(200), ctx.json(req.body))
         },
       ),
-      rest.put(
+      http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/auth/v1/oauth2/client/${mockClient.client_id!}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(ctx.status(200), ctx.json(req.body))
         },
       ),

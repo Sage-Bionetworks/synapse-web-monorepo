@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -30,31 +30,31 @@ export const Demo: Story = {
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         // Return submission based on ID
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             const submission = mockSubmissions.find(
-              submission => req.params.id === submission.id,
+              submission => params.id === submission.id,
             )
-            return res(ctx.status(200), ctx.json(submission))
+            return HttpResponse.json(submission, { status: 200 })
           },
         ),
 
         // Return a mocked access requirement
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json(mockManagedACTAccessRequirement),
             )
           },
         ),
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json({
@@ -65,9 +65,9 @@ export const Demo: Story = {
             )
           },
         ),
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}/repo/v1/accessRequirement/:id/acl`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json({
@@ -85,11 +85,11 @@ export const Demo: Story = {
           },
         ),
         ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
-        rest.put(
+        http.put(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(201), ctx.json(await req.json()))
+          async ({ request, params }) => {
+            return res(ctx.status(201), ctx.json(await request.json()))
           },
         ),
       ],

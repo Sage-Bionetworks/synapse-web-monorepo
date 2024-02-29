@@ -11,7 +11,8 @@ import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
 } from '../../mocks/user/mock_user_profile'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { APPROVED_SUBMISSION_INFO } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -52,16 +53,16 @@ describe('IDUReport tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${APPROVED_SUBMISSION_INFO(':arId')}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           let page = page1
           if ((req.body as SubmissionInfoPageRequest).nextPageToken) {
             page = page2
           }
-          return res(ctx.status(200), ctx.json(page))
+          return HttpResponse.json(page, { status: 200 })
         },
       ),
     )

@@ -4,7 +4,8 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import RejectDataAccessRequestModal, {
   RejectDataAccessRequestModalProps,
 } from './RejectDataAccessRequestModal'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import userEvent from '@testing-library/user-event'
@@ -38,12 +39,12 @@ describe('RejectDataAccessRequestModal', () => {
     server.listen()
     server.use(
       ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
-      rest.put(
+      http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
-        async (req, res, ctx) => {
-          onServerReceivedUpdate(await req.json())
+        async ({ request, params }) => {
+          onServerReceivedUpdate(await request.json())
           return res(ctx.status(200))
         },
       ),

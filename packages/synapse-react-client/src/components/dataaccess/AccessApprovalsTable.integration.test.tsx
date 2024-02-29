@@ -1,5 +1,6 @@
 import React from 'react'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { render, screen } from '@testing-library/react'
 import {
   AccessApprovalSearchRequest,
@@ -34,12 +35,12 @@ describe('AccessApprovalsTable tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/accessApproval/search`,
-        async (req, res, ctx) => {
-          const requestBody: AccessApprovalSearchRequest = await req.json()
+        async ({ request, params }) => {
+          const requestBody: AccessApprovalSearchRequest = await request.json()
           let responseBody: AccessApprovalSearchResponse = {
             results: mockApprovalSearchResponse.results,
             nextPageToken: mockApprovalSearchResponse.nextPageToken,
@@ -51,7 +52,7 @@ describe('AccessApprovalsTable tests', () => {
               nextPageToken: undefined,
             }
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )

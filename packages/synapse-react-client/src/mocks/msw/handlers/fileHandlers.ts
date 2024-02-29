@@ -2,32 +2,36 @@ import {
   BatchFileRequest,
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { FILE_HANDLE_BATCH } from '../../../utils/APIConstants'
 import { mockFileHandles } from '../../mock_file_handle'
+import { SynapseApiResponse } from '../handlers'
 
 export function getFileHandlers(backendOrigin: string) {
   return [
-    rest.post(`${backendOrigin}${FILE_HANDLE_BATCH}`, async (req, res, ctx) => {
-      const request: BatchFileRequest = await req.json()
+    http.post<never, BatchFileRequest, SynapseApiResponse<BatchFileResult>>(
+      `${backendOrigin}${FILE_HANDLE_BATCH}`,
+      async ({ request }) => {
+        const requestBody = await request.json()
 
-      const response: BatchFileResult = {
-        requestedFiles: [],
-      }
-
-      request.requestedFiles.forEach(fileHandleAssociation => {
-        const fileHandle = mockFileHandles.find(
-          fh => fh.id === fileHandleAssociation.fileHandleId,
-        )
-        if (fileHandle) {
-          response.requestedFiles.push({
-            fileHandleId: fileHandle.id,
-            fileHandle,
-          })
+        const response: BatchFileResult = {
+          requestedFiles: [],
         }
-      })
 
-      return res(ctx.status(201), ctx.json(response))
-    }),
+        requestBody.requestedFiles.forEach(fileHandleAssociation => {
+          const fileHandle = mockFileHandles.find(
+            fh => fh.id === fileHandleAssociation.fileHandleId,
+          )
+          if (fileHandle) {
+            response.requestedFiles.push({
+              fileHandleId: fileHandle.id,
+              fileHandle,
+            })
+          }
+        })
+
+        return HttpResponse.json(response, { status: 201 })
+      },
+    ),
   ]
 }

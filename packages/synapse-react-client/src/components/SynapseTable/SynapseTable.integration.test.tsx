@@ -29,7 +29,8 @@ import {
   RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import queryResultBundle from '../../mocks/query/syn16787123'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import * as HasAccessModule from '../HasAccess/HasAccessV2'
@@ -152,10 +153,10 @@ describe('SynapseTable tests', () => {
     server.use(
       ...getHandlersForTableQuery(queryResultBundle),
 
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const requestBody: ReferenceList = (await req.json())
+        async ({ request, params }) => {
+          const requestBody: ReferenceList = (await request.json())
             .references as ReferenceList
           const responseBody: PaginatedResults<EntityHeader> = {
             results: requestBody.map((reference: Reference, index) => {
@@ -172,19 +173,19 @@ describe('SynapseTable tests', () => {
               }
             }),
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const responseBody: FileEntity = {
-            id: `${req.params.id!}`,
-            name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: parseInt(req.params.version as string),
-            versionLabel: `v${req.params.version}`,
+            id: `${params.id!}`,
+            name: `Mock Entity with Id ${params.id}`,
+            versionNumber: parseInt(params.version as string),
+            versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
@@ -192,19 +193,19 @@ describe('SynapseTable tests', () => {
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/restrictionInformation`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const responseBody: RestrictionInformationResponse = {
             restrictionLevel: RestrictionLevel.OPEN,
             hasUnmetAccessRequirement: false,
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )
@@ -469,12 +470,12 @@ describe('SynapseTable tests', () => {
 
     // Return a file view entity, so the download column would be shown if not for the missing row IDs
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        ({ request, params }) => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
       ...getHandlersForTableQuery(queryResultBundleWithoutRowIds),
@@ -512,12 +513,12 @@ describe('SynapseTable tests', () => {
     }
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        ({ request, params }) => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
       ...getHandlersForTableQuery(queryResultBundleWithRenamedColumn),

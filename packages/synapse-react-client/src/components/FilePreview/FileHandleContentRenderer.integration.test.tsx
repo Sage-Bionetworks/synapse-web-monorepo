@@ -19,7 +19,8 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { MOCK_FILE_HANDLE_ID } from '../../mocks/mock_file_handle'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 
 jest.spyOn(HtmlPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="HtmlPreview"></div>
@@ -44,11 +45,11 @@ describe('FileHandleContentRenderer tests', () => {
   beforeEach(() => {
     server.use(
       // Handler to return the presigned URL for the requested file
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
-        (req, res, ctx) => {
+        ({ request, params }) => {
           const result: BatchFileResult = {
             requestedFiles: [
               {
@@ -57,11 +58,11 @@ describe('FileHandleContentRenderer tests', () => {
               },
             ],
           }
-          return res(ctx.status(200), ctx.json(result))
+          return HttpResponse.json(result, { status: 200 })
         },
       ),
       // Handler for the presigned URL to return the file contents
-      rest.get(PRESIGNED_URL, (req, res, ctx) => {
+      http.get(PRESIGNED_URL, ({ request, params }) => {
         return res(ctx.status(200), ctx.text('file contents here'))
       }),
     )

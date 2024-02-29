@@ -30,7 +30,8 @@ import {
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding, mockValidationSchema } from '../../mocks/mockSchema'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { cloneDeep } from 'lodash-es'
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {
@@ -111,28 +112,28 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   })
   afterAll(() => server.close())
 
-  const noAnnotationsHandler = rest.get(
+  const noAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the annotation keys in the mock--we aren't using them in this suite
       delete response.myStringKey
       delete response.myIntegerKey
       delete response.myFloatKey
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
   // Returns an entity with annotations that match the schema
-  const annotationsWithSchemaHandler = rest.get(
+  const annotationsWithSchemaHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -143,18 +144,18 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.country = 'USA'
       response.state = 'Washington'
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
   // Returns an entity with annotations equivalent to the `annotationsWithSchemaHandler`, but with the annotations
   // returned as if there is no bound schema
-  const annotationsWithoutSchemaHandler = rest.get(
+  const annotationsWithoutSchemaHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -165,16 +166,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.country = ['USA']
       response.state = ['Washington']
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const stringArrayAnnotationsHandler = rest.get(
+  const stringArrayAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -185,16 +186,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.showStringArray = true
       response.stringArray = ['one', 'two', 'three']
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const emptyArrayAnnotationsHandler = rest.get(
+  const emptyArrayAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -204,41 +205,41 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       // Fill in annotations that match the schema in this test suite
       response.showStringArray = true
       delete response.stringArray
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const noSchemaHandler = rest.get(
+  const noSchemaHandler = http.get(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       return res(ctx.status(404), ctx.json({}))
     },
   )
 
   const schemaHandlers = [
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(mockSchemaBinding))
+      async ({ request, params }) => {
+        return HttpResponse.json(mockSchemaBinding, { status: 200 })
       },
     ),
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${SCHEMA_VALIDATION_START}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         return res(ctx.status(201), ctx.json({ token: mockAsyncTokenId }))
       },
     ),
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${SCHEMA_VALIDATION_GET(mockAsyncTokenId)}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         return res(
           ctx.status(200),
           ctx.json({ validationSchema: mockValidationSchema }),
@@ -246,11 +247,11 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       },
     ),
 
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ASYNCHRONOUS_JOB_TOKEN(String(mockAsyncTokenId))}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         return res(
           ctx.status(200),
           ctx.json({
@@ -261,21 +262,21 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     ),
   ]
 
-  const successfulUpdateHandler = rest.put(
+  const successfulUpdateHandler = http.put(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       updatedJsonCaptor(req.body)
       return res(ctx.status(200), ctx.json(req.body))
     },
   )
 
-  const unsuccessfulUpdateHandler = rest.put(
+  const unsuccessfulUpdateHandler = http.put(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
-    async (req, res, ctx) => {
+    async ({ request, params }) => {
       return res(
         ctx.status(412),
         ctx.json({

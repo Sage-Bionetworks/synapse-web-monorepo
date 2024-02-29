@@ -1,8 +1,5 @@
-import { DefaultBodyType, rest } from 'msw'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
+import { DefaultBodyType, http, HttpResponse } from 'msw'
+import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
 import { uniqueId } from 'lodash-es'
 import {
   AsynchJobState,
@@ -11,6 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ASYNCHRONOUS_JOB_TOKEN } from '../../../utils/APIConstants'
 import { SynapseError } from '../../../utils/SynapseError'
+import { SynapseApiResponse } from '../handlers'
 
 /**
  * Global mapping between async job token and request/response. This sort of acts as an in-memory database for asynchronous jobs.
@@ -48,92 +46,95 @@ export function generateAsyncJobHandlers<
 ) {
   return [
     // Handler for the asynchronous job request endpoint.
-    rest.post(`${backendOrigin}${requestPath}`, async (req, res, ctx) => {
-      const asyncJobId = uniqueId()
-      mapOfAsyncJobs.set(asyncJobId, {
-        request: await req.json(),
-        response: responseBody,
-      })
-      return res(
-        ctx.status(201),
-        ctx.json<AsyncJobId>({
-          token: asyncJobId,
-        }),
-      )
-    }),
+    http.post<never, never, SynapseApiResponse<AsyncJobId>>(
+      `${backendOrigin}${requestPath}`,
+      async ({ request }) => {
+        const asyncJobId = uniqueId()
+        mapOfAsyncJobs.set(asyncJobId, {
+          request: await request.json(),
+          response: responseBody,
+        })
+        return HttpResponse.json({ token: asyncJobId }, { status: 201 })
+      },
+    ),
 
     // Generic async job response handler. Since this implementation is the same for all services and references the global map, it's fine if this is overridden.
-    rest.get(
-      `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`,
-      async (req, res, ctx) => {
-        const id = req.params.id as string
-        const asyncJobDetails = mapOfAsyncJobs.get(id)
-        if (!id || !asyncJobDetails) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
-          )
-        }
-        const { request, response } = asyncJobDetails as {
-          request: TRequestBody
-          response: TResponseBody
-        }
-        const responseObject: TResponseBody =
-          typeof response === 'function' ? response(request) : response
+    http.get<
+      { id: string },
+      never,
+      SynapseApiResponse<AsynchronousJobStatus<TRequestBody, TResponseBody>>
+    >(`${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`, ({ params }) => {
+      const id = params.id
+      const asyncJobDetails = mapOfAsyncJobs.get(id)
+      if (!id || !asyncJobDetails) {
+        const response: SynapseApiResponse<
+          AsynchronousJobStatus<TRequestBody, TResponseBody>
+        > = { reason: 'The mocked asynchronous job was not found' }
+        return HttpResponse.json(response, { status: 404 })
+      }
+      const { request, response } = asyncJobDetails as {
+        request: TRequestBody
+        response: TResponseBody
+      }
+      const jobResult: TResponseBody =
+        typeof response === 'function' ? response(request) : response
 
-        const jobState: AsynchJobState =
-          serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
+      const jobState: AsynchJobState =
+        serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
 
-        return res(
-          // This endpoint returns a successful status code regardless of the job status
-          ctx.status(200),
-          ctx.json<AsynchronousJobStatus<TRequestBody, TResponseBody>>({
-            jobState,
-            jobCanceling: false,
-            requestBody: request,
-            etag: '00000000-0000-0000-0000-000000000000',
-            jobId: id,
-            responseBody: responseObject,
-            startedByUserId: 0,
-            startedOn: '',
-            changedOn: '',
-            progressMessage: '',
-            progressCurrent: 100,
-            progressTotal: 100,
-            exception: '',
-            errorMessage: '',
-            errorDetails: '',
-            runtimeMS: 100,
-          }),
-        )
-      },
-    ),
+      const jobStatusResponseBody: AsynchronousJobStatus<
+        TRequestBody,
+        TResponseBody
+      > = {
+        jobState,
+        jobCanceling: false,
+        requestBody: request,
+        etag: '00000000-0000-0000-0000-000000000000',
+        jobId: id,
+        responseBody: jobResult,
+        startedByUserId: 0,
+        startedOn: '',
+        changedOn: '',
+        progressMessage: '',
+        progressCurrent: 100,
+        progressTotal: 100,
+        exception: '',
+        errorMessage: '',
+        errorDetails: '',
+        runtimeMS: 100,
+      }
+
+      return HttpResponse.json(jobStatusResponseBody, {
+        // This endpoint returns a successful status code regardless of the job status
+        status: 200,
+      })
+    }),
 
     // Service-specific response endpoint
-    rest.get<TResponseBody>(
-      `${backendOrigin}${responsePath(':asyncJobToken')}`,
-      async (req, res, ctx) => {
-        const asyncJobToken = req.params.asyncJobToken as string
-        const asyncJobDetails = mapOfAsyncJobs.get(asyncJobToken)
-        if (!asyncJobToken || !asyncJobDetails) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
-          )
-        }
-
-        const { request, response } = asyncJobDetails as {
-          request: TRequestBody
-          response: TResponseBody
-        }
-        const responseObject: TResponseBody =
-          typeof response === 'function' ? response(request) : response
-
-        return res(
-          ctx.status(serviceSpecificEndpointResponseStatus),
-          ctx.json(responseObject),
+    http.get<
+      { asyncJobToken: string },
+      never,
+      SynapseApiResponse<TResponseBody>
+    >(`${backendOrigin}${responsePath(':asyncJobToken')}`, ({ params }) => {
+      const asyncJobToken = params.asyncJobToken
+      const asyncJobDetails = mapOfAsyncJobs.get(asyncJobToken)
+      if (!asyncJobToken || !asyncJobDetails) {
+        return HttpResponse.json(
+          { reason: 'The mocked asynchronous job was not found' },
+          { status: 404 },
         )
-      },
-    ),
+      }
+
+      const { request, response } = asyncJobDetails as {
+        request: TRequestBody
+        response: TResponseBody
+      }
+      const responseObject: TResponseBody =
+        typeof response === 'function' ? response(request) : response
+
+      return HttpResponse.json(responseObject, {
+        status: serviceSpecificEndpointResponseStatus,
+      })
+    }),
   ]
 }

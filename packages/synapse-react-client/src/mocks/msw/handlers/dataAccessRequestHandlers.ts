@@ -1,38 +1,47 @@
-import { Renewal, Request } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import {
+  CreateSubmissionRequest,
+  Renewal,
+  Request,
+  StatusEnum,
+  SubmissionStatus,
+} from '@sage-bionetworks/synapse-types'
+import { http, HttpResponse } from 'msw'
 import {
   ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '../../../utils/APIConstants'
-import { MOCK_DATA_ACCESS_REQUEST } from '../../dataaccess/MockDataAccessRequest'
+import { SynapseApiResponse } from '../handlers'
 
-export function getDataAccessRequestHandlers(
-  backendOrigin: string,
-  request: Request | Renewal = MOCK_DATA_ACCESS_REQUEST,
-) {
+export function getDataAccessRequestHandlers(backendOrigin: string) {
   return [
-    rest.get(
+    http.get<{ id: string }, never, SynapseApiResponse<Request | Renewal>>(
       `${backendOrigin}${ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(
         ':id',
       )}`,
-      async (req, res, ctx) => {
-        const response: Request | Renewal = request
-        return res(ctx.status(200), ctx.json(response))
+      async ({ request }) => {
+        const response = await request.json()
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
-    rest.post(
+    http.post<never, Request | Renewal, SynapseApiResponse<Request | Renewal>>(
       `${backendOrigin}${DATA_ACCESS_REQUEST}`,
-      async (req, res, ctx) => {
-        const resp = await req.json()
-        return res(ctx.status(201), ctx.json(resp))
+      async ({ request }) => {
+        const resp = await request.json()
+        return HttpResponse.json(resp, { status: 201 })
       },
     ),
-    rest.post(
-      `${backendOrigin}${DATA_ACCESS_REQUEST_SUBMISSION(':id')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(201), ctx.json({}))
-      },
-    ),
+    http.post<
+      { id: string },
+      CreateSubmissionRequest,
+      SynapseApiResponse<SubmissionStatus>
+    >(`${backendOrigin}${DATA_ACCESS_REQUEST_SUBMISSION(':id')}`, () => {
+      return HttpResponse.json(
+        {
+          state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
+        },
+        { status: 201 },
+      )
+    }),
   ]
 }

@@ -9,7 +9,8 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import * as AccessRequirementDashboardModule from './AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from './AccessSubmissionDashboard'
@@ -46,15 +47,15 @@ function renderComponent(
   isARReviewer: boolean = true,
 ) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         const response: UserBundle = {
           userId: MOCK_USER_ID.toString(),
           isACTMember: isACTMember,
           isARReviewer: isARReviewer,
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
   )

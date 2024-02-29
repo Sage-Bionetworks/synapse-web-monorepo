@@ -201,25 +201,25 @@ describe('EntityTree tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(favorites))
+        async ({ request, params }) => {
+          return HttpResponse.json(favorites, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_PATH(
           ':id',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(entityPath))
+        async ({ request, params }) => {
+          return HttpResponse.json(entityPath, { status: 200 })
         },
       ),
 
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const { references } = await req.json()
+        async ({ request, params }) => {
+          const { references } = await request.json()
           if (references[0].targetId === projectIdWithNoReadAccess) {
             return res(
               ctx.status(200),
@@ -238,19 +238,19 @@ describe('EntityTree tests', () => {
           )
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${PROJECTS}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           let response: ProjectHeaderList = {
             results: projectsPage1,
             nextPageToken: '50a0',
           }
 
-          if (req.params.nextPageToken === '50a0') {
+          if (params.nextPageToken === '50a0') {
             response.results = projectsPage2
             response.nextPageToken = null
           }
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )

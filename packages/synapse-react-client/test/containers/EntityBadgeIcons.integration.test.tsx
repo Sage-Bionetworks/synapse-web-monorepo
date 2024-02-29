@@ -213,12 +213,12 @@ describe('EntityBadgeIcons tests', () => {
           getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
           bundle,
         ),
-        rest.delete(
+        http.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
           )}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(ctx.status(200))
           },
         ),
@@ -251,12 +251,12 @@ describe('EntityBadgeIcons tests', () => {
           getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
           bundle,
         ),
-        rest.delete(
+        http.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
           )}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(ctx.status(403))
           },
         ),
@@ -280,22 +280,24 @@ describe('EntityBadgeIcons tests', () => {
   describe('displays schema validity', () => {
     it('Displays that the annotations are valid w.r.t the schema', async () => {
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          async ({ request, params }) => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaValidationResults))
+          async ({ request, params }) => {
+            return HttpResponse.json(mockSchemaValidationResults, {
+              status: 200,
+            })
           },
         ),
       )
@@ -313,22 +315,22 @@ describe('EntityBadgeIcons tests', () => {
 
     it('Displays that the annotations are invalid w.r.t the schema', async () => {
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          async ({ request, params }) => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
 
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json({
@@ -360,13 +362,13 @@ describe('EntityBadgeIcons tests', () => {
         },
       }
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          async ({ request, params }) => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
 
@@ -375,12 +377,12 @@ describe('EntityBadgeIcons tests', () => {
           bundle,
         ),
         // The entity's annotations are invalid
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.json({
@@ -407,12 +409,12 @@ describe('EntityBadgeIcons tests', () => {
       const onSchemaValidationFetched = jest.fn()
 
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(404),
               ctx.json({ reason: 'No JSON Schema found' }),
@@ -422,12 +424,12 @@ describe('EntityBadgeIcons tests', () => {
 
         // This service should never be called.
         // To verify, see if we invoke a mock function that is called in the mocked service
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             onSchemaValidationFetched()
             return res(
               ctx.status(200),

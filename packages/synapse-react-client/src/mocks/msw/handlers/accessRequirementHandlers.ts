@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_STATUS,
@@ -29,16 +29,16 @@ const accessRequirementStatuses: Map<string, AccessRequirementStatus> =
   new Map()
 
 export const getAccessRequirementHandlers = (backendOrigin: string) => [
-  rest.get(
+  http.get<{ id: string }, never, SynapseApiResponse<AccessRequirement>>(
     `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<AccessRequirement> = {
-        reason: `Mock Service worker could not find an access requirement with ID ${req.params.id}`,
+        reason: `Mock Service worker could not find an access requirement with ID ${params.id}`,
       }
       const ar = mockAccessRequirements.find(
-        ar => ar.id.toString() === req.params.id,
+        ar => ar.id.toString() === params.id,
       )
 
       if (ar) {
@@ -46,20 +46,20 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
-  rest.get(
+  http.get<{ id: string }, never, SynapseApiResponse<WikiPageKey>>(
     `${backendOrigin}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<WikiPageKey> = {
-        reason: `Mock Service worker could not find an access requirement wiki page key with AR ID ${req.params.id}`,
+        reason: `Mock Service worker could not find an access requirement wiki page key with AR ID ${params.id}`,
       }
       const wikiPageKey = mockAccessRequirementWikiPageKeys.find(
         wpk =>
           wpk.ownerObjectType === ObjectType.ACCESS_REQUIREMENT &&
-          String(wpk.ownerObjectId) === req.params.id,
+          String(wpk.ownerObjectId) === params.id,
       )
 
       if (wikiPageKey) {
@@ -67,7 +67,7 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]
@@ -76,16 +76,20 @@ export const getAccessRequirementEntityBindingHandlers = (
   entityId = ':entityId',
   accessRequirements: AccessRequirement[] = mockAccessRequirements,
 ) => [
-  rest.get(
+  http.get<
+    { entityId: string },
+    never,
+    SynapseApiResponse<PaginatedResults<AccessRequirement>>
+  >(
     `${backendOrigin}${ENTITY_ACCESS_REQUIREMENTS(entityId)}`,
 
-    async (req, res, ctx) => {
+    () => {
       const status = 200
       const response: PaginatedResults<AccessRequirement> = {
         results: accessRequirements,
         totalNumberOfResults: accessRequirements.length,
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]
@@ -94,16 +98,20 @@ export const getAccessRequirementsBoundToTeamHandler = (
   backendOrigin: string,
   accessRequirements: AccessRequirement[] = [mockSelfSignAccessRequirement],
 ) =>
-  rest.get(
+  http.get<
+    { teamId: string },
+    never,
+    SynapseApiResponse<PaginatedResults<AccessRequirement>>
+  >(
     `${backendOrigin}/repo/v1/team/:teamId/accessRequirement`,
 
-    async (req, res, ctx) => {
+    () => {
       const status = 200
       const response: PaginatedResults<AccessRequirement> = {
         results: accessRequirements,
         totalNumberOfResults: accessRequirements.length,
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 
@@ -117,16 +125,19 @@ export const getAccessRequirementStatusHandlers = (
     })
   }
   return [
-    rest.get(
+    http.get<
+      { id: string },
+      never,
+      SynapseApiResponse<AccessRequirementStatus>
+    >(
       `${backendOrigin}${ACCESS_REQUIREMENT_STATUS(':id')}`,
 
-      async (req, res, ctx) => {
+      ({ params }) => {
         let response: AccessRequirementStatus | undefined
         const accessRequirement = mockAccessRequirements.find(
-          accessRequirement =>
-            req.params.id === accessRequirement.id.toString(),
+          accessRequirement => params.id === accessRequirement.id.toString(),
         )
-        let override = accessRequirementStatuses.get(req.params.id as string)
+        let override = accessRequirementStatuses.get(params.id)
         if (override) {
           response = override
         }
@@ -135,7 +146,7 @@ export const getAccessRequirementStatusHandlers = (
             accessRequirement.concreteType ===
             MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
           response = {
-            accessRequirementId: req.params.id as string,
+            accessRequirementId: params.id as string,
             concreteType: isManagedACTAR
               ? 'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus'
               : 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
@@ -151,18 +162,22 @@ export const getAccessRequirementStatusHandlers = (
           }
         }
         const status = response ? 200 : 404
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status })
       },
     ),
   ]
 }
 
 export function getCreateAccessApprovalHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<
+    never,
+    CreateAccessApprovalRequest,
+    SynapseApiResponse<AccessApproval>
+  >(
     `${backendOrigin}/repo/v1/accessApproval`,
 
-    async (req, res, ctx) => {
-      const requestBody: CreateAccessApprovalRequest = await req.json()
+    async ({ request }) => {
+      const requestBody = await request.json()
       const status = 200
       const response: AccessApproval = {
         ...requestBody,
@@ -183,7 +198,7 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
         isApproved: true,
       })
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }

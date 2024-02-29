@@ -34,10 +34,7 @@ const meta: Meta<
         ...getFileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getDataAccessRequestHandlers(
-          MOCK_REPO_ORIGIN,
-          MOCK_DATA_ACCESS_REQUEST,
-        ),
+        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
       ],
     },
   },

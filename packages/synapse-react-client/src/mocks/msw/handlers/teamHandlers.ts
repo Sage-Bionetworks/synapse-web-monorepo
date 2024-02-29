@@ -1,6 +1,6 @@
 import { Team, TeamMembershipStatus } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { mockTeamMembershipStatuses, mockTeams } from '../../team/mockTeam'
 
 const teams: Team[] = [...mockTeams]
@@ -25,11 +25,15 @@ function addTeamMembershipStatus(teamMembershipStatus: TeamMembershipStatus) {
 }
 
 export function getTeamMembershipStatusHandler(backendOrigin: string) {
-  return rest.get(
+  return http.get<
+    { teamId: string; memberId: string },
+    never,
+    SynapseApiResponse<TeamMembershipStatus>
+  >(
     `${backendOrigin}/repo/v1/team/:teamId/member/:memberId/membershipStatus`,
-    async (req, res, ctx) => {
-      const teamId = req.params.teamId as string
-      const memberId = req.params.memberId as string
+    ({ params }) => {
+      const teamId = params.teamId
+      const memberId = params.memberId
       let response: SynapseApiResponse<TeamMembershipStatus>
       let status: number
 
@@ -56,45 +60,46 @@ export function getTeamMembershipStatusHandler(backendOrigin: string) {
         response = membershipStatus
         status = 200
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
 
 export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
-  return rest.put(
-    `${backendOrigin}/repo/v1/team/:teamId/member/:memberId`,
-    async (req, res, ctx) => {
-      const teamId = req.params.teamId as string
-      const memberId = req.params.memberId as string
-      let response: SynapseApiResponse<void> | ''
-      let status: number
+  return http.put<
+    { teamId: string; memberId: string },
+    never,
+    SynapseApiResponse<''>
+  >(`${backendOrigin}/repo/v1/team/:teamId/member/:memberId`, ({ params }) => {
+    const teamId = params.teamId
+    const memberId = params.memberId
+    let response: SynapseApiResponse<''>
+    let status: number
 
-      const team = getMockTeamById(teamId)
-      if (!team) {
-        response = {
-          reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
-        }
-        status = 404
-      } else {
-        const membershipStatus: TeamMembershipStatus = {
-          teamId: teamId,
-          userId: memberId,
-          isMember: true,
-          hasOpenInvitation: false, // TODO
-          hasOpenRequest: false, // TODO
-          canJoin: true, // TODO
-          membershipApprovalRequired: false, // TODO
-          hasUnmetAccessRequirement: false, // TODO
-          canSendEmail: false, // TODO
-        }
-        addTeamMembershipStatus(membershipStatus)
-        response = ''
-        status = 201
+    const team = getMockTeamById(teamId)
+    if (!team) {
+      response = {
+        reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
       }
-      return res(ctx.status(status), ctx.json(response))
-    },
-  )
+      status = 404
+    } else {
+      const membershipStatus: TeamMembershipStatus = {
+        teamId: teamId,
+        userId: memberId,
+        isMember: true,
+        hasOpenInvitation: false, // TODO
+        hasOpenRequest: false, // TODO
+        canJoin: true, // TODO
+        membershipApprovalRequired: false, // TODO
+        hasUnmetAccessRequirement: false, // TODO
+        canSendEmail: false, // TODO
+      }
+      addTeamMembershipStatus(membershipStatus)
+      response = ''
+      status = 201
+    }
+    return HttpResponse.json(response, { status })
+  })
 }
 
 export default function getAllTeamHandlers(backendOrigin: string) {

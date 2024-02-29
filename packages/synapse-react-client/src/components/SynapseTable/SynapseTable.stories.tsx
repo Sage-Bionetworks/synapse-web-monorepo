@@ -1,7 +1,7 @@
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import queryResultBundleJson from '../../mocks/query/syn16787123'
 import SynapseTable from './SynapseTable'
@@ -77,10 +77,10 @@ export const SynapseTableDemo: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get(
+        http.get(
           MOCK_REPO_ORIGIN + '/repo/v1/entity/syn16787123',
-          (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockTableEntity))
+          ({ request, params }) => {
+            return HttpResponse.json(mockTableEntity, { status: 200 })
           },
         ),
         ...getHandlersForTableQuery(queryResultBundleJson, MOCK_REPO_ORIGIN),

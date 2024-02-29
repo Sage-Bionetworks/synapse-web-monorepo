@@ -28,14 +28,14 @@ const mockCallback = jest.fn()
 // Adding this mock service worker handler will make the component recognize the caller as an ACT member
 function setIsCurrentUserMemberOfACT(isActMember: boolean) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         const result: UserBundle = {
           ...mockUserBundle,
           isACTMember: isActMember,
         }
-        return res(ctx.status(200), ctx.json(result))
+        return HttpResponse.json(result, { status: 200 })
       },
     ),
   )

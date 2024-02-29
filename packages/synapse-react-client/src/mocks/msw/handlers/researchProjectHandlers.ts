@@ -1,27 +1,31 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
   RESEARCH_PROJECT,
 } from '../../../utils/APIConstants'
 import { ResearchProject } from '@sage-bionetworks/synapse-types'
 import { MOCK_RESEARCH_PROJECT } from '../../dataaccess/MockResearchProject'
+import { SynapseApiResponse } from '../handlers'
 
 export function getResearchProjectHandlers(backendOrigin: string) {
   return [
-    rest.post(`${backendOrigin}${RESEARCH_PROJECT}`, async (req, res, ctx) => {
-      const resp = await req.json()
-      return res(ctx.status(201), ctx.json(resp))
-    }),
-    rest.get(
+    http.post<never, ResearchProject, SynapseApiResponse<ResearchProject>>(
+      `${backendOrigin}${RESEARCH_PROJECT}`,
+      async ({ request }) => {
+        const resp = await request.json()
+        return HttpResponse.json(resp, { status: 201 })
+      },
+    ),
+    http.get<{ id: string }, never, SynapseApiResponse<ResearchProject>>(
       `${backendOrigin}${ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE(
         ':id',
       )}`,
-      async (req, res, ctx) => {
+      ({ params }) => {
         const response: ResearchProject = {
           ...MOCK_RESEARCH_PROJECT,
-          accessRequirementId: req.params.id.toString(),
+          accessRequirementId: params.id.toString(),
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
   ]

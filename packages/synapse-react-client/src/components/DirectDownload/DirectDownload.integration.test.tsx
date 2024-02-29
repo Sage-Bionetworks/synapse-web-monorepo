@@ -13,7 +13,8 @@ import {
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
@@ -57,13 +58,13 @@ describe('DirectDownload: basic functionality', () => {
   }
   it('render direct download component without crashing', async () => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
 
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(batchFileResponse))
+        async ({ request, params }) => {
+          return HttpResponse.json(batchFileResponse, { status: 200 })
         },
       ),
     )
@@ -77,12 +78,12 @@ describe('DirectDownload: basic functionality', () => {
 
   it('file handle fetch failure should display nothing', () => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
 
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.json({

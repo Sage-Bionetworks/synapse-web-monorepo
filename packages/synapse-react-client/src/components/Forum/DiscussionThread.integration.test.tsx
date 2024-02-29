@@ -21,7 +21,8 @@ import {
   mockDiscussionThreadBundle,
 } from '../../mocks/discussion/mock_discussion'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import {
   mockUserProfileData,
   mockUserProfileData2,
@@ -41,11 +42,11 @@ const mockDeleteSubscription = jest.mocked(SynapseClient.deleteSubscription)
 mockDeleteSubscription.mockImplementation(() => {
   // When the subscription is deleted, update the server to return nothing.
   server.use(
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}/repo/v1/subscription/list`,
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         return res(
           ctx.status(200),
           ctx.json({ results: [], totalNumberOfResults: 0 }),
@@ -113,51 +114,51 @@ describe.skip('Discussion Thread test', () => {
   })
   beforeEach(() => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${THREAD_ID(
           MOCK_THREAD_ID,
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockDiscussionThreadBundle))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockDiscussionThreadBundle, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${THREAD_REPLIES(
           MOCK_THREAD_ID,
         )}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const offset = req.url.searchParams.get('offset') ?? '0'
           return res(ctx.status(200), ctx.json(mockThread[parseInt(offset)]))
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${THREAD}/messageUrl`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockMessageUrl))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockMessageUrl, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/reply/messageUrl`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockMessageUrl))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockMessageUrl, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `http://localhost/${mockMessageUrl.messageUrl}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           return res(ctx.status(200), ctx.json('message'))
         },
       ),
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/subscription/list`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockSubscriptionPagedResult))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockSubscriptionPagedResult, { status: 200 })
         },
       ),
     )

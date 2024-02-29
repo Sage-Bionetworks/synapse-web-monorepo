@@ -9,7 +9,8 @@ import {
 } from '../../utils/functions/getEndpoint'
 import { mockActivity } from '../../mocks/provenance/mockActivity'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from '../../mocks/msw/handlers'
 import { Activity } from '@sage-bionetworks/synapse-types'
 import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
@@ -22,37 +23,37 @@ describe('ProvenanceGraph', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(
           mockFileEntityData.id,
           `${mockFileEntityData.entity.versionNumber}`,
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockActivity))
+        async ({ request, params }) => {
+          return HttpResponse.json(mockActivity, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID)}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const response: SynapseApiResponse<Activity> = {
             reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}`,
           }
-          return res(ctx.status(404), ctx.json(response))
+          return HttpResponse.json(response, { status: 404 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID, ':version')}`,
-        async (req, res, ctx) => {
+        async ({ request, params }) => {
           const response: SynapseApiResponse<Activity> = {
-            reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${req.params.version}`,
+            reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${params.version}`,
           }
-          return res(ctx.status(404), ctx.json(response))
+          return HttpResponse.json(response, { status: 404 })
         },
       ),
     )

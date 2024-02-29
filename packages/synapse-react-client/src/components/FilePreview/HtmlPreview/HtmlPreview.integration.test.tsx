@@ -40,18 +40,18 @@ describe('HTML Preview tests', () => {
     }
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${TEAM_ID_MEMBER_ID(TRUSTED_HTML_USERS_TEAM_ID, ':userId')}`,
-        (req, res, ctx) => {
+        ({ request, params }) => {
           let status = 404
           let result: TeamMember | null = null
-          if (req.params.userId === MOCK_USER_ID.toString()) {
+          if (params.userId === MOCK_USER_ID.toString()) {
             status = 200
             result = htmlTeamMembership
           }
-          return res(ctx.status(status), ctx.json(result))
+          return HttpResponse.json(result, { status: status })
         },
       ),
     )

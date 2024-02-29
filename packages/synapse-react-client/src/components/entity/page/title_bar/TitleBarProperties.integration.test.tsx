@@ -58,14 +58,14 @@ function useEntityBundleOverride(bundle: EntityBundle) {
 
 function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DOI_ASSOCIATION}`,
 
-      async (req, res, ctx) => {
+      async ({ request, params }) => {
         if (doiAssociation == null) {
           return res(ctx.status(404), ctx.json({}))
         }
-        return res(ctx.status(200), ctx.json(doiAssociation))
+        return HttpResponse.json(doiAssociation, { status: 200 })
       },
     ),
   )
@@ -375,17 +375,17 @@ describe('TitleBarProperties', () => {
       })
 
       server.use(
-        rest.post(
+        http.post(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}/repo/v1/entity/children`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             const response: EntityChildrenResponse = {
               page: [],
               totalChildCount: 55,
               nextPageToken: 'npt',
             }
-            return res(ctx.status(200), ctx.json(response))
+            return HttpResponse.json(response, { status: 200 })
           },
         ),
       )

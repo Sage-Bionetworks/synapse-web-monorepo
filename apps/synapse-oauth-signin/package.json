@@ -62,7 +62,7 @@
     "markdown-it-synapse-math": "^3.0.5",
     "markdown-it-synapse-table": "^1.0.6",
     "memfs": "^3.5.3",
-    "msw": "^1.2.2",
+    "msw": "^2.2.2",
     "object-assign": "^4.1.1",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",

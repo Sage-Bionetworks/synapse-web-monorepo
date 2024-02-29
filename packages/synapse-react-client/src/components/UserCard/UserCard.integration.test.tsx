@@ -20,7 +20,8 @@ import {
   MEDIUM_USER_CARD,
   SEPERATOR,
 } from '../../utils/SynapseConstants'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
+import { http, HttpResponse } from 'msw'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 
 const { firstName } = mockUserProfileData
@@ -134,11 +135,11 @@ describe('UserCard tests', () => {
       const IMAGE_URL = 'http://some-image-url.notarealurl/image.jpg'
       server.use(
         // Synapse provides the presigned URL for the profile image
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
-          async (req, res, ctx) => {
+          async ({ request, params }) => {
             return res(
               ctx.status(200),
               ctx.set('Content-Type', 'text/plain'),
@@ -147,7 +148,7 @@ describe('UserCard tests', () => {
           },
         ),
         // Handler for the "presigned" URL itself:
-        rest.get(IMAGE_URL, async (req, res, ctx) => {
+        http.get(IMAGE_URL, async ({ request, params }) => {
           return res(
             ctx.status(200),
             ctx.set('Content-Type', 'image/jpeg'),
