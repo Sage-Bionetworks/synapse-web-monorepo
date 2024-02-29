@@ -38,7 +38,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
   return (
     <Box
       sx={{
-        width: '325px',
+        width: '330px',
         p: 0,
         mx: 'auto',
         bgColor: 'transparent',
