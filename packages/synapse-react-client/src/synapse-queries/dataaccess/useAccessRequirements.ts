@@ -175,14 +175,21 @@ export function useCreateLockAccessRequirement(
       SynapseClient.createLockAccessRequirement(entityId, accessToken),
     mutationKey: ['createLockAccessRequirement'],
     onSuccess: async (data, variables, ctx) => {
-      // Invalidate all access requirement queries
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementQueryKey(),
-      })
-      // Invalidate all entity queries (not just the current entity because the new AR may apply to this entity's children)
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAllEntityDataQueryKey(),
-      })
+      await Promise.all([
+        // Invalidate all access requirement queries
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAccessRequirementQueryKey(),
+        }),
+        // Invalidate all entity queries (not just the current entity because the new AR may apply to this entity's children)
+        // this also invalidates entity actions required
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllEntityDataQueryKey(),
+        }),
+        // as well as the download list, if affected entities are on it
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDownloadListBaseQueryKey(),
+        }),
+      ])
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
@@ -377,12 +384,22 @@ export function useCreateAccessApproval(
     mutationFn: request =>
       SynapseClient.createAccessApproval(accessToken, request),
     onSuccess: async (data, variables, ctx) => {
-      // Invalidate query for AR status
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
-          String(variables.requirementId),
-        ),
-      })
+      await Promise.all([
+        // Invalidate query for AR status
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAccessRequirementStatusQueryKey(
+            String(variables.requirementId),
+          ),
+        }),
+        // changes to access requirement eligibility may impact entity actions required
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllEntityActionsRequiredQueryKey(),
+        }),
+        // as well as actions required and stats for the download list
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDownloadListBaseQueryKey(),
+        }),
+      ])
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }

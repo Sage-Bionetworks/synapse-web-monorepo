@@ -68,10 +68,12 @@ const entityQueryKeyObjects = {
     entityQueryKeyObjects.entity(id, versionNumber),
     'json',
   ],
+  // actions required for all entities
+  allActionsRequired: () => [entityQueryKeyObjects.all, 'actionsRequired'],
   // entity actions required
-  entityActions: (id: string) => [
+  actionsRequired: (id: string) => [
     entityQueryKeyObjects.entity(id),
-    'entityActions',
+    'actionsRequired',
   ],
   entityForum: (id: string) => [
     entityQueryKeyObjects.entity(id),
@@ -224,8 +226,12 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.activity(id, versionNumber))
   }
 
+  public getAllEntityActionsRequiredQueryKey() {
+    return this.getKey(...entityQueryKeyObjects.allActionsRequired())
+  }
+
   public getEntityActionsRequiredQueryKey(id: string) {
-    return this.getKey(...entityQueryKeyObjects.entityActions(id))
+    return this.getKey(...entityQueryKeyObjects.actionsRequired(id))
   }
 
   public getEntityChallengeQueryKey(id: string) {
@@ -406,8 +412,12 @@ export class KeyFactory {
     )
   }
 
+  public getAllAccessRequirementStatusesQueryKey() {
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'status')
+  }
+
   public getAccessRequirementStatusQueryKey(id: string) {
-    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id, 'status')
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'status', id)
   }
 
   public getDataAccessRequestForUpdateQueryKey(accessRequirementId: string) {
