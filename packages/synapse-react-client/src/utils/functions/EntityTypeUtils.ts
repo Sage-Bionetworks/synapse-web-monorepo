@@ -19,6 +19,7 @@ import {
   MaterializedView,
   PROJECT_CONCRETE_TYPE_VALUE,
   ProjectHeader,
+  Reference,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   SubmissionView,
   Table,
@@ -304,6 +305,15 @@ export function getVersionDisplay(entity: Entity): string {
   } else {
     return entity.versionNumber!.toString()
   }
+}
+
+export function normalizeSynPrefix(
+  ref: Reference,
+  newDataEntityIds: Set<unknown>,
+) {
+  return !newDataEntityIds.has(
+    ref.targetId.startsWith('syn') ? ref.targetId : `syn${ref.targetId}`,
+  )
 }
 
 // implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html

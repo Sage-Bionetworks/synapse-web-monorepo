@@ -25,7 +25,7 @@ const mockTableEntityInstance = mockTableEntityData.entity
 
 jest.mock('../EntityViewScopeEditor/EntityViewScopeEditor', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid={'EntityViewScopeEditorrMocked'} />),
+  default: jest.fn(() => <div data-testid={'EntityViewScopeEditorMocked'} />),
 }))
 const mockEntityViewScopeEditor = jest.mocked(EntityViewScopeEditor)
 
@@ -35,6 +35,32 @@ function renderComponent(props: EntityViewScopeEditorModalProps) {
   })
 }
 
+async function setUp(props: EntityViewScopeEditorModalProps) {
+  const user = userEvent.setup()
+  const component = renderComponent(props)
+  const dialog = await screen.findByRole('dialog')
+  const heading = await screen.findByRole('heading')
+  const saveButton = await screen.findByRole('button', { name: 'Save' })
+  const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
+  const filesCheckbox = screen.queryByRole('checkbox', { name: 'Files' })
+  const foldersCheckbox = screen.queryByRole('checkbox', { name: 'Folders' })
+  const tablesCheckbox = screen.queryByRole('checkbox', { name: 'Tables' })
+  const datasetsCheckbox = screen.queryByRole('checkbox', { name: 'Datasets' })
+
+  return {
+    user,
+    component,
+    dialog,
+    heading,
+    saveButton,
+    cancelButton,
+    filesCheckbox,
+    foldersCheckbox,
+    tablesCheckbox,
+    datasetsCheckbox,
+  }
+}
+
 const mockUpdateEntity = jest.spyOn(SynapseClient, 'updateEntity')
 
 describe('EntityViewScopeEditorModal tests', () => {
@@ -42,6 +68,7 @@ describe('EntityViewScopeEditorModal tests', () => {
   const mockOnUpdate = jest.fn()
 
   beforeEach(() => {
+    jest.clearAllMocks()
     jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
       ...mockTableEntity,
       scopeIds: ['syn123'],
@@ -51,58 +78,49 @@ describe('EntityViewScopeEditorModal tests', () => {
   })
 
   it('displays the correct scope editor and mask editor after initial render', async () => {
-    jest.clearAllMocks()
-    renderComponent({
+    const {
+      heading,
+      saveButton,
+      cancelButton,
+      filesCheckbox,
+      foldersCheckbox,
+      tablesCheckbox,
+      datasetsCheckbox,
+    } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
       onCancel: mockOnCancel,
       onUpdate: mockOnUpdate,
     })
 
-    const dialog = screen.getByRole('dialog')
-    expect(
-      within(dialog).getByRole('heading', { name: 'Edit Scope' }),
-    ).toBeVisible()
-    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeVisible()
-    expect(within(dialog).getByRole('button', { name: 'Save' })).toBeVisible()
-
-    const filesButton = within(dialog).getByRole('checkbox', { name: 'Files' })
-    const foldersButton = within(dialog).getByRole('checkbox', {
-      name: 'Folders',
-    })
-    const tablesButton = within(dialog).getByRole('checkbox', {
-      name: 'Tables',
-    })
-    const datasetsButton = within(dialog).getByRole('checkbox', {
-      name: 'Datasets',
-    })
+    expect(heading).toBeVisible()
+    expect(saveButton).toBeVisible()
+    expect(cancelButton).toBeVisible()
 
     const checkboxes = screen.getAllByRole('checkbox')
     expect(checkboxes).toHaveLength(4)
 
-    expect(filesButton).toBeVisible()
-    expect(foldersButton).toBeVisible()
-    expect(tablesButton).toBeVisible()
-    expect(datasetsButton).toBeVisible()
+    expect(filesCheckbox).toBeInTheDocument()
+    expect(foldersCheckbox).toBeInTheDocument()
+    expect(tablesCheckbox).toBeInTheDocument()
+    expect(datasetsCheckbox).toBeInTheDocument()
 
     await waitFor(() => {
-      expect(filesButton).toBeChecked()
-      expect(foldersButton).toBeChecked()
-      expect(tablesButton).not.toBeChecked()
-      expect(datasetsButton).not.toBeChecked()
+      expect(filesCheckbox).toBeChecked()
+      expect(foldersCheckbox).toBeChecked()
+      expect(tablesCheckbox).not.toBeChecked()
+      expect(datasetsCheckbox).not.toBeChecked()
     })
   })
 
-  it('display error for invalid entity', async () => {
-    jest.clearAllMocks()
-    renderComponent({
+  it('display error for response returned by update call', async () => {
+    const { user, saveButton } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
       onCancel: mockOnCancel,
       onUpdate: mockOnUpdate,
     })
-
-    const dialog = screen.getByRole('dialog')
+    const errorMessage = 'Error with scope'
     mockUpdateEntity.mockRejectedValue(
       new SynapseClientError(
         404,
@@ -111,73 +129,62 @@ describe('EntityViewScopeEditorModal tests', () => {
       ),
     )
 
-    const saveButton = within(dialog).getByRole('button', { name: 'Save' })
     await waitFor(() => {
-      expect(
-        within(dialog).getByRole('button', { name: 'Save' }),
-      ).not.toBeDisabled()
+      expect(saveButton).not.toBeDisabled()
     })
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorMessage)
+
     expect(mockOnUpdate).not.toHaveBeenCalled()
   })
 
   it('verify no mask options are shown when projectView is passed', async () => {
-    jest.clearAllMocks()
-
     jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
-      ...mockTableEntity,
+      ...mockProjectViewEntity,
       scopeIds: ['syn123'],
       viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
       concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
     } as Entity)
 
-    renderComponent({
+    const { dialog, saveButton } = await setUp({
       entityId: mockProjectViewEntity.id,
       open: true,
       onCancel: mockOnCancel,
       onUpdate: mockOnUpdate,
     })
-    const dialog = screen.getByRole('dialog')
+
     expect(
       within(dialog).getByRole('heading', { name: 'Edit Scope' }),
     ).toBeVisible()
 
-    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeVisible()
-    expect(within(dialog).getByRole('button', { name: 'Save' })).toBeVisible()
-
     await waitFor(() => {
-      expect(
-        within(dialog).getByRole('button', { name: 'Save' }),
-      ).not.toBeDisabled()
+      expect(saveButton).not.toBeDisabled()
       expect(within(dialog).queryByRole('checkbox')).not.toBeInTheDocument()
     })
   })
 
   it('validate onCancel is correctly called', async () => {
-    jest.clearAllMocks()
-    renderComponent({
+    const { user, cancelButton } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
       onCancel: mockOnCancel,
       onUpdate: mockOnUpdate,
     })
-    const dialog = screen.getByRole('dialog')
-    const cancelButton = within(dialog).getByRole('button', { name: 'Cancel' })
+
     await waitFor(() => expect(cancelButton).not.toBeDisabled())
-    await userEvent.click(cancelButton)
+    await user.click(cancelButton)
     expect(mockOnCancel).toHaveBeenCalled()
   })
 
   it('successfully submit new scope and call the onUpdate callback', async () => {
-    jest.clearAllMocks()
-
-    renderComponent({
+    const { dialog, user, saveButton, filesCheckbox } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
       onCancel: mockOnCancel,
       onUpdate: mockOnUpdate,
     })
-    const dialog = screen.getByRole('dialog')
     const newScopeIds = ['syn321']
     const newViewTypeMask = ENTITY_VIEW_TYPE_MASK_FILE
 
@@ -188,16 +195,16 @@ describe('EntityViewScopeEditorModal tests', () => {
     }
     mockUpdateEntity.mockResolvedValue(mockEntityView)
 
-    const filesButton = within(dialog).getByRole('checkbox', { name: 'Files' })
-    const foldersButton = within(dialog).getByRole('checkbox', {
+    const foldersCheckbox = within(dialog).getByRole('checkbox', {
       name: 'Folders',
     })
 
     await waitFor(() => {
-      expect(filesButton).toBeChecked()
-      expect(foldersButton).toBeChecked()
+      expect(filesCheckbox).toBeChecked()
+      expect(foldersCheckbox).toBeChecked()
     })
-    await userEvent.click(foldersButton)
+
+    await user.click(foldersCheckbox)
 
     await waitFor(() => {
       expect(mockEntityViewScopeEditor).toHaveBeenLastCalledWith(
@@ -218,8 +225,7 @@ describe('EntityViewScopeEditorModal tests', () => {
       onChangePassedToEntityViewScopeEditor(newScopeIds)
     })
 
-    const saveButton = within(dialog).getByRole('button', { name: 'Save' })
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     await waitFor(() => {
       expect(mockUpdateEntity).toHaveBeenCalledWith(

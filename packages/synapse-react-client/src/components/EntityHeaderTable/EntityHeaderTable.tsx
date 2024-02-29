@@ -26,6 +26,7 @@ import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import {
   entityTypeToFriendlyName,
   getEntityTypeFromHeader,
+  normalizeSynPrefix,
 } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../../synapse-queries'
 import IconSvg from '../IconSvg'
@@ -230,11 +231,8 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     const newData = results ? results?.results : []
     const newDataEntityIds = new Set()
     newData.map(entityHeader => newDataEntityIds.add(entityHeader.id))
-    const missingRefs = refsInState.filter(
-      ref =>
-        !newDataEntityIds.has(
-          ref.targetId.startsWith('syn') ? ref.targetId : `syn${ref.targetId}`,
-        ),
+    const missingRefs = refsInState.filter(ref =>
+      normalizeSynPrefix(ref, newDataEntityIds),
     )
     const dummyEntityHeaders: EntityHeaderOrDummy[] = missingRefs.map(ref => {
       return {

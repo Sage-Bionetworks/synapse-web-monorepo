@@ -8,6 +8,7 @@ import {
   EntityView,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { Alert } from '@mui/material'
 
 export type EntityViewScopeEditorModalProps = {
   entityId: string
@@ -26,11 +27,11 @@ export default function EntityViewScopeEditorModal(
 
   const isProjectView = viewTypeMask === ENTITY_VIEW_TYPE_MASK_PROJECT
 
-  const { data: entity, isLoading: isEntityLoading } = useGetEntity<EntityView>(
-    entityId,
-    undefined,
-    { staleTime: Infinity },
-  )
+  const {
+    data: entity,
+    isLoading: isEntityLoading,
+    error: entityError,
+  } = useGetEntity<EntityView>(entityId, undefined, { staleTime: Infinity })
 
   useEffect(() => {
     if (entity) {
@@ -39,11 +40,16 @@ export default function EntityViewScopeEditorModal(
     }
   }, [entity])
 
-  const { mutate, isPending: isUpdateLoading } = useUpdateEntity<EntityView>({
+  const {
+    mutate,
+    isPending: isUpdateLoading,
+    error: updateError,
+  } = useUpdateEntity<EntityView>({
     onSuccess: onUpdate,
   })
 
   const isLoading = isEntityLoading || isUpdateLoading
+  const error = entityError || updateError
 
   return (
     <ConfirmationDialog
@@ -63,6 +69,16 @@ export default function EntityViewScopeEditorModal(
               onChange={setViewTypeMask}
               disabled={isLoading}
             ></EntityViewMaskEditor>
+          )}
+          {error && (
+            <Alert
+              sx={{
+                my: 1,
+              }}
+              severity="error"
+            >
+              {error.reason}
+            </Alert>
           )}
         </>
       }
