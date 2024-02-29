@@ -203,7 +203,7 @@ describe('EntityViewScopeEditorModal tests', () => {
       expect(mockEntityViewScopeEditor).toHaveBeenLastCalledWith(
         {
           scopeIds: ['syn123'],
-          disabled: undefined,
+          disabled: false,
           isProjectView: false,
           onChange: expect.any(Function),
         },
