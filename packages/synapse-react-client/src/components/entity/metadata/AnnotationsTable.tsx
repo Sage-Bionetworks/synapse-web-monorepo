@@ -35,19 +35,18 @@ function getDisplayedAnnotation(value: string | number | boolean): string {
 }
 
 export function AnnotationsTable(props: AnnotationsTableProps) {
-  const { entityId } = props
+  const { entityId, versionNumber } = props
   const [isManuallyRefetching, setIsManuallyRefetching] = useState(false)
   /**
    * Currently, schema/validation features are only shown in experimental mode.
    */
   const { isInExperimentalMode } = useSynapseContext()
 
-  // TODO: Support versioned annotations, see PLFM-7290
   const {
     data: entityData,
     isLoading,
     refetch: refetchEntityData,
-  } = useGetJson(entityId, true)
+  } = useGetJson(entityId, versionNumber, true)
   const entityMetadata = entityData?.entityMetadata
   const annotations = entityData?.annotations
 

@@ -250,6 +250,7 @@ export function removeStandardEntityFields(
  */
 export function useGetJson(
   entityId: string,
+  versionNumber: number | undefined,
   includeDerivedAnnotations: boolean,
   options?: Partial<UseQueryOptions<EntityJson, SynapseClientError>>,
 ) {
@@ -258,11 +259,13 @@ export function useGetJson(
     ...options,
     queryKey: keyFactory.getEntityJsonQueryKey(
       entityId,
+      versionNumber,
       includeDerivedAnnotations,
     ),
     queryFn: () =>
       SynapseClient.getEntityJson(
         entityId,
+        versionNumber,
         includeDerivedAnnotations,
         accessToken,
       ),
@@ -301,7 +304,7 @@ export function useUpdateViaJson(
       await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
       queryClient.setQueryData(
         // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
-        keyFactory.getEntityJsonQueryKey(entityId, false),
+        keyFactory.getEntityJsonQueryKey(entityId, undefined, false),
         data,
       )
 

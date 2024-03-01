@@ -37,6 +37,7 @@ import {
   ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
+  ENTITY_VERSION_JSON,
   EVALUATION,
   EVALUATION_BY_ID,
   FAVORITES,
@@ -3651,19 +3652,24 @@ export const hasAccessToEntity = (
  * Get the entity and its annotations as a JSON object
  * https://rest-docs.synapse.org/rest/GET/entity/id/json.html
  * @param entityId
+ * @param versionNumber
  * @param includeDerivedAnnotations
  * @param accessToken
  * @returns
  */
 export const getEntityJson = (
   entityId: string,
+  versionNumber: number | undefined,
   includeDerivedAnnotations: boolean,
   accessToken?: string,
 ) => {
   const params = new URLSearchParams()
   params.set('includeDerivedAnnotations', String(includeDerivedAnnotations))
+  const path = versionNumber
+    ? ENTITY_VERSION_JSON(entityId, versionNumber)
+    : ENTITY_JSON(entityId)
   return doGet<EntityJson>(
-    `${ENTITY_JSON(entityId)}?${params.toString()}`,
+    `${path}?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

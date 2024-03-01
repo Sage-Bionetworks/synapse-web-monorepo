@@ -44,6 +44,10 @@ export const ENTITY_HEADER_BY_ID = (id: string | number) =>
 export const ENTITY_HEADERS = `${REPO}/entity/header`
 
 export const ENTITY_JSON = (id: string | number) => `${REPO}/entity/${id}/json`
+export const ENTITY_VERSION_JSON = (
+  id: string | number,
+  versionNumber: number,
+) => `${REPO}/entity/${id}/version/${versionNumber}/json`
 
 export const ENTITY_SCHEMA = (id: string | number) =>
   `${REPO}/entity/${id}/schema`
