@@ -307,13 +307,8 @@ export function getVersionDisplay(entity: Entity): string {
   }
 }
 
-export function normalizeSynPrefix(
-  ref: Reference,
-  newDataEntityIds: Set<unknown>,
-) {
-  return !newDataEntityIds.has(
-    ref.targetId.startsWith('syn') ? ref.targetId : `syn${ref.targetId}`,
-  )
+export function normalizeSynPrefix(ref: Reference) {
+  return ref.targetId.startsWith('syn') ? ref.targetId : `syn${ref.targetId}`
 }
 
 // implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html

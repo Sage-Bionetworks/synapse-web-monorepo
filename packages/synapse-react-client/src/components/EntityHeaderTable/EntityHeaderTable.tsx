@@ -231,8 +231,8 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     const newData = results ? results?.results : []
     const newDataEntityIds = new Set()
     newData.map(entityHeader => newDataEntityIds.add(entityHeader.id))
-    const missingRefs = refsInState.filter(ref =>
-      normalizeSynPrefix(ref, newDataEntityIds),
+    const missingRefs = refsInState.filter(
+      ref => !newDataEntityIds.has(normalizeSynPrefix(ref)),
     )
     const dummyEntityHeaders: EntityHeaderOrDummy[] = missingRefs.map(ref => {
       return {
