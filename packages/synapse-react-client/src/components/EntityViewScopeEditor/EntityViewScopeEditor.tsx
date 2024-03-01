@@ -13,12 +13,13 @@ export type EntityViewScopeEditorProps = {
   scopeIds: string[]
   onChange: (scopeIds: string[]) => void
   isProjectView?: boolean
+  disabled?: boolean
 }
 
 export default function EntityViewScopeEditor(
   props: EntityViewScopeEditorProps,
 ) {
-  const { scopeIds, isProjectView = false, onChange } = props
+  const { scopeIds, isProjectView = false, onChange, disabled } = props
   const references: ReferenceList = useMemo(
     () => scopeIds.map(scope => ({ targetId: scope })),
     [scopeIds],
@@ -37,6 +38,7 @@ export default function EntityViewScopeEditor(
       <EntityHeaderTable
         references={references}
         isEditable={true}
+        disabled={disabled}
         onUpdate={newReferences => {
           onChange(newReferences.map(ref => ref.targetId))
         }}

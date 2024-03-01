@@ -26,6 +26,7 @@ import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import {
   entityTypeToFriendlyName,
   getEntityTypeFromHeader,
+  normalizeSynPrefix,
 } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../../synapse-queries'
 import IconSvg from '../IconSvg'
@@ -60,6 +61,7 @@ const DEFAULT_FINDER_CONFIG: EntityFinderModalProps['configuration'] = {
 export type EntityHeaderTableProps = {
   references: ReferenceList
   isEditable: boolean
+  disabled?: boolean
   onUpdate?: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
   removeSelectedRowsButtonText?: string
   onUpdateEntityIDsTextbox?: (value: string) => void // when the entity IDs text box is updated, this is called
@@ -83,6 +85,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const {
     references,
     isEditable,
+    disabled,
     onUpdate = noop,
     removeSelectedRowsButtonText = 'Remove Selected Rows',
     onUpdateEntityIDsTextbox,
@@ -229,7 +232,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     const newDataEntityIds = new Set()
     newData.map(entityHeader => newDataEntityIds.add(entityHeader.id))
     const missingRefs = refsInState.filter(
-      ref => !newDataEntityIds.has(ref.targetId),
+      ref => !newDataEntityIds.has(normalizeSynPrefix(ref)),
     )
     const dummyEntityHeaders: EntityHeaderOrDummy[] = missingRefs.map(ref => {
       return {
@@ -334,7 +337,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         {isEditable && refsInState.length > 0 && (
           <Button
             variant="contained"
-            disabled={!isSelection}
+            disabled={!isSelection || disabled}
             onClick={onRemove}
           >
             {removeSelectedRowsButtonText}
@@ -512,6 +515,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                 setShowEntityFinder(true)
               }}
               startIcon={<AddAd />}
+              disabled={disabled}
             >
               Add {pluralObjectName}
             </Button>
@@ -531,11 +535,13 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                   }}
                   value={newEntityIDs}
                   placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
+                  disabled={disabled}
                 />
                 <Box sx={{ padding: '5px 0px 0px 5px' }}>
                   {/* Entity finder button.  On select, append the selected entity ID to the newSynIDs list */}
                   <Tooltip title="Add a Synapse ID to the list via the Entity Finder">
                     <IconButton
+                      disabled={disabled}
                       onClick={() => {
                         setShowEntityFinder(true)
                       }}
@@ -547,7 +553,9 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                 <Button
                   variant="outlined"
                   onClick={addPastedValuesToArray}
-                  disabled={isLoading || newEntityIDs.trim().length == 0}
+                  disabled={
+                    isLoading || newEntityIDs.trim().length == 0 || disabled
+                  }
                   startIcon={<AddCircleTwoTone />}
                 >
                   Add {pluralObjectName}

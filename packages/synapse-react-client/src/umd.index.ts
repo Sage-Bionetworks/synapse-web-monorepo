@@ -75,6 +75,7 @@ import AccessRequirementRelatedProjectsList from './components/AccessRequirement
 import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
+import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
 
 // Also include scss in the bundle
@@ -157,6 +158,7 @@ const SynapseComponents = {
   CreateTableViewWizard,
   TableColumnSchemaEditor,
   SqlDefinedTableEditorModal,
+  EntityViewScopeEditorModal,
 }
 
 // Include the version in the build
