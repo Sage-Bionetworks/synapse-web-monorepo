@@ -150,6 +150,7 @@ export function SchemaDrivenAnnotationEditor(
 
   const { data } = useGetJson(
     entityId!,
+    undefined,
     // Derived annotations will be precomputed and displayed as placeholders in the form
     false,
     {

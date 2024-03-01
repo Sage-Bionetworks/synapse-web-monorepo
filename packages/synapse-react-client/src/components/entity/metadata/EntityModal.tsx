@@ -136,23 +136,27 @@ export function EntityModal(props: EntityModalProps) {
 
   const showEditAnnotationsButton =
     canEdit && currentTab === 'ANNOTATIONS' && !isInEditMode
+  const disableEditingOldVersion = isVersionable && !isLatestVersion
   const editAnnotationsButton = (
     <Tooltip
       title={
-        isVersionable && !isLatestVersion
+        disableEditingOldVersion
           ? 'Annotations can only be edited on the latest version'
           : undefined
       }
     >
-      <Button
-        variant={'contained'}
-        disabled={isVersionable && !isLatestVersion}
-        onClick={() => {
-          setIsInEditMode(true)
-        }}
-      >
-        Edit
-      </Button>
+      {/* Wrap in span so tooltip works even when disabled */}
+      <span>
+        <Button
+          variant={'contained'}
+          disabled={disableEditingOldVersion}
+          onClick={() => {
+            setIsInEditMode(true)
+          }}
+        >
+          Edit
+        </Button>
+      </span>
     </Tooltip>
   )
 
