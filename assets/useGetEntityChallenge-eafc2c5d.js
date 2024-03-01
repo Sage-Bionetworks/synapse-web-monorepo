@@ -1,0 +1,1 @@
+import{h as o,m as s,n as y}from"./ApplicationSessionManager-04917a4f.js";import"./getEndpoint-ac94413e.js";import"./OrientationBanner-7be8199b.js";import"./index-76fb7be0.js";import"./jsx-runtime-9dc53467.js";function m(e,t){const{accessToken:n,keyFactory:r}=o();return s({...t,queryKey:r.getEntityChallengeQueryKey(e),queryFn:()=>y.getEntityChallenge(e,n)})}export{m as u};
