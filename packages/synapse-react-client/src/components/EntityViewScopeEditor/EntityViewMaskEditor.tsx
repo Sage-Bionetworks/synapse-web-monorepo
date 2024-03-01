@@ -11,6 +11,7 @@ import { Checkbox } from '../widgets/Checkbox'
 export type EntityViewMaskEditorProps = {
   value: number
   onChange: (mask: number) => void
+  disabled?: boolean
 }
 
 const maskLabelPairs: [string, number][] = [
@@ -32,7 +33,7 @@ export function isMaskSupportedInUI(value: number) {
 }
 
 export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
-  const { value, onChange } = props
+  const { value, onChange, disabled = false } = props
 
   const customMaskInUse = !isMaskSupportedInUI(value)
 
@@ -50,7 +51,7 @@ export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
               // Checked if the mask bit is set
               (value & mask) > 0
             }
-            disabled={customMaskInUse}
+            disabled={customMaskInUse || disabled}
             onChange={() => {
               // Toggle the clicked mask value with XOR
               onChange(value ^ mask)
