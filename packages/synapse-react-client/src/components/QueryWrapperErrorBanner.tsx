@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { EntityActionsRequired } from './AccessRequirement/EntityActionsRequired'
@@ -10,7 +10,10 @@ import { useSynapseContext } from '../utils'
 export const QueryWrapperErrorBanner = () => {
   const { error, getCurrentQueryRequest, onViewSharingSettingsClicked } =
     useQueryContext()
-  const { entityId } = getCurrentQueryRequest()
+  const { entityId } = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
   const { accessToken } = useSynapseContext()
 
   if (error?.status == 403 && accessToken) {

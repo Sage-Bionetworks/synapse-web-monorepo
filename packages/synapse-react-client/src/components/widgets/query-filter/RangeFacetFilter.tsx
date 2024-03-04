@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
@@ -39,6 +39,11 @@ export function RangeFacetFilter(props: RangeFacetFilterProps) {
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
+  const lastQueryRequest = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
+
   if (!columnModel) {
     return <></>
   }
@@ -60,12 +65,11 @@ export function RangeFacetFilter(props: RangeFacetFilterProps) {
         setRangeFacetValue(facetResult, VALUE_NOT_SET, VALUE_NOT_SET)
       }}
       onAnySelected={() => {
-        const selectedFacet =
-          getCurrentQueryRequest().query.selectedFacets?.find(
-            selectedFacet =>
-              selectedFacet.columnName === facetResult.columnName &&
-              selectedFacet.jsonPath === facetResult.jsonPath,
-          )
+        const selectedFacet = lastQueryRequest.query.selectedFacets?.find(
+          selectedFacet =>
+            selectedFacet.columnName === facetResult.columnName &&
+            selectedFacet.jsonPath === facetResult.jsonPath,
+        )
         if (selectedFacet) {
           removeSelectedFacet(selectedFacet)
         }

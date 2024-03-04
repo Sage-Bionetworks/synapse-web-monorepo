@@ -1,5 +1,5 @@
 import { Collapse, TextField } from '@mui/material'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
@@ -24,14 +24,20 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
 
   const [sql, setSql] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const lastQueryRequest = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
+
   useEffect(() => {
     if (showSqlEditor) {
-      const defaultSql = getCurrentQueryRequest().query.sql
+      const defaultSql = lastQueryRequest.query.sql
 
       setSql(defaultSql)
       inputRef.current?.focus()
     }
-  }, [showSqlEditor, getCurrentQueryRequest])
+  }, [showSqlEditor, lastQueryRequest])
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()

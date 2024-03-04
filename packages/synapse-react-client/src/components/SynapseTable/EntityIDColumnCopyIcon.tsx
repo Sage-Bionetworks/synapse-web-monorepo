@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -16,7 +16,11 @@ type EntityIDColumnCopyIconProps = Omit<InteractiveCopyIdsIconProps, 'onCopy'>
 
 const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
   const synapseContext = useSynapseContext()
-  const queryContext = useQueryContext()
+  const { getCurrentQueryRequest } = useQueryContext()
+  const queryRequestClone = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
   const [isLoading, setIsLoading] = React.useState(false)
   const [idData, setIdData] = React.useState<QueryResultBundle>()
   const [abortController, setAbortController] =
@@ -40,8 +44,6 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
     setIsLoading(true)
 
     // ask for all pages of data
-    const { getCurrentQueryRequest } = queryContext
-    const queryRequestClone = getCurrentQueryRequest()
     const { sql: oldSql } = queryRequestClone.query
     const { entityId, versionNumber } =
       parseEntityIdAndVersionFromSqlStatement(oldSql)!
