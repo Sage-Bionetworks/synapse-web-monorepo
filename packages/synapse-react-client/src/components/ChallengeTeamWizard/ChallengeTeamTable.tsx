@@ -174,6 +174,11 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         />
       )}
       <DataGrid
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'hasInvitation', sort: 'desc' }],
+          },
+        }}
         loading={isLoading}
         rows={allRows}
         columns={columns}
