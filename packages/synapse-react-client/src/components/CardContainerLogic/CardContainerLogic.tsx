@@ -23,6 +23,7 @@ import QuerySortSelector from '../QuerySortSelector'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { IconOptions } from '../Icon/Icon'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { ReleaseCardConfig } from '../ReleaseCard'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -130,6 +131,7 @@ export type CommonCardProps = {
   descriptionConfig?: DescriptionConfig
   rgbIndex?: number
   columnIconOptions?: ColumnIconConfigs
+  releaseCardConfig?: ReleaseCardConfig
 }
 export type CardConfiguration = {
   type: string

@@ -5,9 +5,11 @@ import {
   GENERIC_CARD,
   OBSERVATION_CARD,
   PUBLICATION,
+  RELEASE_CARD,
 } from '../../utils/SynapseConstants'
 import CardContainerLogic from './index'
 import { GenericCardSchema } from '../GenericCard'
+import { StatConfig } from '../ReleaseCard'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -99,5 +101,59 @@ export const PublicationCard: Story = {
     sql: `SELECT * FROM syn21868591 WHERE ( ( "grantNumber" HAS ( 'CA209988' ) ) )`,
     type: GENERIC_CARD,
     genericCardSchema: publicationSchema,
+  },
+}
+
+const statsConfig: StatConfig[] = [
+  { columnName: 'countPatients', label: 'Patients' },
+  { columnName: 'countSamples', label: 'Samples' },
+]
+
+const currentReleaseCardSql =
+  'SELECT * FROM syn53701326 WHERE isCurrentRelease = true'
+
+export const ReleaseCardLarge: Story = {
+  args: {
+    sql: currentReleaseCardSql,
+    type: RELEASE_CARD,
+    limit: 3,
+    releaseCardConfig: {
+      cardSize: 'large',
+      prependRelease: false,
+      statsConfig: statsConfig,
+      buttonToExplorePageConfig: {
+        label: 'Explore Current Data Release',
+        sourcePathColumnName: 'releaseExplorePath',
+        exploreDataSql: currentReleaseCardSql, // generally this would refer to a different table, not the source table
+        exploreDataFacetColumnName: 'releaseType',
+        sourceDataFacetValueColumnName: 'releaseType',
+      },
+      dataGuidePath: 'data guide',
+    },
+  },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=195-13615&mode=design&t=76oHvfvp9FWFtDSR-4',
+    },
+  },
+}
+
+export const ReleaseCardMedium: Story = {
+  args: {
+    sql: `SELECT * FROM syn53701326 WHERE isCurrentRelease = false`,
+    type: RELEASE_CARD,
+    limit: 5,
+    releaseCardConfig: {
+      cardSize: 'medium',
+      requestAccessPath: 'data access',
+      statsConfig: statsConfig,
+    },
+  },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=259-14622&mode=design&t=76oHvfvp9FWFtDSR-4',
+    },
   },
 }

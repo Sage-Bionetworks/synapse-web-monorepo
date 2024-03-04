@@ -1,0 +1,100 @@
+import { Box, Link, Typography } from '@mui/material'
+import React from 'react'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { ReleaseCardProps } from './ReleaseCard'
+import { ReleaseCardMediumConfig, ReleaseCardStat } from './ReleaseCardTypes'
+import { formatReleaseCardData } from './ReleaseCardUtils'
+
+const StatGrid: React.FunctionComponent<ReleaseCardStat> = ({
+  value,
+  label,
+}: ReleaseCardStat) => {
+  return (
+    <>
+      <Box gridColumn="span 1" gridRow="span 1" justifySelf="flex-end">
+        <Typography variant="body1" lineHeight="20px">
+          {value}
+        </Typography>
+      </Box>
+      <Box gridColumn="span 1" gridRow="span 1" justifySelf="flex-start">
+        <Typography variant="body1" lineHeight="20px" color="grey.700">
+          {label}
+        </Typography>
+      </Box>
+    </>
+  )
+}
+
+export type ReleaseCardMediumProps = Omit<
+  ReleaseCardProps,
+  'releaseCardConfig'
+> & { releaseCardConfig: ReleaseCardMediumConfig }
+
+export const ReleaseCardMedium: React.FunctionComponent<
+  ReleaseCardMediumProps
+> = ({
+  data,
+  schema,
+  includePortalCardClass = true,
+  releaseCardConfig,
+}: ReleaseCardMediumProps) => {
+  const { releaseVersion, releaseEntity, releaseDate, stats } =
+    formatReleaseCardData(schema, data, releaseCardConfig.statsConfig)
+
+  if (releaseVersion === null) return <></>
+
+  const nCols = 2
+  const SPAN_ALL_COLS = `span ${nCols}`
+  const nRows = stats.length + 4
+
+  return (
+    <Box
+      className={`ReleaseCard ${
+        includePortalCardClass ? 'SRC-portalCard' : ''
+      }`}
+      display="grid"
+      gridTemplateColumns={`repeat(${nCols}, 1fr)`} // columns are controlled by this component, not the parent grid
+      columnGap="10px"
+      gridTemplateRows="subgrid" // rows are controlled by parent grid, so text will be aligned across cards
+      gridRow={`span ${nRows}`} // ensures that card spans the correct number of rows in the parent grid
+      rowGap="0px" // prevent parent grid from applying its gap to the subgrid rows
+      alignItems="center"
+      justifyItems="center"
+      textAlign="center"
+      padding="30px 40px 40px"
+      my={0} // remove margin added by .SRC-portalCard - CardContainer list will set the gap between cards
+    >
+      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" alignSelf="end">
+        <Typography variant="headline1">{releaseVersion}</Typography>
+      </Box>
+      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mb="30px">
+        <Typography
+          variant="body1"
+          lineHeight="20px"
+          fontStyle="italic"
+          color="grey.800"
+        >{`Released ${releaseDate.value}`}</Typography>
+      </Box>
+      {stats.map(stat => (
+        <StatGrid key={stat.label} {...stat} />
+      ))}
+      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mt="20px" mb="5px">
+        <Link href={releaseCardConfig.requestAccessPath} fontSize="14px">
+          Request Access
+        </Link>
+      </Box>
+      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1">
+        {releaseEntity && (
+          <Link
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${releaseEntity}`}
+            target="_blank"
+            rel="noreferrer"
+            fontSize="14px"
+          >
+            View on Synapse.org
+          </Link>
+        )}
+      </Box>
+    </Box>
+  )
+}
