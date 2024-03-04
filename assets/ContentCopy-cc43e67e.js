@@ -1,0 +1,1 @@
+import{r,i as t,a}from"./jsx-runtime_commonjs-proxy-cf9930ed.js";var e={},o=t;Object.defineProperty(e,"__esModule",{value:!0});var u=e.default=void 0,i=o(r()),v=a;u=e.default=(0,i.default)((0,v.jsx)("path",{d:"M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"}),"ContentCopy");export{u as d};
