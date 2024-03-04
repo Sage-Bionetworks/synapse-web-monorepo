@@ -13,26 +13,12 @@ import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
-/** On mount, update the document title and meta description using data from the portal config */
-function useSetDocumentMetadataFromConfig() {
-  useEffect(() => {
-    if (document.title !== import.meta.env.VITE_PORTAL_NAME) {
-      document.title = import.meta.env.VITE_PORTAL_NAME
-    }
-    document
-      .querySelector('meta[name="description"]')!
-      .setAttribute('content', import.meta.env.VITE_PORTAL_DESCRIPTION)
-  }, [])
-}
-
 function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
   const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
   const isFramed = useFramebuster()
-
-  useSetDocumentMetadataFromConfig()
 
   useEffect(() => {
     /**
