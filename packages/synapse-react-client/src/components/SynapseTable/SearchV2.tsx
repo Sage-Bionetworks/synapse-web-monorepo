@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import {
   ColumnModel,
@@ -135,7 +135,10 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
     const { executeQueryRequest, getCurrentQueryRequest } =
       this.props.queryContext
 
-    const lastQueryRequestDeepClone = getCurrentQueryRequest()
+    const lastQueryRequestDeepClone = useMemo(
+      () => getCurrentQueryRequest(),
+      [getCurrentQueryRequest],
+    )
 
     const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 

@@ -153,7 +153,10 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
   const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
-  const lastRequest = getCurrentQueryRequest()
+  const lastRequest = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
   const data = useAtomValue(tableQueryDataAtom)
 
   const facets = data!

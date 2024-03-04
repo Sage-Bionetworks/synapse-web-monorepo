@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import {
@@ -41,7 +41,11 @@ export const DownloadOptions: React.FunctionComponent<
   const selectedRows = useAtomValue(selectedRowsAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
-  const queryBundleRequest = getCurrentQueryRequest()
+  const queryBundleRequest = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
+
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =

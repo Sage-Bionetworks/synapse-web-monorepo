@@ -168,7 +168,10 @@ export function QueryVisualizationWrapper(
 
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
 
-  const lastQueryRequest = getCurrentQueryRequest()
+  const lastQueryRequest = useMemo(
+    () => getCurrentQueryRequest(),
+    [getCurrentQueryRequest],
+  )
 
   // We deep-compare-memoize the selectColumns so we don't reset visible columns when the reference changes, but not the contents (e.g. on page change)
   const selectColumns = useDeepCompareMemoize(data?.selectColumns)
