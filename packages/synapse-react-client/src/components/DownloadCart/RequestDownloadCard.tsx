@@ -9,6 +9,7 @@ export type RequestDownloadCardProps = {
   count?: number
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
   onViewSharingSettingsClicked?: (benefactorId: string) => void
+  isComplete?: boolean
 }
 
 const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED: RequestDownloadCardProps['onViewSharingSettingsClicked'] =
@@ -25,6 +26,7 @@ export const RequestDownloadCard: React.FunctionComponent<
   entityId,
   count,
   onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
+  isComplete = false,
 }: RequestDownloadCardProps) => {
   const { data: entityHeader, isLoading } = useGetEntityHeader(
     entityId,
@@ -57,8 +59,9 @@ export const RequestDownloadCard: React.FunctionComponent<
             onClick={() => {
               onViewSharingSettingsClicked(entityId)
             }}
+            disabled={isComplete}
           >
-            View Sharing Settings
+            {isComplete ? 'Complete' : 'View Sharing Settings'}
           </Button>
         </>
       }

@@ -129,22 +129,37 @@ export const DownloadCartPage: React.FunctionComponent<
           </ul>
         </div>
       </div>
-      {selectedTabIndex == 0 && !isError && !isLoading && data && (
-        <div>
-          {data.numberOfFilesRequiringAction > 0 && (
+
+      <div
+        style={{
+          /*
+           The DownloadListActionsRequired component stores actions in local state to track which actions are completed.
+
+           Mount the actions required component and hide it with style to ensure actions stored in component state are persisted as the user switches tabs
+           */
+          //
+          //
+          display:
+            selectedTabIndex == 0 && !isError && !isLoading && data
+              ? 'block'
+              : 'none',
+        }}
+      >
+        {data?.numberOfFilesRequiringAction &&
+          data.numberOfFilesRequiringAction > 0 && (
             <div>
               <div className="actionsRequiredContainer container">
                 <DownloadListActionsRequired {...props} />
               </div>
             </div>
           )}
-          {data.numberOfFilesRequiringAction === 0 && (
-            <div className="placeholder">
-              <div>No actions are currently required.</div>
-            </div>
-          )}
-        </div>
-      )}
+        {data?.numberOfFilesRequiringAction === 0 && (
+          <div className="placeholder">
+            <div>No actions are currently required.</div>
+          </div>
+        )}
+      </div>
+
       {selectedTabIndex == 1 && !isError && !isLoading && data && (
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && (
@@ -280,12 +295,10 @@ export const DownloadCartPage: React.FunctionComponent<
                   }
                   numFiles={data.numberOfFilesAvailableForDownload}
                 />
-                {refetch && (
-                  <AvailableForDownloadTable
-                    filesStatistics={data}
-                    refetchStatistics={refetch}
-                  />
-                )}
+                <AvailableForDownloadTable
+                  filesStatistics={data}
+                  refetchStatistics={refetch}
+                />
               </div>
             </div>
           )}

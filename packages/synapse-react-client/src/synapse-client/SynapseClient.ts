@@ -99,6 +99,7 @@ import {
   AccessTokenGenerationResponse,
   AccessTokenRecordList,
   AccountSetupInfo,
+  ActionRequiredCount,
   ActionRequiredList,
   ActionRequiredRequest,
   ActionRequiredResponse,
@@ -3119,7 +3120,9 @@ export const getAllOfPaginatedService = async <T>(
 
 export type FunctionReturningNextPageToken<T> = (
   nextPageToken?: string | null,
-) => Promise<{ results: T[]; nextPageToken?: string | null }>
+) => Promise<
+  ({ results: T[] } | { page: T[] }) & { nextPageToken?: string | null }
+>
 
 export async function getAllOfNextPageTokenPaginatedService<T>(
   fn: FunctionReturningNextPageToken<T>,
@@ -3131,7 +3134,12 @@ export async function getAllOfNextPageTokenPaginatedService<T>(
   while (existsMoreData) {
     try {
       const data = await fn(nextPageToken)
-      results.push(...data.results)
+      // Some object models use `results`, others use `page`
+      if ('results' in data) {
+        results.push(...data.results)
+      } else if ('page' in data) {
+        results.push(...data.page)
+      }
       nextPageToken = data.nextPageToken
 
       if (!nextPageToken) {
@@ -3339,10 +3347,12 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
   )
 }
 
-const getDownloadListJobResponse = async (
+async function getDownloadListJobResponse<
+  TResponse extends QueryResponseDetails = QueryResponseDetails,
+>(
   accessToken: string | undefined,
   queryRequestDetails: QueryRequestDetails,
-): Promise<QueryResponseDetails> => {
+): Promise<TResponse> {
   const downloadListQueryRequest: DownloadListQueryRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
@@ -3359,7 +3369,7 @@ const getDownloadListJobResponse = async (
     `/repo/v1/download/list/query/async/get/${asyncJobId.token}`,
     accessToken,
   )
-  return response.responseDetails
+  return response.responseDetails as TResponse
 }
 
 /**
@@ -3415,10 +3425,23 @@ export const getDownloadListActionsRequired = (
   request: ActionRequiredRequest,
   accessToken: string | undefined = undefined,
 ): Promise<ActionRequiredResponse> => {
-  return getDownloadListJobResponse(
+  return getDownloadListJobResponse<ActionRequiredResponse>(
     accessToken,
     request,
   ) as Promise<ActionRequiredResponse>
+}
+
+/**
+ * Get all Download List v2 actions required
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+export const getAllDownloadListActionsRequired = (
+  request: ActionRequiredRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ActionRequiredCount[]> => {
+  return getAllOfNextPageTokenPaginatedService(() =>
+    getDownloadListActionsRequired(request, accessToken),
+  )
 }
 
 /**
