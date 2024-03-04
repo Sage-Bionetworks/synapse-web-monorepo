@@ -27,16 +27,7 @@ describe('useTrackCompletedActions', () => {
     )
 
     expect(hook.result.current).toEqual(
-      expect.arrayContaining([
-        {
-          actionRequiredCount: initialActionsRequired[0],
-          isComplete: false,
-        },
-        {
-          actionRequiredCount: initialActionsRequired[1],
-          isComplete: false,
-        },
-      ]),
+      expect.arrayContaining(initialActionsRequired),
     )
 
     const actionsReturnedByServerAfterOneActionComplete = [
@@ -47,36 +38,25 @@ describe('useTrackCompletedActions', () => {
     })
 
     expect(hook.result.current).toEqual(
-      expect.arrayContaining([
-        {
-          actionRequiredCount: initialActionsRequired[0],
-          isComplete: false,
-        },
-        {
-          actionRequiredCount: initialActionsRequired[1],
-          // This action is now 'complete' because the server no longer says it is required
-          isComplete: true,
-        },
-      ]),
+      expect.arrayContaining(initialActionsRequired),
     )
 
-    // Ensure it handles case where an action is completed and then re-appears
+    // Now add a new action and verify that all 3 remain present
+    const newAction: ActionRequiredCount = {
+      action: {
+        concreteType: 'org.sagebionetworks.repo.model.download.RequestDownload',
+        benefactorId: 123,
+      },
+      count: 1,
+    }
+    const actionsReturnedByServerWithNewActionRequired: ActionRequiredCount[] =
+      [initialActionsRequired[0], newAction]
     act(() => {
-      hook.rerender(initialActionsRequired)
+      hook.rerender(actionsReturnedByServerWithNewActionRequired)
     })
 
     expect(hook.result.current).toEqual(
-      expect.arrayContaining([
-        {
-          actionRequiredCount: initialActionsRequired[0],
-          isComplete: false,
-        },
-        {
-          actionRequiredCount: initialActionsRequired[1],
-          // This action returns to 'incomplete'
-          isComplete: false,
-        },
-      ]),
+      expect.arrayContaining([...initialActionsRequired, newAction]),
     )
   })
 })

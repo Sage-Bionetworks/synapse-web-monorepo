@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import { useGetAccessRequirements } from '../../synapse-queries/dataaccess/useAccessRequirements'
+import {
+  useGetAccessRequirements,
+  useGetAccessRequirementStatus,
+} from '../../synapse-queries'
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -32,11 +35,7 @@ export const LOCK_TITLE = 'Access Restricted'
 
 export const MeetAccessRequirementCard: React.FunctionComponent<
   MeetAccessRequirementCardProps
-> = ({
-  accessRequirementId,
-  count,
-  isComplete = false,
-}: MeetAccessRequirementCardProps) => {
+> = ({ accessRequirementId, count }: MeetAccessRequirementCardProps) => {
   const { data: ar, isLoading } = useGetAccessRequirements(
     accessRequirementId,
     { throwOnError: true },
@@ -92,6 +91,12 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
     }
   }
 
+  const { data: arStatus } = useGetAccessRequirementStatus(
+    String(accessRequirementId),
+  )
+
+  const meetsAccessRequirement = Boolean(arStatus?.isApproved)
+
   return (
     <>
       <ActionRequiredCard
@@ -104,9 +109,9 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
           <WideButton
             variant="contained"
             onClick={() => setIsShowingAccessRequirement(true)}
-            disabled={isComplete}
+            disabled={meetsAccessRequirement}
           >
-            {isComplete ? 'Complete' : 'Start'}
+            {meetsAccessRequirement ? 'Complete' : 'Start'}
           </WideButton>
         }
       />

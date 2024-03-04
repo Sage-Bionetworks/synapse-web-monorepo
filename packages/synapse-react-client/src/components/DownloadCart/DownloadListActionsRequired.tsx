@@ -30,21 +30,18 @@ export function DownloadListActionsRequired(
   return (
     <>
       <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
-        {allCompleteAndIncompleteActions.map(
-          ({ actionRequiredCount: item, isComplete }, index) => {
-            if (item) {
-              return (
-                <ActionRequiredListItem
-                  key={index}
-                  action={item.action}
-                  count={item.count}
-                  isComplete={isComplete}
-                  onViewSharingSettingsClicked={onViewSharingSettingsClicked}
-                />
-              )
-            } else return false
-          },
-        )}
+        {allCompleteAndIncompleteActions.map((item, index) => {
+          if (item) {
+            return (
+              <ActionRequiredListItem
+                key={index}
+                action={item.action}
+                count={item.count}
+                onViewSharingSettingsClicked={onViewSharingSettingsClicked}
+              />
+            )
+          } else return false
+        })}
         {isLoading && times(3).map(k => <LoadingActionRequiredCard key={k} />)}
       </Box>
     </>
