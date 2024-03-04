@@ -8,7 +8,13 @@ import {
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, mockUserGroupHeader } from '../user/mock_user_profile'
-import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../team/mockTeam'
+import {
+  MOCK_CHALLENGE_PARTICIPANT_TEAM_ID,
+  MOCK_TEAM_ID_2,
+  MOCK_TEAM_ID_3,
+  MOCK_TEAM_ID_4,
+  MOCK_TEAM_ID_5,
+} from '../team/mockTeam'
 
 export const MOCK_CHALLENGE_ID = '1234'
 export const MOCK_CHALLENGE_PROJECT_ID = 'syn12345678'
@@ -95,3 +101,22 @@ export const mockTeamList = (teams: ChallengeTeam[]): ListWrapper<Team> => {
     list,
   }
 }
+
+export const mockRegisteredChallengeTeams: ChallengeTeam[] = [
+  mockChallengeTeam({
+    teamId: String(MOCK_TEAM_ID_2),
+    challengeId: MOCK_CHALLENGE_ID,
+  }),
+  mockChallengeTeam({
+    teamId: String(MOCK_TEAM_ID_3),
+    challengeId: MOCK_CHALLENGE_ID,
+  }),
+  mockChallengeTeam({
+    teamId: String(MOCK_TEAM_ID_4),
+    challengeId: MOCK_CHALLENGE_ID,
+  }),
+  mockChallengeTeam({
+    teamId: String(MOCK_TEAM_ID_5),
+    challengeId: MOCK_CHALLENGE_ID,
+  }),
+]

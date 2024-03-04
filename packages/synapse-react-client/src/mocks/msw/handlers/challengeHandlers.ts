@@ -9,34 +9,13 @@ import { SynapseApiResponse } from '../handlers'
 import { rest } from 'msw'
 import {
   MOCK_CHALLENGE_ID,
-  mockChallengeTeam,
+  mockRegisteredChallengeTeams,
 } from '../../challenge/mockChallenge'
-import {
-  MOCK_CHALLENGE_PARTICIPANT_TEAM_ID,
-  MOCK_TEAM_ID_2,
-  MOCK_TEAM_ID_3,
-  MOCK_TEAM_ID_4,
-  MOCK_TEAM_ID_5,
-} from '../../team/mockTeam'
+import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../team/mockTeam'
 import { uniqueId } from 'lodash-es'
 
-const registeredChallengeTeams = [
-  mockChallengeTeam({
-    teamId: String(MOCK_TEAM_ID_2),
-    challengeId: MOCK_CHALLENGE_ID,
-  }),
-  mockChallengeTeam({
-    teamId: String(MOCK_TEAM_ID_3),
-    challengeId: MOCK_CHALLENGE_ID,
-  }),
-  mockChallengeTeam({
-    teamId: String(MOCK_TEAM_ID_4),
-    challengeId: MOCK_CHALLENGE_ID,
-  }),
-  mockChallengeTeam({
-    teamId: String(MOCK_TEAM_ID_5),
-    challengeId: MOCK_CHALLENGE_ID,
-  }),
+const registeredChallengeTeams: ChallengeTeam[] = [
+  ...mockRegisteredChallengeTeams,
 ]
 
 export function getChallengeHandler(backendOrigin: string) {

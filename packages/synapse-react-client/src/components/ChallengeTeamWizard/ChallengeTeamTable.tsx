@@ -5,10 +5,15 @@ import dayjs from 'dayjs'
 import { RadioOption } from '../widgets/RadioGroup'
 import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 import { Team } from '@sage-bionetworks/synapse-types'
-import { useGetChallengeTeamList, useGetTeamList } from '../../synapse-queries'
-import { Box } from '@mui/material'
-import { Link } from 'react-router-dom'
+import {
+  useGetAllOpenMembershipInvitations,
+  useGetChallengeTeamList,
+  useGetCurrentUserProfile,
+  useGetTeamList,
+} from '../../synapse-queries'
+import { Box, Tooltip, Link } from '@mui/material'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { EmailTwoTone } from '@mui/icons-material'
 
 export type ChallengeTeamTableProps = {
   challengeId: string
@@ -17,26 +22,24 @@ export type ChallengeTeamTableProps = {
 }
 
 // Custom type for the challenge team table that combines fields from the Team and the ChallengeTeam record
-type ChallengeTeamRow = {
-  id: string
-  name: string
-  created: string
-  description?: string
+type RowData = Team & {
+  hasInvitation: boolean
 }
 
-const getTeamRow = (team: Team): ChallengeTeamRow => {
-  return {
-    id: team.id,
-    name: team.name,
-    created: formatDate(dayjs(team.createdOn), 'MM/DD/YY'),
-    description: team.description,
-  }
-}
-
+/**
+ * Table component that displays teams that
+ *  1. are registered for the challenge specified by the challengeId prop
+ *  2. the current user is able to join, create a request to join, or accept an invitation to join
+ */
 export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
   const { challengeId, onSelectTeam, selectedTeamId } = props
   const { data: registeredTeams, isLoading: isLoadingChallengeTeams } =
     useGetChallengeTeamList(challengeId)
+  const { data: user } = useGetCurrentUserProfile()
+  const { data: openInvitationsToJoinTeams } =
+    useGetAllOpenMembershipInvitations(user?.ownerId!, {
+      enabled: Boolean(user?.ownerId),
+    })
   const [searchValue, setSearchValue] = useState('')
   const teamIdList = registeredTeams?.map(team => team.teamId) ?? []
   const { data: teamsList, isLoading: isLoadingTeamList } = useGetTeamList(
@@ -46,14 +49,17 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
     },
   )
 
-  const allRows: ChallengeTeamRow[] = useMemo(() => {
+  const allRows: RowData[] = useMemo(() => {
     const term = searchValue.toLowerCase()
     const teams =
       teamsList?.list.filter(
         team =>
           team.canPublicJoin ||
           // `canRequestMembership` is true by default if the property is not present
-          team.canRequestMembership !== false,
+          team.canRequestMembership !== false ||
+          openInvitationsToJoinTeams?.some(
+            invitation => invitation.teamId === team.id,
+          ),
       ) ?? []
 
     let filtered = teams
@@ -65,12 +71,21 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         )
       })
     }
-    return filtered.map(team => getTeamRow(team))
-  }, [searchValue, teamsList?.list])
+    return filtered.map(
+      (team): RowData => ({
+        ...team,
+        hasInvitation: Boolean(
+          openInvitationsToJoinTeams?.some(
+            invitation => invitation.teamId === team.id,
+          ),
+        ),
+      }),
+    )
+  }, [openInvitationsToJoinTeams, searchValue, teamsList?.list])
 
   const isLoading = isLoadingChallengeTeams || isLoadingTeamList
 
-  const columns: GridColDef<ChallengeTeamRow>[] = useMemo(
+  const columns: GridColDef<RowData>[] = useMemo(
     () => [
       {
         field: 'radiobutton',
@@ -89,6 +104,7 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
                 onSelectTeam(teamId)
               }}
               label=""
+              aria-label={`Select ${row.name}`}
             />
           )
         },
@@ -102,16 +118,30 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         disableColumnMenu: true,
         renderCell: ({ row }) => (
           <Link
-            to={{
-              pathname: `${getEndpoint(
-                BackendDestinationEnum.PORTAL_ENDPOINT,
-              )}/#!Team:${row.id}`,
-            }}
+            href={`${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}/#!Team:${row.id}`}
             target="_blank"
+            underline={'hover'}
           >
             {row.name}
           </Link>
         ),
+      },
+      {
+        field: 'hasInvitation',
+        headerName: '',
+        width: 15,
+        filterable: false,
+        hideable: false,
+        disableColumnMenu: true,
+        align: 'center',
+        renderCell: ({ value }) =>
+          value ? (
+            <Tooltip title={'You have been invited to join this team'}>
+              <EmailTwoTone fontSize={'small'} sx={{ color: 'grey.700' }} />
+            </Tooltip>
+          ) : null,
       },
       {
         field: 'created',
@@ -120,6 +150,7 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         filterable: false,
         hideable: false,
         disableColumnMenu: true,
+        renderCell: ({ value }) => formatDate(dayjs(value), 'MM/DD/YY'),
       },
       {
         field: 'description',
@@ -149,6 +180,7 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         rowCount={5}
         hideFooter
         density="compact"
+        rowBuffer={5} // Buffer ensures all rows required in test are loaded.
         sx={{
           border: 'none',
           height: '100%',
