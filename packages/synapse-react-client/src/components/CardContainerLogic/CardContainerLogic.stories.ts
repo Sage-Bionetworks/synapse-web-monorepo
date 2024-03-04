@@ -1,4 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
+import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import {
+  mockCurrentReleaseCardsQueryResultBundle,
+  mockPreviousReleaseCardsQueryResultBundle,
+} from '../../mocks/query/mockReleaseCardsTableQueryResultBundle'
 import {
   DATASET,
   FUNDER,
@@ -8,8 +15,10 @@ import {
   RELEASE_CARD,
 } from '../../utils/SynapseConstants'
 import CardContainerLogic from './index'
+import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { GenericCardSchema } from '../GenericCard'
 import { StatConfig } from '../ReleaseCard'
+import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -109,10 +118,9 @@ const statsConfig: StatConfig[] = [
   { columnName: 'countSamples', label: 'Samples' },
 ]
 
-const currentReleaseCardSql =
-  'SELECT * FROM syn53701326 WHERE isCurrentRelease = true'
+const currentReleaseCardSql = `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = true`
 
-export const ReleaseCardLarge: Story = {
+export const ReleaseCardLargeMock: Story = {
   args: {
     sql: currentReleaseCardSql,
     type: RELEASE_CARD,
@@ -136,14 +144,24 @@ export const ReleaseCardLarge: Story = {
       type: 'figma',
       url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=195-13615&mode=design&t=76oHvfvp9FWFtDSR-4',
     },
+    msw: {
+      handlers: [
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        ...getHandlersForTableQuery(
+          mockCurrentReleaseCardsQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+        ),
+      ],
+    },
   },
 }
 
-export const ReleaseCardMedium: Story = {
+export const ReleaseCardMediumMock: Story = {
   args: {
-    sql: `SELECT * FROM syn53701326 WHERE isCurrentRelease = false`,
+    sql: `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false`,
     type: RELEASE_CARD,
-    limit: 5,
+    initialLimit: 5,
     releaseCardConfig: {
       cardSize: 'medium',
       requestAccessPath: 'data access',
@@ -154,6 +172,16 @@ export const ReleaseCardMedium: Story = {
     design: {
       type: 'figma',
       url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=259-14622&mode=design&t=76oHvfvp9FWFtDSR-4',
+    },
+    msw: {
+      handlers: [
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        ...getHandlersForTableQuery(
+          mockPreviousReleaseCardsQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+        ),
+      ],
     },
   },
 }
