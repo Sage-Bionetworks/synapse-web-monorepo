@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { difference } from 'lodash-es'
+import { differenceWith, isEqual } from 'lodash-es'
 
 const EMPTY_ARRAY: never[] = []
 
@@ -30,7 +30,11 @@ export default function useTrackTransientListItems<T = unknown>(
   // Synchronize state by adding any new items in the list
   useEffect(() => {
     setAllSeenItems(prevState => {
-      const itemsNotYetAddedToState = difference(currentList, prevState)
+      const itemsNotYetAddedToState = differenceWith(
+        currentList,
+        prevState,
+        isEqual,
+      )
       return [...prevState, ...itemsNotYetAddedToState]
     })
   }, [currentList])
