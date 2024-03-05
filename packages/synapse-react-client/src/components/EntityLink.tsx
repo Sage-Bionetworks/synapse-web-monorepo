@@ -15,7 +15,7 @@ type EntityLinkProps = {
   entity: string | EntityHeader | Entity
   versionNumber?: number
   /** Whether the component should link to the entity page in Synapse. Default true */
-  link?: boolean
+  link?: boolean | string
   className?: string
   /** Whether to display an icon identifying the entity type. Default true */
   showIcon?: boolean
@@ -64,7 +64,21 @@ export const EntityLink = (props: EntityLinkProps) => {
     } else {
       type = getEntityTypeFromHeader(entity)
     }
-
+    if (typeof link === 'string' && link) {
+      return (
+        <Link
+          className={className}
+          target="_blank"
+          rel="noopener noreferrer"
+          href={link}
+        >
+          {showIcon && (
+            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+          )}
+          {entity[displayTextField as keyof typeof entity]}
+        </Link>
+      )
+    }
     if (link) {
       return (
         <Link

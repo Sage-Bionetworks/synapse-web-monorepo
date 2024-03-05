@@ -96,12 +96,18 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     return <p>{formatDate(dayjs(Number(str)))}</p>
   }
 
-  if (columnModelType === ColumnTypeEnum.ENTITYID && str) {
+  if (!labelLink && columnModelType === ColumnTypeEnum.ENTITYID && str) {
     return <EntityLink entity={str} />
   }
 
   if (!labelLink) {
     return <Linkify text={str} className={newClassName} />
+  }
+
+  if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
+    const { baseURL, URLColumnName } = labelLink
+    const href = `/${baseURL}?${URLColumnName}=${str}`
+    return <EntityLink entity={str} link={href} />
   }
 
   let labelContent: JSX.Element

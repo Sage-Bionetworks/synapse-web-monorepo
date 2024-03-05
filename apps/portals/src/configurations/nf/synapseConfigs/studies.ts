@@ -57,6 +57,10 @@ export const studyCardConfiguration: CardConfiguration = {
       isMarkdown: true,
       matchColumnName: 'grantDOI',
     },
+    {
+      isMarkdown: true,
+      matchColumnName: 'studyId',
+    },
   ],
   iconOptions: {
     Active: studyActiveSvg,
