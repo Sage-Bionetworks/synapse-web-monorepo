@@ -79,6 +79,9 @@ describe('Release Card', () => {
 
   describe('ReleaseCardLarge', () => {
     it('does not show an explore button when path data is missing', () => {
+      const consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
       const missingLinkData = [...defaultData]
       const pathColumnIndex =
         defaultSchema[defaultButtonToExplorePageConfig.sourcePathColumnName]
@@ -89,9 +92,17 @@ describe('Release Card', () => {
         data: missingLinkData,
       })
       expect(exploreButtonLink).toBeNull()
+      expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+        `Column not found in source table or cell did not have value in source table for ${defaultButtonToExplorePageConfig.sourcePathColumnName}`,
+      )
+      consoleWarnSpy.mockRestore()
     })
 
     it('explore button has link to path when query config values are missing', () => {
+      const consoleLogSpy = jest
+        .spyOn(console, 'log')
+        .mockImplementation(() => {})
+
       const { exploreButtonLink } = setUp({
         ...defaultReleaseCardLargeProps,
         releaseCardConfig: {
@@ -104,6 +115,10 @@ describe('Release Card', () => {
       })
       expect(exploreButtonLink).toBeVisible()
       expect(exploreButtonLink).toHaveAttribute('href', defaultPath)
+      expect(consoleLogSpy).toHaveBeenLastCalledWith(
+        `No selected facet for ${defaultPath}`,
+      )
+      consoleLogSpy.mockRestore()
     })
 
     it('explore button has link with path and query string', () => {

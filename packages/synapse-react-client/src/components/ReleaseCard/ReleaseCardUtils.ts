@@ -1,6 +1,6 @@
-import { Query } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
 import { ReleaseCardSchema } from './ReleaseCard'
 import {
   ButtonToExplorePageConfig,
@@ -82,47 +82,6 @@ export const formatReleaseCardData = (
   }
 }
 
-const createButtonToExploreDataQueryString = (
-  schema: ReleaseCardSchema,
-  data: (string | null)[],
-  buttonToExploreDataConfig?: ButtonToExplorePageConfig,
-) => {
-  if (!buttonToExploreDataConfig) return null
-
-  const {
-    exploreDataSql,
-    exploreDataFacetColumnName,
-    sourceDataFacetValueColumnName,
-  } = buttonToExploreDataConfig
-  if (
-    exploreDataSql &&
-    exploreDataFacetColumnName &&
-    sourceDataFacetValueColumnName
-  ) {
-    const facetValue = getValueFromData(
-      schema,
-      data,
-      sourceDataFacetValueColumnName,
-    )
-    // column not found in source table or cell did not have value in source table
-    if (facetValue === null) return null
-
-    const query: Query = {
-      sql: exploreDataSql,
-      selectedFacets: [
-        {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: exploreDataFacetColumnName,
-          facetValues: [facetValue],
-        },
-      ],
-    }
-    return `?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-  }
-  return null
-}
-
 export const createButtonToExploreDataPathAndQueryString = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
@@ -134,13 +93,33 @@ export const createButtonToExploreDataPathAndQueryString = (
     data,
     buttonToExploreDataConfig.sourcePathColumnName,
   )
-  // column not found in source table or cell did not have value in source table
-  if (!path) return null
+  if (!path) {
+    console.warn(
+      `Column not found in source table or cell did not have value in source table for ${buttonToExploreDataConfig.sourcePathColumnName}`,
+    )
+    return null
+  }
 
-  const queryString = createButtonToExploreDataQueryString(
-    schema,
-    data,
-    buttonToExploreDataConfig,
-  )
-  return `${path}${queryString || ''}`
+  const {
+    exploreDataSql,
+    exploreDataFacetColumnName,
+    sourceDataFacetValueColumnName,
+  } = buttonToExploreDataConfig
+
+  const facetValue = sourceDataFacetValueColumnName
+    ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
+    : null
+  const hasSelectedFacet =
+    exploreDataSql && exploreDataFacetColumnName && facetValue
+
+  if (!hasSelectedFacet) console.log(`No selected facet for ${path}`)
+
+  return hasSelectedFacet
+    ? generateEncodedPathAndQueryForSelectedFacetURL(
+        path,
+        exploreDataSql,
+        exploreDataFacetColumnName,
+        facetValue,
+      )
+    : path
 }

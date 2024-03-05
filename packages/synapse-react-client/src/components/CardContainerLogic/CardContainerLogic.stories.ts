@@ -140,6 +140,7 @@ export const ReleaseCardLargeMock: Story = {
     },
   },
   parameters: {
+    stack: 'mock',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=195-13615&mode=design&t=76oHvfvp9FWFtDSR-4',
@@ -169,6 +170,7 @@ export const ReleaseCardMediumMock: Story = {
     },
   },
   parameters: {
+    stack: 'mock',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=259-14622&mode=design&t=76oHvfvp9FWFtDSR-4',

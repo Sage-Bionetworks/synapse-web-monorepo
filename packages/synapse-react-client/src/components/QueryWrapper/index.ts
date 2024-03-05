@@ -1,4 +1,9 @@
-import { QueryWrapper } from './QueryWrapper'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from './generateEncodedPathAndQueryForSelectedFacetURL'
 import type { QueryWrapperProps } from './QueryWrapper'
-export { QueryWrapper, QueryWrapperProps }
+import { QueryWrapper } from './QueryWrapper'
+export {
+  generateEncodedPathAndQueryForSelectedFacetURL,
+  QueryWrapper,
+  QueryWrapperProps,
+}
 export default QueryWrapper
