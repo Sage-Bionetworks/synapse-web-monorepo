@@ -21,6 +21,7 @@ import dayjs from 'dayjs'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
 import Linkify from './Linkify'
+import { EntityLink } from '../EntityLink'
 
 type SynapseCardLabelProps = {
   value: string
@@ -93,6 +94,10 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   // NFINT-906
   if (columnModelType === ColumnTypeEnum.DATE && str) {
     return <p>{formatDate(dayjs(Number(str)))}</p>
+  }
+
+  if (columnModelType === ColumnTypeEnum.ENTITYID && str) {
+    return <EntityLink entity={str} />
   }
 
   if (!labelLink) {
