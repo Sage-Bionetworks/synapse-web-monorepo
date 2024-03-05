@@ -1,4 +1,3 @@
-import { columnAliases } from './commonProps'
 import { datasetsSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
 import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
@@ -8,6 +7,14 @@ import { DetailsPageProps } from 'types/portal-util-types'
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 const rgbIndex = 8
 
+const columnAliases = {
+  pmid: 'PubMed Id',
+  id: 'File ID',
+  nf1Genotype: 'NF1 Genotype',
+  nf2Genotype: 'NF2 Genotype',
+  studyId: 'Study Name',
+}
+
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
@@ -16,6 +23,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     description: 'description',
     secondaryLabels: [
       // 'assay',
+      'studyId',
       'doi',
       'datasetSizeInBytes',
       'diseaseFocus',
@@ -102,6 +110,7 @@ export const datasetsDetailsPage: SynapseConfig[] = [
       ...datasetCardConfiguration,
       sql: datasetsSql,
       isHeader: true,
+      columnAliases,
     },
   },
   {
