@@ -6,8 +6,8 @@ import {
   toolsSql,
   projectsSql,
 } from '../resources'
-import { Query } from '@sage-bionetworks/synapse-types'
 import type { ClickCallbackParams } from 'synapse-react-client'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client'
 
 const sqlAndEntityMap: {
   [value: string]: string
@@ -20,26 +20,6 @@ const sqlAndEntityMap: {
   Files: filesSql,
 }
 
-const generateEncodedQueryForURL = (
-  path: string,
-  facet: string,
-  facetValue: string,
-): string => {
-  const sql = sqlAndEntityMap[path]
-  const query: Query = {
-    sql,
-    selectedFacets: [
-      {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        columnName: facet,
-        facetValues: [facetValue],
-      },
-    ],
-  }
-  return encodeURIComponent(JSON.stringify(query))
-}
-
 export const onPointClick = ({
   facetValue,
   type,
@@ -50,12 +30,14 @@ export const onPointClick = ({
   if (typeUpperCase === 'Grants' || typeUpperCase === 'Projects') {
     facet = 'consortium'
   }
-  const encodedQuery = generateEncodedQueryForURL(
-    typeUpperCase,
+
+  const url = generateEncodedPathAndQueryForSelectedFacetURL(
+    `/Explore/${typeUpperCase}`,
+    sqlAndEntityMap[typeUpperCase],
     facet,
     facetValue,
   )
-  const url = `/Explore/${typeUpperCase}?QueryWrapper0=${encodedQuery}`
+
   const target = event.ctrlKey || event.metaKey ? '_blank' : '_self'
   window.open(url, target)
 }

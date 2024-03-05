@@ -6,6 +6,7 @@ import {
   GENERIC_CARD,
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
+  RELEASE_CARD,
 } from '../../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
@@ -18,6 +19,7 @@ import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useInfiniteQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { Dataset, Funder } from '../row_renderers'
+import { ReleaseCard } from '../ReleaseCard'
 import {
   LoadingObservationCard,
   ObservationCard,
@@ -28,6 +30,16 @@ import WideButton from '../styled/WideButton'
 import { Box } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+
+const defaultListSx = { display: 'block' }
+const releaseCardMediumListSx = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, 272px)',
+  gridAutoRows: 'auto',
+  gridAutoFlow: 'row',
+  gap: '10px',
+  mb: '30px',
+}
 
 export type CardContainerProps = {
   isHeader?: boolean
@@ -48,6 +60,8 @@ function Card(props: { propsToPass: any; type: string }) {
       return <GenericCard {...propsToPass} />
     case OBSERVATION_CARD:
       return <ObservationCard {...propsToPass} />
+    case RELEASE_CARD:
+      return <ReleaseCard {...propsToPass} />
     default:
       return <div /> // this should never happen
   }
@@ -174,16 +188,24 @@ export function CardContainer(props: CardContainerProps) {
     )
   }
 
+  const isReleaseCardMediumList =
+    type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
+
   return (
-    <div role="list">
-      {title && <h2 className="SRC-card-overview-title">{title}</h2>}
-      {!title && unitDescription && (
-        <TotalQueryResults frontText={'Displaying'} />
-      )}
-      {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
-      {cards}
+    <>
+      <Box
+        role="list"
+        sx={isReleaseCardMediumList ? releaseCardMediumListSx : defaultListSx}
+      >
+        {title && <h2 className="SRC-card-overview-title">{title}</h2>}
+        {!title && unitDescription && (
+          <TotalQueryResults frontText={'Displaying'} />
+        )}
+        {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
+        {cards}
+      </Box>
       {showViewMoreButton}
-    </div>
+    </>
   )
 }
 
