@@ -309,8 +309,8 @@ export function SchemaDrivenAnnotationEditor(
               } as JSONSchema7
             }
             uiSchema={{
-              'ui:options': {
-                copyable: true,
+              'ui:globalOptions': {
+                copyable: false,
                 duplicateKeySuffixSeparator: '_',
               },
               additionalProperties: {

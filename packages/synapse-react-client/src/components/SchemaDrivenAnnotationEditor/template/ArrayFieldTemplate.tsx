@@ -61,7 +61,7 @@ function ArrayFieldTemplate<
     ) {
       props.onAddClick()
     }
-  }, [props])
+  }, [props, formContext?.allowRemovingLastItemInArray])
 
   return (
     <Box id={idSchema.$id} className={props.className}>
@@ -102,10 +102,9 @@ function ArrayFieldTemplate<
                 key={key}
                 index={index}
                 {...itemProps}
-                hasCopy={true}
-                hasMoveUp={items.length > 1 && index != 0}
-                hasMoveDown={items.length > 1 && index != items.length - 1}
                 hasRemove={
+                  // Override hasRemove to prevent removing the last item in an array (except additional properties),
+                  // unless overridden by formContext
                   isAdditionalProperty ||
                   items.length > 1 ||
                   Boolean(formContext?.allowRemovingLastItemInArray)
@@ -114,7 +113,7 @@ function ArrayFieldTemplate<
                   isAdditionalProperty &&
                   items.length == 1 &&
                   additionalPropertyContext
-                    ? i => {
+                    ? () => {
                         return e => {
                           additionalPropertyContext.dropProperty(e)
                         }
