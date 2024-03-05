@@ -112,8 +112,6 @@ export const createButtonToExploreDataPathAndQueryString = (
   const hasSelectedFacet =
     exploreDataSql && exploreDataFacetColumnName && facetValue
 
-  if (!hasSelectedFacet) console.log(`No selected facet for ${path}`)
-
   return hasSelectedFacet
     ? generateEncodedPathAndQueryForSelectedFacetURL(
         path,

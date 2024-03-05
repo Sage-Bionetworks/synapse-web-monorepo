@@ -99,10 +99,6 @@ describe('Release Card', () => {
     })
 
     it('explore button has link to path when query config values are missing', () => {
-      const consoleLogSpy = jest
-        .spyOn(console, 'log')
-        .mockImplementation(() => {})
-
       const { exploreButtonLink } = setUp({
         ...defaultReleaseCardLargeProps,
         releaseCardConfig: {
@@ -115,10 +111,6 @@ describe('Release Card', () => {
       })
       expect(exploreButtonLink).toBeVisible()
       expect(exploreButtonLink).toHaveAttribute('href', defaultPath)
-      expect(consoleLogSpy).toHaveBeenLastCalledWith(
-        `No selected facet for ${defaultPath}`,
-      )
-      consoleLogSpy.mockRestore()
     })
 
     it('explore button has link with path and query string', () => {
