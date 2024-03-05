@@ -145,6 +145,10 @@ export const DownloadCartPage: React.FunctionComponent<
       >
         {data?.numberOfFilesRequiringAction &&
           data.numberOfFilesRequiringAction > 0 && (
+            // Unmount instead of hiding the DownloadListActionsRequired component when there are 0 actions required
+            // The DownloadListActionsRequired cannot discern between a fulfilled action and an action that is no longer required because the
+            // file was removed from the download cart.
+            // In the typical case where the download cart is cleared, unmounting the component ensures that the actions are cleared out.
             <div>
               <div className="actionsRequiredContainer container">
                 <DownloadListActionsRequired {...props} />
