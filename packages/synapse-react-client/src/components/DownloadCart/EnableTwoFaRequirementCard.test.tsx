@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
@@ -21,24 +21,30 @@ jest
 jest
   .spyOn(SynapseClient, 'getAccessRequirementById')
   .mockResolvedValue(mockManagedACTAccessRequirement)
+const mockGetCurrent2FAStatus = jest.spyOn(
+  SynapseClient,
+  'getCurrentUserTwoFactorEnrollmentStatus',
+)
 
 const defaultProps: EnableTwoFaRequirementCardProps = {
   accessRequirementId: mockManagedACTAccessRequirement.id,
   count: 10,
 }
-async function renderComponent() {
-  // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
-  await act(async () => {
-    render(<EnableTwoFaRequirementCard {...defaultProps} />, {
-      wrapper: createWrapper(),
-    })
+function renderComponent() {
+  render(<EnableTwoFaRequirementCard {...defaultProps} />, {
+    wrapper: createWrapper(),
   })
 }
 
 describe('EnableTwoFaRequirementCard tests', () => {
+  beforeEach(() => {
+    mockGetCurrent2FAStatus.mockResolvedValue({
+      status: 'DISABLED',
+    })
+  })
+
   it('Shows the card', async () => {
-    await renderComponent()
+    renderComponent()
     await screen.findByText(REQUIRES_2FA_CARD_TITLE)
     expect(
       screen.queryByTestId(MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT),
@@ -47,5 +53,18 @@ describe('EnableTwoFaRequirementCard tests', () => {
     await userEvent.click(button)
 
     await screen.findByTestId(MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT)
+  })
+
+  it('Indicates the action is complete if the user has enabled 2FA', async () => {
+    mockGetCurrent2FAStatus.mockResolvedValue({
+      status: 'ENABLED',
+    })
+
+    renderComponent()
+
+    const completeButton = await screen.findByRole('button', {
+      name: 'Complete',
+    })
+    expect(completeButton).toBeDisabled()
   })
 })

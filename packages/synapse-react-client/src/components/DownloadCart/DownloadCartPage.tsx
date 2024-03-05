@@ -137,8 +137,6 @@ export const DownloadCartPage: React.FunctionComponent<
 
            Mount the actions required component and hide it with style to ensure actions stored in component state are persisted as the user switches tabs
            */
-          //
-          //
           display:
             selectedTabIndex == 0 && !isError && !isLoading && data
               ? 'block'

@@ -3,7 +3,7 @@ import useTrackCompletedActions from './useTrackCompletedActions'
 import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
 
 describe('useTrackCompletedActions', () => {
-  it('Tracks actions and marks them as completed when they are no longer listed as required', () => {
+  it('Tracks actions after they are no longer listed as required', () => {
     const initialActionsRequired: ActionRequiredCount[] = [
       {
         action: {
