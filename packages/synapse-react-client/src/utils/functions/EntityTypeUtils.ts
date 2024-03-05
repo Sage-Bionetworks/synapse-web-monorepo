@@ -19,7 +19,6 @@ import {
   MaterializedView,
   PROJECT_CONCRETE_TYPE_VALUE,
   ProjectHeader,
-  Reference,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   SubmissionView,
   Table,
@@ -307,8 +306,16 @@ export function getVersionDisplay(entity: Entity): string {
   }
 }
 
-export function normalizeSynPrefix(ref: Reference) {
-  return ref.targetId.startsWith('syn') ? ref.targetId : `syn${ref.targetId}`
+/**
+ * Given an entityId, returns the entity ID with the `syn` prefix.
+ * If the entity already has the `syn` prefix, the entityId will not be changed
+ * @param entityId
+ */
+export function normalizeSynPrefix(entityId: string) {
+  if (entityId.startsWith('syn')) {
+    return entityId
+  }
+  return `syn${entityId}`
 }
 
 // implemented by https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html

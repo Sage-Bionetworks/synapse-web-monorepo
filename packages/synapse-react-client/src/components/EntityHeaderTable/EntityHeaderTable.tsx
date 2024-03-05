@@ -230,9 +230,11 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     //create dummy entries for values that were not returned by the getEntityHeaders call!
     const newData = results ? results?.results : []
     const newDataEntityIds = new Set()
-    newData.map(entityHeader => newDataEntityIds.add(entityHeader.id))
+    newData.forEach(entityHeader =>
+      newDataEntityIds.add(normalizeSynPrefix(entityHeader.id)),
+    )
     const missingRefs = refsInState.filter(
-      ref => !newDataEntityIds.has(normalizeSynPrefix(ref)),
+      ref => !newDataEntityIds.has(normalizeSynPrefix(ref.targetId)),
     )
     const dummyEntityHeaders: EntityHeaderOrDummy[] = missingRefs.map(ref => {
       return {

@@ -4,14 +4,14 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   EntityHeader,
   PaginatedResults,
   Reference,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
+import { normalizeSynPrefix } from '../../utils/functions/EntityTypeUtils'
 
 export function useGetEntityHeaders(
   references: ReferenceList,
@@ -21,6 +21,11 @@ export function useGetEntityHeaders(
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
+  references = references.map(ref => ({
+    ...ref,
+    targetId: normalizeSynPrefix(ref.targetId),
+  }))
+
   const queryFn = async () => {
     const response = await SynapseClient.getEntityHeaders(
       references,
@@ -80,15 +85,19 @@ export function useGetEntityHeaders(
 }
 
 export function useGetEntityHeader(
-  entityId: string,
+  entityId: string = '',
   versionNumber?: number,
   options?: Partial<
     UseQueryOptions<EntityHeader | undefined, SynapseClientError>
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  if (entityId) {
+    entityId = normalizeSynPrefix(entityId)
+  }
 
   return useQuery({
+    enabled: Boolean(entityId),
     ...options,
     queryKey: keyFactory.getEntityHeaderQueryKey(entityId, versionNumber),
     queryFn: () =>
