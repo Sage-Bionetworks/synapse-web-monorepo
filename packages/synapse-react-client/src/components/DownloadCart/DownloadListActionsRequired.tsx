@@ -3,7 +3,7 @@ import { useGetAllDownloadListActionsRequired } from '../../synapse-queries'
 import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'
 import { ActionRequiredListItem } from './ActionRequiredListItem'
-import useTrackCompletedActions from './useTrackCompletedActions'
+import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 import { times } from 'lodash-es'
 
 export type DownloadListActionsRequiredProps = {
@@ -23,8 +23,9 @@ export function DownloadListActionsRequired(
       throwOnError: true,
     })
 
-  const allCompleteAndIncompleteActions = useTrackCompletedActions(
-    currentActionsRequired || [],
+  // PORTALS-2950 - Keep a record of actions that disappear from the server response - i.e. the 'completed' actions
+  const allCompleteAndIncompleteActions = useTrackTransientListItems(
+    currentActionsRequired,
   )
 
   return (
