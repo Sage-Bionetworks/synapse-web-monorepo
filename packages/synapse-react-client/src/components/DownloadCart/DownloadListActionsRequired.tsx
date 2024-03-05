@@ -1,65 +1,49 @@
-import React, { useEffect } from 'react'
-import { useGetDownloadListActionsRequiredInfinite } from '../../synapse-queries/download/useDownloadList'
-import { useInView } from 'react-intersection-observer'
-import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
+import React from 'react'
+import { useGetAllDownloadListActionsRequired } from '../../synapse-queries'
 import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'
 import { ActionRequiredListItem } from './ActionRequiredListItem'
+import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { times } from 'lodash-es'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
-export const DownloadListActionsRequired: React.FunctionComponent<
-  DownloadListActionsRequiredProps
-> = props => {
-  // Load the next page when this ref comes into view.
-  const { ref, inView } = useInView()
-  const {
-    data,
-    status,
-    isLoading,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useGetDownloadListActionsRequiredInfinite({
-    throwOnError: true,
-  })
+export function DownloadListActionsRequired(
+  props: DownloadListActionsRequiredProps,
+) {
+  const { onViewSharingSettingsClicked } = props
 
-  useEffect(() => {
-    if (
-      status === 'success' &&
-      !isFetchingNextPage &&
-      hasNextPage &&
-      fetchNextPage &&
-      inView
-    ) {
-      fetchNextPage()
-    }
-  }, [status, hasNextPage, isFetchingNextPage, fetchNextPage, inView])
+  // This component will track all completed actions, based on which actions are omitted from the ActionsRequiredResponse as the user performs required tasks
+  // For accurate tracking, we must make sure we have all data. So we will fetch all pages instead of one page at a time.
+  const { data: currentActionsRequired, isLoading } =
+    useGetAllDownloadListActionsRequired({
+      throwOnError: true,
+    })
 
-  const allRows = data?.pages.flatMap(page => page.page) ?? []
+  // PORTALS-2950 - Keep a record of actions that disappear from the server response - i.e. the 'completed' actions
+  const allCompleteAndIncompleteActions = useTrackTransientListItems(
+    currentActionsRequired,
+  )
+
   return (
     <>
       <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
-        {allRows.map((item: ActionRequiredCount, index) => {
+        {allCompleteAndIncompleteActions.map((item, index) => {
           if (item) {
             return (
               <ActionRequiredListItem
                 key={index}
                 action={item.action}
                 count={item.count}
-                onViewSharingSettingsClicked={
-                  props.onViewSharingSettingsClicked
-                }
+                onViewSharingSettingsClicked={onViewSharingSettingsClicked}
               />
             )
           } else return false
         })}
-        {/* To trigger loading the next page */}
-        {allRows.length > 0 && <div ref={ref} />}
-        {isLoading && <LoadingActionRequiredCard />}
+        {isLoading && times(3).map(k => <LoadingActionRequiredCard key={k} />)}
       </Box>
     </>
   )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
+import { useGetEntityBundle } from '../../synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
@@ -26,13 +26,19 @@ export const RequestDownloadCard: React.FunctionComponent<
   count,
   onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
 }: RequestDownloadCardProps) => {
-  const { data: entityHeader, isLoading } = useGetEntityHeader(
+  const { data: entityBundle, isLoading } = useGetEntityBundle(
     entityId,
     undefined,
+    {
+      includeEntity: true,
+      includePermissions: true,
+    },
     {
       throwOnError: true,
     },
   )
+
+  const hasDownloadPermission = Boolean(entityBundle?.permissions.canDownload)
 
   return (
     <ActionRequiredCard
@@ -41,8 +47,8 @@ export const RequestDownloadCard: React.FunctionComponent<
       description={
         <>
           You must be granted the download permission on{' '}
-          <strong>{entityHeader?.name}</strong> in order to download this set of
-          files.
+          <strong>{entityBundle?.entity.name}</strong> in order to download this
+          set of files.
         </>
       }
       iconType={DOWNLOAD_PERMISSION_REQUIRED}
@@ -57,8 +63,9 @@ export const RequestDownloadCard: React.FunctionComponent<
             onClick={() => {
               onViewSharingSettingsClicked(entityId)
             }}
+            disabled={hasDownloadPermission}
           >
-            View Sharing Settings
+            {hasDownloadPermission ? 'Complete' : 'View Sharing Settings'}
           </Button>
         </>
       }

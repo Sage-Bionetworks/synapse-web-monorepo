@@ -1,4 +1,5 @@
 import {
+  ActionRequiredCount,
   ActionRequiredRequest,
   ActionRequiredResponse,
   AddBatchOfFilesToDownloadListResponse,
@@ -85,10 +86,8 @@ export function useGetAvailableFilesToDownloadInfinite<
   })
 }
 
-export function useGetDownloadListActionsRequired(
-  options?: Partial<
-    UseQueryOptions<ActionRequiredResponse, SynapseClientError>
-  >,
+export function useGetAllDownloadListActionsRequired(
+  options?: Partial<UseQueryOptions<ActionRequiredCount[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const request: ActionRequiredRequest = {
@@ -100,7 +99,7 @@ export function useGetDownloadListActionsRequired(
     ...options,
     queryKey: keyFactory.getDownloadListActionsRequiredQueryKey(),
     queryFn: () =>
-      SynapseClient.getDownloadListActionsRequired(request, accessToken),
+      SynapseClient.getAllDownloadListActionsRequired(request, accessToken),
   })
 }
 

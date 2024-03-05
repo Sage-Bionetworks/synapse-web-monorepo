@@ -4,6 +4,7 @@ import AccessRequirementList from '../AccessRequirementList/AccessRequirementLis
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import WideButton from '../../components/styled/WideButton'
 import { useGetAccessRequirements } from '../../synapse-queries'
+import { useGetTwoFactorEnrollmentStatus } from '../../synapse-queries/auth/useTwoFactorEnrollment'
 
 export type EnableTwoFaRequirementCardProps = {
   accessRequirementId: number
@@ -21,6 +22,8 @@ export function EnableTwoFaRequirementCard(
       throwOnError: true,
     },
   )
+  const { data: twoFactorAuthStatus } = useGetTwoFactorEnrollmentStatus()
+  const isEnrolledIn2Fa = twoFactorAuthStatus?.status === 'ENABLED'
 
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
     useState<boolean>(false)
@@ -37,8 +40,9 @@ export function EnableTwoFaRequirementCard(
           <WideButton
             variant="contained"
             onClick={() => setIsShowingAccessRequirement(true)}
+            disabled={isEnrolledIn2Fa}
           >
-            Start
+            {isEnrolledIn2Fa ? 'Complete' : 'Start'}
           </WideButton>
         }
       />

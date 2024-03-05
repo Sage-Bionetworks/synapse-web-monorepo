@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { useGetAccessRequirements } from '../../synapse-queries/dataaccess/useAccessRequirements'
+import React, { useMemo, useState } from 'react'
+import {
+  useGetAccessRequirements,
+  useGetAccessRequirementStatus,
+} from '../../synapse-queries'
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -20,6 +23,7 @@ import WideButton from '../../components/styled/WideButton'
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
   count?: number
+  isComplete?: boolean
 }
 export const TERMS_OF_USE_TITLE =
   'Requires Acceptance of Data-Specific Terms of Use'
@@ -42,12 +46,22 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
   let iconType = ''
   let description = ''
 
+  const arFriendlyName = useMemo(() => {
+    if (!ar) {
+      return ''
+    } else if (ar.name.match(/^\d+$/)) {
+      // Don't show the AR name to the user if it's just the numeric ID
+      return ''
+    }
+    return ar.name
+  }, [ar])
+
   if (!isLoading && ar) {
     switch (ar.concreteType) {
       case TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
         title = TERMS_OF_USE_TITLE
         iconType = EASY_DIFFICULTY
-        description = ar.name ?? ''
+        description = arFriendlyName
         break
       case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE: {
         title = SELF_SIGN_TITLE
@@ -59,14 +73,14 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         } else {
           iconType = EASY_DIFFICULTY
         }
-        description = ar.name ?? ''
+        description = arFriendlyName
         break
       }
       case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       case ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
         title = ACT_TITLE
         iconType = VARIABLE_DIFFICULTY
-        description = ar.name ?? ''
+        description = arFriendlyName
         break
       case LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
         title = LOCK_TITLE
@@ -76,6 +90,12 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         break
     }
   }
+
+  const { data: arStatus } = useGetAccessRequirementStatus(
+    String(accessRequirementId),
+  )
+
+  const meetsAccessRequirement = Boolean(arStatus?.isApproved)
 
   return (
     <>
@@ -89,8 +109,9 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
           <WideButton
             variant="contained"
             onClick={() => setIsShowingAccessRequirement(true)}
+            disabled={meetsAccessRequirement}
           >
-            Start
+            {meetsAccessRequirement ? 'Complete' : 'Start'}
           </WideButton>
         }
       />
@@ -101,7 +122,9 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
           accessRequirementFromProps={[ar]}
           renderAsModal={true}
           numberOfFilesAffected={count}
-          onHide={() => setIsShowingAccessRequirement(false)}
+          onHide={() => {
+            setIsShowingAccessRequirement(false)
+          }}
         />
       )}
     </>

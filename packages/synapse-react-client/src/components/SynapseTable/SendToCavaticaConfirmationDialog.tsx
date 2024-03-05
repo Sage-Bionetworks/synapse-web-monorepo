@@ -24,6 +24,7 @@ import { useLocalStorageValue } from '@react-hookz/web'
 import { Link, Typography, Box, Stack } from '@mui/material'
 import { Checkbox } from '../widgets/Checkbox'
 import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
+import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 
 const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
   'SendToCavaticaButtonFromConfirmationDialog'
@@ -87,7 +88,7 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
-    data?.columnModels,
+    data?.selectColumns,
     selectedRows,
   ])
 
@@ -107,6 +108,8 @@ export default function SendToCavaticaConfirmationDialog(
       enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
     },
   )
+
+  const allCompleteAndIncompleteActions = useTrackTransientListItems(actions)
 
   const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
     hasResettableFilters,
@@ -249,20 +252,22 @@ export default function SendToCavaticaConfirmationDialog(
                     data to CAVATICA.
                   </Typography>
                   <Stack gap={3}>
-                    {actions.map((item: ActionRequiredCount, index) => {
-                      if (item) {
-                        return (
-                          <ActionRequiredListItem
-                            key={index}
-                            action={item.action}
-                            count={item.count}
-                            onViewSharingSettingsClicked={
-                              onViewSharingSettingsClicked
-                            }
-                          />
-                        )
-                      } else return false
-                    })}
+                    {allCompleteAndIncompleteActions.map(
+                      (item: ActionRequiredCount, index) => {
+                        if (item) {
+                          return (
+                            <ActionRequiredListItem
+                              key={index}
+                              action={item.action}
+                              count={item.count}
+                              onViewSharingSettingsClicked={
+                                onViewSharingSettingsClicked
+                              }
+                            />
+                          )
+                        } else return false
+                      },
+                    )}
                   </Stack>
                 </>
               )
