@@ -129,8 +129,8 @@ class SynapseImage extends React.Component<
       className = 'align-center'
     }
     const style: React.CSSProperties = {
-      width: scale,
-      height: scale,
+      maxWidth: scale,
+      height: 'auto',
     }
     if (!this.state.preSignedURL) {
       return null
