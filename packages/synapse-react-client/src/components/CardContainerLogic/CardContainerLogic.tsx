@@ -75,6 +75,8 @@ export interface CardLink {
   tooltipText?: string
   // If set, will specify where to open the link
   target?: TargetEnum
+  // If true, the data is a synID and the entity name should be resolved
+  resolveEntityName?: boolean
 }
 
 export type MarkdownLink = {

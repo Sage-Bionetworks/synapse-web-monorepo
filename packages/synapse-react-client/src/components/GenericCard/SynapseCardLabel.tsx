@@ -21,6 +21,7 @@ import dayjs from 'dayjs'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
 import Linkify from './Linkify'
+import { EntityLink } from '../EntityLink'
 
 type SynapseCardLabelProps = {
   value: string
@@ -97,6 +98,12 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
 
   if (!labelLink) {
     return <Linkify text={str} className={newClassName} />
+  }
+
+  if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
+    const { baseURL, URLColumnName } = labelLink
+    const href = `/${baseURL}?${URLColumnName}=${str}`
+    return <EntityLink entity={str} link={href} showIcon={false} />
   }
 
   let labelContent: JSX.Element

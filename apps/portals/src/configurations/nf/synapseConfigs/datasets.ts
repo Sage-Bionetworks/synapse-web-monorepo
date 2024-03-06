@@ -1,12 +1,17 @@
-import { columnAliases } from './commonProps'
 import { datasetsSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
+import { columnAliases as sharedColumnAliases } from './commonProps'
 import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { DetailsPageProps } from 'types/portal-util-types'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 const rgbIndex = 8
+
+const columnAliases = {
+  ...sharedColumnAliases,
+  studyId: 'Study Name',
+}
 
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -16,6 +21,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     description: 'description',
     secondaryLabels: [
       // 'assay',
+      'studyId',
       'doi',
       'datasetSizeInBytes',
       'diseaseFocus',
@@ -26,6 +32,15 @@ export const datasetCardConfiguration: CardConfiguration = {
       'yearProcessed',
     ],
   },
+  labelLinkConfig: [
+    {
+      isMarkdown: false,
+      matchColumnName: 'studyId',
+      URLColumnName: 'studyId',
+      baseURL: 'Explore/Studies/DetailsPage',
+      resolveEntityName: true,
+    },
+  ],
   titleLinkConfig: {
     isMarkdown: false,
     matchColumnName: 'id',
@@ -102,6 +117,7 @@ export const datasetsDetailsPage: SynapseConfig[] = [
       ...datasetCardConfiguration,
       sql: datasetsSql,
       isHeader: true,
+      columnAliases,
     },
   },
   {
