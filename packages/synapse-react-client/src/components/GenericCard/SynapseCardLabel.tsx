@@ -103,7 +103,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
     const { baseURL, URLColumnName } = labelLink
     const href = `/${baseURL}?${URLColumnName}=${str}`
-    return <EntityLink entity={str} link={href} />
+    return <EntityLink entity={str} link={href} showIcon={false} />
   }
 
   let labelContent: JSX.Element

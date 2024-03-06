@@ -37,7 +37,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       isMarkdown: false,
       matchColumnName: 'studyId',
       URLColumnName: 'studyId',
-      baseURL: 'Explore/Datasets/DetailsPage',
+      baseURL: 'Explore/Studies/DetailsPage',
       resolveEntityName: true,
     },
   ],

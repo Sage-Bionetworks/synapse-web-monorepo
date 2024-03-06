@@ -4,7 +4,10 @@ import {
   convertToEntityType,
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
 import { useGetEntity, useGetEntityHeader } from '../synapse-queries'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
@@ -73,7 +76,9 @@ export const EntityLink = (props: EntityLinkProps) => {
           href={
             typeof link === 'string'
               ? link
-              : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
+              : `${getEndpoint(
+                  BackendDestinationEnum.PORTAL_ENDPOINT,
+                )}#!Synapse:${entity.id!}${
                   versionNumber ? `.${versionNumber}` : ''
                 }`
           }
