@@ -1,4 +1,4 @@
-import { SynapseConstants } from 'synapse-react-client'
+import { SynapseConstants, TargetEnum } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import type { GenericCardSchema } from 'synapse-react-client'
 import type { CardConfiguration } from 'synapse-react-client'
@@ -43,6 +43,7 @@ export const studiesCardConfiguration: CardConfiguration = {
   iconOptions,
   titleLinkConfig: {
     isMarkdown: false,
+    target: TargetEnum.CURRENT_WINDOW,
     baseURL: 'Explore/Collections/DetailsPage',
     URLColumnName: 'study',
     matchColumnName: 'study',
