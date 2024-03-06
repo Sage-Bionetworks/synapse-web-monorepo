@@ -96,10 +96,6 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     return <p>{formatDate(dayjs(Number(str)))}</p>
   }
 
-  if (!labelLink && columnModelType === ColumnTypeEnum.ENTITYID && str) {
-    return <EntityLink entity={str} />
-  }
-
   if (!labelLink) {
     return <Linkify text={str} className={newClassName} />
   }

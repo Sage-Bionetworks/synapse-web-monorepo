@@ -14,7 +14,7 @@ import ErrorChip from './error/ErrorChip'
 type EntityLinkProps = {
   entity: string | EntityHeader | Entity
   versionNumber?: number
-  /** Whether the component should link to the entity page in Synapse. Default true */
+  /** Whether the component should link to the entity page in Synapse. Link can be overriden by passing a string. Default true */
   link?: boolean | string
   className?: string
   /** Whether to display an icon identifying the entity type. Default true */
@@ -64,30 +64,19 @@ export const EntityLink = (props: EntityLinkProps) => {
     } else {
       type = getEntityTypeFromHeader(entity)
     }
-    if (typeof link === 'string' && link) {
-      return (
-        <Link
-          className={className}
-          target="_blank"
-          rel="noopener noreferrer"
-          href={link}
-        >
-          {showIcon && (
-            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
-          )}
-          {entity[displayTextField as keyof typeof entity]}
-        </Link>
-      )
-    }
     if (link) {
       return (
         <Link
           className={className}
           target="_blank"
           rel="noopener noreferrer"
-          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
-            versionNumber ? `.${versionNumber}` : ''
-          }`}
+          href={
+            typeof link === 'string'
+              ? link
+              : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
+                  versionNumber ? `.${versionNumber}` : ''
+                }`
+          }
         >
           {showIcon && (
             <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
