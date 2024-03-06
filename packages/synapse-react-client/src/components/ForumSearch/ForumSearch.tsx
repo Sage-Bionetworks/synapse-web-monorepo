@@ -12,6 +12,23 @@ import NoSearchResults from '../../assets/icons/NoSearchResults'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
+const NoSearchResultComponent = () => {
+  return (
+    <div className="text-center">
+      <NoSearchResults
+        className="no-search-results"
+        display="block"
+        height="181px"
+        sx={{ pt: '40px', pb: '10px' }}
+      />
+      <Typography variant="body1">No results with this query</Typography>
+      <Typography variant="body1Italic">
+        Search the full text of posts, replies, and titles
+      </Typography>
+    </div>
+  )
+}
+
 export type ForumSearchProps = {
   forumId: string
   projectId?: string
@@ -71,18 +88,6 @@ export const ForumSearch = (props: ForumSearchProps) => {
     }
     fetchEntity()
   }, [accessToken, props.projectId])
-
-  const NoSearchResultComponent = () => {
-    return (
-      <div className="text-center">
-        {NoSearchResults}
-        <Typography variant="body1">No results with this query</Typography>
-        <Typography variant="body1Italic">
-          Search the full text of posts, replies, and titles
-        </Typography>
-      </div>
-    )
-  }
 
   const onLoadMore = async () => {
     const searchResponse = await forumSearch(

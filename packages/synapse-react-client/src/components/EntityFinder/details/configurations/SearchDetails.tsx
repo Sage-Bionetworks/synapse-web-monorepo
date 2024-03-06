@@ -5,6 +5,7 @@ import { Hit, SearchQuery } from '@sage-bionetworks/synapse-types'
 import { EntityHeaderFromHit } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
+import NoSearchResults from '../../../../assets/icons/NoSearchResults'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
@@ -44,11 +45,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         isFetchingNextPage={isFetchingNextPage}
         noResultsPlaceholder={
           <>
-            <img
-              className="SearchPlaceholderImage"
-              alt="No results found"
-              src="https://s3.amazonaws.com/static.synapse.org/images/search-sad.svg"
-            />
+            <NoSearchResults className="SearchPlaceholderImage" />
             <p>
               No results for &ldquo;{searchQuery.queryTerm.join(' ')}&rdquo;
             </p>
