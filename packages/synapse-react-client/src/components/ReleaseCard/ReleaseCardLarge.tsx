@@ -16,9 +16,9 @@ const StatFlex: React.FunctionComponent<ReleaseCardStat> = ({
     <Stack
       direction="column"
       alignItems="center"
-      padding="20px 40px 20px 40px"
+      padding={{ xs: '20px 10px', md: '20px 40px' }}
       gap="10px"
-      width="200px" // ensure that stats are aligned when multiple cards are stacked vertically
+      width={{ xs: 'unset', lg: '200px' }} // ensure that stats are aligned when multiple cards are stacked vertically
     >
       <Typography variant="headline1">{value}</Typography>
       <Typography variant="body1" lineHeight="20px" color="grey.700">
@@ -60,6 +60,7 @@ export const ReleaseCardLarge: React.FunctionComponent<
       className={`ReleaseCard ${
         includePortalCardClass ? 'SRC-portalCard' : ''
       }`}
+      minWidth="200px"
     >
       <Stack
         direction={{ xs: 'column', lg: 'row' }}
@@ -95,8 +96,9 @@ export const ReleaseCardLarge: React.FunctionComponent<
         <Divider /> {/* divides stacks when page is narrow */}
         <Stack
           direction="row"
-          gap="10px"
+          gap={{ xs: 0, lg: '10px' }}
           alignItems="center"
+          justifyContent={{ xs: 'space-evenly', lg: 'unset' }}
           flexWrap={{ xs: 'wrap', lg: 'nowrap' }}
         >
           <StatFlex {...releaseDate} />
