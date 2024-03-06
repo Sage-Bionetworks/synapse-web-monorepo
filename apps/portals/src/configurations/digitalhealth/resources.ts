@@ -1,4 +1,4 @@
-export const dataSql = `SELECT id, study, numberParticipants,reportedOutcome,dataCollectionMethod,deviceType,devicePlatform,deviceLocation,sensorType,diagnosis,digitalAssessmentCategory,digitalAssessmentDetails,dataType,dataSubtype,dataDescriptionLocation, dataAccessInstructions FROM syn21994970.7 where dhPortalIndex = 'TRUE'`
+export const dataSql = `SELECT id, study, numberParticipants,reportedOutcome,dataCollectionMethod,deviceType,devicePlatform,deviceLocation,sensorType,diagnosis,digitalAssessmentCategory,digitalAssessmentDetails,dataType,dataSubtype,dataDescriptionLocation, dataAccessInstructions FROM syn21994970.8 where dhPortalIndex = 'TRUE'`
 export const publicationSql =
   'SELECT * FROM syn22017695.1 ORDER BY "Year" DESC, "Title" ASC'
 export const studySql =
