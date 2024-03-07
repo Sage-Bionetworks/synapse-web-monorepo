@@ -246,7 +246,7 @@ export function removeEmptyQueryParams(q: Query) {
   if (query.limit == null) {
     delete query.limit
   }
-  if (query.offset == null) {
+  if (query.offset == null || query.offset == 0) {
     delete query.offset
   }
 
