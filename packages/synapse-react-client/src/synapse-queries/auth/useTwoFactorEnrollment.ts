@@ -13,6 +13,7 @@ import {
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
 
 export function useStartTwoFactorEnrollment(
   options?: Partial<UseMutationOptions<TotpSecret, SynapseClientError>>,
@@ -52,13 +53,9 @@ export function useFinishTwoFactorEnrollment(
           queryKey: keyFactory.getAllAccessRequirementStatusesQueryKey(),
         }),
         // ...and any change to access requirement eligibility will impact actions required
-        // including for entities and the download list
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getAllEntityActionsRequiredQueryKey(),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDownloadListBaseQueryKey(),
-        }),
+        ...getAllActionsRequiredQueryFilters(keyFactory).map(filter =>
+          queryClient.invalidateQueries(filter),
+        ),
       ])
     },
     mutationFn: request =>
@@ -86,13 +83,9 @@ export function useDisableTwoFactorAuth(
           queryKey: keyFactory.getAllAccessRequirementStatusesQueryKey(),
         }),
         // ...and any change to access requirement eligibility will impact actions required
-        // including for entities and the download list
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getAllEntityActionsRequiredQueryKey(),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDownloadListBaseQueryKey(),
-        }),
+        ...getAllActionsRequiredQueryFilters(keyFactory).map(filter =>
+          queryClient.invalidateQueries(filter),
+        ),
       ])
     },
     mutationFn: () =>

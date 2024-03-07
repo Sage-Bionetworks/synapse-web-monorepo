@@ -31,6 +31,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
 import { KeyFactory } from '../KeyFactory'
+import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
@@ -185,10 +186,9 @@ export function useCreateLockAccessRequirement(
         queryClient.invalidateQueries({
           queryKey: keyFactory.getAllEntityDataQueryKey(),
         }),
-        // as well as the download list, if affected entities are on it
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDownloadListBaseQueryKey(),
-        }),
+        ...getAllActionsRequiredQueryFilters(keyFactory).map(filter =>
+          queryClient.invalidateQueries(filter),
+        ),
       ])
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
@@ -392,13 +392,9 @@ export function useCreateAccessApproval(
           ),
         }),
         // changes to access requirement eligibility may impact entity actions required
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getAllEntityActionsRequiredQueryKey(),
-        }),
-        // as well as actions required and stats for the download list
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDownloadListBaseQueryKey(),
-        }),
+        ...getAllActionsRequiredQueryFilters(keyFactory).map(filter =>
+          queryClient.invalidateQueries(filter),
+        ),
       ])
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
