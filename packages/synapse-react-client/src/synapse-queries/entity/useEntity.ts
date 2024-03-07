@@ -18,8 +18,11 @@ import {
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import {
+  createTableUpdateTransactionRequest,
+  SynapseClientError,
+  useSynapseContext,
+} from '../../utils'
 import {
   AccessControlList,
   ColumnModel,
@@ -34,8 +37,7 @@ import {
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
-import { createTableUpdateTransactionRequest } from '../../utils'
+import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
 import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 

@@ -56,13 +56,13 @@ const entityQueryKeyObjects = {
   },
   // List of Entity Versions
   versions: (id: string) => [entityQueryKeyObjects.entity(id), 'versions'],
-  versionsQuery: (id: string, limit: number, offset: number) => ({
+  versionsQuery: (id: string, limit: number, offset: number) => [
     ...entityQueryKeyObjects.versions(id),
-    versionQuery: {
+    {
       limit: limit,
       offset: offset,
     },
-  }),
+  ],
   // JSON Representation of an entity
   json: (id: string, versionNumber?: number) => [
     entityQueryKeyObjects.entity(id, versionNumber),
@@ -110,7 +110,7 @@ const entityQueryKeyObjects = {
     infinite: boolean,
   ) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
-    'tableQueryResult',
+    { type: 'tableQueryResult' },
     {
       isInfinite: infinite,
       tableQueryBundleRequest: queryBundleRequest,
@@ -122,7 +122,7 @@ const entityQueryKeyObjects = {
     infinite: boolean,
   ) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
-    'tableQueryResultWithAsyncStatus',
+    { type: 'tableQueryResult', withAsyncStatus: true },
     {
       isInfinite: infinite,
       tableQueryBundleRequest: queryBundleRequest,
@@ -134,7 +134,7 @@ const entityQueryKeyObjects = {
     forceAnonymous: boolean,
   ) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
-    'fullTableQueryResult',
+    { type: 'tableQueryResult', allResults: true },
     { tableQueryBundleRequest: queryBundleRequest, forceAnonymous },
   ],
 
@@ -223,7 +223,7 @@ export class KeyFactory {
   }
 
   public getEntityActivityQueryKey(id: string, versionNumber?: number) {
-    return this.getKey(entityQueryKeyObjects.activity(id, versionNumber))
+    return this.getKey(...entityQueryKeyObjects.activity(id, versionNumber))
   }
 
   public getAllEntityActionsRequiredQueryKey() {
@@ -251,17 +251,19 @@ export class KeyFactory {
     limit: number,
     offset: number,
   ) {
-    return this.getKey(entityQueryKeyObjects.versionsQuery(id, limit, offset))
+    return this.getKey(
+      ...entityQueryKeyObjects.versionsQuery(id, limit, offset),
+    )
   }
   public getEntityVersionsQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.versions(id))
+    return this.getKey(...entityQueryKeyObjects.versions(id))
   }
 
   public getEntityChildrenQueryKey(
     request: EntityChildrenRequest,
     infinite: boolean,
   ) {
-    return this.getKey(entityQueryKeyObjects.children(request, infinite))
+    return this.getKey(...entityQueryKeyObjects.children(request, infinite))
   }
 
   public getEntityJsonQueryKey(
@@ -269,7 +271,7 @@ export class KeyFactory {
     versionNumber: number | undefined,
     includeDerivedAnnotations: boolean,
   ) {
-    return this.getKey(entityQueryKeyObjects.json(id, versionNumber), {
+    return this.getKey(...entityQueryKeyObjects.json(id, versionNumber), {
       includeDerivedAnnotations,
     })
   }
@@ -279,47 +281,56 @@ export class KeyFactory {
     version: number | undefined,
     bundleRequest: EntityBundleRequest,
   ) {
-    return this.getKey(entityQueryKeyObjects.bundle(id, version, bundleRequest))
+    return this.getKey(
+      ...entityQueryKeyObjects.bundle(id, version, bundleRequest),
+    )
   }
 
   public getEntityPathQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.path(id))
+    return this.getKey(...entityQueryKeyObjects.path(id))
   }
 
-  public getEntityACLQueryKey(entityId: string) {
-    return this.getKey('entityACL', entityId)
+  public getEntityACLQueryKey(id: string) {
+    return this.getKey(entityQueryKeyObjects.entity(id), 'acl')
   }
 
   public getEntityAliasQueryKey(alias: string) {
-    return this.getKey('entityAlias', alias)
+    return this.getKey(entityQueryKeyObjects.all, 'alias', alias)
   }
 
-  public getEntityEvaluationsQueryKey(entityId: string) {
-    return this.getKey('entityEvaluations', entityId)
+  public getEntityEvaluationsQueryKey(id: string) {
+    return this.getKey(entityQueryKeyObjects.entity(id), 'evaluations')
   }
 
-  public getEntityPermissionsQueryKey(entityId: string) {
-    return this.getKey('entityPermissions', entityId)
+  public getEntityPermissionsQueryKey(id: string) {
+    return this.getKey(entityQueryKeyObjects.entity(id), 'permissions')
   }
 
   public getEntityBoundJsonSchemaQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.boundJSONSchema(id))
+    return this.getKey(...entityQueryKeyObjects.boundJSONSchema(id))
   }
 
   public getEntitySchemaValidationResultsQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.schemaValidationResults(id))
+    return this.getKey(...entityQueryKeyObjects.schemaValidationResults(id))
   }
 
   public getEntityHeaderQueryKey(id: string, versionNumber?: number) {
-    return this.getKey(entityQueryKeyObjects.header(id, versionNumber))
+    return this.getKey(...entityQueryKeyObjects.header(id, versionNumber))
   }
 
   public getEntityAccessRequirementsQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.accessRequirements(id))
+    return this.getKey(...entityQueryKeyObjects.accessRequirements(id))
   }
 
   public getEntityHeadersQueryKey(references: ReferenceList) {
-    return this.getKey(entityQueryKeyObjects.headers(references))
+    // TODO: invalidations should check all references
+    return this.getKey(...entityQueryKeyObjects.headers(references))
+  }
+
+  public getAllTableQueryResultsKey() {
+    return this.getKey(entityQueryKeyObjects.all, {
+      type: 'tableQueryResult',
+    })
   }
 
   public getEntityTableQueryResultQueryKey(
@@ -327,7 +338,7 @@ export class KeyFactory {
     infinite: boolean,
   ) {
     return this.getKey(
-      entityQueryKeyObjects.tableQueryResult(queryBundleRequest, infinite),
+      ...entityQueryKeyObjects.tableQueryResult(queryBundleRequest, infinite),
     )
   }
 
@@ -336,7 +347,7 @@ export class KeyFactory {
     infinite: boolean,
   ) {
     return this.getKey(
-      entityQueryKeyObjects.tableQueryResultWithAsyncStatus(
+      ...entityQueryKeyObjects.tableQueryResultWithAsyncStatus(
         queryBundleRequest,
         infinite,
       ),
@@ -348,7 +359,7 @@ export class KeyFactory {
     forceAnonymous: boolean,
   ) {
     return this.getKey(
-      entityQueryKeyObjects.fullTableQueryResult(
+      ...entityQueryKeyObjects.fullTableQueryResult(
         queryBundleRequest,
         forceAnonymous,
       ),
