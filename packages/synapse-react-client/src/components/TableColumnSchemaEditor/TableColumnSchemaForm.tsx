@@ -331,6 +331,7 @@ function TableColumnSchemaFormInternal(
               disabled={isSubmitting}
               key={index}
               columnModelValidationErrors={errorsByColumnModel[index]}
+              annotationColumnModels={annotationColumnModels}
             />
           )
         })}
@@ -479,6 +480,7 @@ type TableColumnSchemaFormRowProps = {
   columnModelIndex: number
   disabled: boolean
   columnModelValidationErrors: ZodIssue[] | null
+  annotationColumnModels?: ColumnModel[]
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
@@ -487,6 +489,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     entityType,
     disabled,
     columnModelValidationErrors = null,
+    annotationColumnModels,
   } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
@@ -500,6 +503,33 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
       [columnModelIndex],
     ),
   )
+
+  // Find the closest match between passed column model and current column model with name and type
+  const findClosestMatch = (
+    columnModels: ColumnModel[],
+  ): ColumnModel | undefined => {
+    let closestMatch: ColumnModel | undefined
+
+    for (const model of columnModels) {
+      if (isCloseMatch(model)) {
+        closestMatch = model
+        break
+      }
+    }
+
+    return closestMatch
+  }
+
+  const isCloseMatch = (model: ColumnModel): boolean => {
+    return (
+      model.name === columnModel.name &&
+      model.columnType === columnModel.columnType
+    )
+  }
+
+  const defaultAnnotationModel = annotationColumnModels
+    ? findClosestMatch(annotationColumnModels)
+    : undefined
 
   // Organize the JSON Subcolumn errors into a map of subcolumn index to errors
   const errorsForSubcolumns = useMemo(() => {
@@ -525,6 +555,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
         isDefaultColumn={isDefaultColumn}
         disabled={disabled}
         validationErrors={columnModelValidationErrors}
+        defaultAnnotationModel={defaultAnnotationModel}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&

@@ -12,13 +12,14 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { selectAtom } from 'jotai/utils'
 import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
 import {
+  ColumnModel,
   ColumnTypeEnum,
   EntityType,
   FacetType,
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
 import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
 import {
   canHaveDefault,
@@ -52,6 +53,7 @@ type ColumnModelFormProps = {
   disabled?: boolean
   /* Can be used to override the schema used for validating ColumnModels */
   validationErrors?: ZodIssue[] | null
+  defaultAnnotationModel?: ColumnModel | null
 }
 const jsonSubColumnFieldSx: SxProps = {
   height: '28px',
@@ -90,6 +92,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     isDefaultColumn,
     disabled = false,
     validationErrors = null,
+    defaultAnnotationModel,
   } = props
   const isJsonSubColumn = jsonSubColumnIndex != undefined
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
@@ -125,6 +128,14 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     () => (isJsonSubColumn ? jsonSubColumnFieldSx : topLevelColumnModelFieldSx),
     [isJsonSubColumn],
   )
+
+  const [currentMaxSize, setCurrentMaxSize] = useState(
+    (columnModel as ColumnModelFormData).maximumSize ?? '',
+  )
+
+  const recommendedSize = defaultAnnotationModel
+    ? defaultAnnotationModel.maximumSize
+    : ''
 
   const errorsByField = useMemo(() => {
     if (validationErrors && isArray(validationErrors)) {
@@ -278,6 +289,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               sx: fieldSx,
             }}
             onChange={e => {
+              const input = e.target.value
+              const numInput = parseInt(input, 10)
+              if (!isNaN(numInput)) {
+                setCurrentMaxSize(numInput)
+              }
               dispatch({
                 type: 'setColumnModelValue',
                 columnModelIndex,
@@ -289,8 +305,19 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               })
             }}
             fullWidth
-            error={!!errorsByField['maximumSize']}
-            helperText={errorsByField['maximumSize']}
+            error={
+              recommendedSize && typeof currentMaxSize === 'number'
+                ? currentMaxSize < recommendedSize ||
+                  !!errorsByField['maximumSize']
+                : !!errorsByField['maximumSize']
+            }
+            helperText={
+              recommendedSize &&
+              typeof currentMaxSize === 'number' &&
+              currentMaxSize < recommendedSize
+                ? `Recommended size is at least ${recommendedSize}`
+                : errorsByField['maximumSize']
+            }
           />
         )}
       </Box>
