@@ -1,10 +1,16 @@
+import * as PermissionLevelToAccessType from './PermissionLevelToAccessType'
 import * as SynapseConstants from './SynapseConstants'
 import * as SynapseHookUtils from './hooks'
 import * as SynapseUtilityFunctions from './functions'
 export * from './AppUtils'
 import { RequiredProperties } from './types/RequiredProperties'
 export { hex2ascii } from './functions'
-export { SynapseConstants, SynapseHookUtils, SynapseUtilityFunctions }
+export {
+  PermissionLevelToAccessType,
+  SynapseConstants,
+  SynapseHookUtils,
+  SynapseUtilityFunctions,
+}
 export type { RequiredProperties }
 export * from './context'
 export { ACCESS_TOKEN_COOKIE_KEY } from './SynapseConstants'
