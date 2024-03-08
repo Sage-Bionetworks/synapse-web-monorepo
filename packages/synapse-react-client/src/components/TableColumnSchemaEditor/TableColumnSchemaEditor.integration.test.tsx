@@ -314,6 +314,68 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
+  it('Show warning when form data size of annotation column is less than recommended size', async () => {
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockFileViewEntity,
+          tableBundle: {
+            // The view initially has no columns.
+            columnModels: [],
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+    const { user } = await setUp({
+      entityId: mockFileViewEntity.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    const addAnnotationColumnsButton = await screen.findByRole('button', {
+      name: 'Add All Annotations',
+    })
+    // The button will be disabled until the annotation columns have been fetched.
+    await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
+
+    // Verify we have no columns -- there will only be one checkbox on the screen for select all/none
+    expect(screen.getAllByRole('checkbox')).toHaveLength(1)
+
+    await user.click(addAnnotationColumnsButton)
+
+    await waitFor(() => {
+      // The column(s) should have been added.
+      expect(screen.getAllByRole('checkbox').length).toBeGreaterThan(1)
+    })
+
+    // The annotation column(s) are editable, so we can find a name text field.
+    await screen.findAllByLabelText('Name')
+
+    const textarea = screen.getByRole('textbox', { name: 'Maximum Size' })
+    await waitFor(() => expect(textarea).not.toBeDisabled())
+
+    // Write a maxSize smaller than the recommended size
+    await userEvent.clear(textarea)
+    await userEvent.type(textarea, '1')
+
+    // Verify we have a warning in display
+    expect(
+      screen.queryByText('Recommended size is at least 10'),
+    ).toBeInTheDocument()
+
+    // Write a maxSize equal to the recommended size
+    await userEvent.clear(textarea)
+    await userEvent.type(textarea, '10')
+
+    // Verify that warning disappears in display
+    expect(
+      screen.queryByText('Recommended size is at least 10'),
+    ).not.toBeInTheDocument()
+  })
+
   it('Existing default columns are not editable, except facetType', async () => {
     // Must use a file view to have default columns
     server.use(

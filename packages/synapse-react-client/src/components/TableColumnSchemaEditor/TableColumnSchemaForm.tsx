@@ -50,7 +50,10 @@ import { displayToast } from '../ToastMessage'
 import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
-import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
+import {
+  ColumnModelFormData,
+  validateColumnModelFormData,
+} from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
 import pluralize from 'pluralize'
 
@@ -475,6 +478,29 @@ function TableColumnSchemaFormActions(
   )
 }
 
+const findMatchingColumnModel = (
+  columnModels: ColumnModel[],
+  target: ColumnModelFormData,
+): ColumnModel | undefined => {
+  let closestMatch: ColumnModel | undefined
+
+  for (const model of columnModels) {
+    if (isCloseMatch(model, target)) {
+      closestMatch = model
+      break
+    }
+  }
+
+  return closestMatch
+}
+
+const isCloseMatch = (
+  model: ColumnModel,
+  target: ColumnModelFormData,
+): boolean => {
+  return model.name === target.name && model.columnType === target.columnType
+}
+
 type TableColumnSchemaFormRowProps = {
   entityType: EntityType
   columnModelIndex: number
@@ -505,30 +531,8 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
   )
 
   // Find the closest match between passed column model and current column model with name and type
-  const findClosestMatch = (
-    columnModels: ColumnModel[],
-  ): ColumnModel | undefined => {
-    let closestMatch: ColumnModel | undefined
-
-    for (const model of columnModels) {
-      if (isCloseMatch(model)) {
-        closestMatch = model
-        break
-      }
-    }
-
-    return closestMatch
-  }
-
-  const isCloseMatch = (model: ColumnModel): boolean => {
-    return (
-      model.name === columnModel.name &&
-      model.columnType === columnModel.columnType
-    )
-  }
-
   const defaultAnnotationModel = annotationColumnModels
-    ? findClosestMatch(annotationColumnModels)
+    ? findMatchingColumnModel(annotationColumnModels, columnModel)
     : undefined
 
   // Organize the JSON Subcolumn errors into a map of subcolumn index to errors

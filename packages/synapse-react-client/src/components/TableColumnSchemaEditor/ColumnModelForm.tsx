@@ -19,7 +19,7 @@ import {
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
 import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
 import {
   canHaveDefault,
@@ -129,13 +129,19 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     [isJsonSubColumn],
   )
 
-  const [currentMaxSize, setCurrentMaxSize] = useState(
-    (columnModel as ColumnModelFormData).maximumSize ?? '',
-  )
+  const currentRawMaxSize = (columnModel as ColumnModelFormData).maximumSize
+
+  const currentMaxSize =
+    currentRawMaxSize !== undefined
+      ? parseInt(currentRawMaxSize.toString(), 10)
+      : null
 
   const recommendedSize = defaultAnnotationModel
     ? defaultAnnotationModel.maximumSize
-    : ''
+    : null
+
+  const isSmallerThanRecommendedSize =
+    recommendedSize && currentMaxSize ? currentMaxSize < recommendedSize : false
 
   const errorsByField = useMemo(() => {
     if (validationErrors && isArray(validationErrors)) {
@@ -149,6 +155,14 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     }
     return {}
   }, [validationErrors])
+
+  const showError = !!errorsByField['maximumSize']
+
+  const helperText = errorsByField['maximumSize']
+    ? errorsByField['maximumSize']
+    : isSmallerThanRecommendedSize && recommendedSize
+    ? `Recommended size is at least ${recommendedSize}`
+    : ''
 
   return (
     <>
@@ -289,11 +303,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               sx: fieldSx,
             }}
             onChange={e => {
-              const input = e.target.value
-              const numInput = parseInt(input, 10)
-              if (!isNaN(numInput)) {
-                setCurrentMaxSize(numInput)
-              }
               dispatch({
                 type: 'setColumnModelValue',
                 columnModelIndex,
@@ -304,20 +313,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 },
               })
             }}
+            color={isSmallerThanRecommendedSize ? 'warning' : undefined}
+            focused={isSmallerThanRecommendedSize ? true : undefined}
             fullWidth
-            error={
-              recommendedSize && typeof currentMaxSize === 'number'
-                ? currentMaxSize < recommendedSize ||
-                  !!errorsByField['maximumSize']
-                : !!errorsByField['maximumSize']
-            }
-            helperText={
-              recommendedSize &&
-              typeof currentMaxSize === 'number' &&
-              currentMaxSize < recommendedSize
-                ? `Recommended size is at least ${recommendedSize}`
-                : errorsByField['maximumSize']
-            }
+            error={showError}
+            helperText={helperText}
           />
         )}
       </Box>
