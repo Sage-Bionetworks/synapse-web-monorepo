@@ -455,6 +455,20 @@ describe('removeEmptyQueryParams', () => {
     const actual = removeEmptyQueryParams(query)
     expect(actual).toEqual(expected)
   })
+
+  it('removes 0 offset', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      offset: 0,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
+  })
 })
 
 describe('getCorrespondingColumnForFacet', () => {

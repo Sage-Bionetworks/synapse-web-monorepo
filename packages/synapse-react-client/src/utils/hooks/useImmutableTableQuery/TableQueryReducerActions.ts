@@ -68,6 +68,9 @@ export function addValueToSelectedFacet(
     })
   }
   queryRequestClone.query.selectedFacets = newFacets
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
@@ -93,6 +96,9 @@ export function removeSelectedFacet(
       return !facetObjectMatchesDefinition(facetsToRemove, facet)
     }
   })
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
@@ -135,6 +141,9 @@ export function setRangeFacetValue(
     })
   }
   queryRequestClone.query.selectedFacets = newFacets
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
@@ -175,6 +184,9 @@ export function removeValueFromSelectedFacet(
       }
       return true
     })
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
@@ -193,6 +205,9 @@ export function removeQueryFilter(
     // Use lodash for deep comparison
     return !isEqual(qf, queryFilter)
   })
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
@@ -232,6 +247,9 @@ export function removeValueFromQueryFilter(
       }
       return true
     })
+  if (!isEqual(queryRequestClone, queryRequest)) {
+    queryRequestClone.query.offset = 0
+  }
   return queryRequestClone
 }
 
