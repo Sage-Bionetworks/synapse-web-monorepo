@@ -14,7 +14,7 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   maxAge?: number
   /* Called when the session is reset, i.e. the user has signed out.*/
   onResetSessionComplete?: () => void
-  onError?: (e: unknown) => void
+  onNoAccessTokenFound?: () => void
   /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
   forceRelogin?: boolean
 }>
@@ -41,7 +41,7 @@ export function ApplicationSessionManager(
     downloadCartPageUrl,
     onResetSessionComplete,
     maxAge,
-    onError,
+    onNoAccessTokenFound,
     forceRelogin,
   } = props
   const history = useHistory()
@@ -55,13 +55,16 @@ export function ApplicationSessionManager(
     TwoFactorAuthErrorResponse | undefined
   >(undefined)
   const initAnonymousUserState = useCallback(() => {
+    if (onNoAccessTokenFound) {
+      onNoAccessTokenFound()
+    }
     SynapseClient.signOut().then(() => {
       // reset token
       setToken(undefined)
       setAcceptsTermsOfUse(undefined)
       setHasInitializedSession(true)
     })
-  }, [])
+  }, [onNoAccessTokenFound])
 
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
@@ -74,9 +77,6 @@ export function ApplicationSessionManager(
       }
     } catch (e) {
       console.error('Unable to get the access token: ', e)
-      if (onError) {
-        onError(e)
-      }
       initAnonymousUserState()
       return
     }
@@ -117,7 +117,7 @@ export function ApplicationSessionManager(
         })
       }
     }
-  }, [initAnonymousUserState, maxAge, onError])
+  }, [initAnonymousUserState, maxAge])
 
   const clearSession = useCallback(async () => {
     await SynapseClient.signOut()

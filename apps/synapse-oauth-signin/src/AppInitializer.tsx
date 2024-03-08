@@ -1,10 +1,6 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect } from 'react'
-import {
-  ApplicationSessionManager,
-  SynapseClient,
-  useFramebuster,
-} from 'synapse-react-client'
+import { ApplicationSessionManager, useFramebuster } from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
 
 function AppInitializer(
@@ -48,7 +44,7 @@ function AppInitializer(
     }
   }, [])
 
-  const onSignInError = useCallback(() => {
+  const onNoAccessTokenFound = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
       handleErrorRedirect(
@@ -65,7 +61,7 @@ function AppInitializer(
   return (
     <ApplicationSessionManager
       maxAge={maxAge}
-      onError={onSignInError}
+      onNoAccessTokenFound={onNoAccessTokenFound}
       forceRelogin={forceRelogin}
     >
       {!isFramed && props.children}
