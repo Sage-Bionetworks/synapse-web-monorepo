@@ -16,6 +16,19 @@ import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import { useGetCurrentUserBundle } from '../../synapse-queries'
+import SearchState from '../../assets/icons/SearchState'
+
+const SearchStartComponent = () => {
+  return (
+    <div className="text-center">
+      <SearchState className="SearchPlaceholderImage" height="167px" />
+      <Typography variant="body1Italic">
+        Select a user using the search field above to view their data access
+        history
+      </Typography>
+    </div>
+  )
+}
 
 export const UserHistoryDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
@@ -98,22 +111,6 @@ export const UserHistoryDashboard = () => {
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
-  const NoSearchResultComponent = () => {
-    return (
-      <div className="text-center">
-        <img
-          className="SearchPlaceholderImage"
-          alt="Begin searching"
-          src="https://s3.amazonaws.com/static.synapse.org/images/search-happy.svg"
-        />
-        <Typography variant="body1Italic">
-          Select a user using the search field above to view their data access
-          history
-        </Typography>
-      </div>
-    )
-  }
-
   return (
     <div className="UserHistoryDashboard bootstrap-4-backport">
       <div className="InputPanel">
@@ -168,7 +165,7 @@ export const UserHistoryDashboard = () => {
           )}
         </>
       ) : (
-        <NoSearchResultComponent />
+        <SearchStartComponent />
       )}
     </div>
   )
