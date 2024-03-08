@@ -80,7 +80,6 @@ const initialQueryRequest: QueryBundleRequest = {
   query: {
     sql: 'SELECT * FROM syn16787123',
     limit: DEFAULT_PAGE_SIZE,
-    offset: 0,
   },
 }
 
