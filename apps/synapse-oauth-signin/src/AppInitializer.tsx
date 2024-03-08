@@ -1,10 +1,6 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect } from 'react'
-import {
-  ApplicationSessionManager,
-  SynapseClient,
-  useFramebuster,
-} from 'synapse-react-client'
+import { ApplicationSessionManager, useFramebuster } from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
 
 function AppInitializer(
@@ -48,23 +44,7 @@ function AppInitializer(
     }
   }, [])
 
-  useEffect(() => {
-    // is prompt=login?  if so, then clear the cookie
-    if (prompt === 'login') {
-      SynapseClient.setAccessTokenCookie(undefined).then(() => {
-        urlSearchParams.set('prompt', '')
-        // replace query params and refresh
-        window.location.replace(
-          `${window.location.href.slice(
-            0,
-            window.location.href.indexOf('?'),
-          )}?${urlSearchParams.toString()}`,
-        )
-      })
-    }
-  }, [])
-
-  const onSignInError = useCallback(() => {
+  const onNoAccessTokenFound = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
       handleErrorRedirect(
@@ -77,9 +57,13 @@ function AppInitializer(
   }, [prompt])
 
   const isFramed = useFramebuster()
-
+  const forceRelogin = prompt === 'login'
   return (
-    <ApplicationSessionManager maxAge={maxAge} onError={onSignInError}>
+    <ApplicationSessionManager
+      maxAge={maxAge}
+      onNoAccessTokenFound={onNoAccessTokenFound}
+      forceRelogin={forceRelogin}
+    >
       {!isFramed && props.children}
     </ApplicationSessionManager>
   )
