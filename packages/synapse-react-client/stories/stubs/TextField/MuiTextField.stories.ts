@@ -21,5 +21,7 @@ export const Demo: Story = {
     label: 'My Label Text Here',
     placeholder: 'Placeholder text',
     error: true,
+    color: 'warning',
+    helperText: 'foo',
   },
 }
