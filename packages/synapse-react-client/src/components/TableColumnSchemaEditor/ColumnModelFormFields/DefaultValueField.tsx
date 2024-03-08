@@ -14,10 +14,10 @@ import FormHelperText from '@mui/material/FormHelperText'
 import MultiValueField from './MultiValueField'
 import { ColumnModelFormData } from '../Validators/ColumnModelValidator'
 
-export type DefaultValueFieldProps<T> = {
+export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   columnModel: ColumnModelFormData
-  value: T | undefined
-  onChange: (newValue: T | undefined) => void
+  value: TValue | undefined
+  onChange: (newValue: TReturn | undefined) => void
   disabled?: boolean
   TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
   SelectProps?: Omit<SelectProps, 'value' | 'onChange' | 'disabled'>
@@ -83,7 +83,9 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
   )
 }
 
-function DefaultValueListField(props: DefaultValueFieldProps<string>) {
+function DefaultValueListField(
+  props: DefaultValueFieldProps<(string | number)[], (string | number)[]>,
+) {
   const {
     onChange,
     value: _value = null,
@@ -91,25 +93,19 @@ function DefaultValueListField(props: DefaultValueFieldProps<string>) {
     TextFieldProps,
     disabled,
   } = props
-  // The backend returns the default value as a serialized JSON string
-  // Try to deserialize it
   const value = useMemo(() => {
-    if (_value == null || _value == '') {
-      return null
-    }
     try {
-      const parsedValue = JSON.parse(_value) as unknown[]
-      if (columnModel.columnType === ColumnTypeEnum.DATE_LIST) {
+      if (
+        columnModel.columnType === ColumnTypeEnum.DATE_LIST &&
+        Array.isArray(_value)
+      ) {
         // if it's a DATE_LIST, then the values are Unix timestamps in milliseconds
-        // divide by 1000 then parse with dayjs
-        return parsedValue.map(v => {
-          if (typeof v === 'number') {
-            return dayjs(v / 1000)
-          }
-          return dayjs(v as string)
+        // The `MultiValueField` component expects ISO strings to match the JSON Schema 'date-time' format
+        return _value.map(v => {
+          return dayjs(v).toISOString()
         })
       }
-      return parsedValue
+      return _value
     } catch (e) {
       return null
     }
@@ -119,10 +115,8 @@ function DefaultValueListField(props: DefaultValueFieldProps<string>) {
     <MultiValueField
       value={value}
       onChange={arr => {
-        if (arr == null) {
-          onChange(undefined)
-        }
-        onChange(JSON.stringify(arr))
+        // Convert null to undefined
+        onChange(arr || undefined)
       }}
       columnType={columnModel.columnType as ColumnTypeEnum}
       TextFieldProps={{ ...TextFieldProps, disabled }}
@@ -154,7 +148,7 @@ export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
   if (columnType.endsWith('_LIST')) {
     return (
       <DefaultValueListField
-        {...(props as unknown as DefaultValueFieldProps<string>)}
+        {...(props as unknown as DefaultValueFieldProps<(string | number)[]>)}
       />
     )
   }
