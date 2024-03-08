@@ -78,8 +78,8 @@ $svg-icon-height: 30px;
 
   .component-container {
     flex: 4;
-    // TODO: PORTALS-2982: Find alternative to overflow: hidden ?
-    overflow: hidden;
+    // PORTALS-2982: make TOC "sticky", but prevent overflow in digitalhealth detail pages
+    min-width: 0;
     [role='heading'] {
       padding-top: 30px;
     }
