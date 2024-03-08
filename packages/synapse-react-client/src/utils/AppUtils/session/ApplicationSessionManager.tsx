@@ -15,6 +15,8 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   /* Called when the session is reset, i.e. the user has signed out.*/
   onResetSessionComplete?: () => void
   onError?: (e: unknown) => void
+  /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
+  forceRelogin?: boolean
 }>
 
 /**
@@ -40,6 +42,7 @@ export function ApplicationSessionManager(
     onResetSessionComplete,
     maxAge,
     onError,
+    forceRelogin,
   } = props
   const history = useHistory()
 
@@ -126,7 +129,11 @@ export function ApplicationSessionManager(
 
   /** Call refreshSession on mount */
   useEffect(() => {
-    refreshSession()
+    if (forceRelogin) {
+      clearSession()
+    } else {
+      refreshSession()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

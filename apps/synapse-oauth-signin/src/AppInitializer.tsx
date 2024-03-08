@@ -48,22 +48,6 @@ function AppInitializer(
     }
   }, [])
 
-  useEffect(() => {
-    // is prompt=login?  if so, then clear the cookie
-    if (prompt === 'login') {
-      SynapseClient.setAccessTokenCookie(undefined).then(() => {
-        urlSearchParams.set('prompt', '')
-        // replace query params and refresh
-        window.location.replace(
-          `${window.location.href.slice(
-            0,
-            window.location.href.indexOf('?'),
-          )}?${urlSearchParams.toString()}`,
-        )
-      })
-    }
-  }, [])
-
   const onSignInError = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
@@ -77,9 +61,13 @@ function AppInitializer(
   }, [prompt])
 
   const isFramed = useFramebuster()
-
+  const forceRelogin = prompt === 'login'
   return (
-    <ApplicationSessionManager maxAge={maxAge} onError={onSignInError}>
+    <ApplicationSessionManager
+      maxAge={maxAge}
+      onError={onSignInError}
+      forceRelogin={forceRelogin}
+    >
       {!isFramed && props.children}
     </ApplicationSessionManager>
   )
