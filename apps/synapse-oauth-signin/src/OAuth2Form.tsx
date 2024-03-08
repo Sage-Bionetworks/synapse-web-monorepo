@@ -270,7 +270,7 @@ export function OAuth2Form() {
     }
 
     getOauthClientInfo()
-  }, [])
+  }, [error, getOAuth2RequestDescription, oauthClientInfo, onError])
 
   useEffect(() => {
     if (redirectURL) {
