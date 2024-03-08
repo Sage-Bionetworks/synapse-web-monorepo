@@ -10,10 +10,16 @@ import { handleErrorRedirect } from './URLUtils'
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,
 ) {
-  const [maxAge, setMaxAge] = useState<number | undefined>(undefined)
-
   const urlSearchParams = new URLSearchParams(window.location.search)
   const prompt = urlSearchParams.get('prompt')
+
+  let maxAge = undefined
+  // check max age when re-establishing the session, not to auto-consent.
+  const maxAgeURLParam = urlSearchParams.get('max_age')
+  // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
+  if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
+    maxAge = parseInt(maxAgeURLParam)
+  }
 
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
@@ -56,22 +62,6 @@ function AppInitializer(
         )
       })
     }
-  }, [])
-
-  useEffect(() => {
-    const urlSearchParams = new URLSearchParams(window.location.search)
-    SynapseClient.getAccessTokenFromCookie().then(
-      (accessToken: string | undefined) => {
-        if (accessToken) {
-          // check max age when re-establishing the session, not to auto-consent.
-          const maxAgeURLParam = urlSearchParams.get('max_age')
-          // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
-          if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
-            setMaxAge(parseInt(maxAgeURLParam))
-          }
-        }
-      },
-    )
   }, [])
 
   const onSignInError = useCallback(() => {
