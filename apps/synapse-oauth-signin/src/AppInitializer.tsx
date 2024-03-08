@@ -1,5 +1,5 @@
 import { OAuthClientError } from './OAuthClientError'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   ApplicationSessionManager,
   SynapseClient,
