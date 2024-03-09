@@ -485,7 +485,7 @@ const findMatchingColumnModel = (
   let closestMatch: ColumnModel | undefined
 
   for (const model of columnModels) {
-    if (isCloseMatch(model, target)) {
+    if (columnModelMatchesFormData(model, target)) {
       closestMatch = model
       break
     }
@@ -494,7 +494,7 @@ const findMatchingColumnModel = (
   return closestMatch
 }
 
-const isCloseMatch = (
+const columnModelMatchesFormData = (
   model: ColumnModel,
   target: ColumnModelFormData,
 ): boolean => {

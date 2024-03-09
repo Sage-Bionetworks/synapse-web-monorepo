@@ -78,6 +78,29 @@ function renderDefaultValue(
   return defaultValue
 }
 
+const getRecommendedMaxSize = (
+  defaultAnnotationModel: ColumnModel | null | undefined,
+): number | null | undefined => {
+  return defaultAnnotationModel ? defaultAnnotationModel.maximumSize : null
+}
+
+const getCurrentMaxSize = (columnModel: ColumnModelFormData): number | null => {
+  return columnModel.maximumSize !== undefined
+    ? parseInt(columnModel.maximumSize.toString(), 10)
+    : null
+}
+
+const calculateSizeParameters = (
+  columnModel: ColumnModelFormData,
+  defaultAnnotationModel: ColumnModel | null | undefined,
+) => {
+  const currentMaxSize = getCurrentMaxSize(columnModel)
+  const recommendedSize = getRecommendedMaxSize(defaultAnnotationModel)
+  const isSmallerThanRecommendedSize =
+    recommendedSize && currentMaxSize ? currentMaxSize < recommendedSize : false
+  return { recommendedSize, isSmallerThanRecommendedSize }
+}
+
 /*
  * Disable immediate MUI/Emotion style injection because it causes performance issues when adding many columns at once.
  * This can be a common occurence when adding annotation columns
@@ -129,19 +152,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     [isJsonSubColumn],
   )
 
-  const currentRawMaxSize = (columnModel as ColumnModelFormData).maximumSize
-
-  const currentMaxSize =
-    currentRawMaxSize !== undefined
-      ? parseInt(currentRawMaxSize.toString(), 10)
-      : null
-
-  const recommendedSize = defaultAnnotationModel
-    ? defaultAnnotationModel.maximumSize
-    : null
-
-  const isSmallerThanRecommendedSize =
-    recommendedSize && currentMaxSize ? currentMaxSize < recommendedSize : false
+  const { recommendedSize, isSmallerThanRecommendedSize } =
+    calculateSizeParameters(
+      columnModel as ColumnModelFormData,
+      defaultAnnotationModel,
+    )
 
   const errorsByField = useMemo(() => {
     if (validationErrors && isArray(validationErrors)) {
@@ -156,9 +171,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     return {}
   }, [validationErrors])
 
-  const showError = !!errorsByField['maximumSize']
+  const showErrorOnMaxSizeField = !!errorsByField['maximumSize']
 
-  const helperText = errorsByField['maximumSize']
+  const helperTextForMaxSizeField = errorsByField['maximumSize']
     ? errorsByField['maximumSize']
     : isSmallerThanRecommendedSize && recommendedSize
     ? `Recommended size is at least ${recommendedSize}`
@@ -316,8 +331,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             color={isSmallerThanRecommendedSize ? 'warning' : undefined}
             focused={isSmallerThanRecommendedSize ? true : undefined}
             fullWidth
-            error={showError}
-            helperText={helperText}
+            error={showErrorOnMaxSizeField}
+            helperText={helperTextForMaxSizeField}
           />
         )}
       </Box>
