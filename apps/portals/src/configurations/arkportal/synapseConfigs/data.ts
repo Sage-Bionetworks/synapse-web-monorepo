@@ -42,7 +42,7 @@ const data: SynapseConfig = {
     },
     facetsToPlot: ['program', 'project'],
     searchConfiguration: {
-      searchable: ['name', 'program', 'project'],
+      searchable: ['name', 'program', 'project', 'id'],
     },
     defaultShowPlots: false,
   },
