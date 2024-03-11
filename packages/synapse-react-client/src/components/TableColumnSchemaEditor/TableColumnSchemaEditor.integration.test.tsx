@@ -358,8 +358,8 @@ describe('TableColumnSchemaEditor', () => {
     await waitFor(() => expect(textarea).not.toBeDisabled())
 
     // Write a maxSize smaller than the recommended size
-    await userEvent.clear(textarea)
-    await userEvent.type(textarea, '1')
+    await user.clear(textarea)
+    await user.type(textarea, '1')
 
     // Verify we have a warning in display
     expect(
@@ -367,8 +367,8 @@ describe('TableColumnSchemaEditor', () => {
     ).toBeInTheDocument()
 
     // Write a maxSize equal to the recommended size
-    await userEvent.clear(textarea)
-    await userEvent.type(textarea, '10')
+    await user.clear(textarea)
+    await user.type(textarea, '10')
 
     // Verify that warning disappears in display
     expect(

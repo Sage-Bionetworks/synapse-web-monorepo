@@ -85,9 +85,12 @@ const getRecommendedMaxSize = (
 }
 
 const getCurrentMaxSize = (columnModel: ColumnModelFormData): number | null => {
-  return columnModel.maximumSize !== undefined
-    ? parseInt(columnModel.maximumSize.toString(), 10)
-    : null
+  const maxSize =
+    columnModel.maximumSize !== null
+      ? parseFloat(String(columnModel.maximumSize))
+      : null
+  const isInteger = Number.isInteger(maxSize)
+  return isInteger ? maxSize : null
 }
 
 const calculateSizeParameters = (
@@ -97,7 +100,9 @@ const calculateSizeParameters = (
   const currentMaxSize = getCurrentMaxSize(columnModel)
   const recommendedSize = getRecommendedMaxSize(defaultAnnotationModel)
   const isSmallerThanRecommendedSize =
-    recommendedSize && currentMaxSize ? currentMaxSize < recommendedSize : false
+    recommendedSize && currentMaxSize && currentMaxSize > 0
+      ? currentMaxSize < recommendedSize
+      : false
   return { recommendedSize, isSmallerThanRecommendedSize }
 }
 
@@ -171,13 +176,15 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     return {}
   }, [validationErrors])
 
-  const showErrorOnMaxSizeField = !!errorsByField['maximumSize']
+  const showErrorOnMaxSizeField =
+    !!errorsByField['maximumSize'] && !isSmallerThanRecommendedSize
 
-  const helperTextForMaxSizeField = errorsByField['maximumSize']
-    ? errorsByField['maximumSize']
-    : isSmallerThanRecommendedSize && recommendedSize
-    ? `Recommended size is at least ${recommendedSize}`
-    : ''
+  const helperTextForMaxSizeField =
+    isSmallerThanRecommendedSize && recommendedSize
+      ? `Recommended size is at least ${recommendedSize}`
+      : errorsByField['maximumSize']
+      ? errorsByField['maximumSize']
+      : ''
 
   return (
     <>
