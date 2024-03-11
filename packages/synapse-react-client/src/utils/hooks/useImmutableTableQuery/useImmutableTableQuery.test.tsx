@@ -439,6 +439,53 @@ describe('useImmutableTableQuery tests', () => {
     expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
   })
 
+  test('addValueToSelectedFacet does not reset the offset when facet value is already present', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithEnumFacet,
+      query: { ...initialQueryWithEnumFacet.query, offset: 10 },
+    }
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.addValueToSelectedFacet({ columnName: 'foo' }, 'bar')
+    })
+
+    // Should not have changed
+    expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
+  })
+
+  test('addValueToSelectedFacet resets the offset', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithEnumFacet,
+      query: {
+        ...initialQueryWithEnumFacet.query,
+        limit: 10,
+        offset: 10,
+      },
+    }
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test - add value to new facet
+    act(() => {
+      result.current.addValueToSelectedFacet({ columnName: 'abc' }, 'def')
+    })
+
+    expect(result.current.currentQueryRequest.query.offset).toBeFalsy()
+  })
+
   test('removeSelectedFacet when facet exists', () => {
     const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
@@ -466,6 +513,32 @@ describe('useImmutableTableQuery tests', () => {
   })
   test('removeSelectedFacet when facet does not exist', () => {
     const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.removeSelectedFacet({
+        columnName: 'abc',
+      })
+    })
+
+    expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
+  })
+
+  test('removeSelectedFacet does not remove offset when facet does not exist', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithEnumFacet,
+      query: {
+        ...initialQueryWithEnumFacet.query,
+        offset: 10,
+      },
+    }
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -554,6 +627,49 @@ describe('useImmutableTableQuery tests', () => {
   })
   test("removeValueFromSelectedFacet when facet doesn't exist", () => {
     const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    act(() => {
+      result.current.removeValueFromSelectedFacet({ columnName: 'abc' }, 'def')
+    })
+
+    expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
+  })
+
+  test('removeValueFromSelectedFacet resets the offset', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithEnumFacet,
+      query: { ...initialQueryWithEnumFacet.query, offset: 10 },
+    }
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.removeSelectedFacet(
+        result.current.getCurrentQueryRequest().query.selectedFacets![0],
+      )
+    })
+
+    expect(result.current.currentQueryRequest.query.offset).toBeFalsy()
+  })
+
+  test("removeValueFromSelectedFacet doesn't reset the offset when facet doesn't exist", () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithEnumFacet,
+      query: { ...initialQueryWithEnumFacet.query, offset: 10 },
+    }
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -684,6 +800,33 @@ describe('useImmutableTableQuery tests', () => {
     expect(result.current.currentQueryRequest).toEqual(expected)
   })
 
+  test('setRangeFacetValue removes offset', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...options.initQueryRequest,
+      query: { ...options.initQueryRequest.query, offset: 10 },
+    }
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.setRangeFacetValue(
+        {
+          columnName: 'bar',
+          jsonPath: '$.someJsonPath',
+        },
+        '10',
+        '20',
+      )
+    })
+
+    expect(result.current.currentQueryRequest.query.offset).toBeFalsy()
+  })
+
   test('removeQueryFilter', () => {
     const initQueryRequest: QueryBundleRequest = initialQueryWithFilter
 
@@ -707,6 +850,31 @@ describe('useImmutableTableQuery tests', () => {
         additionalFilters: undefined,
       },
     })
+  })
+
+  test('removeQueryFilter resets the offset', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithFilter,
+      query: {
+        ...initialQueryWithFilter.query,
+        offset: 10,
+      },
+    }
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    act(() => {
+      result.current.removeQueryFilter(
+        result.current.getCurrentQueryRequest().query.additionalFilters![0],
+      )
+    })
+
+    expect(result.current.currentQueryRequest.query.offset).toBeFalsy()
   })
 
   test('removeValueFromQueryFilter when filter has multiple values', () => {
@@ -742,6 +910,7 @@ describe('useImmutableTableQuery tests', () => {
       },
     })
   })
+
   test('removeValueFromQueryFilter when removing last value in filter', () => {
     const initQueryRequest: QueryBundleRequest = {
       ...initialQueryWithFilter,
@@ -781,8 +950,67 @@ describe('useImmutableTableQuery tests', () => {
       },
     })
   })
+
+  test('removeValueFromQueryFilter resets offset', () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithFilter,
+      query: {
+        ...initialQueryWithFilter.query,
+        offset: 10,
+      },
+    }
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    act(() => {
+      result.current.removeValueFromQueryFilter(
+        result.current.getCurrentQueryRequest().query.additionalFilters![0],
+        'bar',
+      )
+    })
+
+    expect(result.current.currentQueryRequest.query.offset).toBeFalsy()
+  })
+
   test("removeValueFromQueryFilter when filter doesn't exist", () => {
     const initQueryRequest: QueryBundleRequest = initialQueryWithFilter
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    act(() => {
+      result.current.removeValueFromQueryFilter(
+        {
+          columnName: 'abc',
+          values: ['def'],
+          operator: ColumnSingleValueFilterOperator.EQUAL,
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        },
+        'def',
+      )
+    })
+
+    expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
+  })
+
+  test("removeValueFromQueryFilter when filter doesn't exist does not reset offset", () => {
+    const initQueryRequest: QueryBundleRequest = {
+      ...initialQueryWithFilter,
+      query: {
+        ...initialQueryWithFilter.query,
+        offset: 10,
+      },
+    }
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({

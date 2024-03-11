@@ -163,6 +163,53 @@ function useGetQueryStats<
   )
 }
 
+/**
+ * The set of properties returned by UseQuery where the results can be safely merged and memoized
+ */
+type UseQueryResultMergeableProperties<TData, TError> = Pick<
+  UseQueryResult<TData, TError>,
+  | 'data'
+  | 'status'
+  | 'isError'
+  | 'isLoading'
+  | 'error'
+  | 'isSuccess'
+  | 'isPlaceholderData'
+  | 'isPending'
+  // Note -- this list is not comprehensive. If there is a merge-able property you need, then add it!
+>
+
+/**
+ * Returns a memoized object that contains the merge-able properties in the provided UseQueryResult
+ * @param useQueryResult
+ */
+function useGetMemoizedMergeableProperties<TData, TError>(
+  useQueryResult: UseQueryResult<TData, TError>,
+): UseQueryResultMergeableProperties<TData, TError> {
+  return useMemo(
+    () => ({
+      data: useQueryResult.data,
+      status: useQueryResult.status,
+      isError: useQueryResult.isError,
+      isLoading: useQueryResult.isLoading,
+      error: useQueryResult.error,
+      isSuccess: useQueryResult.isSuccess,
+      isPlaceholderData: useQueryResult.isPlaceholderData,
+      isPending: useQueryResult.isPending,
+    }),
+    [
+      useQueryResult.data,
+      useQueryResult.error,
+      useQueryResult.isError,
+      useQueryResult.isLoading,
+      useQueryResult.isPending,
+      useQueryResult.isPlaceholderData,
+      useQueryResult.isSuccess,
+      useQueryResult.status,
+    ],
+  )
+}
+
 export function useGetQueryResultBundleWithAsyncStatus<
   TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
 >(
@@ -177,7 +224,7 @@ export function useGetQueryResultBundleWithAsyncStatus<
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
-): UseQueryResult<TData, SynapseClientError> {
+): UseQueryResultMergeableProperties<TData, SynapseClientError> {
   /**
    * Separate the query into two parts
    *  - Query result rows, which will change each page
@@ -194,28 +241,43 @@ export function useGetQueryResultBundleWithAsyncStatus<
     setCurrentAsyncStatus,
   )
 
+  // The rowResult and statsResult objects change every render.
+  // Memoize the two query results so that we can safely memoize the result that we return
+  const rowResultMergeableProperties =
+    useGetMemoizedMergeableProperties(rowResult)
+  const statsResultMergeableProperties =
+    useGetMemoizedMergeableProperties(statsResult)
+
   const mergedBundle = useMemo(() => {
     // If either query is in error, return the error
-    if (rowResult.status === 'error') {
-      return rowResult
-    } else if (statsResult.status === 'error') {
-      return statsResult
-    } else if (rowResult.isLoading) {
+    if (rowResultMergeableProperties.status === 'error') {
+      return rowResultMergeableProperties
+    } else if (statsResultMergeableProperties.status === 'error') {
+      return statsResultMergeableProperties
+    } else if (rowResultMergeableProperties.isLoading) {
       // if either query is loading, return the loading status
-      return rowResult
-    } else if (statsResult.isLoading) {
-      return statsResult
+      return rowResultMergeableProperties
+    } else if (statsResultMergeableProperties.isLoading) {
+      return statsResultMergeableProperties
     } else {
       // Otherwise, both queries are successful or idle, Merge the results into a single object
-      if (rowResult.isPending) {
+      if (rowResultMergeableProperties.isPending) {
         // If the row result is pending, apply the stats result last to override the pending status
-        return merge({}, rowResult, statsResult)
+        return merge(
+          {},
+          rowResultMergeableProperties,
+          statsResultMergeableProperties,
+        )
       } else {
         // Otherwise, always apply the rowResult last, since it is likely have been fetched more recently than the stats.
-        return merge({}, statsResult, rowResult)
+        return merge(
+          {},
+          statsResultMergeableProperties,
+          rowResultMergeableProperties,
+        )
       }
     }
-  }, [rowResult, statsResult])
+  }, [rowResultMergeableProperties, statsResultMergeableProperties])
 
   return mergedBundle
 }
