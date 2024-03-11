@@ -9,7 +9,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import DateTimePicker from '../../DateTimePicker/DateTimePicker'
-import dayjs, { isDayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import FormHelperText from '@mui/material/FormHelperText'
 import MultiValueField from './MultiValueField'
 import { ColumnModelFormData } from '../Validators/ColumnModelValidator'
@@ -74,11 +74,11 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
     <DateTimePicker
       value={valueAsDayjs}
       onChange={newValue => {
-        if (isDayjs(newValue)) {
+        if (newValue == null) {
+          onChange(undefined)
+        } else {
           // onChange argument should match the backend's passed value
           onChange(String(newValue.valueOf()))
-        } else if (newValue == null) {
-          onChange(undefined)
         }
       }}
       disabled={disabled}
