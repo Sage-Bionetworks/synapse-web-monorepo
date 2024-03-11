@@ -130,7 +130,6 @@ function DefaultValueListField(
         } else if (columnModel.columnType === ColumnTypeEnum.DATE_LIST) {
           onChange(arr.map(val => dayjs(val).valueOf()))
         } else {
-          // Convert null to undefined
           onChange(arr)
         }
       }}
