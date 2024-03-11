@@ -287,8 +287,8 @@ describe('ApplicationSessionManager tests', () => {
     })
   })
 
-  it('Calls onError prop', async () => {
-    const onError = jest.fn()
+  it('Calls onNoAccessTokenFound prop on error', async () => {
+    const onNoAccessTokenFound = jest.fn()
     const error = new SynapseClientError(
       500,
       'some error',
@@ -296,10 +296,24 @@ describe('ApplicationSessionManager tests', () => {
     )
     mockGetAccessToken.mockRejectedValue(error)
 
-    const context = render({ onError })
+    const context = render({ onNoAccessTokenFound })
 
     await waitFor(() => {
-      expect(onError).toHaveBeenCalledWith(error)
+      expect(onNoAccessTokenFound).toHaveBeenCalled()
+      expect(mockGetAccessToken).toHaveBeenCalled()
+      expect(signOutSpy).toHaveBeenCalled()
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
+    })
+  })
+
+  it('Calls onNoAccessTokenFound prop when undefined token', async () => {
+    mockGetAccessToken.mockResolvedValue(undefined)
+    const onNoAccessTokenFound = jest.fn()
+
+    const context = render({ onNoAccessTokenFound })
+
+    await waitFor(() => {
+      expect(onNoAccessTokenFound).toHaveBeenCalled()
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
