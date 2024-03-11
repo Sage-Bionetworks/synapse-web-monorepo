@@ -50,7 +50,10 @@ import { displayToast } from '../ToastMessage'
 import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
-import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
+import {
+  ColumnModelFormData,
+  validateColumnModelFormData,
+} from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
 import pluralize from 'pluralize'
 
@@ -331,6 +334,7 @@ function TableColumnSchemaFormInternal(
               disabled={isSubmitting}
               key={index}
               columnModelValidationErrors={errorsByColumnModel[index]}
+              annotationColumnModels={annotationColumnModels}
             />
           )
         })}
@@ -474,11 +478,35 @@ function TableColumnSchemaFormActions(
   )
 }
 
+const findMatchingColumnModel = (
+  columnModels: ColumnModel[],
+  target: ColumnModelFormData,
+): ColumnModel | undefined => {
+  let closestMatch: ColumnModel | undefined
+
+  for (const model of columnModels) {
+    if (columnModelMatchesFormData(model, target)) {
+      closestMatch = model
+      break
+    }
+  }
+
+  return closestMatch
+}
+
+const columnModelMatchesFormData = (
+  model: ColumnModel,
+  target: ColumnModelFormData,
+): boolean => {
+  return model.name === target.name && model.columnType === target.columnType
+}
+
 type TableColumnSchemaFormRowProps = {
   entityType: EntityType
   columnModelIndex: number
   disabled: boolean
   columnModelValidationErrors: ZodIssue[] | null
+  annotationColumnModels?: ColumnModel[]
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
@@ -487,6 +515,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     entityType,
     disabled,
     columnModelValidationErrors = null,
+    annotationColumnModels,
   } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
@@ -500,6 +529,11 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
       [columnModelIndex],
     ),
   )
+
+  // Find the closest match between passed column model and current column model with name and type
+  const defaultAnnotationModel = annotationColumnModels
+    ? findMatchingColumnModel(annotationColumnModels, columnModel)
+    : undefined
 
   // Organize the JSON Subcolumn errors into a map of subcolumn index to errors
   const errorsForSubcolumns = useMemo(() => {
@@ -525,6 +559,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
         isDefaultColumn={isDefaultColumn}
         disabled={disabled}
         validationErrors={columnModelValidationErrors}
+        defaultAnnotationModel={defaultAnnotationModel}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&

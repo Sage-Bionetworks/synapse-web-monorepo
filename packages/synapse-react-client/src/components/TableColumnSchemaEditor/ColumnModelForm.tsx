@@ -12,6 +12,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { selectAtom } from 'jotai/utils'
 import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
 import {
+  ColumnModel,
   ColumnTypeEnum,
   EntityType,
   FacetType,
@@ -52,6 +53,7 @@ type ColumnModelFormProps = {
   disabled?: boolean
   /* Can be used to override the schema used for validating ColumnModels */
   validationErrors?: ZodIssue[] | null
+  defaultAnnotationModel?: ColumnModel | null
 }
 const jsonSubColumnFieldSx: SxProps = {
   height: '28px',
@@ -76,6 +78,34 @@ function renderDefaultValue(
   return defaultValue
 }
 
+const getRecommendedMaxSize = (
+  defaultAnnotationModel: ColumnModel | null | undefined,
+): number | null | undefined => {
+  return defaultAnnotationModel ? defaultAnnotationModel.maximumSize : null
+}
+
+const getCurrentMaxSize = (columnModel: ColumnModelFormData): number | null => {
+  const maxSize =
+    columnModel.maximumSize !== null
+      ? parseFloat(String(columnModel.maximumSize))
+      : null
+  const isInteger = Number.isInteger(maxSize)
+  return isInteger ? maxSize : null
+}
+
+const calculateSizeParameters = (
+  columnModel: ColumnModelFormData,
+  defaultAnnotationModel: ColumnModel | null | undefined,
+) => {
+  const currentMaxSize = getCurrentMaxSize(columnModel)
+  const recommendedSize = getRecommendedMaxSize(defaultAnnotationModel)
+  const isSmallerThanRecommendedSize =
+    recommendedSize && currentMaxSize && currentMaxSize > 0
+      ? currentMaxSize < recommendedSize
+      : false
+  return { recommendedSize, isSmallerThanRecommendedSize }
+}
+
 /*
  * Disable immediate MUI/Emotion style injection because it causes performance issues when adding many columns at once.
  * This can be a common occurence when adding annotation columns
@@ -90,6 +120,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     isDefaultColumn,
     disabled = false,
     validationErrors = null,
+    defaultAnnotationModel,
   } = props
   const isJsonSubColumn = jsonSubColumnIndex != undefined
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
@@ -126,6 +157,12 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     [isJsonSubColumn],
   )
 
+  const { recommendedSize, isSmallerThanRecommendedSize } =
+    calculateSizeParameters(
+      columnModel as ColumnModelFormData,
+      defaultAnnotationModel,
+    )
+
   const errorsByField = useMemo(() => {
     if (validationErrors && isArray(validationErrors)) {
       const errorsByField: Record<string, string> = {}
@@ -138,6 +175,16 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     }
     return {}
   }, [validationErrors])
+
+  const showErrorOnMaxSizeField =
+    !!errorsByField['maximumSize'] && !isSmallerThanRecommendedSize
+
+  const helperTextForMaxSizeField =
+    isSmallerThanRecommendedSize && recommendedSize
+      ? `Recommended size is at least ${recommendedSize}`
+      : errorsByField['maximumSize']
+      ? errorsByField['maximumSize']
+      : ''
 
   return (
     <>
@@ -288,9 +335,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 },
               })
             }}
+            color={isSmallerThanRecommendedSize ? 'warning' : undefined}
+            focused={isSmallerThanRecommendedSize ? true : undefined}
             fullWidth
-            error={!!errorsByField['maximumSize']}
-            helperText={errorsByField['maximumSize']}
+            error={showErrorOnMaxSizeField}
+            helperText={helperTextForMaxSizeField}
           />
         )}
       </Box>
