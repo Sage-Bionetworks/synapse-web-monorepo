@@ -6,7 +6,7 @@ import { EntityHeaderFromHit } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 import NoSearchResults from '../../../../assets/icons/NoSearchResults'
-import SearchState from '../../../../assets/icons/SearchState'
+import SearchImage from '../../../../assets/icons/SearchImage'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
@@ -64,7 +64,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         hasNextPage={false}
         noResultsPlaceholder={
           <>
-            <SearchState className="SearchPlaceholderImage" />
+            <SearchImage className="SearchPlaceholderImage" />
             <p>Enter a term or Synapse ID to start searching</p>
           </>
         }

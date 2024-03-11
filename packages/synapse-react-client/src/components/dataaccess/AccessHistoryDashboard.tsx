@@ -16,12 +16,12 @@ import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import { useGetCurrentUserBundle } from '../../synapse-queries'
-import SearchState from '../../assets/icons/SearchState'
+import SearchImage from '../../assets/icons/SearchImage'
 
 const SearchStartComponent = () => {
   return (
     <div className="text-center">
-      <SearchState className="SearchPlaceholderImage" height="167px" />
+      <SearchImage className="SearchPlaceholderImage" height="167px" />
       <Typography variant="body1Italic">
         Select a user using the search field above to view their data access
         history

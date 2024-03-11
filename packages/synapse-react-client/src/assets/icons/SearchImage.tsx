@@ -1,7 +1,7 @@
 import { Box, BoxProps } from '@mui/material'
 import React from 'react'
 
-const SearchState = (props: BoxProps) => (
+const SearchImage = (props: BoxProps) => (
   <Box {...props}>
     <svg
       width="100%"
@@ -87,4 +87,4 @@ const SearchState = (props: BoxProps) => (
   </Box>
 )
 
-export default SearchState
+export default SearchImage
