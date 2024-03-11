@@ -16,7 +16,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 
-export type DateTimePickerProps = MuiDateTimePickerProps<string | Dayjs>
+export type DateTimePickerProps = MuiDateTimePickerProps<Dayjs>
 
 function TextFieldWithTzShown(props: TextFieldProps) {
   const { utcTime } = useSynapseContext()
@@ -55,7 +55,7 @@ export default function DateTimePicker(props: DateTimePickerProps) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <MuiDateTimePicker<string | Dayjs>
+      <MuiDateTimePicker<Dayjs>
         value={valueAsDayjs}
         slots={{
           ...slots,

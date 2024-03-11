@@ -147,12 +147,12 @@ export const EvaluationRoundEditor: React.FunctionComponent<
     }
   }, [error])
 
-  const [startDate, setStartDate] = useState<string | Dayjs | null>(
+  const [startDate, setStartDate] = useState<Dayjs | null>(
     evaluationRoundInput.roundStart
       ? dayjs(evaluationRoundInput.roundStart)
       : null,
   )
-  const [endDate, setEndDate] = useState<string | Dayjs | null>(
+  const [endDate, setEndDate] = useState<Dayjs | null>(
     evaluationRoundInput.roundEnd ? dayjs(evaluationRoundInput.roundEnd) : null,
   )
 

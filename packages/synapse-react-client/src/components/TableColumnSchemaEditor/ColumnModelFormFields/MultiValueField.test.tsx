@@ -37,7 +37,7 @@ function renderComponent(props: MultiValueFieldProps) {
   })
 }
 
-describe('RestrictedValuesField', () => {
+describe('MultiValueField', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })

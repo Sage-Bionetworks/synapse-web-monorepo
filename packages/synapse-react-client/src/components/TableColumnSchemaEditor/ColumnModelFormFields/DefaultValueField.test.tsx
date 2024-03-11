@@ -1,11 +1,22 @@
 import React from 'react'
 import DefaultValueField, { DefaultValueFieldProps } from './DefaultValueField'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { formatDate } from '../../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
+import dayjs, { isDayjs } from 'dayjs'
+import DateTimePicker from '../../DateTimePicker/DateTimePicker'
+
+const MOCK_DATETIME_PICKER_TEST_ID = 'MockDateTimePicker'
+
+// Mock the DateTimePicker because how the date renders can vary based on time zone and localization, making it hard to test
+jest.mock('../../DateTimePicker/DateTimePicker', () => ({
+  __esModule: true,
+  default: jest.fn(() => <div data-testid={MOCK_DATETIME_PICKER_TEST_ID} />),
+}))
+
+const mockDateTimePicker = jest.mocked(DateTimePicker)
 
 function renderComponent<T>(props: DefaultValueFieldProps<T>) {
   return render(<DefaultValueField<T> {...props} />, {
@@ -14,6 +25,9 @@ function renderComponent<T>(props: DefaultValueFieldProps<T>) {
 }
 
 describe('DefaultValueField', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   describe('STRING columnType', () => {
     it('shows an initial value', () => {
       const onChange = jest.fn()
@@ -91,16 +105,24 @@ describe('DefaultValueField', () => {
         isOriginallyDefaultColumn: false,
       },
       onChange,
-      value: '2021-01-15T00:00:00.000Z',
+      value: '1710388800000',
     })
 
-    // The actual value shown can vary based on localization
-    // So we will just test for the presence of a value and successful onChange call
-    const datePicker = screen.getByRole('textbox')
-    expect(datePicker.getAttribute('value')).not.toBeNull()
+    await screen.findByTestId(MOCK_DATETIME_PICKER_TEST_ID)
+    const mockDateTimePickerPassedProps = mockDateTimePicker.mock.lastCall![0]
+    // Verify that we pass the correct Dayjs value to the mock
+    expect(isDayjs(mockDateTimePickerPassedProps.value)).toBe(true)
+    expect(mockDateTimePickerPassedProps.value!.valueOf()).toBe(1710388800000)
 
-    await userEvent.type(datePicker, '2')
-    expect(onChange).toHaveBeenCalled()
+    // Simulate changing the date
+    act(() => {
+      mockDateTimePickerPassedProps.onChange!(dayjs(1710399900000), {
+        validationError: null,
+      })
+    })
+
+    // Verify that `onChange` gets a millisecond timestamp encoded in a string
+    expect(onChange).toHaveBeenLastCalledWith('1710399900000')
   })
 
   it('handles a STRING_LIST column type', async () => {
@@ -138,6 +160,10 @@ describe('DefaultValueField', () => {
 
   it('handles a DATE_LIST column type', async () => {
     const onChange = jest.fn()
+    // datetime in 2023
+    const DATE_ONE = 1678852800000
+    // datetime in 2024
+    const DATE_TWO = 1710475200000
     renderComponent<Array<number> | undefined>({
       columnModel: {
         name: 'foo',
@@ -147,19 +173,12 @@ describe('DefaultValueField', () => {
       },
       onChange,
       // Default value is an array of unix timestamps (milliseconds)
-      value: [
-        // datetime in 2023
-        1678852800000,
-        // datetime in 2024
-        1710475200000,
-      ],
+      value: [DATE_ONE, DATE_TWO],
     })
 
     const textField = screen.getByRole('textbox')
     expect(textField).toHaveValue(
-      formatDate(dayjs(1678852800000)) +
-        ', ' +
-        formatDate(dayjs(1710475200000)),
+      formatDate(dayjs(DATE_ONE)) + ', ' + formatDate(dayjs(DATE_TWO)),
     )
     // Sanity check the date formatter--check that the years appear in order
     expect(textField.getAttribute('value')).toMatch(/.*2023.*2024/)
@@ -168,20 +187,27 @@ describe('DefaultValueField', () => {
 
     const multiValueDialog = await screen.findByRole('dialog')
 
-    const itemTextFields = await within(multiValueDialog).findAllByRole(
-      'textbox',
+    const datePickerFields = await within(multiValueDialog).findAllByTestId(
+      MOCK_DATETIME_PICKER_TEST_ID,
     )
+    expect(datePickerFields).toHaveLength(2)
 
-    expect(itemTextFields).toHaveLength(2)
-    expect(itemTextFields[0].getAttribute('value')).toMatch(/2023/)
-    expect(itemTextFields[1].getAttribute('value')).toMatch(/2024/)
+    expect(mockDateTimePicker).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: dayjs(DATE_ONE),
+      }),
+      expect.anything(),
+    )
+    expect(mockDateTimePicker).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: dayjs(DATE_TWO),
+      }),
+      expect.anything(),
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'OK' }))
 
-    // Saving will convert these to ISO strings
-    expect(onChange).toHaveBeenCalledWith([
-      dayjs(1678852800000).toISOString(),
-      dayjs(1710475200000).toISOString(),
-    ])
+    // Saving should invoke onChange, which should return the original type, millisecond timestamps
+    expect(onChange).toHaveBeenCalledWith([DATE_ONE, DATE_TWO])
   })
 })
