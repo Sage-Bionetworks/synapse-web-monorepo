@@ -207,7 +207,7 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
       case ColumnTypeEnum.DATE:
       case ColumnTypeEnum.DATE_LIST:
       case ColumnTypeEnum.USERID:
-        //    case ColumnTypeEnum.ENTITYID: //PORTALS-2995: users may want to search on Synapse
+        //    case ColumnTypeEnum.ENTITYID: //PORTALS-2995: users may want to search on Synapse ID
         return false
       default:
         return true
