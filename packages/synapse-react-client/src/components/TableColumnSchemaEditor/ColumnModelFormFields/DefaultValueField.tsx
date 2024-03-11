@@ -13,6 +13,10 @@ import dayjs, { isDayjs } from 'dayjs'
 import FormHelperText from '@mui/material/FormHelperText'
 import MultiValueField from './MultiValueField'
 import { ColumnModelFormData } from '../Validators/ColumnModelValidator'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+// required to parse unix timestamp below
+dayjs.extend(customParseFormat)
 
 export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   columnModel: ColumnModelFormData
@@ -57,10 +61,13 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
   const { onChange, value = null, disabled, TextFieldProps } = props
 
   const valueAsDayjs = useMemo(() => {
-    if (value != null) {
-      return dayjs(value)
+    if (value) {
+      // The backend service returns a string that contains an integer unix timestamp with millisecond precision
+      // Passing the raw string to dayjs without a format option will parse the value incorrectly
+      // 'x' indicates parsing the value as a ms Unix Timestamp - https://day.js.org/docs/en/parse/string-format
+      return dayjs(value, 'x')
     }
-    return value
+    return null
   }, [value])
 
   return (
@@ -68,11 +75,10 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
       value={valueAsDayjs}
       onChange={newValue => {
         if (isDayjs(newValue)) {
-          onChange(newValue.toISOString())
+          // onChange argument should match the backend's passed value
+          onChange(String(newValue.valueOf()))
         } else if (newValue == null) {
           onChange(undefined)
-        } else {
-          onChange(newValue)
         }
       }}
       disabled={disabled}
@@ -86,6 +92,9 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
 function DefaultValueListField(
   props: DefaultValueFieldProps<(string | number)[], (string | number)[]>,
 ) {
+  // Note the backend returns a string that is a serialized JSON array.
+  // However, TableColumnSchemaEditorUtils.transformColumnModelsToFormData will parse this before this component receives the value.
+  // So this component will get an array of strings or numbers
   const {
     onChange,
     value: _value = null,
@@ -102,7 +111,7 @@ function DefaultValueListField(
         // if it's a DATE_LIST, then the values are Unix timestamps in milliseconds
         // The `MultiValueField` component expects ISO strings to match the JSON Schema 'date-time' format
         return _value.map(v => {
-          return dayjs(v).toISOString()
+          return dayjs(v, 'x').toISOString()
         })
       }
       return _value
@@ -115,8 +124,15 @@ function DefaultValueListField(
     <MultiValueField
       value={value}
       onChange={arr => {
-        // Convert null to undefined
-        onChange(arr || undefined)
+        if (arr == null) {
+          // Convert null to undefined
+          onChange(undefined)
+        } else if (columnModel.columnType === ColumnTypeEnum.DATE_LIST) {
+          onChange(arr.map(val => dayjs(val).valueOf()))
+        } else {
+          // Convert null to undefined
+          onChange(arr)
+        }
       }}
       columnType={columnModel.columnType as ColumnTypeEnum}
       TextFieldProps={{ ...TextFieldProps, disabled }}
