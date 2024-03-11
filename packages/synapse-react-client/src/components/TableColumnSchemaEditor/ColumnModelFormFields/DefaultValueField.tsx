@@ -128,6 +128,7 @@ function DefaultValueListField(
           // Convert null to undefined
           onChange(undefined)
         } else if (columnModel.columnType === ColumnTypeEnum.DATE_LIST) {
+          // Transform the ISO Timestamps to integer unix timestamps to match the passed value
           onChange(arr.map(val => dayjs(val).valueOf()))
         } else {
           onChange(arr)
