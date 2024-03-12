@@ -1,5 +1,4 @@
 import { renderHook as _renderHook, waitFor } from '@testing-library/react'
-import * as SynapseContext from '../../utils/context/SynapseContext'
 import useDetectSSOCode, { UseDetectSSOCodeOptions } from './useDetectSSOCode'
 import { SynapseClient } from '../../index'
 import {
@@ -47,6 +46,10 @@ const mockBindOAuthProviderToAccount = jest.spyOn(
   'bindOAuthProviderToAccount',
 )
 
+const AUTHENTICATED_CONTEXT: SynapseContextType = {
+  ...MOCK_CONTEXT_VALUE,
+}
+
 const UNAUTHENTICATED_CONTEXT: SynapseContextType = {
   ...MOCK_CONTEXT_VALUE,
   accessToken: undefined,
@@ -62,11 +65,9 @@ describe('useDetectSSOCode tests', () => {
     })
   }
 
-  const synapseContextSpy = jest.spyOn(SynapseContext, 'useSynapseContext')
   beforeEach(() => {
     jest.clearAllMocks()
     history.replaceState({}, '', `/`)
-    synapseContextSpy.mockRestore()
   })
 
   it('Does nothing if searchParams are not set', () => {
@@ -110,8 +111,6 @@ describe('useDetectSSOCode tests', () => {
     })
   })
   it('Handles ORCID binding', async () => {
-    // set up access token, to indicate that user is logged in
-    synapseContextSpy.mockImplementation(() => MOCK_CONTEXT_VALUE)
     history.replaceState(
       {},
       '',
@@ -119,7 +118,11 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
-    const hookReturn = renderHook({ onSignInComplete })
+    const hookReturn = renderHook(
+      { onSignInComplete },
+      // User is logged in
+      AUTHENTICATED_CONTEXT,
+    )
     expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
@@ -136,9 +139,6 @@ describe('useDetectSSOCode tests', () => {
     })
   })
   it('Handles ORCID binding failure', async () => {
-    // set up access token, to indicate that user is logged in
-    synapseContextSpy.mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     history.replaceState(
       {},
@@ -154,7 +154,11 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    const hookReturn = renderHook({ onSignInComplete, onError: mockOnError })
+    const hookReturn = renderHook(
+      { onSignInComplete, onError: mockOnError },
+      // User is logged in
+      AUTHENTICATED_CONTEXT,
+    )
     expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
@@ -172,7 +176,6 @@ describe('useDetectSSOCode tests', () => {
       expect(hookReturn.result.current.isLoading).toBe(false)
     })
     consoleSpy.mockReset()
-    synapseContextSpy.mockReset()
   })
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
