@@ -20,7 +20,6 @@ import {
 } from './TableColumnSchemaFormReducer'
 import {
   Box,
-  BoxProps,
   Button,
   ButtonGroup,
   Checkbox as MUICheckbox,
@@ -47,7 +46,6 @@ import {
 } from '../../synapse-queries/table/useColumnModel'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage'
-import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
 import {
@@ -104,7 +102,7 @@ type TableColumnSchemaFormProps = {
   isSubmitting?: boolean
 }
 
-const ColumnHeader: StyledComponent<BoxProps> = styled(Box, {
+const ColumnHeader = styled(Box, {
   label: 'ColumnHeader',
 })({
   fontWeight: 700,

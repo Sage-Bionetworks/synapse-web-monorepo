@@ -6,8 +6,7 @@ import {
 } from '@mui/icons-material'
 import Skeleton from '@mui/material/Skeleton'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
-import { Avatar, AvatarProps, styled, SxProps, useTheme } from '@mui/material'
-import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
+import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 
 export enum RequirementItemStatus {
   COMPLETE = 'COMPLETE',
@@ -25,12 +24,9 @@ const iconSx: SxProps = {
   width: '20px',
 }
 
-const AccessApprovalCheckMarkContainer: StyledComponent<AvatarProps> = styled(
-  Avatar,
-  {
-    label: 'AccessApprovalCheckMarkContainer',
-  },
-)({
+const AccessApprovalCheckMarkContainer = styled(Avatar, {
+  label: 'AccessApprovalCheckMarkContainer',
+})({
   color: 'white',
   height: '30px',
   width: '30px',
