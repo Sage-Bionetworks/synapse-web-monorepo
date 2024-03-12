@@ -238,6 +238,7 @@
     "vite": "^5.1.6",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plugin-turbosnap": "^1.0.2",
+    "vite-config": "workspace:*",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.2"
   },

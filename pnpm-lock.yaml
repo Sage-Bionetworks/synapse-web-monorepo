@@ -1366,6 +1366,9 @@ importers:
       vite:
         specifier: ^5.1.6
         version: 5.1.6(@types/node@18.19.23)(sass@1.69.5)
+      vite-config:
+        specifier: workspace:*
+        version: link:../vite-config
       vite-plugin-svgr:
         specifier: ^4.2.0
         version: 4.2.0(rollup@2.79.1)(typescript@5.4.2)(vite@5.1.6)
@@ -13566,6 +13569,7 @@ packages:
       chalk: 3.0.0
       diff-match-patch: 1.0.5
     dev: true
+    bundledDependencies: []
 
   /jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
