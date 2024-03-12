@@ -18,10 +18,6 @@ import {
 } from '../../mocks/user/mock_user_profile'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
-  PermissionLevelEnum,
-  getAccessTypeFromPermissionLevel,
-} from '../../utils/PermissionLevelToAccessType'
-import {
   EMPTY_RESOURCE_ACCESS_LIST_TEXT,
   REVIEWER_ALREADY_ADDED_ERROR_MESSAGE,
   ResourceAccessEditor,
@@ -31,21 +27,18 @@ import {
 const resourceAccessList: ResourceAccess[] = [
   {
     principalId: MOCK_TEAM_ID,
-    accessType: getAccessTypeFromPermissionLevel(
-      PermissionLevelEnum.CAN_REVIEW_SUBMISSIONS,
-    ),
+    accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
   },
   {
     principalId: MOCK_TEAM_ID_2,
-    accessType: getAccessTypeFromPermissionLevel(
-      PermissionLevelEnum.EXEMPTION_ELIGIBLE,
-    ),
+    accessType: [ACCESS_TYPE.EXEMPTION_ELIGIBLE],
   },
   {
     principalId: MOCK_USER_ID,
-    accessType: getAccessTypeFromPermissionLevel(
-      PermissionLevelEnum.CAN_REVIEW_AND_EXEMPTION_ELIGIBLE,
-    ),
+    accessType: [
+      ACCESS_TYPE.EXEMPTION_ELIGIBLE,
+      ACCESS_TYPE.REVIEW_SUBMISSIONS,
+    ],
   },
 ]
 
@@ -111,20 +104,12 @@ describe('ResourceAccessEditor', () => {
   test('displays an initially populated resource access list', async () => {
     const { itemRows } = await setUp({ resourceAccessList, onChange })
 
-    confirmItem(
-      itemRows[0],
-      mockTeamData.name,
-      PermissionLevelEnum.CAN_REVIEW_SUBMISSIONS,
-    )
-    confirmItem(
-      itemRows[1],
-      mockTeamData2.name,
-      PermissionLevelEnum.EXEMPTION_ELIGIBLE,
-    )
+    confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
     confirmItem(
       itemRows[2],
       `@${MOCK_USER_NAME}`,
-      PermissionLevelEnum.CAN_REVIEW_AND_EXEMPTION_ELIGIBLE,
+      'Can Review & Exempt Eligible',
     )
     expect(onChange).not.toHaveBeenCalled()
   })
@@ -141,26 +126,27 @@ describe('ResourceAccessEditor', () => {
   })
 
   test('updates access types for an existing resource access item', async () => {
-    const updatedPermissionsLevel =
-      PermissionLevelEnum.CAN_REVIEW_AND_EXEMPTION_ELIGIBLE
     const updatedResourceAccessList = [
       { ...resourceAccessList[0] },
       {
         ...resourceAccessList[1],
-        accessType: getAccessTypeFromPermissionLevel(updatedPermissionsLevel),
+        accessType: [
+          ACCESS_TYPE.EXEMPTION_ELIGIBLE,
+          ACCESS_TYPE.REVIEW_SUBMISSIONS,
+        ],
       },
       { ...resourceAccessList[2] },
     ]
 
     const { itemRows, user } = await setUp({ resourceAccessList, onChange })
     const row = itemRows[1]
-    confirmItem(row, mockTeamData2.name, PermissionLevelEnum.EXEMPTION_ELIGIBLE)
+    confirmItem(row, mockTeamData2.name, 'Exempt Eligible')
 
     const menu = within(row).getByRole('combobox')
     await user.click(menu)
 
     const option = screen.getByRole('option', {
-      name: updatedPermissionsLevel,
+      name: 'Can Review & Exempt Eligible',
     })
     await user.click(option)
 

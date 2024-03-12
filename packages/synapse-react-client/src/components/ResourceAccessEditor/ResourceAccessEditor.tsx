@@ -1,16 +1,16 @@
 import { Alert, Box, IconButton, Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
-import { PermissionLevelEnum } from '../../utils/PermissionLevelToAccessType'
+import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 import IconSvg from '../IconSvg'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { PermissionLevelMenu } from './PermissionLevelMenu'
 
-const availablePermissionLevels: PermissionLevelEnum[] = [
-  PermissionLevelEnum.CAN_REVIEW_SUBMISSIONS,
-  PermissionLevelEnum.EXEMPTION_ELIGIBLE,
-  PermissionLevelEnum.CAN_REVIEW_AND_EXEMPTION_ELIGIBLE,
+const availablePermissionLevels: PermissionLevel[] = [
+  'CAN_REVIEW_SUBMISSIONS',
+  'IS_EXEMPTION_ELIGIBLE',
+  'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
 ]
 
 type ResourceAccessItemProps = {

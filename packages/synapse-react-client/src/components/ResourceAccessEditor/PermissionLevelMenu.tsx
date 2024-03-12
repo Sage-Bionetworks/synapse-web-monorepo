@@ -2,14 +2,15 @@ import { MenuItem, TextField, Typography } from '@mui/material'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import {
-  PermissionLevelEnum,
+  PermissionLevel,
   getAccessTypeFromPermissionLevel,
   getPermissionLevelFromAccessType,
+  permissionLevelToLabel,
 } from '../../utils/PermissionLevelToAccessType'
 
 export type PermissionLevelMenuProps = {
   currentAccessType: ACCESS_TYPE[]
-  availablePermissionLevels: PermissionLevelEnum[]
+  availablePermissionLevels: PermissionLevel[]
   onChange: (accessTypes: ACCESS_TYPE[]) => void
 }
 
@@ -23,24 +24,28 @@ export const PermissionLevelMenu: React.FunctionComponent<
       value={getPermissionLevelFromAccessType(currentAccessType) || null}
       onChange={e => {
         const accessType = getAccessTypeFromPermissionLevel(
-          e.target.value as PermissionLevelEnum,
+          e.target.value as PermissionLevel,
         )
         if (!accessType) {
           console.error(
-            `ACCESS_TYPE[] not found for PermissionLevelEnum value: ${e.target.value}`,
+            `ACCESS_TYPE[] not found for PermissionLevel: ${e.target.value}`,
           )
         }
-        onChange(accessType || [])
+        onChange(accessType || null)
       }}
       fullWidth
       select
+      SelectProps={{
+        renderValue: selected =>
+          permissionLevelToLabel[selected as PermissionLevel],
+      }}
       size="small"
     >
       {Object.values(availablePermissionLevels).map(permissionLevel => {
         return (
           <MenuItem key={permissionLevel} value={permissionLevel}>
-            <Typography variant="smallText1" textTransform="capitalize" noWrap>
-              {permissionLevel}
+            <Typography variant="smallText1" noWrap>
+              {permissionLevelToLabel[permissionLevel]}
             </Typography>
           </MenuItem>
         )
