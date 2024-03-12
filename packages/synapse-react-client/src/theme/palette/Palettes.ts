@@ -173,6 +173,12 @@ export const challengePortalPalette: PaletteOptions = {
   secondary: generatePalette('#407BA0'),
 }
 
+export const geniePalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#5F6870'),
+  secondary: generatePalette('#4CB848'),
+}
+
 export default {
   palette,
   generatePalette,
@@ -189,4 +195,5 @@ export default {
   crcResearcherPortalPalette,
   cancerComplexityPortalPalette,
   sageBionetworksPalette,
+  geniePalette,
 }
