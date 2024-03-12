@@ -6,9 +6,7 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 export default defineConfig({
   entry: { index: './src/index.ts' },
   format: ['esm', 'cjs'],
-  dts: {
-    banner: `/// <reference path="../src/theme/ThemeTypes.d.ts" />`,
-  },
+  dts: true,
   // MUI doesn't support directory import in ESM, but we can get around that by just bundling it
   // https://github.com/mui/material-ui/issues/35233
   noExternal: ['@mui/material'],
