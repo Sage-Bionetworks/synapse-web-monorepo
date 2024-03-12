@@ -164,14 +164,25 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
           }
         additionalFilters.push(columnMultiValueQueryFilter)
       } else {
-        const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-          columnName,
-          operator: ColumnSingleValueFilterOperator.LIKE,
-          values: [`%${searchText}%`],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        if (columnModel?.columnType == ColumnTypeEnum.ENTITYID) {
+          const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+            columnName,
+            operator: ColumnSingleValueFilterOperator.EQUAL,
+            values: [`${searchText.toLowerCase().replace('syn', '')}`],
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          }
+          additionalFilters.push(columnSingleValueQueryFilter)
+        } else {
+          const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+            columnName,
+            operator: ColumnSingleValueFilterOperator.LIKE,
+            values: [`%${searchText}%`],
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          }
+          additionalFilters.push(columnSingleValueQueryFilter)
         }
-        additionalFilters.push(columnSingleValueQueryFilter)
       }
     } else {
       ;(
@@ -193,10 +204,10 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
   public isSupportedColumn = (columnModel?: ColumnModel) => {
     switch (columnModel?.columnType) {
       case ColumnTypeEnum.FILEHANDLEID:
-      case ColumnTypeEnum.ENTITYID:
       case ColumnTypeEnum.DATE:
       case ColumnTypeEnum.DATE_LIST:
       case ColumnTypeEnum.USERID:
+        //    case ColumnTypeEnum.ENTITYID: //PORTALS-2995: users may want to search on Synapse ID
         return false
       default:
         return true
