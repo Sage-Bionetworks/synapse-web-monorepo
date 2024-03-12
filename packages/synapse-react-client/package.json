@@ -15,9 +15,7 @@
       "require": "./dist/*"
     },
     "./package.json": "./package.json",
-    "./src/theme/*": [
-      "./src/theme/ThemeTypes.d.ts"
-    ]
+    "./ThemeTypes": "./src/theme/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
