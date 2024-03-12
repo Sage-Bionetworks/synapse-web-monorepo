@@ -7,7 +7,7 @@ import { DetailsPageProps } from 'types/portal-util-types'
 import { datasetsSql, programSql, projectsSql } from '../resources'
 import { projectsCardConfiguration } from './projects'
 import { datasetCardConfiguration } from './datasets'
-import tagCloudSvg from '../style/tagCloud.svg'
+import tagCloudSvg from '../style/tagCloud.svg?url'
 
 const rgbIndex = 9
 

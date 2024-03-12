@@ -8,8 +8,7 @@ import {
   SynapseClient,
   useSynapseContext,
 } from 'synapse-react-client'
-import Cropper from 'react-easy-crop'
-import { Area } from 'react-easy-crop/types'
+import Cropper, { Area } from 'react-easy-crop'
 import Person from '@mui/icons-material/Person'
 import {
   FileUploadComplete,

@@ -8,7 +8,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "moduleResolution": "bundler",
+    "types": ["vite/client"]
   },
   "include": [
     "src/**/*.tsx",

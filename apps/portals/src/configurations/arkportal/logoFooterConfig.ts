@@ -1,6 +1,6 @@
 import { LogoConfig } from 'types/portal-config'
-import logoSvg from './style/iconFooter.svg'
+import logoSvg from './style/iconFooter.svg?url'
 const logo: LogoConfig = {
-  icon: logoSvg
+  icon: logoSvg,
 }
 export default logo

@@ -2,9 +2,7 @@ import react from '@vitejs/plugin-react'
 import { resolve, dirname } from 'path'
 import { defineConfig, UserConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-import rollupNodePolyFill from 'rollup-plugin-polyfill-node'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -17,9 +15,6 @@ export const config: UserConfig = {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    rollupOptions: {
-      plugins: [rollupNodePolyFill()],
-    },
   },
   plugins: [
     react(),
@@ -27,8 +22,12 @@ export const config: UserConfig = {
       svgrOptions: {
         plugins: ['@svgr/plugin-jsx'],
         ref: true,
+        exportType: 'named',
       },
+      // Explicitly exclude SVG imports that end in a query (such as ?url) - Vite can already handle these
+      include: /^.*\.svg$/,
     }),
+    nodePolyfills(),
   ],
   define: {
     __TEST__: JSON.stringify(false),
@@ -43,13 +42,6 @@ export const config: UserConfig = {
       define: {
         global: 'globalThis',
       },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true,
-          process: true,
-        }),
-        NodeModulesPolyfillPlugin(),
-      ],
     },
   },
   resolve: {

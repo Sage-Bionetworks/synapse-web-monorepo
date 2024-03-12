@@ -6,7 +6,7 @@ import {
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
-import educationalResourceSvg from '../style/EducationalResource.svg'
+import educationalResourceSvg from '../style/EducationalResource.svg?url'
 
 const rgbIndex = 8
 

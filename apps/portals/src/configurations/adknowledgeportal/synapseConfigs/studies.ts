@@ -2,7 +2,7 @@ import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConstants } from 'synapse-react-client'
 import type { CardConfiguration } from 'synapse-react-client'
-import studyHeaderSvg from '../style/study-header.svg'
+import studyHeaderSvg from '../style/study-header.svg?url'
 import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
 import {
   ColumnMultiValueFunction,

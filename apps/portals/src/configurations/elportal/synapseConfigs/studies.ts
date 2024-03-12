@@ -1,7 +1,7 @@
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConstants, CardConfiguration } from 'synapse-react-client'
-import studyHeaderSvg from '../style/study-header.svg'
+import studyHeaderSvg from '../style/study-header.svg?url'
 import {
   studiesSql,
   dataSql,
