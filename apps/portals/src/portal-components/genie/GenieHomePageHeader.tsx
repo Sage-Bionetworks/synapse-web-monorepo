@@ -1,26 +1,21 @@
 import React from 'react'
 import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
-import Background from './assets/genie-homepage-background.png?url'
-import GreenPolygon from './assets/Genie-green-rectangle.svg?url'
+import Background from './assets/genie-homepage-background.jpg?url'
 
 const GenieHomePageHeader = () => {
-  const isDesktop = useMediaQuery(`(min-width: ${1315}px)`)
+  const isDesktop = useMediaQuery(`(min-width: ${1250}px)`)
   // if larger screen, show an additional extra background and show GreenPolygon's right side (which is angled)
   const additionalGreenBackgroundProps: SxProps = isDesktop
-    ? {}
-    : {
-        marginRight: '-240px',
-        paddingRight: '150px',
-      }
+    ? { clipPath: 'polygon(0 0%, 90% 0%, 100% 100%, 0% 100%)' }
+    : {}
   const content = (
     <Box
       sx={{
         ...additionalGreenBackgroundProps,
-        backgroundImage: `url(${GreenPolygon})`,
-        backgroundSize: 'cover',
+        background: 'linear-gradient(98deg, #14683D 0%, #46AF3F 100%)',
       }}
     >
-      <Box sx={{ color: 'grey.100', padding: '50px 15% 50px 100px' }}>
+      <Box sx={{ color: 'grey.100', padding: '50px 10% 50px 100px' }}>
         <Typography variant="h1" sx={{ fontSize: '36px' }}>
           Welcome to the {import.meta.env.VITE_PORTAL_NAME}
         </Typography>
