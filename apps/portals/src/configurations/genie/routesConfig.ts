@@ -46,6 +46,31 @@ const routes: GenericRoute[] = [
           },
         ],
       },
+      {
+        exact: true,
+        path: 'GENIE',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'GENIE-BPC',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'Publications',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'Contributors',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'Tools',
+        hideRouteFromNavbar: false,
+      },
     ],
   },
   {

@@ -4,8 +4,6 @@ import { SynapseConfig } from 'types/portal-config'
 import type { CardConfiguration } from 'synapse-react-client'
 import { toolsSql } from '../resources'
 
-// https://sagebionetworks.jira.com/wiki/spaces/PS/pages/1254293523/AMP-AD+Experimental+Models+Schema
-
 const schema: GenericCardSchema = {
   type: SynapseConstants.EXPERIMENTAL,
   title: 'name',

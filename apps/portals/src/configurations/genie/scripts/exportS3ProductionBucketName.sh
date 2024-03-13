@@ -1,1 +1,1 @@
-export S3_PRODUCTION_BUCK_LOCATION=s3://prod-arkportal-synapse-org-websitebucket-1557e1kxr3if1
+export S3_PRODUCTION_BUCK_LOCATION=s3://prod-genie-synapse-org-websitebucket-???????

@@ -1,6 +1,6 @@
-import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
 import { publicationsSql } from '../resources'
+import { SynapseConfig } from 'types/portal-config'
 
 const rgbIndex = 5
 
