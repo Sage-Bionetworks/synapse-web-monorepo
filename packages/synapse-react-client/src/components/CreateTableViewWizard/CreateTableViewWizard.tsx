@@ -127,10 +127,10 @@ export default function CreateTableViewWizard(
     })
 
   const {
-    mutateAsync: validateSql,
+    mutate: validateSql,
     data: isSqlValid,
-    error: sqlValidationError,
-  } = useValidateDefiningSql(sql, entityType!, {
+    error: definingSqlValidationError,
+  } = useValidateDefiningSql({
     onSuccess: (isSqlValid: ValidateDefiningSqlResponse) => {
       if (isSqlValid && isSqlValid.isValid) {
         setStep('TABLE_NAME')
@@ -138,15 +138,15 @@ export default function CreateTableViewWizard(
     },
   })
 
-  const showSqlValidationError: string | null = useMemo(() => {
-    if (sqlValidationError?.message) {
-      return sqlValidationError.message
+  const sqlValidationError: string | null = useMemo(() => {
+    if (definingSqlValidationError) {
+      return definingSqlValidationError.message
     } else if (isSqlValid && isSqlValid.invalidReason) {
       return isSqlValid.invalidReason
     } else {
       return null
     }
-  }, [sqlValidationError?.message, isSqlValid?.invalidReason])
+  }, [definingSqlValidationError, isSqlValid])
 
   const { mutateAsync: createColumnModels, error: createColumnModelsError } =
     useCreateColumnModels()
@@ -231,14 +231,6 @@ export default function CreateTableViewWizard(
     viewTypeMask,
   ])
 
-  const onTableSql = useCallback(async () => {
-    try {
-      await validateSql()
-    } catch (e) {
-      return
-    }
-  }, [validateSql])
-
   const onColumnSchemaSubmit = useCallback(
     (columnModels: SetOptional<ColumnModel, 'id'>[]) => {
       setColumnModels(columnModels)
@@ -270,8 +262,8 @@ export default function CreateTableViewWizard(
   const onNextButtonClicked = useCallback(() => {
     if (isLastStep(step)) {
       void onFinish()
-    } else if (step === 'TABLE_SQL') {
-      onTableSql()
+    } else if (step === 'TABLE_SQL' && entityType) {
+      validateSql({ sql, entityType })
     } else if (step === 'TABLE_COLUMNS') {
       onColumnSchemaNextClicked()
     } else if (
@@ -293,7 +285,9 @@ export default function CreateTableViewWizard(
     onColumnSchemaNextClicked,
     columnModels.length,
     defaultColumnModels,
-    onTableSql,
+    validateSql,
+    entityType,
+    sql,
   ])
 
   const isNextButtonDisabled = useMemo(() => {
@@ -334,14 +328,14 @@ export default function CreateTableViewWizard(
             {createColumnModelsError.message}
           </Alert>
         )}
-        {showSqlValidationError && (
+        {sqlValidationError && (
           <Alert sx={{ my: 2 }} severity="error">
-            {showSqlValidationError}
+            {sqlValidationError}
           </Alert>
         )}
       </>
     )
-  }, [createColumnModelsError, createEntityError, showSqlValidationError])
+  }, [createColumnModelsError, createEntityError, sqlValidationError])
 
   const stepContent = useMemo(() => {
     switch (step) {

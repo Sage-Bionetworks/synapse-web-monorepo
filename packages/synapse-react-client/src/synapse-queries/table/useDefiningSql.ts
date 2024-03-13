@@ -3,16 +3,23 @@ import { UseMutationOptions, useMutation } from '@tanstack/react-query'
 import { validateDefiningSql } from '../../synapse-client'
 import {
   ValidateDefiningSqlResponse,
-  EntityType,
+  ValidateDefiningSqlRequest,
 } from '@sage-bionetworks/synapse-types'
 
 export function useValidateDefiningSql(
-  sql: string,
-  entityType: EntityType,
-  options?: UseMutationOptions<ValidateDefiningSqlResponse, SynapseClientError>,
+  options?: UseMutationOptions<
+    ValidateDefiningSqlResponse,
+    SynapseClientError,
+    ValidateDefiningSqlRequest
+  >,
 ) {
-  return useMutation<ValidateDefiningSqlResponse, SynapseClientError>({
+  return useMutation<
+    ValidateDefiningSqlResponse,
+    SynapseClientError,
+    ValidateDefiningSqlRequest
+  >({
     ...options,
-    mutationFn: () => validateDefiningSql(sql, entityType),
+    mutationFn: variables =>
+      validateDefiningSql(variables.sql, variables.entityType),
   })
 }
