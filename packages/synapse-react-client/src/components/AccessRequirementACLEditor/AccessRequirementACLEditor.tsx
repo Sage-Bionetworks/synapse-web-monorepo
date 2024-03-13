@@ -1,65 +1,13 @@
-import { Alert, Box, IconButton, Stack, Typography } from '@mui/material'
-import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
-import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import IconSvg from '../IconSvg'
-import UserOrTeamBadge from '../UserOrTeamBadge'
+import { Alert, Box, Skeleton, Stack, Typography } from '@mui/material'
+import {
+  ACCESS_TYPE,
+  AccessControlList,
+  ResourceAccess,
+} from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
+import { useGetAccessRequirementACL } from '../../synapse-queries'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
-import { PermissionLevelMenu } from './PermissionLevelMenu'
-
-const availablePermissionLevels: PermissionLevel[] = [
-  'CAN_REVIEW_SUBMISSIONS',
-  'IS_EXEMPTION_ELIGIBLE',
-  'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
-]
-
-type ResourceAccessItemProps = {
-  resourceAccess: ResourceAccess
-  onChangeAccessType: (accessType: ACCESS_TYPE[]) => void
-  onRemove: () => void
-}
-
-const ResourceAccessItem: React.FunctionComponent<ResourceAccessItemProps> = (
-  props: ResourceAccessItemProps,
-) => {
-  const { resourceAccess, onChangeAccessType, onRemove } = props
-
-  return (
-    <>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        gap="10px"
-        py="6px"
-        role="row"
-      >
-        <Typography fontSize="16px" lineHeight="20px">
-          <UserOrTeamBadge principalId={resourceAccess.principalId} />
-        </Typography>
-        <Stack direction="row" gap="10px" alignItems="center" width="225px">
-          <PermissionLevelMenu
-            currentAccessType={resourceAccess.accessType}
-            availablePermissionLevels={availablePermissionLevels}
-            onChange={onChangeAccessType}
-          />
-          <IconButton
-            // TODO - confirm this language
-            aria-label={`Remove from AR Permissions`}
-            onClick={() => onRemove()}
-            sx={{
-              '&:hover': {
-                color: 'error.main',
-              },
-            }}
-          >
-            <IconSvg icon={'delete'} fontSize={'inherit'} wrap={false} />
-          </IconButton>
-        </Stack>
-      </Stack>
-    </>
-  )
-}
+import { ResourceAccessItem } from './ResourceAccessItem'
 
 const textSx = {
   variant: 'body1',
@@ -72,18 +20,35 @@ export const EMPTY_RESOURCE_ACCESS_LIST_TEXT =
 export const REVIEWER_ALREADY_ADDED_ERROR_MESSAGE =
   'User or team already has permissions on this AR.'
 
-export type ResourceAccessEditorProps = {
-  resourceAccessList: ResourceAccess[]
-  onChange: (resourceAccess: ResourceAccess[]) => void
+type ACL_OPERATION = 'UPDATE' | 'CREATE' | 'DELETE' | 'NOOP'
+export type AccessRequirementAclEditorProps = {
+  accessRequirementId: string
+  onUpdate: (acl: AccessControlList | null, aclOperation: ACL_OPERATION) => void
 }
 
-export const ResourceAccessEditor: React.FunctionComponent<
-  ResourceAccessEditorProps
-> = (props: ResourceAccessEditorProps) => {
-  const { resourceAccessList, onChange } = props
+export const AccessRequirementAclEditor: React.FunctionComponent<
+  AccessRequirementAclEditorProps
+> = (props: AccessRequirementAclEditorProps) => {
+  const { accessRequirementId, onUpdate } = props
   const [error, setError] = useState<string | null>(null)
+  const [resourceAccessList, setResourceAccessList] = useState<
+    ResourceAccess[]
+  >([])
 
-  const handleNewReviewer = (newReviewerId: string | null) => {
+  const { data: originalAcl, isLoading: isLoadingOriginalAcl } =
+    useGetAccessRequirementACL(accessRequirementId)
+
+  useEffect(() => {
+    if (originalAcl) {
+      setResourceAccessList(originalAcl.resourceAccess)
+    }
+  }, [originalAcl])
+
+  const baseAcl: AccessControlList = originalAcl
+    ? originalAcl
+    : { id: accessRequirementId, resourceAccess: resourceAccessList }
+
+  const addResourceAccessItem = (newReviewerId: string | null) => {
     if (newReviewerId) {
       const alreadyReviewer = resourceAccessList.some(
         resourceAccess => resourceAccess.principalId === Number(newReviewerId),
@@ -96,24 +61,66 @@ export const ResourceAccessEditor: React.FunctionComponent<
           principalId: Number(newReviewerId),
           accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
         }
-        onChange([...resourceAccessList, newResourceAccess])
+        const updatedResourceAccessList = [
+          ...resourceAccessList,
+          newResourceAccess,
+        ]
+        setResourceAccessList(updatedResourceAccessList)
+        onUpdate(
+          {
+            ...baseAcl,
+            resourceAccess: updatedResourceAccessList,
+          },
+          originalAcl === null ? 'CREATE' : 'UPDATE',
+        )
       }
     } else {
       setError(null)
     }
   }
 
-  const handleOnChangeAccessType = (
+  const updateResourceAccessItem = (
     principalId: number,
     accessType: ACCESS_TYPE[],
   ) => {
-    onChange(
-      resourceAccessList.map(resourceAccess => {
-        return resourceAccess.principalId === principalId
-          ? { ...resourceAccess, accessType }
-          : resourceAccess
-      }),
+    const updatedResourceAccessList = resourceAccessList.map(resourceAccess => {
+      return resourceAccess.principalId === principalId
+        ? { ...resourceAccess, accessType }
+        : resourceAccess
+    })
+    setResourceAccessList(updatedResourceAccessList)
+    onUpdate(
+      {
+        ...baseAcl,
+        resourceAccess: updatedResourceAccessList,
+      },
+      originalAcl === null ? 'CREATE' : 'UPDATE',
     )
+  }
+
+  const removeResourceAccessItem = (principalId: number) => {
+    const updatedResourceAccessList = resourceAccessList.filter(
+      raListItem => raListItem.principalId !== principalId,
+    )
+    setResourceAccessList(updatedResourceAccessList)
+
+    const updatedAcl =
+      updatedResourceAccessList.length === 0
+        ? null
+        : { ...baseAcl, resourceAccess: updatedResourceAccessList }
+
+    let updateType: ACL_OPERATION
+    if (originalAcl === null && updatedAcl === null) {
+      updateType = 'NOOP'
+    } else if (originalAcl === null) {
+      updateType = 'CREATE'
+    } else if (updatedAcl === null) {
+      updateType = 'DELETE'
+    } else {
+      updateType = 'UPDATE'
+    }
+
+    onUpdate(updatedAcl, updateType)
   }
 
   return (
@@ -142,8 +149,11 @@ export const ResourceAccessEditor: React.FunctionComponent<
           <Typography variant="headline3" mb="10px">
             Users and Teams with Permissions
           </Typography>
+          {isLoadingOriginalAcl && (
+            <Skeleton variant="rectangular" width={250} height={24} />
+          )}
           {/* TODO - confirm this case / language */}
-          {resourceAccessList.length === 0 ? (
+          {!isLoadingOriginalAcl && resourceAccessList.length === 0 ? (
             <Typography variant="body1Italic">
               {EMPTY_RESOURCE_ACCESS_LIST_TEXT}
             </Typography>
@@ -154,21 +164,15 @@ export const ResourceAccessEditor: React.FunctionComponent<
                   <ResourceAccessItem
                     key={resourceAccess.principalId}
                     resourceAccess={resourceAccess}
-                    onChangeAccessType={accessType =>
-                      handleOnChangeAccessType(
+                    onChange={accessType =>
+                      updateResourceAccessItem(
                         resourceAccess.principalId,
                         accessType,
                       )
                     }
-                    onRemove={() => {
-                      onChange(
-                        resourceAccessList.filter(
-                          raListItem =>
-                            raListItem.principalId !==
-                            resourceAccess.principalId,
-                        ),
-                      )
-                    }}
+                    onRemove={() =>
+                      removeResourceAccessItem(resourceAccess.principalId)
+                    }
                   />
                 )
               })}
@@ -197,7 +201,7 @@ export const ResourceAccessEditor: React.FunctionComponent<
             <UserSearchBoxV2
               inputId="reviewer-search"
               placeholder="Username, name (first and last) or team name."
-              onChange={handleNewReviewer}
+              onChange={addResourceAccessItem}
             />
             {error && <Alert severity="error">{error}</Alert>}
           </Box>

@@ -1,5 +1,6 @@
 import { rest } from 'msw'
 import {
+  ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -24,6 +25,8 @@ import {
 } from '../../mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { AccessControlList } from '@sage-bionetworks/synapse-types'
+import { mockAccessRequirementAcls } from '../../mockAccessRequirementAcls'
 
 const accessRequirementStatuses: Map<string, AccessRequirementStatus> =
   new Map()
@@ -188,6 +191,29 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
   )
 }
 
+export function getAccessRequirementAclHandler(backendOrigin: string) {
+  return rest.get(
+    `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
+
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<AccessControlList> = {
+        reason: `Mock Service worker could not find an ACL for access requirement with ID ${req.params.id}`,
+      }
+      const acl = mockAccessRequirementAcls.find(
+        acl => acl.id === req.params.id,
+      )
+
+      if (acl) {
+        response = acl
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  )
+}
+
 export function getAllAccessRequirementHandlers(backendOrigin: string) {
   return [
     ...getAccessRequirementHandlers(backendOrigin),
@@ -195,5 +221,6 @@ export function getAllAccessRequirementHandlers(backendOrigin: string) {
     getAccessRequirementsBoundToTeamHandler(backendOrigin),
     ...getAccessRequirementStatusHandlers(backendOrigin),
     getCreateAccessApprovalHandler(backendOrigin),
+    getAccessRequirementAclHandler(backendOrigin),
   ]
 }
