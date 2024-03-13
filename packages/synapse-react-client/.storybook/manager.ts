@@ -9,6 +9,12 @@ addons.setConfig({
     brandImage:
       'https://s3.amazonaws.com/static.synapse.org/images/synapse-logo-blue.svg',
   }),
-  colorPrimary: palette.primary[500],
-  colorSecondary: palette.secondary[500],
+  colorPrimary:
+    palette.primary && 'main' in palette.primary
+      ? palette.primary.main
+      : undefined,
+  colorSecondary:
+    palette.secondary && 'main' in palette.secondary
+      ? palette.secondary.main
+      : undefined,
 })
