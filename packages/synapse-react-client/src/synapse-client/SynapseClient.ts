@@ -290,6 +290,8 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
+  EntityType,
+  ValidateDefiningSqlResponse,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -315,6 +317,20 @@ export const getVersion = (): Promise<SynapseVersion> => {
   return doGet<SynapseVersion>(
     '/repo/v1/version',
     undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/validateDefiningSql.html
+export function validateDefiningSql(
+  definingSql: string,
+  entityType: EntityType,
+  accessToken?: string | undefined,
+) {
+  return doPost<ValidateDefiningSqlResponse>(
+    '/repo/v1/validateDefiningSql',
+    { definingSql, entityType },
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
