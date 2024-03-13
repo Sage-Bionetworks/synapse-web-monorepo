@@ -1,64 +1,34 @@
-import React from 'react'
 import useGetInfoFromIds, { UseGetInfoFromIdsProps } from './useGetInfoFromIds'
-import { act } from 'react-dom/test-utils'
-import ReactDOM from 'react-dom'
-import { UserGroupHeader, UserProfile } from '@sage-bionetworks/synapse-types'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
+import {
+  UserGroupHeader,
+  UserGroupHeaderResponsePage,
+} from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
-import { waitFor } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
-jest.mock('../../synapse-client', () => ({
-  getGroupHeadersBatch: jest.fn(),
-}))
-
-const HookWrapper = (props: UseGetInfoFromIdsProps<any>) => {
-  const useHookGetProfilesHook = useGetInfoFromIds(props) as UserProfile[]
-  return (
-    <ul>
-      {useHookGetProfilesHook.map(el => (
-        <li key={el.ownerId}> {el.ownerId} </li>
-      ))}
-    </ul>
-  )
+const mockGroupHeaders: UserGroupHeaderResponsePage = {
+  children: [{ ownerId: 'aaa', userName: 'aaa', isIndividual: true }],
 }
 
+jest
+  .spyOn(SynapseClient, 'getGroupHeadersBatch')
+  .mockResolvedValueOnce(mockGroupHeaders)
+
 describe('useGetInfoFromIds hook works', () => {
-  let container: HTMLDivElement
-  beforeEach(() => {
-    container = document.createElement('div')
-    document.body.appendChild(container)
-  })
-
-  afterEach(() => {
-    document.body.removeChild(container!)
-    // @ts-ignore
-    container = null
-  })
-
-  const mockGetGroupHeadersBatch = jest.mocked(
-    SynapseClient.getGroupHeadersBatch,
-  )
-  mockGetGroupHeadersBatch.mockResolvedValueOnce({
-    children: [{ ownerId: 'aaa', userName: 'aaa', isIndividual: true }],
-  })
-
   it('gets initial data', async () => {
     const props: UseGetInfoFromIdsProps<UserGroupHeader> = {
       ids: ['aaa'],
       type: 'USER_PROFILE',
     }
-    act(() => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <HookWrapper {...props} />
-        </SynapseTestContext>,
-        container,
-      )
+
+    const hook = renderHook(() => useGetInfoFromIds(props), {
+      wrapper: createWrapper(),
     })
+
     await waitFor(() => {
-      const component = container.querySelector<HTMLDivElement>('ul')!
-      expect(component).toBeDefined()
-      expect(component.querySelectorAll('li')).toHaveLength(1)
+      expect(hook.result.current).toEqual(mockGroupHeaders.children)
+      expect(hook.result.current).toHaveLength(1)
     })
   })
 })
