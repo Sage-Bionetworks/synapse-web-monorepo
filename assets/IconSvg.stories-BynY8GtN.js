@@ -1,8 +1,0 @@
-import{j as r}from"./jsx-runtime-CKrituN3.js";import{a as s,I as a}from"./IconSvg--XoCrLds.js";import"./index-CBqU2yxZ.js";import"./_commonjsHelpers-BosuxZz1.js";import"./createSvgIcon-ClnqzT54.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-BPGUNDjC.js";import"./createTheme-2XtGYoE4.js";import"./index-DMoHWj5j.js";import"./styled-CPWjInoX.js";import"./Tooltip-XprEAl00.js";import"./index-CJ-wfEIf.js";import"./utils-SU9mu0D7.js";import"./inheritsLoose-B7h9gheN.js";import"./index-BtM5VmRH.js";import"./TransitionGroupContext-B1FFUpIO.js";import"./useForkRef-BSLA1zlB.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DHJeVGyA.js";import"./mergeSlotProps-ih6DGlm4.js";import"./isHostComponent-DVu5iVWx.js";import"./useIsFocusVisible-Chjat8DO.js";import"./ErrorOutlined-BhDYotgP.js";import"./GetAppTwoTone-DGNvw6OX.js";import"./InfoOutlined-G1tbAqgK.js";import"./CheckCircleTwoTone-B5Iaww82.js";const k={title:"UI/IconSvg",render:p=>r.jsx("div",{style:{display:"flex",flexWrap:"wrap",flexDirection:"row"},children:[...s].sort().map(t=>r.jsxs("div",{style:{margin:"10px",textAlign:"center"},children:[r.jsx("div",{children:r.jsx(a,{...p,icon:t,label:t})}),r.jsx("div",{style:{fontSize:"10px"},children:t})]},t))})},o={args:{sx:{color:"primary.main"},fontSize:"large"}};var i,e,m;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
-  args: {
-    sx: {
-      color: 'primary.main'
-    },
-    fontSize: 'large'
-  }
-}`,...(m=(e=o.parameters)==null?void 0:e.docs)==null?void 0:m.source}}};const q=["Icon"];export{o as Icon,q as __namedExportsOrder,k as default};
