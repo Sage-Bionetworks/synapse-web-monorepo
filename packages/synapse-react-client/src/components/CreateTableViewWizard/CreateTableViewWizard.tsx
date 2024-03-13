@@ -293,6 +293,7 @@ export default function CreateTableViewWizard(
     onColumnSchemaNextClicked,
     columnModels.length,
     defaultColumnModels,
+    onTableSql,
   ])
 
   const isNextButtonDisabled = useMemo(() => {
