@@ -44,9 +44,11 @@ const mockEntityFinderModal = jest.mocked(EntityFinderModal)
 jest.spyOn(SynapseClient, 'createEntity')
 jest.spyOn(SynapseClient, 'createColumnModels')
 jest.spyOn(SynapseClient, 'getAnnotationColumnModels')
+const mockValidateDefiningSql = jest.spyOn(SynapseClient, 'validateDefiningSql')
 
 const createColumnModelsSpy = jest.mocked(SynapseClient.createColumnModels)
 const createEntitySpy = jest.mocked(SynapseClient.createEntity)
+const validateDefiningSqlSpy = jest.mocked(SynapseClient.validateDefiningSql)
 const getAnnotationColumnsSpy = jest.mocked(
   SynapseClient.getAnnotationColumnModels,
 )
@@ -500,6 +502,10 @@ describe('CreateTableWizard integration tests', () => {
       onComplete,
       onCancel,
     })
+    const mockValidateDefiningSqlResponse = {
+      isValid: true,
+    }
+    mockValidateDefiningSql.mockResolvedValue(mockValidateDefiningSqlResponse)
 
     // Select "View"
     await user.click(
@@ -515,16 +521,26 @@ describe('CreateTableWizard integration tests', () => {
       }),
     )
 
-    // Give the view a name
-    const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await user.type(nameField, 'tableName')
-
     // Add defining SQL
     const definingSqlField = await screen.findByRole('textbox', {
       name: 'Defining SQL',
     })
     await user.type(definingSqlField, 'SELECT * FROM syn123')
 
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await waitFor(() => {
+      expect(validateDefiningSqlSpy).toHaveBeenCalledWith(
+        'SELECT * FROM syn123',
+        'materializedview',
+      )
+    })
+
+    // Give the view a name
+    const nameField = await waitFor(() =>
+      screen.findByRole('textbox', { name: 'Name' }),
+    )
+    await user.type(nameField, 'tableName')
     await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
@@ -552,6 +568,10 @@ describe('CreateTableWizard integration tests', () => {
       onComplete,
       onCancel,
     })
+    const mockValidateDefiningSqlResponse = {
+      isValid: true,
+    }
+    mockValidateDefiningSql.mockResolvedValue(mockValidateDefiningSqlResponse)
 
     // Select "View"
     await user.click(
@@ -567,16 +587,26 @@ describe('CreateTableWizard integration tests', () => {
       }),
     )
 
-    // Give the view a name
-    const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await user.type(nameField, 'tableName')
-
     // Add defining SQL
     const definingSqlField = await screen.findByRole('textbox', {
       name: 'Defining SQL',
     })
     await user.type(definingSqlField, 'SELECT * FROM syn123')
 
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await waitFor(() => {
+      expect(validateDefiningSqlSpy).toHaveBeenCalledWith(
+        'SELECT * FROM syn123',
+        'virtualtable',
+      )
+    })
+
+    // Give the view a name
+    const nameField = await waitFor(() =>
+      screen.findByRole('textbox', { name: 'Name' }),
+    )
+    await user.type(nameField, 'tableName')
     await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
@@ -594,6 +624,53 @@ describe('CreateTableWizard integration tests', () => {
       )
       expect(onComplete).toHaveBeenCalledWith(expect.stringMatching(/syn\d+/))
     })
+  })
+  test('DefiningSql must be valid before advancing', async () => {
+    const onComplete = jest.fn()
+    const onCancel = jest.fn()
+    const { user } = renderComponent({
+      open: true,
+      parentId: mockProjectEntityData.id,
+      onComplete,
+      onCancel,
+    })
+    const mockValidateDefiningSqlResponse = {
+      isValid: false,
+      invalidReason: 'Error with SQL',
+    }
+    mockValidateDefiningSql.mockResolvedValue(mockValidateDefiningSqlResponse)
+
+    // Select "View"
+    await user.click(
+      await screen.findByRole('menuitem', {
+        name: 'View',
+      }),
+    )
+
+    // Select the materialized view option
+    await user.click(
+      await screen.findByRole('menuitem', {
+        name: 'Materialized View',
+      }),
+    )
+
+    // Add defining SQL
+    const definingSqlField = await screen.findByRole('textbox', {
+      name: 'Defining SQL',
+    })
+    await user.type(definingSqlField, 'SELECT * FROM syn123')
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await waitFor(() => {
+      expect(validateDefiningSqlSpy).toHaveBeenCalledWith(
+        'SELECT * FROM syn123',
+        'materializedview',
+      )
+    })
+    // Check that the error message appears instead of advancing
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(mockValidateDefiningSqlResponse.invalidReason)
   })
   test('Column models must be valid before advancing', async () => {
     const onComplete = jest.fn()
