@@ -1,1 +1,0 @@
-import{c as s}from"./Box-Bs5qirON.js";import{g as e,C as o}from"./createTheme-BmyBSwiD.js";const a=e("MuiBox",["root"]),t=a,r=s({defaultClassName:t.root,generateClassName:o.generate}),m=r;export{m as B};

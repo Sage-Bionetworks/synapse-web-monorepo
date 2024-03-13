@@ -1,0 +1,1 @@
+import{a as s,c as t,t as l}from"./_baseIteratee-KHctvnqt.js";import{b as r}from"./_baseSlice-F8doVSIJ.js";function u(n){var e=n==null?0:n.length;return e?n[e-1]:void 0}function a(n,e){return e.length<2?n:s(n,r(e,0,-1))}function m(n,e){return e=t(e,n),n=a(n,e),n==null||delete n[l(u(e))]}export{m as b,u as l,a as p};
