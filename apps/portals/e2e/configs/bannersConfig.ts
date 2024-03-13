@@ -17,6 +17,7 @@ const bannerConfig: BannerConfig = {
   nf: ['survey', 'cookies'],
   psychencode: ['cookies'],
   stopadportal: ['cookies'],
+  genie: ['cookies'],
 }
 
 export default bannerConfig

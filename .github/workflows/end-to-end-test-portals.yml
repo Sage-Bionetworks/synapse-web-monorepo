@@ -30,6 +30,7 @@ jobs:
             nf,
             psychencode,
             stopadportal,
+            genie,
           ]
     runs-on: ubuntu-latest
     steps:

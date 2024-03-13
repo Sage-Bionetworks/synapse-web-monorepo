@@ -9,6 +9,7 @@ export type Portal =
   | 'nf'
   | 'psychencode'
   | 'stopadportal'
+  | 'genie'
 
 type RouteButtonsLinks = { buttons: string[]; links: string[] }
 type RouteConfig = Record<Portal, RouteButtonsLinks>
@@ -61,6 +62,10 @@ const routesConfig: RouteConfig = {
   stopadportal: {
     buttons: ['Help', 'Sign In'],
     links: ['Home', 'Apply'],
+  },
+  genie: {
+    buttons: ['Home', 'Explore', 'Sign In'],
+    links: ['Access', 'Help'],
   },
 }
 

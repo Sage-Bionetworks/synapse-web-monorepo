@@ -69,6 +69,11 @@ const exploreConfig: ExploreConfig = {
     people_charts: ['People'],
   },
   stopadportal: {},
+  genie: {
+    // TBD
+    // table_charts: ['GENIE, GENIE-BPC'],
+    // cards: ['Publications', 'Contributors', 'Tools'],
+  },
 }
 
 export default exploreConfig
