@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import React from 'react'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -18,7 +17,7 @@ const secondEvaluation = {
 async function chooseAutocompleteOption(
   el: HTMLElement,
   option: string,
-  user: UserEvent,
+  user: ReturnType<(typeof userEvent)['setup']>,
 ) {
   await user.clear(el)
   await user.type(el, option)

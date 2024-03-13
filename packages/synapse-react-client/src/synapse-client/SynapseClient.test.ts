@@ -1,6 +1,6 @@
 import type { FunctionReturningPaginatedResults } from './SynapseClient'
 import * as SynapseClient from './SynapseClient'
-import { SynapseClientError } from '../utils/SynapseClientError'
+import { SynapseClientError } from '../utils'
 import {
   ACCESS_TOKEN_COOKIE_KEY,
   NETWORK_UNAVAILABLE_MESSAGE,
@@ -67,6 +67,7 @@ describe('SynapseClient tests', () => {
 
   describe('fetch tests', () => {
     it('fetch error results in a nice network unavailable message', async () => {
+      doGetSpy.mockRestore()
       const expected = new SynapseClientError(
         0,
         NETWORK_UNAVAILABLE_MESSAGE,

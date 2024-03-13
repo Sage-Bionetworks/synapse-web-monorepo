@@ -6,7 +6,7 @@
     "outDir": "dist",
     "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "noEmit": false
   },
   "files": ["src/index.ts"]

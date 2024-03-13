@@ -10,8 +10,8 @@ import { handleSelectedFilesToParticipants } from './handleFilesToParticipants'
 import {
   QueryWrapperSynapsePlotProps,
   QueryWrapperSynapsePlotRowClickEvent,
-} from 'synapse-react-client/src/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import { SynapseUtilityFunctions } from 'synapse-react-client'
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
 
 const rgbIndex = 1
 

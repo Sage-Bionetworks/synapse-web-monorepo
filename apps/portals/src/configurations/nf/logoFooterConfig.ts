@@ -1,5 +1,5 @@
 import { LogoConfig } from 'types/portal-config'
-import nfLogoWhite from './style/nfLogoWhite.svg'
+import nfLogoWhite from './style/nfLogoWhite.svg?url'
 
 const logoHeader: LogoConfig = {
   icon: nfLogoWhite,

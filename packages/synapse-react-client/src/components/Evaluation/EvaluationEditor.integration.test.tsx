@@ -1,6 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import React from 'react'
 import { EvaluationEditor, EvaluationEditorProps } from './EvaluationEditor'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -25,8 +24,7 @@ describe('test EvaluationEditor', () => {
   const onCreateEvaluation = jest.fn()
   const onUpdateEvaluation = jest.fn()
   const onDeleteEvaluation = jest.fn()
-
-  let user: UserEvent
+  let user: ReturnType<(typeof userEvent)['setup']>
   beforeAll(() => {
     server.listen()
     user = userEvent.setup({

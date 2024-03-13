@@ -1,10 +1,9 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 export async function addColumnModelToForm(
   columnName?: string,
-  user: UserEvent | typeof userEvent = userEvent,
+  user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
 ) {
   const addColumnButton = await screen.findByRole('button', {
     name: 'Add Column',
@@ -19,7 +18,7 @@ export async function addColumnModelToForm(
 export async function modifyColumnModelInForm(
   index: number,
   data: { columnName: string },
-  user: UserEvent | typeof userEvent = userEvent,
+  user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
 ) {
   if (data.columnName) {
     const nameField = (await screen.findAllByLabelText('Name'))[index]

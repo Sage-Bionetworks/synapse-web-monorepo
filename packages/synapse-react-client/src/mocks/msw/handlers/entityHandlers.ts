@@ -30,6 +30,22 @@ import { SynapseApiResponse } from '../handlers'
 import { uniqueId } from 'lodash-es'
 import { mockProjectsEntityData } from '../../entity/mockProject'
 import { mockUploadDestinations } from '../../mock_upload_destination'
+import { normalizeSynPrefix } from '../../../utils/functions/EntityTypeUtils'
+import { MockEntityData } from '../../entity/MockEntityData'
+
+function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
+  const normalizedPassedIds = entityIds.map(normalizeSynPrefix)
+  return mockEntities.filter(entity =>
+    normalizedPassedIds.includes(normalizeSynPrefix(entity.id)),
+  )
+}
+function getMatchingMockEntity(entityId: string): MockEntityData | undefined {
+  const matches = getMatchingMockEntities([entityId])
+  if (matches.length == 0) {
+    return undefined
+  }
+  return matches[0]
+}
 
 export function getEntityBundleHandler(
   backendOrigin: string,
@@ -46,9 +62,7 @@ export function getEntityBundleHandler(
         response = bundle as EntityBundle
         status = 200
       } else {
-        const entityData = mockEntities.find(
-          entity => entity.id === req.params.entityId,
-        )
+        const entityData = getMatchingMockEntity(req.params.entityId as string)
         if (entityData?.bundle) {
           response = entityData.bundle
           status = 200
@@ -66,7 +80,7 @@ export function getVersionedEntityBundleHandler(
   return rest.post(
     `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
     async (req, res, ctx) => {
-      const entityId = req.params.entityId
+      const entityId = req.params.entityId as string
       const versionNumber = parseInt(req.params.versionNumber as string)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
@@ -76,7 +90,7 @@ export function getVersionedEntityBundleHandler(
         response = bundle as EntityBundle
         status = 200
       } else {
-        const entityData = mockEntities.find(entity => entity.id === entityId)
+        const entityData = getMatchingMockEntity(entityId)
         if (entityData) {
           const bundle = entityData.bundle
           if (entityData.versions && entityData.versions[versionNumber]) {
@@ -133,9 +147,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
         reason: `Mock Service worker could not find a mock entity with ID ${req.params.entityId}`,
       }
 
-      const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
-      )
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
       if (entityData) {
         response = entityData.entity
         status = 200
@@ -152,9 +164,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
         reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
       }
 
-      const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
-      )
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
       if (entityData && entityData.versionInfo) {
         response = { results: entityData.versionInfo }
         status = 200
@@ -175,9 +185,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
         reason: `Mock Service worker could not find a mock versioned entity with ID ${entityId}.${versionNumber}`,
       }
 
-      const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
-      )
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
       if (
         entityData &&
         entityData.versions &&
@@ -209,9 +217,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       let response: SynapseApiResponse<EntityJson> = {
         reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
       }
-      const entityData = mockEntities.find(
-        entity => entity.id === req.params.entityId,
-      )
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
       if (entityData?.json) {
         response = entityData.json
         status = 200
@@ -231,11 +237,18 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
 
       const referenceList = req.body as { references: Reference[] }
-      const entityData = mockEntities
-        .filter(entity =>
-          referenceList.references.find(ref => ref.targetId === entity.id),
-        )
-        .map(entity => entity.entityHeader)
+      const entityData: EntityHeader[] = referenceList.references
+        .map(ref => {
+          const entityHeader = getMatchingMockEntity(ref.targetId)?.entityHeader
+          if (entityHeader) {
+            return {
+              ...entityHeader,
+              // ID should match what is passed in (i.e. may or may not have syn prefix)
+              id: ref.targetId,
+            }
+          }
+          return undefined
+        })
         .filter((header): header is EntityHeader => !!header)
 
       if (entityData) {
@@ -255,7 +268,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       let response: SynapseApiResponse<EntityPath> = {
         reason: `Mock Service worker could not find a mock entity path using ID ${req.params.entityId}`,
       }
-      const entityData = mockEntities.find(e => req.params.entityId === e.id)
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
 
       if (entityData && entityData.path) {
         response = entityData.path

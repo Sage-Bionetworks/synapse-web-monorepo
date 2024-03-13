@@ -3,7 +3,7 @@ import { projectCardConfiguration } from './synapseConfigs/projects'
 import { datasetCardConfiguration } from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { toolsConfiguration } from './synapseConfigs/tools'
-import DatasetSvg from './style/Dataset.svg'
+import DatasetSvg from './style/Dataset.svg?url'
 import { publicationsCardConfiguration } from './synapseConfigs/publications'
 import { grantsCardConfiguration } from './synapseConfigs/grants'
 import { peopleCardConfiguration } from './synapseConfigs/people'
@@ -24,7 +24,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import personGraySvg from './style/PersonGray.svg'
+import personGraySvg from './style/PersonGray.svg?url'
 
 const routes: GenericRoute[] = [
   {
