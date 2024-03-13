@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
-import Background from './assets/genie-homepage-background.png'
-import GreenPolygon from './assets/Genie-green-rectangle.svg'
+import Background from './assets/genie-homepage-background.png?url'
+import GreenPolygon from './assets/Genie-green-rectangle.svg?url'
 
 const GenieHomePageHeader = () => {
   const isDesktop = useMediaQuery(`(min-width: ${1315}px)`)
