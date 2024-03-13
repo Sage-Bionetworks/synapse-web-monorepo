@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { displayToast } from '../ToastMessage/ToastMessage'
+import { SynapseClientError, useSynapseContext } from '../../utils'
+import { displayToast } from '../ToastMessage'
 import {
   Alert,
   Box,
@@ -12,10 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import {
-  OAuthClient,
-  OIDCSigningAlgorithm,
-} from '@sage-bionetworks/synapse-types'
+import { OAuthClient, OIDCSigningAlgorithm } from 'synapse-client'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
@@ -23,11 +20,9 @@ import {
 } from '../../synapse-queries'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import SynapseClient from '../../synapse-client'
 import { useDebouncedEffect } from '../../utils/hooks'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export const defaultUserInfoSignedResponseAlgorithm = 'JSON'
 export const warningHeader = 'Are you absolutely sure?'
@@ -60,7 +55,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   isShowingConfirmModal,
   setIsShowingModal,
 }) => {
-  const { accessToken } = useSynapseContext()
+  const { synapseClient } = useSynapseContext()
   const [clientName, setClientName] = useState('')
   const [redirectUris, setRedirectUris] = useState([{ uri: '' }])
   const [policyUri, setPolicyUri] = useState<string>('')
@@ -106,31 +101,37 @@ export const CreateOAuthModal: React.FunctionComponent<
   useEffect(() => {
     setClientName(client?.client_name ?? '')
     setRedirectUris(
-      client?.redirect_uris.map(str => ({ uri: str })) ?? [{ uri: '' }],
+      client?.redirect_uris?.map((str: string) => ({ uri: str })) ?? [
+        { uri: '' },
+      ],
     )
     setPolicyUri(client?.policy_uri ?? '')
     setClientUri(client?.client_uri ?? '')
     setSectorUri(client?.sector_identifier_uri ?? '')
     setUserinfoSignedResponseAlg(
-      client?.userinfo_signed_response_alg ??
-        defaultUserInfoSignedResponseAlgorithm,
+      (client?.userinfo_signed_response_alg ??
+        defaultUserInfoSignedResponseAlgorithm) as
+        | 'JSON'
+        | OIDCSigningAlgorithm,
     )
     setTosUri(client?.tos_uri ?? '')
   }, [isShowingModal, client])
 
   useDebouncedEffect(
     () => {
-      if (accessToken && oAuthClient.client_id) {
+      if (oAuthClient.client_id) {
         // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
-        SynapseClient.isOAuthClientReverificationRequired(
-          oAuthClient,
-          accessToken,
-        ).then(precheckResult => {
-          setWarnTrigger(precheckResult.reverificationRequired)
-        })
+        synapseClient.openIDConnectServicesClient
+          .putAuthV1Oauth2ClientIdVerificationPrecheck({
+            id: oAuthClient.client_id!,
+            oAuthClient: oAuthClient,
+          })
+          .then(precheckResult => {
+            setWarnTrigger(precheckResult.reverificationRequired!)
+          })
       }
     },
-    [accessToken, oAuthClient],
+    [oAuthClient, synapseClient.openIDConnectServicesClient],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
@@ -186,16 +187,14 @@ export const CreateOAuthModal: React.FunctionComponent<
 
   const onCreateClient = () => {
     try {
-      if (accessToken) {
-        setUpdatedClient(oAuthClient)
-        if (warnTrigger === true) {
-          setIsShowingConfirmModal(true)
+      setUpdatedClient(oAuthClient)
+      if (warnTrigger === true) {
+        setIsShowingConfirmModal(true)
+      } else {
+        if (isEdit) {
+          updateClient(oAuthClient)
         } else {
-          if (isEdit) {
-            updateClient(oAuthClient)
-          } else {
-            createClient(oAuthClient)
-          }
+          createClient(oAuthClient)
         }
       }
     } catch (err) {

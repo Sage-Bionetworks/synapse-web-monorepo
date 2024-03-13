@@ -1,18 +1,37 @@
 {
   "name": "synapse-client",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "src/generated/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.9.0",
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@types/lodash": "^4.17.7",
+    "@types/minimist": "^1.2.5",
     "lodash": "^4.17.21",
-    "rimraf": "^5.0.1"
+    "minimist": "^1.2.8",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.3",
+    "tsup": "^8.0.2",
+    "undici": "^6.19.4",
+    "vitest": "^1.6.0"
   },
   "scripts": {
-    "get-spec": "curl -fsSL https://rest-docs.synapse.org/rest/openapi/openapispecification.json > openapispecification.json",
-    "configure": "openapi-generator-cli version-manager set 7.2.0",
-    "build": "pnpm configure && rimraf src/generated && openapi-generator-cli generate -i transformedSpec.json -c config.json -o src/generated",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "get-spec:staging": "npx ts-node src/util/downloadSpec.ts --stack staging",
+    "get-spec:production": "npx ts-node src/util/downloadSpec.ts --stack production",
+    "get-spec": "pnpm get-spec:production",
+    "configure": "openapi-generator-cli version-manager set 7.7.0",
+    "generate": "MODEL_NAME_MAPPINGS=$(npx ts-node src/util/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS ",
+    "build": "rimraf ./dist && pnpm generate && tsup && tsc",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
