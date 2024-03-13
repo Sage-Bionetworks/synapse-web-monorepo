@@ -1,0 +1,14 @@
+import{j as t}from"./jsx-runtime-CKrituN3.js";import{A as s}from"./ActionRequiredCard-n5fpHRXP.js";import{W as d}from"./WideButton-BQbp5XNt.js";import{f as c}from"./SynapseConstants-BgUUD4xl.js";import{T as u}from"./Typography-B9IcQwF1.js";import{B as g}from"./Button-CpzfOSQ4.js";import"./index-CBqU2yxZ.js";import"./_commonjsHelpers-BosuxZz1.js";import"./Icon-DOmZrr25.js";import"./createSvgIcon-hKF-axwl.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-BPGUNDjC.js";import"./createTheme-BmyBSwiD.js";import"./styled-CpvAj9Jd.js";import"./IconSvg-Bn_bYvII.js";import"./Tooltip-B3pRd4mi.js";import"./useTheme-BsCSKhvJ.js";import"./isHostComponent-BHK9_qiJ.js";import"./Grow-DI9-8Eyf.js";import"./useForkRef-BEI5gptS.js";import"./index-BtM5VmRH.js";import"./utils-BhlLjzQ2.js";import"./inheritsLoose-B7h9gheN.js";import"./TransitionGroupContext-CSiky9Ms.js";import"./useIsFocusVisible-YID51Ly0.js";import"./ErrorOutlined-B-p_qnqa.js";import"./GetAppTwoTone-BchtSdkB.js";import"./InfoOutlined-CmTcoTdA.js";import"./CheckCircleTwoTone-Bm9Y8dkw.js";import"./Paper-CypdJUpq.js";import"./Box-Bs5qirON.js";import"./extendSxProp-CItG1no9.js";import"./Skeleton-CL8YFeep.js";import"./emotion-react.browser.esm-BhA2isNO.js";import"./index-DMoHWj5j.js";import"./OrientationBanner-eGM9Gy2i.js";import"./FullWidthAlert-843DPaPD.js";import"./Alert-C_9TnCz2.js";import"./IconButton-NUGov2wg.js";import"./ButtonBase-ywJhAmC4.js";import"./assertThisInitialized-B9jnkVVz.js";import"./Stack-CHd9FObi.js";import"./AlertTitle-Cg6cXOoN.js";import"./ClickAwayListener-XLCmgdgg.js";const it={title:"Download/ActionRequiredCard",component:s,tags:["autodocs"],argTypes:{actionNode:{options:["Button","Button with text (Sharing Settings)"],mapping:{Button:t.jsx(d,{variant:"contained",children:"Start"}),"Button with text (Sharing Settings)":t.jsxs(t.Fragment,{children:[t.jsx(u,{variant:"smallText1",sx:{color:"grey.700"},children:"Contact an administrator to request download permission"}),t.jsx(g,{variant:"outlined",children:"View Sharing Settings"})]})}}}},o={args:{isLoading:!0}},r={args:{isLoading:!1,title:"The title of the card",description:"The description of the card",actionNode:"Button",iconType:c,count:42}};var i,e,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    isLoading: true
+  }
+}`,...(a=(e=o.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var n,p,m;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isLoading: false,
+    title: 'The title of the card',
+    description: 'The description of the card',
+    actionNode: 'Button',
+    iconType: EASY_DIFFICULTY,
+    count: 42
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const et=["Loading","Card"];export{r as Card,o as Loading,et as __namedExportsOrder,it as default};
