@@ -31,7 +31,7 @@ const MAX_RETRY = 3
  * handling errors returned by the Synapse backend.
  * @throws SynapseClientError
  */
-const fetchWithExponentialTimeout = async <TResponse>(
+export const fetchWithExponentialTimeout = async <TResponse>(
   url: RequestInfo,
   options: RequestInit,
   delayMs = 1000,

@@ -7,10 +7,15 @@
     "target": "esnext",
     "moduleResolution": "Node",
     "allowJs": false,
-    "noEmit": true,
+    "noEmit": false,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
   },
   "include": ["src/**/*.ts"]
 }
