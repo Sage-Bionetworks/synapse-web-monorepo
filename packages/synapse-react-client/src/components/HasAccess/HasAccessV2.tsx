@@ -1,13 +1,12 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import SynapseClient from '../../synapse-client'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { useGetRestrictionInformation } from '../../synapse-queries/dataaccess/useAccessRequirements'
-import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+  useGetEntityBundle,
+  useGetRestrictionInformation,
+} from '../../synapse-queries'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import {
   AccessRequirement,
   RestrictableObjectType,
@@ -111,13 +110,10 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
 export function useGetFileHandleDownloadType(
   entityId: string,
   entityVersionNumber?: string,
-) {
-  const [fileHandleDownloadType, setFileHandleDownloadType] =
-    React.useState<FileHandleDownloadTypeEnum>()
-
+): FileHandleDownloadTypeEnum | undefined {
   const { accessToken } = useSynapseContext()
   const parsedVersionNumber = parseInt(entityVersionNumber ?? '')
-  const { data: entityBundle, error: entityFetchError } = useGetEntityBundle(
+  const { data: entityBundle } = useGetEntityBundle(
     entityId,
     Number.isNaN(parsedVersionNumber) ? undefined : parsedVersionNumber,
     {
@@ -126,14 +122,13 @@ export function useGetFileHandleDownloadType(
     },
   )
 
-  const restrictionInformationRequest: RestrictionInformationRequest =
-    React.useMemo(
-      () => ({
-        restrictableObjectType: RestrictableObjectType.ENTITY,
-        objectId: entityId,
-      }),
-      [entityId],
-    )
+  const restrictionInformationRequest: RestrictionInformationRequest = useMemo(
+    () => ({
+      restrictableObjectType: RestrictableObjectType.ENTITY,
+      objectId: entityId,
+    }),
+    [entityId],
+  )
 
   const { data: restrictionInformation } = useGetRestrictionInformation(
     restrictionInformationRequest,
@@ -142,44 +137,31 @@ export function useGetFileHandleDownloadType(
   const entity = entityBundle?.entity
   const permissions = entityBundle?.permissions
 
-  React.useEffect(() => {
+  return useMemo(() => {
     if (
       restrictionInformation &&
       restrictionInformation.hasUnmetAccessRequirement
     ) {
-      setFileHandleDownloadType(
-        FileHandleDownloadTypeEnum.AccessBlockedByRestriction,
-      )
+      return FileHandleDownloadTypeEnum.AccessBlockedByRestriction
     } else if (entity && permissions?.canDownload) {
       if (isFileEntity(entity) && entity.dataFileHandleId) {
         if (
           restrictionInformation?.restrictionLevel !== RestrictionLevel.OPEN
         ) {
-          setFileHandleDownloadType(
-            FileHandleDownloadTypeEnum.AccessibleWithTerms,
-          )
+          return FileHandleDownloadTypeEnum.AccessibleWithTerms
         } else {
-          setFileHandleDownloadType(FileHandleDownloadTypeEnum.Accessible)
+          return FileHandleDownloadTypeEnum.Accessible
         }
       } else {
-        setFileHandleDownloadType(FileHandleDownloadTypeEnum.NoFileHandle)
+        return FileHandleDownloadTypeEnum.NoFileHandle
       }
     } else if (permissions && !permissions.canDownload) {
-      setFileHandleDownloadType(
-        accessToken
-          ? FileHandleDownloadTypeEnum.AccessBlockedByACL
-          : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous,
-      )
+      return accessToken
+        ? FileHandleDownloadTypeEnum.AccessBlockedByACL
+        : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
     }
-  }, [
-    accessToken,
-    entity,
-    entityFetchError,
-    permissions,
-    restrictionInformation,
-  ])
-
-  return fileHandleDownloadType
+    return undefined
+  }, [accessToken, entity, permissions, restrictionInformation])
 }
 
 /**
@@ -188,8 +170,8 @@ export function useGetFileHandleDownloadType(
  */
 export function HasAccessV2(props: HasAccessProps) {
   const [displayAccessRequirement, setDisplayAccessRequirement] =
-    React.useState(false)
-  const [accessRequirements, setAccessRequirements] = React.useState<
+    useState(false)
+  const [accessRequirements, setAccessRequirements] = useState<
     AccessRequirement[]
   >([])
 
@@ -202,14 +184,13 @@ export function HasAccessV2(props: HasAccessProps) {
 
   const { accessToken } = useSynapseContext()
 
-  const restrictionInformationRequest: RestrictionInformationRequest =
-    React.useMemo(
-      () => ({
-        restrictableObjectType: RestrictableObjectType.ENTITY,
-        objectId: entityId,
-      }),
-      [entityId],
-    )
+  const restrictionInformationRequest: RestrictionInformationRequest = useMemo(
+    () => ({
+      restrictableObjectType: RestrictableObjectType.ENTITY,
+      objectId: entityId,
+    }),
+    [entityId],
+  )
 
   const { data: restrictionInformation } = useGetRestrictionInformation(
     restrictionInformationRequest,
