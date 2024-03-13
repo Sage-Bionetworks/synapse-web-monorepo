@@ -44,7 +44,7 @@ const PortalComponents = {
   NFSurveyToast,
   ELBetaLaunchBanner,
   ARKWelcomePage,
-  GenieHeader: GenieHomePageHeader,
+  GenieHomePageHeader,
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,

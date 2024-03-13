@@ -7,7 +7,7 @@ const routes: GenericRoute[] = [
     exact: true,
     synapseConfigArray: [
       {
-        name: 'GenieHeader',
+        name: 'GenieHomePageHeader',
         props: undefined,
         isOutsideContainer: true,
       },
