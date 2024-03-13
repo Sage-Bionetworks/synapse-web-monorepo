@@ -669,7 +669,8 @@ describe('CreateTableWizard integration tests', () => {
       )
     })
     // Check that the error message appears instead of advancing
-    await screen.findByRole('alert')
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(mockValidateDefiningSqlResponse.invalidReason)
   })
   test('Column models must be valid before advancing', async () => {
     const onComplete = jest.fn()

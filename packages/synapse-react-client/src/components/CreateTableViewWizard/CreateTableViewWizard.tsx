@@ -140,7 +140,7 @@ export default function CreateTableViewWizard(
 
   const sqlValidationError: string | null = useMemo(() => {
     if (definingSqlValidationError) {
-      return definingSqlValidationError.message
+      return definingSqlValidationError.reason
     } else if (isSqlValid && isSqlValid.invalidReason) {
       return isSqlValid.invalidReason
     } else {
