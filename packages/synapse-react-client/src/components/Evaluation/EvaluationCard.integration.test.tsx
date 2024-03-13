@@ -11,7 +11,6 @@ import {
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import { server } from '../../mocks/msw/server'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions
@@ -26,7 +25,8 @@ describe('test Evaluation Card', () => {
   let mockOnSubmit: jest.Mock
   let mockOnDeleteSuccess: jest.Mock
 
-  let user: UserEvent
+  let user: ReturnType<(typeof userEvent)['setup']>
+
   beforeAll(() => {
     server.listen()
     user = userEvent.setup({

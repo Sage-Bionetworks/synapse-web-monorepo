@@ -5,7 +5,7 @@ import {
 } from 'synapse-react-client'
 import { peopleSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
-import personSvg from '../style/Person.svg'
+import personSvg from '../style/Person.svg?url'
 
 const rgbIndex = 3
 

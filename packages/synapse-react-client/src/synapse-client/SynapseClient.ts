@@ -78,10 +78,7 @@ import {
   VERIFICATION_SUBMISSION,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../utils/functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
 import { removeUndefined } from '../utils/functions/ObjectUtils'
 import { DATETIME_UTC_COOKIE_KEY } from '../utils/SynapseConstants'
 import {

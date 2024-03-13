@@ -5,9 +5,8 @@ import {
   MAX_LIST_LENGTH,
   MAX_STRING_SIZE,
 } from '../TableColumnSchemaEditorUtils'
-import { z } from 'zod'
+import { type SafeParseReturnType, z } from 'zod'
 import { SetOptional } from 'type-fest'
-import { SafeParseReturnType } from 'zod/lib/types'
 import { getDefaultValueValidator } from './DefaultValueValidator'
 import getEnumValuesValidator from './EnumValuesValidator'
 import { optionalStringSchema } from './OptionalStringSchema'

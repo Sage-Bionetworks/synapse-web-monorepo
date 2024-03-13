@@ -70,10 +70,10 @@
     "timers-browserify": "^2.0.12",
     "tslib": "^2.6.0",
     "type-fest": "^3.13.0",
-    "typescript": "5.1.6",
+    "typescript": "5.4.2",
     "url": "^0.11.1",
     "util": "^0.12.5",
-    "vite": "^4.5.2",
+    "vite": "^5.1.6",
     "vite-config": "workspace:*",
     "vitest": "^0.34.6",
     "whatwg-fetch": "^3.6.2"

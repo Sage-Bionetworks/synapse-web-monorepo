@@ -5,8 +5,8 @@ import { datasetsSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
 import type { GenericCardSchema } from 'synapse-react-client'
 import { DetailsPageProps } from 'types/portal-util-types'
-import publicationDataSvg from '../style/publicationData.svg'
-import experimentalDataSvg from '../style/experimentalData.svg'
+import publicationDataSvg from '../style/publicationData.svg?url'
+import experimentalDataSvg from '../style/experimentalData.svg?url'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0

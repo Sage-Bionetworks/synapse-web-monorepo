@@ -7,14 +7,7 @@ import {
   FacetColumnResultValues,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import {
-  act,
-  Queries,
-  render,
-  RenderResult,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { SynapseConstants } from '../../../../utils'
 import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
 import { QueryContextType, useQueryContext } from '../../../../index'
@@ -26,25 +19,13 @@ import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import QueryWrapper from '../../../QueryWrapper'
 import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
 import { DEBOUNCE_DELAY_MS } from '../../../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
-
-jest.mock('../../../../synapse-client', () => {
-  const actual = jest.requireActual('../../../../synapse-client')
-  return {
-    ...actual,
-    getGroupHeadersBatch: jest.fn().mockResolvedValue({
-      children: [
-        { ownerId: '123', userName: 'somename', isIndividual: false },
-        { ownerId: '1234', userName: 'somename2', isIndividual: true },
-      ],
-    }),
-    getEntityHeaders: jest.fn().mockResolvedValue({
-      results: [
-        { id: '123', name: 'Entity1' },
-        { id: '1234', name: 'Entity2' },
-      ],
-    }),
-  }
-})
+import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_ID_2,
+  mockUserProfileData,
+  mockUserProfileData2,
+} from '../../../../mocks/user/mock_user_profile'
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
@@ -56,14 +37,32 @@ const stringFacetValues: FacetColumnResultValueCount[] = [
   },
 ]
 
-const userEntityFacetValues: FacetColumnResultValueCount[] = [
+const userFacetValues: FacetColumnResultValueCount[] = [
   {
     value: SynapseConstants.VALUE_NOT_SET,
     count: 2,
     isSelected: false,
   },
-  { value: '123', count: 1, isSelected: false },
-  { value: '1234', count: 1, isSelected: false },
+  {
+    value: String(MOCK_USER_ID),
+    count: 1,
+    isSelected: false,
+  },
+  { value: String(MOCK_USER_ID_2), count: 1, isSelected: false },
+]
+
+const entityFacetValues: FacetColumnResultValueCount[] = [
+  {
+    value: SynapseConstants.VALUE_NOT_SET,
+    count: 2,
+    isSelected: false,
+  },
+  {
+    value: mockFileEntityData.id.replace('syn', ''),
+    count: 1,
+    isSelected: false,
+  },
+  { value: mockTableEntity.id.replace('syn', ''), count: 1, isSelected: false },
 ]
 
 const columnModel: ColumnModel = {
@@ -114,28 +113,17 @@ function ContextReceiver() {
   return <></>
 }
 
-async function init(
-  overrides?: Partial<EnumFacetFilterProps>,
-): Promise<RenderResult<Queries, HTMLElement, HTMLElement>> {
+async function init(overrides?: Partial<EnumFacetFilterProps>) {
   const props = createTestProps(overrides)
-  let renderResult:
-    | RenderResult<Queries, HTMLElement, HTMLElement>
-    | undefined = undefined
-  act(() => {
-    renderResult = render(
-      <QueryWrapper initQueryRequest={nextQueryRequest}>
-        <QueryVisualizationWrapper>
-          <ContextReceiver />
-          <EnumFacetFilter {...props} />
-        </QueryVisualizationWrapper>
-      </QueryWrapper>,
-      { wrapper: createWrapper() },
-    )
-  })
-
-  if (renderResult === undefined) {
-    throw new Error('renderResult is undefined')
-  }
+  const renderResult = render(
+    <QueryWrapper initQueryRequest={nextQueryRequest}>
+      <QueryVisualizationWrapper>
+        <ContextReceiver />
+        <EnumFacetFilter {...props} />
+      </QueryVisualizationWrapper>
+    </QueryWrapper>,
+    { wrapper: createWrapper() },
+  )
 
   await waitFor(() => {
     expect(currentQueryContext).toBeDefined()
@@ -193,7 +181,6 @@ describe('EnumFacetFilter', () => {
 
         expect(labels[0].textContent).toBe('All')
 
-        screen.debug(undefined, 2000000)
         await waitFor(() => {
           expect(labels[1].textContent).toBe(`${stringFacetValues[0].value}`)
           expect(counts[0].textContent).toBe(`${stringFacetValues[0].count}`)
@@ -224,7 +211,7 @@ describe('EnumFacetFilter', () => {
           facet: {
             ...facet,
             columnName: 'File',
-            facetValues: userEntityFacetValues,
+            facetValues: entityFacetValues,
           },
         }
 
@@ -239,20 +226,18 @@ describe('EnumFacetFilter', () => {
           '.EnumFacetFilter__count',
         )
         expect(labels.item(1).textContent).toBe(`Not Assigned`)
-        expect(counts.item(0).textContent).toBe(
-          `${userEntityFacetValues[0].count}`,
-        )
+        expect(counts.item(0).textContent).toBe(`${entityFacetValues[0].count}`)
 
         // Wait for the entity info to populate and replace the ID
-        await waitFor(() => expect(labels.item(2).textContent).toBe(`Entity1`))
-        expect(counts.item(1).textContent).toBe(
-          `${userEntityFacetValues[1].count}`,
+        await waitFor(() =>
+          expect(labels.item(2).textContent).toBe(mockFileEntityData.name),
         )
+        expect(counts.item(1).textContent).toBe(`${entityFacetValues[1].count}`)
 
-        await waitFor(() => expect(labels.item(3).textContent).toBe(`Entity2`))
-        expect(counts.item(2).textContent).toBe(
-          `${userEntityFacetValues[2].count}`,
+        await waitFor(() =>
+          expect(labels.item(3).textContent).toBe(mockTableEntity.name),
         )
+        expect(counts.item(2).textContent).toBe(`${entityFacetValues[2].count}`)
       })
 
       it('should set labels correctly for USERID type', async () => {
@@ -273,7 +258,7 @@ describe('EnumFacetFilter', () => {
           facet: {
             ...facet,
             columnName: 'Users',
-            facetValues: userEntityFacetValues,
+            facetValues: userFacetValues,
           },
         }
         const { container } = await init(updatedProps)
@@ -291,22 +276,20 @@ describe('EnumFacetFilter', () => {
         // First item (0) is select all
 
         expect(labels.item(1).textContent).toBe(`Not Assigned`)
-        expect(counts.item(0).textContent).toBe(
-          `${userEntityFacetValues[0].count}`,
-        )
+        expect(counts.item(0).textContent).toBe(`${userFacetValues[0].count}`)
 
         // Wait for the user info to populate and replace the ID
-        await waitFor(() => expect(labels.item(2).textContent).toBe(`somename`))
-        expect(counts.item(1).textContent).toBe(
-          `${userEntityFacetValues[1].count}`,
+        await waitFor(() =>
+          expect(labels.item(2).textContent).toBe(mockUserProfileData.userName),
         )
+        expect(counts.item(1).textContent).toBe(`${userFacetValues[1].count}`)
 
         await waitFor(() =>
-          expect(labels.item(3).textContent).toBe(`somename2`),
+          expect(labels.item(3).textContent).toBe(
+            mockUserProfileData2.userName,
+          ),
         )
-        expect(counts.item(2).textContent).toBe(
-          `${userEntityFacetValues[2].count}`,
-        )
+        expect(counts.item(2).textContent).toBe(`${userFacetValues[2].count}`)
       })
     })
   })

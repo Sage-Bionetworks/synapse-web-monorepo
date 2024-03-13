@@ -5,7 +5,7 @@
     "outDir": "./dist/types",
     "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "allowJs": false,
     "noEmit": true,
     "isolatedModules": true,

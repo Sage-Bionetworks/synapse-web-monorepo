@@ -1,8 +1,5 @@
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../utils/functions/getEndpoint'
-import { SynapseClientError } from '../utils/SynapseClientError'
+import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
+import { SynapseClientError } from '../utils'
 import { NETWORK_UNAVAILABLE_MESSAGE } from '../utils/SynapseConstants'
 import { SynapseError } from '../utils/SynapseError'
 

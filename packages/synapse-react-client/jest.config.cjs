@@ -3,6 +3,7 @@ const esModules = [
   '@react-hook',
   'lodash-es',
   'nanoid',
+  'mui-one-time-password-input'
 ]
 
 /** @type {import('jest').Config} */
