@@ -1,4 +1,7 @@
-import type { GenericCardSchema } from 'synapse-react-client'
+import type {
+  CardContainerLogicProps,
+  GenericCardSchema,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import type { CardConfiguration } from 'synapse-react-client'
@@ -58,17 +61,13 @@ export const cardConfiguration: CardConfiguration = {
   ],
 }
 
-const rgbIndex = 6
-
+const toolProps: CardContainerLogicProps = {
+  sql: toolsSql,
+  ...cardConfiguration,
+}
 const tools: SynapseConfig = {
   name: 'CardContainerLogic',
-  props: {
-    rgbIndex,
-    sql: toolsSql,
-    name: 'Tools',
-    ...cardConfiguration,
-    genericCardSchema: schema,
-  },
+  props: toolProps,
 }
 
 export default tools
