@@ -164,6 +164,10 @@ type ARKWelcomePage = {
   name: 'ARKWelcomePage'
   props: undefined
 }
+type GenieHomePageHeader = {
+  name: 'GenieHomePageHeader'
+  props: undefined
+}
 
 type ExternalFileHandleLink = {
   name: 'ExternalFileHandleLink'
@@ -350,6 +354,7 @@ export type SynapseConfig = (
   | NFSurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage
+  | GenieHomePageHeader
   | SubsectionRowRenderer
   | ToggleSynapseObjects
   | TabbedSynapseObjects

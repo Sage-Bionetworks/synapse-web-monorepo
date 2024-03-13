@@ -23,6 +23,7 @@ import {
   psychEncodePortalPalette,
   sageBionetworksPalette,
   stopAdPortalPalette,
+  geniePalette,
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
@@ -165,6 +166,9 @@ export const decorators = [
       }),
       ['EL Portal']: createTheme(defaultMuiThemeOptions, {
         palette: elPortalPalette,
+      }),
+      ['GENIE Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: geniePalette,
       }),
     },
     defaultTheme: 'Synapse',
