@@ -63,10 +63,11 @@ const rgbIndex = 6
 const tools: SynapseConfig = {
   name: 'CardContainerLogic',
   props: {
-    ...cardConfiguration,
     rgbIndex,
     sql: toolsSql,
     name: 'Tools',
+    ...cardConfiguration,
+    genericCardSchema: schema,
   },
 }
 
