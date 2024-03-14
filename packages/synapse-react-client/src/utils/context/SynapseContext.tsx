@@ -56,6 +56,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
 
   const synapseApiClient = useMemo(() => {
     const configuration = new Configuration({
+      // TODO: Extract fetchWithExponentialTimeout so it can be used in `synapse-client` by default
       fetchApi: fetchWithExponentialTimeout,
       apiKey: providedContext.accessToken
         ? `Bearer ${providedContext.accessToken}`
