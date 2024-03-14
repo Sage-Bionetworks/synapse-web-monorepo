@@ -43,6 +43,7 @@ import {
   DOWNLOAD_PERMISSION_REQUIRED,
   SQL_EDITOR,
   CONTRIBUTOR,
+  EXTERNAL_RESOURCE,
 } from '../../utils/SynapseConstants'
 
 import { ReactComponent as Data2Svg } from '../../assets/icons/Data2.svg'
@@ -109,6 +110,7 @@ const defaultIcons = {
   [PUBLICATION]: Publication,
   [STUDY]: Study,
   [EXPERIMENTAL]: ToolExperimental,
+  [EXTERNAL_RESOURCE]: ToolExperimental,
   [EXPERIMENTAL_TOOL]: ToolExperimental,
   [COMPUTATIONAL]: ToolComputational,
   [COMPUTATIONAL_TOOL]: ToolComputational,

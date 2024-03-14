@@ -8,7 +8,7 @@ import type { CardConfiguration } from 'synapse-react-client'
 import { toolsSql } from '../resources'
 
 const schema: GenericCardSchema = {
-  type: SynapseConstants.TOOL,
+  type: SynapseConstants.EXTERNAL_RESOURCE,
   title: 'Name',
   description: 'Description',
   link: 'Link',

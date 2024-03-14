@@ -16,7 +16,7 @@ const routeButtonControlProps: RouteControlWrapperProps = {
       synapseConfigArray: [publications],
     },
     { path: 'Contributors', synapseConfigArray: [contributors] },
-    { path: 'Tools', synapseConfigArray: [tools] },
+    { path: 'External Resources', synapseConfigArray: [tools] },
   ],
 }
 

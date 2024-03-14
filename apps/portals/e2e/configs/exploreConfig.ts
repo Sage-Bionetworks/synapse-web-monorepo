@@ -70,9 +70,8 @@ const exploreConfig: ExploreConfig = {
   },
   stopadportal: {},
   genie: {
-    // TBD
-    // table_charts: ['GENIE, GENIE-BPC'],
-    // cards: ['Publications', 'Contributors', 'Tools'],
+    table_charts: ['GENIE, GENIE-BPC'],
+    cards: ['Publications', 'Contributors', 'External Resources'],
   },
 }
 
