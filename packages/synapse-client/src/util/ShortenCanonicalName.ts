@@ -38,9 +38,9 @@ function getDuplicateNames(canonicalNames: string[][]): string[][] {
  * Output:
  * ```
  *  {
- *    'org.sagebionetworks.foo.Bar': 'foo.Bar',
+ *    'org.sagebionetworks.foo.Bar': 'FooBar',
  *    'org.sagebionetworks.foo.Baz': 'Baz',
- *    'org.sagebionetworks.bar.Bar': 'bar.Bar',
+ *    'org.sagebionetworks.bar.Bar': 'BarBar',
  *  }
  * ```
  */
