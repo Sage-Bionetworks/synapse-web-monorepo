@@ -17,7 +17,7 @@ import { shortenCanonicalNames } from './ShortenCanonicalName'
  *   "org.sagebionetworks.repo.model.foo.MyObject" and
  *   "org.sagebionetworks.repo.model.bar.MyObject"
  * the script would return:
- *   "org.sagebionetworks.repo.model.foo.MyObject=foo.MyObject,org.sagebionetworks.repo.model.bar.MyObject=bar.MyObject"
+ *   "org.sagebionetworks.repo.model.foo.MyObject=FooMyObject,org.sagebionetworks.repo.model.bar.MyObject=BarMyObject"
  * And the generator would create TypeScript models with the names "FooMyObject" and "BarMyObject"
  */
 
