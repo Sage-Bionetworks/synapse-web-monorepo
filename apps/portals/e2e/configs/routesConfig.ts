@@ -65,7 +65,7 @@ const routesConfig: RouteConfig = {
   },
   genie: {
     buttons: ['Home', 'Explore', 'Sign In'],
-    links: ['Access', 'Help'],
+    links: ['Data Releases', 'Access', 'Help'],
   },
 }
 
