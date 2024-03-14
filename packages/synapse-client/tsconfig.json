@@ -8,6 +8,7 @@
     "moduleResolution": "bundler",
     "allowJs": false,
     "noEmit": false,
+    "emitDeclarationOnly": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false
