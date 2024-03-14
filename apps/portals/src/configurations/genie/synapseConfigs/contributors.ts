@@ -9,11 +9,10 @@ const rgbIndex = 8
 export const contributorCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
-    type: SynapseConstants.ORGANIZATION,
+    type: SynapseConstants.CONTRIBUTOR,
     title: 'Contributor',
-    description: 'summary',
-    link: 'website',
-    imageFileHandleColumnName: 'image',
+    // description: 'summary',
+    secondaryLabels: ['Contribution', 'Center Abbreviation', 'Location'],
   },
 }
 
@@ -37,10 +36,10 @@ const contributors: SynapseConfig = {
       //   link: 'website',
       // },
     },
-    name: 'Initiatives',
-    searchConfiguration: {
-      searchable: ['initiative', 'summary'],
-    },
+    name: 'Contributors',
+    // searchConfiguration: {
+    //   searchable: ['initiative', 'summary'],
+    // },
   },
 }
 

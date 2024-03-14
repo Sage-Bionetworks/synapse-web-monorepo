@@ -42,6 +42,7 @@ import {
   VARIABLE_DIFFICULTY,
   DOWNLOAD_PERMISSION_REQUIRED,
   SQL_EDITOR,
+  CONTRIBUTOR,
 } from '../../utils/SynapseConstants'
 
 import { ReactComponent as Data2Svg } from '../../assets/icons/Data2.svg'
@@ -53,6 +54,7 @@ import { ReactComponent as personSvg } from '../../assets/icons/person.svg'
 import { ReactComponent as mouseSvg } from '../../assets/icons/mouse.svg'
 import { ReactComponent as chart2Svg } from '../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../assets/icons/file.svg'
+import { ReactComponent as institutionSvg } from '../../assets/icons/institution.svg'
 import {
   Challenge,
   Program,
@@ -136,6 +138,7 @@ const defaultIcons = {
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
+  [CONTRIBUTOR]: institutionSvg,
   [EASY_DIFFICULTY]:
     'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
   [MEDIUM_DIFFICULTY]:
