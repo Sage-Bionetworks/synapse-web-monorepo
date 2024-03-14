@@ -58,8 +58,13 @@ $text-color-lighter: #898989;
     @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
       padding-top: 89px;
     }
-    .SRC-type,
+    .SRC-type {
+      color: inherit;
+    }
     .SRC-cardThumbnail {
+      margin-top: unset;
+      margin-bottom: unset;
+      padding-top: $baseline-grid;
       color: inherit;
       img,
       svg {
@@ -136,7 +141,8 @@ $text-color-lighter: #898989;
   .SRC-cardThumbnail {
     display: inline-block;
     vertical-align: top;
-    padding-top: $baseline-grid;
+    margin-top: auto;
+    margin-bottom: auto;
     max-width: 215px;
     img {
       margin: auto;
