@@ -175,7 +175,7 @@ export const challengePortalPalette: PaletteOptions = {
 
 export const geniePalette: PaletteOptions = {
   ...palette,
-  primary: generatePalette('#5F6870'),
+  primary: generatePalette('#4CB848'),
   secondary: generatePalette('#4CB848'),
 }
 

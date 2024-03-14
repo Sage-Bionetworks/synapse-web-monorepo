@@ -68,7 +68,7 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'Tools',
+        path: 'External Resources',
         hideRouteFromNavbar: false,
       },
     ],
