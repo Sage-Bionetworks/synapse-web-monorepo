@@ -1,5 +1,6 @@
 import { GenericRoute } from 'types/portal-config'
 import routeControlWrapperProps from './routeControlWrapperProps'
+import { dataReleases } from './synapseConfigs'
 
 const routes: GenericRoute[] = [
   {
@@ -72,6 +73,11 @@ const routes: GenericRoute[] = [
         hideRouteFromNavbar: false,
       },
     ],
+  },
+  {
+    path: 'Data Releases',
+    exact: true,
+    synapseConfigArray: dataReleases,
   },
   {
     path: 'Access',

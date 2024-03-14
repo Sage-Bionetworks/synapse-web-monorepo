@@ -98,6 +98,7 @@ export type IconProps = {
 const iconSvgMapping = {
   clipboard: <IconSvg icon="clipboard" />,
   [DATASET]: <IconSvg icon="dataset" />,
+  [EXTERNAL_RESOURCE]: <IconSvg icon="link" />,
 }
 
 const defaultIcons = {
@@ -110,7 +111,6 @@ const defaultIcons = {
   [PUBLICATION]: Publication,
   [STUDY]: Study,
   [EXPERIMENTAL]: ToolExperimental,
-  [EXTERNAL_RESOURCE]: ToolExperimental,
   [EXPERIMENTAL_TOOL]: ToolExperimental,
   [COMPUTATIONAL]: ToolComputational,
   [COMPUTATIONAL_TOOL]: ToolComputational,

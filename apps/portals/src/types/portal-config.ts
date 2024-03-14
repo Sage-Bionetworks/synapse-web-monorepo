@@ -41,6 +41,7 @@ import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
 import { RedirectToURLProps } from 'portal-components/RedirectToURL'
+import { SynapseComponentCollapseProps } from 'portal-components/SynapseComponentCollapse'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -168,7 +169,10 @@ type GenieHomePageHeader = {
   name: 'GenieHomePageHeader'
   props: undefined
 }
-
+type SynapseComponentCollapse = {
+  name: 'SynapseComponentCollapse'
+  props: SynapseComponentCollapseProps
+}
 type ExternalFileHandleLink = {
   name: 'ExternalFileHandleLink'
   props: ExternalFileHandleLinkProps
@@ -355,6 +359,7 @@ export type SynapseConfig = (
   | ELBetaLaunchBanner
   | ARKWelcomePage
   | GenieHomePageHeader
+  | SynapseComponentCollapse
   | SubsectionRowRenderer
   | ToggleSynapseObjects
   | TabbedSynapseObjects
