@@ -45,7 +45,6 @@ export const ResourceAccessItem: React.FunctionComponent<
             onChange={onChange}
           />
           <IconButton
-            // TODO - confirm this language
             aria-label={REMOVE_BUTTON_LABEL}
             onClick={() => onRemove()}
             sx={{

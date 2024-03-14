@@ -4,8 +4,14 @@ import {
   AccessControlList,
   ResourceAccess,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
-import { useGetAccessRequirementACL } from '../../synapse-queries'
+import { isEqual } from 'lodash-es'
+import React, { useEffect, useMemo, useState } from 'react'
+import {
+  useCreateAccessRequirementACL,
+  useDeleteAccessRequirementACL,
+  useGetAccessRequirementACL,
+  useUpdateAccessRequirementACL,
+} from '../../synapse-queries'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { ResourceAccessItem } from './ResourceAccessItem'
 
@@ -20,33 +26,117 @@ export const EMPTY_RESOURCE_ACCESS_LIST_TEXT =
 export const REVIEWER_ALREADY_ADDED_ERROR_MESSAGE =
   'User or team already has permissions on this AR.'
 
-type ACL_OPERATION = 'UPDATE' | 'CREATE' | 'DELETE' | 'NOOP'
 export type AccessRequirementAclEditorProps = {
   accessRequirementId: string
-  onUpdate: (acl: AccessControlList | null, aclOperation: ACL_OPERATION) => void
+  /* Prop changed by SWC when updated ACL should be saved */
+  isSaveClicked: boolean
+  /* Called when ACL has been saved or an error has been returned */
+  onSaveComplete: (saveSuccessful: boolean) => void
 }
 
 export const AccessRequirementAclEditor: React.FunctionComponent<
   AccessRequirementAclEditorProps
 > = (props: AccessRequirementAclEditorProps) => {
-  const { accessRequirementId, onUpdate } = props
+  const { accessRequirementId, isSaveClicked, onSaveComplete } = props
   const [error, setError] = useState<string | null>(null)
   const [resourceAccessList, setResourceAccessList] = useState<
     ResourceAccess[]
   >([])
+  const [hasSavedAcl, setHasSavedAcl] = useState<boolean>(false)
 
   const { data: originalAcl, isLoading: isLoadingOriginalAcl } =
     useGetAccessRequirementACL(accessRequirementId)
 
+  // set resourceAccessList when the fetched acl changes
   useEffect(() => {
     if (originalAcl) {
       setResourceAccessList(originalAcl.resourceAccess)
     }
   }, [originalAcl])
 
-  const baseAcl: AccessControlList = originalAcl
-    ? originalAcl
-    : { id: accessRequirementId, resourceAccess: resourceAccessList }
+  // reset hasSavedAcl when isSaveClicked is false,
+  // ...so that changing isSaveClicked to true will trigger saving the ACL
+  useMemo(() => {
+    if (!isSaveClicked && hasSavedAcl) {
+      setHasSavedAcl(false)
+    }
+  }, [isSaveClicked, hasSavedAcl])
+
+  const { mutate: deleteAcl } = useDeleteAccessRequirementACL({
+    onSuccess: () => {
+      setHasSavedAcl(true)
+      onSaveComplete(true)
+    },
+    onError: error => {
+      setError(error.reason)
+      onSaveComplete(false)
+    },
+  })
+
+  const { mutate: createAcl } = useCreateAccessRequirementACL({
+    onSuccess: () => {
+      setHasSavedAcl(true)
+      onSaveComplete(true)
+    },
+    onError: error => {
+      setError(error.reason)
+      onSaveComplete(false)
+    },
+  })
+
+  const { mutate: updateAcl } = useUpdateAccessRequirementACL({
+    onSuccess: () => {
+      setHasSavedAcl(true)
+      onSaveComplete(true)
+    },
+    onError: error => {
+      setError(error.reason)
+      onSaveComplete(false)
+    },
+  })
+
+  // save the ACL
+  useMemo(() => {
+    if (isSaveClicked && !hasSavedAcl) {
+      setError(null)
+      const updatedAcl: AccessControlList | null =
+        resourceAccessList.length === 0
+          ? null
+          : {
+              ...originalAcl,
+              id: originalAcl?.id || accessRequirementId,
+              resourceAccess: resourceAccessList,
+            }
+
+      const aclIsUnchanged =
+        (originalAcl === null && updatedAcl == null) ||
+        // ignore properties that will change when the ACL is saved (etag, modifiedOn)
+        (isEqual(originalAcl?.resourceAccess, resourceAccessList) &&
+          originalAcl?.id === updatedAcl?.id)
+
+      if (aclIsUnchanged) {
+        // noop
+        setHasSavedAcl(true)
+        onSaveComplete(true)
+      } else if (originalAcl === null && updatedAcl !== null) {
+        createAcl(updatedAcl)
+      } else if (updatedAcl === null) {
+        deleteAcl(accessRequirementId)
+      } else {
+        updateAcl(updatedAcl)
+      }
+    }
+  }, [
+    isSaveClicked,
+    hasSavedAcl,
+    resourceAccessList,
+    originalAcl,
+    accessRequirementId,
+    createAcl,
+    deleteAcl,
+    updateAcl,
+    onSaveComplete,
+  ])
 
   const addResourceAccessItem = (newReviewerId: string | null) => {
     if (newReviewerId) {
@@ -66,13 +156,6 @@ export const AccessRequirementAclEditor: React.FunctionComponent<
           newResourceAccess,
         ]
         setResourceAccessList(updatedResourceAccessList)
-        onUpdate(
-          {
-            ...baseAcl,
-            resourceAccess: updatedResourceAccessList,
-          },
-          originalAcl === null ? 'CREATE' : 'UPDATE',
-        )
       }
     } else {
       setError(null)
@@ -89,13 +172,6 @@ export const AccessRequirementAclEditor: React.FunctionComponent<
         : resourceAccess
     })
     setResourceAccessList(updatedResourceAccessList)
-    onUpdate(
-      {
-        ...baseAcl,
-        resourceAccess: updatedResourceAccessList,
-      },
-      originalAcl === null ? 'CREATE' : 'UPDATE',
-    )
   }
 
   const removeResourceAccessItem = (principalId: number) => {
@@ -103,24 +179,6 @@ export const AccessRequirementAclEditor: React.FunctionComponent<
       raListItem => raListItem.principalId !== principalId,
     )
     setResourceAccessList(updatedResourceAccessList)
-
-    const updatedAcl =
-      updatedResourceAccessList.length === 0
-        ? null
-        : { ...baseAcl, resourceAccess: updatedResourceAccessList }
-
-    let updateType: ACL_OPERATION
-    if (originalAcl === null && updatedAcl === null) {
-      updateType = 'NOOP'
-    } else if (originalAcl === null) {
-      updateType = 'CREATE'
-    } else if (updatedAcl === null) {
-      updateType = 'DELETE'
-    } else {
-      updateType = 'UPDATE'
-    }
-
-    onUpdate(updatedAcl, updateType)
   }
 
   return (
@@ -203,10 +261,10 @@ export const AccessRequirementAclEditor: React.FunctionComponent<
               placeholder="Username, name (first and last) or team name."
               onChange={addResourceAccessItem}
             />
-            {error && <Alert severity="error">{error}</Alert>}
           </Box>
         </Box>
       </Box>
+      {error && <Alert severity="error">{error}</Alert>}
     </Stack>
   )
 }
