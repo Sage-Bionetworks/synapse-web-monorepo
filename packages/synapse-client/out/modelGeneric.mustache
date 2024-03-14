@@ -23,7 +23,10 @@ import {
 /**
  * Check if a given object implements the {{classname}} interface.
  */
-export function instanceOf{{classname}}(value: object): boolean {
+{{! START CUSTOM TEMPLATING FOR synapse-client }}
+{{! Change the return type from `boolean` to a type predicate so this method can be used for type narrowing }}
+export function instanceOf{{classname}}(value: object): value is {{classname}} {
+{{! END CUSTOM TEMPLATING FOR synapse-client }}
     {{#vars}}
     {{#required}}
     if (!('{{name}}' in value)) return false;

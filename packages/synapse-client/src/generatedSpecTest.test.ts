@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, expectTypeOf, test } from 'vitest'
 import {
   EntityFromJSONTyped,
   FileEntity,
@@ -6,7 +6,7 @@ import {
 } from './generated'
 
 describe('Tests for the generated specification', () => {
-  test('instanceOfXxx works for a model with a concrete type', () => {
+  test('instanceOfXxx works for a model with a concreteType', () => {
     const fileEntity: FileEntity = {
       concreteType: 'org.sagebionetworks.repo.model.FileEntity',
       id: 'syn123',
@@ -39,5 +39,32 @@ describe('Tests for the generated specification', () => {
     expect(() =>
       EntityFromJSONTyped(withDifferentConcreteType, false),
     ).toThrow()
+  })
+  test('instanceOfXxx asserts that an object is of the checked type', () => {
+    const fileEntityWithoutType: object = {
+      concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+      id: 'syn123',
+      createdBy: '123',
+      modifiedBy: '123',
+      createdOn: '2024-01-01T00:00:00.000Z',
+      modifiedOn: '2024-01-01T00:00:00.000Z',
+      dataFileHandleId: '456',
+      etag: 'b75773a4-be19-438f-bc7c-184a3f144d73',
+      fileNameOverride: 'foo.txt',
+      isLatestVersion: true,
+      name: 'Foo',
+      parentId: 'syn234',
+      versionComment: '',
+      versionLabel: '',
+      versionNumber: 1,
+    }
+
+    if (instanceOfFileEntity(fileEntityWithoutType)) {
+      expectTypeOf(fileEntityWithoutType).toMatchTypeOf<FileEntity>()
+    } else {
+      throw Error(
+        'instanceOfFileEntity was false when it should have been true',
+      )
+    }
   })
 })
