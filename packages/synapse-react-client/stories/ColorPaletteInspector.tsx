@@ -2,7 +2,7 @@ import React from 'react'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../../../src/utils/functions/colorPalette'
+} from '../src/utils/functions/colorPalette'
 import { Box } from '@mui/material'
 import tinycolor from 'tinycolor2'
 

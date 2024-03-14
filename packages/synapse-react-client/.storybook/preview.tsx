@@ -1,5 +1,5 @@
 import React from 'react'
-import '../demo/style/DemoStyle.scss'
+import '../stories/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'

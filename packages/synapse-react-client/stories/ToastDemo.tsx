@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, TextField, Typography } from '@mui/material'
-import { displayToast } from '../../../src/components/ToastMessage/ToastMessage'
-import { RadioGroup } from '../../../src/components/widgets/RadioGroup'
+import { displayToast } from '../src/components/ToastMessage/ToastMessage'
+import { RadioGroup } from '../src/components/widgets/RadioGroup'
 
 export const ToastDemo = () => {
   const [variant, setVariant] = React.useState<
