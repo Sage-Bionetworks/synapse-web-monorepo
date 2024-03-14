@@ -70,8 +70,10 @@ const exploreConfig: ExploreConfig = {
   },
   stopadportal: {},
   genie: {
-    table_charts: ['GENIE, GENIE-BPC'],
-    cards: ['Publications', 'Contributors', 'External Resources'],
+    // getByRole('tab', { name: 'GENIE' }) resolves to 2 elements (the GENIE tab and GENIE-BPC tab)
+    // table_charts: ['GENIE', 'GENIE-BPC'],
+    // TODO: uncomment after route is finalized and source tables are OPEN_DATA
+    // cards: ['Publications', 'Contributors', 'External Resources'],
   },
 }
 
