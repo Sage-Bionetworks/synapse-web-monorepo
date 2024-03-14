@@ -83,4 +83,10 @@ $row-hovered-background-color: unset;
   .EntityFinderTableCellEntityIcon svg {
     width: 20px;
   }
+
+  .nameColumnCell {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }

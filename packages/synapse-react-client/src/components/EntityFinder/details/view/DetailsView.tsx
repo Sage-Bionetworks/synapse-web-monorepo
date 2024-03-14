@@ -40,6 +40,7 @@ import {
   TypeIconRenderer,
 } from './DetailsViewTableRenderers'
 import { VersionColumnHeader } from './VersionColumnHeader'
+import { Tooltip } from '@mui/material'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -344,6 +345,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   const NameRenderer = useCallback(
     (props: CellRendererProps<EntityFinderTableViewRowData>) => {
+      const rowName = props.rowData.name
       if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
         return (
           <span
@@ -354,11 +356,17 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               setCurrentContainer(props.rowData.id)
             }}
           >
-            {props.rowData.name}
+            <Tooltip title={rowName}>
+              <span className="nameColumnCell">{rowName}</span>
+            </Tooltip>
           </span>
         )
       } else {
-        return props.rowData.name
+        return (
+          <Tooltip title={rowName}>
+            <span className="nameColumnCell">{rowName}</span>
+          </Tooltip>
+        )
       }
     },
     [setCurrentContainer],
