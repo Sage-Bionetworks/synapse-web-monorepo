@@ -763,7 +763,7 @@ importers:
   packages/synapse-client:
     devDependencies:
       '@openapitools/openapi-generator-cli':
-        specifier: ^2.9.0
+        specifier: ^2.12.0
         version: 2.12.0
       '@types/lodash':
         specifier: ^4.14.195
@@ -778,7 +778,7 @@ importers:
         specifier: ^1.2.8
         version: 1.2.8
       rimraf:
-        specifier: ^5.0.1
+        specifier: ^5.0.5
         version: 5.0.5
       ts-node:
         specifier: ^10.9.2
