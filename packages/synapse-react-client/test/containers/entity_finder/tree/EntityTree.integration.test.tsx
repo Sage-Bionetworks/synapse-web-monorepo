@@ -297,9 +297,13 @@ describe('EntityTree tests', () => {
         projectId: undefined,
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+        }),
+      )
       await waitFor(() =>
-        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+        expect(screen.getAllByRole('menu').length).toBeGreaterThan(0),
       )
 
       expect(screen.queryByLabelText('Current Project')).not.toBeInTheDocument()
@@ -311,9 +315,13 @@ describe('EntityTree tests', () => {
         projectId: mockProject.id,
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+        }),
+      )
       await waitFor(() =>
-        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+        expect(screen.getAllByRole('menu').length).toBeGreaterThan(0),
       )
 
       expect(screen.getAllByText('Current Project').length).toBe(1)
@@ -338,7 +346,11 @@ describe('EntityTree tests', () => {
         )
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+        }),
+      )
       await userEvent.click(screen.getByText('My Favorites'))
 
       await waitFor(() => {
