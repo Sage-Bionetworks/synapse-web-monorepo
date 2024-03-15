@@ -71,8 +71,14 @@ export default function DropdownSelect(props: DropdownSelectProps) {
 
   return (
     <React.Fragment>
-      <ButtonGroup variant={variant} ref={anchorRef} aria-label="split button">
+      <ButtonGroup
+        variant={variant}
+        ref={anchorRef}
+        aria-label="split button"
+        size="small"
+      >
         <Button
+          className="optionsButton"
           onClick={() => {
             if (onButtonClick) {
               onButtonClick(selectedIndex ?? selectedIndexLocal)
