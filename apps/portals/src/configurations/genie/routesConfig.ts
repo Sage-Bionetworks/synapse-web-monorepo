@@ -104,8 +104,8 @@ const routes: GenericRoute[] = [
         title: 'Access',
         className: 'DataAccessPage',
         props: {
-          ownerId: 'syn26710600',
-          wikiId: '619468',
+          ownerId: 'syn53013218',
+          wikiId: '626555',
           loadingSkeletonRowCount: 8,
         },
       },
@@ -120,8 +120,8 @@ const routes: GenericRoute[] = [
         title: 'Help',
         className: 'HelpPage',
         props: {
-          ownerId: 'syn26710600',
-          wikiId: '619468',
+          ownerId: 'syn53013218',
+          wikiId: '626556',
           loadingSkeletonRowCount: 8,
         },
       },
