@@ -65,6 +65,9 @@
     button.btn {
       padding: 5px 10px;
     }
+    .MuiButtonGroup-grouped {
+      white-space: nowrap;
+    }
   }
 
   .Placeholder {
@@ -75,9 +78,5 @@
     &__Content {
       font-size: large;
     }
-  }
-
-  .optionsButton {
-    white-space: nowrap;
   }
 }

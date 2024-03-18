@@ -402,6 +402,13 @@ export function EntityTree(props: EntityTreeProps) {
     [scope, initialContainerPath],
   )
 
+  const filteredOptions = Object.values(FinderScope).filter(
+    scopeOption =>
+      !(scopeOption === FinderScope.CURRENT_PROJECT && projectId == null),
+  )
+
+  const selectedIndex = filteredOptions.indexOf(scope)
+
   return (
     <div
       className={`TreeView ${
@@ -415,19 +422,18 @@ export function EntityTree(props: EntityTreeProps) {
         <div onClick={e => e.stopPropagation()}>
           <DropdownSelect
             variant={'outlined'}
-            options={Object.values(FinderScope).filter(
-              scopeOption =>
-                !(
-                  scopeOption === FinderScope.CURRENT_PROJECT &&
-                  projectId == null
-                ),
-            )}
-            selectedIndex={Object.values(FinderScope).indexOf(scope)}
+            options={filteredOptions}
+            selectedIndex={selectedIndex}
             setSelectedIndex={index => {
-              const selectedScope = Object.values(FinderScope)[index]
-              setScope(selectedScope)
-              setCurrentContainer(getScopeOptionDefaultContainer(selectedScope))
+              const selectedScope = filteredOptions[index]
+              if (scope !== selectedScope) {
+                setScope(selectedScope)
+                setCurrentContainer(
+                  getScopeOptionDefaultContainer(selectedScope),
+                )
+              }
             }}
+            size="small"
           />
         </div>
       </div>

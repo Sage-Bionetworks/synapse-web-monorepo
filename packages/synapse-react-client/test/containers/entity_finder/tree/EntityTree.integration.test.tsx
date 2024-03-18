@@ -299,7 +299,7 @@ describe('EntityTree tests', () => {
 
       await userEvent.click(
         screen.getByRole('button', {
-          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+          name: 'All Projects',
         }),
       )
       await waitFor(() =>
@@ -317,7 +317,7 @@ describe('EntityTree tests', () => {
 
       await userEvent.click(
         screen.getByRole('button', {
-          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+          name: 'All Projects',
         }),
       )
       await waitFor(() =>
@@ -348,7 +348,7 @@ describe('EntityTree tests', () => {
 
       await userEvent.click(
         screen.getByRole('button', {
-          name: /(Current Project)|(All Projects)|(Projects Created By Me)|(My Favorites)/,
+          name: 'All Projects',
         }),
       )
       await userEvent.click(screen.getByText('My Favorites'))

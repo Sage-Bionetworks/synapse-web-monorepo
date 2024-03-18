@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {
   Button,
   ButtonGroup,
+  ButtonGroupProps,
   ButtonProps,
   ClickAwayListener,
   Grow,
@@ -12,7 +13,7 @@ import {
 } from '@mui/material'
 import IconSvg from '../IconSvg'
 
-export type DropdownSelectProps = {
+export type DropdownSelectProps = ButtonGroupProps & {
   options: string[]
   selectedIndex?: number
   setSelectedIndex?: (selectedIndex: number) => void
@@ -35,6 +36,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     variant = 'contained',
     buttonGroupAriaLabel,
     onButtonClick,
+    ...rest
   } = props
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef<HTMLDivElement>(null)
@@ -75,10 +77,9 @@ export default function DropdownSelect(props: DropdownSelectProps) {
         variant={variant}
         ref={anchorRef}
         aria-label="split button"
-        size="small"
+        {...rest}
       >
         <Button
-          className="optionsButton"
           onClick={() => {
             if (onButtonClick) {
               onButtonClick(selectedIndex ?? selectedIndexLocal)
