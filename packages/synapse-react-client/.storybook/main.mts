@@ -48,10 +48,6 @@ const config: StorybookConfig = {
     },
   },
 
-  features: {
-    storyStoreV7: true,
-  },
-
   staticDirs: ['../public'],
 
   async viteFinal(config, { configType }) {
