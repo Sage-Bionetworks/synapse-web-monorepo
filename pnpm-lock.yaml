@@ -1250,8 +1250,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       chromatic:
-        specifier: ^9.1.0
-        version: 9.1.0
+        specifier: ^11.0.8
+        version: 11.0.8
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
@@ -1372,9 +1372,6 @@ importers:
       vite-plugin-svgr:
         specifier: ^4.2.0
         version: 4.2.0(rollup@2.79.1)(typescript@5.4.2)(vite@5.1.6)
-      vite-plugin-turbosnap:
-        specifier: ^1.0.3
-        version: 1.0.3
       weak-napi:
         specifier: ^2.0.2
         version: 2.0.2
@@ -8373,9 +8370,17 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /chromatic@9.1.0:
-    resolution: {integrity: sha512-9ib8k4LIfg/88kKufxz1N8vgCB7nlLhJqmx+Vx55cM/6DCB/M6oqroirVRXfdeC7qaZuhyUemPF2QHxBh7GXtQ==}
+  /chromatic@11.0.8:
+    resolution: {integrity: sha512-+zJ5h0/Eu5z26KCNLIw2tknbK69gUO8q3Jsew4oU0Q/i/NPhIwcXhvPP7u75aLJgX1EI61+ndiGJA/yeQZQcgw==}
     hasBin: true
+    peerDependencies:
+      '@chromatic-com/cypress': ^0.*.* || ^1.0.0
+      '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+    peerDependenciesMeta:
+      '@chromatic-com/cypress':
+        optional: true
+      '@chromatic-com/playwright':
+        optional: true
     dev: true
 
   /chrome-trace-event@1.0.3:
@@ -17243,10 +17248,6 @@ packages:
       - rollup
       - supports-color
       - typescript
-    dev: true
-
-  /vite-plugin-turbosnap@1.0.3:
-    resolution: {integrity: sha512-p4D8CFVhZS412SyQX125qxyzOgIFouwOcvjZWk6bQbNPR1wtaEzFT6jZxAjf1dejlGqa6fqHcuCvQea6EWUkUA==}
     dev: true
 
   /vite@5.1.6(@types/node@18.19.24)(sass@1.71.1):
