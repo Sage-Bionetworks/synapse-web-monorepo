@@ -1,14 +1,35 @@
 import { SynapseConfig } from 'types/portal-config'
-import { dataReleasesSql } from '../resources'
+import { currentDataReleasesSql, dataReleasesSql } from '../resources'
+import { SynapseConstants } from 'synapse-react-client'
 
-const dataReleases: SynapseConfig[] = [
-  {
-    name: 'Markdown',
-    title: 'Latest Data Release',
-    props: {
-      markdown: 'TODO: replace this with the new Data Release component',
+export const currentDataReleases: SynapseConfig = {
+  name: 'CardContainerLogic',
+  title: 'Current Data Releases',
+  props: {
+    sql: currentDataReleasesSql,
+    type: SynapseConstants.RELEASE_CARD,
+    limit: 3,
+    releaseCardConfig: {
+      cardSize: 'large',
+      prependRelease: false,
+      statsConfig: [
+        { columnName: 'Patients', label: 'Patients' },
+        { columnName: 'Samples', label: 'Samples' },
+      ],
+      buttonToExplorePageConfig: {
+        label: 'Explore Data Release',
+        sourcePathColumnName: 'releaseExplorePath',
+        exploreDataSql: currentDataReleasesSql,
+        exploreDataFacetColumnName: 'releaseType',
+        sourceDataFacetValueColumnName: 'releaseType',
+      },
+      dataGuidePath: 'data guide',
     },
   },
+}
+
+const dataReleases: SynapseConfig[] = [
+  currentDataReleases,
   {
     name: 'Markdown',
     title: 'Previous Data Release',
