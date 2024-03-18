@@ -1,9 +1,0 @@
-import{T as m}from"./Topic-DW6R7KMu.js";import"./jsx-runtime-CKrituN3.js";import"./index-CBqU2yxZ.js";import"./_commonjsHelpers-BosuxZz1.js";import"./IconSvg-sfHaiTJJ.js";import"./createSvgIcon-ClnqzT54.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-BPGUNDjC.js";import"./createTheme-2XtGYoE4.js";import"./index-DMoHWj5j.js";import"./styled-CPWjInoX.js";import"./Tooltip-XprEAl00.js";import"./index-CJ-wfEIf.js";import"./utils-SU9mu0D7.js";import"./inheritsLoose-B7h9gheN.js";import"./index-BtM5VmRH.js";import"./TransitionGroupContext-B1FFUpIO.js";import"./useForkRef-BSLA1zlB.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DHJeVGyA.js";import"./mergeSlotProps-ih6DGlm4.js";import"./isHostComponent-DVu5iVWx.js";import"./useIsFocusVisible-Chjat8DO.js";import"./ErrorOutlined-BhDYotgP.js";import"./GetAppTwoTone-DGNvw6OX.js";import"./InfoOutlined-G1tbAqgK.js";import"./CheckCircleTwoTone-B5Iaww82.js";import"./ConditionalWrapper-CiWFj8WY.js";import"./Stack-wDqeWMTC.js";import"./Button-BOCcoe4v.js";import"./ButtonBase-xB_9igmm.js";import"./assertThisInitialized-B9jnkVVz.js";import"./Skeleton-BQPHOfbB.js";import"./colorManipulator-CieAV1Z7.js";import"./Link-BXqr-BaG.js";import"./Typography-BhttL55U.js";const J={title:"Synapse/Following/Topic",component:m,tags:["autodocs"]},o={name:"Topic",args:{isSubscribed:!0,isLoading:!1,icon:"discussion",name:"Help me understand this project!"}};var r,i,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
-  name: 'Topic',
-  args: {
-    isSubscribed: true,
-    isLoading: false,
-    icon: 'discussion',
-    name: 'Help me understand this project!'
-  }
-}`,...(t=(i=o.parameters)==null?void 0:i.docs)==null?void 0:t.source}}};const K=["Demo"];export{o as Demo,K as __namedExportsOrder,J as default};
