@@ -6,21 +6,22 @@ import {
   MEDIUM_USER_CARD,
 } from '../../utils/SynapseConstants'
 import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   Query,
 } from '@sage-bionetworks/synapse-types'
-import QueryWrapperPlotNav from './QueryWrapperPlotNav'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import QueryWrapperPlotNav, {
+  QueryWrapperPlotNavProps,
+} from './QueryWrapperPlotNav'
 import { displayToast } from '../ToastMessage'
-import { CustomControlCallbackData } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
+import { CustomControlCallbackData } from '../SynapseTable'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
 import { SynapseClient } from '../../index'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
+import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<QueryWrapperPlotNavProps> = {
   title: 'Explore/QueryWrapperPlotNav',
   component: QueryWrapperPlotNav,
   decorators: [
@@ -33,7 +34,11 @@ const meta = {
       )
     },
   ],
-} satisfies Meta
+  args: {
+    onQueryChange: fn(),
+    onQueryResultBundleChange: fn(),
+  },
+}
 
 export default meta
 type Story = StoryObj<typeof meta>

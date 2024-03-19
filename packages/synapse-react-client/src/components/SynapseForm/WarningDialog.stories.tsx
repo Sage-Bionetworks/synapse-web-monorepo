@@ -1,12 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import { WarningDialog, WarningDialogProps } from './WarningDialog'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'UI/WarningDialog',
   component: WarningDialog,
   render: args => {
     return <WarningDialog {...args} />
+  },
+  args: {
+    onConfirm: fn(),
+    onCancel: fn(),
   },
 } satisfies Meta<WarningDialogProps>
 

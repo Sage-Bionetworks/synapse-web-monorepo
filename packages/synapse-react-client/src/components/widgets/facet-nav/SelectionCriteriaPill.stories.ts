@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import SelectionCriteriaPill from './SelectionCriteriaPill'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Explore/Tokens/SelectionCriteriaPill',
@@ -13,5 +14,6 @@ export const Pill: Story = {
     key: 'key',
     innerText: 'Facet Value: ABC',
     tooltipText: 'You can add tooltip text too.',
+    onRemoveFilter: fn(),
   },
 }

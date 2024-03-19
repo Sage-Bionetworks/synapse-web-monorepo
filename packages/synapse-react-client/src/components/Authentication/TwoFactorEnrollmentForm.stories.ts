@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import TwoFactorEnrollmentForm from './TwoFactorEnrollmentForm'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Authentication/TwoFactorEnrollment',
@@ -14,5 +15,6 @@ export const Demo: Story = {
     onTwoFactorEnrollmentSuccess: () => {
       displayToast('Successfully enrolled in 2FA!', 'success')
     },
+    onBackClicked: fn(),
   },
 }

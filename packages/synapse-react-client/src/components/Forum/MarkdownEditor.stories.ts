@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { ForumThreadEditor } from './ForumThreadEditor'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Markdown/MarkdownEditor',
@@ -13,5 +14,6 @@ export const MarkdownEditorDemo: Story = {
     id: '123',
     isReply: false,
     isDialog: false,
+    onClose: fn(),
   },
 }

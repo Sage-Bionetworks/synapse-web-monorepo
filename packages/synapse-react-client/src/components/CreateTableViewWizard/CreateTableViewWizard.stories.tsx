@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import CreateTableViewWizard from './CreateTableViewWizard'
 import { displayToast } from '../ToastMessage'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Create Table Wizard',
@@ -25,5 +26,6 @@ export const Demo: Story = {
     onComplete: newId => {
       displayToast(`Successfully created ${newId}`)
     },
+    onCancel: fn(),
   },
 }

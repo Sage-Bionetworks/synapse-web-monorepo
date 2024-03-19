@@ -5,6 +5,7 @@ import {
   ConfirmationDialog,
   ConfirmationDialogProps,
 } from './ConfirmationDialog'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'UI/ConfirmationDialog',
@@ -32,5 +33,7 @@ export const Demo: Story = {
       markdownText:
         'Option to show a _HelpPopover_ in the title bar with a link to the docs site',
     },
+    onCancel: fn(),
+    onConfirm: fn(),
   },
 }

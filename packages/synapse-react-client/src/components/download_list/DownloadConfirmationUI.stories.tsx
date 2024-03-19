@@ -5,6 +5,7 @@ import {
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
 import { SynapseContextConsumer, SynapseContextProvider } from '../../index'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Download/DownloadConfirmationUI',
@@ -14,6 +15,10 @@ const meta = {
     isAuthenticated: {
       type: 'boolean',
     },
+  },
+  args: {
+    onAddToDownloadCart: fn(),
+    onCancel: fn(),
   },
   decorators: [
     (Story, args) => (
