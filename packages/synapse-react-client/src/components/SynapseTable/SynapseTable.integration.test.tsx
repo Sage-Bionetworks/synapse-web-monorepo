@@ -52,6 +52,7 @@ import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
 import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
 import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
+import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
 
 const synapseTableEntityId = 'syn16787123'
 
@@ -142,6 +143,9 @@ jest.spyOn(UserCardModule, 'default').mockImplementation(() => {
 
 jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
   return <div data-testid="AddToDownloadListV2" />
+})
+jest.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
+  return <div data-testid="NoContentPlaceholder" />
 })
 
 describe('SynapseTable tests', () => {
@@ -607,5 +611,36 @@ describe('SynapseTable tests', () => {
     // Verify that the ID column contains the icon button with the help text
     const columnHeader = await screen.findByRole('columnheader', { name: 'Id' })
     within(columnHeader).getByRole('button', { name: helpText })
+  })
+
+  it('Shows NoContentPlaceholder when there are no results', async () => {
+    const queryResultBundleWithNoRows: QueryResultBundle = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount: 1,
+      selectColumns: [{ name: 'study', columnType: 'STRING' }],
+      columnModels: [
+        {
+          id: '1',
+          name: 'study',
+          columnType: 'STRING',
+        },
+      ],
+      lastUpdatedOn: '2023-08-28T07:27:00.667Z',
+      queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+        queryResults: {
+          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+          tableId: MOCK_TABLE_ENTITY_ID,
+          etag: '53e1e27a-dbf3-4db3-acd1-dafca30b894c',
+          headers: [{ name: 'study', columnType: 'STRING' }],
+          rows: [],
+        },
+      },
+    }
+    server.use(...getHandlersForTableQuery(queryResultBundleWithNoRows))
+
+    renderTable()
+
+    await screen.findByTestId('NoContentPlaceholder')
   })
 })

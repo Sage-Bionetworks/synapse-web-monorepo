@@ -209,8 +209,11 @@ export function SynapseTable(props: SynapseTableProps) {
     return <></>
   }
   const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
-  // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
-  if (!hasResults && queryRequest.query.offset === 0) {
+  // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0 or null/undefined).
+  if (
+    !hasResults &&
+    (queryRequest.query.offset === 0 || queryRequest.query.offset == null)
+  ) {
     return <NoContentPlaceholder />
   }
 
