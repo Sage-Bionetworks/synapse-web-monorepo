@@ -53,6 +53,14 @@ const columnModels: ColumnModel[] = [
     maximumSize: 50,
     enumValues: ['/explore/files/genie', '/explore/files/genie-bpc'],
   },
+  {
+    name: 'exploreDataSql',
+    columnType: 'STRING',
+    id: '208850',
+    defaultValue: 'select * from syn54100284',
+    maximumSize: 50,
+    enumValues: ['select * from syn54100284', 'select * from syn54100290'],
+  },
 ]
 const headers: SelectColumn[] = columnModels.map(columnModel => {
   const sc: SelectColumn = { ...columnModel }
@@ -82,6 +90,7 @@ export const mockCurrentReleaseCardsQueryResultBundle: QueryResultBundle = {
             'true',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -96,6 +105,7 @@ export const mockCurrentReleaseCardsQueryResultBundle: QueryResultBundle = {
             'true',
             'crc',
             '/explore/files/genie-bpc',
+            'select * from syn54100290',
           ],
         },
         {
@@ -110,6 +120,7 @@ export const mockCurrentReleaseCardsQueryResultBundle: QueryResultBundle = {
             'true',
             'nsclc',
             '/explore/files/genie-bpc',
+            'select * from syn54100290',
           ],
         },
       ],
@@ -173,6 +184,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -187,6 +199,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -201,6 +214,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -215,6 +229,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -229,6 +244,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -243,6 +259,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -257,6 +274,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -271,6 +289,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
         {
@@ -285,6 +304,7 @@ export const mockPreviousReleaseCardsQueryResultBundle: QueryResultBundle = {
             'false',
             null,
             '/explore/files/genie',
+            'select * from syn54100284',
           ],
         },
       ],

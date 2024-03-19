@@ -120,11 +120,14 @@ export const createButtonToExploreDataPathAndQueryString = (
   }
 
   const {
-    exploreDataSql,
+    sourceExploreDataSqlColumnName,
     exploreDataFacetColumnName,
     sourceDataFacetValueColumnName,
   } = buttonToExploreDataConfig
 
+  const exploreDataSql = sourceExploreDataSqlColumnName
+    ? getValueFromData(schema, data, sourceExploreDataSqlColumnName)
+    : null
   const facetValue = sourceDataFacetValueColumnName
     ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
     : null

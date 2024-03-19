@@ -140,7 +140,7 @@ export const ReleaseCardLargeMock: Story = {
       buttonToExplorePageConfig: {
         label: 'Explore Current Data Release',
         sourcePathColumnName: 'releaseExplorePath',
-        exploreDataSql: currentReleaseCardSql, // generally this would refer to a different table, not the source table
+        sourceExploreDataSqlColumnName: 'exploreDataSql',
         exploreDataFacetColumnName: 'releaseType',
         sourceDataFacetValueColumnName: 'releaseType',
       },

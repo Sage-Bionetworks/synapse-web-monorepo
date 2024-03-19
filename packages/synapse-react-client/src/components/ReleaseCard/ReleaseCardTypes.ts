@@ -16,9 +16,9 @@ export type ButtonToExplorePageConfig = {
   // column name in the data (table, view...) driving the page where the button is located
   // which is used to populate the button's path
   sourcePathColumnName: string
-  // defining SQL for the data (table, view...) driving the Explore page
-  // which is used in generating the button's query string
-  exploreDataSql?: string
+  // column name in the data (table, view...) driving the page where the button is located
+  // which is used to populate the defining SQL for the data (table, view...) driving the Explore page
+  sourceExploreDataSqlColumnName?: string
   // column name of the selected facet in the data (table, view...) driving the Explore page
   // which is used in generating the button's query string
   exploreDataFacetColumnName?: string

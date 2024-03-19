@@ -12,11 +12,12 @@ import {
 
 const defaultPath = '/explore/files/genie'
 const defaultReleaseType = 'some-facet-value'
+const defaultSql = 'select * from syn123456'
 
 const defaultButtonToExplorePageConfig: ButtonToExplorePageConfig = {
   label: 'Explore Current Data Release',
   sourcePathColumnName: 'releaseExplorePath',
-  exploreDataSql: 'select * from syn123456',
+  sourceExploreDataSqlColumnName: 'exploreDataSql',
   exploreDataFacetColumnName: 'columnInSyn123456',
   sourceDataFacetValueColumnName: 'releaseType',
 }
@@ -50,6 +51,7 @@ const defaultSchema: ReleaseCardSchema = {
   countSamples: 4,
   releaseType: 6,
   releaseExplorePath: 7,
+  exploreDataSql: 8,
 }
 const defaultData: (string | null)[] = [
   'syn51417430',
@@ -60,6 +62,7 @@ const defaultData: (string | null)[] = [
   'false',
   defaultReleaseType,
   defaultPath,
+  defaultSql,
 ]
 
 const defaultReleaseCardLargeProps: ReleaseCardLargeProps = {
@@ -113,7 +116,7 @@ describe('Release Card', () => {
           ...defaultReleaseCardLargeConfig,
           buttonToExplorePageConfig: {
             ...defaultButtonToExplorePageConfig,
-            exploreDataSql: undefined,
+            sourceExploreDataSqlColumnName: undefined,
           },
         },
       })
@@ -123,7 +126,7 @@ describe('Release Card', () => {
 
     it('explore button has link with path and query string', () => {
       const query: Query = {
-        sql: defaultButtonToExplorePageConfig.exploreDataSql!,
+        sql: defaultSql,
         selectedFacets: [
           {
             concreteType:
