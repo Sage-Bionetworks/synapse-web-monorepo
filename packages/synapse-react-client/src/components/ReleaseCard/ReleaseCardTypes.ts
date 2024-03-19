@@ -10,6 +10,13 @@ export type StatConfig = {
   label: string
 }
 
+export type SelectedFacetConfig = {
+  // the column that should be faceted
+  facetColumnName: string
+  // specifies which column should be used to populate the selected facet value
+  facetValueColumnName: string
+}
+
 export type ButtonToExplorePageConfig = {
   // button's label
   label: string
@@ -19,12 +26,11 @@ export type ButtonToExplorePageConfig = {
   // column name in the data (table, view...) driving the page where the button is located
   // which is used to populate the defining SQL for the data (table, view...) driving the Explore page
   sourceExploreDataSqlColumnName?: string
-  // column name of the selected facet in the data (table, view...) driving the Explore page
-  // which is used in generating the button's query string
-  exploreDataFacetColumnName?: string
-  // column name in the data (table, view...) driving the page where the button is located
-  // which is used to to populate the value for the selected facet in the button's query string
-  sourceDataFacetValueColumnName?: string
+  // selected facets used in generating the button's query string, wwhere each selected facet has:
+  //  - facetColumnName: name of the facet column in the data driving the Explore page
+  //  - facetValueColumnName: column name in the data driving the page where
+  //    the button is located and is used to populate the selected facet value
+  selectedFacetConfigs?: SelectedFacetConfig[]
 }
 
 export type ReleaseMetadataConfig = {

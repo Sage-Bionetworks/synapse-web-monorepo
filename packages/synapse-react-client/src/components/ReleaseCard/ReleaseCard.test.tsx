@@ -8,18 +8,39 @@ import {
   ButtonToExplorePageConfig,
   ReleaseCardLargeConfig,
   ReleaseMetadataConfig,
+  SelectedFacetConfig,
 } from './ReleaseCardTypes'
 
 const defaultPath = '/explore/files/genie'
-const defaultReleaseType = 'some-facet-value'
+const defaultSourcePathColumnName = 'releaseExplorePath'
+
 const defaultSql = 'select * from syn123456'
+const defaultExploreDataSqlColumnName = 'exploreDataSql'
+
+const defaultFacetValue1 = '15.0-public'
+const defaultFacetValueColumnName1 = 'version'
+const defaultFacetColumnName1 = 'versionInSyn123456'
+
+const defaultFacetValue2 = 'main'
+const defaultFacetValueColumnName2 = 'Cohort'
+const defaultFacetColumnName2 = 'cohortInSyn123456'
+
+const defaultSelectedFacetConfigs: SelectedFacetConfig[] = [
+  {
+    facetColumnName: defaultFacetColumnName1,
+    facetValueColumnName: defaultFacetValueColumnName1,
+  },
+  {
+    facetColumnName: defaultFacetColumnName2,
+    facetValueColumnName: defaultFacetValueColumnName2,
+  },
+]
 
 const defaultButtonToExplorePageConfig: ButtonToExplorePageConfig = {
   label: 'Explore Current Data Release',
-  sourcePathColumnName: 'releaseExplorePath',
-  sourceExploreDataSqlColumnName: 'exploreDataSql',
-  exploreDataFacetColumnName: 'columnInSyn123456',
-  sourceDataFacetValueColumnName: 'releaseType',
+  sourcePathColumnName: defaultSourcePathColumnName,
+  sourceExploreDataSqlColumnName: defaultExploreDataSqlColumnName,
+  selectedFacetConfigs: defaultSelectedFacetConfigs,
 }
 
 const defaultReleaseMetadataConfig: ReleaseMetadataConfig = {
@@ -49,9 +70,10 @@ const defaultSchema: ReleaseCardSchema = {
   releaseDate: 2,
   countPatients: 3,
   countSamples: 4,
-  releaseType: 6,
-  releaseExplorePath: 7,
-  exploreDataSql: 8,
+  [defaultFacetValueColumnName1]: 6,
+  [defaultSourcePathColumnName]: 7,
+  [defaultExploreDataSqlColumnName]: 8,
+  [defaultFacetValueColumnName2]: 9,
 }
 const defaultData: (string | null)[] = [
   'syn51417430',
@@ -60,9 +82,10 @@ const defaultData: (string | null)[] = [
   defaultCountPatients.toString(),
   defaultCountSamples.toString(),
   'false',
-  defaultReleaseType,
+  defaultFacetValue1,
   defaultPath,
   defaultSql,
+  defaultFacetValue2,
 ]
 
 const defaultReleaseCardLargeProps: ReleaseCardLargeProps = {
@@ -131,9 +154,14 @@ describe('Release Card', () => {
           {
             concreteType:
               'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName:
-              defaultButtonToExplorePageConfig.exploreDataFacetColumnName!,
-            facetValues: [defaultReleaseType],
+            columnName: defaultFacetColumnName1,
+            facetValues: [defaultFacetValue1],
+          },
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            columnName: defaultFacetColumnName2,
+            facetValues: [defaultFacetValue2],
           },
         ],
       }

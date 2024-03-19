@@ -1,11 +1,13 @@
 import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
+import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCardSchema } from './ReleaseCard'
 import {
   ButtonToExplorePageConfig,
   ReleaseCardStat,
   ReleaseMetadataConfig,
+  SelectedFacetConfig,
   StatConfig,
 } from './ReleaseCardTypes'
 
@@ -101,6 +103,28 @@ export const formatReleaseCardData = (
   }
 }
 
+const selectedFacetConfigToSelectedFacet = (
+  schema: ReleaseCardSchema,
+  data: (string | null)[],
+  selectedFacetConfigs: SelectedFacetConfig[],
+): SelectedFacet[] => {
+  const selectedFacets: SelectedFacet[] = []
+  selectedFacetConfigs.forEach(selectedFacetConfig => {
+    const sourceDataFacetValueColumnName =
+      selectedFacetConfig.facetValueColumnName
+    const facetValue = sourceDataFacetValueColumnName
+      ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
+      : null
+    if (facetValue) {
+      selectedFacets.push({
+        facet: selectedFacetConfig.facetColumnName,
+        facetValue: facetValue,
+      })
+    }
+  })
+  return selectedFacets
+}
+
 export const createButtonToExploreDataPathAndQueryString = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
@@ -119,27 +143,23 @@ export const createButtonToExploreDataPathAndQueryString = (
     return null
   }
 
-  const {
-    sourceExploreDataSqlColumnName,
-    exploreDataFacetColumnName,
-    sourceDataFacetValueColumnName,
-  } = buttonToExploreDataConfig
+  const { sourceExploreDataSqlColumnName, selectedFacetConfigs } =
+    buttonToExploreDataConfig
 
   const exploreDataSql = sourceExploreDataSqlColumnName
     ? getValueFromData(schema, data, sourceExploreDataSqlColumnName)
     : null
-  const facetValue = sourceDataFacetValueColumnName
-    ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
-    : null
-  const hasSelectedFacet =
-    exploreDataSql && exploreDataFacetColumnName && facetValue
+  const selectedFacets =
+    selectedFacetConfigs &&
+    selectedFacetConfigToSelectedFacet(schema, data, selectedFacetConfigs)
+  const hasSelectedFacets =
+    exploreDataSql && selectedFacets && selectedFacets.length > 0
 
-  return hasSelectedFacet
+  return hasSelectedFacets
     ? generateEncodedPathAndQueryForSelectedFacetURL(
         path,
         exploreDataSql,
-        exploreDataFacetColumnName,
-        facetValue,
+        selectedFacets,
       )
     : path
 }

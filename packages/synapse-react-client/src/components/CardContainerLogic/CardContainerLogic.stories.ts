@@ -141,8 +141,16 @@ export const ReleaseCardLargeMock: Story = {
         label: 'Explore Current Data Release',
         sourcePathColumnName: 'releaseExplorePath',
         sourceExploreDataSqlColumnName: 'exploreDataSql',
-        exploreDataFacetColumnName: 'releaseType',
-        sourceDataFacetValueColumnName: 'releaseType',
+        selectedFacetConfigs: [
+          {
+            facetColumnName: 'releaseType',
+            facetValueColumnName: 'releaseType',
+          },
+          {
+            facetColumnName: 'version',
+            facetValueColumnName: 'version',
+          },
+        ],
       },
       dataGuidePath: 'data guide',
     },
