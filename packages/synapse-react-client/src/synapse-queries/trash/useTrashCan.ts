@@ -8,8 +8,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   PaginatedResults,
   TrashedEntity,
@@ -54,7 +53,7 @@ export function useRestoreEntities(
     UseMutationOptions<
       PromiseSettledResult<void>[],
       SynapseClientError,
-      string | Set<string>
+      string | string[] | Set<string>
     >
   >,
 ) {
@@ -64,10 +63,10 @@ export function useRestoreEntities(
   return useMutation<
     PromiseSettledResult<void>[],
     SynapseClientError,
-    string | Set<string>
+    string | string[] | Set<string>
   >({
     ...options,
-    mutationFn: (ids: string | Set<string>) => {
+    mutationFn: (ids: string | string[] | Set<string>) => {
       if (typeof ids === 'string') {
         ids = new Set([ids])
       }
@@ -92,7 +91,7 @@ export function usePurgeEntities(
     UseMutationOptions<
       PromiseSettledResult<void>[],
       SynapseClientError,
-      string | Set<string>
+      string | string[] | Set<string>
     >
   >,
 ) {
@@ -102,10 +101,10 @@ export function usePurgeEntities(
   return useMutation<
     PromiseSettledResult<void>[],
     SynapseClientError,
-    string | Set<string>
+    string | string[] | Set<string>
   >({
     ...options,
-    mutationFn: (ids: string | Set<string>) => {
+    mutationFn: (ids: string | string[] | Set<string>) => {
       if (typeof ids === 'string') {
         ids = new Set([ids])
       }
