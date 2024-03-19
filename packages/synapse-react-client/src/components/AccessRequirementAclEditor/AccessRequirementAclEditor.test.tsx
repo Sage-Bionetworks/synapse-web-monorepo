@@ -6,6 +6,11 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import {
+  MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
+  MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
+} from '../../mocks/mockAccessRequirementAcls'
 import { rest, server } from '../../mocks/msw/server'
 import { mockTeamData, mockTeamData2 } from '../../mocks/team/mockTeam'
 import {
@@ -13,21 +18,17 @@ import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../mocks/user/mock_user_profile'
+import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
+  AccessRequirementAclEditor,
+  AccessRequirementAclEditorHandle,
+  AccessRequirementAclEditorProps,
   EMPTY_RESOURCE_ACCESS_LIST_TEXT,
   REVIEWER_ALREADY_ADDED_ERROR_MESSAGE,
-  AccessRequirementAclEditor,
-  AccessRequirementAclEditorProps,
 } from './AccessRequirementAclEditor'
-import {
-  MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
-  MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
-} from '../../mocks/mockAccessRequirementAcls'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { REMOVE_BUTTON_LABEL } from './ResourceAccessItem'
-import SynapseClient from '../../synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const onSaveComplete = jest.fn()
 const mockDeleteAccessRequirementAcl = jest.spyOn(
@@ -51,14 +52,18 @@ const defaultResourceAccessList =
 
 const defaultProps: AccessRequirementAclEditorProps = {
   accessRequirementId: defaultAccessRequirementId,
-  isSaveClicked: false,
   onSaveComplete,
 }
 
 function renderComponent(props: AccessRequirementAclEditorProps) {
-  return render(<AccessRequirementAclEditor {...props} />, {
-    wrapper: createWrapper(),
-  })
+  const ref = React.createRef<AccessRequirementAclEditorHandle>()
+  const component = render(
+    <AccessRequirementAclEditor ref={ref} {...props} />,
+    {
+      wrapper: createWrapper(),
+    },
+  )
+  return { ref, component }
 }
 
 async function setUp(
@@ -66,7 +71,7 @@ async function setUp(
   expectedResourceAccessItems: number = defaultResourceAccessItemsCount,
 ) {
   const user = userEvent.setup()
-  const component = renderComponent(props)
+  const { ref, component } = renderComponent(props)
 
   // wait for UserOrTeamBadge(s) to finish loading
   await waitFor(() => {
@@ -78,7 +83,7 @@ async function setUp(
   const itemRows = screen.queryAllByRole('row')
   expect(itemRows).toHaveLength(expectedResourceAccessItems)
 
-  return { component, itemRows, user }
+  return { ref, component, itemRows, user }
 }
 
 const confirmItem = (
@@ -175,7 +180,7 @@ describe('ResourceAccessEditor', () => {
         resourceAccess: updatedResourceAccessList,
       }
 
-      const { itemRows, user, component } = await setUp()
+      const { itemRows, user, ref } = await setUp()
       const row = itemRows[1]
       confirmItem(row, mockTeamData2.name, 'Exempt Eligible')
 
@@ -183,10 +188,8 @@ describe('ResourceAccessEditor', () => {
       confirmItem(row, mockTeamData2.name, updatedPermissionLevelLabel)
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor {...defaultProps} isSaveClicked={true} />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
@@ -207,15 +210,13 @@ describe('ResourceAccessEditor', () => {
         resourceAccess: [...defaultResourceAccessList, newResourceAccess],
       }
 
-      const { user, component } = await setUp()
+      const { user, ref } = await setUp()
       expect(onSaveComplete).not.toHaveBeenCalled()
 
       await selectReviewerUser(user, MOCK_USER_NAME_2)
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor {...defaultProps} isSaveClicked={true} />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
@@ -233,15 +234,13 @@ describe('ResourceAccessEditor', () => {
         resourceAccess: updatedResourceAccessList,
       }
 
-      const { itemRows, user, component } = await setUp()
+      const { itemRows, user, ref } = await setUp()
 
       await removeItem(itemRows[0], user)
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor {...defaultProps} isSaveClicked={true} />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
@@ -271,20 +270,17 @@ describe('ResourceAccessEditor', () => {
 
       const props: AccessRequirementAclEditorProps = {
         accessRequirementId,
-        isSaveClicked: false,
         onSaveComplete,
       }
 
-      const { user, component } = await setUp({ ...props }, 1)
+      const { user, ref } = await setUp({ ...props }, 1)
 
       await removeItem(screen.getByRole('row'), user)
       expect(onSaveComplete).not.toHaveBeenCalled()
       expect(screen.getByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)).toBeVisible()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor {...props} isSaveClicked={true} />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
@@ -296,10 +292,7 @@ describe('ResourceAccessEditor', () => {
     })
 
     test('does not update an unchanged ACL', async () => {
-      const { user, component, itemRows } = await setUp(
-        { ...defaultProps, isSaveClicked: false },
-        defaultResourceAccessItemsCount,
-      )
+      const { user, ref, itemRows } = await setUp()
 
       // remove last principal
       const index = itemRows.length - 1
@@ -315,10 +308,8 @@ describe('ResourceAccessEditor', () => {
       confirmItem(row, MOCK_USER_NAME, permissionLevelLabel)
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor {...defaultProps} isSaveClicked={true} />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       // noop
       await waitFor(() => {
@@ -333,7 +324,6 @@ describe('ResourceAccessEditor', () => {
   describe('AR without existing ACL', () => {
     const noExistingAclProps: AccessRequirementAclEditorProps = {
       accessRequirementId: MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
-      isSaveClicked: false,
       onSaveComplete,
     }
 
@@ -354,19 +344,14 @@ describe('ResourceAccessEditor', () => {
         resourceAccess: [newResourceAccess],
       }
 
-      const { user, component } = await setUp(noExistingAclProps, 0)
+      const { user, ref } = await setUp(noExistingAclProps, 0)
 
       await screen.findByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)
       await selectReviewerUser(user, MOCK_USER_NAME_2)
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor
-          {...noExistingAclProps}
-          isSaveClicked={true}
-        />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
@@ -378,7 +363,7 @@ describe('ResourceAccessEditor', () => {
     })
 
     test('does not create a new acl when principal is added and removed before clicking save', async () => {
-      const { user, component } = await setUp(noExistingAclProps, 0)
+      const { user, ref } = await setUp(noExistingAclProps, 0)
 
       await screen.findByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)
       await selectReviewerUser(user, MOCK_USER_NAME_2)
@@ -388,13 +373,8 @@ describe('ResourceAccessEditor', () => {
       expect(screen.getByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)).toBeVisible()
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      // simulate user clicking save button: isSaveClicked -> true
-      component.rerender(
-        <AccessRequirementAclEditor
-          {...noExistingAclProps}
-          isSaveClicked={true}
-        />,
-      )
+      // parent calls save
+      ref.current?.save()
 
       // noop
       await waitFor(() => {

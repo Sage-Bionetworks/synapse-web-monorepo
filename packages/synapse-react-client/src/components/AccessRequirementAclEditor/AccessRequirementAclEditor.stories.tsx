@@ -1,6 +1,6 @@
 import { Button, Paper } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
   MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
@@ -8,18 +8,25 @@ import {
 import { getAllAccessRequirementAclHandlers } from '../../mocks/msw/handlers/accessRequirementAclHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { AccessRequirementAclEditor } from './AccessRequirementAclEditor'
+import {
+  AccessRequirementAclEditor,
+  AccessRequirementAclEditorHandle,
+} from './AccessRequirementAclEditor'
 
 const meta: Meta<typeof AccessRequirementAclEditor> = {
   title: 'Governance/AccessRequirementAclEditor',
   component: AccessRequirementAclEditor,
   render: function RenderFn(args) {
     const [isSaving, setIsSaving] = useState<boolean>(false)
+    const ref = useRef<AccessRequirementAclEditorHandle>(null)
 
     return (
       <>
         <Button
-          onClick={() => setIsSaving(true)}
+          onClick={() => {
+            setIsSaving(true)
+            ref.current?.save()
+          }}
           variant="contained"
           disabled={isSaving}
         >
@@ -28,7 +35,7 @@ const meta: Meta<typeof AccessRequirementAclEditor> = {
         <Paper sx={{ mx: 'auto', p: '44px', maxWidth: '750px' }}>
           <AccessRequirementAclEditor
             {...args}
-            isSaveClicked={isSaving}
+            ref={ref}
             onSaveComplete={() => setIsSaving(false)}
           />
         </Paper>
