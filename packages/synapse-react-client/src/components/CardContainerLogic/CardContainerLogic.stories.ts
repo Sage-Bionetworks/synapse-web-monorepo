@@ -19,6 +19,7 @@ import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { GenericCardSchema } from '../GenericCard'
 import { StatConfig } from '../ReleaseCard'
 import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
+import { ReleaseMetadataConfig } from '../ReleaseCard/ReleaseCardTypes'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -113,6 +114,12 @@ export const PublicationCard: Story = {
   },
 }
 
+const releaseMetadataConfig: ReleaseMetadataConfig = {
+  releaseDateColumnName: 'releaseDate',
+  releaseEntityColumnName: 'releaseEntity',
+  releaseNameColumnName: 'releaseName',
+}
+
 const statsConfig: StatConfig[] = [
   { columnName: 'countPatients', label: 'Patients' },
   { columnName: 'countSamples', label: 'Samples' },
@@ -128,6 +135,7 @@ export const ReleaseCardLargeMock: Story = {
     releaseCardConfig: {
       cardSize: 'large',
       prependRelease: false,
+      releaseMetadataConfig: releaseMetadataConfig,
       statsConfig: statsConfig,
       buttonToExplorePageConfig: {
         label: 'Explore Current Data Release',
@@ -166,6 +174,7 @@ export const ReleaseCardMediumMock: Story = {
     releaseCardConfig: {
       cardSize: 'medium',
       requestAccessPath: 'data access',
+      releaseMetadataConfig: releaseMetadataConfig,
       statsConfig: statsConfig,
     },
   },

@@ -27,24 +27,35 @@ export type ButtonToExplorePageConfig = {
   sourceDataFacetValueColumnName?: string
 }
 
-export type ReleaseCardLargeConfig = {
+export type ReleaseMetadataConfig = {
+  // specifies which column should be used to populate the release entity id
+  releaseEntityColumnName: string
+  // specifies which column should be used to populate the release name
+  releaseNameColumnName: string
+  // specifies which column should be used to populate the release date
+  releaseDateColumnName: string
+}
+
+type ReleaseCardBaseConfig = {
+  releaseMetadataConfig: ReleaseMetadataConfig
+  // statistics to display in the release card
+  statsConfig: StatConfig[]
+}
+
+export type ReleaseCardLargeConfig = ReleaseCardBaseConfig & {
   cardSize: 'large'
   // whether the release version should be prefixed with "Release "
   prependRelease: boolean
-  // statistics to display in the release card
-  statsConfig: StatConfig[]
   // button to explore data in the release
   buttonToExplorePageConfig?: ButtonToExplorePageConfig
   // path to release's data guide
   dataGuidePath?: string
 }
 
-export type ReleaseCardMediumConfig = {
+export type ReleaseCardMediumConfig = ReleaseCardBaseConfig & {
   cardSize: 'medium'
   // path to request access to the release data
   requestAccessPath: string
-  // statistics to display in the release card
-  statsConfig: StatConfig[]
 }
 
 export type ReleaseCardConfig = ReleaseCardLargeConfig | ReleaseCardMediumConfig

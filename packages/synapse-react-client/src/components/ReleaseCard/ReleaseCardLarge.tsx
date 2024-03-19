@@ -41,9 +41,10 @@ export const ReleaseCardLarge: React.FunctionComponent<
   includePortalCardClass = true,
   releaseCardConfig,
 }: ReleaseCardLargeProps) => {
-  const { releaseVersion, releaseDate, stats } = formatReleaseCardData(
+  const { releaseName, releaseDate, stats } = formatReleaseCardData(
     schema,
     data,
+    releaseCardConfig.releaseMetadataConfig,
     releaseCardConfig.statsConfig,
   )
   const { buttonToExplorePageConfig } = releaseCardConfig
@@ -53,7 +54,7 @@ export const ReleaseCardLarge: React.FunctionComponent<
     buttonToExplorePageConfig,
   )
 
-  if (releaseVersion === null) return <></>
+  if (releaseName === null) return <></>
 
   return (
     <Box
@@ -73,7 +74,7 @@ export const ReleaseCardLarge: React.FunctionComponent<
             <CalendarTodayTwoTone sx={{ color: 'grey.700' }} />
             <Typography variant="headline1">
               {releaseCardConfig.prependRelease && 'Release '}
-              {releaseVersion}
+              {releaseName}
             </Typography>
           </Stack>
           <Stack

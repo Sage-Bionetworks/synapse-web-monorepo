@@ -38,10 +38,15 @@ export const ReleaseCardMedium: React.FunctionComponent<
   includePortalCardClass = true,
   releaseCardConfig,
 }: ReleaseCardMediumProps) => {
-  const { releaseVersion, releaseEntity, releaseDate, stats } =
-    formatReleaseCardData(schema, data, releaseCardConfig.statsConfig)
+  const { releaseName, releaseEntity, releaseDate, stats } =
+    formatReleaseCardData(
+      schema,
+      data,
+      releaseCardConfig.releaseMetadataConfig,
+      releaseCardConfig.statsConfig,
+    )
 
-  if (releaseVersion === null) return <></>
+  if (releaseName === null) return <></>
 
   const nCols = 2
   const SPAN_ALL_COLS = `span ${nCols}`
@@ -65,7 +70,7 @@ export const ReleaseCardMedium: React.FunctionComponent<
       my={0} // remove margin added by .SRC-portalCard - CardContainer list will set the gap between cards
     >
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" alignSelf="end">
-        <Typography variant="headline1">{releaseVersion}</Typography>
+        <Typography variant="headline1">{releaseName}</Typography>
       </Box>
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mb="30px">
         <Typography

@@ -12,7 +12,7 @@ const columnModels: ColumnModel[] = [
     id: '207864',
   },
   {
-    name: 'releaseVersion',
+    name: 'releaseName',
     columnType: 'STRING',
     id: '207865',
     maximumSize: 50,

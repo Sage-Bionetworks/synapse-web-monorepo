@@ -5,6 +5,7 @@ import { ReleaseCardSchema } from './ReleaseCard'
 import {
   ButtonToExplorePageConfig,
   ReleaseCardStat,
+  ReleaseMetadataConfig,
   StatConfig,
 } from './ReleaseCardTypes'
 
@@ -58,8 +59,13 @@ const formatReleaseStats = (
 const formatReleaseDate = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
+  releaseDateColumnName: string,
 ) => {
-  const releaseDateString = data[schema.releaseDate]
+  const releaseDateString = getValueFromData(
+    schema,
+    data,
+    releaseDateColumnName,
+  )
   const cardStat: ReleaseCardStat = {
     label: 'Date of release',
     value: releaseDateString
@@ -72,12 +78,25 @@ const formatReleaseDate = (
 export const formatReleaseCardData = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
+  releaseMetdataConfig: ReleaseMetadataConfig,
   statsConfig: StatConfig[],
 ) => {
   return {
-    releaseVersion: data[schema.releaseVersion],
-    releaseEntity: data[schema.releaseEntity],
-    releaseDate: formatReleaseDate(schema, data),
+    releaseName: getValueFromData(
+      schema,
+      data,
+      releaseMetdataConfig.releaseNameColumnName,
+    ),
+    releaseEntity: getValueFromData(
+      schema,
+      data,
+      releaseMetdataConfig.releaseEntityColumnName,
+    ),
+    releaseDate: formatReleaseDate(
+      schema,
+      data,
+      releaseMetdataConfig.releaseDateColumnName,
+    ),
     stats: formatReleaseStats(schema, data, statsConfig),
   }
 }

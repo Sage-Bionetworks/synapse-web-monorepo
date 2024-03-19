@@ -7,6 +7,7 @@ import { ReleaseCardLargeProps } from './ReleaseCardLarge'
 import {
   ButtonToExplorePageConfig,
   ReleaseCardLargeConfig,
+  ReleaseMetadataConfig,
 } from './ReleaseCardTypes'
 
 const defaultPath = '/explore/files/genie'
@@ -20,6 +21,12 @@ const defaultButtonToExplorePageConfig: ButtonToExplorePageConfig = {
   sourceDataFacetValueColumnName: 'releaseType',
 }
 
+const defaultReleaseMetadataConfig: ReleaseMetadataConfig = {
+  releaseDateColumnName: 'releaseDate',
+  releaseEntityColumnName: 'releaseEntity',
+  releaseNameColumnName: 'releaseName',
+}
+
 const defaultCountPatients = 170505
 const defaultCountSamples = 196541
 const defaultStatsConfig = [
@@ -30,13 +37,14 @@ const defaultStatsConfig = [
 const defaultReleaseCardLargeConfig: ReleaseCardLargeConfig = {
   cardSize: 'large',
   prependRelease: false,
+  releaseMetadataConfig: defaultReleaseMetadataConfig,
   statsConfig: defaultStatsConfig,
   buttonToExplorePageConfig: defaultButtonToExplorePageConfig,
 }
 
 const defaultSchema: ReleaseCardSchema = {
   releaseEntity: 0,
-  releaseVersion: 1,
+  releaseName: 1,
   releaseDate: 2,
   countPatients: 3,
   countSamples: 4,
@@ -156,6 +164,7 @@ describe('Release Card', () => {
         releaseCardConfig: {
           cardSize: 'medium',
           requestAccessPath: 'request access',
+          releaseMetadataConfig: defaultReleaseMetadataConfig,
           statsConfig: defaultStatsConfig,
         },
       })
