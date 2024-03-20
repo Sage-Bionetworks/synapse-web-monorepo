@@ -1788,6 +1788,12 @@ export const signOut = async () => {
   await setAccessTokenCookie(undefined)
 }
 
+// Progress sent back during upload, will report when a part of a file is finished processing
+export type ProgressCallback = {
+  value: number
+  total: number
+}
+
 /**
  * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
  * @param accessToken
@@ -1798,6 +1804,7 @@ export const uploadFile = (
   accessToken: string | undefined,
   filename: string,
   file: Blob,
+  progressCallback?: (progress: ProgressCallback) => void,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
@@ -1818,6 +1825,7 @@ export const uploadFile = (
           request,
           fileUploadResolve,
           fileUploadReject,
+          progressCallback,
         )
       })
     },
@@ -1874,9 +1882,11 @@ const processFilePart = (
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
+  updateProgress: () => void,
 ) => {
   if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
+    updateProgress()
     return
   }
 
@@ -1923,6 +1933,7 @@ const processFilePart = (
         if (addPartResponse.addPartState === 'ADD_SUCCESS') {
           // done with this part!
           multipartUploadStatus.clientSidePartsState![partNumber - 1] = true
+          updateProgress()
           checkUploadComplete(
             multipartUploadStatus,
             fileName,
@@ -1942,6 +1953,7 @@ const processFilePart = (
               request,
               fileUploadResolve,
               fileUploadReject,
+              updateProgress,
             )
           })
         }
@@ -2004,6 +2016,7 @@ export const startMultipartUpload = (
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
+  progressCallback?: (progress: ProgressCallback) => void,
 ) => {
   const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
@@ -2019,6 +2032,16 @@ export const startMultipartUpload = (
         .split('')
         .map(bit => bit === '1')
       status.clientSidePartsState = clientSidePartsState
+      let progress = 0
+      const updateProgress = () => {
+        progress++
+        if (progressCallback) {
+          progressCallback({
+            value: progress,
+            total: clientSidePartsState.length,
+          })
+        }
+      }
       for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
         if (!clientSidePartsState[i]) {
           // upload this part.  note that partNumber is always the index+1
@@ -2031,7 +2054,10 @@ export const startMultipartUpload = (
             request,
             fileUploadResolve,
             fileUploadReject,
+            updateProgress,
           )
+        } else {
+          updateProgress()
         }
       }
       // in case there is no upload work to do!
