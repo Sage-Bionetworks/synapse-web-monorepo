@@ -75,7 +75,7 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
           path: ${{ env.PORTALS_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
