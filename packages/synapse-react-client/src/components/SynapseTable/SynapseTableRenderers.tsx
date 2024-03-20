@@ -11,14 +11,12 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Checkbox } from '../widgets/Checkbox'
 import { isEqual } from 'lodash-es'
-import React from 'react'
+import React, { useCallback } from 'react'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
-import { Box, IconButton, Tooltip } from '@mui/material'
-import IconSvg from '../IconSvg'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import SynapseTableCell from './SynapseTableCell'
@@ -32,7 +30,7 @@ import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
-import { HelpTwoTone } from '@mui/icons-material'
+import ColumnHeader from '../styled/ColumnHeader'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -221,12 +219,12 @@ export function TableDataColumnHeader(
   const facets = data?.facets ?? []
   const { getColumnDisplayName, getHelpText } = useQueryVisualizationContext()
 
-  if (!selectColumn) {
-    return <>{column.id}</>
-  }
-
-  const displayColumnName = getColumnDisplayName(selectColumn.name)
-  const columnHelpText = getHelpText(selectColumn.name)
+  const displayColumnName = selectColumn
+    ? getColumnDisplayName(selectColumn.name)
+    : column.id
+  const columnHelpText = selectColumn
+    ? getHelpText(selectColumn.name)
+    : undefined
   // we have to figure out if the current column is a facet selection
   const facetIndex: number = facets.findIndex(
     (facetColumnResult: FacetColumnResult) => {
@@ -242,68 +240,33 @@ export function TableDataColumnHeader(
     facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
   const facet = facets[facetIndex] as FacetColumnResultValues
   const isLockedColumn =
+    selectColumn &&
     selectColumn.name.toLowerCase() === lockedColumn?.columnName?.toLowerCase() // used in details page to disable filter the column
   const isEntityIDColumn =
     selectColumn &&
     selectColumn.name == 'id' &&
     selectColumn.columnType == ColumnTypeEnum.ENTITYID
 
+  // TODO: enableFiltering should be specified on the column, but for now it's easier to override `getCanFilter` here where we have the facet information
+  props.column.getCanFilter = useCallback(
+    () => Boolean(isFacetSelection && !isLockedColumn && columnModel),
+    [isFacetSelection, isLockedColumn, columnModel],
+  )
+
   return (
-    <div className="SRC-split">
-      <div className="SRC-centerContent">
-        <span
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {displayColumnName}
+    <ColumnHeader
+      {...props}
+      title={displayColumnName}
+      helpText={columnHelpText}
+      filterControl={
+        <span>
+          <EnumFacetFilter containerAs="Dropdown" facet={facet} />
         </span>
-      </div>
-      <Box
-        role={'menubar'}
-        display={'flex'}
-        alignItems="center"
-        sx={{ height: '22px', ml: 2, gap: 0.25 }}
-      >
-        {columnHelpText && (
-          <Tooltip title={columnHelpText} placement={'top'}>
-            <IconButton size={'small'}>
-              <HelpTwoTone fontSize={'inherit'} />
-            </IconButton>
-          </Tooltip>
-        )}
-        {isFacetSelection && !isLockedColumn && columnModel && (
-          <span>
-            <EnumFacetFilter containerAs="Dropdown" facet={facet} />
-          </span>
-        )}
-        {column.getCanSort() && (
-          <Tooltip
-            title={`Sort ${getColumnDisplayName(selectColumn.name)}`}
-            placement={'top'}
-          >
-            <IconButton
-              role="button"
-              aria-label="sort"
-              size={'small'}
-              tabIndex={0}
-              onKeyPress={() => column.toggleSorting()}
-              onClick={() => column.toggleSorting()}
-            >
-              <IconSvg
-                icon={column.getIsSorted() === 'asc' ? 'sortUp' : 'sortDown'}
-                wrap={false}
-                sx={{
-                  color: column.getIsSorted() ? 'primary.main' : 'grey.700',
-                  backgroundColor: 'none',
-                }}
-              />
-            </IconButton>
-          </Tooltip>
-        )}
-        {isEntityIDColumn && <EntityIDColumnCopyIcon size={'small'} />}
-      </Box>
-    </div>
+      }
+      additionalButtons={
+        <>{isEntityIDColumn && <EntityIDColumnCopyIcon size={'small'} />}</>
+      }
+    />
   )
 }
 
