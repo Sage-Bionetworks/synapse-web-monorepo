@@ -1,6 +1,8 @@
 import React, { useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
-import { KeyFactory } from '../../synapse-queries/KeyFactory'
+import { KeyFactory } from '../../synapse-queries'
+import { Configuration, SynapseClient } from 'synapse-client'
+import { fetchWithExponentialTimeout } from '../../synapse-client/HttpClient'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -15,6 +17,8 @@ export type SynapseContextType = {
   downloadCartPageUrl: string
   /* The key factory to use for react-query. Generated automatically. */
   keyFactory: KeyFactory
+  /* API client objects for Synapse. Generated automatically. */
+  synapseClient: SynapseClient
 }
 
 const defaultContext = {
@@ -24,6 +28,7 @@ const defaultContext = {
   withErrorBoundary: false,
   keyFactory: new KeyFactory(undefined),
   downloadCartPageUrl: '/DownloadCart',
+  synapseClient: new SynapseClient(),
 } satisfies SynapseContextType
 
 /**
@@ -40,7 +45,6 @@ export type SynapseContextProviderProps = React.PropsWithChildren<{
  * Provides context necessary for most components in SRC.
  *
  * The SynapseContextProvider must be wrapped in a react-query QueryClientProvider.
- * @param param0
  * @returns
  */
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
@@ -49,6 +53,17 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
     () => new KeyFactory(providedContext.accessToken),
     [providedContext.accessToken],
   )
+
+  const synapseApiClient = useMemo(() => {
+    const configuration = new Configuration({
+      // TODO: Extract fetchWithExponentialTimeout so it can be used in `synapse-client` by default
+      fetchApi: fetchWithExponentialTimeout,
+      apiKey: providedContext.accessToken
+        ? `Bearer ${providedContext.accessToken}`
+        : undefined,
+    })
+    return new SynapseClient(configuration)
+  }, [providedContext.accessToken])
 
   const synapseContext: SynapseContextType = useMemo(
     () => ({
@@ -59,6 +74,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       downloadCartPageUrl:
         providedContext.downloadCartPageUrl ?? '/DownloadCart',
       keyFactory: providedContext.keyFactory ?? queryKeyFactory,
+      synapseClient: synapseApiClient,
     }),
     [
       providedContext.accessToken,
@@ -68,6 +84,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       providedContext.utcTime,
       providedContext.withErrorBoundary,
       queryKeyFactory,
+      synapseApiClient,
     ],
   )
 

@@ -14,7 +14,6 @@ import {
   FileHandleAssociation,
   GetEvaluationParameters,
   GetProjectsParameters,
-  PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
   RestrictionInformationRequest,
@@ -27,6 +26,7 @@ import {
   ViewColumnModelRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
+import { PrincipalAliasRequest } from 'synapse-client'
 import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
 import { hashCode } from '../utils/functions/StringUtils'

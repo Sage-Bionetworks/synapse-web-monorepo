@@ -4,7 +4,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../synapse-queries'
 import { CreateOAuthModal } from './CreateOAuthClient'
-import { OAuthClient } from '@sage-bionetworks/synapse-types'
+import { OAuthClient } from 'synapse-client'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -27,7 +27,8 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const [isShowingVerification, setIsShowingVerification] = useState(false)
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
-  const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
+  const oAuthClientList: OAuthClient[] =
+    data?.pages.flatMap(page => page.results ?? []) ?? []
 
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
