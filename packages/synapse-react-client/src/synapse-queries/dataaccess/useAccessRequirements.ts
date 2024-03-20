@@ -149,12 +149,13 @@ export function useCreateAccessRequirementACL(
   return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
     ...options,
     mutationFn: acl => createAccessRequirementAcl(accessToken, acl),
-    onSuccess: async (data, acl, ctx) => {
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementAclQueryKey(acl.id),
-      })
+    onSuccess: async (newAcl, acl, ctx) => {
+      const accessRequirementAclQueryKey =
+        keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
+      queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
+
       if (options?.onSuccess) {
-        return await options.onSuccess(data, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx)
       }
       return
     },
@@ -174,12 +175,13 @@ export function useUpdateAccessRequirementACL(
   return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
     ...options,
     mutationFn: acl => updateAccessRequirementAcl(accessToken, acl),
-    onSuccess: async (data, acl, ctx) => {
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementAclQueryKey(acl.id),
-      })
+    onSuccess: async (newAcl, acl, ctx) => {
+      const accessRequirementAclQueryKey =
+        keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
+      queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
+
       if (options?.onSuccess) {
-        return await options.onSuccess(data, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx)
       }
       return
     },

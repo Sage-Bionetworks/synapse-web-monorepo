@@ -28,10 +28,12 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     principalId = providedUserGroupHeader?.ownerId
   }
 
-  const { data: fetchedUserGroupHeader, isLoading: isLoadingUserGroupHeader } =
-    useGetUserGroupHeader((principalId ?? '').toString(), {
+  const { data: fetchedUserGroupHeader } = useGetUserGroupHeader(
+    (principalId ?? '').toString(),
+    {
       enabled: !providedUserGroupHeader,
-    })
+    },
+  )
 
   const userGroupHeader = providedUserGroupHeader ?? fetchedUserGroupHeader
 
@@ -40,7 +42,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
       'Expected one of principalId or userGroupHeader to be defined but both were null or undefined',
     )
     return <></>
-  } else if (userGroupHeader === undefined || isLoadingUserGroupHeader) {
+  } else if (userGroupHeader === undefined) {
     return <Skeleton width={125} height={30} />
   } else if (userGroupHeader.isIndividual) {
     return (

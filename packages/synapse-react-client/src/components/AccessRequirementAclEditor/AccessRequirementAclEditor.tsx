@@ -6,6 +6,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useImperativeHandle, useState } from 'react'
+import { SynapseClientError } from '../..'
 import {
   useCreateAccessRequirementACL,
   useDeleteAccessRequirementACL,
@@ -48,6 +49,16 @@ export const AccessRequirementAclEditor = React.forwardRef(
       ResourceAccess[]
     >([])
 
+    const onMutationSuccess = () => {
+      setError(null)
+      onSaveComplete(true)
+    }
+
+    const onMutationError = (error: SynapseClientError) => {
+      setError(error.reason)
+      onSaveComplete(false)
+    }
+
     const { data: originalAcl, isLoading: isLoadingOriginalAcl } =
       useGetAccessRequirementACL(accessRequirementId, {
         // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
@@ -62,36 +73,18 @@ export const AccessRequirementAclEditor = React.forwardRef(
     }, [originalAcl])
 
     const { mutate: deleteAcl } = useDeleteAccessRequirementACL({
-      onSuccess: () => {
-        setError(null)
-        onSaveComplete(true)
-      },
-      onError: error => {
-        setError(error.reason)
-        onSaveComplete(false)
-      },
+      onSuccess: () => onMutationSuccess(),
+      onError: error => onMutationError(error),
     })
 
     const { mutate: createAcl } = useCreateAccessRequirementACL({
-      onSuccess: () => {
-        setError(null)
-        onSaveComplete(true)
-      },
-      onError: error => {
-        setError(error.reason)
-        onSaveComplete(false)
-      },
+      onSuccess: () => onMutationSuccess(),
+      onError: error => onMutationError(error),
     })
 
     const { mutate: updateAcl } = useUpdateAccessRequirementACL({
-      onSuccess: () => {
-        setError(null)
-        onSaveComplete(true)
-      },
-      onError: error => {
-        setError(error.reason)
-        onSaveComplete(false)
-      },
+      onSuccess: () => onMutationSuccess(),
+      onError: error => onMutationError(error),
     })
 
     useImperativeHandle(

@@ -31,15 +31,15 @@ import {
 import { REMOVE_BUTTON_LABEL } from './ResourceAccessItem'
 
 const onSaveComplete = jest.fn()
-const mockDeleteAccessRequirementAcl = jest.spyOn(
+const deleteAccessRequirementAclSpy = jest.spyOn(
   SynapseClient,
   'deleteAccessRequirementAcl',
 )
-const mockCreateAccessRequirementAcl = jest.spyOn(
+const createAccessRequirementAclSpy = jest.spyOn(
   SynapseClient,
   'createAccessRequirementAcl',
 )
-const mockUpdateAccessRequirementAcl = jest.spyOn(
+const updateAccessRequirementAclSpy = jest.spyOn(
   SynapseClient,
   'updateAccessRequirementAcl',
 )
@@ -193,7 +193,7 @@ describe('ResourceAccessEditor', () => {
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockUpdateAccessRequirementAcl).toHaveBeenCalledWith(
+        expect(updateAccessRequirementAclSpy).toHaveBeenCalledWith(
           MOCK_ACCESS_TOKEN,
           updatedAcl,
         )
@@ -220,7 +220,7 @@ describe('ResourceAccessEditor', () => {
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockUpdateAccessRequirementAcl).toHaveBeenCalledWith(
+        expect(updateAccessRequirementAclSpy).toHaveBeenCalledWith(
           MOCK_ACCESS_TOKEN,
           updatedAcl,
         )
@@ -244,7 +244,7 @@ describe('ResourceAccessEditor', () => {
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockUpdateAccessRequirementAcl).toHaveBeenCalledWith(
+        expect(updateAccessRequirementAclSpy).toHaveBeenCalledWith(
           MOCK_ACCESS_TOKEN,
           updatedAcl,
         )
@@ -284,7 +284,7 @@ describe('ResourceAccessEditor', () => {
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockDeleteAccessRequirementAcl).toHaveBeenCalledWith(
+        expect(deleteAccessRequirementAclSpy).toHaveBeenCalledWith(
           MOCK_ACCESS_TOKEN,
           accessRequirementId,
         )
@@ -314,9 +314,9 @@ describe('ResourceAccessEditor', () => {
       // noop
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockCreateAccessRequirementAcl).not.toHaveBeenCalled()
-        expect(mockUpdateAccessRequirementAcl).not.toHaveBeenCalled()
-        expect(mockDeleteAccessRequirementAcl).not.toHaveBeenCalled()
+        expect(createAccessRequirementAclSpy).not.toHaveBeenCalled()
+        expect(updateAccessRequirementAclSpy).not.toHaveBeenCalled()
+        expect(deleteAccessRequirementAclSpy).not.toHaveBeenCalled()
       })
     })
   })
@@ -355,7 +355,7 @@ describe('ResourceAccessEditor', () => {
 
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockCreateAccessRequirementAcl).toHaveBeenCalledWith(
+        expect(createAccessRequirementAclSpy).toHaveBeenCalledWith(
           MOCK_ACCESS_TOKEN,
           newAcl,
         )
@@ -379,9 +379,9 @@ describe('ResourceAccessEditor', () => {
       // noop
       await waitFor(() => {
         expect(onSaveComplete).toHaveBeenCalledTimes(1)
-        expect(mockCreateAccessRequirementAcl).not.toHaveBeenCalled()
-        expect(mockUpdateAccessRequirementAcl).not.toHaveBeenCalled()
-        expect(mockDeleteAccessRequirementAcl).not.toHaveBeenCalled()
+        expect(createAccessRequirementAclSpy).not.toHaveBeenCalled()
+        expect(updateAccessRequirementAclSpy).not.toHaveBeenCalled()
+        expect(deleteAccessRequirementAclSpy).not.toHaveBeenCalled()
       })
     })
   })
