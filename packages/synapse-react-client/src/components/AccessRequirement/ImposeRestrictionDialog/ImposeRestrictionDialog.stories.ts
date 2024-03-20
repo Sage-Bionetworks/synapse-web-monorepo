@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Governance/ImposeRestrictionDialog',
@@ -12,5 +13,6 @@ export const Demo: Story = {
   args: {
     entityId: 'syn45328519',
     open: true,
+    onClose: fn(),
   },
 }

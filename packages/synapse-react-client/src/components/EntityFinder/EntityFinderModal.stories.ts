@@ -4,10 +4,15 @@ import {
   SinglePane as EntityFinderSinglePane,
   DualPane as EntityFinderDualPane,
 } from './EntityFinder.stories'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/EntityFinderModal',
   component: EntityFinderModal,
+  args: {
+    onConfirm: fn(),
+    onCancel: fn(),
+  },
   argTypes: {
     versionSelection: {
       options: ['REQUIRED', 'DISABLED', 'TRACKED', 'UNTRACKED'],

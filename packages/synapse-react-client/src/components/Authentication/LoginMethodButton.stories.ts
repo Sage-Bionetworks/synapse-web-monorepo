@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { LoginMethods } from './LoginMethod'
 import LoginMethodButton from './LoginMethodButton'
 import { IconStrings } from '../IconSvg/IconSvg'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Authentication/LoginMethodButton',
@@ -25,5 +26,6 @@ export const Demo: Story = {
   args: {
     loginMethod: 'GOOGLE',
     iconName: 'google24',
+    onClick: fn(),
   },
 }

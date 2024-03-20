@@ -5,10 +5,14 @@ import { rest } from 'msw'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import dayjs from 'dayjs'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Challenge/EvaluationEditorPage',
   component: EvaluationEditorPage,
+  args: {
+    onDeleteSuccess: fn(),
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

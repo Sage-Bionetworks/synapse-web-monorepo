@@ -3,6 +3,7 @@ import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHan
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Governance/RejectDataAccessRequestModal',
@@ -24,5 +25,5 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   name: 'RejectDataAccessRequestModal',
-  args: { open: true, tableId: 'syn50683097', submissionId: '' },
+  args: { open: true, tableId: 'syn50683097', submissionId: '', onClose: fn() },
 }

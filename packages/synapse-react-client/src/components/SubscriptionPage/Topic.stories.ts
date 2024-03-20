@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import Topic from './Topic'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Following/Topic',
@@ -17,5 +18,6 @@ export const Demo: Story = {
     isLoading: false,
     icon: 'discussion',
     name: 'Help me understand this project!',
+    onToggleSubscribe: fn(),
   },
 }
