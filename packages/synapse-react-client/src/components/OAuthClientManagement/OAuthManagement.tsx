@@ -21,6 +21,7 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table'
+import ColumnHeader from '../styled/ColumnHeader'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 
@@ -64,21 +65,21 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const columns: ColumnDef<OAuthClient, any>[] = useMemo(
     () => [
       columnHelper.accessor('createdOn', {
-        header: 'Created',
+        header: props => <ColumnHeader {...props} title={'Created'} />,
         cell: info => formatDate(dayjs(info.getValue())),
       }),
       columnHelper.accessor('modifiedOn', {
-        header: 'Modified',
+        header: props => <ColumnHeader {...props} title={'Modified'} />,
         cell: info => formatDate(dayjs(info.getValue())),
       }),
       columnHelper.accessor('client_id', {
-        header: 'ID',
+        header: props => <ColumnHeader {...props} title={'ID'} />,
       }),
       columnHelper.accessor('client_name', {
-        header: 'Client',
+        header: props => <ColumnHeader {...props} title={'Client'} />,
       }),
       columnHelper.accessor('verified', {
-        header: 'Verified',
+        header: props => <ColumnHeader {...props} title={'Verified'} />,
         cell: ({ getValue }) =>
           getValue() ? (
             'Yes'
@@ -94,7 +95,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
       }),
       {
         id: 'generateSecret',
-        header: 'App Secret',
+        header: props => <ColumnHeader {...props} title={'App Secret'} />,
         cell: ({ row }) => (
           <Button
             variant="outlined"
@@ -110,7 +111,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: props => <ColumnHeader {...props} title={'Actions'} />,
         cell: ({ row }) => (
           <Button
             variant="outlined"
@@ -134,6 +135,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
     columns,
     getRowId: row => row.client_id!,
     enableRowSelection: true,
+    enableSorting: false,
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',
   })
@@ -154,7 +156,13 @@ export const OAuthManagement: React.FunctionComponent = () => {
           Create New Client
         </Button>
       </Box>
-      <StyledTableContainer>
+      <StyledTableContainer
+        sx={{
+          td: {
+            py: 1,
+          },
+        }}
+      >
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <thead>
             {table.getHeaderGroups().map(headerGroup => {
@@ -196,8 +204,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
                       key={cell.id}
                       style={{
                         width: cell.column.getSize(),
-                        paddingTop: '8px',
-                        paddingBottom: '8px',
                       }}
                     >
                       {flexRender(
