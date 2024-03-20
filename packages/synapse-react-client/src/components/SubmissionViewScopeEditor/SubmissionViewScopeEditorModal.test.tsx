@@ -74,10 +74,10 @@ describe('SubmissionViewScopeEditorModal tests', () => {
       )
     })
 
-    expect(screen.findByRole('dialog')).toBeVisible
-    expect(screen.findByRole('heading')).toBeVisible
-    expect(screen.findByRole('button', { name: 'Save' })).toBeVisible
-    expect(screen.findByRole('button', { name: 'Cancel' })).toBeVisible
+    expect(await screen.findByRole('dialog')).toBeVisible()
+    expect(await screen.findByRole('heading')).toBeVisible()
+    expect(await screen.findByRole('button', { name: 'Save' })).toBeVisible()
+    expect(await screen.findByRole('button', { name: 'Cancel' })).toBeVisible()
 
     await screen.findByText('Evaluation 123')
     await screen.findByLabelText('Remove Evaluation 123 from scope')
@@ -85,7 +85,7 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     await screen.findByText('Evaluation 456')
     await screen.findByLabelText('Remove Evaluation 456 from scope')
 
-    await expect(screen.queryByText('Evaluation 789')).not.toBeInTheDocument()
+    expect(screen.queryByText('Evaluation 789')).not.toBeInTheDocument()
 
     const onChangePassedToEvaluationFinder =
       mockEvaluationFinder.mock.lastCall![0].onChange
@@ -160,7 +160,7 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     await screen.findByText('Evaluation 456')
     await screen.findByLabelText('Remove Evaluation 456 from scope')
 
-    await expect(screen.queryByText('Evaluation 789')).not.toBeInTheDocument()
+    expect(screen.queryByText('Evaluation 789')).not.toBeInTheDocument()
 
     const onChangePassedToEvaluationFinder =
       mockEvaluationFinder.mock.lastCall![0].onChange
