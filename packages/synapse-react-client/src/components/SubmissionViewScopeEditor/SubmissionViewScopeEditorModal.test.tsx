@@ -34,6 +34,19 @@ function renderComponent(props: SubmissionViewScopeEditorModalProps) {
   })
 }
 
+async function setUp(props: SubmissionViewScopeEditorModalProps) {
+  const user = userEvent.setup()
+  const component = await renderComponent(props)
+  const saveButton = await screen.findByRole('button', { name: 'Save' })
+  const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
+  return {
+    component,
+    user,
+    saveButton,
+    cancelButton,
+  }
+}
+
 describe('SubmissionViewScopeEditorModal tests', () => {
   const mockOnCancel = jest.fn()
   const mockOnUpdate = jest.fn()
@@ -44,12 +57,6 @@ describe('SubmissionViewScopeEditorModal tests', () => {
       scopeIds: ['123', '456'],
       concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
     } as Entity)
-    renderComponent({
-      entityId: mockTableEntity.id,
-      open: true,
-      onCancel: mockOnCancel,
-      onUpdate: mockOnUpdate,
-    })
   })
 
   it('displays the correct scope editor which can modify selection', async () => {
@@ -60,6 +67,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
       })
     })
 
+    const { saveButton, cancelButton } = await setUp({
+      entityId: mockTableEntity.id,
+      open: true,
+      onCancel: mockOnCancel,
+      onUpdate: mockOnUpdate,
+    })
     await screen.findByTestId('EvaluationFinderMocked')
 
     await waitFor(() => {
@@ -76,8 +89,8 @@ describe('SubmissionViewScopeEditorModal tests', () => {
 
     expect(await screen.findByRole('dialog')).toBeVisible()
     expect(await screen.findByRole('heading')).toBeVisible()
-    expect(await screen.findByRole('button', { name: 'Save' })).toBeVisible()
-    expect(await screen.findByRole('button', { name: 'Cancel' })).toBeVisible()
+    expect(saveButton).toBeVisible()
+    expect(cancelButton).toBeVisible()
 
     await screen.findByText('Evaluation 123')
     await screen.findByLabelText('Remove Evaluation 123 from scope')
@@ -99,8 +112,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
   })
 
   it('display error for response returned by update call', async () => {
-    const user = userEvent.setup()
-    const saveButton = await screen.findByRole('button', { name: 'Save' })
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntity.id,
+      open: true,
+      onCancel: mockOnCancel,
+      onUpdate: mockOnUpdate,
+    })
 
     const errorMessage = 'Error with scope'
     mockUpdateEntity.mockRejectedValue(
@@ -123,15 +140,25 @@ describe('SubmissionViewScopeEditorModal tests', () => {
   })
 
   it('validate onCancel is correctly called', async () => {
-    const user = userEvent.setup()
-    const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
+    const { user, cancelButton } = await setUp({
+      entityId: mockTableEntity.id,
+      open: true,
+      onCancel: mockOnCancel,
+      onUpdate: mockOnUpdate,
+    })
 
     await waitFor(() => expect(cancelButton).not.toBeDisabled())
     await user.click(cancelButton)
     expect(mockOnCancel).toHaveBeenCalled()
   })
   it('successfully submit new scope and call the onUpdate callback', async () => {
-    const user = userEvent.setup()
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntity.id,
+      open: true,
+      onCancel: mockOnCancel,
+      onUpdate: mockOnUpdate,
+    })
+
     const newScopeIds = ['123', '456', '789']
 
     await waitFor(() => {
@@ -151,8 +178,6 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     }
 
     mockUpdateEntity.mockResolvedValue(mockSubmissionView)
-
-    const saveButton = await screen.findByRole('button', { name: 'Save' })
 
     await screen.findByText('Evaluation 123')
     await screen.findByLabelText('Remove Evaluation 123 from scope')
