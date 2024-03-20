@@ -130,8 +130,7 @@ const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
 
 export const ReleaseCardLarge: Story = {
   args: {
-    // TODO - update to GENIE release table (syn53978783) once data is updated
-    sql: 'select * from syn53701326 where isCurrentRelease = true',
+    sql: "select * from syn53977527 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
     type: RELEASE_CARD,
     limit: 3,
     releaseCardConfig: {
@@ -140,7 +139,7 @@ export const ReleaseCardLarge: Story = {
       releaseMetadataConfig: {
         releaseDateColumnName: 'ReleaseDate',
         releaseEntityColumnName: 'id',
-        releaseNameColumnName: 'name',
+        releaseNameColumnName: 'nameReleaseCard',
       },
       statsConfig: [
         { columnName: 'Patients', label: 'Patients' },

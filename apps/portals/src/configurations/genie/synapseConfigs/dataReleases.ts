@@ -2,6 +2,20 @@ import { SynapseConfig } from 'types/portal-config'
 import { currentDataReleasesSql, dataReleasesSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
 
+const sourcePathColumnName = 'releaseExplorePath'
+const sourceExploreDataSqlColumnName = 'exploreDataSql'
+
+const selectedFacetConfigs = [
+  {
+    facetColumnName: 'cohort',
+    facetValueColumnName: 'Cohort',
+  },
+  {
+    facetColumnName: 'version',
+    facetValueColumnName: 'version',
+  },
+]
+
 export const currentDataReleases: SynapseConfig = {
   name: 'CardContainerLogic',
   title: 'Current Data Releases',
@@ -12,18 +26,33 @@ export const currentDataReleases: SynapseConfig = {
     releaseCardConfig: {
       cardSize: 'large',
       prependRelease: false,
+      releaseMetadataConfig: {
+        releaseDateColumnName: 'ReleaseDate',
+        releaseEntityColumnName: 'id',
+        releaseNameColumnName: 'nameReleaseCard',
+      },
       statsConfig: [
         { columnName: 'Patients', label: 'Patients' },
         { columnName: 'Samples', label: 'Samples' },
       ],
-      buttonToExplorePageConfig: {
+      primaryBtnConfig: {
         label: 'Explore Data Release',
-        sourcePathColumnName: 'releaseExplorePath',
-        exploreDataSql: currentDataReleasesSql,
-        exploreDataFacetColumnName: 'releaseType',
-        sourceDataFacetValueColumnName: 'releaseType',
+        sourcePathColumnName: sourcePathColumnName,
+        sourceExploreDataSqlColumnName: sourceExploreDataSqlColumnName,
+        selectedFacetConfigs: selectedFacetConfigs,
       },
-      dataGuidePath: 'data guide',
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourcePathColumnName: sourcePathColumnName,
+        sourceExploreDataSqlColumnName: sourceExploreDataSqlColumnName,
+        selectedFacetConfigs: selectedFacetConfigs,
+        staticSelectedFacets: [
+          {
+            facet: 'dataType',
+            facetValue: 'data_guide',
+          },
+        ],
+      },
     },
   },
 }
