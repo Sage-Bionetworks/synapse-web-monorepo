@@ -19,7 +19,10 @@ import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { GenericCardSchema } from '../GenericCard'
 import { StatConfig } from '../ReleaseCard'
 import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
-import { ReleaseMetadataConfig } from '../ReleaseCard/ReleaseCardTypes'
+import {
+  ReleaseMetadataConfig,
+  SelectedFacetConfig,
+} from '../ReleaseCard/ReleaseCardTypes'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -114,6 +117,57 @@ export const PublicationCard: Story = {
   },
 }
 
+const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
+  {
+    facetColumnName: 'cohort',
+    facetValueColumnName: 'Cohort',
+  },
+  {
+    facetColumnName: 'version',
+    facetValueColumnName: 'version',
+  },
+]
+
+export const ReleaseCardLarge: Story = {
+  args: {
+    // TODO - update to GENIE release table (syn53978783) once data is updated
+    sql: 'select * from syn53701326 where isCurrentRelease = true',
+    type: RELEASE_CARD,
+    limit: 3,
+    releaseCardConfig: {
+      cardSize: 'large',
+      prependRelease: false,
+      releaseMetadataConfig: {
+        releaseDateColumnName: 'ReleaseDate',
+        releaseEntityColumnName: 'id',
+        releaseNameColumnName: 'name',
+      },
+      statsConfig: [
+        { columnName: 'Patients', label: 'Patients' },
+        { columnName: 'Samples', label: 'Samples' },
+      ],
+      primaryBtnConfig: {
+        label: 'Explore Data Release',
+        sourcePathColumnName: 'releaseExplorePath',
+        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: genieSelectedFacetConfigs,
+      },
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourcePathColumnName: 'releaseExplorePath',
+        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: genieSelectedFacetConfigs,
+        staticSelectedFacets: [
+          {
+            facet: 'dataType',
+            facetValue: 'data_guide',
+          },
+        ],
+      },
+    },
+  },
+}
+
 const releaseMetadataConfig: ReleaseMetadataConfig = {
   releaseDateColumnName: 'releaseDate',
   releaseEntityColumnName: 'releaseEntity',
@@ -123,6 +177,17 @@ const releaseMetadataConfig: ReleaseMetadataConfig = {
 const statsConfig: StatConfig[] = [
   { columnName: 'countPatients', label: 'Patients' },
   { columnName: 'countSamples', label: 'Samples' },
+]
+
+const selectedFacetConfigs: SelectedFacetConfig[] = [
+  {
+    facetColumnName: 'releaseType',
+    facetValueColumnName: 'releaseType',
+  },
+  {
+    facetColumnName: 'version',
+    facetValueColumnName: 'version',
+  },
 ]
 
 const currentReleaseCardSql = `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = true`
@@ -137,22 +202,24 @@ export const ReleaseCardLargeMock: Story = {
       prependRelease: false,
       releaseMetadataConfig: releaseMetadataConfig,
       statsConfig: statsConfig,
-      buttonToExplorePageConfig: {
+      primaryBtnConfig: {
         label: 'Explore Current Data Release',
         sourcePathColumnName: 'releaseExplorePath',
         sourceExploreDataSqlColumnName: 'exploreDataSql',
-        selectedFacetConfigs: [
+        selectedFacetConfigs: selectedFacetConfigs,
+      },
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourcePathColumnName: 'releaseExplorePath',
+        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: selectedFacetConfigs,
+        staticSelectedFacets: [
           {
-            facetColumnName: 'releaseType',
-            facetValueColumnName: 'releaseType',
-          },
-          {
-            facetColumnName: 'version',
-            facetValueColumnName: 'version',
+            facet: 'dataType',
+            facetValue: 'data_guide',
           },
         ],
       },
-      dataGuidePath: 'data guide',
     },
   },
   parameters: {

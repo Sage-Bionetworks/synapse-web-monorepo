@@ -47,11 +47,16 @@ export const ReleaseCardLarge: React.FunctionComponent<
     releaseCardConfig.releaseMetadataConfig,
     releaseCardConfig.statsConfig,
   )
-  const { buttonToExplorePageConfig } = releaseCardConfig
-  const pathAndQuery = createButtonToExploreDataPathAndQueryString(
+  const { primaryBtnConfig, secondaryBtnConfig } = releaseCardConfig
+  const primaryBtnPathAndQuery = createButtonToExploreDataPathAndQueryString(
     schema,
     data,
-    buttonToExplorePageConfig,
+    primaryBtnConfig,
+  )
+  const secondaryBtnPathAndQuery = createButtonToExploreDataPathAndQueryString(
+    schema,
+    data,
+    secondaryBtnConfig,
   )
 
   if (releaseName === null) return <></>
@@ -82,14 +87,18 @@ export const ReleaseCardLarge: React.FunctionComponent<
             alignItems={{ xs: 'flex-start', sm: 'center' }}
             gap="20px"
           >
-            {buttonToExplorePageConfig && pathAndQuery && (
-              <Button variant="contained" color="primary" href={pathAndQuery}>
-                {buttonToExplorePageConfig.label}
+            {primaryBtnConfig && primaryBtnPathAndQuery && (
+              <Button
+                variant="contained"
+                color="primary"
+                href={primaryBtnPathAndQuery}
+              >
+                {primaryBtnConfig.label}
               </Button>
             )}
-            {releaseCardConfig.dataGuidePath && (
-              <Link href={releaseCardConfig.dataGuidePath}>
-                View Data Guide
+            {secondaryBtnConfig && secondaryBtnPathAndQuery && (
+              <Link href={secondaryBtnPathAndQuery}>
+                {secondaryBtnConfig.label}
               </Link>
             )}
           </Stack>

@@ -1,3 +1,5 @@
+import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
+
 export type ReleaseCardStat = {
   label: string
   value: string
@@ -26,11 +28,17 @@ export type ButtonToExplorePageConfig = {
   // column name in the data (table, view...) driving the page where the button is located
   // which is used to populate the defining SQL for the data (table, view...) driving the Explore page
   sourceExploreDataSqlColumnName?: string
-  // selected facets used in generating the button's query string, wwhere each selected facet has:
+  // selected facets used in generating the button's query string,
+  // where the selected facet value is looked up in the data (table, view...) driving the page where the button is located:
   //  - facetColumnName: name of the facet column in the data driving the Explore page
   //  - facetValueColumnName: column name in the data driving the page where
   //    the button is located and is used to populate the selected facet value
   selectedFacetConfigs?: SelectedFacetConfig[]
+  // selected facets used in generating the button's query string,
+  // where the selected facet value is static
+  //  - columnName: name of the facet column in the data driving the Explore page
+  //  - facetValue: the selected facet value
+  staticSelectedFacets?: SelectedFacet[]
 }
 
 export type ReleaseMetadataConfig = {
@@ -52,10 +60,10 @@ export type ReleaseCardLargeConfig = ReleaseCardBaseConfig & {
   cardSize: 'large'
   // whether the release version should be prefixed with "Release "
   prependRelease: boolean
-  // button to explore data in the release
-  buttonToExplorePageConfig?: ButtonToExplorePageConfig
-  // path to release's data guide
-  dataGuidePath?: string
+  // primary button to explore page
+  primaryBtnConfig?: ButtonToExplorePageConfig
+  // secondary button to explore page
+  secondaryBtnConfig?: ButtonToExplorePageConfig
 }
 
 export type ReleaseCardMediumConfig = ReleaseCardBaseConfig & {

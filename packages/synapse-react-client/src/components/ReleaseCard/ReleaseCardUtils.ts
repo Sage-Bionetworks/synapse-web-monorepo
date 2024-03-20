@@ -103,26 +103,33 @@ export const formatReleaseCardData = (
   }
 }
 
-const selectedFacetConfigToSelectedFacet = (
+const getAllSelectedFacets = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
-  selectedFacetConfigs: SelectedFacetConfig[],
+  selectedFacetConfigs: SelectedFacetConfig[] | undefined,
+  staticSelectedFacets: SelectedFacet[] | undefined,
 ): SelectedFacet[] => {
-  const selectedFacets: SelectedFacet[] = []
-  selectedFacetConfigs.forEach(selectedFacetConfig => {
-    const sourceDataFacetValueColumnName =
-      selectedFacetConfig.facetValueColumnName
-    const facetValue = sourceDataFacetValueColumnName
-      ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
-      : null
-    if (facetValue) {
-      selectedFacets.push({
-        facet: selectedFacetConfig.facetColumnName,
-        facetValue: facetValue,
-      })
-    }
-  })
-  return selectedFacets
+  const allSelectedFacets: SelectedFacet[] = staticSelectedFacets
+    ? [...staticSelectedFacets]
+    : []
+
+  if (selectedFacetConfigs) {
+    selectedFacetConfigs.forEach(selectedFacetConfig => {
+      const sourceDataFacetValueColumnName =
+        selectedFacetConfig.facetValueColumnName
+      const facetValue = sourceDataFacetValueColumnName
+        ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
+        : null
+      if (facetValue) {
+        allSelectedFacets.push({
+          facet: selectedFacetConfig.facetColumnName,
+          facetValue: facetValue,
+        })
+      }
+    })
+  }
+
+  return allSelectedFacets
 }
 
 export const createButtonToExploreDataPathAndQueryString = (
@@ -143,23 +150,28 @@ export const createButtonToExploreDataPathAndQueryString = (
     return null
   }
 
-  const { sourceExploreDataSqlColumnName, selectedFacetConfigs } =
-    buttonToExploreDataConfig
+  const {
+    sourceExploreDataSqlColumnName,
+    selectedFacetConfigs,
+    staticSelectedFacets,
+  } = buttonToExploreDataConfig
 
   const exploreDataSql = sourceExploreDataSqlColumnName
     ? getValueFromData(schema, data, sourceExploreDataSqlColumnName)
     : null
-  const selectedFacets =
-    selectedFacetConfigs &&
-    selectedFacetConfigToSelectedFacet(schema, data, selectedFacetConfigs)
-  const hasSelectedFacets =
-    exploreDataSql && selectedFacets && selectedFacets.length > 0
+  const allSelectedFacets = getAllSelectedFacets(
+    schema,
+    data,
+    selectedFacetConfigs,
+    staticSelectedFacets,
+  )
+  const hasSelectedFacets = exploreDataSql && allSelectedFacets.length > 0
 
   return hasSelectedFacets
     ? generateEncodedPathAndQueryForSelectedFacetURL(
         path,
         exploreDataSql,
-        selectedFacets,
+        allSelectedFacets,
       )
     : path
 }
