@@ -28,8 +28,6 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
     additionalButtons,
   } = props
 
-  column.getCanFilter
-
   return (
     <Box
       display={'flex'}
