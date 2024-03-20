@@ -1795,7 +1795,7 @@ export type ProgressCallback = {
 }
 
 /**
- * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
+ * Upload file to Synapse, creating a FileHandle
  * @param accessToken
  * @param file
  * @param endpoint
