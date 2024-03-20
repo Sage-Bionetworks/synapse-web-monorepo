@@ -25,5 +25,5 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   name: 'RejectDataAccessRequestModal',
-  args: { open: true, tableId: 'syn50683097', submissionId: '', onClose: fn },
+  args: { open: true, tableId: 'syn50683097', submissionId: '', onClose: fn() },
 }
