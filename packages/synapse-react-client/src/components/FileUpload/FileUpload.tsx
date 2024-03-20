@@ -51,6 +51,8 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
           accessToken,
           file.name,
           file,
+          undefined,
+          undefined,
           progressCallback,
         )
         if (onComplete) {

@@ -1804,17 +1804,19 @@ export const uploadFile = (
   accessToken: string | undefined,
   filename: string,
   file: Blob,
+  storageLocationId: number = SYNAPSE_STORAGE_LOCATION_ID,
+  contentType: string = file.type,
   progressCallback?: (progress: ProgressCallback) => void,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
       const partSize: number = Math.max(5242880, file.size / 10000)
       const request: MultipartUploadRequest = {
-        contentType: file.type,
+        contentType,
         fileName: filename,
         fileSizeBytes: file.size,
         partSizeBytes: partSize,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+        storageLocationId,
       }
       calculateMd5(file).then((md5: string) => {
         request.contentMD5Hex = md5
