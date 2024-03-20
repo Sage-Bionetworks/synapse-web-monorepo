@@ -36,7 +36,7 @@ function renderComponent(props: SubmissionViewScopeEditorModalProps) {
 
 async function setUp(props: SubmissionViewScopeEditorModalProps) {
   const user = userEvent.setup()
-  const component = await renderComponent(props)
+  const component = renderComponent(props)
   const saveButton = await screen.findByRole('button', { name: 'Save' })
   const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
   return {
