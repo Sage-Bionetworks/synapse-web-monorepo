@@ -1807,6 +1807,7 @@ export const uploadFile = (
   storageLocationId: number = SYNAPSE_STORAGE_LOCATION_ID,
   contentType: string = file.type,
   progressCallback?: (progress: ProgressCallback) => void,
+  isCancelled?: () => boolean,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
@@ -1828,6 +1829,7 @@ export const uploadFile = (
           fileUploadResolve,
           fileUploadReject,
           progressCallback,
+          isCancelled,
         )
       })
     },
@@ -1885,6 +1887,7 @@ const processFilePart = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
   updateProgress: () => void,
+  isCancelled?: () => boolean,
 ) => {
   if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
@@ -1922,6 +1925,7 @@ const processFilePart = (
       presignedUrl,
       fileSlice,
       presignedUploadUrlRequest.contentType,
+      isCancelled,
     )
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
@@ -1999,9 +2003,21 @@ const uploadFilePart = async (
   presignedUrl: string,
   file: Blob,
   contentType: string,
+  isCancelled?: () => boolean,
 ) => {
-  // TODO: could try using axios to get upload progress, then update the client-side part state (change to numbers from 0-1)
-  // This would give progress for the single file (across all parts).
+  const controller = new AbortController()
+  const signal = controller.signal
+
+  const checkIsCancelled = async () => {
+    if (isCancelled) {
+      const isCurrentlyCancelled = await isCancelled()
+      if (isCurrentlyCancelled) {
+        controller.abort()
+      }
+    }
+  }
+  const timer = setInterval(checkIsCancelled, 1000)
+  // Progress is provided for a single file based on what parts have been successfully uploaded.
   // The parent would still need to figure out progress (for the total file set).
   await fetch(presignedUrl, {
     method: 'PUT',
@@ -2009,7 +2025,9 @@ const uploadFilePart = async (
       'Content-Type': contentType,
     },
     body: file,
+    signal,
   })
+  clearInterval(timer)
 }
 export const startMultipartUpload = (
   accessToken: string | undefined,
@@ -2019,6 +2037,7 @@ export const startMultipartUpload = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
   progressCallback?: (progress: ProgressCallback) => void,
+  isCancelled?: () => boolean,
 ) => {
   const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
@@ -2057,6 +2076,7 @@ export const startMultipartUpload = (
             fileUploadResolve,
             fileUploadReject,
             updateProgress,
+            isCancelled,
           )
         } else {
           updateProgress()
