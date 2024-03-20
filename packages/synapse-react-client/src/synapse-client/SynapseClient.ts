@@ -303,6 +303,7 @@ const cookies = new UniversalCookies()
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
+const MAX_NUMBER_OF_PARTS = 10000
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
@@ -1807,11 +1808,14 @@ export const uploadFile = (
   storageLocationId: number = SYNAPSE_STORAGE_LOCATION_ID,
   contentType: string = file.type,
   progressCallback?: (progress: ProgressCallback) => void,
-  isCancelled?: () => boolean,
+  getIsCancelled?: () => boolean,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
-      const partSize: number = Math.max(5242880, file.size / 10000)
+      const partSize: number = Math.max(
+        MAX_JS_FILE_DOWNLOAD_SIZE,
+        file.size / MAX_NUMBER_OF_PARTS,
+      )
       const request: MultipartUploadRequest = {
         contentType,
         fileName: filename,
@@ -1829,7 +1833,7 @@ export const uploadFile = (
           fileUploadResolve,
           fileUploadReject,
           progressCallback,
-          isCancelled,
+          getIsCancelled,
         )
       })
     },
@@ -1880,6 +1884,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
 const processFilePart = (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
+  clientSidePartsState: boolean[],
   accessToken: string | undefined,
   fileName: string,
   file: Blob,
@@ -1887,9 +1892,9 @@ const processFilePart = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
   updateProgress: () => void,
-  isCancelled?: () => boolean,
+  getIsCancelled?: () => boolean,
 ) => {
-  if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
+  if (clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
     updateProgress()
     return
@@ -1925,7 +1930,7 @@ const processFilePart = (
       presignedUrl,
       fileSlice,
       presignedUploadUrlRequest.contentType,
-      isCancelled,
+      getIsCancelled,
     )
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
@@ -1938,10 +1943,11 @@ const processFilePart = (
       ).then((addPartResponse: AddPartResponse) => {
         if (addPartResponse.addPartState === 'ADD_SUCCESS') {
           // done with this part!
-          multipartUploadStatus.clientSidePartsState![partNumber - 1] = true
+          clientSidePartsState![partNumber - 1] = true
           updateProgress()
           checkUploadComplete(
             multipartUploadStatus,
+            clientSidePartsState,
             fileName,
             accessToken,
             fileUploadResolve,
@@ -1953,6 +1959,7 @@ const processFilePart = (
             processFilePart(
               partNumber,
               multipartUploadStatus,
+              clientSidePartsState,
               accessToken,
               fileName,
               file,
@@ -1969,6 +1976,7 @@ const processFilePart = (
 }
 export const checkUploadComplete = (
   status: MultipartUploadStatus,
+  clientSidePartsState: boolean[],
   fileHandleName: string,
   accessToken: string | undefined,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
@@ -1976,7 +1984,7 @@ export const checkUploadComplete = (
 ) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
   if (
-    status.clientSidePartsState!.every(v => {
+    clientSidePartsState!.every(v => {
       return v
     })
   ) {
@@ -2003,15 +2011,15 @@ const uploadFilePart = async (
   presignedUrl: string,
   file: Blob,
   contentType: string,
-  isCancelled?: () => boolean,
+  getIsCancelled?: () => boolean,
 ) => {
   const controller = new AbortController()
   const signal = controller.signal
 
   const checkIsCancelled = () => {
-    if (isCancelled) {
-      const isCurrentlyCancelled = isCancelled()
-      if (isCurrentlyCancelled) {
+    if (getIsCancelled) {
+      const isCancelled = getIsCancelled()
+      if (isCancelled) {
         controller.abort()
       }
     }
@@ -2019,15 +2027,18 @@ const uploadFilePart = async (
   const timer = setInterval(checkIsCancelled, 1000)
   // Progress is provided for a single file based on what parts have been successfully uploaded.
   // The parent would still need to figure out progress (for the total file set).
-  await fetch(presignedUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': contentType,
-    },
-    body: file,
-    signal,
-  })
-  clearInterval(timer)
+  try {
+    await fetch(presignedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': contentType,
+      },
+      body: file,
+      signal,
+    })
+  } finally {
+    clearInterval(timer)
+  }
 }
 export const startMultipartUpload = (
   accessToken: string | undefined,
@@ -2037,7 +2048,7 @@ export const startMultipartUpload = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
   progressCallback?: (progress: ProgressCallback) => void,
-  isCancelled?: () => boolean,
+  getIsCancelled?: () => boolean,
 ) => {
   const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
@@ -2052,7 +2063,6 @@ export const startMultipartUpload = (
       const clientSidePartsState: boolean[] = status.partsState
         .split('')
         .map(bit => bit === '1')
-      status.clientSidePartsState = clientSidePartsState
       let progress = 0
       const updateProgress = () => {
         progress++
@@ -2069,6 +2079,7 @@ export const startMultipartUpload = (
           processFilePart(
             i + 1,
             status,
+            clientSidePartsState,
             accessToken,
             fileName,
             file,
@@ -2076,7 +2087,7 @@ export const startMultipartUpload = (
             fileUploadResolve,
             fileUploadReject,
             updateProgress,
-            isCancelled,
+            getIsCancelled,
           )
         } else {
           updateProgress()
@@ -2085,6 +2096,7 @@ export const startMultipartUpload = (
       // in case there is no upload work to do!
       checkUploadComplete(
         status,
+        clientSidePartsState,
         fileName,
         accessToken,
         fileUploadResolve,
