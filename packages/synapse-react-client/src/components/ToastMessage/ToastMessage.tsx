@@ -87,7 +87,7 @@ export const displayToast = (
   message: string,
   variant?: 'info' | 'success' | 'warning' | 'danger',
   toastMessageOptions: ToastMessageOptions = {},
-) => {
+): (() => void) => {
   const id = uniqueId('synToast-')
   const onClose = () => {
     toast.dismiss(id)
@@ -151,4 +151,6 @@ export const displayToast = (
       duration: autoCloseInMs,
     },
   )
+
+  return onClose
 }

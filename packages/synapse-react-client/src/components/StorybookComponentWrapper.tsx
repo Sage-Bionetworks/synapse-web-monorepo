@@ -1,24 +1,23 @@
 import React, { useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import {
+  defaultQueryClientConfig,
+  SynapseClientError,
   SynapseContextProvider,
   SynapseContextType,
-} from '../utils/context/SynapseContext'
+} from '../utils'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import SynapseClient from '../synapse-client'
-import { SynapseToastContainer } from './ToastMessage/ToastMessage'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import dayjs from 'dayjs'
-import {
+import SynapseClient, {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
   getUserProfile,
   signOut,
-} from '../synapse-client/SynapseClient'
-import { SynapseClientError } from '../utils/SynapseClientError'
+} from '../synapse-client'
+import { SynapseToastContainer } from './ToastMessage'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import dayjs from 'dayjs'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
 import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
-import { defaultQueryClientConfig } from '../utils/context/FullContextProvider'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
@@ -54,7 +53,6 @@ function overrideEndpoint(stack: SynapseStack) {
   ;(window as any)['SRC'] = {
     OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
   }
-  storybookQueryClient.resetQueries()
 }
 
 /**
@@ -99,12 +97,11 @@ export function StorybookComponentWrapper(props: {
   useEffect(() => {
     async function resetCache() {
       await storybookQueryClient.cancelQueries()
-      storybookQueryClient.removeQueries()
-      await storybookQueryClient.invalidateQueries()
+      await storybookQueryClient.resetQueries()
     }
 
-    resetCache()
-  }, [accessToken])
+    void resetCache()
+  }, [accessToken, currentStack])
 
   const synapseContext: Partial<SynapseContextType> = useMemo(
     () => ({
