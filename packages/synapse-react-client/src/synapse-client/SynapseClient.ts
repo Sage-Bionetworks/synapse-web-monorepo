@@ -2008,9 +2008,9 @@ const uploadFilePart = async (
   const controller = new AbortController()
   const signal = controller.signal
 
-  const checkIsCancelled = async () => {
+  const checkIsCancelled = () => {
     if (isCancelled) {
-      const isCurrentlyCancelled = await isCancelled()
+      const isCurrentlyCancelled = isCancelled()
       if (isCurrentlyCancelled) {
         controller.abort()
       }
