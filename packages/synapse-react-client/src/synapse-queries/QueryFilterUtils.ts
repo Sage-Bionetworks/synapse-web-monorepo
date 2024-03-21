@@ -1,26 +1,43 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryKey } from '@tanstack/react-query'
 import { KeyFactory } from './KeyFactory'
 import { BUNDLE_MASK_ACTIONS_REQUIRED } from '../utils/SynapseConstants'
-import { isNumber, isObject } from 'lodash-es'
-import { QueryFilters } from '@tanstack/query-core'
+import { isEqual, isNumber, isObject } from 'lodash-es'
+import { matchQuery, QueryFilters } from '@tanstack/query-core'
 
 /**
- * Invalidate all queries for the given entity.
+ * Invalidate all queries for the given entity. Table queries will be reset, i.e. the stale data will be removed from the cache.
  * @param queryClient
  * @param keyFactory
- * @param id
+ * @param id the ID of the entity
+ * @param excludeQueryKey do not invalidate queries exactly matching this query key (useful if you intend to call setQueryData)
  */
 export function invalidateAllQueriesForEntity(
   queryClient: QueryClient,
   keyFactory: KeyFactory,
   id: string,
+  excludeQueryKey?: QueryKey,
 ) {
-  // TODO: Figure out how to handle cases where the change can affect other entities.
-  // Some examples:
-  //  - deleting an entity should invalidate the parent's children
-  //  - moving an entity should invalidate the old and new parent's children
+  // Since we are resetting, no need to `await` - our UI will show loading screens
+  void queryClient.resetQueries({
+    // We invalidate all table query results because this entity could be shown in a view or used to compose JOINed tables
+    // Reset all table query results to avoid showing stale data (SWC-6722)
+    queryKey: keyFactory.getAllTableQueryResultsKey(),
+  })
+
   return queryClient.invalidateQueries({
     queryKey: keyFactory.getEntityQueryKey(id),
+    predicate: query => {
+      if (excludeQueryKey && isEqual(query.queryKey, excludeQueryKey)) {
+        // Don't invalidate query keys that are specifically excluded
+        return false
+      } else if (
+        matchQuery({ queryKey: keyFactory.getAllTableQueryResultsKey() }, query)
+      ) {
+        // Don't invalidate any cached table query data; these queries were already reset above
+        return false
+      }
+      return true
+    },
   })
 }
 

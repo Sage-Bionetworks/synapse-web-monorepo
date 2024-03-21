@@ -105,14 +105,13 @@ export function useCreateEntity(
     mutationFn: (entity: Entity) =>
       SynapseClient.createEntity(entity, accessToken),
     onSuccess: async (newEntity, variables, ctx) => {
+      const entityDataQueryKey = keyFactory.getEntityQueryKey(newEntity.id!)
+      queryClient.setQueryData(entityDataQueryKey, newEntity)
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
         newEntity.id!,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityQueryKey(newEntity.id!),
-        newEntity,
+        entityDataQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -133,14 +132,13 @@ export function useUpdateEntity<T extends Entity>(
     mutationFn: (entity: T) =>
       SynapseClient.updateEntity<T>(entity, accessToken),
     onSuccess: async (updatedEntity, variables, ctx) => {
+      const entityDataQueryKey = keyFactory.getEntityQueryKey(updatedEntity.id!)
+      queryClient.setQueryData(entityDataQueryKey, updatedEntity)
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
         updatedEntity.id!,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityQueryKey(updatedEntity.id!),
-        updatedEntity,
+        entityDataQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -302,12 +300,18 @@ export function useUpdateViaJson(
     },
     onSuccess: async (data, variables, ctx) => {
       const entityId = data.id
-
-      await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
-      queryClient.setQueryData(
-        // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
-        keyFactory.getEntityJsonQueryKey(entityId, undefined, false),
-        data,
+      // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
+      const entityJsonQueryKey = keyFactory.getEntityJsonQueryKey(
+        entityId,
+        undefined,
+        false,
+      )
+      queryClient.setQueryData(entityJsonQueryKey, data)
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        entityId,
+        entityJsonQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -394,14 +398,13 @@ export function useUpdateEntityACL(
     mutationFn: (acl: AccessControlList) =>
       SynapseClient.updateEntityACL(acl, accessToken),
     onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+      const entityAclQueryKey = keyFactory.getEntityACLQueryKey(updatedACL.id)
+      queryClient.setQueryData(entityAclQueryKey, updatedACL)
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
         updatedACL.id,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityACLQueryKey(updatedACL.id),
-        updatedACL,
+        entityAclQueryKey,
       )
 
       if (options?.onSuccess) {

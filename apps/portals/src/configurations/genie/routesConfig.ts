@@ -1,6 +1,7 @@
 import { GenericRoute } from 'types/portal-config'
 import routeControlWrapperProps from './routeControlWrapperProps'
 import { dataReleases } from './synapseConfigs'
+import { currentDataReleases } from './synapseConfigs/dataReleases'
 
 const routes: GenericRoute[] = [
   {
@@ -16,7 +17,7 @@ const routes: GenericRoute[] = [
         name: 'Goals',
         title: 'Our Data',
         centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
           entityId: 'syn23516796',
         },
@@ -28,6 +29,21 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer',
         props: {
           entityId: 'syn23516796',
+        },
+      },
+      {
+        ...currentDataReleases,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        centerTitle: true,
+      },
+      {
+        name: 'Markdown',
+        title: 'Related Resources',
+        centerTitle: true,
+        props: {
+          ownerId: 'syn53013218',
+          wikiId: '626554',
+          loadingSkeletonRowCount: 10,
         },
       },
     ],
@@ -88,8 +104,8 @@ const routes: GenericRoute[] = [
         title: 'Access',
         className: 'DataAccessPage',
         props: {
-          ownerId: 'syn26710600',
-          wikiId: '619468',
+          ownerId: 'syn53013218',
+          wikiId: '626555',
           loadingSkeletonRowCount: 8,
         },
       },
@@ -104,8 +120,8 @@ const routes: GenericRoute[] = [
         title: 'Help',
         className: 'HelpPage',
         props: {
-          ownerId: 'syn26710600',
-          wikiId: '619468',
+          ownerId: 'syn53013218',
+          wikiId: '626556',
           loadingSkeletonRowCount: 8,
         },
       },

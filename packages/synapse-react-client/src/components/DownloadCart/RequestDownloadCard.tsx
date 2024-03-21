@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGetEntityBundle } from '../../synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
+import { Alert, Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type RequestDownloadCardProps = {
@@ -26,20 +26,21 @@ export const RequestDownloadCard: React.FunctionComponent<
   count,
   onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
 }: RequestDownloadCardProps) => {
-  const { data: entityBundle, isLoading } = useGetEntityBundle(
-    entityId,
-    undefined,
-    {
-      includeEntity: true,
-      includePermissions: true,
-    },
-    {
-      throwOnError: true,
-    },
-  )
+  const {
+    data: entityBundle,
+    isLoading,
+    isError,
+    error,
+  } = useGetEntityBundle(entityId, undefined, {
+    includeEntity: true,
+    includePermissions: true,
+  })
 
   const hasDownloadPermission = Boolean(entityBundle?.permissions.canDownload)
 
+  if (isError) {
+    return <Alert severity={'error'}>{error.reason}</Alert>
+  }
   return (
     <ActionRequiredCard
       isLoading={isLoading}

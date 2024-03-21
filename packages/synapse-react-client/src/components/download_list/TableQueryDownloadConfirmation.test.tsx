@@ -29,6 +29,7 @@ import {
 import QueryWrapper from '../QueryWrapper'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { noop } from 'lodash-es'
 
 jest.mock('../../../src/synapse-queries', () => {
   const actual = jest.requireActual('../../../src/synapse-queries')
@@ -53,7 +54,7 @@ const mockDownloadConfirmationUi = jest
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+  .mockImplementation(() => noop)
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:

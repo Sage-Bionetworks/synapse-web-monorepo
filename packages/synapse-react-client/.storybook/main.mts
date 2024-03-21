@@ -1,6 +1,5 @@
 import { mergeConfig, defineConfig } from 'vite'
 import { StorybookConfig } from '@storybook/react-vite'
-import turbosnap from 'vite-plugin-turbosnap'
 
 const config: StorybookConfig = {
   stories: ['../**/*.stories.mdx', '../**/*.stories.@(js|jsx|ts|tsx)'],
@@ -48,10 +47,6 @@ const config: StorybookConfig = {
     },
   },
 
-  features: {
-    storyStoreV7: true,
-  },
-
   staticDirs: ['../public'],
 
   async viteFinal(config, { configType }) {
@@ -60,7 +55,6 @@ const config: StorybookConfig = {
     // Fix deployment to github pages
     if (configType === 'PRODUCTION') {
       base = './'
-      plugins = [turbosnap({ rootDir: config.root ?? process.cwd() })]
     }
     const customStorybookConfig = defineConfig({
       base,
@@ -76,4 +70,5 @@ const config: StorybookConfig = {
     autodocs: false,
   },
 }
-module.exports = config
+
+export default config

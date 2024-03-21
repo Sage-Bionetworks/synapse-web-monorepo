@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { EntityModal } from './EntityModal'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/EntityModal',
@@ -13,5 +14,7 @@ export const Project: Story = {
     show: true,
     initialTab: 'ANNOTATIONS',
     entityId: 'syn23567475',
+    onEditModeChanged: fn(),
+    onClose: fn(),
   },
 }

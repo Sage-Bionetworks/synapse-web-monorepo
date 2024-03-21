@@ -10,7 +10,11 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+import SynapseClient, {
+  createAccessRequirementAcl,
+  deleteAccessRequirementAcl,
+  updateAccessRequirementAcl,
+} from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   AccessApproval,
@@ -107,6 +111,80 @@ export function useGetAccessRequirementACL(
 
     queryFn: () =>
       SynapseClient.getAccessRequirementAcl(accessToken, accessRequirementId),
+  })
+}
+
+export function useDeleteAccessRequirementACL(
+  options?: UseMutationOptions<void, SynapseClientError, string>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>({
+    ...options,
+    mutationFn: accessRequirementId =>
+      deleteAccessRequirementAcl(accessToken, accessRequirementId),
+    onSuccess: async (data, accessRequirementId, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey:
+          keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(data, accessRequirementId, ctx)
+      }
+    },
+  })
+}
+
+export function useCreateAccessRequirementACL(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: acl => createAccessRequirementAcl(accessToken, acl),
+    onSuccess: async (newAcl, acl, ctx) => {
+      const accessRequirementAclQueryKey =
+        keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
+      queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAcl, acl, ctx)
+      }
+      return
+    },
+  })
+}
+
+export function useUpdateAccessRequirementACL(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: acl => updateAccessRequirementAcl(accessToken, acl),
+    onSuccess: async (newAcl, acl, ctx) => {
+      const accessRequirementAclQueryKey =
+        keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
+      queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAcl, acl, ctx)
+      }
+      return
+    },
   })
 }
 

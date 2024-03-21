@@ -23,6 +23,8 @@ export enum ACCESS_TYPE {
   MODERATE = 'MODERATE',
   /** Allows to review a group of submissions (e.g. on ARs) for a given object */
   REVIEW_SUBMISSIONS = 'REVIEW_SUBMISSIONS',
+  /** Eligible for exemption when granted this permission on the ACl of the AR */
+  EXEMPTION_ELIGIBLE = 'EXEMPTION_ELIGIBLE',
 }
 
 export default ACCESS_TYPE

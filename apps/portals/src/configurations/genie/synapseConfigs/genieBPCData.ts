@@ -7,7 +7,6 @@ const genieBPCData: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
     rgbIndex,
-    shouldDeepLink: true,
     sql: genieBPCSql,
     name: 'Files',
     tableConfiguration: {

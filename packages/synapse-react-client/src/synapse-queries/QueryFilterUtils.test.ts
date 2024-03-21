@@ -1,15 +1,166 @@
 import { KeyFactory } from './KeyFactory'
 import { MOCK_ACCESS_TOKEN } from '../mocks/MockSynapseContext'
-import { getAllActionsRequiredQueryFilters } from './QueryFilterUtils'
+import {
+  getAllActionsRequiredQueryFilters,
+  invalidateAllQueriesForEntity,
+} from './QueryFilterUtils'
 import { doesQueryFilterMatch } from './QueryMatchingTestUtils'
 import {
   BUNDLE_MASK_ACTIONS_REQUIRED,
   BUNDLE_MASK_QUERY_RESULTS,
 } from '../utils/SynapseConstants'
+import { QueryClient } from '@tanstack/react-query'
+import { Query, QueryCache } from '@tanstack/query-core'
 
 const keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
 
 describe('QueryFilterUtils', () => {
+  describe('invalidateAllQueriesForEntity', () => {
+    test('invalidates/resets queries', async () => {
+      const queryClient = new QueryClient()
+      const keyFactory = new KeyFactory(undefined)
+      const entityId = 'syn123'
+
+      const resetQueriesSpy = jest.spyOn(queryClient, 'resetQueries')
+      const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
+
+      await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
+
+      expect(resetQueriesSpy).toHaveBeenCalledWith({
+        queryKey: keyFactory.getAllTableQueryResultsKey(),
+      })
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+        queryKey: keyFactory.getEntityQueryKey(entityId),
+        predicate: expect.any(Function),
+      })
+
+      // Validate that the predicate matches a few entity query keys
+      const suppliedPredicate =
+        invalidateQueriesSpy.mock.lastCall![0]!.predicate!
+
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getEntityQueryKey(entityId),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(true)
+
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getEntityPathQueryKey(entityId),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(true)
+
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getEntityJsonQueryKey(entityId, 3, false),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(true)
+
+      // It should not invalidate table queries, because they were reset
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getAllTableQueryResultsKey(),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(false)
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey:
+              keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
+                {
+                  concreteType:
+                    'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+                  partMask: 254,
+                  entityId: entityId,
+                  query: { sql: `SELECT * FROM ${entityId}` },
+                },
+                true,
+              ),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(false)
+    })
+    test('excludes invalidating a specified QueryKey', async () => {
+      const queryClient = new QueryClient()
+      const keyFactory = new KeyFactory(undefined)
+      const entityId = 'syn123'
+
+      const resetQueriesSpy = jest.spyOn(queryClient, 'resetQueries')
+      const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
+
+      const keyToExcludeFromInvalidation =
+        keyFactory.getEntityQueryKey(entityId)
+
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        entityId,
+        keyToExcludeFromInvalidation,
+      )
+
+      expect(resetQueriesSpy).toHaveBeenCalledWith({
+        queryKey: keyFactory.getAllTableQueryResultsKey(),
+      })
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+        queryKey: keyFactory.getEntityQueryKey(entityId),
+        predicate: expect.any(Function),
+      })
+
+      // Validate predicate behavior
+      const suppliedPredicate =
+        invalidateQueriesSpy.mock.lastCall![0]!.predicate!
+
+      // The key that was excluded should not match the predicate, so it will not be invalidated
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyToExcludeFromInvalidation,
+            queryHash: '',
+          }),
+        ),
+      ).toBe(false)
+
+      // Other keys will still match
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getEntityPathQueryKey(entityId),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(true)
+
+      expect(
+        suppliedPredicate(
+          new Query({
+            cache: new QueryCache(),
+            queryKey: keyFactory.getEntityJsonQueryKey(entityId, 3, false),
+            queryHash: '',
+          }),
+        ),
+      ).toBe(true)
+    })
+  })
   test('getAllActionsRequiredQueryFilters', () => {
     const queryFilters = getAllActionsRequiredQueryFilters(keyFactory)
 

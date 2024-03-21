@@ -5,13 +5,23 @@ import {
   VALUE_NOT_SET,
 } from '../../../../utils/SynapseConstants'
 import { cloneDeep } from 'lodash-es'
-import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
+import EnumFacetFilterUI, {
+  EnumFacetFilterUIProps,
+  RenderedFacetValue,
+} from './EnumFacetFilterUI'
+import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<EnumFacetFilterUIProps> = {
   title: 'Explore/Components/Facets/EnumFacetFilter',
   component: EnumFacetFilterUI,
   decorators: [Story => <Story />],
-} satisfies Meta
+  args: {
+    onAddValueToSelection: fn(),
+    onRemoveValueFromSelection: fn(),
+    onRemoveAllFacetSelections: fn(),
+    onHoverOverValue: fn(),
+  },
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

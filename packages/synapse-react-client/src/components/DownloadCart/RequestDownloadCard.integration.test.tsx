@@ -11,7 +11,7 @@ import {
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
 import userEvent from '@testing-library/user-event'
-import { EntityBundle } from '@sage-bionetworks/synapse-types'
+import { EntityBundle, ErrorResponse } from '@sage-bionetworks/synapse-types'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 
 const ENTITY_ID = 'syn29218'
@@ -91,5 +91,27 @@ describe('RequestDownloadCard tests', () => {
       name: 'Complete',
     })
     expect(viewSharingSettingsButton).toBeDisabled()
+  })
+
+  it('Show an alert on error', async () => {
+    const reason = `Entity ${ENTITY_ID} is in trash can.`
+    const errorResponse: ErrorResponse = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: reason,
+    }
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ENTITY_ID,
+        )}`,
+        async (req, res, ctx) => {
+          return res(ctx.status(404), ctx.json(errorResponse))
+        },
+      ),
+    )
+
+    renderComponent()
+
+    await screen.findByText(reason)
   })
 })

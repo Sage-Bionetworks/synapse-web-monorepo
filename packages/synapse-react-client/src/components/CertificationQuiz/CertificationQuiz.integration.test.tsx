@@ -25,6 +25,7 @@ import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundl
 import { mockUserBundle } from '../../mocks/user/mock_user_profile'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import { noop } from 'lodash-es'
 
 window.open = jest.fn()
 jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
@@ -47,7 +48,7 @@ const mockUseGetCurrentUserBundle = useGetCurrentUserBundle as jest.Mock
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+  .mockImplementation(() => noop)
 const gettingStartedUrl =
   'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 

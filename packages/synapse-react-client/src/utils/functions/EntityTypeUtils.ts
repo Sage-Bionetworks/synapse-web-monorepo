@@ -257,7 +257,9 @@ export const isDatasetCollection = isTypeViaConcreteTypeFactory<
   Entity
 >(DATASET_COLLECTION_CONCRETE_TYPE_VALUE)
 
-export const isEntityRefCollectionView = (entity: Entity) =>
+export const isEntityRefCollectionView = (
+  entity: Entity,
+): entity is Dataset | DatasetCollection =>
   isDataset(entity) || isDatasetCollection(entity)
 
 export const isEntityView = isTypeViaConcreteTypeFactory<EntityView, Entity>(

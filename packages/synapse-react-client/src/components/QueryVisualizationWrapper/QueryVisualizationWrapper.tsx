@@ -7,17 +7,15 @@ import React, {
   useState,
 } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { useQueryContext } from '../QueryContext/QueryContext'
-import NoContentAvailable from '../SynapseTable/NoContentAvailable'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import SearchResultsNotFound from '../SynapseTable/SearchResultsNotFound'
-import ThisTableIsEmpty from '../SynapseTable/TableIsEmpty'
+import { useQueryContext } from '../QueryContext'
+import { NoContentPlaceholderType } from '../SynapseTable'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
 import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
 import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import NoContentPlaceholderComponent from './NoContentPlaceholder'
 
 type ColumnOrFacetHelpConfig = {
   /** Text that describes the column or facet */
@@ -229,21 +227,15 @@ export function QueryVisualizationWrapper(
     [helpConfiguration],
   )
 
-  const NoContentPlaceholder = useCallback(() => {
-    switch (noContentPlaceholderType) {
-      case NoContentPlaceholderType.INTERACTIVE:
-        if (hasResettableFilters) {
-          return <SearchResultsNotFound />
-        } else {
-          return <ThisTableIsEmpty />
-        }
-      case NoContentPlaceholderType.HIDDEN:
-        return <></>
-      case NoContentPlaceholderType.STATIC:
-      default:
-        return <NoContentAvailable />
-    }
-  }, [noContentPlaceholderType, hasResettableFilters])
+  const NoContentPlaceholder = useCallback(
+    () => (
+      <NoContentPlaceholderComponent
+        type={noContentPlaceholderType}
+        hasResettableFilters={hasResettableFilters}
+      />
+    ),
+    [noContentPlaceholderType, hasResettableFilters],
+  )
 
   const context: QueryVisualizationContextType = useMemo(
     () => ({

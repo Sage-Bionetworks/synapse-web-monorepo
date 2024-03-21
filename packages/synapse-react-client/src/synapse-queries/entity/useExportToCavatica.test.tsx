@@ -10,11 +10,12 @@ import {
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { SynapseError } from '../../utils/SynapseError'
 import * as ToastMessage from '../../components/ToastMessage/ToastMessage'
+import { noop } from 'lodash-es'
 window.open = jest.fn()
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+  .mockImplementation(() => noop)
 
 const tableId = 'syn42'
 const resultsFileHandleId = '12345'

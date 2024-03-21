@@ -4,6 +4,7 @@ import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { RangeFacetFilterUI } from './RangeFacetFilterUI'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Explore/Components/Facets/RangeFacetFilter',
@@ -27,6 +28,11 @@ const meta = {
       </QueryWrapper>
     ),
   ],
+  args: {
+    onAnySelected: fn(),
+    onNotSetSelected: fn(),
+    onRangeValueSelected: fn(),
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
