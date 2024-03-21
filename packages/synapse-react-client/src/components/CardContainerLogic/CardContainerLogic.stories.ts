@@ -130,7 +130,7 @@ const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
 
 export const ReleaseCardLarge: Story = {
   args: {
-    sql: "select * from syn53977527 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
+    sql: "select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
     type: RELEASE_CARD,
     limit: 3,
     releaseCardConfig: {

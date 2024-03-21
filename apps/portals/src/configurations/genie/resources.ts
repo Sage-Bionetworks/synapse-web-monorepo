@@ -5,4 +5,4 @@ export const publicationsSql = 'SELECT * FROM syn53974927'
 export const toolsSql = 'select * from syn53975155'
 export const dataReleasesSql = 'select * from syn53977725'
 export const currentDataReleasesSql =
-  "select * from syn53977527 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc"
+  "select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc"
