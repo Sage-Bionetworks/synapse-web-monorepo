@@ -2957,6 +2957,61 @@ export const getAccessRequirementAcl = (
 }
 
 /**
+ * Delete the ACL for the access requirement with the given id.
+ * Only an ACT member is allowed to delete the ACL.
+ *
+ * See https://rest-docs.synapse.org/rest/DELETE/accessRequirement/requirementId/acl.html
+ */
+export const deleteAccessRequirementAcl = (
+  accessToken: string | undefined,
+  id: string | number,
+): Promise<void> => {
+  return doDelete(
+    ACCESS_REQUIREMENT_ACL(id),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Assign the given ACL to the access requirement with the given id.
+ * Only an ACT member is allowed to assign the ACL.
+ * Only supports REVIEW_SUBMISSIONS and EXEMPTION_ELIGIBLE access types.
+ *
+ * See https://rest-docs.synapse.org/rest/POST/accessRequirement/requirementId/acl.html
+ */
+export const createAccessRequirementAcl = (
+  accessToken: string | undefined,
+  acl: AccessControlList,
+): Promise<AccessControlList> => {
+  return doPost<AccessControlList>(
+    ACCESS_REQUIREMENT_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Updates the ACL for the access requirement with the given id.
+ * Only an ACT member is allowed to update the ACL.
+ * Only supports REVIEW_SUBMISSIONS and EXEMPTION_ELIGIBLE access types.
+ *
+ * See https://rest-docs.synapse.org/rest/PUT/accessRequirement/requirementId/acl.html
+ */
+export const updateAccessRequirementAcl = (
+  accessToken: string | undefined,
+  acl: AccessControlList,
+): Promise<AccessControlList> => {
+  return doPut<AccessControlList>(
+    ACCESS_REQUIREMENT_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Search for access requirements
  *
  * See http://rest-docs.synapse.org/rest/POST/accessRequirement/search.html

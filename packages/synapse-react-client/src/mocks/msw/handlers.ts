@@ -26,6 +26,7 @@ import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import getAllChallengeHandlers from './handlers/challengeHandlers'
 import getAllTeamHandlers from './handlers/teamHandlers'
+import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -48,6 +49,7 @@ const getHandlers = (backendOrigin: string) => [
   getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),
   ...getWikiHandlers(backendOrigin),
   ...getAllAccessRequirementHandlers(backendOrigin),
+  ...getAllAccessRequirementAclHandlers(backendOrigin),
   ...getDataAccessRequestHandlers(backendOrigin),
   ...getResearchProjectHandlers(backendOrigin),
   ...getFileHandlers(backendOrigin),

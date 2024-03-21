@@ -77,6 +77,7 @@ import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableC
 import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
 import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
+import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -159,6 +160,7 @@ const SynapseComponents = {
   TableColumnSchemaEditor,
   SqlDefinedTableEditorModal,
   EntityViewScopeEditorModal,
+  AccessRequirementAclEditor,
 }
 
 // Include the version in the build
