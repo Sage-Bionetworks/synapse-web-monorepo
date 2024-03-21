@@ -51,7 +51,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
       >
         header 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-jgibl5-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-axgts0-MuiTypography-root-MuiLink-root"
           href="https://synapse.org"
           target="_blank"
         >

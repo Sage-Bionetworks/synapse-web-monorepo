@@ -157,7 +157,6 @@ $link-underline-color-default: adjust-color(
 @mixin highlightLink() {
   color: SRC.$primary-action-color;
   font-weight: 700;
-  letter-spacing: 0.5px;
   @include underline($link-underline-color-default, 1px, 4px);
   &:hover {
     @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
@@ -171,7 +170,6 @@ $link-underline-color-default: adjust-color(
   color: SRC.$primary-action-color;
   text-decoration: none;
   font-weight: 700;
-  letter-spacing: 0.5px;
   &:hover {
     @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
   }
