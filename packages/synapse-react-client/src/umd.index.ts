@@ -76,6 +76,7 @@ import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTabl
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
 import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
+import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
 import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 
@@ -160,6 +161,7 @@ const SynapseComponents = {
   TableColumnSchemaEditor,
   SqlDefinedTableEditorModal,
   EntityViewScopeEditorModal,
+  SubmissionViewScopeEditorModal,
   AccessRequirementAclEditor,
 }
 
