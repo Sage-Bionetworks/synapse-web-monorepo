@@ -14,25 +14,25 @@ export type StatConfig = {
 
 export type SelectedFacetConfig = {
   // the column that should be faceted
-  facetColumnName: string
+  destinationTableColumnName: string
   // specifies which column should be used to populate the selected facet value
-  facetValueColumnName: string
+  sourceTableColumnName: string
 }
 
 export type ButtonToExplorePageConfig = {
   // button's label
   label: string
-  // column name in the data (table, view...) driving the page where the button is located
+  // column name in the data (table, view...) driving the component that renders the button
   // which is used to populate the button's path
-  sourcePathColumnName: string
-  // column name in the data (table, view...) driving the page where the button is located
+  sourceTablePathColumnName: string
+  // column name in the data (table, view...) driving the component that renders the button
   // which is used to populate the defining SQL for the data (table, view...) driving the Explore page
-  sourceExploreDataSqlColumnName?: string
-  // selected facets used in generating the button's query string,
-  // where the selected facet value is looked up in the data (table, view...) driving the page where the button is located:
+  sourceTableSqlColumnName?: string
+  // selected facets to generate the button's query string,
+  // where the selected facet value is looked up in the data (table, view...) driving the component that renders the button:
   //  - facetColumnName: name of the facet column in the data driving the Explore page
-  //  - facetValueColumnName: column name in the data driving the page where
-  //    the button is located and is used to populate the selected facet value
+  //  - facetValueColumnName: column name in the data driving the component that
+  //    renders the button and is used to populate the selected facet value
   selectedFacetConfigs?: SelectedFacetConfig[]
   // selected facets used in generating the button's query string,
   // where the selected facet value is static
@@ -43,7 +43,7 @@ export type ButtonToExplorePageConfig = {
 
 export type ReleaseMetadataConfig = {
   // specifies which column should be used to populate the release entity id
-  releaseEntityColumnName: string
+  releaseEntityIdColumnName: string
   // specifies which column should be used to populate the release name
   releaseNameColumnName: string
   // specifies which column should be used to populate the release date

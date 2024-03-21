@@ -1,10 +1,11 @@
 import { CalendarTodayTwoTone } from '@mui/icons-material'
-import { Box, Button, Divider, Link, Stack, Typography } from '@mui/material'
+import { Box, Button, Divider, Stack, Typography } from '@mui/material'
 import React from 'react'
+import { Link as ReactRouterLink } from 'react-router-dom'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardLargeConfig, ReleaseCardStat } from './ReleaseCardTypes'
 import {
-  createButtonToExploreDataPathAndQueryString,
+  formatExplorePagePathAndQueryString,
   formatReleaseCardData,
 } from './ReleaseCardUtils'
 
@@ -48,12 +49,12 @@ export const ReleaseCardLarge: React.FunctionComponent<
     releaseCardConfig.statsConfig,
   )
   const { primaryBtnConfig, secondaryBtnConfig } = releaseCardConfig
-  const primaryBtnPathAndQuery = createButtonToExploreDataPathAndQueryString(
+  const primaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
     schema,
     data,
     primaryBtnConfig,
   )
-  const secondaryBtnPathAndQuery = createButtonToExploreDataPathAndQueryString(
+  const secondaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
     schema,
     data,
     secondaryBtnConfig,
@@ -89,17 +90,18 @@ export const ReleaseCardLarge: React.FunctionComponent<
           >
             {primaryBtnConfig && primaryBtnPathAndQuery && (
               <Button
+                component={ReactRouterLink}
                 variant="contained"
                 color="primary"
-                href={primaryBtnPathAndQuery}
+                to={primaryBtnPathAndQuery}
               >
                 {primaryBtnConfig.label}
               </Button>
             )}
             {secondaryBtnConfig && secondaryBtnPathAndQuery && (
-              <Link href={secondaryBtnPathAndQuery}>
+              <Button component={ReactRouterLink} to={secondaryBtnPathAndQuery}>
                 {secondaryBtnConfig.label}
-              </Link>
+              </Button>
             )}
           </Stack>
         </Stack>

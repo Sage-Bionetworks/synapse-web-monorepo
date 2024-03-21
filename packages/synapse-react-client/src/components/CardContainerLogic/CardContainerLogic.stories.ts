@@ -119,12 +119,12 @@ export const PublicationCard: Story = {
 
 const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
   {
-    facetColumnName: 'cohort',
-    facetValueColumnName: 'Cohort',
+    destinationTableColumnName: 'cohort',
+    sourceTableColumnName: 'Cohort',
   },
   {
-    facetColumnName: 'version',
-    facetValueColumnName: 'version',
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
   },
 ]
 
@@ -138,7 +138,7 @@ export const ReleaseCardLarge: Story = {
       prependRelease: false,
       releaseMetadataConfig: {
         releaseDateColumnName: 'ReleaseDate',
-        releaseEntityColumnName: 'id',
+        releaseEntityIdColumnName: 'id',
         releaseNameColumnName: 'nameReleaseCard',
       },
       statsConfig: [
@@ -147,14 +147,14 @@ export const ReleaseCardLarge: Story = {
       ],
       primaryBtnConfig: {
         label: 'Explore Data Release',
-        sourcePathColumnName: 'releaseExplorePath',
-        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
         selectedFacetConfigs: genieSelectedFacetConfigs,
       },
       secondaryBtnConfig: {
         label: 'View Data Guide',
-        sourcePathColumnName: 'releaseExplorePath',
-        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
         selectedFacetConfigs: genieSelectedFacetConfigs,
         staticSelectedFacets: [
           {
@@ -169,7 +169,7 @@ export const ReleaseCardLarge: Story = {
 
 const releaseMetadataConfig: ReleaseMetadataConfig = {
   releaseDateColumnName: 'releaseDate',
-  releaseEntityColumnName: 'releaseEntity',
+  releaseEntityIdColumnName: 'releaseEntityId',
   releaseNameColumnName: 'releaseName',
 }
 
@@ -180,12 +180,12 @@ const statsConfig: StatConfig[] = [
 
 const selectedFacetConfigs: SelectedFacetConfig[] = [
   {
-    facetColumnName: 'releaseType',
-    facetValueColumnName: 'releaseType',
+    destinationTableColumnName: 'releaseType',
+    sourceTableColumnName: 'releaseType',
   },
   {
-    facetColumnName: 'version',
-    facetValueColumnName: 'version',
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
   },
 ]
 
@@ -203,14 +203,14 @@ export const ReleaseCardLargeMock: Story = {
       statsConfig: statsConfig,
       primaryBtnConfig: {
         label: 'Explore Current Data Release',
-        sourcePathColumnName: 'releaseExplorePath',
-        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
         selectedFacetConfigs: selectedFacetConfigs,
       },
       secondaryBtnConfig: {
         label: 'View Data Guide',
-        sourcePathColumnName: 'releaseExplorePath',
-        sourceExploreDataSqlColumnName: 'exploreDataSql',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
         selectedFacetConfigs: selectedFacetConfigs,
         staticSelectedFacets: [
           {

@@ -1,6 +1,8 @@
 import { Query } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import { createMemoryHistory } from 'history'
 import React from 'react'
+import { Router } from 'react-router-dom'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCard, ReleaseCardProps, ReleaseCardSchema } from './ReleaseCard'
@@ -28,19 +30,19 @@ const defaultFacetColumnName2 = 'cohortInSyn123456'
 
 const defaultSelectedFacetConfigs: SelectedFacetConfig[] = [
   {
-    facetColumnName: defaultFacetColumnName1,
-    facetValueColumnName: defaultFacetValueColumnName1,
+    destinationTableColumnName: defaultFacetColumnName1,
+    sourceTableColumnName: defaultFacetValueColumnName1,
   },
   {
-    facetColumnName: defaultFacetColumnName2,
-    facetValueColumnName: defaultFacetValueColumnName2,
+    destinationTableColumnName: defaultFacetColumnName2,
+    sourceTableColumnName: defaultFacetValueColumnName2,
   },
 ]
 
 const defaultPrimaryBtnConfig: ButtonToExplorePageConfig = {
   label: 'Explore Current Data Release',
-  sourcePathColumnName: defaultSourcePathColumnName,
-  sourceExploreDataSqlColumnName: defaultExploreDataSqlColumnName,
+  sourceTablePathColumnName: defaultSourcePathColumnName,
+  sourceTableSqlColumnName: defaultExploreDataSqlColumnName,
   selectedFacetConfigs: defaultSelectedFacetConfigs,
 }
 
@@ -50,15 +52,15 @@ const defaultSecondaryBtnSelectedFacetStatic: SelectedFacet = {
 }
 const defaultSecondaryBtnConfig: ButtonToExplorePageConfig = {
   label: 'View Data Guide',
-  sourcePathColumnName: 'releaseExplorePath',
-  sourceExploreDataSqlColumnName: 'exploreDataSql',
+  sourceTablePathColumnName: 'releaseExplorePath',
+  sourceTableSqlColumnName: 'exploreDataSql',
   selectedFacetConfigs: defaultSelectedFacetConfigs,
   staticSelectedFacets: [defaultSecondaryBtnSelectedFacetStatic],
 }
 
 const defaultReleaseMetadataConfig: ReleaseMetadataConfig = {
   releaseDateColumnName: 'releaseDate',
-  releaseEntityColumnName: 'releaseEntity',
+  releaseEntityIdColumnName: 'releaseEntityId',
   releaseNameColumnName: 'releaseName',
 }
 
@@ -79,7 +81,7 @@ const defaultReleaseCardLargeConfig: ReleaseCardLargeConfig = {
 }
 
 const defaultSchema: ReleaseCardSchema = {
-  releaseEntity: 0,
+  releaseEntityId: 0,
   releaseName: 1,
   releaseDate: 2,
   countPatients: 3,
@@ -109,9 +111,14 @@ const defaultReleaseCardLargeProps: ReleaseCardLargeProps = {
 }
 
 function renderComponent(props: ReleaseCardProps) {
-  return render(<ReleaseCard {...props} />, {
-    wrapper: createWrapper(),
-  })
+  return render(
+    <Router history={createMemoryHistory()}>
+      <ReleaseCard {...props} />
+    </Router>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 function setUp(props: ReleaseCardProps) {
@@ -135,7 +142,7 @@ describe('Release Card', () => {
         .mockImplementation(() => {})
       const missingLinkData = [...defaultData]
       const pathColumnIndex =
-        defaultSchema[defaultPrimaryBtnConfig.sourcePathColumnName]
+        defaultSchema[defaultPrimaryBtnConfig.sourceTablePathColumnName]
       missingLinkData[pathColumnIndex] = null
 
       const { primaryBtnLink } = setUp({
@@ -144,7 +151,7 @@ describe('Release Card', () => {
       })
       expect(primaryBtnLink).toBeNull()
       expect(consoleWarnSpy).toHaveBeenLastCalledWith(
-        `Column not found in source table or cell did not have value in source table for ${defaultPrimaryBtnConfig.sourcePathColumnName}`,
+        `Column not found in source table or cell did not have value in source table for ${defaultPrimaryBtnConfig.sourceTablePathColumnName}`,
       )
       consoleWarnSpy.mockRestore()
     })
@@ -156,7 +163,7 @@ describe('Release Card', () => {
           ...defaultReleaseCardLargeConfig,
           primaryBtnConfig: {
             ...defaultPrimaryBtnConfig,
-            sourceExploreDataSqlColumnName: undefined,
+            sourceTableSqlColumnName: undefined,
           },
         },
       })

@@ -2,17 +2,17 @@ import { SynapseConfig } from 'types/portal-config'
 import { currentDataReleasesSql, dataReleasesSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
 
-const sourcePathColumnName = 'releaseExplorePath'
-const sourceExploreDataSqlColumnName = 'exploreDataSql'
+const sourceTablePathColumnName = 'releaseExplorePath'
+const sourceTableSqlColumnName = 'exploreDataSql'
 
 const selectedFacetConfigs = [
   {
-    facetColumnName: 'cohort',
-    facetValueColumnName: 'Cohort',
+    destinationTableColumnName: 'cohort',
+    sourceTableColumnName: 'Cohort',
   },
   {
-    facetColumnName: 'version',
-    facetValueColumnName: 'version',
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
   },
 ]
 
@@ -28,7 +28,7 @@ export const currentDataReleases: SynapseConfig = {
       prependRelease: false,
       releaseMetadataConfig: {
         releaseDateColumnName: 'ReleaseDate',
-        releaseEntityColumnName: 'id',
+        releaseEntityIdColumnName: 'id',
         releaseNameColumnName: 'nameReleaseCard',
       },
       statsConfig: [
@@ -37,14 +37,14 @@ export const currentDataReleases: SynapseConfig = {
       ],
       primaryBtnConfig: {
         label: 'Explore Data Release',
-        sourcePathColumnName: sourcePathColumnName,
-        sourceExploreDataSqlColumnName: sourceExploreDataSqlColumnName,
+        sourceTablePathColumnName: sourceTablePathColumnName,
+        sourceTableSqlColumnName: sourceTableSqlColumnName,
         selectedFacetConfigs: selectedFacetConfigs,
       },
       secondaryBtnConfig: {
         label: 'View Data Guide',
-        sourcePathColumnName: sourcePathColumnName,
-        sourceExploreDataSqlColumnName: sourceExploreDataSqlColumnName,
+        sourceTablePathColumnName: sourceTablePathColumnName,
+        sourceTableSqlColumnName: sourceTableSqlColumnName,
         selectedFacetConfigs: selectedFacetConfigs,
         staticSelectedFacets: [
           {

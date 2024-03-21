@@ -7,7 +7,7 @@ import { MOCK_RELEASE_CARDS_TABLE_ID } from '../entity/mockReleaseCardsTable'
 
 const columnModels: ColumnModel[] = [
   {
-    name: 'releaseEntity',
+    name: 'releaseEntityId',
     columnType: 'ENTITYID',
     id: '207864',
   },

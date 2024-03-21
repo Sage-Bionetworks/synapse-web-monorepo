@@ -89,10 +89,10 @@ export const formatReleaseCardData = (
       data,
       releaseMetdataConfig.releaseNameColumnName,
     ),
-    releaseEntity: getValueFromData(
+    releaseEntityId: getValueFromData(
       schema,
       data,
-      releaseMetdataConfig.releaseEntityColumnName,
+      releaseMetdataConfig.releaseEntityIdColumnName,
     ),
     releaseDate: formatReleaseDate(
       schema,
@@ -116,13 +116,13 @@ const getAllSelectedFacets = (
   if (selectedFacetConfigs) {
     selectedFacetConfigs.forEach(selectedFacetConfig => {
       const sourceDataFacetValueColumnName =
-        selectedFacetConfig.facetValueColumnName
+        selectedFacetConfig.sourceTableColumnName
       const facetValue = sourceDataFacetValueColumnName
         ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
         : null
       if (facetValue) {
         allSelectedFacets.push({
-          facet: selectedFacetConfig.facetColumnName,
+          facet: selectedFacetConfig.destinationTableColumnName,
           facetValue: facetValue,
         })
       }
@@ -132,29 +132,29 @@ const getAllSelectedFacets = (
   return allSelectedFacets
 }
 
-export const createButtonToExploreDataPathAndQueryString = (
+export const formatExplorePagePathAndQueryString = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
-  buttonToExploreDataConfig?: ButtonToExplorePageConfig,
+  btnConfig?: ButtonToExplorePageConfig,
 ) => {
-  if (!buttonToExploreDataConfig) return null
+  if (!btnConfig) return null
   const path = getValueFromData(
     schema,
     data,
-    buttonToExploreDataConfig.sourcePathColumnName,
+    btnConfig.sourceTablePathColumnName,
   )
   if (!path) {
     console.warn(
-      `Column not found in source table or cell did not have value in source table for ${buttonToExploreDataConfig.sourcePathColumnName}`,
+      `Column not found in source table or cell did not have value in source table for ${btnConfig.sourceTablePathColumnName}`,
     )
     return null
   }
 
   const {
-    sourceExploreDataSqlColumnName,
+    sourceTableSqlColumnName: sourceExploreDataSqlColumnName,
     selectedFacetConfigs,
     staticSelectedFacets,
-  } = buttonToExploreDataConfig
+  } = btnConfig
 
   const exploreDataSql = sourceExploreDataSqlColumnName
     ? getValueFromData(schema, data, sourceExploreDataSqlColumnName)
