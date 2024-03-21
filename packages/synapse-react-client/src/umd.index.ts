@@ -78,6 +78,7 @@ import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDe
 import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
 import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
+import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -161,6 +162,7 @@ const SynapseComponents = {
   SqlDefinedTableEditorModal,
   EntityViewScopeEditorModal,
   SubmissionViewScopeEditorModal,
+  AccessRequirementAclEditor,
 }
 
 // Include the version in the build
