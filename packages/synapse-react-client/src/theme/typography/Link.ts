@@ -7,7 +7,6 @@ const linkTheme: Components<Theme>['MuiLink'] = {
   styleOverrides: {
     root: ({ theme }) => ({
       fontWeight: 700,
-      letterSpacing: '0.5px',
       '&:hover': {
         // overrides base style in bootstrap 3
         color: theme.palette.primary.main,
