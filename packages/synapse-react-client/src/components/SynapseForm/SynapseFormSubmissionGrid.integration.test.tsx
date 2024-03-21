@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import UserFileGrid, {
   SynapseFormSubmissionGridProps,
-} from './SynapseFormSubmissionsGrid'
+} from './SynapseFormSubmissionGrid'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
 import { StatusEnum } from '@sage-bionetworks/synapse-types'

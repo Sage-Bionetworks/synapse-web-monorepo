@@ -4,7 +4,7 @@ import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,
-} from './SynapseFormSubmissionsGrid'
+} from './SynapseFormSubmissionGrid'
 import { SynapseContextConsumer } from '../../utils/context/SynapseContext'
 import FullContextProvider from '../../utils/context/FullContextProvider'
 import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'

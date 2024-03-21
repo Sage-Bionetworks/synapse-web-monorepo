@@ -261,8 +261,8 @@ type SynapseFormWrapper = {
   props: SynapseFormWrapperProps
 }
 
-type SynapseFormSubmissionsGrid = {
-  name: 'SynapseFormSubmissionsGrid'
+type SynapseFormSubmissionGrid = {
+  name: 'SynapseFormSubmissionGrid'
   props: SynapseFormSubmissionGridProps
 }
 
@@ -328,7 +328,7 @@ export type SynapseConfig = (
   | MarkdownCollapse
   | DetailsPage
   | SynapseFormWrapper
-  | SynapseFormSubmissionsGrid
+  | SynapseFormSubmissionGrid
   | ConsortiaGoals
   | HomePageCardContainer
   | Ecosystem
