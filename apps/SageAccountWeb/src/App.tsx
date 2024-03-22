@@ -53,6 +53,7 @@ function App() {
           <QueryClientProvider client={queryClient}>
             <ApplicationSessionManager>
               <SourceAppProvider>
+                <SynapseToastContainer />
                 <AppInitializer>
                   <CookiesNotification />
                   <Switch>
@@ -190,7 +191,6 @@ function App() {
                 </AppInitializer>
               </SourceAppProvider>
             </ApplicationSessionManager>
-            <SynapseToastContainer />
           </QueryClientProvider>
         </StyledEngineProvider>
       </Router>

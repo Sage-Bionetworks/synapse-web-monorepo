@@ -67,12 +67,17 @@
         globalThis.global = globalThis
     </script>
     <!-- <script>
-        const endpoint = {
+        const devEndpoint = {
+          REPO: 'https://repo-dev.dev.sagebase.org',
+          PORTAL: 'https://portal-dev.dev.sagebase.org/',
+        }
+        const stagingEndpoint = {
           REPO: 'https://repo-staging.prod.sagebase.org',
           PORTAL: 'https://staging.synapse.org/',
         }
         window.SRC = {
-          OVERRIDE_ENDPOINT_CONFIG: endpoint
+            OVERRIDE_ENDPOINT_CONFIG: devEndpoint,
+            // OVERRIDE_ENDPOINT_CONFIG: stagingEndpoint,
         }
       </script> -->
     <script type="module" src="./src/index.tsx"></script>
