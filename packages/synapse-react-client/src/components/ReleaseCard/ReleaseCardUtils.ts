@@ -1,10 +1,13 @@
 import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
+import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCardSchema } from './ReleaseCard'
 import {
   ButtonToExplorePageConfig,
   ReleaseCardStat,
+  ReleaseMetadataConfig,
+  SelectedFacetConfig,
   StatConfig,
 } from './ReleaseCardTypes'
 
@@ -58,8 +61,13 @@ const formatReleaseStats = (
 const formatReleaseDate = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
+  releaseDateColumnName: string,
 ) => {
-  const releaseDateString = data[schema.releaseDate]
+  const releaseDateString = getValueFromData(
+    schema,
+    data,
+    releaseDateColumnName,
+  )
   const cardStat: ReleaseCardStat = {
     label: 'Date of release',
     value: releaseDateString
@@ -72,52 +80,98 @@ const formatReleaseDate = (
 export const formatReleaseCardData = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
+  releaseMetdataConfig: ReleaseMetadataConfig,
   statsConfig: StatConfig[],
 ) => {
   return {
-    releaseVersion: data[schema.releaseVersion],
-    releaseEntity: data[schema.releaseEntity],
-    releaseDate: formatReleaseDate(schema, data),
+    releaseName: getValueFromData(
+      schema,
+      data,
+      releaseMetdataConfig.releaseNameColumnName,
+    ),
+    releaseEntityId: getValueFromData(
+      schema,
+      data,
+      releaseMetdataConfig.releaseEntityIdColumnName,
+    ),
+    releaseDate: formatReleaseDate(
+      schema,
+      data,
+      releaseMetdataConfig.releaseDateColumnName,
+    ),
     stats: formatReleaseStats(schema, data, statsConfig),
   }
 }
 
-export const createButtonToExploreDataPathAndQueryString = (
+const getAllSelectedFacets = (
   schema: ReleaseCardSchema,
   data: (string | null)[],
-  buttonToExploreDataConfig?: ButtonToExplorePageConfig,
+  selectedFacetConfigs: SelectedFacetConfig[] | undefined,
+  staticSelectedFacets: SelectedFacet[] | undefined,
+): SelectedFacet[] => {
+  const allSelectedFacets: SelectedFacet[] = staticSelectedFacets
+    ? [...staticSelectedFacets]
+    : []
+
+  if (selectedFacetConfigs) {
+    selectedFacetConfigs.forEach(selectedFacetConfig => {
+      const sourceDataFacetValueColumnName =
+        selectedFacetConfig.sourceTableColumnName
+      const facetValue = sourceDataFacetValueColumnName
+        ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
+        : null
+      if (facetValue) {
+        allSelectedFacets.push({
+          facet: selectedFacetConfig.destinationTableColumnName,
+          facetValue: facetValue,
+        })
+      }
+    })
+  }
+
+  return allSelectedFacets
+}
+
+export const formatExplorePagePathAndQueryString = (
+  schema: ReleaseCardSchema,
+  data: (string | null)[],
+  btnConfig?: ButtonToExplorePageConfig,
 ) => {
-  if (!buttonToExploreDataConfig) return null
+  if (!btnConfig) return null
   const path = getValueFromData(
     schema,
     data,
-    buttonToExploreDataConfig.sourcePathColumnName,
+    btnConfig.sourceTablePathColumnName,
   )
   if (!path) {
     console.warn(
-      `Column not found in source table or cell did not have value in source table for ${buttonToExploreDataConfig.sourcePathColumnName}`,
+      `Column not found in source table or cell did not have value in source table for ${btnConfig.sourceTablePathColumnName}`,
     )
     return null
   }
 
   const {
-    exploreDataSql,
-    exploreDataFacetColumnName,
-    sourceDataFacetValueColumnName,
-  } = buttonToExploreDataConfig
+    sourceTableSqlColumnName: sourceExploreDataSqlColumnName,
+    selectedFacetConfigs,
+    staticSelectedFacets,
+  } = btnConfig
 
-  const facetValue = sourceDataFacetValueColumnName
-    ? getValueFromData(schema, data, sourceDataFacetValueColumnName)
+  const exploreDataSql = sourceExploreDataSqlColumnName
+    ? getValueFromData(schema, data, sourceExploreDataSqlColumnName)
     : null
-  const hasSelectedFacet =
-    exploreDataSql && exploreDataFacetColumnName && facetValue
+  const allSelectedFacets = getAllSelectedFacets(
+    schema,
+    data,
+    selectedFacetConfigs,
+    staticSelectedFacets,
+  )
+  const hasSelectedFacets = exploreDataSql && allSelectedFacets.length > 0
 
-  return hasSelectedFacet
+  return hasSelectedFacets
     ? generateEncodedPathAndQueryForSelectedFacetURL(
         path,
         exploreDataSql,
-        exploreDataFacetColumnName,
-        facetValue,
+        allSelectedFacets,
       )
     : path
 }

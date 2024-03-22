@@ -34,8 +34,7 @@ export const onPointClick = ({
   const url = generateEncodedPathAndQueryForSelectedFacetURL(
     `/Explore/${typeUpperCase}`,
     sqlAndEntityMap[typeUpperCase],
-    facet,
-    facetValue,
+    [{ facet, facetValue }],
   )
 
   const target = event.ctrlKey || event.metaKey ? '_blank' : '_self'

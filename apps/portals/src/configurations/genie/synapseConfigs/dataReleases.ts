@@ -2,6 +2,20 @@ import { SynapseConfig } from 'types/portal-config'
 import { currentDataReleasesSql, dataReleasesSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
 
+const sourceTablePathColumnName = 'releaseExplorePath'
+const sourceTableSqlColumnName = 'exploreDataSql'
+
+const selectedFacetConfigs = [
+  {
+    destinationTableColumnName: 'cohort',
+    sourceTableColumnName: 'Cohort',
+  },
+  {
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
+  },
+]
+
 export const currentDataReleases: SynapseConfig = {
   name: 'CardContainerLogic',
   title: 'Current Data Releases',
@@ -12,18 +26,33 @@ export const currentDataReleases: SynapseConfig = {
     releaseCardConfig: {
       cardSize: 'large',
       prependRelease: false,
+      releaseMetadataConfig: {
+        releaseDateColumnName: 'ReleaseDate',
+        releaseEntityIdColumnName: 'id',
+        releaseNameColumnName: 'nameReleaseCard',
+      },
       statsConfig: [
         { columnName: 'Patients', label: 'Patients' },
         { columnName: 'Samples', label: 'Samples' },
       ],
-      buttonToExplorePageConfig: {
+      primaryBtnConfig: {
         label: 'Explore Data Release',
-        sourcePathColumnName: 'releaseExplorePath',
-        exploreDataSql: currentDataReleasesSql,
-        exploreDataFacetColumnName: 'releaseType',
-        sourceDataFacetValueColumnName: 'releaseType',
+        sourceTablePathColumnName: sourceTablePathColumnName,
+        sourceTableSqlColumnName: sourceTableSqlColumnName,
+        selectedFacetConfigs: selectedFacetConfigs,
       },
-      dataGuidePath: 'data guide',
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourceTablePathColumnName: sourceTablePathColumnName,
+        sourceTableSqlColumnName: sourceTableSqlColumnName,
+        selectedFacetConfigs: selectedFacetConfigs,
+        staticSelectedFacets: [
+          {
+            facet: 'dataType',
+            facetValue: 'data_guide',
+          },
+        ],
+      },
     },
   },
 }
