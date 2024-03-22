@@ -72,11 +72,6 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
         const assetFileHandleIds = assets.filter(
           v => v != null && v !== undefined,
         )
-        if (assetFileHandleIds.some(asset => asset === null)) {
-          // We cast assets above assuming there are no null values, emit a warning just in case.
-          console.warn('Row has null value(s) when no nulls expected')
-        }
-
         if (assetFileHandleIds.length === 0) {
           // wait for data to load
           return
