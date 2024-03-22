@@ -19,7 +19,7 @@ const routes: GenericRoute[] = [
         centerTitle: true,
         outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
-          entityId: 'syn23516796',
+          entityId: 'syn54352754',
         },
       },
       {
@@ -28,7 +28,7 @@ const routes: GenericRoute[] = [
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
-          entityId: 'syn23516796',
+          entityId: 'syn54355188',
         },
       },
       {
