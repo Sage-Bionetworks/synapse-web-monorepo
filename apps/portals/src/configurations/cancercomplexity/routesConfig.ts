@@ -25,6 +25,7 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import personGraySvg from './style/PersonGray.svg?url'
+import { mc2SupplementTable } from './synapseConfigs/mc2supplement'
 
 const routes: GenericRoute[] = [
   {
@@ -648,6 +649,12 @@ const routes: GenericRoute[] = [
     target: '_blank',
     link: 'http://help.cancercomplexity.synapse.org/',
     synapseConfigArray: [],
+  },
+  {
+    exact: true,
+    path: 'MC2Supplement',
+    hideRouteFromNavbar: true,
+    synapseConfigArray: [mc2SupplementTable],
   },
 ]
 
