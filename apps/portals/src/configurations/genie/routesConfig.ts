@@ -105,7 +105,7 @@ const routes: GenericRoute[] = [
         className: 'DataAccessPage',
         props: {
           ownerId: 'syn53013218',
-          wikiId: '626555',
+          wikiId: '626697',
           loadingSkeletonRowCount: 8,
         },
       },
