@@ -88,4 +88,20 @@ describe('MissingQueryResultsWarning tests', () => {
       'Files may be unavailable because you do not have permission to see them or the Dataset was misconfigured.',
     )
   })
+
+  it('shows no warning when total results is less than total visible results', () => {
+    // Unlikely edge case -- see PLFM-8326
+    const numberOfVisibleResults = allDatasetItems.length + 1
+    server.use(
+      ...getHandlersForTableQuery({
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+        queryCount: numberOfVisibleResults,
+      }),
+    )
+
+    renderComponent({ ...mockDatasetEntity, items: allDatasetItems })
+
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
 })

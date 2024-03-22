@@ -53,8 +53,10 @@ const MissingQueryResultsWarning: React.FunctionComponent<
     const totalVisibleResults = queryResult.responseBody!.queryCount!
     const totalResults = entity.items?.length ?? 0
 
-    if (totalVisibleResults === totalResults) {
+    if (totalVisibleResults >= totalResults) {
       // All the results are visible, so there is no need to show a warning.
+      // SWC-6727 / PLFM-8326 - `totalVisibleResults` should never be greater than `totalResults`, but in case it is (e.g. stale cache),
+      // don't show the warning.
       return <></>
     }
 
