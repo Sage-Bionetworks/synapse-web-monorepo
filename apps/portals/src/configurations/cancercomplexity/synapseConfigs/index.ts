@@ -6,6 +6,7 @@ import { projects } from './projects'
 import { tools } from './tools'
 import { people } from './people'
 import { education } from './education'
+import { mc2SupplementTable } from './mc2supplement'
 
 export {
   files,
@@ -16,6 +17,7 @@ export {
   tools,
   people,
   education,
+  mc2SupplementTable,
 }
 
 export default {
@@ -27,4 +29,5 @@ export default {
   tools,
   people,
   education,
+  mc2SupplementTable,
 }
