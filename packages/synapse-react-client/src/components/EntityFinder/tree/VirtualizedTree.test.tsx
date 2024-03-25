@@ -8,15 +8,17 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { VariableSizeNodePublicState } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
 import {
+  EntityHeaderNode,
   EntityTreeNodeType,
   getNodeData,
   getTreeWalkerFunction,
   Node,
   RootNodeConfiguration,
   TreeData,
-} from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+} from './VirtualizedTree'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { WritableDeep } from 'type-fest'
 
 describe('VirtualizedTree tests', () => {
   beforeEach(() => {
@@ -77,12 +79,12 @@ describe('VirtualizedTree tests', () => {
     })
 
     it('General test for entity header', () => {
-      const node = {
+      const node: EntityHeaderNode = {
         id: 'syn123',
         type: 'org.sagebionetworks.repo.model.Folder',
         name: 'A Custom Folder Name',
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        children: [],
+        childrenNextPageToken: null,
       }
       const actual = getNodeData({
         node,
@@ -104,7 +106,7 @@ describe('VirtualizedTree tests', () => {
           id: node.id,
           node,
           getNextPageOfChildren,
-          isLeaf: false,
+          isLeaf: true,
           isOpenByDefault: true,
           nestingLevel,
           setSelectedId,
@@ -120,12 +122,12 @@ describe('VirtualizedTree tests', () => {
     it('isOpenByDefault matches the value of autoExpand', () => {
       const autoExpandTrue = jest.fn().mockReturnValue(true)
       const autoExpandFalse = jest.fn().mockReturnValue(false)
-      const node = {
+      const node: EntityHeaderNode = {
         id: 'syn123',
         name: 'A Custom Folder Name',
+        type: 'org.sagebionetworks.repo.model.Folder',
         children: [],
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        childrenNextPageToken: null,
       }
 
       let isOpenByDefault = getNodeData({
@@ -162,12 +164,13 @@ describe('VirtualizedTree tests', () => {
     it('automatically fetches children if autoExpanded with undefined children', () => {
       const autoExpand = jest.fn().mockReturnValue(true)
       const children = undefined
-      const node = {
+      const childrenNextPageToken = undefined
+      const node: EntityHeaderNode = {
         id: 'syn123',
         name: 'A Custom Folder Name',
+        type: 'org.sagebionetworks.repo.model.Folder',
         children: children,
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        childrenNextPageToken: childrenNextPageToken,
       }
 
       getNodeData({
@@ -189,12 +192,12 @@ describe('VirtualizedTree tests', () => {
       const treeNodeType = EntityTreeNodeType.SINGLE_PANE
       const id = 'syn123'
       let selected = Map<string, number>()
-      const node = {
+      const node: EntityHeaderNode = {
         id: id,
         name: 'A Custom Folder Name',
+        type: 'org.sagebionetworks.repo.model.Folder',
         children: [],
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        childrenNextPageToken: undefined,
       }
 
       let isSelected = getNodeData({
@@ -232,12 +235,12 @@ describe('VirtualizedTree tests', () => {
       const treeNodeType = EntityTreeNodeType.DUAL_PANE
       const id = 'syn123'
       let currentContainer = null
-      const node = {
+      const node: EntityHeaderNode = {
         id: id,
         name: 'A Custom Folder Name',
+        type: 'org.sagebionetworks.repo.model.Folder',
         children: [],
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        childrenNextPageToken: undefined,
       }
 
       let isSelected = getNodeData({
@@ -273,13 +276,12 @@ describe('VirtualizedTree tests', () => {
     })
     it('isDisabled if is not a selectable type', () => {
       let selectableTypes = [EntityType.FOLDER]
-      const node = {
+      const node: EntityHeaderNode = {
         id: 'syn123',
         name: 'A Custom Folder Name',
         type: 'org.sagebionetworks.repo.model.Folder',
         children: [],
-        fetchNextPage: async () => {},
-        hasNextPage: false,
+        childrenNextPageToken: undefined,
       }
 
       let isDisabled = getNodeData({
@@ -327,12 +329,12 @@ describe('VirtualizedTree tests', () => {
           defaultHeight,
           currentContainer,
         }),
-      ).toThrowError()
+      ).toThrow()
     })
   })
 
   describe('treeWalker tests', () => {
-    it('Yields node data in the correct order', async () => {
+    it('Yields node data in the correct order', () => {
       const mockSetSelectedId = jest.fn()
       const mockAutoExpand = jest.fn().mockReturnValue(false)
       const mockItemSize = jest.fn().mockReturnValue(50)
@@ -400,14 +402,14 @@ describe('VirtualizedTree tests', () => {
       // react-vtree will pass the root node and nesting level
       expect(
         generator.next({
+          ...rootData,
           nestingLevel: 0,
           node: rootNodeConfiguration,
-          data: rootData,
         }).value,
       ).toBeUndefined()
 
       // each of the root's children will be returned
-      const expectedValueChild0 = getNodeData({
+      const child0GeneratedNodeData = getNodeData({
         node: rootNodeConfiguration.children[0],
         nestingLevel: 1,
         getNextPageOfChildren: mockFetchNextPage,
@@ -419,10 +421,8 @@ describe('VirtualizedTree tests', () => {
         currentContainer: currentContainer,
         defaultHeight: 50,
       })
-      // non-root nodes have a new function constructed for getNextPageOfChildren
-      expectedValueChild0.data.getNextPageOfChildren = expect.any(Function)
 
-      const expectedValueChild1 = getNodeData({
+      const child1GeneratedNodeData = getNodeData({
         node: rootNodeConfiguration.children[1],
         nestingLevel: 1,
         getNextPageOfChildren: mockFetchNextPage,
@@ -434,31 +434,42 @@ describe('VirtualizedTree tests', () => {
         currentContainer: currentContainer,
         defaultHeight: 50,
       })
-      // non-root nodes have a new function constructed for getNextPageOfChildren
-      expectedValueChild1.data.getNextPageOfChildren = expect.any(Function)
 
       expect(
         generator.next({
+          ...rootData,
           nestingLevel: 0,
           node: rootNodeConfiguration,
-
-          data: rootData,
         }).value,
-      ).toEqual(expectedValueChild0)
+      ).toEqual({
+        ...child0GeneratedNodeData,
+        data: {
+          ...child0GeneratedNodeData.data,
+          // non-root nodes have a new function constructed for getNextPageOfChildren
+          getNextPageOfChildren: expect.any(Function),
+        },
+      })
       expect(
         generator.next({
+          ...rootData,
           nestingLevel: 0,
           node: rootNodeConfiguration,
-          data: rootData,
         }).value,
-      ).toEqual(expectedValueChild1)
+      ).toEqual({
+        ...child1GeneratedNodeData,
+        data: {
+          ...child1GeneratedNodeData.data,
+          // non-root nodes have a new function constructed for getNextPageOfChildren
+          getNextPageOfChildren: expect.any(Function),
+        },
+      })
 
       // The root node has more children that have not been fetched, so a pagination node should be yielded
       expect(
         generator.next({
+          ...rootData,
           nestingLevel: 0,
           node: rootNodeConfiguration,
-          data: rootData,
         }).value,
       ).toEqual(
         expect.objectContaining({
@@ -469,9 +480,9 @@ describe('VirtualizedTree tests', () => {
       // Verify that the next value yielded is undefined
       expect(
         generator.next({
+          ...child0GeneratedNodeData,
           nestingLevel: 1,
           node: rootNodeConfiguration.children[0],
-          data: expectedValueChild0,
         }).value,
       ).toEqual(undefined)
 
@@ -480,11 +491,8 @@ describe('VirtualizedTree tests', () => {
   })
 
   describe('Node tests', () => {
-    it('Renders a fragment only when height is 0', async () => {
-      const nodeProps: NodeComponentProps<
-        TreeData,
-        VariableSizeNodePublicState<TreeData>
-      > = {
+    it('Renders a fragment only when height is 0', () => {
+      const nodeProps = {
         style: { height: 0 },
         data: {
           id: 'root',
@@ -500,16 +508,19 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: async () => {},
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: true,
         height: 0, // this height property doesn't seem to do anything
-        resize: (height: number) => {},
-      }
+        resize: () => {},
+      } satisfies NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      >
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
       })
@@ -535,15 +546,15 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: true,
         height: 50,
-        resize: (height: number) => {},
+        resize: () => {},
       }
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
@@ -577,15 +588,15 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: false,
         height: 50,
-        resize: (height: number) => {},
+        resize: () => {},
       }
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
@@ -599,10 +610,7 @@ describe('VirtualizedTree tests', () => {
     })
     it('Displays the entity name for an EntityHeader', async () => {
       const mockFetchNextPage = jest.fn()
-      const nodeProps: NodeComponentProps<
-        TreeData,
-        VariableSizeNodePublicState<TreeData>
-      > = {
+      const nodeProps = {
         style: { height: 50 },
         data: {
           id: 'root-pagination',
@@ -617,16 +625,19 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: false,
         height: 50,
-        resize: (height: number) => {},
-      }
+        resize: () => {},
+      } satisfies NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      >
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
       })
@@ -634,10 +645,7 @@ describe('VirtualizedTree tests', () => {
     })
     it('Displays the node text for the root node', async () => {
       const mockFetchNextPage = jest.fn()
-      const nodeProps: NodeComponentProps<
-        TreeData,
-        VariableSizeNodePublicState<TreeData>
-      > = {
+      const nodeProps = {
         style: { height: 50 },
         data: {
           id: 'root-pagination',
@@ -653,16 +661,19 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: false,
         height: 50,
-        resize: (height: number) => {},
-      }
+        resize: () => {},
+      } satisfies NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      >
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
       })
@@ -672,10 +683,7 @@ describe('VirtualizedTree tests', () => {
     it('Expands the node when selected in Dual Pane mode', async () => {
       const mockFetchNextPage = jest.fn()
       const mockSetOpen = jest.fn()
-      const nodeProps: NodeComponentProps<
-        TreeData,
-        VariableSizeNodePublicState<TreeData>
-      > = {
+      const nodeProps = {
         style: { height: 50 },
         data: {
           id: 'root-pagination',
@@ -691,7 +699,7 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.DUAL_PANE,
           isSelected: false,
           isDisabled: false,
@@ -699,8 +707,11 @@ describe('VirtualizedTree tests', () => {
         setOpen: mockSetOpen,
         isOpen: false,
         height: 50,
-        resize: (height: number) => {},
-      }
+        resize: () => {},
+      } satisfies NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      >
       const { rerender } = render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
       })
@@ -709,12 +720,14 @@ describe('VirtualizedTree tests', () => {
       await screen.findByText('▸')
 
       // `isSelected` changes. This could happen via props, see SWC-6205
-      const newProps = cloneDeep(nodeProps)
+      const newProps: WritableDeep<
+        NodeComponentProps<TreeData, VariableSizeNodePublicState<TreeData>>
+      > = cloneDeep(nodeProps)
       newProps.data.isSelected = true
       rerender(<Node {...newProps} />)
 
       // Should have called to be expanded
-      await waitFor(() => expect(mockSetOpen).toBeCalledWith(true))
+      await waitFor(() => expect(mockSetOpen).toHaveBeenCalledWith(true))
     })
 
     test('Shows a tooltip for an EntityHeader node', async () => {
@@ -740,15 +753,15 @@ describe('VirtualizedTree tests', () => {
           getNextPageOfChildren: mockFetchNextPage,
           isLeaf: false,
           nestingLevel: 0,
-          setSelectedId: id => {},
+          setSelectedId: () => {},
           treeNodeType: EntityTreeNodeType.SINGLE_PANE,
           isSelected: false,
           isDisabled: false,
         },
-        setOpen: async (state: boolean) => {},
+        setOpen: async () => {},
         isOpen: false,
         height: 50,
-        resize: (height: number) => {},
+        resize: () => {},
       }
       render(<Node {...nodeProps} />, {
         wrapper: createWrapper(),
