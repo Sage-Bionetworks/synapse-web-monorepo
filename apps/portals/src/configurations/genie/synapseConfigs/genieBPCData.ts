@@ -9,8 +9,14 @@ const genieBPCData: SynapseConfig = {
     rgbIndex,
     sql: genieBPCSql,
     name: 'Files',
+    // showExportToCavatica: true,
+    isRowSelectionVisible: true,
+    rowSelectionPrimaryKey: ['id'],
     tableConfiguration: {
-      // columnLinks: dataColumnLinks,
+      showAccessColumn: true,
+      // set the entity ID column and version column to use (instead of the Row ID and Version)
+      rowEntityIDColumnName: 'id',
+      // rowEntityVersionColumnName: 'currentVersion',
     },
     defaultShowPlots: false,
   },
