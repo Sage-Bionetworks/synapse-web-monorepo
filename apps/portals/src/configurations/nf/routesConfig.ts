@@ -141,7 +141,7 @@ const routes: GenericRoute[] = [
           sql: topProjectsSql,
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: {
-            type: SynapseConstants.PROJECT,
+            type: SynapseConstants.STUDY,
             title: 's.studyName',
             secondaryLabels: [
               'f.n_downloads_30d',
@@ -156,6 +156,12 @@ const routes: GenericRoute[] = [
             'f.n_unique_users_30d': '# Unique Users',
             'f.egress_size_in_gb_30d': 'Download Volume (GB)',
             's.studyId': 'On Synapse',
+          },
+          titleLinkConfig: {
+            isMarkdown: false,
+            baseURL: 'Explore/Studies/DetailsPage',
+            URLColumnName: 'studyId',
+            matchColumnName: 's.studyId',
           },
         },
       },
