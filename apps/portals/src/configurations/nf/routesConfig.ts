@@ -134,7 +134,7 @@ const routes: GenericRoute[] = [
       },
       {
         name: 'CardContainerLogic',
-        title: 'Top 10 Projects',
+        title: 'Top 10 Studies (Last 30 Days)',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
