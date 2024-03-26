@@ -134,7 +134,7 @@ const routes: GenericRoute[] = [
       },
       {
         name: 'CardContainerLogic',
-        title: 'Top 10 Downloaded Projects',
+        title: 'Top 10 Projects',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
@@ -142,7 +142,7 @@ const routes: GenericRoute[] = [
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: {
             type: SynapseConstants.PROJECT,
-            title: 's.studyId',
+            title: 's.studyName',
             secondaryLabels: [
               'f.n_downloads_30d',
               'f.n_unique_users_30d',
@@ -154,7 +154,7 @@ const routes: GenericRoute[] = [
           columnAliases: {
             'f.n_downloads_30d': '# Downloads',
             'f.n_unique_users_30d': '# Unique Users',
-            'f.egress_size_in_gb_30d': 'Egress Size (GB)',
+            'f.egress_size_in_gb_30d': 'Download Volume (GB)',
             's.studyId': 'On Synapse',
           },
         },
