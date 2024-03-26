@@ -22,3 +22,5 @@ export const mutationsSql =
 export const publicationsV2Sql = 'SELECT * FROM syn51735450'
 export const popularSearchesSql =
   'SELECT displayText, fullTextSearch FROM syn26436892'
+export const topProjectsSql =
+  'SELECT * FROM syn53698263 order by "f.n_downloads_30d" desc limit 10'
