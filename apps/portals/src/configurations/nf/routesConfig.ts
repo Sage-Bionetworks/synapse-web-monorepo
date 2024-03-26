@@ -28,6 +28,7 @@ import {
   initiativesSql,
   peopleSql,
   studiesSql,
+  topProjectsSql,
 } from './resources'
 import { toolsDetailsPage } from './synapseConfigs/tools'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
@@ -128,6 +129,39 @@ const routes: GenericRoute[] = [
           // mailChimpUrl:'https://sagebase.us7.list-manage.com/subscribe/post?u=abcdefghi...',
           lockedColumn: {
             value: 'featured',
+          },
+        },
+      },
+      {
+        name: 'CardContainerLogic',
+        title: 'Top 10 Studies (Last 30 Days)',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          sql: topProjectsSql,
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: {
+            type: SynapseConstants.STUDY,
+            title: 's.studyName',
+            secondaryLabels: [
+              'f.n_downloads_30d',
+              'f.n_unique_users_30d',
+              'f.egress_size_in_gb_30d',
+              's.studyId',
+            ],
+          },
+          secondaryLabelLimit: 5,
+          columnAliases: {
+            'f.n_downloads_30d': '# Downloads',
+            'f.n_unique_users_30d': '# Unique Users',
+            'f.egress_size_in_gb_30d': 'Download Volume (GB)',
+            's.studyId': 'On Synapse',
+          },
+          titleLinkConfig: {
+            isMarkdown: false,
+            baseURL: 'Explore/Studies/DetailsPage',
+            URLColumnName: 'studyId',
+            matchColumnName: 's.studyId',
           },
         },
       },
