@@ -95,6 +95,7 @@ export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
 export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
+export const CHANGE_PASSWORD = `${AUTH}/user/changePassword`
 
 export const ACCESS_REQUIREMENT_SEARCH = `${REPO}/accessRequirement/search`
 export const ACCESS_REQUEST_SUBMISSION_SEARCH = `${REPO}/dataAccessSubmission/search`

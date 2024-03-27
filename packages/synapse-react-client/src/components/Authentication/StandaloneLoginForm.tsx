@@ -4,6 +4,10 @@ import useLogin from '../../utils/hooks/useLogin'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import LoginForm from './LoginForm'
 import LoginFlowBackButton from './LoginFlowBackButton'
+import {
+  RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
+  TOTP_GUIDANCE_TEXT,
+} from './Constants'
 
 export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string
@@ -51,14 +55,12 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
       />
       {step === 'VERIFICATION_CODE' && (
         <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
-          Enter the 6-digit, time-based verification code provided by your
-          authenticator app.
+          {TOTP_GUIDANCE_TEXT}
         </Typography>
       )}
       {step === 'RECOVERY_CODE' && (
         <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
-          Enter a one-time backup code. Your backup code is a 16 digit code,
-          with groups of 4 letters or numbers separated by hyphens.
+          {RECOVERY_CODE_GUIDANCE_TEXT_SHORT}
         </Typography>
       )}
       <LoginForm

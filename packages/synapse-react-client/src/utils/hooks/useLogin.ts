@@ -1,21 +1,21 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import {
+  LoginResponse,
+  TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
   TwoFactorAuthOtpType,
 } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from '@tanstack/react-query'
 import { SynapseClientError } from '../SynapseClientError'
 import SynapseClient from '../../synapse-client'
+import { ONE_TIME_PASSWORD_STEP } from '../../components'
 
 export type UseLoginReturn = {
   step:
     | 'CHOOSE_AUTH_METHOD'
     | 'USERNAME_PASSWORD'
-    | 'VERIFICATION_CODE'
-    | 'RECOVERY_CODE'
+    | ONE_TIME_PASSWORD_STEP
     | 'LOGGED_IN'
   onStepChange: Dispatch<SetStateAction<UseLoginReturn['step']>>
   submitUsernameAndPassword: (username: string, password: string) => void
@@ -107,7 +107,7 @@ export default function useLogin(
     mutate: mutateLoginWithUsernameAndPassword,
     isPending: isLoadingLoginWithUsernameAndPassword,
   } = useMutation<
-    LoginResponse | TwoFactorAuthErrorResponse | null,
+    LoginResponse | TwoFactorAuthErrorResponse,
     SynapseClientError,
     { username: string; password: string; authenticationReceipt: string | null }
   >({

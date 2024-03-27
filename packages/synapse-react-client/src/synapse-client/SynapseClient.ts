@@ -18,6 +18,7 @@ import {
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   BIND_INVITATION_TO_AUTHENTICATED_USER,
+  CHANGE_PASSWORD,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
@@ -289,6 +290,7 @@ import {
   WikiPageKey,
   EntityType,
   ValidateDefiningSqlResponse,
+  ChangePasswordWithTwoFactorAuthToken,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -594,9 +596,9 @@ export async function login(
   password: string,
   authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> {
   return returnIfTwoFactorAuthError(() =>
-    doPost(
+    doPost<LoginResponse>(
       '/auth/v1/login2',
       { username, password, authenticationReceipt },
       undefined,
@@ -651,9 +653,9 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> => {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> => {
   return returnIfTwoFactorAuthError(() =>
-    doPost(
+    doPost<LoginResponse>(
       '/auth/v1/oauth2/session2',
       { provider, authenticationCode, redirectUrl },
       undefined,
@@ -3993,15 +3995,18 @@ export const createProfileVerificationSubmission = (
 }
 
 // https://rest-docs.synapse.org/rest/POST/user/changePassword.html
-export const changePasswordWithCurrentPassword = (
-  newPassword: ChangePasswordWithCurrentPassword,
-  accessToken: string | undefined,
-) => {
-  return doPost<ChangePasswordWithCurrentPassword>(
-    '/auth/v1/user/changePassword',
-    newPassword,
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
+export const changePassword = (
+  request:
+    | ChangePasswordWithCurrentPassword
+    | ChangePasswordWithTwoFactorAuthToken,
+): Promise<TwoFactorAuthErrorResponse | ''> => {
+  return returnIfTwoFactorAuthError(() =>
+    doPost<''>(
+      CHANGE_PASSWORD,
+      request,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
@@ -4010,7 +4015,7 @@ export const changePasswordWithToken = (
   newPassword: ChangePasswordWithToken,
 ) => {
   return doPost<ChangePasswordWithToken>(
-    '/auth/v1/user/changePassword',
+    CHANGE_PASSWORD,
     newPassword,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

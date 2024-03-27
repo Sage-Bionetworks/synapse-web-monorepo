@@ -15,6 +15,7 @@ import useLogin from '../../utils/hooks/useLogin'
 import LoginForm from './LoginForm'
 import { StyledComponent } from '@emotion/styled'
 import SystemUseNotification from '../SystemUseNotification/SystemUseNotification'
+import { TOTP_GUIDANCE_TEXT } from './Constants'
 
 const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
   'Lost access to my Synapse account',
@@ -106,8 +107,7 @@ export default function LoginPage(props: LoginPageProps) {
       </Box>
       {!showDesktop && step === 'VERIFICATION_CODE' && (
         <Typography variant={'body1'} align={'center'} sx={{ my: 1 }}>
-          Enter the 6-digit, time-based verification code provided by your
-          authenticator app.
+          {TOTP_GUIDANCE_TEXT}
         </Typography>
       )}
       {!showDesktop && step === 'RECOVERY_CODE' && (
@@ -169,8 +169,7 @@ export default function LoginPage(props: LoginPageProps) {
                     Enter your verification code
                   </Typography>
                   <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
-                    Enter the 6-digit, time-based verification code provided by
-                    your authenticator app.
+                    {TOTP_GUIDANCE_TEXT}
                   </Typography>
                 </>
               )}
