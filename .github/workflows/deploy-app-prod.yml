@@ -15,7 +15,7 @@ on:
 
 jobs:
   build-and-deploy-sage-account-web:
-    if: ${{ inputs.app-name }} == 'SageAccountWeb'
+    if: ${{ inputs.app-name == 'SageAccountWeb' }}
     permissions:
       id-token: write
       contents: read
@@ -27,7 +27,7 @@ jobs:
       cfdist-id: E2656IE63W1MXI
       deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
   build-and-deploy-synapse-oauth-signin:
-    if: ${{ inputs.app-name }} == 'synapse-oauth-signin'
+    if: ${{ inputs.app-name == 'synapse-oauth-signin' }}
     permissions:
       id-token: write
       contents: read
