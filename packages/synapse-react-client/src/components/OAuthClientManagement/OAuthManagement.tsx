@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { Table } from 'react-bootstrap'
+import React, { useMemo, useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../synapse-queries'
@@ -7,12 +6,24 @@ import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '@sage-bionetworks/synapse-types'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
-import { displayToast } from '../ToastMessage/ToastMessage'
+import { displayToast } from '../ToastMessage'
 import { DialogBase } from '../DialogBase'
-import { Button, Link } from '@mui/material'
+import { Box, Button, Link } from '@mui/material'
 import { AddCircleTwoTone } from '@mui/icons-material'
+import { StyledTableContainer } from '../styled/StyledTableContainer'
+import {
+  ColumnDef,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  Table,
+  useReactTable,
+} from '@tanstack/react-table'
+import ColumnHeader from '../styled/ColumnHeader'
+
+const columnHelper = createColumnHelper<OAuthClient>()
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
@@ -27,7 +38,10 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const [isShowingVerification, setIsShowingVerification] = useState(false)
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
-  const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
+  const oAuthClientList = useMemo(
+    () => data?.pages.flatMap(page => page.results) ?? [],
+    [data],
+  )
 
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
@@ -48,83 +62,162 @@ export const OAuthManagement: React.FunctionComponent = () => {
     }
   }
 
+  const columns: ColumnDef<OAuthClient, any>[] = useMemo(
+    () => [
+      columnHelper.accessor('createdOn', {
+        header: props => <ColumnHeader {...props} title={'Created'} />,
+        cell: info => formatDate(dayjs(info.getValue())),
+      }),
+      columnHelper.accessor('modifiedOn', {
+        header: props => <ColumnHeader {...props} title={'Modified'} />,
+        cell: info => formatDate(dayjs(info.getValue())),
+      }),
+      columnHelper.accessor('client_id', {
+        header: props => <ColumnHeader {...props} title={'ID'} />,
+      }),
+      columnHelper.accessor('client_name', {
+        header: props => <ColumnHeader {...props} title={'Client'} />,
+      }),
+      columnHelper.accessor('verified', {
+        header: props => <ColumnHeader {...props} title={'Verified'} />,
+        cell: ({ getValue }) =>
+          getValue() ? (
+            'Yes'
+          ) : (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setIsShowingVerification(true)}
+            >
+              Submit Verification
+            </Button>
+          ),
+      }),
+      {
+        id: 'generateSecret',
+        header: props => <ColumnHeader {...props} title={'App Secret'} />,
+        cell: ({ row }) => (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setSelectedClient(row.original)
+              setIsShowingSecretWarning(true)
+            }}
+            size="small"
+          >
+            Generate Secret
+          </Button>
+        ),
+      },
+      {
+        id: 'actions',
+        header: props => <ColumnHeader {...props} title={'Actions'} />,
+        cell: ({ row }) => (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setSelectedClient(row.original)
+              setIsEdit(true)
+              setIsShowingCreateClientModal(true)
+            }}
+            size="small"
+          >
+            Edit
+          </Button>
+        ),
+      },
+    ],
+    [],
+  )
+
+  const table: Table<OAuthClient> = useReactTable<OAuthClient>({
+    data: oAuthClientList,
+    columns,
+    getRowId: row => row.client_id!,
+    enableRowSelection: true,
+    enableSorting: false,
+    getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: 'onChange',
+  })
+
   return (
-    <div className="bootstrap-4-backport">
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          setIsShowingCreateClientModal(true)
-          setIsEdit(false)
+    <div>
+      <Box display={'flex'} width={'100%'} justifyContent={'flex-end'} mb={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setIsShowingCreateClientModal(true)
+            setIsEdit(false)
+          }}
+          sx={{ float: 'right' }}
+          startIcon={<AddCircleTwoTone />}
+        >
+          Create New Client
+        </Button>
+      </Box>
+      <StyledTableContainer
+        sx={{
+          td: {
+            py: 1,
+          },
         }}
-        sx={{ float: 'right' }}
-        startIcon={<AddCircleTwoTone />}
       >
-        Create New Client
-      </Button>
-      <Table striped>
-        <thead>
-          <tr>
-            <th>Created</th>
-            <th>Modified</th>
-            <th>ID</th>
-            <th>Client</th>
-            <th>Verified</th>
-            <th>App Secret</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {oAuthClientList.map(item => {
-            return (
-              <tr key={item.client_id}>
-                <td>{formatDate(dayjs(item.createdOn))}</td>
-                <td>{formatDate(dayjs(item.modifiedOn))}</td>
-                <td>{item.client_id}</td>
-                <td>{item.client_name}</td>
-                <td>
-                  {item.verified ? (
-                    'Yes'
-                  ) : (
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => setIsShowingVerification(true)}
+        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => {
+              return (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{ width: header.getSize() }}
                     >
-                      Submit Verification
-                    </Button>
-                  )}
-                </td>
-                <td>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setSelectedClient(item)
-                      setIsShowingSecretWarning(true)
-                    }}
-                    size="small"
-                  >
-                    Generate Secret
-                  </Button>
-                </td>
-                <td>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setSelectedClient(item)
-                      setIsEdit(true)
-                      setIsShowingCreateClientModal(true)
-                    }}
-                    size="small"
-                  >
-                    Edit
-                  </Button>
-                </td>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                      {header.column.getCanResize() && (
+                        <div
+                          className={`resizer ${
+                            header.column.getIsResizing() ? 'isResizing' : ''
+                          }`}
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                        />
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              )
+            })}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map(row => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => {
+                  return (
+                    <td
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize(),
+                      }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  )
+                })}
               </tr>
-            )
-          })}
-        </tbody>
-      </Table>
+            ))}
+          </tbody>
+        </table>
+      </StyledTableContainer>
       {hasNextPage && (
         <div className="text-center">
           <Button

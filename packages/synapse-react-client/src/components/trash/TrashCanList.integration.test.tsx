@@ -8,14 +8,11 @@ import {
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
 } from '../../utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
+  EntityType,
   PaginatedResults,
   TrashedEntity,
-  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import mockDatasetData from '../../mocks/entity/mockDataset'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'

@@ -37,20 +37,23 @@ export function EntityHeaderTypeCell(
     </Typography>
   )
 }
-export function CheckBoxHeader(
-  props: HeaderContext<EntityHeaderOrDummy, string | null>,
+export function CheckBoxHeader<TData = never, TValue = never>(
+  props: HeaderContext<TData, TValue>,
 ) {
   const { table } = props
   return (
     <Checkbox
+      inputProps={{
+        'aria-label': 'Select All',
+      }}
       checked={table.getIsAllRowsSelected()}
       indeterminate={table.getIsSomeRowsSelected()}
       onClick={table.getToggleAllRowsSelectedHandler()}
     />
   )
 }
-export function CheckBoxCell(
-  props: CellContext<EntityHeaderOrDummy, string | null>,
+export function CheckBoxCell<TData = never, TValue = never>(
+  props: CellContext<TData, TValue>,
 ) {
   const { row } = props
   return (
