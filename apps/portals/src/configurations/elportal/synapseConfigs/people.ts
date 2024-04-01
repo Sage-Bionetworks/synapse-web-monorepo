@@ -16,7 +16,7 @@ const people: SynapseConfig = {
     },
     facetsToPlot: [
       'institution',
-      'grantNumber',
+      'grant',
       // 'Program',
     ],
     searchConfiguration: defaultSearchConfiguration,
