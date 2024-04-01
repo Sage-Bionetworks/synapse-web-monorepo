@@ -12,7 +12,7 @@ const GenieHomePageHeader = () => {
     <Box
       sx={{
         ...additionalGreenBackgroundProps,
-        background: 'linear-gradient(98deg, #14683D 0%, #46AF3F 100%)',
+        background: 'linear-gradient(98.34deg, #14683D 0%, #46AF3F 100%)',
       }}
     >
       <Box sx={{ color: 'grey.100', padding: '50px 10% 50px 100px' }}>
