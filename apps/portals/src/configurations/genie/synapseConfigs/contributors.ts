@@ -12,7 +12,7 @@ export const contributorCardConfiguration: CardConfiguration = {
     type: SynapseConstants.CONTRIBUTOR,
     title: 'Contributor',
     // description: 'summary',
-    secondaryLabels: ['Contribution', 'Center Abbreviation', 'Location'],
+    secondaryLabels: ['Contribution', 'Center Abbreviation', 'Location', 'Lead(s)'],
   },
 }
 
