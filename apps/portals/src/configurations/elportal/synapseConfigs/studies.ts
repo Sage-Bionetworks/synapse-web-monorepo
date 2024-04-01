@@ -28,8 +28,8 @@ export const studyCardConfiguration: CardConfiguration = {
     {
       isMarkdown: false,
       baseURL: 'Explore/Projects/DetailsPage',
-      URLColumnName: 'grantNumber',
-      matchColumnName: 'grantNumber',
+      URLColumnName: 'grant',
+      matchColumnName: 'grant',
     },
   ],
   genericCardSchema: {
@@ -44,7 +44,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'species',
       'specimenType',
       'program',
-      'grantNumber',
+      'grant',
       'Number_Of_Individuals',
       'Cohort_Type',
       'Study_Status',
@@ -54,7 +54,6 @@ export const studyCardConfiguration: CardConfiguration = {
 const columnAliases = {
   dataTypeAll: 'Data Types',
   Number_of_Individuals: 'Individuals',
-  'Grant Number': 'Grant',
 }
 const studies: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
