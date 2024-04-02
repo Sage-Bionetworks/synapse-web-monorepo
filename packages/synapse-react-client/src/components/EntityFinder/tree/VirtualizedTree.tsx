@@ -553,7 +553,7 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
       // Update the node data -- add the children and store the nextPageToken
       if (node.children) {
         for (const newChild of children.page) {
-          // Prevent adding duplicate entries
+          // SWC-6751 - Prevent adding duplicate entries in case this function is called twice
           if (!node.children.find(child => child.id == newChild.id)) {
             node.children.push(newChild)
           }
