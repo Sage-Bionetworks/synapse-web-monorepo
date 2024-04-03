@@ -4,7 +4,10 @@
 
 'use strict'
 
-import { RuleInline } from 'markdown-it/lib/parser_inline'
+import { type RuleInline } from 'markdown-it/lib/parser_inline'
+import type MarkdownIt from 'markdown-it'
+import { type Token } from 'markdown-it'
+import { type ParseResult } from 'markdown-it/lib/helpers/parse_link_destination'
 
 // same as UNESCAPE_MD_RE plus a space
 const UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g
@@ -33,13 +36,12 @@ let footnoteId: number | undefined
 let footnotes: string | undefined
 let baseURL: string | undefined
 
-function getParamValue(params: string, name: string) {
+function getParamValue(params: string, name: string): string | null {
   const queryStringArray = params.split('?')
   const queryStringParamArray = queryStringArray[1].split('&')
-  let nameValue = null,
-    i,
-    queryStringNameValueArray
-  for (i = 0; i < queryStringParamArray.length; i++) {
+  let nameValue: string | null = null
+  let queryStringNameValueArray: string[]
+  for (let i = 0; i < queryStringParamArray.length; i++) {
     queryStringNameValueArray = queryStringParamArray[i].split('=')
     if (name === queryStringNameValueArray[0]) {
       nameValue = queryStringNameValueArray[1]
@@ -106,13 +108,13 @@ function isInternalLink(src: string) {
 }
 
 const synapse: RuleInline = function (state, silent) {
-  let found,
-    content,
-    token,
-    widgetParams,
-    decodedWidgetParams,
-    footnoteText,
-    widgetContainerClass = 'widgetContainer'
+  let found: boolean = false
+  let content: string
+  let token: Token
+  let widgetParams
+  let decodedWidgetParams
+  let footnoteText
+  let widgetContainerClass = 'widgetContainer'
   const max = state.posMax
   const start = state.pos
 
@@ -259,7 +261,7 @@ const synapse: RuleInline = function (state, silent) {
   return true
 }
 
-module.exports = function synapse_plugin(md, _suffix, _baseURL) {
+function synapse_plugin(md, _suffix, _baseURL) {
   widgetIndex = 0
   navIndex = 0
   footnoteId = 1
@@ -272,16 +274,16 @@ module.exports = function synapse_plugin(md, _suffix, _baseURL) {
   md.inline.ruler.after('emphasis', 'synapse', synapse)
 }
 
-module.exports.footnotes = function () {
+function getFootnotes() {
   return footnotes
 }
 
-module.exports.resetFootnotes = function () {
+function resetFootnotes() {
   footnotes = ''
   footnoteId = 1
 }
 
-module.exports.preprocessMarkdown = function (mdString) {
+function preprocessMarkdown(mdString: string) {
   let md = ''
   const splitMD = mdString.split('\n')
 
@@ -307,8 +309,8 @@ module.exports.preprocessMarkdown = function (mdString) {
   return md
 }
 
-module.exports.init_markdown_it = function (
-  md,
+function init_markdown_it(
+  md: MarkdownIt,
   markdownitSub,
   markdownitSup,
   markdownitCentertext,
@@ -416,17 +418,17 @@ module.exports.init_markdown_it = function (
     })
   }
 
-  function link(state, silent) {
-    let attrs,
-      code,
-      label,
-      pos,
-      res,
-      ref,
-      title,
-      token,
-      href = '',
-      start = state.pos
+  const link: RuleInline = function (state, silent) {
+    let attrs: [string, string][]
+    let code: number
+    let label: string
+    let pos: number
+    let res: ParseResult
+    let ref
+    let title: string
+    let token: Token
+    let href = ''
+    let start = state.pos
 
     const oldPos = state.pos,
       max = state.posMax,
@@ -671,7 +673,6 @@ module.exports.init_markdown_it = function (
       html: true,
       breaks: true,
       linkify: true,
-      maxNesting: 100,
     })
     md.disable(['heading'])
     md.disable(['lheading'])
@@ -779,3 +780,11 @@ module.exports.init_markdown_it = function (
 
   initMarkdownIt()
 }
+
+export {
+  getFootnotes as footnotes,
+  resetFootnotes,
+  preprocessMarkdown,
+  init_markdown_it,
+}
+export default synapse_plugin
