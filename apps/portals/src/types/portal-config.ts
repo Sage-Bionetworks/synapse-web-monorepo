@@ -1,6 +1,8 @@
 import {
   CardContainerLogicProps,
+  ChallengeDataDownloadProps,
   DownloadCartPageProps,
+  EcosystemProps,
   ExternalFileHandleLinkProps,
   FeaturedDataTabsProps,
   GoalsProps,
@@ -19,17 +21,15 @@ import {
   SynapsePlotProps,
   TableFeedCardsProps,
   ThemesPlotProps,
+  TimelinePlotProps,
   UpsetPlotProps,
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
-  ChallengeDataDownloadProps,
-  TimelinePlotProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
-import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
 import { DetailsPageProps } from './portal-util-types'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'

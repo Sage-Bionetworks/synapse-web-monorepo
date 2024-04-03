@@ -1,4 +1,4 @@
-@use '../../../style/variables' as Portal;
+@use '../abstracts/variables' as SRC;
 
 @use 'sass:color';
 
@@ -31,12 +31,12 @@
         padding: 20px;
         &:hover {
           background-color: color.change(
-            Portal.$primary-action-color,
+            SRC.$primary-action-color,
             $alpha: 0.08
           );
         }
         &.isSelected {
-          border-right: 2px solid Portal.$primary-action-color;
+          border-right: 2px solid SRC.$primary-action-color;
         }
         border-right: 2px solid #dcdcdc;
         font-weight: bold;
