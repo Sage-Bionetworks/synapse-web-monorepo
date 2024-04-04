@@ -64,6 +64,52 @@ function setUp() {
   }
 }
 
+async function getTOTPInputs() {
+  let otpInputs: HTMLElement[] = []
+  await waitFor(() => {
+    otpInputs = screen.getAllByRole('textbox')
+    expect(otpInputs).toHaveLength(6)
+  })
+  return otpInputs
+}
+
+async function typeAndSubmitTOTP(
+  currentPasswordField: HTMLElement,
+  newPasswordField: HTMLElement,
+  confirmPasswordField: HTMLElement,
+  newPassword: string,
+  currentPassword: string,
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  const otpInputs: HTMLElement[] = await getTOTPInputs()
+
+  await waitFor(() => {
+    const alert = screen.getByRole('alert')
+    within(alert).getByText(
+      'Two-factor authentication is required to change your password.',
+    )
+
+    expect(mockDisplayToast).not.toHaveBeenCalled()
+    expect(currentPasswordField).not.toBeInTheDocument()
+    expect(newPasswordField).not.toBeInTheDocument()
+    expect(confirmPasswordField).not.toBeInTheDocument()
+
+    expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+    expect(changePasswordSpy).toHaveBeenCalledWith({
+      concreteType:
+        'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+      username: mockUserProfileData.userName,
+      newPassword: newPassword,
+      currentPassword: currentPassword,
+    })
+  })
+
+  // Type the code. Once the code is entered, the form should submit automatically
+  for (let i = 0; i < otpInputs.length; i++) {
+    await user.type(otpInputs[i], String(i + 1))
+  }
+}
+
 describe('ChangePassword tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
@@ -92,7 +138,7 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockDisplayToast).toHaveBeenCalledWith(
@@ -130,7 +176,7 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, confirmPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockDisplayToast).toHaveBeenCalledWith(
@@ -171,7 +217,7 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       const alert = screen.getByRole('alert')
@@ -224,38 +270,17 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     // TOTP form should pop up
-    let otpInputs: HTMLElement[] = []
-    await waitFor(() => {
-      otpInputs = screen.getAllByRole('textbox')
-      expect(otpInputs).toHaveLength(6)
-
-      const alert = screen.getByRole('alert')
-      within(alert).getByText(
-        'Two-factor authentication is required to change your password.',
-      )
-
-      expect(mockDisplayToast).not.toHaveBeenCalled()
-      expect(currentPasswordField).not.toBeInTheDocument()
-      expect(newPasswordField).not.toBeInTheDocument()
-      expect(confirmPasswordField).not.toBeInTheDocument()
-
-      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
-      expect(changePasswordSpy).toHaveBeenCalledWith({
-        concreteType:
-          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
-        username: mockUserProfileData.userName,
-        newPassword: newPassword,
-        currentPassword: currentPassword,
-      })
-    })
-
-    // Type the code. Once the code is entered, the form should submit automatically
-    for (let i = 0; i < otpInputs.length; i++) {
-      await userEvent.type(otpInputs[i], String(i + 1))
-    }
+    await typeAndSubmitTOTP(
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      newPassword,
+      currentPassword,
+      user,
+    )
     await waitFor(() => {
       expect(changePasswordSpy).toHaveBeenCalledTimes(2)
       expect(changePasswordSpy).toHaveBeenLastCalledWith({
@@ -311,13 +336,14 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     const useRecoveryCodeButton = await screen.findByText(
       'Use a backup code instead',
     )
-    await userEvent.click(useRecoveryCodeButton)
+    await user.click(useRecoveryCodeButton)
 
+    // Type the backup code and submit it
     const recoveryCode = '1234-5678-abcd-edcb'
     const recoveryCodeTextbox = await screen.findByPlaceholderText(
       'Enter backup code',
@@ -325,7 +351,6 @@ describe('ChangePassword tests', () => {
     await user.type(recoveryCodeTextbox, recoveryCode)
     await user.click(screen.getByRole('button', { name: 'Submit' }))
 
-    // Type the code. Once the code is entered, the form should submit automatically
     await waitFor(() => {
       expect(changePasswordSpy).toHaveBeenCalledTimes(2)
       expect(changePasswordSpy).toHaveBeenLastCalledWith({
@@ -383,38 +408,18 @@ describe('ChangePassword tests', () => {
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     // TOTP form should pop up
-    let otpInputs: HTMLElement[] = []
-    await waitFor(() => {
-      otpInputs = screen.getAllByRole('textbox')
-      expect(otpInputs).toHaveLength(6)
+    await typeAndSubmitTOTP(
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      newPassword,
+      currentPassword,
+      user,
+    )
 
-      const alert = screen.getByRole('alert')
-      within(alert).getByText(
-        'Two-factor authentication is required to change your password.',
-      )
-
-      expect(mockDisplayToast).not.toHaveBeenCalled()
-      expect(currentPasswordField).not.toBeInTheDocument()
-      expect(newPasswordField).not.toBeInTheDocument()
-      expect(confirmPasswordField).not.toBeInTheDocument()
-
-      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
-      expect(changePasswordSpy).toHaveBeenCalledWith({
-        concreteType:
-          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
-        username: mockUserProfileData.userName,
-        newPassword: newPassword,
-        currentPassword: currentPassword,
-      })
-    })
-
-    // Type the code. Once the code is entered, the form should submit automatically
-    for (let i = 0; i < otpInputs.length; i++) {
-      await userEvent.type(otpInputs[i], String(i + 1))
-    }
     await waitFor(() => {
       // The error should be shown on the screen
       screen.getByText(errorMessage)
@@ -434,7 +439,7 @@ describe('ChangePassword tests', () => {
     })
 
     // The TOTP form should still be shown
-    otpInputs = screen.getAllByRole('textbox')
+    const otpInputs = await getTOTPInputs()
     expect(otpInputs).toHaveLength(6)
   })
 })
