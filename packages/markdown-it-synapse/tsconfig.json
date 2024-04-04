@@ -7,5 +7,5 @@
     "strictNullChecks": false,
     "noImplicitAny": false
   },
-  "files": ["src/index.ts"]
+  "files": ["src/index.ts", "src/index-umd.ts"]
 }
