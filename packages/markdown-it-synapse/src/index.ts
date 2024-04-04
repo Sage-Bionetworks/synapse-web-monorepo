@@ -311,16 +311,16 @@ function preprocessMarkdown(mdString: string) {
 
 function init_markdown_it(
   md: MarkdownIt,
-  markdownitSub,
-  markdownitSup,
-  markdownitCentertext,
-  markdownitSynapseHeading,
-  markdownitSynapseTable,
-  markdownitStrikethroughAlt,
-  markdownitContainer,
-  markdownitEmphasisAlt,
-  markdownitInlineComments,
-  markdownitBr,
+  markdownitSub?: MarkdownIt.PluginSimple,
+  markdownitSup?: MarkdownIt.PluginSimple,
+  markdownitCentertext?: MarkdownIt.PluginSimple,
+  markdownitSynapseHeading?: MarkdownIt.PluginSimple,
+  markdownitSynapseTable?: MarkdownIt.PluginSimple,
+  markdownitStrikethroughAlt?: MarkdownIt.PluginSimple,
+  markdownitContainer?: MarkdownIt.PluginSimple,
+  markdownitEmphasisAlt?: MarkdownIt.PluginSimple,
+  markdownitInlineComments?: MarkdownIt.PluginSimple,
+  markdownitBr?: MarkdownIt.PluginSimple,
 ) {
   function sendLinksToNewWindow() {
     const defaultRender =

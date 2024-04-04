@@ -744,9 +744,12 @@ importers:
       '@types/node':
         specifier: ^18.19.24
         version: 18.19.24
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@18.19.24)
+      '@vitest/coverage-v8':
+        specifier: ^0.34.6
+        version: 0.34.6(vitest@0.34.6)
+      '@vitest/ui':
+        specifier: ^0.34.7
+        version: 0.34.7(vitest@0.34.6)
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -762,6 +765,12 @@ importers:
       typescript:
         specifier: 5.4.2
         version: 5.4.2
+      vite-config:
+        specifier: workspace:*
+        version: link:../vite-config
+      vitest:
+        specifier: ^0.34.6
+        version: 0.34.6(@vitest/ui@0.34.7)(jsdom@21.1.2)(sass@1.71.1)
 
   packages/synapse-react-client:
     dependencies:
