@@ -36,8 +36,8 @@ export async function allowNotFoundError<T>(
  */
 export async function returnIfTwoFactorAuthError<T>(
   fn: () => Promise<T>,
-): Promise<T | TwoFactorAuthErrorResponse | null> {
-  let response: Awaited<T> | null = null
+): Promise<T | TwoFactorAuthErrorResponse> {
+  let response: Awaited<T>
   try {
     response = await fn()
   } catch (e) {

@@ -27,6 +27,8 @@ export default function TOTPForm(props: TOTPFormProps) {
         }}
         gap={'2px'}
         sx={{
+          mx: 'auto',
+          maxWidth: '350px',
           '.MuiInputBase-root': {
             paddingLeft: '5px',
             paddingRight: '5px',
@@ -45,7 +47,6 @@ export default function TOTPForm(props: TOTPFormProps) {
             },
         }}
       />
-
       <Button
         fullWidth
         type="submit"

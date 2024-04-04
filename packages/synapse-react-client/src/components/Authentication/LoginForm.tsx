@@ -1,16 +1,12 @@
 import React from 'react'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseLoginReturn } from '../../utils/hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
-import TOTPForm from './TOTPForm'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
-import RecoveryCodeForm from './RecoveryCodeForm'
+import OneTimePasswordForm from './OneTimePasswordForm'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -62,29 +58,18 @@ export default function LoginForm(props: Props) {
           }}
         />
       )}
-      {step === 'VERIFICATION_CODE' && (
-        <>
-          <TOTPForm
-            isLoading={isLoading}
-            onSubmit={totp => {
-              submitOneTimePassword(totp, 'TOTP')
-            }}
-          />
-          <Link
-            align={'center'}
-            color={'grey.700'}
-            sx={{ display: 'block', mx: 'auto' }}
-            onClick={() => onStepChange('RECOVERY_CODE')}
-          >
-            Use a backup code instead
-          </Link>
-        </>
-      )}
-      {step === 'RECOVERY_CODE' && (
-        <RecoveryCodeForm
+      {(step === 'VERIFICATION_CODE' || step === 'RECOVERY_CODE') && (
+        <OneTimePasswordForm
+          step={step}
           isLoading={isLoading}
-          onSubmit={recoveryCode => {
-            submitOneTimePassword(recoveryCode, 'RECOVERY_CODE')
+          onSubmit={(totp, otpType) => {
+            submitOneTimePassword(totp, otpType)
+          }}
+          onClickUseTOTP={() => {
+            onStepChange('VERIFICATION_CODE')
+          }}
+          onClickUseBackupCode={() => {
+            onStepChange('RECOVERY_CODE')
           }}
         />
       )}

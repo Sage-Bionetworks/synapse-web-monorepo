@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import { UserBundle, UserProfile } from '@sage-bionetworks/synapse-types'
 import {
+  ChangePassword,
   displayToast,
   IconSvg,
   SynapseClient,
@@ -22,7 +23,6 @@ import {
 } from 'synapse-react-client'
 import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { Form } from 'react-bootstrap'
-import { ChangePassword } from './ChangePassword'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
