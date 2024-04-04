@@ -4,11 +4,11 @@ runs:
   using: 'composite'
   steps:
     - name: Use Node.js ${{ matrix.node-version || 18 }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version || 18 }}
         registry-url: https://registry.npmjs.org/
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@v3
       name: Install pnpm
       id: pnpm-install
       with:
@@ -20,7 +20,7 @@ runs:
       run: |
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
     - name: Setup pnpm cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -29,7 +29,7 @@ runs:
     #    TODO: Storing the Nx cache is failing builds because the cache is not meant to be shared between machines.
     #    This check can be disabled, but may present security risks. See: https://nx.dev/recipes/troubleshooting/unknown-local-cache#you-share-cache-with-another-machine-using-a-network-drive
     #    - name: Set up Nx build cache
-    #      uses: actions/cache@v3
+    #      uses: actions/cache@v4
     #      with:
     #        path: .nx/cache
     #        key: ${{ runner.os }}-nx-cache

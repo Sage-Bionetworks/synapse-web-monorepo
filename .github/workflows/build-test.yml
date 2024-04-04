@@ -18,7 +18,7 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -32,7 +32,7 @@ jobs:
     # Job should not last longer than 60 minutes--and the larger runner is billed per-minute ;)
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -41,7 +41,7 @@ jobs:
         run: pnpm nx affected --target test --base=remotes/origin/main
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
@@ -50,7 +50,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -58,7 +58,7 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action

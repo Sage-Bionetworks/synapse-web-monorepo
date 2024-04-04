@@ -34,7 +34,7 @@ jobs:
           ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -56,7 +56,7 @@ jobs:
       - name: Stop portal
         run: pnpm nx run portals:portal:stop
       - name: Upload blob report to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
@@ -69,20 +69,20 @@ jobs:
     needs: [e2e-tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
           path: ${{ env.PORTALS_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
       - name: Merge into HTML Report
         run: cd ${{ env.PORTALS_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
       - name: Upload HTML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: '${{ env.PORTALS_SUBDIR }}/playwright-report'
