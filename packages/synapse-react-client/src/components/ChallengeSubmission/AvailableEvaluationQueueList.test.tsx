@@ -106,7 +106,7 @@ describe('AvailableEvaluationQueueList', () => {
     expect(onChangeSelectedEvaluation).toHaveBeenCalledWith(secondEvaluation)
   })
 
-  it('handles >1 available evaluations that are not selectable', async () => {
+  it('handles >1 available evaluations that are not selectable', () => {
     const { selectInput, staticListHeading } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue, secondEvaluation],
