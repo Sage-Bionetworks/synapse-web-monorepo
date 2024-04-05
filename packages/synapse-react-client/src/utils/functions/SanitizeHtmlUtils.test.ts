@@ -20,7 +20,7 @@ describe('HTML Santization', () => {
     const html = createHTML(sanitized)
     const span = html.querySelector('span')!
     expect(span).not.toBeNull()
-    expect(span.getAttribute('onload')).toBeNull()
+    expect(span.getAttribute('onclick')).toBeNull()
   })
   test('Prevents XSS through href', () => {
     const script = 'javascript:alert(1)'
