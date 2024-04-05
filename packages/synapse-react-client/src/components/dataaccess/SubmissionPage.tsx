@@ -179,7 +179,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         </Typography>
         <br />
         {submission ? (
-          submission.state === 'SUBMITTED' && (
+          submission.state === SubmissionState.SUBMITTED && (
             <div className="ButtonContainer">
               <Button
                 onClick={() => {

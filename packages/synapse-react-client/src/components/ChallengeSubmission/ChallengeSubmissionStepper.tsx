@@ -21,11 +21,11 @@ enum StepsEnum {
   SUBMISSION_SUCCESS = 'SUBMISSION_SUCCESS',
 }
 type StepKey = keyof typeof StepsEnum
-type StepList = {
-  [key in StepKey]: Step
+type StepList<TStepId = string> = {
+  [key in StepKey]: Step<TStepId>
 }
 
-const stepsDocker: StepList = {
+const stepsDocker: StepList<StepsEnum> = {
   SELECT_COMMIT: {
     id: StepsEnum.SELECT_COMMIT,
     title: 'Select Commit for Submission',
@@ -47,7 +47,7 @@ const stepsDocker: StepList = {
   },
 }
 
-const stepsFile: StepList = {
+const stepsFile: StepList<StepsEnum> = {
   SELECT_COMMIT: { id: StepsEnum.SELECT_COMMIT, title: '' },
   SELECT_EVALUATION: {
     id: StepsEnum.SELECT_EVALUATION,
@@ -92,7 +92,7 @@ function ChallengeSubmissionStepper({
     entityType === EntityType.DOCKER_REPO
       ? steps.SELECT_COMMIT
       : steps.SELECT_EVALUATION
-  const [step, setStep] = useState<Step>(initialStep)
+  const [step, setStep] = useState<Step<StepsEnum>>(initialStep)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [selectedCommit, setSelectedCommit] = useState<DockerCommit>()
 

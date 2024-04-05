@@ -14,8 +14,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jest/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:storybook/recommended",
   ],
   parserOptions: {
@@ -44,6 +43,7 @@ module.exports = {
       "warn",
       { allowBoolean: true },
     ],
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/unbound-method": "warn",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/ban-ts-comment": "warn",
@@ -69,7 +69,9 @@ module.exports = {
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }
-    ]
+    ],
+    // Redundant types are occasionally helpful, e.g. to guide in using particular string literals
+    "@typescript-eslint/no-redundant-type-constituents": "warn"
   },
   overrides: [
     {
