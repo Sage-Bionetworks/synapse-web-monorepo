@@ -40,15 +40,11 @@ function setUp(props: AvailableEvaluationQueueListProps) {
   const user = userEvent.setup()
   const component = renderComponent(props)
   const selectInput = screen.queryByLabelText('Selected Evaluation Queue')
-  const showStaticListButton = screen.queryByRole('button', {
-    name: /all available evaluation queues/i,
-  })
   const staticListHeading = screen.queryByText('Available Evaluation Queues:')
   return {
     component,
     user,
     selectInput,
-    showStaticListButton,
     staticListHeading,
   }
 }
@@ -59,22 +55,20 @@ describe('AvailableEvaluationQueueList', () => {
   })
 
   it('handles 0 available evaluations', () => {
-    const { selectInput, showStaticListButton } = setUp(defaultProps)
+    const { selectInput } = setUp(defaultProps)
 
     screen.getByText('No evaluations found')
     expect(selectInput).toBeNull()
-    expect(showStaticListButton).toBeNull()
   })
 
   it('handles 1 available evaluation', () => {
-    const { selectInput, showStaticListButton, staticListHeading } = setUp({
+    const { selectInput, staticListHeading } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue],
     })
 
     screen.getByText(mockEvaluationQueue.name!)
     expect(selectInput).toBeNull()
-    expect(showStaticListButton).toBeNull()
     expect(staticListHeading).toBeNull()
 
     expect(onChangeSelectedEvaluation).toHaveBeenCalledTimes(1)
@@ -82,7 +76,7 @@ describe('AvailableEvaluationQueueList', () => {
   })
 
   it('handles 1 available evaluation that is not selectable', () => {
-    const { selectInput, showStaticListButton, staticListHeading } = setUp({
+    const { selectInput, staticListHeading } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue],
       isSelectable: false,
@@ -90,26 +84,17 @@ describe('AvailableEvaluationQueueList', () => {
 
     screen.getByText(mockEvaluationQueue.name!)
     expect(staticListHeading).toBeNull()
-    expect(showStaticListButton).toBeNull()
     expect(selectInput).toBeNull()
     expect(onChangeSelectedEvaluation).not.toHaveBeenCalled()
   })
 
   it('handles >1 available evaluations', async () => {
-    const { selectInput, showStaticListButton, staticListHeading, user } =
-      setUp({
-        ...defaultProps,
-        evaluations: [mockEvaluationQueue, secondEvaluation],
-      })
+    const { selectInput, staticListHeading, user } = setUp({
+      ...defaultProps,
+      evaluations: [mockEvaluationQueue, secondEvaluation],
+    })
 
     expect(selectInput).not.toBeNull()
-    expect(showStaticListButton).not.toBeNull()
-    expect(showStaticListButton?.textContent).toContain('Show')
-    expect(staticListHeading).not.toBeVisible()
-
-    await user.click(showStaticListButton!)
-
-    expect(showStaticListButton?.textContent).toContain('Hide')
     expect(staticListHeading).toBeVisible()
     expect(screen.getByText(mockEvaluationQueue.name!)).toBeVisible()
     expect(screen.getByText(secondEvaluation.name)).toBeVisible()
@@ -122,18 +107,13 @@ describe('AvailableEvaluationQueueList', () => {
   })
 
   it('handles >1 available evaluations that are not selectable', async () => {
-    const { selectInput, staticListHeading, showStaticListButton, user } =
-      setUp({
-        ...defaultProps,
-        evaluations: [mockEvaluationQueue, secondEvaluation],
-        isSelectable: false,
-      })
+    const { selectInput, staticListHeading } = setUp({
+      ...defaultProps,
+      evaluations: [mockEvaluationQueue, secondEvaluation],
+      isSelectable: false,
+    })
 
     expect(selectInput).toBeNull()
-    expect(showStaticListButton).not.toBeNull()
-    expect(staticListHeading).not.toBeVisible()
-
-    await user.click(showStaticListButton!)
 
     expect(staticListHeading).toBeVisible()
     expect(screen.getByText(mockEvaluationQueue.name!)).toBeVisible()

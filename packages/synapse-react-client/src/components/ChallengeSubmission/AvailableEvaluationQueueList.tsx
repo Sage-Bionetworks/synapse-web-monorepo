@@ -2,8 +2,6 @@ import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Autocomplete,
   Box,
-  Button,
-  Collapse,
   List,
   ListItem,
   MenuItem,
@@ -57,32 +55,22 @@ function AvailableEvaluationQueueStaticList(
   props: AvailableEvaluationQueueStaticListProps,
 ) {
   const { evaluations } = props
-  const [showList, setShowList] = useState<boolean>(false)
 
   return (
     <Box mt={2}>
-      <Button
-        variant="contained"
-        sx={{ mb: 1 }}
-        onClick={() => setShowList(!showList)}
-      >
-        {`${showList ? 'Hide' : 'Show'} All Available Evaluation Queues`}
-      </Button>
-      <Collapse in={showList}>
-        <Typography variant="body1">Available Evaluation Queues:</Typography>
-        <List dense={true}>
-          {evaluations.map(evaluation => {
-            return (
-              <ListItem key={evaluation.id}>
-                <TextWithHelpIcon
-                  text={evaluation.name!}
-                  tooltipMarkdownText={evaluation.submissionInstructionsMessage}
-                />
-              </ListItem>
-            )
-          })}
-        </List>
-      </Collapse>
+      <Typography variant="body1">Available Evaluation Queues:</Typography>
+      <List dense={true}>
+        {evaluations.map(evaluation => {
+          return (
+            <ListItem key={evaluation.id}>
+              <TextWithHelpIcon
+                text={evaluation.name!}
+                tooltipMarkdownText={evaluation.submissionInstructionsMessage}
+              />
+            </ListItem>
+          )
+        })}
+      </List>
     </Box>
   )
 }
