@@ -126,41 +126,32 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
 export function convertToEntityType(
   typeString: string | ENTITY_CONCRETE_TYPE | EntityType,
 ): EntityType {
+  if (Object.values(EntityType).includes(typeString as EntityType)) {
+    return typeString as EntityType
+  }
   switch (typeString) {
-    case EntityType.PROJECT:
     case 'org.sagebionetworks.repo.model.Project':
       return EntityType.PROJECT
-    case EntityType.FOLDER:
     case 'org.sagebionetworks.repo.model.Folder':
       return EntityType.FOLDER
-    case EntityType.FILE:
     case FILE_ENTITY_CONCRETE_TYPE_VALUE:
       return EntityType.FILE
-    case EntityType.LINK:
     case 'org.sagebionetworks.repo.model.Link':
       return EntityType.LINK
-    case EntityType.DOCKER_REPO:
     case 'org.sagebionetworks.repo.model.docker.DockerRepository':
       return EntityType.DOCKER_REPO
-    case EntityType.TABLE:
     case TABLE_ENTITY_CONCRETE_TYPE_VALUE:
       return EntityType.TABLE
-    case EntityType.SUBMISSION_VIEW:
     case 'org.sagebionetworks.repo.model.table.SubmissionView':
       return EntityType.SUBMISSION_VIEW
-    case EntityType.ENTITY_VIEW:
     case ENTITY_VIEW_CONCRETE_TYPE_VALUE:
       return EntityType.ENTITY_VIEW
-    case EntityType.DATASET:
     case DATASET_CONCRETE_TYPE_VALUE:
       return EntityType.DATASET
-    case EntityType.DATASET_COLLECTION:
     case DATASET_COLLECTION_CONCRETE_TYPE_VALUE:
       return EntityType.DATASET_COLLECTION
-    case EntityType.MATERIALIZED_VIEW:
     case MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE:
       return EntityType.MATERIALIZED_VIEW
-    case EntityType.VIRTUAL_TABLE:
     case VIRTUAL_TABLE_CONCRETE_TYPE_VALUE:
       return EntityType.VIRTUAL_TABLE
     default:

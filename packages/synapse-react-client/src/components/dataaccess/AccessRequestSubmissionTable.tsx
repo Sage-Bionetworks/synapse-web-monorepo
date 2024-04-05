@@ -95,10 +95,10 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
               <SortIcon
                 role="button"
                 style={{ float: 'right' }}
-                active={sort.field === 'CREATED_ON'}
+                active={sort.field === SubmissionSortField.CREATED_ON}
                 aria-label="Sort by Created On"
                 direction={
-                  sort.field === 'CREATED_ON'
+                  sort.field === SubmissionSortField.CREATED_ON
                     ? sort.direction === 'DESC'
                       ? 'DESC'
                       : 'ASC'
