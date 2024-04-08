@@ -13,6 +13,11 @@ const secondEvaluation = {
   id: '12345',
   name: 'another evaluation queue',
 }
+const eightEvaluationQueues: any[] = Array.from({ length: 8 }, (_, index) => ({
+  ...mockEvaluationQueue,
+  id: `${index + 1}`,
+  name: `Evaluation Queue ${index + 1}`,
+}))
 
 async function chooseAutocompleteOption(
   el: HTMLElement,
@@ -40,11 +45,15 @@ function setUp(props: AvailableEvaluationQueueListProps) {
   const user = userEvent.setup()
   const component = renderComponent(props)
   const selectInput = screen.queryByLabelText('Selected Evaluation Queue')
+  const showStaticListButton = screen.queryByRole('button', {
+    name: /all available evaluation queues/i,
+  })
   const staticListHeading = screen.queryByText('Available Evaluation Queues:')
   return {
     component,
     user,
     selectInput,
+    showStaticListButton,
     staticListHeading,
   }
 }
@@ -89,12 +98,20 @@ describe('AvailableEvaluationQueueList', () => {
   })
 
   it('handles >1 available evaluations', async () => {
-    const { selectInput, staticListHeading, user } = setUp({
-      ...defaultProps,
-      evaluations: [mockEvaluationQueue, secondEvaluation],
-    })
+    const { selectInput, staticListHeading, showStaticListButton, user } =
+      setUp({
+        ...defaultProps,
+        evaluations: [mockEvaluationQueue, secondEvaluation],
+      })
 
     expect(selectInput).not.toBeNull()
+    expect(staticListHeading).not.toBeNull()
+    expect(showStaticListButton?.textContent).toContain('Show')
+    expect(staticListHeading).not.toBeVisible()
+
+    await user.click(showStaticListButton!)
+
+    expect(showStaticListButton?.textContent).toContain('Hide')
     expect(staticListHeading).toBeVisible()
     expect(screen.getByText(mockEvaluationQueue.name!)).toBeVisible()
     expect(screen.getByText(secondEvaluation.name)).toBeVisible()
@@ -114,10 +131,66 @@ describe('AvailableEvaluationQueueList', () => {
     })
 
     expect(selectInput).toBeNull()
-
     expect(staticListHeading).toBeVisible()
     expect(screen.getByText(mockEvaluationQueue.name!)).toBeVisible()
     expect(screen.getByText(secondEvaluation.name)).toBeVisible()
+
+    expect(onChangeSelectedEvaluation).not.toHaveBeenCalled()
+  })
+
+  it('handles >7 available evaluations', async () => {
+    const { selectInput, showStaticListButton, staticListHeading, user } =
+      setUp({
+        ...defaultProps,
+        evaluations: eightEvaluationQueues,
+      })
+
+    expect(selectInput).not.toBeNull()
+    expect(showStaticListButton).not.toBeNull()
+    expect(showStaticListButton?.textContent).toContain('Show')
+    expect(staticListHeading).not.toBeVisible()
+
+    await user.click(showStaticListButton!)
+
+    expect(showStaticListButton?.textContent).toContain('Hide')
+    expect(staticListHeading).toBeVisible()
+    eightEvaluationQueues.forEach((queue, index) => {
+      expect(screen.getByText(queue.name)).toBeVisible()
+    })
+
+    await chooseAutocompleteOption(
+      selectInput!,
+      eightEvaluationQueues[1].name,
+      user,
+    )
+
+    expect(selectInput).toHaveValue(eightEvaluationQueues[1].name)
+    expect(onChangeSelectedEvaluation).toHaveBeenCalledTimes(1)
+    expect(onChangeSelectedEvaluation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: eightEvaluationQueues[1].name,
+      }),
+    )
+  })
+
+  it('handles >7 available evaluations that are not selectable', async () => {
+    const { selectInput, showStaticListButton, staticListHeading, user } =
+      setUp({
+        ...defaultProps,
+        evaluations: eightEvaluationQueues,
+        isSelectable: false,
+      })
+
+    expect(selectInput).toBeNull()
+    expect(showStaticListButton).not.toBeNull()
+    expect(staticListHeading).not.toBeVisible()
+
+    await user.click(showStaticListButton!)
+
+    expect(staticListHeading).toBeVisible()
+    eightEvaluationQueues.forEach((queue, index) => {
+      expect(screen.getByText(queue.name)).toBeVisible()
+    })
 
     expect(onChangeSelectedEvaluation).not.toHaveBeenCalled()
   })

@@ -2,6 +2,8 @@ import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Autocomplete,
   Box,
+  Button,
+  Collapse,
   List,
   ListItem,
   MenuItem,
@@ -50,27 +52,59 @@ type AvailableEvaluationQueueStaticListProps = Pick<
   AvailableEvaluationQueueListProps,
   'evaluations'
 >
-
 function AvailableEvaluationQueueStaticList(
   props: AvailableEvaluationQueueStaticListProps,
 ) {
   const { evaluations } = props
+  return (
+    <>
+      <Typography variant="body1">Available Evaluation Queues:</Typography>
+      <List dense={true}>
+        {evaluations.map(evaluation => (
+          <ListItem key={evaluation.id}>
+            <TextWithHelpIcon
+              text={evaluation.name!}
+              tooltipMarkdownText={evaluation.submissionInstructionsMessage}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </>
+  )
+}
+
+type AvailableEvaluationQueueCollapsableListProps = Pick<
+  AvailableEvaluationQueueListProps,
+  'evaluations' | 'isSelectable'
+>
+
+function AvailableEvaluationQueueCollapsableList(
+  props: AvailableEvaluationQueueCollapsableListProps,
+) {
+  const { evaluations, isSelectable } = props
+  const [showList, setShowList] = useState<boolean>(false)
+  const collapseBound = isSelectable ? 2 : 8
 
   return (
     <Box mt={2}>
-      <Typography variant="body1">Available Evaluation Queues:</Typography>
-      <List dense={true}>
-        {evaluations.map(evaluation => {
-          return (
-            <ListItem key={evaluation.id}>
-              <TextWithHelpIcon
-                text={evaluation.name!}
-                tooltipMarkdownText={evaluation.submissionInstructionsMessage}
-              />
-            </ListItem>
-          )
-        })}
-      </List>
+      {evaluations.length >= (collapseBound as number) ? (
+        <>
+          <Button
+            variant="contained"
+            sx={{ mb: 1 }}
+            onClick={() => setShowList(!showList)}
+          >
+            {`${showList ? 'Hide' : 'Show'} All Available Evaluation Queues`}
+          </Button>
+          <Collapse in={showList}>
+            <AvailableEvaluationQueueStaticList {...props} />
+          </Collapse>
+        </>
+      ) : (
+        <>
+          <AvailableEvaluationQueueStaticList {...props} />
+        </>
+      )}
     </Box>
   )
 }
@@ -160,7 +194,7 @@ function AvailableEvaluationQueueList(
       className="AvailableEvaluationQueueList"
     >
       {isSelectable && <AvailableEvaluationQueueAutocompleteList {...props} />}
-      <AvailableEvaluationQueueStaticList {...props} />
+      <AvailableEvaluationQueueCollapsableList {...props} />
     </Box>
   )
 }
