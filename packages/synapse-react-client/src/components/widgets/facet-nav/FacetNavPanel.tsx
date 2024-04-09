@@ -386,6 +386,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
+              alignItems: 'center',
             }}
             role="graphics-object"
             className="FacetNavPanel__body"

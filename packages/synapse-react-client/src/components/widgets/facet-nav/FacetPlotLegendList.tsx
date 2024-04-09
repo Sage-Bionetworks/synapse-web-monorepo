@@ -50,11 +50,15 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
+                  fontSize: '14px',
                 }}
               >
                 {facetValue.label}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+              <Typography
+                variant="body2"
+                sx={{ color: 'grey.600', fontSize: '14px' }}
+              >
                 {facetValue.count}
               </Typography>
             </Box>
