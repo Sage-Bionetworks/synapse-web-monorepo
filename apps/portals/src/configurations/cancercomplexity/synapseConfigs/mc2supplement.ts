@@ -16,6 +16,10 @@ export const mc2SupplementTable: SynapseConfig = {
         matchColumnName: 'fuse_mask',
         isEntityImage: true,
       },
+      {
+        matchColumnName: 'thumb',
+        isEntityImage: true,
+      },
     ],
   },
 }
