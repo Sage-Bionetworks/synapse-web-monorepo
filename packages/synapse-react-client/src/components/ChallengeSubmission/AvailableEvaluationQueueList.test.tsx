@@ -64,14 +64,15 @@ describe('AvailableEvaluationQueueList', () => {
   })
 
   it('handles 0 available evaluations', () => {
-    const { selectInput } = setUp(defaultProps)
+    const { selectInput, showStaticListButton } = setUp(defaultProps)
 
     screen.getByText('No evaluations found')
     expect(selectInput).toBeNull()
+    expect(showStaticListButton).toBeNull()
   })
 
   it('handles 1 available evaluation', () => {
-    const { selectInput, staticListHeading } = setUp({
+    const { selectInput, staticListHeading, showStaticListButton } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue],
     })
@@ -79,13 +80,14 @@ describe('AvailableEvaluationQueueList', () => {
     screen.getByText(mockEvaluationQueue.name!)
     expect(selectInput).toBeNull()
     expect(staticListHeading).toBeNull()
+    expect(showStaticListButton).toBeNull()
 
     expect(onChangeSelectedEvaluation).toHaveBeenCalledTimes(1)
     expect(onChangeSelectedEvaluation).toHaveBeenCalledWith(mockEvaluationQueue)
   })
 
   it('handles 1 available evaluation that is not selectable', () => {
-    const { selectInput, staticListHeading } = setUp({
+    const { selectInput, staticListHeading, showStaticListButton } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue],
       isSelectable: false,
@@ -93,11 +95,12 @@ describe('AvailableEvaluationQueueList', () => {
 
     screen.getByText(mockEvaluationQueue.name!)
     expect(staticListHeading).toBeNull()
+    expect(showStaticListButton).toBeNull()
     expect(selectInput).toBeNull()
     expect(onChangeSelectedEvaluation).not.toHaveBeenCalled()
   })
 
-  it('handles >1 available evaluations', async () => {
+  it('displays collapsed list for <8 selectable available evaluations', async () => {
     const { selectInput, staticListHeading, showStaticListButton, user } =
       setUp({
         ...defaultProps,
@@ -106,6 +109,7 @@ describe('AvailableEvaluationQueueList', () => {
 
     expect(selectInput).not.toBeNull()
     expect(staticListHeading).not.toBeNull()
+    expect(showStaticListButton).not.toBeNull()
     expect(showStaticListButton?.textContent).toContain('Show')
     expect(staticListHeading).not.toBeVisible()
 
@@ -123,8 +127,8 @@ describe('AvailableEvaluationQueueList', () => {
     expect(onChangeSelectedEvaluation).toHaveBeenCalledWith(secondEvaluation)
   })
 
-  it('handles >1 available evaluations that are not selectable', () => {
-    const { selectInput, staticListHeading } = setUp({
+  it('displays static list for <8 available evaluations that are not selectable', () => {
+    const { selectInput, staticListHeading, showStaticListButton } = setUp({
       ...defaultProps,
       evaluations: [mockEvaluationQueue, secondEvaluation],
       isSelectable: false,
@@ -132,13 +136,14 @@ describe('AvailableEvaluationQueueList', () => {
 
     expect(selectInput).toBeNull()
     expect(staticListHeading).toBeVisible()
+    expect(showStaticListButton).toBeNull()
     expect(screen.getByText(mockEvaluationQueue.name!)).toBeVisible()
     expect(screen.getByText(secondEvaluation.name)).toBeVisible()
 
     expect(onChangeSelectedEvaluation).not.toHaveBeenCalled()
   })
 
-  it('handles >7 available evaluations', async () => {
+  it('displays collapsed list for >8 selectable available evaluations', async () => {
     const { selectInput, showStaticListButton, staticListHeading, user } =
       setUp({
         ...defaultProps,
@@ -173,7 +178,7 @@ describe('AvailableEvaluationQueueList', () => {
     )
   })
 
-  it('handles >7 available evaluations that are not selectable', async () => {
+  it('displays collapsed list for >8 available evaluations that are not selectable', async () => {
     const { selectInput, showStaticListButton, staticListHeading, user } =
       setUp({
         ...defaultProps,
@@ -183,10 +188,12 @@ describe('AvailableEvaluationQueueList', () => {
 
     expect(selectInput).toBeNull()
     expect(showStaticListButton).not.toBeNull()
+    expect(showStaticListButton?.textContent).toContain('Show')
     expect(staticListHeading).not.toBeVisible()
 
     await user.click(showStaticListButton!)
 
+    expect(showStaticListButton?.textContent).toContain('Hide')
     expect(staticListHeading).toBeVisible()
     eightEvaluationQueues.forEach((queue, index) => {
       expect(screen.getByText(queue.name)).toBeVisible()

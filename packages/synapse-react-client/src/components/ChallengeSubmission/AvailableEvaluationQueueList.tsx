@@ -83,11 +83,12 @@ function AvailableEvaluationQueueCollapsableList(
 ) {
   const { evaluations, isSelectable } = props
   const [showList, setShowList] = useState<boolean>(false)
-  const collapseBound = isSelectable ? 2 : 8
+  const nEvaluationsCollapseLimit = isSelectable ? 2 : 8
+  const shouldCollapse = evaluations.length >= nEvaluationsCollapseLimit
 
   return (
     <Box mt={2}>
-      {evaluations.length >= (collapseBound as number) ? (
+      {shouldCollapse ? (
         <>
           <Button
             variant="contained"
