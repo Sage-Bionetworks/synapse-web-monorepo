@@ -118,16 +118,6 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
 export default function SubmissionPage(props: SubmissionPageProps) {
   const { submissionId } = props
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
-  const [rejectionDialogKey, setRejectionDialogKey] = useState(
-    `${submissionId}-0`,
-  )
-
-  const onCloseRejectionDialog = () => {
-    const [submissionId, currentNumber] = rejectionDialogKey.split('-')
-    const newNumber = parseInt(currentNumber) + 1
-    setRejectionDialogKey(`${submissionId}-${newNumber}`)
-    setShowRejectionDialog(false)
-  }
 
   const handleError = useErrorHandler()
   const { data: submission, refetch } = useGetDataAccessSubmission(
@@ -175,13 +165,15 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           refetch()
         }}
       />
-      <RejectDataAccessRequestModal
-        // Use the rejectionDialogKey as a key so that the modal form is reset each time its opened
-        key={rejectionDialogKey}
-        submissionId={submissionId}
-        open={showRejectionDialog}
-        onClose={() => onCloseRejectionDialog()}
-      />
+      {showRejectionDialog && (
+        <RejectDataAccessRequestModal
+          // Previously, we used a 'key' prop to reset the modal form when it was opened,
+          // but removing the key and re-rendering the JSX achieves the same functionality in a more straightforward way.
+          submissionId={submissionId}
+          open={showRejectionDialog}
+          onClose={() => setShowRejectionDialog(false)}
+        />
+      )}
       <div className="SubmissionSummary">
         <Typography variant="dataFieldKey">Status</Typography>
         <Typography variant="headline3">
