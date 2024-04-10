@@ -118,6 +118,16 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
 export default function SubmissionPage(props: SubmissionPageProps) {
   const { submissionId } = props
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
+  const [rejectionDialogKey, setRejectionDialogKey] = useState(
+    `${submissionId}-0`,
+  )
+
+  const onCloseRejectionDialog = () => {
+    const [submissionId, currentNumber] = rejectionDialogKey.split('-')
+    const newNumber = parseInt(currentNumber) + 1
+    setRejectionDialogKey(`${submissionId}-${newNumber}`)
+    setShowRejectionDialog(false)
+  }
 
   const handleError = useErrorHandler()
   const { data: submission, refetch } = useGetDataAccessSubmission(
@@ -166,11 +176,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         }}
       />
       <RejectDataAccessRequestModal
-        // Use the submission ID as a key so that the modal form is reset for a new submission
-        key={submissionId}
+        // Use the rejectionDialogKey as a key so that the modal form is reset each time its opened
+        key={rejectionDialogKey}
         submissionId={submissionId}
         open={showRejectionDialog}
-        onClose={() => setShowRejectionDialog(false)}
+        onClose={() => onCloseRejectionDialog()}
       />
       <div className="SubmissionSummary">
         <Typography variant="dataFieldKey">Status</Typography>
