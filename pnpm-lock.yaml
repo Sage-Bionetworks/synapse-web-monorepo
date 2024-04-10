@@ -93,6 +93,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.2.0)
+      katex:
+        specifier: ^0.16.10
+        version: 0.16.10
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -184,48 +187,6 @@ importers:
       jsdom:
         specifier: ^21.1.2
         version: 21.1.2
-      katex:
-        specifier: ^0.10.2
-        version: 0.10.2
-      markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
-      markdown-it-br:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-center-text:
-        specifier: ^1.0.4
-        version: 1.0.4
-      markdown-it-container:
-        specifier: ^2.0.0
-        version: 2.0.0
-      markdown-it-emphasis-alt:
-        specifier: ^1.0.8
-        version: 1.0.8
-      markdown-it-inline-comments:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-strikethrough-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sub-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sup-alt:
-        specifier: ^1.0.2
-        version: 1.0.2
-      markdown-it-synapse:
-        specifier: workspace:^
-        version: link:../../packages/markdown-it-synapse
-      markdown-it-synapse-heading:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-synapse-math:
-        specifier: ^3.0.5
-        version: 3.0.5
-      markdown-it-synapse-table:
-        specifier: ^1.0.6
-        version: 1.0.6
       memfs:
         specifier: ^3.5.3
         version: 3.5.3
@@ -417,47 +378,8 @@ importers:
         specifier: ^21.1.2
         version: 21.1.2
       katex:
-        specifier: ^0.10.2
-        version: 0.10.2
-      markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
-      markdown-it-br:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-center-text:
-        specifier: ^1.0.4
-        version: 1.0.4
-      markdown-it-container:
-        specifier: ^2.0.0
-        version: 2.0.0
-      markdown-it-emphasis-alt:
-        specifier: ^1.0.8
-        version: 1.0.8
-      markdown-it-inline-comments:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-strikethrough-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sub-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sup-alt:
-        specifier: ^1.0.2
-        version: 1.0.2
-      markdown-it-synapse:
-        specifier: workspace:^
-        version: link:../../packages/markdown-it-synapse
-      markdown-it-synapse-heading:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-synapse-math:
-        specifier: ^3.0.5
-        version: 3.0.5
-      markdown-it-synapse-table:
-        specifier: ^1.0.6
-        version: 1.0.6
+        specifier: ^0.16.10
+        version: 0.16.10
       memfs:
         specifier: ^3.5.3
         version: 3.5.3
@@ -633,51 +555,9 @@ importers:
       jsdom:
         specifier: ^21.1.2
         version: 21.1.2
-      katex:
-        specifier: ^0.10.2
-        version: 0.10.2
       lint-staged:
         specifier: ^13.3.0
         version: 13.3.0
-      markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
-      markdown-it-br:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-center-text:
-        specifier: ^1.0.4
-        version: 1.0.4
-      markdown-it-container:
-        specifier: ^2.0.0
-        version: 2.0.0
-      markdown-it-emphasis-alt:
-        specifier: ^1.0.8
-        version: 1.0.8
-      markdown-it-inline-comments:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-strikethrough-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sub-alt:
-        specifier: ^1.0.0
-        version: 1.0.0
-      markdown-it-sup-alt:
-        specifier: ^1.0.2
-        version: 1.0.2
-      markdown-it-synapse:
-        specifier: workspace:^
-        version: link:../../packages/markdown-it-synapse
-      markdown-it-synapse-heading:
-        specifier: ^1.0.1
-        version: 1.0.1
-      markdown-it-synapse-math:
-        specifier: ^3.0.5
-        version: 3.0.5
-      markdown-it-synapse-table:
-        specifier: ^1.0.6
-        version: 1.0.6
       memfs:
         specifier: ^3.5.3
         version: 3.5.3
@@ -880,8 +760,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       katex:
-        specifier: 0.11.1
-        version: 0.11.1
+        specifier: ^0.16.10
+        version: 0.16.10
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -913,7 +793,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
       markdown-it-synapse:
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
@@ -7892,6 +7772,7 @@ packages:
     requiresBuild: true
     dependencies:
       minimist: 1.2.8
+    dev: false
     optional: true
 
   /asn1.js@4.10.1:
@@ -8771,6 +8652,10 @@ packages:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
     dev: true
+
+  /commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
 
   /common-path-prefix@3.0.0:
     resolution: {integrity: sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==}
@@ -12778,19 +12663,11 @@ packages:
       object.values: 1.1.7
     dev: true
 
-  /katex@0.10.2:
-    resolution: {integrity: sha512-cQOmyIRoMloCoSIOZ1+gEwsksdJZ1EW4SWm3QzxSza/QsnZr6D4U1V9S4q+B/OLm2OQ8TCBecQ8MaIfnScI7cw==}
+  /katex@0.16.10:
+    resolution: {integrity: sha512-ZiqaC04tp2O5utMsl2TEZTXxa6WSC4yo0fv5ML++D3QZv/vx2Mct0mTlRx3O+uUkjfuAgOkzsCmq5MiUEsDDdA==}
     hasBin: true
     dependencies:
-      commander: 2.20.3
-    dev: true
-
-  /katex@0.11.1:
-    resolution: {integrity: sha512-5oANDICCTX0NqYIyAiFCCwjQ7ERu3DQG2JFHLbYOf+fXaMoH8eg/zOq5WSYJsKMi/QebW+Eh3gSM+oss1H/bww==}
-    hasBin: true
-    dependencies:
-      commander: 2.20.3
-    dev: false
+      commander: 8.3.0
 
   /kdbush@3.0.0:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
@@ -13134,43 +13011,55 @@ packages:
 
   /markdown-it-br@1.0.0:
     resolution: {integrity: sha512-3YxWD5IsHs2d2aiNawnvLBITLZFj1vIT07aAjJmLywx3j3y6tNgq/eFv94JGiAT+c8tIyILfr73eOdTKufDZIA==}
+    dev: false
 
   /markdown-it-center-text@1.0.4:
     resolution: {integrity: sha512-7AA0gek4FYJ6gWB2kdGNx06k3GrlO97nEMY7uovQ70/6MtfqPznrgnKoWO3V4p36m3RT5GeQIFXqBH9Wr4iL/g==}
+    dev: false
 
   /markdown-it-container@2.0.0:
     resolution: {integrity: sha512-IxPOaq2LzrGuFGyYq80zaorXReh2ZHGFOB1/Hen429EJL1XkPI3FJTpx9TsJeua+j2qTru4h3W1TiCRdeivMmA==}
+    dev: false
 
   /markdown-it-emphasis-alt@1.0.8:
     resolution: {integrity: sha512-5oGI4i8YM3S7Nyn0u7n2I6XJaZIbjFmYrvhwo7En2yFXZW8UzBAJG/vkSJ985GRymuW0tgQgqcIdwPjuH74kzQ==}
+    dev: false
 
   /markdown-it-inline-comments@1.0.1:
     resolution: {integrity: sha512-gObNM3NumcpsU66pO2LmV8MGBfdfFp7TcYME9iuUGs82+JYJWMmBQtAj6/qho4OhKqpR0UX2JTkuuA2HPgHUtQ==}
+    dev: false
 
   /markdown-it-strikethrough-alt@1.0.0:
     resolution: {integrity: sha512-pYVJNwcSm1DEuug0AG4wTQWuJtTN3MvbSp6r/7HbO3ApI96tfpHDIiD3KytlgBjUR7IRcgAX6GJl9nLRbX34uA==}
+    dev: false
 
   /markdown-it-sub-alt@1.0.0:
     resolution: {integrity: sha512-6tLB30PYnZkjj2a7VcBWrdkRkelMrmjzKzzhqV4LZTk18YOBm3JM/TzyL8yDJ8U6DpCESJNfflj3dCC7Df3wcA==}
+    dev: false
 
   /markdown-it-sup-alt@1.0.2:
     resolution: {integrity: sha512-V5dctQ41v0m4E5dxiVuQoec287ANqtmTGxUdYizvXI4LJbkEdKIBnEEs5gcOPBh9AHxPutGet+9doKJa7QTGLw==}
     dependencies:
       markdown-it-sup: 1.0.0
+    dev: false
 
   /markdown-it-sup@1.0.0:
     resolution: {integrity: sha512-E32m0nV9iyhRR7CrhnzL5msqic7rL1juWre6TQNxsnApg7Uf+F97JOKxUijg5YwXz86lZ0mqfOnutoryyNdntQ==}
+    dev: false
 
   /markdown-it-synapse-heading@1.0.1:
     resolution: {integrity: sha512-NubkbK9N4CC2O0CjcMLUjXi3IUTYMTjVahWSR5M2IuhikZfbETyoXCQwgJeUqy9t0M0ZlwaD8s0Sp9VXAzYoEQ==}
+    dev: false
 
   /markdown-it-synapse-math@3.0.5:
     resolution: {integrity: sha512-jbmJRx0fKYjhZoja2RGVQDpXB+qckUp5TucWFZIxtsLbOi/Cw62ocS3BaSsfmikhj0U51zpIp8F/HKmaxwiTDg==}
     optionalDependencies:
       ascii2mathml: 0.6.2
+    dev: false
 
   /markdown-it-synapse-table@1.0.6:
     resolution: {integrity: sha512-znhzQZhMxZ8sSQ9IBfdVv4ufW54i+P8M//rHEswcgg7SI3J0AN1s2T7T0KqYGG+9rHf/ORsdcUZst9hMiBC9xA==}
+    dev: false
 
   /markdown-it-testgen@0.1.6:
     resolution: {integrity: sha512-hYC71G4Mcv3Y7fLTsi4PyoHKSs0P4UgkpzmGBtUYoR/TS83lFbfXUMaI71OiMJ9r4p3fbMhHBwdNTLhSDwmt6Q==}

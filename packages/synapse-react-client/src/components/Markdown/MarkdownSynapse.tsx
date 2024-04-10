@@ -1,6 +1,5 @@
 import React from 'react'
 import MarkdownIt from 'markdown-it'
-import markdownit from 'markdown-it'
 import xss from 'xss'
 import SynapseClient from '../../synapse-client'
 import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
@@ -43,7 +42,7 @@ export type MarkdownSynapseProps = {
   loadingSkeletonRowCount?: number
   onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
 }
-const md = markdownit({ html: true })
+const md = MarkdownIt({ html: true })
 
 type MarkdownSynapseState = {
   md: MarkdownIt
@@ -93,7 +92,7 @@ class MarkdownSynapse extends React.Component<
       markdownitMath,
       mathSuffix,
     )
-    const data: any = {}
+    const data: { markdown?: string } = {}
     if (this.props.markdown) {
       data.markdown = this.props.markdown
     }

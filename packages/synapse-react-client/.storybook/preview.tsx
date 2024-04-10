@@ -27,6 +27,7 @@ import {
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
+import 'katex/dist/katex.css'
 
 faker.seed(12345)
 

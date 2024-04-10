@@ -10,7 +10,7 @@ export default defineConfig([
   },
   {
     ...sharedConfig,
-    entry: { index: './src/index-umd.ts' },
+    entry: { index: './src/index-umd.cts' },
     format: ['iife'],
     globalName: 'markdownitSynapse',
   },
