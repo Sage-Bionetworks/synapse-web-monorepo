@@ -6,12 +6,7 @@ export default defineConfig([
   {
     ...sharedConfig,
     entry: { index: './src/index.ts' },
-    format: ['esm', 'cjs'],
-  },
-  {
-    ...sharedConfig,
-    entry: { index: './src/index-umd.cts' },
-    format: ['iife'],
+    format: ['esm', 'cjs', 'iife'],
     globalName: 'markdownitSynapse',
   },
 ])

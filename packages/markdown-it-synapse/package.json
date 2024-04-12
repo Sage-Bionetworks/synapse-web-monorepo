@@ -1,15 +1,15 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.14",
+  "version": "2.0.0",
   "description": "tag for markdown-it markdown parser.",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
-  "types": "dist/index.d.cts",
+  "types": "dist/index.d.ts",
   "type": "module",
   "exports": {
     "import": "./dist/index.js",
     "require": "./dist/index.cjs",
-    "types": "./dist/index.d.cts"
+    "types": "./dist/index.d.ts"
   },
   "keywords": [
     "markdown-it-plugin",
