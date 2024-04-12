@@ -25,14 +25,14 @@ export const projectCardConfiguration: CardConfiguration = {
     title: 'name',
     subTitle: 'principalInvestigators',
     description: 'abstract',
-    secondaryLabels: ['institutions', 'program', 'grantNumber'],
+    secondaryLabels: ['institutions', 'program', 'grant'],
   },
   secondaryLabelLimit: 4,
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Projects/DetailsPage',
-    URLColumnName: 'grantNumber',
-    matchColumnName: 'grantNumber',
+    URLColumnName: 'grant',
+    matchColumnName: 'grant',
   },
   labelLinkConfig: [
     {
@@ -49,9 +49,9 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
   synapseConfigArray: [
     {
       name: 'CardContainerLogic',
-      columnName: 'grantNumber',
+      columnName: 'grant',
       title: 'Studies',
-      tableSqlKeys: ['grantNumber'],
+      tableSqlKeys: ['grant'],
       props: {
         ...studyCardConfiguration,
         sql: studiesSql,
@@ -59,10 +59,10 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     },
     {
       name: 'CardContainerLogic',
-      columnName: 'grantNumber',
+      columnName: 'grant',
       title: 'Publications',
       showTitleSeperator: false,
-      tableSqlKeys: ['Grant'],
+      tableSqlKeys: ['grant'],
       props: {
         ...publicationCardProps,
         sql: publicationsSql,
@@ -71,8 +71,8 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'People',
-      columnName: 'grantNumber',
-      tableSqlKeys: ['grantNumber'],
+      columnName: 'grant',
+      tableSqlKeys: ['grant'],
       props: {
         sql: peopleSql,
         limit: 6,
@@ -82,7 +82,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'Computational Tools',
-      columnName: 'grantNumber',
+      columnName: 'grant',
       tableSqlKeys: ['grant'],
       props: {
         ...computationalCardConfiguration,
@@ -106,7 +106,7 @@ const projects: SynapseConfig = {
       'name',
       'institutions',
       'principalInvestigators',
-      'grantNumber',
+      'grant',
       // 'Program',
     ],
     searchConfiguration: defaultSearchConfiguration,

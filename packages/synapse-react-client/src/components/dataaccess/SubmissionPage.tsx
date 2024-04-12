@@ -165,13 +165,15 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           refetch()
         }}
       />
-      <RejectDataAccessRequestModal
-        // Use the submission ID as a key so that the modal form is reset for a new submission
-        key={submissionId}
-        submissionId={submissionId}
-        open={showRejectionDialog}
-        onClose={() => setShowRejectionDialog(false)}
-      />
+      {showRejectionDialog && (
+        <RejectDataAccessRequestModal
+          // Previously, we used a 'key' prop to reset the modal form when it was opened,
+          // but removing the key and re-rendering the JSX achieves the same functionality in a more straightforward way.
+          submissionId={submissionId}
+          open={showRejectionDialog}
+          onClose={() => setShowRejectionDialog(false)}
+        />
+      )}
       <div className="SubmissionSummary">
         <Typography variant="dataFieldKey">Status</Typography>
         <Typography variant="headline3">
@@ -179,7 +181,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         </Typography>
         <br />
         {submission ? (
-          submission.state === 'SUBMITTED' && (
+          submission.state === SubmissionState.SUBMITTED && (
             <div className="ButtonContainer">
               <Button
                 onClick={() => {

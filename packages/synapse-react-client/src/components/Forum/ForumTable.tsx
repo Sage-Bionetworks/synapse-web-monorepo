@@ -65,7 +65,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                   aria-label="Sort by Topic"
                   active={sort === DiscussionThreadOrder.THREAD_TITLE}
                   direction={
-                    sort === 'THREAD_TITLE'
+                    sort === DiscussionThreadOrder.THREAD_TITLE
                       ? isAscending === false
                         ? Direction.DESC
                         : Direction.ASC
@@ -85,7 +85,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                   aria-label="Sort by Replies"
                   active={sort === DiscussionThreadOrder.NUMBER_OF_REPLIES}
                   direction={
-                    sort === 'NUMBER_OF_REPLIES'
+                    sort === DiscussionThreadOrder.NUMBER_OF_REPLIES
                       ? isAscending === false
                         ? Direction.DESC
                         : Direction.ASC
@@ -105,7 +105,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                   aria-label="Sort by Views"
                   active={sort === DiscussionThreadOrder.NUMBER_OF_VIEWS}
                   direction={
-                    sort === 'NUMBER_OF_VIEWS'
+                    sort === DiscussionThreadOrder.NUMBER_OF_VIEWS
                       ? isAscending === false
                         ? Direction.DESC
                         : Direction.ASC
@@ -125,7 +125,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                     sort === DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
                   }
                   direction={
-                    sort === 'PINNED_AND_LAST_ACTIVITY'
+                    sort === DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
                       ? isAscending === false
                         ? Direction.DESC
                         : Direction.ASC
