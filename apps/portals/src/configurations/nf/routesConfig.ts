@@ -4,6 +4,7 @@ import {
   newStudiesSql,
   studiesDetailPage,
   studyCardConfiguration,
+  studyColumnIconConfigs,
   studyHeaderIconOptions,
 } from './synapseConfigs/studies'
 import {
@@ -144,17 +145,19 @@ const routes: GenericRoute[] = [
             type: SynapseConstants.STUDY,
             title: 's.studyName',
             secondaryLabels: [
-              'f.n_downloads_30d',
-              'f.n_unique_users_30d',
-              'f.egress_size_in_gb_30d',
+              'f.n_downloads',
+              'f.n_unique_users',
+              'f.egress_size_in_gb',
               's.studyId',
             ],
+            dataTypeIconNames: 's.dataType',
           },
+          columnIconOptions: studyColumnIconConfigs,
           secondaryLabelLimit: 5,
           columnAliases: {
-            'f.n_downloads_30d': '# Downloads',
-            'f.n_unique_users_30d': '# Unique Users',
-            'f.egress_size_in_gb_30d': 'Download Volume (GB)',
+            'f.n_downloads': '# Downloads',
+            'f.n_unique_users': '# Unique Users',
+            'f.egress_size_in_gb': 'Download Volume (GB)',
             's.studyId': 'On Synapse',
           },
           titleLinkConfig: {
