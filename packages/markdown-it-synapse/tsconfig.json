@@ -8,5 +8,5 @@
     "noImplicitAny": false,
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "src/**/*.cts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
