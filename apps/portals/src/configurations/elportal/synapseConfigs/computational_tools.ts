@@ -38,7 +38,7 @@ const computationalTools: SynapseConfig = {
     cardConfiguration: computationalCardConfiguration,
     shouldDeepLink: true,
     name: 'Computational Tools',
-    facetsToPlot: ['grant', 'softwareType'],
+    facetsToPlot: ['project'],
     searchConfiguration: defaultSearchConfiguration,
   },
 }
