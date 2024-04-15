@@ -84,7 +84,10 @@ export const Demo: Story = {
             )
           },
         ),
-        ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
+        ...getHandlersForTableQuery(
+          mockRejectionReasonsTableQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+        ),
         rest.put(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 

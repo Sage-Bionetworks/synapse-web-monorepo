@@ -243,18 +243,11 @@ describe('Submission Page tests', () => {
       submissionId: SUBMITTED_SUBMISSION_ID,
     })
 
-    // The modal is rendered but not shown
+    // The modal is not rendered
     expect(
       screen.queryByTestId('RejectDataAccessRequestModal'),
-    ).toBeInTheDocument()
-    expect(mockRejectDataAccessRequestModal).toHaveBeenLastCalledWith(
-      {
-        open: false,
-        submissionId: SUBMITTED_SUBMISSION_ID,
-        onClose: expect.anything(),
-      },
-      expect.anything(),
-    )
+    ).not.toBeInTheDocument()
+    expect(mockRejectDataAccessRequestModal).not.toHaveBeenCalled()
 
     // Click the reject button
     const rejectButton = await screen.findByRole('button', { name: 'Reject' })
