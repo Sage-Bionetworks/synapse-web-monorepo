@@ -33,7 +33,7 @@ md.render('${image?fileName=joy%2Epng&align=None}', 'my-unique-div-id') // => '<
 The widgetparams can be used to determine what kind of html widget should be rendered in the output container.
 
 _Differences in browser._ If you load script directly into the page using the IIFE bundle, without
-package system, module will add itself globally as `window.markdownitSynapse`. The plugin function can be accessed at `window.markdownitSynapse.default`.
+package system, module will add itself globally as `window.markdownitSynapse`.
 
 ## License
 
