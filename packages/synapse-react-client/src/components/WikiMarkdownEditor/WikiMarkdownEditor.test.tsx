@@ -15,10 +15,9 @@ import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { CreateWikiPageInput } from '../../synapse-queries'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_OBJECT_TYPE, WIKI_PAGE } from '../../utils/APIConstants'
+import { WIKI_PAGE } from '../../utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
-  ERROR_LOADING_WIKI_FAILED,
   ERROR_SAVING_WIKI,
   NAVIGATE_AWAY_CONFIRMATION_MESSAGE,
   UNSAVED_CHANGES,
@@ -73,10 +72,6 @@ function getEditorDialog() {
   })
 }
 
-function getSpinners() {
-  return document.getElementsByClassName('spinner')
-}
-
 function queryTitleField() {
   return screen.queryByRole('textbox', { name: 'Title' })
 }
@@ -89,13 +84,7 @@ function setUp(props: WikiMarkdownEditorProps) {
   const user = userEvent.setup()
   const component = renderComponent(props)
 
-  const spinner = getSpinners()
-
-  return { component, user, spinner }
-}
-
-async function waitForWikiLoaded() {
-  await waitFor(() => expect(getSpinners()).toHaveLength(0))
+  return { component, user }
 }
 
 async function waitForMarkdownSet(markdown: string) {
@@ -123,9 +112,8 @@ describe('WikiMarkdownEditor', () => {
   afterAll(() => server.close())
 
   test('creates a root WikiPage when there was not an existing root WikiPage', async () => {
-    const { spinner } = setUp(defaultNoRootProps)
+    setUp(defaultNoRootProps)
 
-    expect(spinner).toHaveLength(1)
     expect(queryTitleField()).toBeNull()
     expect(queryMarkdownField()).toBeNull()
 
@@ -140,7 +128,6 @@ describe('WikiMarkdownEditor', () => {
 
     // root WikiPageKey not found
     expect(await getRootWikiPageKeySpy.mock.results[0].value).toBe(null)
-    expect(spinner).toHaveLength(1)
 
     await waitFor(() => {
       expect(createWikiPageSpy).toHaveBeenCalledTimes(1)
@@ -156,7 +143,6 @@ describe('WikiMarkdownEditor', () => {
     expect(getWikiPageSpy).not.toHaveBeenCalled()
 
     await waitFor(() => {
-      expect(spinner).toHaveLength(0)
       expect(screen.queryByRole('alert')).toBeNull()
       expect(queryTitleField()).toBeNull()
     })
@@ -165,9 +151,8 @@ describe('WikiMarkdownEditor', () => {
   })
 
   test('finds and displays an existing root WikiPage', async () => {
-    const { spinner } = setUp(defaultExistingRootWikiPageProps)
+    setUp(defaultExistingRootWikiPageProps)
 
-    expect(spinner).toHaveLength(1)
     expect(queryTitleField()).toBeNull()
     expect(queryMarkdownField()).toBeNull()
 
@@ -180,7 +165,6 @@ describe('WikiMarkdownEditor', () => {
       )
     })
 
-    expect(spinner).toHaveLength(1)
     expect(await getRootWikiPageKeySpy.mock.results[0].value).toStrictEqual(
       mockEntityRootWikiPageKey,
     )
@@ -194,29 +178,29 @@ describe('WikiMarkdownEditor', () => {
     })
 
     expect(screen.queryByRole('alert')).toBeNull()
-    expect(spinner).toHaveLength(0)
     expect(queryTitleField()).toBeNull()
 
     await waitForMarkdownSet(mockEntityRootWikiPage.markdown)
   })
 
-  test('displays error when root WikiPage does not exist and user cannot create the root WikiPage', async () => {
+  test('displays error when user cannot create the root WikiPage', async () => {
     const errorResponse: ErrorResponse = {
       concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
-      reason: `User is not authorized to 'CREATE' a WikiPage with an ownerId: '${defaultExistingWikiPageProps.ownerObjectId}' of type: '${defaultExistingWikiPageProps.ownerObjectType}'`,
+      reason: `User is not authorized to 'CREATE' a WikiPage with an ownerId: '${defaultNoRootProps.ownerObjectId}' of type: '${defaultNoRootProps.ownerObjectType}'`,
     }
     server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_OBJECT_TYPE(
-          defaultExistingWikiPageProps.ownerObjectType,
-        )}/:ownerObjectId/wikikey`,
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE(
+          defaultNoRootProps.ownerObjectType,
+          ':ownerObjectId',
+        )}`,
         async (req, res, ctx) => {
           return res(ctx.status(403), ctx.json(errorResponse))
         },
       ),
     )
 
-    const { spinner } = setUp(defaultNoRootProps)
+    setUp(defaultNoRootProps)
 
     await waitFor(() => {
       expect(getRootWikiPageKeySpy).toHaveBeenCalledTimes(1)
@@ -227,17 +211,25 @@ describe('WikiMarkdownEditor', () => {
       )
     })
 
-    await waitFor(() => expect(spinner).toHaveLength(0))
+    // root WikiPageKey not found
+    expect(await getRootWikiPageKeySpy.mock.results[0].value).toBe(null)
 
-    const alert = screen.getByRole('alert')
-    expect(alert).toHaveTextContent(
-      ERROR_LOADING_WIKI_FAILED + errorResponse.reason,
-    )
+    await waitFor(() => {
+      expect(createWikiPageSpy).toHaveBeenCalledTimes(1)
+      expect(createWikiPageSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        defaultNoRootProps.ownerObjectType,
+        defaultNoRootProps.ownerObjectId,
+        mockCreateRootWikiPage,
+      )
+    })
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(errorResponse.reason)
   })
 
   test('displays an existing WikiPage', async () => {
-    const { spinner } = setUp(defaultExistingWikiPageProps)
-    expect(spinner).toHaveLength(1)
+    setUp(defaultExistingWikiPageProps)
 
     await waitFor(() => {
       expect(getWikiPageSpy).toHaveBeenCalledTimes(1)
@@ -254,24 +246,19 @@ describe('WikiMarkdownEditor', () => {
     expect(getRootWikiPageKeySpy).not.toHaveBeenCalled()
     expect(createWikiPageSpy).not.toHaveBeenCalled()
 
-    await waitFor(() => {
-      expect(spinner).toHaveLength(0)
-      expect(screen.queryByRole('alert')).toBeNull()
-    })
-
     await waitForTitleSet(mockEntityWikiPage.title)
     await waitForMarkdownSet(mockEntityWikiPage.markdown)
   })
 
   test('does not display title for root WikiPage', async () => {
     setUp(defaultExistingRootWikiPageProps)
-    await waitForWikiLoaded()
+    await waitForMarkdownSet('')
     expect(queryTitleField()).toBeNull()
   })
 
   test('displays title for non-root WikiPage', async () => {
     setUp(defaultExistingWikiPageProps)
-    await waitForWikiLoaded()
+    await waitForMarkdownSet('')
     expect(queryTitleField()).not.toBeNull()
   })
 
@@ -279,7 +266,6 @@ describe('WikiMarkdownEditor', () => {
     const { user } = setUp(defaultExistingRootWikiPageProps)
 
     const editorDialog = getEditorDialog()
-    await waitForWikiLoaded()
 
     const markdownField = await waitForMarkdownSet(
       mockEntityRootWikiPage.markdown,
@@ -316,7 +302,6 @@ describe('WikiMarkdownEditor', () => {
     const { user } = setUp(defaultExistingRootWikiPageProps)
 
     const editorDialog = getEditorDialog()
-    await waitForWikiLoaded()
 
     const markdownField = await waitForMarkdownSet(
       mockEntityRootWikiPage.markdown,
@@ -355,7 +340,6 @@ describe('WikiMarkdownEditor', () => {
     const { user } = setUp(defaultExistingRootWikiPageProps)
 
     const editorDialog = getEditorDialog()
-    await waitForWikiLoaded()
     await waitForMarkdownSet(mockEntityRootWikiPage.markdown)
 
     const cancelBtn = screen.getByRole('button', { name: 'Cancel' })
@@ -371,7 +355,6 @@ describe('WikiMarkdownEditor', () => {
 
   test('updates wiki page', async () => {
     const { user } = setUp(defaultExistingWikiPageProps)
-    await waitForWikiLoaded()
     const editorDialog = getEditorDialog()
 
     const markdownField = await waitForMarkdownSet(mockEntityWikiPage.markdown)
@@ -423,7 +406,6 @@ describe('WikiMarkdownEditor', () => {
     )
 
     const { user } = setUp(defaultExistingWikiPageProps)
-    await waitForWikiLoaded()
 
     const markdownField = await waitForMarkdownSet(mockEntityWikiPage.markdown)
     const newMarkdown = 'some new markdown'

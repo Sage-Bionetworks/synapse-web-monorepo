@@ -55,32 +55,26 @@ export const WikiMarkdownEditor: React.FunctionComponent<
   const [markdown, setMarkdown] = useState<string>('')
   const [showConfirmCancelDialog, setShowConfirmDialog] =
     useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
 
   const { data: rootWikiPageKey, error: errorLoadingRootWikiPageKey } =
     useGetRootWikiPageKey(ownerObjectType, ownerObjectId, {
       enabled: wikiPageId === undefined,
     })
 
-  const { mutate: createWikiPage } = useCreateWikiPage({
-    onSuccess: wikiPage => {
-      setError(null)
-      setWikiPageId(wikiPage.id)
-    },
-    onError: error => {
-      setError(error.reason)
-    },
-  })
+  const { mutate: createWikiPage, error: errorCreatingWikiPage } =
+    useCreateWikiPage({
+      onSuccess: wikiPage => {
+        setWikiPageId(wikiPage.id)
+      },
+    })
 
   useEffect(() => {
-    setError(null)
-
     // an existing root WikiPageKey was found
     if (rootWikiPageKey) {
       setWikiPageId(rootWikiPageKey.wikiPageId)
     }
 
-    // root WikiPageKey was not found (so we have create permission),
+    // root WikiPageKey was not found,
     // then create a root WikiPage for this ownerObject
     if (rootWikiPageKey === null) {
       const rootWikiPage: CreateWikiPageInput['wikiPage'] = {
@@ -95,11 +89,6 @@ export const WikiMarkdownEditor: React.FunctionComponent<
         wikiPage: rootWikiPage,
       }
       createWikiPage(input)
-    }
-
-    // any other error finding root WikiPageKey
-    if (errorLoadingRootWikiPageKey) {
-      setError(ERROR_LOADING_WIKI_FAILED + errorLoadingRootWikiPageKey.reason)
     }
   }, [
     rootWikiPageKey,
@@ -128,16 +117,11 @@ export const WikiMarkdownEditor: React.FunctionComponent<
   )
 
   useEffect(() => {
-    setError(null)
-
     if (wikiPage) {
       setTitle(wikiPage.title)
       setMarkdown(wikiPage.markdown)
     }
-    if (errorLoadingWikiPage) {
-      setError(ERROR_LOADING_WIKI_FAILED + errorLoadingWikiPage.reason)
-    }
-  }, [errorLoadingWikiPage, wikiPage])
+  }, [wikiPage])
 
   const handleCancel = () => {
     if (wikiPage && wikiPage.markdown !== markdown) {
@@ -148,17 +132,37 @@ export const WikiMarkdownEditor: React.FunctionComponent<
     }
   }
 
-  const { mutate: updateWikiPage, isPending: isUpdatingWikiPage } =
-    useUpdateWikiPage({
-      onSuccess: () => {
-        setError(null)
-        setOpen(false)
-        onSave()
-      },
-      onError: error => {
-        setError(ERROR_SAVING_WIKI + error.reason)
-      },
-    })
+  const {
+    mutate: updateWikiPage,
+    isPending: isUpdatingWikiPage,
+    error: errorUpdatingWikiPage,
+  } = useUpdateWikiPage({
+    onSuccess: () => {
+      setOpen(false)
+      onSave()
+    },
+  })
+
+  const error = useMemo(() => {
+    if (errorLoadingRootWikiPageKey) {
+      return ERROR_LOADING_WIKI_FAILED + errorLoadingRootWikiPageKey.reason
+    }
+    if (errorLoadingWikiPage) {
+      return ERROR_LOADING_WIKI_FAILED + errorLoadingWikiPage.reason
+    }
+    if (errorCreatingWikiPage) {
+      return errorCreatingWikiPage.reason
+    }
+    if (errorUpdatingWikiPage) {
+      return ERROR_SAVING_WIKI + errorUpdatingWikiPage.reason
+    }
+    return null
+  }, [
+    errorLoadingRootWikiPageKey,
+    errorLoadingWikiPage,
+    errorCreatingWikiPage,
+    errorUpdatingWikiPage,
+  ])
 
   const isLoading = !wikiPage && !error
   const areButtonsDisabled = isLoading || isUpdatingWikiPage
