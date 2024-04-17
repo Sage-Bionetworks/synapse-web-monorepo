@@ -11,7 +11,7 @@ const computationalSchema: GenericCardSchema = {
   title: 'name',
   description: 'summary',
   subTitle: 'softwareType',
-  secondaryLabels: ['contributor', 'program', 'grant', 'documentation'],
+  secondaryLabels: ['contributor', 'program', 'grants', 'documentation'],
   link: 'url',
 }
 
@@ -21,9 +21,9 @@ export const computationalCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      baseURL: 'Explore/Projects/DetailsPage',
+      baseURL: 'Explore/Projects',
       URLColumnName: 'grant',
-      matchColumnName: 'grant',
+      matchColumnName: 'grants',
     },
   ],
 }

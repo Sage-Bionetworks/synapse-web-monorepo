@@ -31,8 +31,8 @@ export const projectCardConfiguration: CardConfiguration = {
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Projects/DetailsPage',
-    URLColumnName: 'grant',
-    matchColumnName: 'grant',
+    URLColumnName: 'shortName',
+    matchColumnName: 'shortName',
   },
   labelLinkConfig: [
     {
@@ -49,9 +49,9 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
   synapseConfigArray: [
     {
       name: 'CardContainerLogic',
-      columnName: 'grant',
+      columnName: 'shortName',
       title: 'Studies',
-      tableSqlKeys: ['grant'],
+      tableSqlKeys: ['projectShortName'],
       props: {
         ...studyCardConfiguration,
         sql: studiesSql,
@@ -82,8 +82,8 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'Computational Tools',
-      columnName: 'grant',
-      tableSqlKeys: ['grant'],
+      columnName: 'shortName',
+      tableSqlKeys: ['project'],
       props: {
         ...computationalCardConfiguration,
         sqlOperator: ColumnMultiValueFunction.HAS,

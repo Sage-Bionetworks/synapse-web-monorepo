@@ -1,18 +1,15 @@
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
-import { SynapseConstants, CardConfiguration } from 'synapse-react-client'
+import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import studyHeaderSvg from '../style/study-header.svg?url'
 import {
-  studiesSql,
-  dataSql,
-  dataOnStudiesPageSql,
-  defaultSearchConfiguration,
   cavaticaConnectAccountURL,
+  dataOnStudiesPageSql,
+  dataSql,
+  defaultSearchConfiguration,
+  studiesSql,
 } from '../resources'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {
@@ -27,9 +24,15 @@ export const studyCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      baseURL: 'Explore/Projects/DetailsPage',
+      baseURL: 'Explore/Projects',
       URLColumnName: 'grant',
-      matchColumnName: 'grant',
+      matchColumnName: 'grants',
+    },
+    {
+      isMarkdown: false,
+      baseURL: 'Explore/Projects/DetailsPage',
+      URLColumnName: 'shortName',
+      matchColumnName: 'projectShortName',
     },
   ],
   genericCardSchema: {
@@ -44,7 +47,8 @@ export const studyCardConfiguration: CardConfiguration = {
       'species',
       'specimenType',
       'program',
-      'grant',
+      'projectShortName',
+      'grants',
       'Number_Of_Individuals',
       'Cohort_Type',
       'Study_Status',
@@ -54,6 +58,7 @@ export const studyCardConfiguration: CardConfiguration = {
 const columnAliases = {
   dataTypeAll: 'Data Types',
   Number_of_Individuals: 'Individuals',
+  projectShortName: 'Project',
 }
 const studies: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
@@ -109,11 +114,11 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          columnName: 'studyKey',
+          columnName: 'relatedStudies',
           title: 'Related Studies',
-          tableSqlKeys: ['relatedStudies'],
+          tableSqlKeys: ['id'],
           props: {
-            sqlOperator: ColumnMultiValueFunction.HAS,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             sql: studiesSql,
             ...studyCardConfiguration,
           },
