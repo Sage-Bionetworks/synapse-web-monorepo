@@ -1,4 +1,6 @@
+import { Alert, Button, ButtonProps, Typography } from '@mui/material'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
+import { defaults } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import {
   CreateWikiPageInput,
@@ -6,10 +8,10 @@ import {
   useGetRootWikiPageKey,
   useGetWikiPage,
 } from '../../synapse-queries'
-import { Alert, Button, ButtonProps } from '@mui/material'
-import { defaults } from 'lodash-es'
+import { MarkdownSynapse } from '../Markdown'
 import WikiMarkdownEditor from '../WikiMarkdownEditor/WikiMarkdownEditor'
 
+export const NO_WIKI_CONTENT = 'There is no content.'
 export const ERROR_LOADING_WIKI_FAILED = 'Failed to load the wiki page: '
 export const DEFAULT_BUTTON_TEXT = 'Edit Wiki Page'
 const DEFAULT_BUTTON_PROPS: Omit<ButtonProps, 'onClick'> = {
@@ -25,6 +27,7 @@ export type WikiMarkdownEditorButtonProps = {
   // otherwise, will get the WikiPage with the specified wikiPageId
   wikiPageId?: string
   buttonProps?: Omit<ButtonProps, 'onClick' | 'disabled'>
+  displayWikiMarkdown?: boolean
 }
 
 export const WikiMarkdownEditorButton: React.FunctionComponent<
@@ -34,6 +37,7 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
     ownerObjectType,
     ownerObjectId,
     wikiPageId: initialWikiPageId,
+    displayWikiMarkdown = false,
   } = props
 
   const buttonProps: Omit<ButtonProps, 'onClick' | 'disabled'> = defaults(
@@ -124,6 +128,20 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
 
   return (
     <>
+      {displayWikiMarkdown && (
+        <>
+          {wikiPage && wikiPage.markdown !== '' ? (
+            <MarkdownSynapse
+              key={wikiPage.markdown}
+              markdown={wikiPage.markdown}
+            />
+          ) : (
+            <Typography variant="body1Italic" mb={1}>
+              {NO_WIKI_CONTENT}
+            </Typography>
+          )}
+        </>
+      )}
       <Button
         onClick={handleClick}
         disabled={

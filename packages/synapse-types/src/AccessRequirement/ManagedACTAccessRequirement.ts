@@ -41,7 +41,7 @@ export type ManagedACTAccessRequirement = {
   /* If true, then accessor needs to fill, sign, and submit a Data Use Certificate (DUC) to gain access to the data. */
   isDUCRequired: boolean
   /* If the Data Use Certificate (DUC) is required, creator of this requirement needs to upload a Data Use Certificate (DUC) template. Users have to download this template, fill out, sign and submit it. */
-  ducTemplateFileHandleId: string
+  ducTemplateFileHandleId?: string
   /* If true, then accessor needs to submit an Institutional Review Board (IRB) Approval document to gain access to the data. */
   isIRBApprovalRequired: boolean
   /* If true, then accessor needs to upload attachment(s) other than Data Use Certificate (DUC) and Institutional Review Board (IRB) Approval document to gain access to the data. */

@@ -76,6 +76,7 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
   return (
     <>
       <input
+        data-testid="file-input"
         type={'file'}
         ref={hiddenFileInput}
         onChange={e => {
