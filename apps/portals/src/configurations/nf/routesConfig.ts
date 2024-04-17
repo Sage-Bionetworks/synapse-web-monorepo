@@ -381,19 +381,12 @@ const routes: GenericRoute[] = [
     path: 'About',
     routes: [
       {
-        path: 'NF-OSI',
+        displayName: 'NF-OSI',
         hideRouteFromNavbar: false,
-        synapseConfigArray: [
-          {
-            name: 'Markdown',
-            title: 'About',
-            props: {
-              ownerId: 'syn26451327',
-              wikiId: '614265',
-              loadingSkeletonRowCount: 20,
-            },
-          },
-        ],
+        path: undefined,
+        target: '_blank',
+        link: 'https://help.nf.synapse.org/NFdocs/about',
+        synapseConfigArray: [],
       },
       {
         displayName: 'Data Standards',
