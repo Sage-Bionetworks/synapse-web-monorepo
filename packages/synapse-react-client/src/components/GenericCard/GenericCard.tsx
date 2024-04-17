@@ -210,21 +210,23 @@ export function getCardLinkHref(
     if (!data || !schema) {
       throw Error('Must specify CardLink and data for linking to work')
     }
-    const {
-      matchColumnName,
-      URLColumnName,
-      overrideLinkURLColumnName,
-      overrideValueWithRowID,
-    } = cardLink
+    const { matchColumnName, overrideValueWithRowID } = cardLink
 
     // PORTALS-2088:  Return the link, unless...
-    // an overrideLinkURLColumnName has been set and it's value is defined.
+    // an overrideLinkURLColumnName has been set and its value is defined.
     // In this case, just use the overrideLinkURLColumnName value
-    if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
-      const indexOfOverrideLinkURLColumnName = schema[overrideLinkURLColumnName]
-      const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
-      if (overrideLinkValue) {
-        return overrideLinkValue
+    if ('overrideLinkURLColumnName' in cardLink) {
+      const { overrideLinkURLColumnName, overrideLinkURLColumnTransform } =
+        cardLink
+      if (schema[overrideLinkURLColumnName]) {
+        const indexOfOverrideLinkURLColumnName =
+          schema[overrideLinkURLColumnName]
+        const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
+        if (overrideLinkValue && overrideLinkURLColumnTransform) {
+          return overrideLinkURLColumnTransform(overrideLinkValue)
+        } else if (overrideLinkValue) {
+          return overrideLinkValue
+        }
       }
     }
 
@@ -233,11 +235,12 @@ export function getCardLinkHref(
       console.error(
         `Could not find match for data: ${data} with columnName ${matchColumnName}`,
       )
-    } else {
+    } else if ('baseURL' in cardLink) {
+      const { baseURL, URLColumnName } = cardLink
       const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
       if (value) {
         // value is defined!
-        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        return `/${baseURL}?${URLColumnName}=${value}`
       }
     }
   }

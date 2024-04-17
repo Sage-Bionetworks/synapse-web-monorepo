@@ -197,10 +197,30 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         <p>
           {split.map((el, index) => {
             const cardLink = labelLink as CardLink
-            const { baseURL, URLColumnName, wrapValueWithParens } = cardLink
             const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
-            const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
-            const href = `/${baseURL}?${URLColumnName}=${value}`
+            let href = ''
+            if ('baseURL' in cardLink) {
+              const { baseURL, URLColumnName, wrapValueWithParens } = cardLink
+              const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
+              href = `/${baseURL}?${URLColumnName}=${value}`
+            } else if ('overrideLinkURLColumnName' in cardLink) {
+              const overrideHrefIndex = getColumnIndex(
+                cardLink.overrideLinkURLColumnName,
+                selectColumns,
+                columnModels,
+              )
+              if (overrideHrefIndex) {
+                const overrideHrefData = rowData[overrideHrefIndex]
+                if (overrideHrefData) {
+                  if (cardLink.overrideLinkURLColumnTransform) {
+                    href =
+                      cardLink.overrideLinkURLColumnTransform(overrideHrefData)
+                  } else {
+                    href = overrideHrefData
+                  }
+                }
+              }
+            }
 
             return (
               <React.Fragment key={el}>
