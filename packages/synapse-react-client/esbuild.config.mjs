@@ -5,6 +5,7 @@ import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
 
 const globals = {
+  katex: "katex",
   react: 'React',
   'react-dom': 'ReactDOM',
   'react-router': 'ReactRouter',

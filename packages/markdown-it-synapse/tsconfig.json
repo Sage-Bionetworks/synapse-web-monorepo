@@ -5,7 +5,8 @@
     "outDir": "./dist",
     "target": "esnext",
     "strictNullChecks": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["vitest/globals"]
   },
-  "files": ["src/index.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
