@@ -27,6 +27,8 @@ import {
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
+
+// KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
 
 faker.seed(12345)
