@@ -9,7 +9,7 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { getAllAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
-import { getWikiHandlers } from './handlers/wikiHandlers'
+import { getAllWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
@@ -47,7 +47,7 @@ const getHandlers = (backendOrigin: string) => [
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),
   getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),
-  ...getWikiHandlers(backendOrigin),
+  ...getAllWikiHandlers(backendOrigin),
   ...getAllAccessRequirementHandlers(backendOrigin),
   ...getAllAccessRequirementAclHandlers(backendOrigin),
   ...getDataAccessRequestHandlers(backendOrigin),

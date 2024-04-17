@@ -10,6 +10,5 @@ export type WikiPage = {
   modifiedBy: string
   modifiedOn: string
   title: string
-  // get out jail free card
-  [x: string]: string | string[]
+  parentWikiId?: string // When set, the WikiPage is a sub-page of the indicated parent WikiPage.
 }

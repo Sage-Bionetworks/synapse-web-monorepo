@@ -156,6 +156,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       <div>
         {currentTab === 'WRITE' ? (
           <textarea
+            aria-label="markdown"
             onChange={e => {
               setText(e.target.value)
               handleTagModal(e.target.value)
