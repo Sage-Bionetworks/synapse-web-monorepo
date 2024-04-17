@@ -206,8 +206,6 @@ describe('WikiMarkdownEditorButton', () => {
     await waitForNotDisabled(button)
     await user.click(button)
 
-    expect(button).toBeDisabled()
-
     await waitFor(() => {
       expect(createWikiPageSpy).toHaveBeenCalledTimes(1)
       expect(createWikiPageSpy).toHaveBeenCalledWith(

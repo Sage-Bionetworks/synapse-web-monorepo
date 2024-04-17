@@ -43,7 +43,6 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
   )
 
   const [open, setOpen] = useState<boolean>(false)
-  const [isCreatingWikiPage, setIsCreatingWikiPage] = useState<boolean>(false)
 
   const {
     data: rootWikiPageKey,
@@ -53,11 +52,13 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
     enabled: initialWikiPageId === undefined,
   })
 
-  const { mutate: createWikiPage, error: errorCreatingWikiPage } =
-    useCreateWikiPage({
-      onSuccess: () => setOpen(true),
-      onSettled: () => setIsCreatingWikiPage(false),
-    })
+  const {
+    mutate: createWikiPage,
+    isPending: isCreatingWikiPage,
+    error: errorCreatingWikiPage,
+  } = useCreateWikiPage({
+    onSuccess: () => setOpen(true),
+  })
 
   const wikiPageKey = useMemo(() => {
     const wikiPageId = initialWikiPageId || rootWikiPageKey?.wikiPageId || ''
@@ -98,8 +99,6 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
     } else if (rootWikiPageKey === null) {
       // root WikiPageKey was not found,
       // then create a root WikiPage for this ownerObject
-      setIsCreatingWikiPage(true)
-
       const rootWikiPage: CreateWikiPageInput['wikiPage'] = {
         parentWikiId: undefined,
         title: '',
@@ -139,6 +138,8 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
       )}
       {wikiPage && (
         <WikiMarkdownEditor
+          // Specify a key so that uncommitted changes in WikiMarkdownEditor
+          // are not displayed when editor is re-opened
           key={open.toString()}
           open={open}
           ownerObjectType={ownerObjectType}
