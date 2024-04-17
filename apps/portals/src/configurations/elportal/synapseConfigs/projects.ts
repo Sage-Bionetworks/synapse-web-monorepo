@@ -51,7 +51,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
       name: 'CardContainerLogic',
       columnName: 'shortName',
       title: 'Studies',
-      tableSqlKeys: ['projectShortName'],
+      tableSqlKeys: ['project'],
       props: {
         ...studyCardConfiguration,
         sql: studiesSql,

@@ -12,6 +12,12 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
+const columnAliases = {
+  dataTypeAll: 'Data Types',
+  Number_of_Individuals: 'Individuals',
+  projectFullName: 'Project',
+}
+
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
@@ -30,9 +36,10 @@ export const studyCardConfiguration: CardConfiguration = {
     },
     {
       isMarkdown: false,
-      baseURL: 'Explore/Projects/DetailsPage',
-      URLColumnName: 'shortName',
-      matchColumnName: 'projectShortName',
+      matchColumnName: 'projectFullName',
+      overrideLinkURLColumnName: 'project',
+      overrideLinkURLColumnTransform: (shortName) =>
+        `/Explore/Projects/DetailsPage?shortName=${shortName}`,
     },
   ],
   genericCardSchema: {
@@ -47,18 +54,14 @@ export const studyCardConfiguration: CardConfiguration = {
       'species',
       'specimenType',
       'program',
-      'projectShortName',
+      'projectFullName',
       'grants',
       'Number_Of_Individuals',
       'Cohort_Type',
       'Study_Status',
     ],
   },
-}
-const columnAliases = {
-  dataTypeAll: 'Data Types',
-  Number_of_Individuals: 'Individuals',
-  projectShortName: 'Project',
+  columnAliases,
 }
 const studies: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
