@@ -1,15 +1,8 @@
 import { Alert, Box, Button, TextField } from '@mui/material'
-import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
+import { ObjectType, WikiPage } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useEffect, useMemo, useState } from 'react'
-import {
-  CreateWikiPageInput,
-  UpdateWikiPageInput,
-  useCreateWikiPage,
-  useGetRootWikiPageKey,
-  useGetWikiPage,
-  useUpdateWikiPage,
-} from '../../synapse-queries'
+import React, { useState } from 'react'
+import { UpdateWikiPageInput, useUpdateWikiPage } from '../../synapse-queries'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
@@ -18,16 +11,14 @@ import { MarkdownEditor } from '../Markdown'
 export const UNSAVED_CHANGES = 'Unsaved Changes'
 export const NAVIGATE_AWAY_CONFIRMATION_MESSAGE =
   'Any unsaved changes may be lost. Are you sure that you would like to navigate away from this editor?'
-export const ERROR_LOADING_WIKI_FAILED = 'Failed to load the wiki page: '
 export const ERROR_SAVING_WIKI =
   'Could not save your changes. It is recommended that you copy your version of the wiki text so that it is not lost. '
 
 export type WikiMarkdownEditorProps = {
+  open: boolean
   ownerObjectType: ObjectType
   ownerObjectId: string
-  // if wikiPageId is undefined, will get (or create) the root WikiPage for this ownerObject
-  // otherwise, will get the WikiPage with the specified wikiPageId
-  wikiPageId?: string
+  wikiPage: WikiPage
   onCancel?: () => void
   onSave?: () => void
   // TODO: SWC-6774 - expose delete prop
@@ -40,94 +31,23 @@ export const WikiMarkdownEditor: React.FunctionComponent<
   // TODO: SWC-6774 - get showDeleteButton from props
   const showDeleteButton = false
   const {
-    ownerObjectType,
+    open,
     ownerObjectId,
-    wikiPageId: initialWikiPageId,
+    ownerObjectType,
+    wikiPage,
     onCancel = noop,
     onSave = noop,
   } = props
 
-  const [wikiPageId, setWikiPageId] = useState<string | undefined>(
-    initialWikiPageId,
-  )
-  const [open, setOpen] = useState<boolean>(true)
-  const [title, setTitle] = useState<string>('')
-  const [markdown, setMarkdown] = useState<string>('')
+  const [title, setTitle] = useState<string>(wikiPage.title)
+  const [markdown, setMarkdown] = useState<string>(wikiPage.markdown)
   const [showConfirmCancelDialog, setShowConfirmDialog] =
     useState<boolean>(false)
-
-  const { data: rootWikiPageKey, error: errorLoadingRootWikiPageKey } =
-    useGetRootWikiPageKey(ownerObjectType, ownerObjectId, {
-      enabled: wikiPageId === undefined,
-    })
-
-  const { mutate: createWikiPage, error: errorCreatingWikiPage } =
-    useCreateWikiPage({
-      onSuccess: wikiPage => {
-        setWikiPageId(wikiPage.id)
-      },
-    })
-
-  useEffect(() => {
-    // an existing root WikiPageKey was found
-    if (rootWikiPageKey) {
-      setWikiPageId(rootWikiPageKey.wikiPageId)
-    }
-
-    // root WikiPageKey was not found,
-    // then create a root WikiPage for this ownerObject
-    if (rootWikiPageKey === null) {
-      const rootWikiPage: CreateWikiPageInput['wikiPage'] = {
-        parentWikiId: undefined,
-        title: '',
-        markdown: '',
-        attachmentFileHandleIds: [],
-      }
-      const input: CreateWikiPageInput = {
-        ownerObjectId,
-        ownerObjectType,
-        wikiPage: rootWikiPage,
-      }
-      createWikiPage(input)
-    }
-  }, [
-    rootWikiPageKey,
-    ownerObjectId,
-    ownerObjectType,
-    errorLoadingRootWikiPageKey,
-    createWikiPage,
-  ])
-
-  const wikiPageKey = useMemo(() => {
-    const wikiPageKey: WikiPageKey = {
-      ownerObjectType,
-      ownerObjectId,
-      wikiPageId: wikiPageId || '',
-    }
-    return wikiPageKey
-  }, [wikiPageId, ownerObjectId, ownerObjectType])
-
-  const { data: wikiPage, error: errorLoadingWikiPage } = useGetWikiPage(
-    wikiPageKey,
-    {
-      enabled: wikiPageId !== undefined,
-      // Set staleTime to infinity to prevent re-fetching while editing
-      staleTime: Infinity,
-    },
-  )
-
-  useEffect(() => {
-    if (wikiPage) {
-      setTitle(wikiPage.title)
-      setMarkdown(wikiPage.markdown)
-    }
-  }, [wikiPage])
 
   const handleCancel = () => {
     if (wikiPage && wikiPage.markdown !== markdown) {
       setShowConfirmDialog(true)
     } else {
-      setOpen(false)
       onCancel()
     }
   }
@@ -137,35 +57,8 @@ export const WikiMarkdownEditor: React.FunctionComponent<
     isPending: isUpdatingWikiPage,
     error: errorUpdatingWikiPage,
   } = useUpdateWikiPage({
-    onSuccess: () => {
-      setOpen(false)
-      onSave()
-    },
+    onSuccess: () => onSave(),
   })
-
-  const error = useMemo(() => {
-    if (errorLoadingRootWikiPageKey) {
-      return ERROR_LOADING_WIKI_FAILED + errorLoadingRootWikiPageKey.reason
-    }
-    if (errorLoadingWikiPage) {
-      return ERROR_LOADING_WIKI_FAILED + errorLoadingWikiPage.reason
-    }
-    if (errorCreatingWikiPage) {
-      return errorCreatingWikiPage.reason
-    }
-    if (errorUpdatingWikiPage) {
-      return ERROR_SAVING_WIKI + errorUpdatingWikiPage.reason
-    }
-    return null
-  }, [
-    errorLoadingRootWikiPageKey,
-    errorLoadingWikiPage,
-    errorCreatingWikiPage,
-    errorUpdatingWikiPage,
-  ])
-
-  const isLoading = !wikiPage && !error
-  const areButtonsDisabled = isLoading || isUpdatingWikiPage
 
   return (
     <DialogBase
@@ -176,7 +69,7 @@ export const WikiMarkdownEditor: React.FunctionComponent<
       title="Edit Wiki Markdown"
       content={
         <>
-          {isLoading && <SynapseSpinner />}
+          {isUpdatingWikiPage && <SynapseSpinner />}
           {wikiPage && (
             <>
               {wikiPage.parentWikiId && (
@@ -197,13 +90,16 @@ export const WikiMarkdownEditor: React.FunctionComponent<
                 onCancel={() => setShowConfirmDialog(false)}
                 onConfirm={() => {
                   setShowConfirmDialog(false)
-                  setOpen(false)
                   onCancel()
                 }}
               />
             </>
           )}
-          {error && <Alert severity="error">{error}</Alert>}
+          {errorUpdatingWikiPage && (
+            <Alert severity="error">
+              {ERROR_SAVING_WIKI + errorUpdatingWikiPage.reason}
+            </Alert>
+          )}
         </>
       }
       actions={
@@ -216,7 +112,7 @@ export const WikiMarkdownEditor: React.FunctionComponent<
           <Box display="flex" gap={1}>
             <Button
               variant="outlined"
-              disabled={areButtonsDisabled}
+              disabled={isUpdatingWikiPage}
               onClick={handleCancel}
             >
               Cancel
@@ -224,7 +120,7 @@ export const WikiMarkdownEditor: React.FunctionComponent<
             <Button
               variant="contained"
               color="primary"
-              disabled={areButtonsDisabled}
+              disabled={isUpdatingWikiPage}
               onClick={() => {
                 if (wikiPage) {
                   const input: UpdateWikiPageInput = {
@@ -243,7 +139,7 @@ export const WikiMarkdownEditor: React.FunctionComponent<
             <Button
               variant="contained"
               color="error"
-              disabled={areButtonsDisabled}
+              disabled={isUpdatingWikiPage}
               onClick={() => {
                 // TODO: SWC-6774 - implement delete functionality
               }}

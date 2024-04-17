@@ -1,19 +1,14 @@
 import { ObjectType } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import {
-  mockEntityRootWikiPage,
-  mockEntityWikiPage,
-} from '../../mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
 } from '../../mocks/mockWikiPageKey'
-import { WikiMarkdownEditor } from './WikiMarkdownEditor'
+import { WikiMarkdownEditorButton } from './WikiMarkdownEditorButton'
 
-const meta: Meta<typeof WikiMarkdownEditor> = {
-  title: 'Synapse/WikiMarkdownEditor',
-  component: WikiMarkdownEditor,
+const meta: Meta<typeof WikiMarkdownEditorButton> = {
+  title: 'Synapse/WikiMarkdownEditorButton',
+  component: WikiMarkdownEditorButton,
   parameters: {
     stack: 'mock',
   },
@@ -27,30 +22,34 @@ const meta: Meta<typeof WikiMarkdownEditor> = {
       ],
     },
   },
-} satisfies Meta<typeof WikiMarkdownEditor>
+} satisfies Meta<typeof WikiMarkdownEditorButton>
 
 export default meta
 
 type Story = StoryObj<typeof meta>
 
+export const AccessRequirementWiki: Story = {
+  args: {
+    ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+    ownerObjectId: '9602704',
+  },
+  parameters: {
+    stack: 'development',
+  },
+}
+
 export const MockWikiRootPage: Story = {
   args: {
-    open: true,
     ownerObjectType: mockEntityRootWikiPageKey.ownerObjectType,
     ownerObjectId: mockEntityRootWikiPageKey.ownerObjectId,
-    wikiPage: mockEntityRootWikiPage,
-    onCancel: fn(),
-    onSave: fn(),
+    wikiPageId: mockEntityRootWikiPageKey.wikiPageId,
   },
 }
 
 export const MockWikiSubpage: Story = {
   args: {
-    open: true,
     ownerObjectType: mockEntityWikiPageKey.ownerObjectType,
     ownerObjectId: mockEntityWikiPageKey.ownerObjectId,
-    wikiPage: mockEntityWikiPage,
-    onCancel: fn(),
-    onSave: fn(),
+    wikiPageId: mockEntityWikiPageKey.wikiPageId,
   },
 }
