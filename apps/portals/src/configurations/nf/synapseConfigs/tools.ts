@@ -98,11 +98,11 @@ const tools: SynapseConfig = {
 export const toolDetailsPageConfig: DetailsPageProps = {
   sql: toolsSql,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  showMenu: false,
   tabLayout: [
     {
       title: 'Details',
       uriValue: 'Details',
+      showMenu: false,
       synapseConfigArray: [
         {
           name: 'Markdown',
@@ -242,6 +242,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
     {
       title: 'Observations',
       uriValue: 'Observations',
+      showMenu: false,
       synapseConfigArray: [
         {
           name: 'TimelinePlot',
@@ -292,6 +293,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
     {
       title: 'Data',
       uriValue: 'Data',
+      showMenu: false,
       tabLayout: [
         {
           title: 'Files',

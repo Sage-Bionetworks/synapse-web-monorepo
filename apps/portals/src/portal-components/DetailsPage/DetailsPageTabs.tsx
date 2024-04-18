@@ -17,14 +17,13 @@ import { SynapseComponents } from 'synapse-react-client'
 export type DetailsPageTabsProps = {
   tabConfigs: DetailsPageTabProps[]
   loading: boolean
-  showMenu: boolean
   queryResultBundle?: QueryResultBundle
 }
 
 const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
   props,
 ) => {
-  const { tabConfigs, loading, queryResultBundle, showMenu } = props
+  const { tabConfigs, loading, queryResultBundle } = props
   const { url } = useRouteMatch()
   const rowValues = queryResultBundle?.queryResult?.queryResults.rows[0].values
   const headers = queryResultBundle?.queryResult?.queryResults.headers
@@ -44,7 +43,9 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
         {tabConfigs.map((tab, index) => {
           if (tab.hideIfColumnValueNull) {
             if (rowValues && headers) {
-              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueNull)
+              const colIndex = headers.findIndex(
+                (h) => h.name == tab.hideIfColumnValueNull,
+              )
               if (!rowValues[colIndex]) {
                 return <></>
               }
@@ -91,13 +92,12 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
                       tabConfigs={tabConfig.tabLayout}
                       loading={loading}
                       queryResultBundle={queryResultBundle}
-                      showMenu={showMenu}
                     ></DetailsPageTabs>
                   )}
                   {'synapseConfigArray' in tabConfig &&
                     tabConfig.synapseConfigArray && (
                       <DetailsPageSynapseConfigArray
-                        showMenu={showMenu}
+                        showMenu={tabConfig.showMenu}
                         synapseConfigArray={tabConfig.synapseConfigArray}
                         queryResultBundle={queryResultBundle}
                       />

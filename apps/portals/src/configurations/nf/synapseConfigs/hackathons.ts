@@ -105,7 +105,6 @@ const hackathons: SynapseConfig = {
 }
 
 export const hackathonsDetailPage: DetailsPageProps = {
-  showMenu: true,
   sql: hackathonsSql,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   tabLayout: [

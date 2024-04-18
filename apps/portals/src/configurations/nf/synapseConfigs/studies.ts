@@ -139,7 +139,6 @@ const studies: SynapseConfig = {
 }
 
 export const studiesDetailPage: DetailsPageProps = {
-  showMenu: true,
   sql: studiesSql,
   tabLayout: [
     {
@@ -204,6 +203,7 @@ export const studiesDetailPage: DetailsPageProps = {
       iconName: 'dataset',
       toolTip: 'All of the Datasets generated within this study',
       cssClass: 'tab-dataset',
+      showMenu: false,
       synapseConfigArray: [
         {
           name: 'CardContainerLogic',
@@ -224,6 +224,7 @@ export const studiesDetailPage: DetailsPageProps = {
       iconName: 'database',
       toolTip: 'All of the file data generated within this study',
       cssClass: 'tab-database',
+      showMenu: false,
       synapseConfigArray: [
         {
           name: 'QueryWrapperPlotNav',

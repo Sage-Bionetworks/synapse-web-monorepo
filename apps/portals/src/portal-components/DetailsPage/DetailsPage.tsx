@@ -408,10 +408,10 @@ const getSynapseComponent = (
   )
 }
 export const DetailsPageSynapseConfigArray: React.FC<{
-  showMenu: boolean
+  showMenu?: boolean
   synapseConfigArray: RowSynapseConfig[]
   queryResultBundle?: QueryResultBundle
-}> = ({ showMenu, synapseConfigArray, queryResultBundle }) => {
+}> = ({ showMenu = true, synapseConfigArray, queryResultBundle }) => {
   const synapseConfigContent = (
     <>
       {synapseConfigArray.map((el: RowSynapseConfig, index) => {
