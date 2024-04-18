@@ -1,30 +1,33 @@
 import React, { useState } from 'react'
-import { Alert, Button, Link, TextField } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
+import { Alert, Button, TextField } from '@mui/material'
+import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
 
-export default function ChangePassword() {
-  const [oldPassword, setOldPassword] = useState<string>('')
+export type ChangePasswordWithTokenProps = {
+  passwordChangeToken: PasswordResetSignedToken
+  onSuccess: () => void
+}
+
+export default function ChangePasswordWithToken(
+  props: ChangePasswordWithTokenProps,
+) {
+  const { passwordChangeToken, onSuccess } = props
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
-
-  const { data: userProfile, isLoading: isLoadingUserProfile } =
-    useGetCurrentUserProfile()
 
   const {
     promptForTwoFactorAuth,
     twoFactorAuthPrompt,
     isPending: changePasswordIsPending,
-    handleChangePasswordWithCurrentPassword,
+    handleChangePasswordWithResetToken,
     error,
   } = useChangePasswordFormState({
     onChangePasswordSuccess: () => {
-      setOldPassword('')
       setNewPassword('')
       setConfirmPassword('')
       displayToast('Password successfully changed.', 'success')
+      onSuccess()
     },
   })
 
@@ -33,11 +36,7 @@ export default function ChangePassword() {
     if (newPassword !== confirmPassword) {
       displayToast('Passwords do not match.', 'danger')
     } else {
-      handleChangePasswordWithCurrentPassword(
-        userProfile?.userName!,
-        oldPassword,
-        newPassword,
-      )
+      handleChangePasswordWithResetToken(newPassword, passwordChangeToken)
     }
   }
 
@@ -54,52 +53,36 @@ export default function ChangePassword() {
           <TextField
             fullWidth
             required
-            margin={'normal'}
-            type="password"
-            id="currentPassword"
-            label={'Current password'}
-            onChange={e => setOldPassword(e.target.value)}
-            value={oldPassword}
-          />
-          <TextField
-            fullWidth
-            required
-            margin={'normal'}
             type="password"
             id="newPassword"
+            name="newPassword"
             label={'New password'}
             onChange={e => setNewPassword(e.target.value)}
-            value={newPassword}
+            value={newPassword || ''}
+            sx={{ mb: 2 }}
           />
           <TextField
             fullWidth
             required
-            margin={'normal'}
             type="password"
             id="confirmPassword"
+            name="confirmPassword"
             label={'Confirm password'}
             onChange={e => setConfirmPassword(e.target.value)}
-            value={confirmPassword}
+            value={confirmPassword || ''}
+            sx={{ mb: 2 }}
           />
-          <div style={{ marginTop: '30px' }}>
-            <Button
-              sx={{ marginRight: '26px' }}
-              disabled={
-                !oldPassword ||
-                !newPassword ||
-                !confirmPassword ||
-                isLoadingUserProfile ||
-                changePasswordIsPending
-              }
-              variant="contained"
-              type="submit"
-            >
-              Change Password
-            </Button>
-            <Link component={RouterLink} to="/resetPassword">
-              Forgot password?
-            </Link>
-          </div>
+          <Button
+            variant="contained"
+            type="submit"
+            fullWidth
+            disabled={
+              !newPassword || !confirmPassword || changePasswordIsPending
+            }
+            sx={{ mt: 3, py: 2 }}
+          >
+            Change Password
+          </Button>
         </form>
       )}
       {error && (

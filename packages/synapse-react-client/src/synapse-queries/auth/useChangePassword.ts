@@ -1,6 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import {
   ChangePasswordWithCurrentPassword,
+  ChangePasswordWithToken,
   ChangePasswordWithTwoFactorAuthToken,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
@@ -12,7 +13,9 @@ export function useChangePassword(
     UseMutationOptions<
       '' | TwoFactorAuthErrorResponse,
       SynapseClientError,
-      ChangePasswordWithCurrentPassword | ChangePasswordWithTwoFactorAuthToken
+      | ChangePasswordWithToken
+      | ChangePasswordWithCurrentPassword
+      | ChangePasswordWithTwoFactorAuthToken
     >
   >,
 ) {
