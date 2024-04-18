@@ -29,6 +29,7 @@ jobs:
       - id: package-version-check
         uses: EndBug/version-check@v2
         with:
+          diff-search: true
           file-name: './${{ steps.package-path.outputs.packagePath }}/package.json'
       # Build the package to publish
       - name: Build package
