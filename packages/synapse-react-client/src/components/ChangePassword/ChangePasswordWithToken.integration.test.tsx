@@ -113,7 +113,7 @@ async function typeAndSubmitTOTP(
   }
 }
 
-describe('ChangePassword tests', () => {
+describe('ChangePasswordWithToken tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
   afterEach(() => server.resetHandlers())
