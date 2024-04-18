@@ -3,6 +3,7 @@
 exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loose text 1`] = `
 <div>
   <div
+    aria-label="markdown"
     class="markdown"
   >
     <span
@@ -39,6 +40,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
 exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] = `
 <div>
   <div
+    aria-label="markdown"
     class="markdown"
   >
     <span
@@ -68,6 +70,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
 exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] = `
 <div>
   <div
+    aria-label="markdown"
     class="markdown"
   >
     <span

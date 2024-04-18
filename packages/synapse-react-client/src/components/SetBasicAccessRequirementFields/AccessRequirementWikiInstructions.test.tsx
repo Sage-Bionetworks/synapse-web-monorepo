@@ -1,36 +1,40 @@
+import { ObjectType, WikiPage } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   mockACTAccessRequirement,
-  mockACTAccessRequirementWithWiki,
+  mockToUAccessRequirementWithWiki,
 } from '../../mocks/mockAccessRequirements'
-import { mockACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
-import { server } from '../../mocks/msw/server'
+import { mockToUAccessRequirementWikiPage } from '../../mocks/mockWiki'
+import { rest, server } from '../../mocks/msw/server'
+import SynapseClient from '../../synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MarkdownSynapse } from '../Markdown'
-import { NO_WIKI_CONTENT } from '../WikiMarkdownEditorButton/WikiMarkdownEditorButton'
+import { WIKI_PAGE } from '../../utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   AccessRequirementWikiInstructions,
   AccessRequirementWikiInstructionsProps,
 } from './AccessRequirementWikiInstructions'
 
-const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../Markdown/MarkdownSynapse', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
-mockMarkdownSynapse.mockImplementation(
-  () => (<div data-testid={MARKDOWN_SYNAPSE_TEST_ID} />) as any,
-)
-async function confirmMarkdown(markdown: string) {
-  await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
-  expect(mockMarkdownSynapse).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      markdown: markdown,
-    }),
-    expect.anything(),
+const createWikiPageSpy = jest.spyOn(SynapseClient, 'createWikiPage')
+const changeGetWikiPageHandlerOnce = (wikiPage: WikiPage) => {
+  return server.use(
+    rest.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE(
+        ObjectType.ACCESS_REQUIREMENT,
+        ':ownerObjectId',
+      )}/:wikiPageId`,
+      async (req, res, ctx) => {
+        return res.once(ctx.status(200), ctx.json(wikiPage))
+      },
+    ),
   )
 }
 
@@ -61,12 +65,16 @@ describe('AccessRequirementWikiInstructions', () => {
     }
     const { user, editBtn } = setUp(props)
 
-    await waitFor(() => {
-      expect(editBtn).not.toBeDisabled()
-      expect(screen.queryByText(NO_WIKI_CONTENT)).not.toBeNull()
-    })
+    await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
+    expectMarkdownSynapseNotToGetWiki()
+    expect(editBtn).not.toBeDisabled()
 
     await user.click(editBtn)
+
+    const createdWikiPage = (await createWikiPageSpy.mock.results[0]
+      .value) as WikiPage
+    changeGetWikiPageHandlerOnce(createdWikiPage)
+    await waitForMarkdownSynapseToGetWiki()
 
     const editDialog = await screen.findByRole('dialog', {
       name: 'Edit Wiki Markdown',
@@ -87,17 +95,21 @@ describe('AccessRequirementWikiInstructions', () => {
       expect(editDialog).not.toBeInTheDocument()
     })
 
-    await confirmMarkdown(newMarkdown)
-    expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
+    changeGetWikiPageHandlerOnce({ ...createdWikiPage, markdown: newMarkdown })
+    await waitForMarkdownSynapseToGetWiki(2)
+    await confirmMarkdownSynapseTextContent(newMarkdown)
   })
 
   test('edits an existing wiki', async () => {
     const props: AccessRequirementWikiInstructionsProps = {
-      accessRequirement: mockACTAccessRequirementWithWiki,
+      accessRequirement: mockToUAccessRequirementWithWiki,
     }
     const { user, editBtn } = setUp(props)
 
-    await confirmMarkdown(mockACTAccessRequirementWikiPage.markdown)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(
+      mockToUAccessRequirementWikiPage.markdown,
+    )
     expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
     expect(editBtn).not.toBeDisabled()
 
@@ -109,7 +121,7 @@ describe('AccessRequirementWikiInstructions', () => {
     const markdownField = await within(editDialog).findByRole('textbox', {
       name: 'markdown',
     })
-    expect(markdownField).toHaveValue(mockACTAccessRequirementWikiPage.markdown)
+    expect(markdownField).toHaveValue(mockToUAccessRequirementWikiPage.markdown)
 
     const newMarkdown = 'Some new markdown AR instructions'
     await user.clear(markdownField)
@@ -123,6 +135,11 @@ describe('AccessRequirementWikiInstructions', () => {
       expect(editDialog).not.toBeInTheDocument()
     })
 
-    await confirmMarkdown(newMarkdown)
+    changeGetWikiPageHandlerOnce({
+      ...mockToUAccessRequirementWikiPage,
+      markdown: newMarkdown,
+    })
+    await waitForMarkdownSynapseToGetWiki(2)
+    await confirmMarkdownSynapseTextContent(newMarkdown)
   })
 })

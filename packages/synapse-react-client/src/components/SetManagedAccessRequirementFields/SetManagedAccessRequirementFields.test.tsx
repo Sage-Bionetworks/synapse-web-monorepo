@@ -15,13 +15,16 @@ import {
 } from '../../mocks/mock_file_handle'
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  waitForMarkdownSynapseToGetWiki,
+} from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClientError } from '../../utils'
 import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../utils/APIConstants'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { MarkdownSynapse } from '../Markdown'
-import { NO_WIKI_CONTENT } from '../WikiMarkdownEditorButton/WikiMarkdownEditorButton'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DUC_TEMPLATE_UPLOAD_ERROR,
   SetManagedAccessRequirementFields,
@@ -32,25 +35,6 @@ import {
 
 const NEGATIVE_EXPIRATION_PERIOD_ERROR =
   'Please enter a valid expiration period (in days): If expiration period is set, then it must be greater than 0.'
-
-const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../Markdown/MarkdownSynapse', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
-mockMarkdownSynapse.mockImplementation(
-  () => (<div data-testid={MARKDOWN_SYNAPSE_TEST_ID} />) as any,
-)
-async function confirmMarkdown(markdown: string) {
-  await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
-    expect.objectContaining({
-      markdown: markdown,
-    }),
-    expect.anything(),
-  )
-}
 
 const onSaveComplete = jest.fn()
 const updateAccessRequirementSpy = jest.spyOn(
@@ -141,7 +125,6 @@ describe('SetManagedAccessRequirementFields', () => {
     const { checkboxes, buttons, expirationPeriodInput } = setUp()
 
     expect(buttons.editInstructions).toBeVisible()
-    await confirmMarkdown(mockManagedACTAccessRequirementWikiPage.markdown)
 
     expect(checkboxes.isCertifiedUserRequired).toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).toBeChecked()
@@ -161,7 +144,32 @@ describe('SetManagedAccessRequirementFields', () => {
     expect(checkboxes.isIDUPublic).toBeChecked()
   })
 
-  test('displays managed AR without wiki content', () => {
+  test('displays managed AR with wiki content', async () => {
+    const simpleWikiContent =
+      'Some wiki content that will be straightforward to match'
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_WIKI_PAGE(':arId', ':wikiId')}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              ...mockManagedACTAccessRequirementWikiPage,
+              markdown: simpleWikiContent,
+            }),
+          )
+        },
+      ),
+    )
+
+    setUp()
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(simpleWikiContent)
+  })
+
+  test('displays managed AR without wiki content', async () => {
     server.use(
       rest.get(
         `${getEndpoint(
@@ -180,9 +188,8 @@ describe('SetManagedAccessRequirementFields', () => {
     )
 
     setUp()
-
-    expect(mockMarkdownSynapse).not.toHaveBeenCalled()
-    expect(screen.getByText(NO_WIKI_CONTENT)).toBeVisible()
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
   })
 
   test('handles updates to accessor requirements', async () => {

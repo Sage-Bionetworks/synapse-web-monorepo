@@ -3,9 +3,11 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { mockToUAccessRequirementWithWikiPageKey } from '../../mocks/mockAccessRequirements'
 import {
   mockEntityRootWikiPage,
   mockEntityWikiPage,
+  mockToUAccessRequirementWikiPage,
 } from '../../mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
@@ -14,35 +16,20 @@ import {
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { CreateWikiPageInput } from '../../synapse-queries'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { WIKI_PAGE } from '../../utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,
-  NO_WIKI_CONTENT,
   WikiMarkdownEditorButton,
   WikiMarkdownEditorButtonProps,
 } from './WikiMarkdownEditorButton'
-
-const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../Markdown/MarkdownSynapse', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
-mockMarkdownSynapse.mockImplementation(
-  () => (<div data-testid={MARKDOWN_SYNAPSE_TEST_ID} />) as any,
-)
-async function confirmMarkdown(markdown: string) {
-  await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
-    expect.objectContaining({
-      markdown: markdown,
-    }),
-    expect.anything(),
-  )
-}
 
 const getRootWikiPageKeySpy = jest.spyOn(SynapseClient, 'getRootWikiPageKey')
 const getWikiPageSpy = jest.spyOn(SynapseClient, 'getWikiPage')
@@ -307,31 +294,59 @@ describe('WikiMarkdownEditorButton', () => {
     })
   })
 
-  test('displays wiki markdown', async () => {
+  test('displays root wiki markdown for entity', async () => {
+    const { button } = setUp({
+      ...existingRootProps,
+      displayWikiMarkdown: true,
+    })
+
+    await waitForNotDisabled(button)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(mockEntityRootWikiPage.markdown)
+  })
+
+  test('displays wiki subpage markdown for entity', async () => {
     const { button } = setUp({
       ...existingSubpageProps,
       displayWikiMarkdown: true,
     })
 
     await waitForNotDisabled(button)
-    await confirmMarkdown(mockEntityWikiPage.markdown)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(mockEntityWikiPage.markdown)
   })
 
-  test('displays wiki markdown placeholder when no existing markdown content', async () => {
+  test('displays root wiki markdown for access requirement', async () => {
+    const arProps: WikiMarkdownEditorButtonProps = {
+      ownerObjectId: mockToUAccessRequirementWithWikiPageKey.ownerObjectId,
+      ownerObjectType: mockToUAccessRequirementWithWikiPageKey.ownerObjectType,
+      displayWikiMarkdown: true,
+    }
+    const { button } = setUp(arProps)
+
+    await waitForNotDisabled(button)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(
+      mockToUAccessRequirementWikiPage.markdown,
+    )
+  })
+
+  test('displays wiki markdown placeholder when no existing wiki page', async () => {
     const { button } = setUp({
       ...noRootProps,
       displayWikiMarkdown: true,
     })
 
     await waitForNotDisabled(button)
-    await screen.findByText(NO_WIKI_CONTENT)
+    expectMarkdownSynapseNotToGetWiki()
+    await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
   })
 
   test('does not display wiki markdown by default', async () => {
     const { button } = setUp(noRootProps)
 
     await waitForNotDisabled(button)
-    expect(mockMarkdownSynapse).not.toHaveBeenCalled()
+    expect(screen.queryByLabelText('markdown')).toBeNull()
     expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
   })
 })

@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonProps, Typography } from '@mui/material'
+import { Alert, Button, ButtonProps } from '@mui/material'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 import { defaults } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
@@ -8,10 +8,10 @@ import {
   useGetRootWikiPageKey,
   useGetWikiPage,
 } from '../../synapse-queries'
-import { MarkdownSynapse } from '../Markdown'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { MarkdownSynapse, MarkdownSynapseProps } from '../Markdown'
 import WikiMarkdownEditor from '../WikiMarkdownEditor/WikiMarkdownEditor'
 
-export const NO_WIKI_CONTENT = 'There is no content.'
 export const ERROR_LOADING_WIKI_FAILED = 'Failed to load the wiki page: '
 export const DEFAULT_BUTTON_TEXT = 'Edit Wiki Page'
 const DEFAULT_BUTTON_PROPS: Omit<ButtonProps, 'onClick'> = {
@@ -126,19 +126,39 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
     }
   }
 
+  /* TODO - pass ownerId, objectType, wikiId directly to MarkdownSynapse after 
+  MarkdownSynapse is updated to fetch root WikiPages for ACCESS_REQUIREMENT object types.
+  See https://sagebionetworks.jira.com/browse/SWC-6791. */
+  const markdownSynapseProps = useMemo(() => {
+    const markdownSynapseProps: MarkdownSynapseProps = {
+      showPlaceholderIfNoWikiContent: true,
+    }
+    if (wikiPage) {
+      return {
+        ...markdownSynapseProps,
+        ownerId: ownerObjectId,
+        objectType: ownerObjectType,
+        wikiId: wikiPage.id,
+      }
+    } else {
+      // use a placeholder value for markdown so that MarkdownSynapse
+      // displays no content placeholder for owners without root wiki pages
+      return { ...markdownSynapseProps, markdown: '' }
+    }
+  }, [ownerObjectId, ownerObjectType, wikiPage])
+
   return (
     <>
       {displayWikiMarkdown && (
         <>
-          {wikiPage && wikiPage.markdown !== '' ? (
-            <MarkdownSynapse
-              key={wikiPage.markdown}
-              markdown={wikiPage.markdown}
-            />
+          {isLoadingWikiPage || isLoadingRootWikiPageKey ? (
+            <SynapseSpinner />
           ) : (
-            <Typography variant="body1Italic" mb={1}>
-              {NO_WIKI_CONTENT}
-            </Typography>
+            // TODO - remove key once MarkdownSynapse uses tanstack-query
+            <MarkdownSynapse
+              key={wikiPage?.markdown}
+              {...markdownSynapseProps}
+            />
           )}
         </>
       )}
