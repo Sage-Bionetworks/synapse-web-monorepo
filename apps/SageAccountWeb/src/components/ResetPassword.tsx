@@ -42,8 +42,8 @@ export const ResetPassword = (props: ResetPasswordProps) => {
         'If a matching account was found, then your password reset request has been sent. Please check your email.',
         'success',
       )
-    } catch (err: SynapseClientError) {
-      displayToast(err.reason, 'danger')
+    } catch (err: unknown) {
+      displayToast((err as SynapseClientError).reason, 'danger')
     }
   }
 
