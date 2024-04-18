@@ -5,7 +5,11 @@ import {
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { rest } from 'msw'
-import { WIKI_OBJECT_TYPE, WIKI_PAGE } from '../../../utils/APIConstants'
+import {
+  WIKI_OBJECT_TYPE,
+  WIKI_PAGE,
+  WIKI_PAGE_ID,
+} from '../../../utils/APIConstants'
 import { MOCK_WIKI_ETAG, NEW_WIKI_PAGE_ID, mockWikiPages } from '../../mockWiki'
 import { mockWikiPageKeys } from '../../mockWikiPageKey'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
@@ -20,10 +24,11 @@ const wikiOwnerObjectTypes = [
 export function getWikiPage(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
     return rest.get(
-      `${backendOrigin}${WIKI_PAGE(
+      `${backendOrigin}${WIKI_PAGE_ID(
         ownerObjectType,
         ':ownerObjectId',
-      )}/:wikiPageId`,
+        ':wikiPageId',
+      )}`,
       async (req, res, ctx) => {
         let status = 404
         let response: SynapseApiResponse<WikiPage> = {
@@ -111,10 +116,11 @@ export function createWikiPage(backendOrigin: string) {
 export function updateWikiPage(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
     return rest.put(
-      `${backendOrigin}${WIKI_PAGE(
+      `${backendOrigin}${WIKI_PAGE_ID(
         ownerObjectType,
         ':ownerObjectId',
-      )}/:wikiPageId`,
+        ':wikiPageId',
+      )}`,
       async (req, res, ctx) => {
         const requestBody: WikiPage = await req.json()
         return res(ctx.status(201), ctx.json(requestBody))

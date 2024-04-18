@@ -30,7 +30,8 @@ const meta: Meta<typeof SetManagedAccessRequirementFields> = {
           <SetManagedAccessRequirementFields
             {...args}
             ref={ref}
-            onSaveComplete={() => setIsSaving(false)}
+            onSave={() => setIsSaving(false)}
+            onError={() => setIsSaving(false)}
           />
         </Paper>
       </>
@@ -42,11 +43,20 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Demo: Story = {
+export const MockDemo: Story = {
   args: {
-    accessRequirement: mockManagedACTAccessRequirement,
+    accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
   },
   parameters: {
     stack: 'mock',
+  },
+}
+
+export const DevDemo: Story = {
+  args: {
+    accessRequirementId: '9602704',
+  },
+  parameters: {
+    stack: 'development',
   },
 }

@@ -6,11 +6,15 @@ import {
   ManagedACTAccessRequirement,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import React, { useImperativeHandle, useMemo, useState } from 'react'
-import { useUpdateAccessRequirement } from '../../synapse-queries'
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  useGetAccessRequirements,
+  useUpdateAccessRequirement,
+} from '../../synapse-queries'
 import { SynapseClientError } from '../../utils'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 import { UploadDocumentField } from '../AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   AccessRequirementWikiInstructions,
   AccessorRequirements,
@@ -43,12 +47,11 @@ export type SetManagedAccessRequirementFieldsHandle = {
 }
 
 export type SetManagedAccessRequirementFieldsProps = {
-  accessRequirement: ManagedACTAccessRequirement
-  /* Called when AR has been saved or an error has been returned */
-  onSaveComplete: (
-    /* null when an error has been returned */
-    updatedAr: ManagedACTAccessRequirement | null,
-  ) => void
+  accessRequirementId: string
+  /* Called when AR has been saved successfully */
+  onSave: () => void
+  /* Called when error saving AR */
+  onError: () => void
 }
 
 export const SetManagedAccessRequirementFields = React.forwardRef(
@@ -56,7 +59,21 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
     props: SetManagedAccessRequirementFieldsProps,
     ref: React.ForwardedRef<SetManagedAccessRequirementFieldsHandle>,
   ) {
-    const { accessRequirement, onSaveComplete } = props
+    const { accessRequirementId, onSave, onError } = props
+
+    const { data: accessRequirement, error: getArError } =
+      useGetAccessRequirements<ManagedACTAccessRequirement>(
+        accessRequirementId,
+        { staleTime: Infinity },
+      )
+    useEffect(() => {
+      if (accessRequirement) {
+        setUpdatedAr(accessRequirement)
+        setExpirationPeriodDays(
+          (accessRequirement.expirationPeriod / DAY_IN_MS).toString(),
+        )
+      }
+    }, [accessRequirement])
 
     const [uploadDucTemplateError, setUploadDucTemplateError] = useState<
       string | null
@@ -64,16 +81,13 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
     const [expirationPeriodError, setExpirationPeriodError] = useState<
       string | null
     >(null)
-    const [updateArError, setUpdateArError] = useState<string | null>(null)
 
     const [updatedAr, setUpdatedAr] =
-      useState<ManagedACTAccessRequirement>(accessRequirement)
-    const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>(
-      (accessRequirement.expirationPeriod / DAY_IN_MS).toString(),
-    )
+      useState<ManagedACTAccessRequirement | null>(null)
+    const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>('')
 
     const ducTemplateFileHandleAssociation = useMemo(() => {
-      if (updatedAr.ducTemplateFileHandleId) {
+      if (updatedAr?.ducTemplateFileHandleId) {
         const ducTemplateFileHandleAssociation: FileHandleAssociation = {
           fileHandleId: updatedAr.ducTemplateFileHandleId,
           associateObjectType:
@@ -83,10 +97,10 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
         return ducTemplateFileHandleAssociation
       }
       return undefined
-    }, [updatedAr.ducTemplateFileHandleId, updatedAr.id])
+    }, [updatedAr?.ducTemplateFileHandleId, updatedAr?.id])
 
     const uploadDucTemplateCallback = (data: UploadCallbackResp) => {
-      if (data.resp && data.success) {
+      if (data.resp && data.success && updatedAr) {
         setUploadDucTemplateError(null)
         // Files are uploaded and synced with the server immediately
         const uploadResponse: FileUploadComplete = data.resp
@@ -106,15 +120,10 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
     const {
       mutate: updateAccessRequirement,
       isPending: isUpdatingAccessRequirement,
+      error: updateArError,
     } = useUpdateAccessRequirement<ManagedACTAccessRequirement>({
-      onSuccess: updatedAr => {
-        setUpdateArError(null)
-        onSaveComplete(updatedAr)
-      },
-      onError: error => {
-        setUpdateArError(error.reason)
-        onSaveComplete(null)
-      },
+      onSuccess: () => onSave(),
+      onError: () => onError(),
     })
 
     useImperativeHandle(
@@ -122,27 +131,32 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
       () => {
         return {
           save() {
-            const expirationPeriodOrErrorMessage =
-              getValidExpirationPeriodOrErrorMessage(expirationPeriodDays)
-            if (typeof expirationPeriodOrErrorMessage === 'string') {
-              setExpirationPeriodError(expirationPeriodOrErrorMessage)
-              onSaveComplete(null)
-            } else {
-              updateAccessRequirement({
-                ...updatedAr,
-                expirationPeriod: expirationPeriodOrErrorMessage,
-              })
+            if (updatedAr) {
+              const expirationPeriodOrErrorMessage =
+                getValidExpirationPeriodOrErrorMessage(expirationPeriodDays)
+              if (typeof expirationPeriodOrErrorMessage === 'string') {
+                setExpirationPeriodError(expirationPeriodOrErrorMessage)
+                onError()
+              } else {
+                updateAccessRequirement({
+                  ...updatedAr,
+                  expirationPeriod: expirationPeriodOrErrorMessage,
+                })
+              }
             }
           },
         }
       },
-      [
-        expirationPeriodDays,
-        updatedAr,
-        updateAccessRequirement,
-        onSaveComplete,
-      ],
+      [expirationPeriodDays, updatedAr, updateAccessRequirement, onError],
     )
+
+    if (!updatedAr) {
+      if (getArError) {
+        return <Alert severity="error">{getArError.reason}</Alert>
+      } else {
+        return <SynapseSpinner />
+      }
+    }
 
     return (
       <>
@@ -223,18 +237,22 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
                 name="expirationPeriod"
                 label="Expiration period (days)"
                 value={expirationPeriodDays}
+                error={Boolean(expirationPeriodError)}
+                helperText={expirationPeriodError}
                 sx={{ mt: 1 }}
                 fullWidth
                 onChange={event => {
                   setExpirationPeriodError(null)
                   setExpirationPeriodDays(event.target.value)
                 }}
+                onBlur={() => {
+                  const expirationPeriodOrErrorMessage =
+                    getValidExpirationPeriodOrErrorMessage(expirationPeriodDays)
+                  if (typeof expirationPeriodOrErrorMessage === 'string') {
+                    setExpirationPeriodError(expirationPeriodOrErrorMessage)
+                  }
+                }}
               />
-              {expirationPeriodError && (
-                <Alert severity="error" sx={{ marginTop: 2 }}>
-                  {expirationPeriodError}
-                </Alert>
-              )}
               <Box mt={1}>
                 <Checkbox
                   label="Intended Data Use statement is required."
@@ -271,7 +289,7 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
         </Box>
         {updateArError && (
           <Alert severity="error" sx={{ marginTop: 2 }}>
-            {updateArError}
+            {updateArError.reason}
           </Alert>
         )}
       </>

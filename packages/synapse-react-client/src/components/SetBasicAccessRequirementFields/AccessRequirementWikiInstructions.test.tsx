@@ -15,7 +15,7 @@ import {
   waitForMarkdownSynapseToGetWiki,
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_PAGE } from '../../utils/APIConstants'
+import { WIKI_PAGE_ID } from '../../utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
@@ -27,10 +27,11 @@ const createWikiPageSpy = jest.spyOn(SynapseClient, 'createWikiPage')
 const changeGetWikiPageHandlerOnce = (wikiPage: WikiPage) => {
   return server.use(
     rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
         ObjectType.ACCESS_REQUIREMENT,
         ':ownerObjectId',
-      )}/:wikiPageId`,
+        ':wikiPageId',
+      )}`,
       async (req, res, ctx) => {
         return res.once(ctx.status(200), ctx.json(wikiPage))
       },

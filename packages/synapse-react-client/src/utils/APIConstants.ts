@@ -115,13 +115,6 @@ export const ACCESS_REQUIREMENT_WIKI_PAGE_KEY = (id: string | number) =>
   // Note that this is `access_requirement` not `accessRequirement`!
   `${REPO}/access_requirement/${id}/wikikey`
 
-export const ACCESS_REQUIREMENT_WIKI_PAGE = (
-  accessRequirementId: string | number,
-  wikiId: string | number,
-) =>
-  // Note that this is `access_requirement` not `accessRequirement`!
-  `${REPO}/access_requirement/${accessRequirementId}/wiki/${wikiId}`
-
 export const FAVORITES = `${REPO}/favorite`
 
 export const USER_GROUP_HEADERS = `${REPO}/userGroupHeaders`
@@ -217,4 +210,11 @@ export const WIKI_PAGE = (
   ownerObjectId: string,
 ) => {
   return `${WIKI_OBJECT_TYPE(ownerObjectType)}/${ownerObjectId}/wiki`
+}
+export const WIKI_PAGE_ID = (
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+  wikiPageId: string,
+) => {
+  return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId}`
 }

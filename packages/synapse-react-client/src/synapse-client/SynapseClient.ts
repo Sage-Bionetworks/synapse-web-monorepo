@@ -80,6 +80,7 @@ import {
   VERIFICATION_SUBMISSION,
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
+  WIKI_PAGE_ID,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -1747,10 +1748,11 @@ export const getWikiPage = (
   accessToken: string | undefined,
   wikiPageKey: WikiPageKey,
 ): Promise<WikiPage> => {
-  const url = `${WIKI_PAGE(
+  const url = `${WIKI_PAGE_ID(
     wikiPageKey.ownerObjectType,
     wikiPageKey.ownerObjectId,
-  )}/${wikiPageKey.wikiPageId}`
+    wikiPageKey.wikiPageId,
+  )}`
   return doGet<WikiPage>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
@@ -1801,7 +1803,7 @@ export const updateWikiPage = (
   ownerObjectId: string,
   wikiPage: WikiPage,
 ): Promise<WikiPage> => {
-  const url = `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPage.id}`
+  const url = `${WIKI_PAGE_ID(ownerObjectType, ownerObjectId, wikiPage.id)}`
   return doPut<WikiPage>(
     url,
     wikiPage,

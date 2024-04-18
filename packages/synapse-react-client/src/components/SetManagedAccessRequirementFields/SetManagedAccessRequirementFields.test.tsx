@@ -1,6 +1,8 @@
 import {
   FileUploadComplete,
   ManagedACTAccessRequirement,
+  ObjectType,
+  WikiPage,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -21,7 +23,10 @@ import {
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClientError } from '../../utils'
-import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../utils/APIConstants'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  WIKI_PAGE_ID,
+} from '../../utils/APIConstants'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
@@ -36,7 +41,12 @@ import {
 const NEGATIVE_EXPIRATION_PERIOD_ERROR =
   'Please enter a valid expiration period (in days): If expiration period is set, then it must be greater than 0.'
 
-const onSaveComplete = jest.fn()
+const onSave = jest.fn()
+const onError = jest.fn()
+const getAccessRequirementByIdSpy = jest.spyOn(
+  SynapseClient,
+  'getAccessRequirementById',
+)
 const updateAccessRequirementSpy = jest.spyOn(
   SynapseClient,
   'updateAccessRequirement',
@@ -44,8 +54,39 @@ const updateAccessRequirementSpy = jest.spyOn(
 const getFilesSpy = jest.spyOn(SynapseClient, 'getFiles')
 
 const defaultProps: SetManagedAccessRequirementFieldsProps = {
-  accessRequirement: mockManagedACTAccessRequirement,
-  onSaveComplete: onSaveComplete,
+  accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
+  onSave,
+  onError,
+}
+
+const overrideGetAccessRequirementHandler = (
+  ar: ManagedACTAccessRequirement,
+) => {
+  return server.use(
+    rest.get(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+      async (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(ar))
+      },
+    ),
+  )
+}
+
+const overrideGetWikiPageHandler = (wikiPage: WikiPage) => {
+  return server.use(
+    rest.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
+        ObjectType.ACCESS_REQUIREMENT,
+        ':ownerObjectId',
+        ':wikiPageId',
+      )}`,
+      async (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(wikiPage))
+      },
+    ),
+  )
 }
 
 function renderComponent(props: SetManagedAccessRequirementFieldsProps) {
@@ -59,9 +100,16 @@ function renderComponent(props: SetManagedAccessRequirementFieldsProps) {
   return { ref, component }
 }
 
-function setUp(props: SetManagedAccessRequirementFieldsProps = defaultProps) {
+async function setUp(
+  props: SetManagedAccessRequirementFieldsProps = defaultProps,
+) {
   const user = userEvent.setup()
   const { ref, component } = renderComponent(props)
+
+  await waitFor(() => {
+    expect(getAccessRequirementByIdSpy).toHaveBeenCalledTimes(1)
+    expect(component.container.querySelectorAll('div.spinner')).toHaveLength(0)
+  })
 
   const checkboxes = {
     isCertifiedUserRequired: screen.getByRole('checkbox', {
@@ -122,9 +170,10 @@ describe('SetManagedAccessRequirementFields', () => {
   afterAll(() => server.close())
 
   test('displays existing managed AR', async () => {
-    const { checkboxes, buttons, expirationPeriodInput } = setUp()
+    const { checkboxes, buttons, expirationPeriodInput } = await setUp()
 
     expect(buttons.editInstructions).toBeVisible()
+    await waitForMarkdownSynapseToGetWiki()
 
     expect(checkboxes.isCertifiedUserRequired).toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).toBeChecked()
@@ -147,53 +196,29 @@ describe('SetManagedAccessRequirementFields', () => {
   test('displays managed AR with wiki content', async () => {
     const simpleWikiContent =
       'Some wiki content that will be straightforward to match'
-    server.use(
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ACCESS_REQUIREMENT_WIKI_PAGE(':arId', ':wikiId')}`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockManagedACTAccessRequirementWikiPage,
-              markdown: simpleWikiContent,
-            }),
-          )
-        },
-      ),
-    )
+    overrideGetWikiPageHandler({
+      ...mockManagedACTAccessRequirementWikiPage,
+      markdown: simpleWikiContent,
+    })
 
-    setUp()
+    await setUp()
     await waitForMarkdownSynapseToGetWiki()
     await confirmMarkdownSynapseTextContent(simpleWikiContent)
   })
 
   test('displays managed AR without wiki content', async () => {
-    server.use(
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ACCESS_REQUIREMENT_WIKI_PAGE(':arId', ':wikiId')}`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockManagedACTAccessRequirementWikiPage,
-              markdown: '',
-            }),
-          )
-        },
-      ),
-    )
+    overrideGetWikiPageHandler({
+      ...mockManagedACTAccessRequirementWikiPage,
+      markdown: '',
+    })
 
-    setUp()
+    await setUp()
     await waitForMarkdownSynapseToGetWiki()
     await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
   })
 
   test('handles updates to accessor requirements', async () => {
-    const { user, checkboxes, ref } = setUp()
+    const { user, checkboxes, ref } = await setUp()
 
     expect(checkboxes.isCertifiedUserRequired).toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).toBeChecked()
@@ -219,8 +244,8 @@ describe('SetManagedAccessRequirementFields', () => {
         isValidatedProfileRequired: false,
         isTwoFaRequired: false,
       }
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
         updatedAr,
@@ -229,7 +254,7 @@ describe('SetManagedAccessRequirementFields', () => {
   })
 
   test('handles updates to DUC section', async () => {
-    const { user, checkboxes, ref } = setUp()
+    const { user, checkboxes, ref } = await setUp()
 
     expect(checkboxes.isDUCRequired).toBeChecked()
     expect(checkboxes.isIRBApprovalRequired).toBeChecked()
@@ -255,8 +280,8 @@ describe('SetManagedAccessRequirementFields', () => {
         isIRBApprovalRequired: false,
         areOtherAttachmentsRequired: false,
       }
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
         updatedAr,
@@ -265,7 +290,7 @@ describe('SetManagedAccessRequirementFields', () => {
   })
 
   test('displays DUC template download button when there is an existing DUC template', async () => {
-    const { buttons } = setUp()
+    const { buttons } = await setUp()
     expect(buttons.uploadDucTemplate).toBeVisible()
 
     const val = document.getElementById('duc-download-0')
@@ -275,13 +300,14 @@ describe('SetManagedAccessRequirementFields', () => {
     expect(getFilesSpy).toHaveBeenCalled()
   })
 
-  test('does not display DUC template download button when there is not an existing DUC template', () => {
-    const { buttons } = setUp({
+  test('does not display DUC template download button when there is not an existing DUC template', async () => {
+    overrideGetAccessRequirementHandler({
+      ...mockManagedACTAccessRequirement,
+      ducTemplateFileHandleId: undefined,
+    })
+    const { buttons } = await setUp({
       ...defaultProps,
-      accessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        ducTemplateFileHandleId: undefined,
-      },
+      accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
     })
     expect(buttons.uploadDucTemplate).toBeVisible()
     const val = document.getElementById('duc-download-0')
@@ -303,7 +329,7 @@ describe('SetManagedAccessRequirementFields', () => {
       .spyOn(SynapseClient, 'uploadFile')
       .mockResolvedValue(fileUploadComplete)
 
-    const { user, ref } = setUp()
+    const { user, ref } = await setUp()
     await findDucTemplateButton(mockDucTemplateFileHandle.fileName)
 
     const fileInput = screen.getByTestId('file-input')
@@ -320,8 +346,8 @@ describe('SetManagedAccessRequirementFields', () => {
         ...mockManagedACTAccessRequirement,
         ducTemplateFileHandleId: newFileHandleId,
       }
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
         updatedAr,
@@ -344,7 +370,7 @@ describe('SetManagedAccessRequirementFields', () => {
         )
       })
 
-    const { user, ref } = setUp()
+    const { user, ref } = await setUp()
     await findDucTemplateButton(mockDucTemplateFileHandle.fileName)
 
     // hide console.log output by FileUpload on error
@@ -362,10 +388,8 @@ describe('SetManagedAccessRequirementFields', () => {
     ref.current?.save()
 
     await waitFor(() => {
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(
-        mockManagedACTAccessRequirement,
-      )
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
         mockManagedACTAccessRequirement,
@@ -377,7 +401,7 @@ describe('SetManagedAccessRequirementFields', () => {
     const updatedExpirationPeriodDays = 25
     const updatedExpirationPeriodMs = updatedExpirationPeriodDays * DAY_IN_MS
 
-    const { user, expirationPeriodInput, ref } = setUp()
+    const { user, expirationPeriodInput, ref } = await setUp()
 
     expect(expirationPeriodInput).toHaveValue('1')
 
@@ -390,7 +414,8 @@ describe('SetManagedAccessRequirementFields', () => {
     expect(expirationPeriodInput).toHaveValue(
       updatedExpirationPeriodDays.toString(),
     )
-    expect(onSaveComplete).not.toHaveBeenCalled()
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
 
     // parent clicking save
     ref?.current?.save()
@@ -405,14 +430,14 @@ describe('SetManagedAccessRequirementFields', () => {
         MOCK_ACCESS_TOKEN,
         updatedAr,
       )
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
     })
   })
 
   test('defaults to 0 when no expiration period is set', async () => {
     const updatedExpirationPeriodMs = 0
-    const { user, expirationPeriodInput, ref } = setUp()
+    const { user, expirationPeriodInput, ref } = await setUp()
 
     await user.clear(expirationPeriodInput)
     expect(expirationPeriodInput).toHaveValue('')
@@ -430,19 +455,21 @@ describe('SetManagedAccessRequirementFields', () => {
         MOCK_ACCESS_TOKEN,
         updatedAr,
       )
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
     })
   })
 
   test('displays an error when expiration period is < 0', async () => {
     const negativeExpirationPeriodDays = '-25'
-    const { user, expirationPeriodInput, ref } = setUp()
+    const { user, expirationPeriodInput, ref } = await setUp()
 
     await user.clear(expirationPeriodInput)
     await user.type(expirationPeriodInput, negativeExpirationPeriodDays)
+    await user.tab() // trigger blur
 
     expect(expirationPeriodInput).toHaveValue(negativeExpirationPeriodDays)
+    expect(screen.getByText(NEGATIVE_EXPIRATION_PERIOD_ERROR)).toBeVisible()
 
     // parent clicking save
     act(() => {
@@ -451,22 +478,25 @@ describe('SetManagedAccessRequirementFields', () => {
 
     await waitFor(() => {
       expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(null)
-      expect(screen.getByRole('alert')).toHaveTextContent(
-        NEGATIVE_EXPIRATION_PERIOD_ERROR,
-      )
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onSave).not.toHaveBeenCalled()
     })
   })
 
   test('displays an error when a non-number is entered for expiration period', async () => {
     const nonNumberExpirationPeriod = 'ab23'
-    const { user, expirationPeriodInput, ref } = setUp()
+    const { user, expirationPeriodInput, ref } = await setUp()
 
     await user.clear(expirationPeriodInput)
     await user.type(expirationPeriodInput, nonNumberExpirationPeriod)
+    await user.tab() // trigger blur
 
     expect(expirationPeriodInput).toHaveValue(nonNumberExpirationPeriod)
+    expect(
+      screen.getByText(
+        `Please enter a valid expiration period (in days): For input string: "${nonNumberExpirationPeriod}"`,
+      ),
+    ).toBeVisible()
 
     // parent clicking save
     act(() => {
@@ -475,16 +505,13 @@ describe('SetManagedAccessRequirementFields', () => {
 
     await waitFor(() => {
       expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(null)
-      expect(screen.getByRole('alert')).toHaveTextContent(
-        `Please enter a valid expiration period (in days): For input string: "${nonNumberExpirationPeriod}"`,
-      )
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onSave).not.toHaveBeenCalled()
     })
   })
 
   test('when isIDURequired is toggled to false, isIDUPublic is disabled and false (even when previously checked)', async () => {
-    const { user, checkboxes, ref } = setUp()
+    const { user, checkboxes, ref } = await setUp()
 
     expect(checkboxes.isIDURequired).toBeChecked()
     expect(checkboxes.isIDUPublic).toBeChecked()
@@ -512,8 +539,8 @@ describe('SetManagedAccessRequirementFields', () => {
         MOCK_ACCESS_TOKEN,
         updatedAr,
       )
-      expect(onSaveComplete).toHaveBeenCalledTimes(1)
-      expect(onSaveComplete).toHaveBeenLastCalledWith(updatedAr)
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
     })
   })
 
@@ -523,7 +550,11 @@ describe('SetManagedAccessRequirementFields', () => {
       isIDURequired: false,
       isIDUPublic: false,
     }
-    const { user, checkboxes } = setUp({ accessRequirement, onSaveComplete })
+    overrideGetAccessRequirementHandler(accessRequirement)
+    const { user, checkboxes } = await setUp({
+      ...defaultProps,
+      accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
+    })
 
     expect(checkboxes.isIDURequired).not.toBeChecked()
     expect(checkboxes.isIDUPublic).not.toBeChecked()

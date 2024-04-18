@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonProps } from '@mui/material'
+import { Alert, Box, Button, ButtonProps } from '@mui/material'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 import { defaults } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
@@ -150,7 +150,7 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
   return (
     <>
       {displayWikiMarkdown && (
-        <>
+        <Box mb={1}>
           {isLoadingWikiPage || isLoadingRootWikiPageKey ? (
             <SynapseSpinner />
           ) : (
@@ -160,7 +160,7 @@ export const WikiMarkdownEditorButton: React.FunctionComponent<
               {...markdownSynapseProps}
             />
           )}
-        </>
+        </Box>
       )}
       <Button
         onClick={handleClick}

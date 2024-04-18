@@ -14,7 +14,7 @@ import {
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_PAGE } from '../../utils/APIConstants'
+import { WIKI_PAGE_ID } from '../../utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
   ERROR_SAVING_WIKI,
@@ -226,10 +226,11 @@ describe('WikiMarkdownEditor', () => {
     }
     server.use(
       rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
           defaultSubWikiPageProps.ownerObjectType,
           ':ownerObjectId',
-        )}/:wikiPageId`,
+          ':wikiPageId',
+        )}`,
         async (req, res, ctx) => {
           return res(ctx.status(403), ctx.json(errorResponse))
         },
