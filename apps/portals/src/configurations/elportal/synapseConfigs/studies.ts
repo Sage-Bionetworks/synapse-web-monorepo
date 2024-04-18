@@ -12,12 +12,6 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
-const columnAliases = {
-  dataTypeAll: 'Data Types',
-  Number_of_Individuals: 'Individuals',
-  projectFullName: 'Project',
-}
-
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
@@ -61,8 +55,14 @@ export const studyCardConfiguration: CardConfiguration = {
       'Study_Status',
     ],
   },
-  columnAliases,
 }
+
+const columnAliases = {
+  dataTypeAll: 'Data Types',
+  Number_of_Individuals: 'Individuals',
+  projectFullName: 'Project',
+}
+
 const studies: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
