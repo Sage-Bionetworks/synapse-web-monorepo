@@ -139,7 +139,6 @@ const studies: SynapseConfig = {
 }
 
 export const studiesDetailPage: DetailsPageProps = {
-  showMenu: true,
   sql: studiesSql,
   tabLayout: [
     {
@@ -204,6 +203,7 @@ export const studiesDetailPage: DetailsPageProps = {
       iconName: 'dataset',
       toolTip: 'All of the Datasets generated within this study',
       cssClass: 'tab-dataset',
+      showMenu: false,
       synapseConfigArray: [
         {
           name: 'CardContainerLogic',
@@ -222,7 +222,7 @@ export const studiesDetailPage: DetailsPageProps = {
       title: 'Study Files',
       uriValue: 'Files',
       iconName: 'database',
-      toolTip: 'All of the file data generated within this study',
+      toolTip: 'File data generated within this study',
       cssClass: 'tab-database',
       synapseConfigArray: [
         {
@@ -234,6 +234,8 @@ export const studiesDetailPage: DetailsPageProps = {
             sql: filesSql,
             visibleColumnCount: 7,
             sqlOperator: ColumnSingleValueFilterOperator.LIKE,
+            isRowSelectionVisible: true,
+            rowSelectionPrimaryKey: ['id'],
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -247,16 +249,25 @@ export const studiesDetailPage: DetailsPageProps = {
           tableSqlKeys: ['studyId'],
           columnName: 'studyId',
         },
+      ],
+    },
+    {
+      title: 'Additional Files',
+      uriValue: 'AdditionalFiles',
+      iconName: 'database',
+      toolTip: 'Additional file data generated within this study',
+      cssClass: 'tab-database',
+      synapseConfigArray: [
         {
           name: 'StandaloneQueryWrapper',
-          title: 'Metadata Files',
+          title: 'Additional Files',
           columnName: 'studyId',
           tableSqlKeys: ['studyId'],
           props: {
             visibleColumnCount: 7,
             sql: metadataFilesSql,
             rgbIndex,
-            hideAddToDownloadListColumn: true,
+            hideAddToDownloadListColumn: false,
             showDownloadColumn: true,
             rowEntityIDColumnName: 'id',
             rowEntityVersionColumnName: 'currentVersion',

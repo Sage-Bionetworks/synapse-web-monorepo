@@ -182,7 +182,6 @@ export default function DetailsPage(props: DetailsPageProps) {
               tabConfigs={tabLayout}
               loading={isLoading}
               queryResultBundle={queryResultBundle}
-              showMenu={showMenu}
             ></DetailsPageTabs>
           }
         </div>
@@ -408,10 +407,10 @@ const getSynapseComponent = (
   )
 }
 export const DetailsPageSynapseConfigArray: React.FC<{
-  showMenu: boolean
+  showMenu?: boolean
   synapseConfigArray: RowSynapseConfig[]
   queryResultBundle?: QueryResultBundle
-}> = ({ showMenu, synapseConfigArray, queryResultBundle }) => {
+}> = ({ showMenu = true, synapseConfigArray, queryResultBundle }) => {
   const synapseConfigContent = (
     <>
       {synapseConfigArray.map((el: RowSynapseConfig, index) => {

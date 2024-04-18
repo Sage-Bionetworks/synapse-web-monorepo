@@ -111,7 +111,6 @@ const taskTabConfigs = (taskID: string) => {
 export const challengeDetailsPageConfig: DetailsPageProps = {
   sql: challengeProjectsSql,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  showMenu: true,
   tabLayout: [
     {
       title: 'Overview',
