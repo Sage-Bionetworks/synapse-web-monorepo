@@ -15,6 +15,7 @@
     "markdown-it-plugin",
     "markdown-it",
     "markdown",
+    "markdownitSynapse",
     "synapse"
   ],
   "files": [
