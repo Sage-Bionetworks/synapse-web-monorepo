@@ -182,7 +182,6 @@ export default function DetailsPage(props: DetailsPageProps) {
               tabConfigs={tabLayout}
               loading={isLoading}
               queryResultBundle={queryResultBundle}
-              showMenu={showMenu}
             ></DetailsPageTabs>
           }
         </div>
