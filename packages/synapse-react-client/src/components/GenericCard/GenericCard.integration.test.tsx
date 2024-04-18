@@ -26,7 +26,7 @@ import mockTableEntityData, {
   mockTableEntity,
 } from '../../mocks/entity/mockTableEntity'
 import { GenericCardProps } from './GenericCard'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import {
   mockQueryBundleRequest,
@@ -443,6 +443,50 @@ describe('GenericCard tests', () => {
       expect(href2).toEqual(expectedLink)
       // PORTALS-2254: Verify we can override the target via the parameter in the CardLink config
       expect(target2).toEqual(TargetEnum.FULL_WINDOW_BODY)
+    })
+
+    it('uses another column value for link override', () => {
+      const value = 'foo'
+      const hrefOverrideValue = 'bar'
+      const data = [value, hrefOverrideValue]
+      const matchColumnName = 'Funder'
+      const hrefOverrideColumnName = 'Override Col'
+      const schema = {
+        [matchColumnName]: 0,
+        [hrefOverrideColumnName]: 1,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        matchColumnName,
+        overrideLinkURLColumnName: hrefOverrideColumnName,
+      }
+      const expectedLink = hrefOverrideValue
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
+    })
+
+    it('uses another column value for link override with transform', () => {
+      const value = 'foo'
+      const hrefOverrideValue = 'bar'
+      const data = [value, hrefOverrideValue]
+      const matchColumnName = 'Funder'
+      const hrefOverrideColumnName = 'Override Col'
+      const transform = (value: string) => `https://example.com/${value}`
+      const schema = {
+        [matchColumnName]: 0,
+        [hrefOverrideColumnName]: 1,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        matchColumnName,
+        overrideLinkURLColumnName: hrefOverrideColumnName,
+        overrideLinkURLColumnTransform: transform,
+      }
+      const expectedLink = 'https://example.com/bar'
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
     })
   })
 

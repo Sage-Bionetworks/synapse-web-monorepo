@@ -30,9 +30,10 @@ export const studyCardConfiguration: CardConfiguration = {
     },
     {
       isMarkdown: false,
-      baseURL: 'Explore/Projects/DetailsPage',
-      URLColumnName: 'shortName',
-      matchColumnName: 'projectShortName',
+      matchColumnName: 'projectFullName',
+      overrideLinkURLColumnName: 'project',
+      overrideLinkURLColumnTransform: (shortName) =>
+        `/Explore/Projects/DetailsPage?shortName=${shortName}`,
     },
   ],
   genericCardSchema: {
@@ -47,7 +48,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'species',
       'specimenType',
       'program',
-      'projectShortName',
+      'projectFullName',
       'grants',
       'Number_Of_Individuals',
       'Cohort_Type',
@@ -55,11 +56,13 @@ export const studyCardConfiguration: CardConfiguration = {
     ],
   },
 }
+
 const columnAliases = {
   dataTypeAll: 'Data Types',
   Number_of_Individuals: 'Individuals',
-  projectShortName: 'Project',
+  projectFullName: 'Project',
 }
+
 const studies: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
