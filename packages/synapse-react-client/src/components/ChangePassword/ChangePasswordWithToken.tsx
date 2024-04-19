@@ -18,7 +18,7 @@ export default function ChangePasswordWithToken(
 
   const {
     promptForTwoFactorAuth,
-    twoFactorAuthPrompt,
+    TwoFactorAuthPrompt,
     isPending: changePasswordIsPending,
     handleChangePasswordWithResetToken,
     error,
@@ -43,7 +43,7 @@ export default function ChangePasswordWithToken(
   return (
     <div>
       {promptForTwoFactorAuth ? (
-        twoFactorAuthPrompt
+        <TwoFactorAuthPrompt />
       ) : (
         <form
           onSubmit={e => {

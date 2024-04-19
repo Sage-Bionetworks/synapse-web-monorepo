@@ -15,7 +15,7 @@ export default function ChangePassword() {
 
   const {
     promptForTwoFactorAuth,
-    twoFactorAuthPrompt,
+    TwoFactorAuthPrompt,
     isPending: changePasswordIsPending,
     handleChangePasswordWithCurrentPassword,
     error,
@@ -44,7 +44,7 @@ export default function ChangePassword() {
   return (
     <div>
       {promptForTwoFactorAuth ? (
-        twoFactorAuthPrompt
+        <TwoFactorAuthPrompt />
       ) : (
         <form
           onSubmit={e => {

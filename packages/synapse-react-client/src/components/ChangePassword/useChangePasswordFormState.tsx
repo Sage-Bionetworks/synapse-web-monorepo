@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken as ChangePasswordWithTokenObject,
@@ -100,9 +100,13 @@ export default function useChangePasswordFormState(
       changePassword(changeRequest)
     }
   }
+  const promptForTwoFactorAuth = Boolean(twoFactorAuthErrorResponse)
 
-  const twoFactorAuthPrompt: React.ReactNode = useMemo(
-    () => (
+  const TwoFactorAuthPrompt = useCallback(() => {
+    if (!promptForTwoFactorAuth) {
+      return <></>
+    }
+    return (
       <>
         {otpStep === 'VERIFICATION_CODE' && (
           <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
@@ -131,15 +135,20 @@ export default function useChangePasswordFormState(
           Two-factor authentication is required to change your password.
         </Alert>
       </>
-    ),
-    [handleChangePasswordWithOtp, isPending, newPassword, otpStep],
-  )
+    )
+  }, [
+    handleChangePasswordWithOtp,
+    isPending,
+    newPassword,
+    otpStep,
+    promptForTwoFactorAuth,
+  ])
 
   return {
     isPending,
     error,
-    promptForTwoFactorAuth: Boolean(twoFactorAuthErrorResponse),
-    twoFactorAuthPrompt,
+    promptForTwoFactorAuth,
+    TwoFactorAuthPrompt: TwoFactorAuthPrompt,
     handleChangePasswordWithCurrentPassword,
     handleChangePasswordWithResetToken,
   }
