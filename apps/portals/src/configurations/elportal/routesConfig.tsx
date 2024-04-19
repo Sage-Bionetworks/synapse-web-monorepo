@@ -7,7 +7,7 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { peopleSql, projectsSql } from './resources'
+import { peopleSql, projectsSql, upsetPlotSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
@@ -52,21 +52,21 @@ const routes: GenericRoute[] = [
         },
       },
       // Commented out for v1
-      // {
-      //   name: 'UpsetPlot',
-      //   title: 'Exploring the Data',
-      //   outsideContainerClassName: 'home-spacer home-bg-dark',
-      //   centerTitle: true,
-      //   props: {
-      //     sql: upsetPlotSql,
-      //     rgbIndex: 0,
-      //     maxBarCount: 20,
-      //     setName: '# Files per data type',
-      //     combinationName: '# Files',
-      //     // summaryLinkText: 'Explore All Data',
-      //     // summaryLink: '/Explore/Data',
-      //   },
-      // },
+      {
+        name: 'UpsetPlot',
+        title: 'Exploring the Data',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        centerTitle: true,
+        props: {
+          sql: upsetPlotSql,
+          rgbIndex: 0,
+          maxBarCount: 20,
+          setName: '# Files per data type',
+          combinationName: '# Files',
+          // summaryLinkText: 'Explore All Data',
+          // summaryLink: '/Explore/Data',
+        },
+      },
       // {
       //   name: 'FeaturedDataTabs',
       //   centerTitle: true,
@@ -138,7 +138,7 @@ const routes: GenericRoute[] = [
         title: 'Related Resources',
         centerTitle: true,
         subtitle: '',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
+        outsideContainerClassName: 'home-spacer',
         props: {
           config: [
             {
@@ -162,7 +162,7 @@ const routes: GenericRoute[] = [
       {
         name: 'UserCardListRotate',
         title: 'Our People & Institutions',
-        outsideContainerClassName: 'home-spacer',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
           sql: `${peopleSql} WHERE isFeatured=true ORDER BY firstName`,
