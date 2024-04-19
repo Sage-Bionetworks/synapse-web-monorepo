@@ -4,6 +4,7 @@ import * as MarkdownSynapseImageModule from '../../../src/components/Markdown/wi
 import * as MarkdownPlotModule from '../../../src/components/Markdown/widget/MarkdownSynapsePlot'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
+  NO_WIKI_CONTENT,
 } from '../../../src/components/Markdown/MarkdownSynapse'
 import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
@@ -138,6 +139,50 @@ describe('MarkdownSynapse tests', () => {
       }
       renderComponent(props)
       await screen.findByRole('link')
+    })
+  })
+
+  describe('it conditonally renders no content placeholder', () => {
+    it('by default, displays empty string when wiki markdown is undefined', () => {
+      const props: MarkdownSynapseProps = {
+        markdown: undefined,
+      }
+      renderComponent(props)
+
+      const markdownField = screen.getByTestId('markdown')
+      expect(markdownField).toHaveTextContent('')
+    })
+
+    it('by default, displays empty string when wiki markdown is empty string', () => {
+      const props: MarkdownSynapseProps = {
+        wikiId: 'xxx', // placeholder
+        ownerId: 'xxx', // placeholder
+      }
+      mockGetEntityWiki('')
+      renderComponent(props)
+
+      const markdownField = screen.getByTestId('markdown')
+      expect(markdownField).toHaveTextContent('')
+    })
+
+    it('when specified, displays no content placeholder when wiki markdown is undefined', () => {
+      const props: MarkdownSynapseProps = {
+        markdown: undefined,
+        showPlaceholderIfNoWikiContent: true,
+      }
+      renderComponent(props)
+      screen.getByText(NO_WIKI_CONTENT)
+    })
+
+    it('when specified, displays no content placeholder when wiki markdown is empty string', () => {
+      const props: MarkdownSynapseProps = {
+        wikiId: 'xxx', // placeholder
+        ownerId: 'xxx', // placeholder
+        showPlaceholderIfNoWikiContent: true,
+      }
+      mockGetEntityWiki('')
+      renderComponent(props)
+      screen.getByText(NO_WIKI_CONTENT)
     })
   })
 

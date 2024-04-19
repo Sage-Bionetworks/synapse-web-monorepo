@@ -4,6 +4,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -40,6 +41,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -69,6 +71,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"

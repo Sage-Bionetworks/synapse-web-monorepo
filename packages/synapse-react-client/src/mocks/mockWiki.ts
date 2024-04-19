@@ -54,7 +54,7 @@ export const mockACTAccessRequirementWikiPage: WikiPage = {
   modifiedBy: MOCK_USER_ID_2.toString(),
   title: '',
   markdown:
-    'This is a wiki page.  You must request access using this legacy ACT access requirement.  Access to these data is controlled at the request of the data contributor(s) and due to the sensitive nature of the data.',
+    'This is a wiki page. You must request access using this legacy ACT access requirement. Access to these data is controlled at the request of the data contributor(s) and due to the sensitive nature of the data.',
   attachmentFileHandleIds: [],
 }
 
@@ -66,7 +66,7 @@ export const mockEntityRootWikiPage: WikiPage = {
   modifiedOn: '2022-12-06T23:18:27.877Z',
   modifiedBy: MOCK_USER_ID_2.toString(),
   title: '',
-  markdown: 'This is the **root** page for an Entity wiki',
+  markdown: 'This is the root page for an Entity wiki',
   attachmentFileHandleIds: [],
 }
 
@@ -78,7 +78,7 @@ export const mockEntityWikiPage: WikiPage = {
   modifiedOn: '2022-12-06T23:18:27.877Z',
   modifiedBy: MOCK_USER_ID_2.toString(),
   title: 'Some title',
-  markdown: 'This is a a **subpage** for an Entity wiki',
+  markdown: 'This is a a subpage for an Entity wiki',
   attachmentFileHandleIds: [MOCK_FILE_HANDLE_ID],
   parentWikiId: mockEntityRootWikiPage.id,
 }

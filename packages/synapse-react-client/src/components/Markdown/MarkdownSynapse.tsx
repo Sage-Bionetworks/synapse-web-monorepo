@@ -33,6 +33,8 @@ import markdownitInlineComments from 'markdown-it-inline-comments'
 import markdownitBr from 'markdown-it-br'
 import markdownitMath from 'markdown-it-synapse-math'
 
+export const NO_WIKI_CONTENT = 'There is no content.'
+
 export type MarkdownSynapseProps = {
   ownerId?: string
   wikiId?: string
@@ -41,6 +43,7 @@ export type MarkdownSynapseProps = {
   objectType?: ObjectType
   loadingSkeletonRowCount?: number
   onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
+  showPlaceholderIfNoWikiContent?: boolean
 }
 const md = MarkdownIt({ html: true })
 
@@ -241,6 +244,10 @@ class MarkdownSynapse extends React.Component<
       return
     }
     try {
+      /* TODO: when wikiId is undefined, get the root WikiPageKey (SynapseClient.getRootWikiPageKey),
+      then use the key to get the specific WikiPage (SynapseClient.getWikiPage). 
+      See https://sagebionetworks.jira.com/browse/SWC-6791.
+      */
       const wikiPage = await SynapseClient.getEntityWiki(
         this.context.accessToken,
         ownerId,
@@ -344,6 +351,22 @@ class MarkdownSynapse extends React.Component<
       const document = domParser.parseFromString(markup, 'text/html')
       return <>{this.recursiveRender(document.body, markup)}</>
     }
+
+    // If we're still fetching data, then don't show the placeholder yet
+    const isFetchingData =
+      this.props.objectType && this.props.ownerId && this.state.isLoading
+    if (
+      !isFetchingData &&
+      this.props.showPlaceholderIfNoWikiContent &&
+      markup === ''
+    ) {
+      return (
+        <Typography variant="body1Italic" mb={1}>
+          {NO_WIKI_CONTENT}
+        </Typography>
+      )
+    }
+
     return
   }
 
@@ -614,13 +637,17 @@ class MarkdownSynapse extends React.Component<
     )
     if (renderInline) {
       return (
-        <span className="markdown markdown-inline" ref={this.markupRef}>
+        <span
+          data-testid="markdown"
+          className="markdown markdown-inline"
+          ref={this.markupRef}
+        >
           {content}
         </span>
       )
     }
     return (
-      <div className="markdown" ref={this.markupRef}>
+      <div data-testid="markdown" className="markdown" ref={this.markupRef}>
         {content}
       </div>
     )

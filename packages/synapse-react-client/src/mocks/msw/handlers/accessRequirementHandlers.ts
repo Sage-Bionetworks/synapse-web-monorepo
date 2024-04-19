@@ -71,6 +71,16 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     },
   ),
 ]
+export function updateAccessRequirement(backendOrigin: string) {
+  return rest.put(
+    `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+    async (req, res, ctx) => {
+      const requestBody: AccessRequirement = await req.json()
+      return res(ctx.status(200), ctx.json(requestBody))
+    },
+  )
+}
+
 export const getAccessRequirementEntityBindingHandlers = (
   backendOrigin: string,
   entityId = ':entityId',
@@ -191,6 +201,7 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
 export function getAllAccessRequirementHandlers(backendOrigin: string) {
   return [
     ...getAccessRequirementHandlers(backendOrigin),
+    updateAccessRequirement(backendOrigin),
     ...getAccessRequirementEntityBindingHandlers(backendOrigin),
     getAccessRequirementsBoundToTeamHandler(backendOrigin),
     ...getAccessRequirementStatusHandlers(backendOrigin),

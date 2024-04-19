@@ -3,9 +3,11 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { mockToUAccessRequirementWithWikiPageKey } from '../../mocks/mockAccessRequirements'
 import {
   mockEntityRootWikiPage,
   mockEntityWikiPage,
+  mockToUAccessRequirementWikiPage,
 } from '../../mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
@@ -14,9 +16,15 @@ import {
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { CreateWikiPageInput } from '../../synapse-queries'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { WIKI_PAGE } from '../../utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,
   WikiMarkdownEditorButton,
@@ -284,5 +292,61 @@ describe('WikiMarkdownEditorButton', () => {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument()
     })
+  })
+
+  test('displays root wiki markdown for entity', async () => {
+    const { button } = setUp({
+      ...existingRootProps,
+      displayWikiMarkdown: true,
+    })
+
+    await waitForNotDisabled(button)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(mockEntityRootWikiPage.markdown)
+  })
+
+  test('displays wiki subpage markdown for entity', async () => {
+    const { button } = setUp({
+      ...existingSubpageProps,
+      displayWikiMarkdown: true,
+    })
+
+    await waitForNotDisabled(button)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(mockEntityWikiPage.markdown)
+  })
+
+  test('displays root wiki markdown for access requirement', async () => {
+    const arProps: WikiMarkdownEditorButtonProps = {
+      ownerObjectId: mockToUAccessRequirementWithWikiPageKey.ownerObjectId,
+      ownerObjectType: mockToUAccessRequirementWithWikiPageKey.ownerObjectType,
+      displayWikiMarkdown: true,
+    }
+    const { button } = setUp(arProps)
+
+    await waitForNotDisabled(button)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(
+      mockToUAccessRequirementWikiPage.markdown,
+    )
+  })
+
+  test('displays wiki markdown placeholder when no existing wiki page', async () => {
+    const { button } = setUp({
+      ...noRootProps,
+      displayWikiMarkdown: true,
+    })
+
+    await waitForNotDisabled(button)
+    expectMarkdownSynapseNotToGetWiki()
+    await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
+  })
+
+  test('does not display wiki markdown by default', async () => {
+    const { button } = setUp(noRootProps)
+
+    await waitForNotDisabled(button)
+    expect(screen.queryByLabelText('markdown')).toBeNull()
+    expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
   })
 })

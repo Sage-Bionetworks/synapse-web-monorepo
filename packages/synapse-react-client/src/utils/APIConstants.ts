@@ -98,11 +98,12 @@ export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
 export const CHANGE_PASSWORD = `${AUTH}/user/changePassword`
 
-export const ACCESS_REQUIREMENT_SEARCH = `${REPO}/accessRequirement/search`
+export const ACCESS_REQUIREMENT = `${REPO}/accessRequirement`
+export const ACCESS_REQUIREMENT_SEARCH = `${ACCESS_REQUIREMENT}/search`
 export const ACCESS_REQUEST_SUBMISSION_SEARCH = `${REPO}/dataAccessSubmission/search`
 
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
-  `${REPO}/accessRequirement/${id}`
+  `${ACCESS_REQUIREMENT}/${id}`
 
 export const ACCESS_REQUIREMENT_ACL = (id: string | number) =>
   ACCESS_REQUIREMENT_BY_ID(id) + '/acl'
@@ -113,13 +114,6 @@ export const ACCESS_REQUIREMENT_STATUS = (id: string | number) =>
 export const ACCESS_REQUIREMENT_WIKI_PAGE_KEY = (id: string | number) =>
   // Note that this is `access_requirement` not `accessRequirement`!
   `${REPO}/access_requirement/${id}/wikikey`
-
-export const ACCESS_REQUIREMENT_WIKI_PAGE = (
-  accessRequirementId: string | number,
-  wikiId: string | number,
-) =>
-  // Note that this is `access_requirement` not `accessRequirement`!
-  `${REPO}/access_requirement/${accessRequirementId}/wiki/${wikiId}`
 
 export const FAVORITES = `${REPO}/favorite`
 
@@ -216,4 +210,11 @@ export const WIKI_PAGE = (
   ownerObjectId: string,
 ) => {
   return `${WIKI_OBJECT_TYPE(ownerObjectType)}/${ownerObjectId}/wiki`
+}
+export const WIKI_PAGE_ID = (
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+  wikiPageId: string,
+) => {
+  return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId}`
 }

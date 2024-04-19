@@ -13,6 +13,7 @@ import {
 import SynapseClient, {
   createAccessRequirementAcl,
   deleteAccessRequirementAcl,
+  updateAccessRequirement,
   updateAccessRequirementAcl,
 } from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
@@ -94,6 +95,28 @@ export function useGetAccessRequirementWikiPageKey(
         accessToken,
         accessRequirementId,
       ),
+  })
+}
+
+export function useUpdateAccessRequirement<T extends AccessRequirement>(
+  options?: UseMutationOptions<T, SynapseClientError, T>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useMutation<T, SynapseClientError, T>({
+    ...options,
+    mutationFn: ar => updateAccessRequirement<T>(accessToken, ar),
+    onSuccess: async (newAr, ar, ctx) => {
+      const accessRequirementQueryKey = keyFactory.getAccessRequirementQueryKey(
+        newAr.id.toString(),
+      )
+      queryClient.setQueryData(accessRequirementQueryKey, newAr)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAr, ar, ctx)
+      }
+      return
+    },
   })
 }
 
