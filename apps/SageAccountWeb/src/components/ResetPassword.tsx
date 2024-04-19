@@ -1,12 +1,13 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { StyledFormControl } from '../components/StyledComponents'
-import React, { useEffect, useState } from 'react'
+import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
+import React, { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { displayToast, SynapseClient } from 'synapse-react-client'
 import {
   ChangePasswordWithToken,
-  PasswordResetSignedToken,
-} from '@sage-bionetworks/synapse-types'
+  displayToast,
+  SynapseClient,
+  SynapseClientError,
+} from 'synapse-react-client'
+import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
@@ -19,20 +20,17 @@ export type ResetPasswordProps = {
 export const ResetPassword = (props: ResetPasswordProps) => {
   const history = useHistory()
   const [userName, setUserName] = useState('')
-  const [token, setToken] = useState<PasswordResetSignedToken | undefined>()
-  const [newPassword, setNewPassword] = useState<string>('')
-  const [confirmPassword, setConfirmPassword] = useState<string>('')
 
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
 
-  useEffect(() => {
+  const token = useMemo(() => {
     if (passwordResetTokenValue) {
-      const hexDecodedPasswordResetToken = hexDecodeAndDeserialize(
+      return hexDecodeAndDeserialize(
         passwordResetTokenValue,
-      )
-      setToken(hexDecodedPasswordResetToken)
+      ) as PasswordResetSignedToken
     }
-  }, [])
+    return undefined
+  }, [passwordResetTokenValue])
 
   const handleResetPassword = async (
     clickEvent: React.FormEvent<HTMLElement>,
@@ -40,48 +38,17 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     clickEvent.preventDefault()
     try {
       await SynapseClient.resetPassword(userName)
-        .then(() => {
-          displayToast(
-            'If a matching account was found, then your password reset request has been sent. Please check your email.',
-            'success',
-          )
-        })
-        .catch((err: any) => {
-          displayToast(err.reason as string, 'danger')
-        })
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+      displayToast(
+        'If a matching account was found, then your password reset request has been sent. Please check your email.',
+        'success',
+      )
+    } catch (err: unknown) {
+      displayToast((err as SynapseClientError).reason, 'danger')
     }
   }
 
-  const handleChangePasswordWithToken = async (
-    clickEvent: React.FormEvent<HTMLElement>,
-  ) => {
-    clickEvent.preventDefault()
-    try {
-      if (newPassword !== confirmPassword) {
-        displayToast('Passwords do not match', 'danger')
-      } else {
-        const changeRequest: ChangePasswordWithToken = {
-          newPassword,
-          concreteType:
-            'org.sagebionetworks.repo.model.auth.ChangePasswordWithToken',
-          passwordChangeToken: token as PasswordResetSignedToken,
-        }
-        await SynapseClient.changePasswordWithToken(changeRequest)
-          .then(() => {
-            displayToast('Successfully changed', 'success')
-          })
-          .then(() => window.location.replace(props.returnToUrl))
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    }
-  }
-
-  const formControlSx = {
-    marginTop: '0px',
-    marginBottom: '10px',
+  const formControlSx: SxProps = {
+    mb: 2,
   }
 
   const buttonSx = {
@@ -96,55 +63,12 @@ export const ResetPassword = (props: ResetPasswordProps) => {
           token ? (
             <>
               <SourceAppLogo />
-              <form onSubmit={handleChangePasswordWithToken}>
-                <StyledFormControl
-                  fullWidth
-                  required
-                  variant="standard"
-                  margin="normal"
-                  sx={formControlSx}
-                >
-                  <TextField
-                    fullWidth
-                    required
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    label={'New password'}
-                    onChange={e => setNewPassword(e.target.value)}
-                    value={newPassword || ''}
-                  />
-                </StyledFormControl>
-                <StyledFormControl
-                  fullWidth
-                  required
-                  variant="standard"
-                  margin="normal"
-                  sx={formControlSx}
-                >
-                  <TextField
-                    fullWidth
-                    required
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    label={'Confirm password'}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    value={confirmPassword || ''}
-                  />
-                </StyledFormControl>
-                <Button
-                  className="btn-container"
-                  variant="contained"
-                  type="submit"
-                  fullWidth
-                  onSubmit={handleChangePasswordWithToken}
-                  sx={buttonSx}
-                  disabled={!newPassword || !confirmPassword}
-                >
-                  Change Password
-                </Button>
-              </form>
+              <ChangePasswordWithToken
+                passwordChangeToken={token}
+                onSuccess={() => {
+                  window.location.replace(props.returnToUrl)
+                }}
+              />
             </>
           ) : (
             <Box>
@@ -154,27 +78,22 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 }}
               />
               <SourceAppLogo />
-              <StyledFormControl
+              <TextField
                 fullWidth
                 required
-                variant="standard"
-                margin="normal"
+                label={'Email address or username'}
+                id="username"
+                name="username"
+                onChange={e => setUserName(e.target.value)}
+                value={userName || ''}
                 sx={formControlSx}
-              >
-                <TextField
-                  fullWidth
-                  required
-                  label={'Email address or username'}
-                  id="username"
-                  name="username"
-                  onChange={e => setUserName(e.target.value)}
-                  value={userName || ''}
-                />
-              </StyledFormControl>
+              />
               <Button
                 variant="contained"
                 fullWidth
-                onClick={handleResetPassword}
+                onClick={e => {
+                  void handleResetPassword(e)
+                }}
                 sx={buttonSx}
                 type="button"
                 disabled={!userName}
@@ -198,8 +117,8 @@ export const ResetPassword = (props: ResetPasswordProps) => {
             <div>
               <Typography variant="headline2">Reset your password</Typography>
               <Typography variant="subtitle1">
-                Please enter your email address or username and we'll send you
-                instructions to reset your password
+                Please enter your email address or username and we&apos;ll send
+                you instructions to reset your password
               </Typography>
             </div>
           )

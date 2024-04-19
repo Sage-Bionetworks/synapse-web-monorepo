@@ -1,6 +1,5 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ChangePassword from './ChangePassword'
 import { Paper } from '@mui/material'
 import {
   getRequires2FAChangePasswordHandler,
@@ -8,10 +7,11 @@ import {
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import ChangePasswordWithToken from './ChangePasswordWithToken'
 
-const meta: Meta<typeof ChangePassword> = {
-  title: 'Authentication/ChangePassword/WithCurrentPassword',
-  component: ChangePassword,
+const meta: Meta<typeof ChangePasswordWithToken> = {
+  title: 'Authentication/ChangePassword/ResetWithToken',
+  component: ChangePasswordWithToken,
   parameters: {
     stack: 'mock',
   },

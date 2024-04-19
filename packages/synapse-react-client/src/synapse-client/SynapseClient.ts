@@ -4089,6 +4089,7 @@ export const createProfileVerificationSubmission = (
 // https://rest-docs.synapse.org/rest/POST/user/changePassword.html
 export const changePassword = (
   request:
+    | ChangePasswordWithToken
     | ChangePasswordWithCurrentPassword
     | ChangePasswordWithTwoFactorAuthToken,
 ): Promise<TwoFactorAuthErrorResponse | ''> => {
@@ -4099,18 +4100,6 @@ export const changePassword = (
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
-  )
-}
-
-// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
-export const changePasswordWithToken = (
-  newPassword: ChangePasswordWithToken,
-) => {
-  return doPost<ChangePasswordWithToken>(
-    CHANGE_PASSWORD,
-    newPassword,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
