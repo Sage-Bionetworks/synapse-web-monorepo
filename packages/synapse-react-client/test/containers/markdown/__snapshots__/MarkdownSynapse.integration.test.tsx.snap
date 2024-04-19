@@ -3,8 +3,8 @@
 exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loose text 1`] = `
 <div>
   <div
-    aria-label="markdown"
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -40,8 +40,8 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
 exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] = `
 <div>
   <div
-    aria-label="markdown"
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -70,8 +70,8 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
 exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] = `
 <div>
   <div
-    aria-label="markdown"
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"

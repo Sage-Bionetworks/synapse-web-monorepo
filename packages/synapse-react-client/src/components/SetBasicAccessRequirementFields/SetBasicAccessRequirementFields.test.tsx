@@ -1,4 +1,7 @@
-import { ACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  ACTAccessRequirement,
+  ErrorResponse,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
@@ -39,6 +42,24 @@ const updateAccessRequirementSpy = jest.spyOn(
   SynapseClient,
   'updateAccessRequirement',
 )
+
+const NON_ACT_ERROR_REASON = 'Only ACT member can perform this action'
+function overrideUpdateAccessRequirementHandlerWithError() {
+  const errorResponse: ErrorResponse = {
+    concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+    reason: NON_ACT_ERROR_REASON,
+  }
+  server.use(
+    rest.put(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+      async (req, res, ctx) => {
+        return res(ctx.status(403), ctx.json(errorResponse))
+      },
+    ),
+  )
+}
 
 function renderComponent(props: SetBasicAccessRequirementFieldsProps) {
   const ref = React.createRef<SetBasicAccessRequirementFieldsHandle>()
@@ -96,6 +117,7 @@ describe('SetBasicAccessRequirementFields', () => {
       accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
       onSave,
       onError,
+      allowDeleteTextInstructions: true,
     })
     expect(buttons.deleteTextInstructions).toBeNull()
     await waitForMarkdownSynapseToGetWiki()
@@ -153,6 +175,20 @@ describe('SetBasicAccessRequirementFields', () => {
     expect(onError).not.toHaveBeenCalled()
   })
 
+  test('displays text instructions, but does not allow deletion from legacy AR by default', async () => {
+    const { buttons } = await setUp({
+      accessRequirementId: mockACTAccessRequirement.id.toString(),
+      onSave,
+      onError,
+    })
+    expectMarkdownSynapseNotToGetWiki()
+
+    expect(buttons.deleteTextInstructions).toBeNull()
+    expect(
+      screen.getByText(mockACTAccessRequirement.actContactInfo!),
+    ).toBeVisible()
+  })
+
   test('does not show accessor requirements for ACT AR', async () => {
     const { checkboxes } = await setUp({
       accessRequirementId: mockACTAccessRequirement.id.toString(),
@@ -189,6 +225,7 @@ describe('SetBasicAccessRequirementFields', () => {
         mockACTAccessRequirementWithWikiAndTextInstructions.id.toString(),
       onSave,
       onError,
+      allowDeleteTextInstructions: true,
     })
 
     expect(buttons.editInstructions).toBeVisible()
@@ -210,6 +247,7 @@ describe('SetBasicAccessRequirementFields', () => {
       accessRequirementId: mockACTAccessRequirement.id.toString(),
       onSave,
       onError,
+      allowDeleteTextInstructions: true,
     })
     expectMarkdownSynapseNotToGetWiki()
 
@@ -235,6 +273,7 @@ describe('SetBasicAccessRequirementFields', () => {
       accessRequirementId: mockACTAccessRequirement.id.toString(),
       onSave,
       onError,
+      allowDeleteTextInstructions: true,
     })
     expectMarkdownSynapseNotToGetWiki()
 
@@ -261,7 +300,10 @@ describe('SetBasicAccessRequirementFields', () => {
     })
 
     expect(confirmDialog).not.toBeVisible()
-    expect(buttons.deleteTextInstructions).not.toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(buttons.deleteTextInstructions).not.toBeInTheDocument()
+    })
   })
 
   test('does not show accessor requirements for terms of use AR', async () => {
@@ -280,6 +322,7 @@ describe('SetBasicAccessRequirementFields', () => {
       accessRequirementId: mockToUAccessRequirement.id.toString(),
       onSave,
       onError,
+      allowDeleteTextInstructions: true,
     })
     expectMarkdownSynapseNotToGetWiki()
 
@@ -307,7 +350,58 @@ describe('SetBasicAccessRequirementFields', () => {
     })
 
     expect(confirmDialog).not.toBeVisible()
-    expect(buttons.deleteTextInstructions).not.toBeInTheDocument()
-    expect(screen.queryByText(mockToUAccessRequirement.termsOfUse!)).toBeNull()
+
+    await waitFor(() => {
+      expect(buttons.deleteTextInstructions).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(mockToUAccessRequirement.termsOfUse!),
+      ).toBeNull()
+    })
+  })
+
+  test('displays alert when error deleting text instructions', async () => {
+    overrideUpdateAccessRequirementHandlerWithError()
+
+    const { user, buttons } = await setUp({
+      accessRequirementId: mockACTAccessRequirement.id.toString(),
+      onSave,
+      onError,
+      allowDeleteTextInstructions: true,
+    })
+    expectMarkdownSynapseNotToGetWiki()
+    await user.click(buttons.deleteTextInstructions!)
+
+    const confirmDialog = await screen.findByRole('dialog')
+    const confirmBtn = within(confirmDialog).getByRole('button', { name: 'OK' })
+    await user.click(confirmBtn)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(NON_ACT_ERROR_REASON)
+
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
+
+    expect(confirmDialog).not.toBeVisible()
+    expect(buttons.deleteTextInstructions).not.toBeNull()
+  })
+
+  test('displays alert when error updating AR', async () => {
+    overrideUpdateAccessRequirementHandlerWithError()
+
+    const { ref } = await setUp({
+      accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
+      onSave,
+      onError,
+    })
+    await waitForMarkdownSynapseToGetWiki()
+
+    // parent calls save
+    ref?.current?.save()
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(NON_ACT_ERROR_REASON)
+
+    expect(onError).toHaveBeenCalled()
+    expect(onSave).not.toHaveBeenCalled()
   })
 })

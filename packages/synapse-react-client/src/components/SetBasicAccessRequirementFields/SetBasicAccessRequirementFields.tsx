@@ -3,7 +3,12 @@ import {
   AccessRequirement,
   ManagedACTAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useImperativeHandle, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
 import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
@@ -29,6 +34,7 @@ export type SetBasicAccessRequirementFieldsProps = {
   onSave: () => void
   /* Called when error saving AR */
   onError: () => void
+  allowDeleteTextInstructions?: boolean
 }
 
 export const SetBasicAccessRequirementFields = React.forwardRef(
@@ -36,12 +42,15 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
     props: SetBasicAccessRequirementFieldsProps,
     ref: React.ForwardedRef<SetBasicAccessRequirementFieldsHandle>,
   ) {
-    const { accessRequirementId, onSave, onError } = props
+    const {
+      accessRequirementId,
+      onSave,
+      onError,
+      allowDeleteTextInstructions = false,
+    } = props
     const [updatedAr, setUpdatedAr] = useState<BasicAccessRequirement | null>(
       null,
     )
-    const [isDeletingTextInstructions, setIsDeletingTextInstructions] =
-      useState<boolean>(false)
 
     const { data: accessRequirement, error: getArError } =
       useGetAccessRequirements<BasicAccessRequirement>(accessRequirementId, {
@@ -53,32 +62,39 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
       }
     }, [accessRequirement])
 
-    const { mutate: updateAccessRequirement, error: updateArError } =
-      useUpdateAccessRequirement<BasicAccessRequirement>({
-        onSuccess: updatedAr => {
-          if (isDeletingTextInstructions) {
-            setUpdatedAr(updatedAr)
-            setIsDeletingTextInstructions(false)
-          } else {
+    const { mutateAsync: updateAccessRequirement, error: updateArError } =
+      useUpdateAccessRequirement<BasicAccessRequirement>()
+
+    const onUpdateAccessRequirement = useCallback(
+      async (
+        updatedAr: BasicAccessRequirement,
+        isDeletingTextInstructions: boolean,
+      ) => {
+        try {
+          await updateAccessRequirement(updatedAr)
+          setUpdatedAr(updatedAr)
+          if (!isDeletingTextInstructions) {
             onSave()
           }
-        },
-        onError: () => {
-          setIsDeletingTextInstructions(false)
-          onError()
-        },
-      })
+        } catch {
+          if (!isDeletingTextInstructions) {
+            onError()
+          }
+        }
+      },
+      [onSave, onError, updateAccessRequirement],
+    )
 
     useImperativeHandle(
       ref,
       () => {
         return {
           save() {
-            if (updatedAr) updateAccessRequirement(updatedAr)
+            if (updatedAr) onUpdateAccessRequirement(updatedAr, false)
           },
         }
       },
-      [updatedAr, updateAccessRequirement],
+      [updatedAr, onUpdateAccessRequirement],
     )
 
     if (!updatedAr) {
@@ -91,17 +107,13 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
 
     return (
       <>
-        {isDeletingTextInstructions ? (
-          <SynapseSpinner />
-        ) : (
-          <AccessRequirementTextInstructions
-            accessRequirement={updatedAr}
-            onConfirmDelete={updatedAr => {
-              setIsDeletingTextInstructions(true)
-              updateAccessRequirement(updatedAr as BasicAccessRequirement)
-            }}
-          />
-        )}
+        <AccessRequirementTextInstructions
+          accessRequirement={updatedAr}
+          allowDelete={allowDeleteTextInstructions}
+          onConfirmDelete={updatedAr => {
+            onUpdateAccessRequirement(updatedAr as BasicAccessRequirement, true)
+          }}
+        />
         <AccessRequirementWikiInstructions accessRequirement={updatedAr} />
         <AccessorRequirements
           accessRequirement={updatedAr}

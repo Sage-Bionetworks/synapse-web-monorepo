@@ -11,12 +11,13 @@ import { getOldAccessRequirementInstructions } from './GovernanceUtils'
 type AccessRequirementTextInstructionsProps = {
   accessRequirement: AccessRequirement
   onConfirmDelete: (updatedAr: AccessRequirement) => void
+  allowDelete?: boolean
 }
 
 export const AccessRequirementTextInstructions: React.FunctionComponent<
   AccessRequirementTextInstructionsProps
 > = (props: AccessRequirementTextInstructionsProps) => {
-  const { accessRequirement, onConfirmDelete } = props
+  const { accessRequirement, onConfirmDelete, allowDelete = false } = props
 
   const [open, setOpen] = useState<boolean>(false)
   const oldInstructions = getOldAccessRequirementInstructions(accessRequirement)
@@ -31,34 +32,39 @@ export const AccessRequirementTextInstructions: React.FunctionComponent<
           <Typography variant="body1" mb={1}>
             {oldInstructions}
           </Typography>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => setOpen(true)}
-          >
-            Delete old instructions
-          </Button>
-          <ConfirmationDialog
-            open={open}
-            title="Are you sure?"
-            content="Deleting the old instructions cannot be undone. Continue?"
-            onCancel={() => setOpen(false)}
-            onConfirm={() => {
-              const clearedInstructionsAr = { ...accessRequirement }
-              if (
-                clearedInstructionsAr.concreteType ===
-                TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
-              ) {
-                clearedInstructionsAr.termsOfUse = undefined
-              } else if (
-                clearedInstructionsAr.concreteType ===
-                ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
-              ) {
-                clearedInstructionsAr.actContactInfo = undefined
-              }
-              onConfirmDelete(clearedInstructionsAr)
-            }}
-          />
+          {allowDelete && (
+            <>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => setOpen(true)}
+              >
+                Delete old instructions
+              </Button>
+              <ConfirmationDialog
+                open={open}
+                title="Are you sure?"
+                content="Deleting the old instructions cannot be undone. Continue?"
+                onCancel={() => setOpen(false)}
+                onConfirm={() => {
+                  const clearedInstructionsAr = { ...accessRequirement }
+                  if (
+                    clearedInstructionsAr.concreteType ===
+                    TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+                  ) {
+                    clearedInstructionsAr.termsOfUse = undefined
+                  } else if (
+                    clearedInstructionsAr.concreteType ===
+                    ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+                  ) {
+                    clearedInstructionsAr.actContactInfo = undefined
+                  }
+                  onConfirmDelete(clearedInstructionsAr)
+                  setOpen(false)
+                }}
+              />
+            </>
+          )}
         </Box>
       )}
     </>

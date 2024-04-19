@@ -638,7 +638,7 @@ class MarkdownSynapse extends React.Component<
     if (renderInline) {
       return (
         <span
-          aria-label="markdown"
+          data-testid="markdown"
           className="markdown markdown-inline"
           ref={this.markupRef}
         >
@@ -647,7 +647,7 @@ class MarkdownSynapse extends React.Component<
       )
     }
     return (
-      <div aria-label="markdown" className="markdown" ref={this.markupRef}>
+      <div data-testid="markdown" className="markdown" ref={this.markupRef}>
         {content}
       </div>
     )

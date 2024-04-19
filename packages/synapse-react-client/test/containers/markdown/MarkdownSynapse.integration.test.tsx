@@ -149,7 +149,7 @@ describe('MarkdownSynapse tests', () => {
       }
       renderComponent(props)
 
-      const markdownField = screen.getByLabelText('markdown')
+      const markdownField = screen.getByTestId('markdown')
       expect(markdownField).toHaveTextContent('')
     })
 
@@ -161,7 +161,7 @@ describe('MarkdownSynapse tests', () => {
       mockGetEntityWiki('')
       renderComponent(props)
 
-      const markdownField = screen.getByLabelText('markdown')
+      const markdownField = screen.getByTestId('markdown')
       expect(markdownField).toHaveTextContent('')
     })
 
