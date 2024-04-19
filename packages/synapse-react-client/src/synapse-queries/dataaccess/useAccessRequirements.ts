@@ -11,6 +11,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient, {
+  createAccessRequirement,
   createAccessRequirementAcl,
   deleteAccessRequirementAcl,
   updateAccessRequirement,
@@ -95,6 +96,29 @@ export function useGetAccessRequirementWikiPageKey(
         accessToken,
         accessRequirementId,
       ),
+  })
+}
+
+export function useCreateAccessRequirement<T extends AccessRequirement>(
+  options?: UseMutationOptions<T, SynapseClientError, Partial<T>>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<T, SynapseClientError, Partial<T>>({
+    ...options,
+    mutationFn: ar => createAccessRequirement<T>(accessToken, ar),
+    onSuccess: async (newAr, ar, ctx) => {
+      const accessRequirementQueryKey = keyFactory.getAccessRequirementQueryKey(
+        newAr.id.toString(),
+      )
+      queryClient.setQueryData(accessRequirementQueryKey, newAr)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAr, ar, ctx)
+      }
+      return
+    },
   })
 }
 
