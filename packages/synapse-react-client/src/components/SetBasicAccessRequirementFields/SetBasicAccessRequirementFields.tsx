@@ -3,12 +3,15 @@ import {
   AccessRequirement,
   ManagedACTAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import React, { useImperativeHandle, useState } from 'react'
-import { useUpdateAccessRequirement } from '../../synapse-queries'
-import { AccessRequirementTextInstructions } from './AccessRequirementTextInstructions'
-import { AccessorRequirements } from './AccessorRequirements'
+import React, { useEffect, useImperativeHandle, useState } from 'react'
+import {
+  useGetAccessRequirements,
+  useUpdateAccessRequirement,
+} from '../../synapse-queries'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { AccessRequirementTextInstructions } from './AccessRequirementTextInstructions'
 import { AccessRequirementWikiInstructions } from './AccessRequirementWikiInstructions'
+import { AccessorRequirements } from './AccessorRequirements'
 
 export type BasicAccessRequirement = Exclude<
   AccessRequirement,
@@ -21,11 +24,11 @@ export type SetBasicAccessRequirementFieldsHandle = {
 }
 
 export type SetBasicAccessRequirementFieldsProps = {
-  accessRequirement: BasicAccessRequirement
-  onSaveComplete: (
-    /* null when an error has been returned */
-    updatedAr: BasicAccessRequirement | null,
-  ) => void
+  accessRequirementId: string
+  /* Called when AR has been saved successfully */
+  onSave: () => void
+  /* Called when error saving AR */
+  onError: () => void
 }
 
 export const SetBasicAccessRequirementFields = React.forwardRef(
@@ -33,29 +36,36 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
     props: SetBasicAccessRequirementFieldsProps,
     ref: React.ForwardedRef<SetBasicAccessRequirementFieldsHandle>,
   ) {
-    const { accessRequirement, onSaveComplete } = props
-    const [updatedAr, setUpdatedAr] =
-      useState<BasicAccessRequirement>(accessRequirement)
-
+    const { accessRequirementId, onSave, onError } = props
+    const [updatedAr, setUpdatedAr] = useState<BasicAccessRequirement | null>(
+      null,
+    )
     const [isDeletingTextInstructions, setIsDeletingTextInstructions] =
       useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
 
-    const { mutate: updateAccessRequirement } =
+    const { data: accessRequirement, error: getArError } =
+      useGetAccessRequirements<BasicAccessRequirement>(accessRequirementId, {
+        staleTime: Infinity,
+      })
+    useEffect(() => {
+      if (accessRequirement) {
+        setUpdatedAr(accessRequirement)
+      }
+    }, [accessRequirement])
+
+    const { mutate: updateAccessRequirement, error: updateArError } =
       useUpdateAccessRequirement<BasicAccessRequirement>({
         onSuccess: updatedAr => {
-          setError(null)
           if (isDeletingTextInstructions) {
             setUpdatedAr(updatedAr)
             setIsDeletingTextInstructions(false)
           } else {
-            onSaveComplete(updatedAr)
+            onSave()
           }
         },
-        onError: error => {
-          setError(error.reason)
+        onError: () => {
           setIsDeletingTextInstructions(false)
-          onSaveComplete(null)
+          onError()
         },
       })
 
@@ -64,12 +74,20 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
       () => {
         return {
           save() {
-            updateAccessRequirement(updatedAr)
+            if (updatedAr) updateAccessRequirement(updatedAr)
           },
         }
       },
       [updatedAr, updateAccessRequirement],
     )
+
+    if (!updatedAr) {
+      if (getArError) {
+        return <Alert severity="error">{getArError.reason}</Alert>
+      } else {
+        return <SynapseSpinner />
+      }
+    }
 
     return (
       <>
@@ -79,7 +97,6 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
           <AccessRequirementTextInstructions
             accessRequirement={updatedAr}
             onConfirmDelete={updatedAr => {
-              setError(null)
               setIsDeletingTextInstructions(true)
               updateAccessRequirement(updatedAr as BasicAccessRequirement)
             }}
@@ -92,9 +109,9 @@ export const SetBasicAccessRequirementFields = React.forwardRef(
             setUpdatedAr(updatedAr as BasicAccessRequirement)
           }
         />
-        {error && (
+        {updateArError && (
           <Alert severity="error" sx={{ marginTop: 2 }}>
-            {error}
+            {updateArError.reason}
           </Alert>
         )}
       </>

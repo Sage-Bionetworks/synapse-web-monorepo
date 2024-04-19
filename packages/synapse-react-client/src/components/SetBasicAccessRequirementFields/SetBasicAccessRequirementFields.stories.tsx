@@ -37,7 +37,8 @@ const meta: Meta<typeof SetBasicAccessRequirementFields> = {
           <SetBasicAccessRequirementFields
             {...args}
             ref={ref}
-            onSaveComplete={() => setIsSaving(false)}
+            onSave={() => setIsSaving(false)}
+            onError={() => setIsSaving(false)}
           />
         </Paper>
       </>
@@ -51,18 +52,27 @@ type Story = StoryObj<typeof meta>
 
 export const MockSelfSign: Story = {
   args: {
-    accessRequirement: mockSelfSignAccessRequirement,
+    accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
   },
 }
 
 export const MockTermsOfUse: Story = {
   args: {
-    accessRequirement: mockToUAccessRequirement,
+    accessRequirementId: mockToUAccessRequirement.id.toString(),
   },
 }
 
 export const MockACTAccessRequirement: Story = {
   args: {
-    accessRequirement: mockACTAccessRequirement,
+    accessRequirementId: mockACTAccessRequirement.id.toString(),
+  },
+}
+
+export const DevSelfSign: Story = {
+  args: {
+    accessRequirementId: '9602674',
+  },
+  parameters: {
+    stack: 'development',
   },
 }

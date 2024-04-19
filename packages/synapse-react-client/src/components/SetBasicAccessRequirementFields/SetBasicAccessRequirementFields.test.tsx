@@ -13,36 +13,28 @@ import {
   mockACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
 } from '../../mocks/mockWiki'
-import { server } from '../../mocks/msw/server'
+import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MarkdownSynapse } from '../Markdown'
+import { ACCESS_REQUIREMENT_BY_ID } from '../../utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,
   SetBasicAccessRequirementFieldsProps,
 } from './SetBasicAccessRequirementFields'
 
-const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../Markdown/MarkdownSynapse', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
-mockMarkdownSynapse.mockImplementation(
-  () => (<div data-testid={MARKDOWN_SYNAPSE_TEST_ID} />) as any,
+const onSave = jest.fn()
+const onError = jest.fn()
+const getAccessRequirementByIdSpy = jest.spyOn(
+  SynapseClient,
+  'getAccessRequirementById',
 )
-async function confirmMarkdown(markdown: string) {
-  await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
-    expect.objectContaining({
-      markdown: markdown,
-    }),
-    expect.anything(),
-  )
-}
-
-const onSaveComplete = jest.fn()
 const updateAccessRequirementSpy = jest.spyOn(
   SynapseClient,
   'updateAccessRequirement',
@@ -59,9 +51,14 @@ function renderComponent(props: SetBasicAccessRequirementFieldsProps) {
   return { ref, component }
 }
 
-function setUp(props: SetBasicAccessRequirementFieldsProps) {
+async function setUp(props: SetBasicAccessRequirementFieldsProps) {
   const user = userEvent.setup()
   const { ref, component } = renderComponent(props)
+
+  await waitFor(() => {
+    expect(getAccessRequirementByIdSpy).toHaveBeenCalledTimes(1)
+    expect(component.container.querySelectorAll('div.spinner')).toHaveLength(0)
+  })
 
   const checkboxes = {
     isCertifiedUserRequired: screen.queryByRole('checkbox', {
@@ -91,31 +88,39 @@ function setUp(props: SetBasicAccessRequirementFieldsProps) {
 describe('SetBasicAccessRequirementFields', () => {
   beforeEach(() => jest.clearAllMocks())
   beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
+  afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  test('does not show text instructions for self-signed AR', () => {
-    const { buttons } = setUp({
-      accessRequirement: mockSelfSignAccessRequirement,
-      onSaveComplete,
+  test('does not show text instructions for self-signed AR', async () => {
+    const { buttons } = await setUp({
+      accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
     expect(buttons.deleteTextInstructions).toBeNull()
+    await waitForMarkdownSynapseToGetWiki()
   })
 
   test('displays existing wiki for self-signed AR', async () => {
-    const { buttons } = setUp({
-      accessRequirement: mockSelfSignAccessRequirement,
-      onSaveComplete,
+    const { buttons } = await setUp({
+      accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
     expect(buttons.editInstructions).toBeVisible()
-    await confirmMarkdown(mockSelfSignAccessRequirementWikiPage.markdown)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(
+      mockSelfSignAccessRequirementWikiPage.markdown,
+    )
   })
 
   test('updates accessor requirements for self-signed AR', async () => {
-    const { user, ref, checkboxes } = setUp({
-      accessRequirement: mockSelfSignAccessRequirement,
-      onSaveComplete,
+    const { user, ref, checkboxes } = await setUp({
+      accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    await waitForMarkdownSynapseToGetWiki()
 
     expect(checkboxes.isCertifiedUserRequired).not.toBeNull()
     expect(checkboxes.isValidatedProfileRequired).not.toBeNull()
@@ -127,7 +132,8 @@ describe('SetBasicAccessRequirementFields', () => {
 
     expect(checkboxes.isCertifiedUserRequired).not.toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).not.toBeChecked()
-    expect(onSaveComplete).not.toHaveBeenCalled()
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
 
     // parent calls save
     ref?.current?.save()
@@ -143,14 +149,17 @@ describe('SetBasicAccessRequirementFields', () => {
         },
       )
     })
-    expect(onSaveComplete).toHaveBeenCalled()
+    expect(onSave).toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
   })
 
-  test('does not show accessor requirements for ACT AR', () => {
-    const { checkboxes } = setUp({
-      accessRequirement: mockACTAccessRequirement,
-      onSaveComplete,
+  test('does not show accessor requirements for ACT AR', async () => {
+    const { checkboxes } = await setUp({
+      accessRequirementId: mockACTAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    expectMarkdownSynapseNotToGetWiki()
     expect(checkboxes.isCertifiedUserRequired).toBeNull()
     expect(checkboxes.isValidatedProfileRequired).toBeNull()
   })
@@ -161,13 +170,32 @@ describe('SetBasicAccessRequirementFields', () => {
         ...mockACTAccessRequirementWithWiki,
         actContactInfo: 'some contact info',
       }
-    const { buttons } = setUp({
-      accessRequirement: mockACTAccessRequirementWithWikiAndTextInstructions,
-      onSaveComplete,
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json(mockACTAccessRequirementWithWikiAndTextInstructions),
+          )
+        },
+      ),
+    )
+
+    const { buttons } = await setUp({
+      accessRequirementId:
+        mockACTAccessRequirementWithWikiAndTextInstructions.id.toString(),
+      onSave,
+      onError,
     })
 
     expect(buttons.editInstructions).toBeVisible()
-    await confirmMarkdown(mockACTAccessRequirementWikiPage.markdown)
+    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseTextContent(
+      mockACTAccessRequirementWikiPage.markdown,
+    )
 
     expect(buttons.deleteTextInstructions).not.toBeNull()
     expect(
@@ -178,10 +206,12 @@ describe('SetBasicAccessRequirementFields', () => {
   })
 
   test('does not delete text instructions from ACT AR when cancelled', async () => {
-    const { user, buttons } = setUp({
-      accessRequirement: mockACTAccessRequirement,
-      onSaveComplete,
+    const { user, buttons } = await setUp({
+      accessRequirementId: mockACTAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    expectMarkdownSynapseNotToGetWiki()
 
     expect(buttons.deleteTextInstructions).not.toBeNull()
     await user.click(buttons.deleteTextInstructions!)
@@ -195,15 +225,18 @@ describe('SetBasicAccessRequirementFields', () => {
     await user.click(cancelBtn)
 
     expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
-    expect(onSaveComplete).not.toHaveBeenCalled()
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
     expect(buttons.deleteTextInstructions).toBeInTheDocument()
   })
 
   test('deletes text instructions from ACT AR when confirmed', async () => {
-    const { user, buttons } = setUp({
-      accessRequirement: mockACTAccessRequirement,
-      onSaveComplete,
+    const { user, buttons } = await setUp({
+      accessRequirementId: mockACTAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    expectMarkdownSynapseNotToGetWiki()
 
     expect(buttons.deleteTextInstructions).not.toBeNull()
     await user.click(buttons.deleteTextInstructions!)
@@ -223,27 +256,32 @@ describe('SetBasicAccessRequirementFields', () => {
           actContactInfo: undefined,
         },
       )
-      expect(onSaveComplete).not.toHaveBeenCalled()
+      expect(onSave).not.toHaveBeenCalled()
+      expect(onError).not.toHaveBeenCalled()
     })
 
     expect(confirmDialog).not.toBeVisible()
     expect(buttons.deleteTextInstructions).not.toBeInTheDocument()
   })
 
-  test('does not show accessor requirements for terms of use AR', () => {
-    const { checkboxes } = setUp({
-      accessRequirement: mockToUAccessRequirement,
-      onSaveComplete,
+  test('does not show accessor requirements for terms of use AR', async () => {
+    const { checkboxes } = await setUp({
+      accessRequirementId: mockToUAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    expectMarkdownSynapseNotToGetWiki()
     expect(checkboxes.isCertifiedUserRequired).toBeNull()
     expect(checkboxes.isValidatedProfileRequired).toBeNull()
   })
 
   test('deletes text instructions from terms of use AR', async () => {
-    const { user, buttons } = setUp({
-      accessRequirement: mockToUAccessRequirement,
-      onSaveComplete,
+    const { user, buttons } = await setUp({
+      accessRequirementId: mockToUAccessRequirement.id.toString(),
+      onSave,
+      onError,
     })
+    expectMarkdownSynapseNotToGetWiki()
 
     expect(screen.getByText(mockToUAccessRequirement.termsOfUse!)).toBeVisible()
     expect(buttons.deleteTextInstructions).not.toBeNull()
@@ -264,7 +302,8 @@ describe('SetBasicAccessRequirementFields', () => {
           termsOfUse: undefined,
         },
       )
-      expect(onSaveComplete).not.toHaveBeenCalled()
+      expect(onSave).not.toHaveBeenCalled()
+      expect(onError).not.toHaveBeenCalled()
     })
 
     expect(confirmDialog).not.toBeVisible()

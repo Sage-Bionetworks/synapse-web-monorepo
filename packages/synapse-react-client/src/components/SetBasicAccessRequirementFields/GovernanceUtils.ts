@@ -16,6 +16,7 @@ export const getOldAccessRequirementInstructions = (ar: AccessRequirement) => {
   switch (ar.concreteType) {
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
     case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      // uses wiki to store instructions
       return ''
     case TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return ar.termsOfUse
@@ -26,6 +27,10 @@ export const getOldAccessRequirementInstructions = (ar: AccessRequirement) => {
   }
 }
 
+/**
+ * Returns true iff the access requirement can apply restrictions based on
+ * accessor qualities, such as certification or validation status
+ */
 export const hasAccessorRequirement = (
   ar: AccessRequirement,
 ): ar is SelfSignAccessRequirement | ManagedACTAccessRequirement => {

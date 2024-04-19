@@ -54,7 +54,7 @@ export const mockACTAccessRequirementWikiPage: WikiPage = {
   modifiedBy: MOCK_USER_ID_2.toString(),
   title: '',
   markdown:
-    'This is a wiki page.  You must request access using this legacy ACT access requirement.  Access to these data is controlled at the request of the data contributor(s) and due to the sensitive nature of the data.',
+    'This is a wiki page. You must request access using this legacy ACT access requirement. Access to these data is controlled at the request of the data contributor(s) and due to the sensitive nature of the data.',
   attachmentFileHandleIds: [],
 }
 
