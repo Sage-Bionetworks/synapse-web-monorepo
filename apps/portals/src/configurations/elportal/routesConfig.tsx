@@ -7,7 +7,7 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { peopleSql, projectsSql } from './resources'
+import { peopleSql, projectsSql, upsetPlotSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
@@ -51,22 +51,21 @@ const routes: GenericRoute[] = [
           entityId: 'syn51449135',
         },
       },
-      // Commented out for v1
-      // {
-      //   name: 'UpsetPlot',
-      //   title: 'Exploring the Data',
-      //   outsideContainerClassName: 'home-spacer home-bg-dark',
-      //   centerTitle: true,
-      //   props: {
-      //     sql: upsetPlotSql,
-      //     rgbIndex: 0,
-      //     maxBarCount: 20,
-      //     setName: '# Files per data type',
-      //     combinationName: '# Files',
-      //     // summaryLinkText: 'Explore All Data',
-      //     // summaryLink: '/Explore/Data',
-      //   },
-      // },
+      {
+        name: 'UpsetPlot',
+        title: 'Exploring the Data',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        centerTitle: true,
+        props: {
+          sql: upsetPlotSql,
+          rgbIndex: 0,
+          maxBarCount: 20,
+          setName: '# Files per data type',
+          combinationName: '# Files',
+          // summaryLinkText: 'Explore All Data',
+          // summaryLink: '/Explore/Data',
+        },
+      },
       // {
       //   name: 'FeaturedDataTabs',
       //   centerTitle: true,
@@ -173,23 +172,16 @@ const routes: GenericRoute[] = [
           summaryLinkText: 'View All People',
         },
       },
-      // {
-      //   name: 'RssFeedCards',
-      //   title: "What's New",
-      //   centerTitle: true,
-      //   outsideContainerClassName: 'home-spacer',
-      //   props: {
-      //     url: 'https://eliteportalstg.wpengine.com/',
-      //     itemsToShow: 3,
-      //     allowCategories: [],
-      //     // mailChimpListName: 'AMP-AD quarterly newsletter',
-      //     // mailChimpUrl:
-      //     //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-      //     lockedColumn: {
-      //       value: "what's-new",
-      //     },
-      //   },
-      // },
+      {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          url: 'https://news.eliteportal.org',
+          itemsToShow: 3,
+        },
+      },
     ],
   },
   {
