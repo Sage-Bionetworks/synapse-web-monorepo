@@ -157,33 +157,31 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     const selectorContent = useMemo(() => {
       if (!subjectsType) return <></>
 
+      function onUpdate(subjects: RestrictableObjectDescriptor[]) {
+        setSubjectsError(null)
+        setSubjects(subjects)
+      }
+
+      function onUpdateIdsTextbox(value: string) {
+        setSubjectsError(null)
+        setHasPendingSubjects(value.trim() !== '')
+      }
+
       switch (subjectsType) {
         case RestrictableObjectType.TEAM:
           return (
             <TeamSubjectsSelector
               subjects={subjects}
-              onUpdate={subjects => {
-                setSubjectsError(null)
-                setSubjects(subjects)
-              }}
-              onUpdateTeamIDsTextbox={value => {
-                setSubjectsError(null)
-                setHasPendingSubjects(value.trim() !== '')
-              }}
+              onUpdate={subjects => onUpdate(subjects)}
+              onUpdateTeamIDsTextbox={value => onUpdateIdsTextbox(value)}
             />
           )
         case RestrictableObjectType.ENTITY:
           return (
             <EntitySubjectsSelector
               subjects={subjects}
-              onUpdate={subjects => {
-                setSubjectsError(null)
-                setSubjects(subjects)
-              }}
-              onUpdateEntityIDsTextbox={value => {
-                setSubjectsError(null)
-                setHasPendingSubjects(value.trim() !== '')
-              }}
+              onUpdate={subjects => onUpdate(subjects)}
+              onUpdateEntityIDsTextbox={value => onUpdateIdsTextbox(value)}
             />
           )
         default:
