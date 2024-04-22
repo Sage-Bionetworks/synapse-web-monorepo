@@ -42,8 +42,6 @@ export const UNSAVED_SUBJECTS_ERROR_MESSAGE = (
     typeText,
   )} button.`
 }
-export const MISSING_NAME_ERROR_MESSAGE =
-  'Please enter a name for this Access Requirement.'
 const NAME_HELP_TEXT =
   "Enter access requirement name. This will also be used when sending notifications for expiring or revoked approval. For example, 'The approval for the name access requirement was revoked...'"
 
@@ -99,7 +97,6 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     const [hasPendingSubjects, setHasPendingSubjects] = useState<boolean>(false)
     const [subjectsError, setSubjectsError] = useState<string | null>(null)
     const [name, setName] = useState<string>('')
-    const [nameError, setNameError] = useState<string | null>(null)
     const [arType, setArType] = useState<ACCESS_REQUIREMENT_CONCRETE_TYPE>(
       MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
     )
@@ -200,13 +197,8 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
             const isStillLoading =
               (isEditing && !accessRequirement) || !subjectsType
             const hasSubjectsError = hasPendingSubjects || subjects.length === 0
-            const hasNameError = name === ''
 
-            if (isStillLoading || hasSubjectsError || hasNameError) {
-              if (hasNameError) {
-                setNameError(MISSING_NAME_ERROR_MESSAGE)
-              }
-
+            if (isStillLoading || hasSubjectsError) {
               if (hasSubjectsError && !isStillLoading) {
                 if (hasPendingSubjects) {
                   setSubjectsError(UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType))
@@ -281,15 +273,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
           value={name}
           placeholder="Access requirement name"
           fullWidth
-          error={Boolean(nameError)}
-          helperText={nameError}
-          onChange={event => {
-            setNameError(null)
-            setName(event.target.value)
-          }}
-          onBlur={() => {
-            if (name === '') setNameError(MISSING_NAME_ERROR_MESSAGE)
-          }}
+          onChange={event => setName(event.target.value)}
         />
         {!isEditing && (
           <>

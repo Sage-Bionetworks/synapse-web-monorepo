@@ -34,7 +34,6 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { REMOVE_TEXT } from '../TeamSubjectsSelector/TeamSubjectsSelector'
 import {
   EMPTY_SUBJECT_LIST_ERROR_MESSAGE,
-  MISSING_NAME_ERROR_MESSAGE,
   UNSAVED_SUBJECTS_ERROR_MESSAGE,
 } from './SetAccessRequirementCommonFields'
 
@@ -350,27 +349,6 @@ describe('SetAccessRequirementCommonFields', () => {
       })
     })
   }
-
-  test('displays error when name is not provided', async () => {
-    const { ref, nameInput } = await setUp(newEntityArProps)
-
-    await waitFor(() => {
-      expect(screen.getByText(MOCK_FILE_NAME)).toBeVisible()
-      expect(nameInput).toHaveValue('')
-    })
-
-    // parent calls save
-    act(() => ref.current?.save())
-
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledTimes(1)
-      expect(onSave).not.toHaveBeenCalled()
-      expect(createAccessRequirementSpy).not.toHaveBeenCalled()
-      expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
-    })
-
-    expect(screen.getByText(MISSING_NAME_ERROR_MESSAGE)).toBeVisible()
-  })
 
   test('displays error when there are pending subjects', async () => {
     const { ref, user } = await setUp(existingTeamArProps)
