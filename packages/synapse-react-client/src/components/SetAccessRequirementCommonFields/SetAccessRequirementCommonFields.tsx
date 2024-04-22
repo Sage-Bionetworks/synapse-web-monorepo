@@ -98,7 +98,9 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     const [subjectsError, setSubjectsError] = useState<string | null>(null)
     const [name, setName] = useState<string>('')
     const [arType, setArType] = useState<ACCESS_REQUIREMENT_CONCRETE_TYPE>(
-      MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      subject?.type === RestrictableObjectType.TEAM
+        ? SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+        : MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
     )
     const [clientError, setClientError] = useState<string | null>(null)
 
@@ -275,7 +277,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
           fullWidth
           onChange={event => setName(event.target.value)}
         />
-        {!isEditing && (
+        {!isEditing && subjectsType !== RestrictableObjectType.TEAM && (
           <>
             <Typography {...headerProps} mt={2}>
               Access requirement type

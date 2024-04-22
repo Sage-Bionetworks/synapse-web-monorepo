@@ -153,18 +153,17 @@ export const mockACTAccessRequirementWithWikiPageKey: WikiPageKey = {
   ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
 }
 
-export const mockTeamManagedACTAccessRequirement: ManagedACTAccessRequirement =
-  {
-    ...mockManagedACTAccessRequirement,
-    id: 8,
-    subjectIds: [
-      {
-        id: MOCK_TEAM_ID.toString(),
-        type: RestrictableObjectType.TEAM,
-      },
-    ],
-    accessType: ACCESS_TYPE.PARTICIPATE,
-  }
+export const mockTeamSelfSignAccessRequirement: SelfSignAccessRequirement = {
+  ...mockSelfSignAccessRequirement,
+  id: 8,
+  subjectIds: [
+    {
+      id: MOCK_TEAM_ID.toString(),
+      type: RestrictableObjectType.TEAM,
+    },
+  ],
+  accessType: ACCESS_TYPE.PARTICIPATE,
+}
 
 export const mockSearchResults: AccessRequirementSearchResponse = {
   results: [
@@ -219,7 +218,7 @@ export const mockAccessRequirements: AccessRequirement[] = [
   mockLockAccessRequirement,
   mockToUAccessRequirementWithWiki,
   mockACTAccessRequirementWithWiki,
-  mockTeamManagedACTAccessRequirement,
+  mockTeamSelfSignAccessRequirement,
 ]
 
 export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [

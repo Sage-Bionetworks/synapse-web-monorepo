@@ -24,7 +24,7 @@ import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
-  mockTeamManagedACTAccessRequirement,
+  mockTeamSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '../../mocks/mockAccessRequirements'
 import { server } from '../../mocks/msw/server'
@@ -63,7 +63,7 @@ const newEntityArProps: SetAccessRequirementCommonFieldsProps = {
   onError,
 }
 const existingTeamArProps: SetAccessRequirementCommonFieldsProps = {
-  accessRequirementId: mockTeamManagedACTAccessRequirement.id.toString(),
+  accessRequirementId: mockTeamSelfSignAccessRequirement.id.toString(),
   onSave,
   onError,
 }
@@ -199,7 +199,24 @@ describe('SetAccessRequirementCommonFields', () => {
     })
   })
 
-  test('creates a new managed team AR', async () => {
+  test('does not show AR type options when creating new team AR', async () => {
+    const props: SetAccessRequirementCommonFieldsProps = {
+      subject: teamSubject,
+      onSave,
+      onError,
+    }
+    await setUp(props)
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('link', { name: mockTeamData.name }),
+      ).toBeVisible()
+    })
+
+    expect(screen.queryByRole('radiogroup')).toBeNull()
+  })
+
+  test('creates a new self-signed team AR', async () => {
     const props: SetAccessRequirementCommonFieldsProps = {
       subject: teamSubject,
       onSave,
@@ -217,10 +234,6 @@ describe('SetAccessRequirementCommonFields', () => {
     const name = 'some name'
     await user.type(nameInput, name)
 
-    const radioButtons = getRadioButtons()
-    expect(radioButtons.managed).toBeChecked()
-    expect(radioButtons.selfSign).not.toBeChecked()
-
     expect(onSave).not.toHaveBeenCalled()
     expect(onError).not.toHaveBeenCalled()
 
@@ -228,11 +241,11 @@ describe('SetAccessRequirementCommonFields', () => {
     ref.current?.save()
 
     await waitFor(() => {
-      const managedAr: Pick<
-        ManagedACTAccessRequirement,
+      const selfSignAr: Pick<
+        SelfSignAccessRequirement,
         'concreteType' | 'name' | 'subjectIds' | 'accessType'
       > = {
-        concreteType: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+        concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
         name: name,
         subjectIds: [teamSubject],
         accessType: ACCESS_TYPE.PARTICIPATE,
@@ -240,27 +253,27 @@ describe('SetAccessRequirementCommonFields', () => {
 
       expect(createAccessRequirementSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
-        managedAr,
+        selfSignAr,
       )
       expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
 
       expect(onSave).toHaveBeenCalledTimes(1)
       expect(onSave).toHaveBeenLastCalledWith(
         MOCK_NEWLY_CREATED_AR_ID.toString(),
-        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+        SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
       )
       expect(onError).not.toHaveBeenCalled()
     })
   })
 
-  test('updates an existing managed team AR', async () => {
+  test('updates an existing self-sign team AR', async () => {
     const { ref, user, nameInput } = await setUp(existingTeamArProps)
 
     await waitFor(() => {
       expect(
         screen.getByRole('link', { name: mockTeamData.name }),
       ).toBeVisible()
-      expect(nameInput).toHaveValue(mockTeamManagedACTAccessRequirement.name)
+      expect(nameInput).toHaveValue(mockTeamSelfSignAccessRequirement.name)
       // cannot select access type for existing AR
       expect(screen.queryByRole('radiogroup')).toBeNull()
     })
@@ -277,8 +290,8 @@ describe('SetAccessRequirementCommonFields', () => {
     ref.current?.save()
 
     await waitFor(() => {
-      const updatedAr: ManagedACTAccessRequirement = {
-        ...mockTeamManagedACTAccessRequirement,
+      const updatedAr: SelfSignAccessRequirement = {
+        ...mockTeamSelfSignAccessRequirement,
         name: updatedName,
       }
       expect(onSave).toHaveBeenCalledTimes(1)
@@ -397,14 +410,14 @@ describe('SetAccessRequirementCommonFields', () => {
     await waitFor(() => {
       expect(onSave).toHaveBeenCalledTimes(1)
       expect(onSave).toHaveBeenLastCalledWith(
-        mockTeamManagedACTAccessRequirement.id.toString(),
-        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+        mockTeamSelfSignAccessRequirement.id.toString(),
+        SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
       )
       expect(onError).not.toHaveBeenCalled()
       expect(updateAccessRequirementSpy).toHaveBeenCalledTimes(1)
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
-        mockTeamManagedACTAccessRequirement,
+        mockTeamSelfSignAccessRequirement,
       )
     })
 
