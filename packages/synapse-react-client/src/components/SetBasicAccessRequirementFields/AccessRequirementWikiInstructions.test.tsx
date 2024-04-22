@@ -111,11 +111,14 @@ describe('AccessRequirementWikiInstructions', () => {
     const { user, editBtn } = setUp(props)
 
     await waitForMarkdownSynapseToGetWiki()
+    await waitFor(() => {
+      expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
+      expect(editBtn).not.toBeDisabled()
+    })
+
     await confirmMarkdownSynapseTextContent(
       mockToUAccessRequirementWikiPage.markdown,
     )
-    expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
-    expect(editBtn).not.toBeDisabled()
 
     await user.click(editBtn)
 
