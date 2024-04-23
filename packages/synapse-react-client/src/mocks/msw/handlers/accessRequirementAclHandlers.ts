@@ -40,7 +40,8 @@ export function createAccessRequirementAcl(backendOrigin: string) {
   return rest.post(
     `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
     async (req, res, ctx) => {
-      return res(ctx.status(201), ctx.json(req))
+      const requestBody: AccessControlList = await req.json()
+      return res(ctx.status(201), ctx.json(requestBody))
     },
   )
 }
@@ -49,7 +50,8 @@ export function updateAccessRequirementAcl(backendOrigin: string) {
   return rest.put(
     `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
     async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(req))
+      const requestBody: AccessControlList = await req.json()
+      return res(ctx.status(200), ctx.json(requestBody))
     },
   )
 }
