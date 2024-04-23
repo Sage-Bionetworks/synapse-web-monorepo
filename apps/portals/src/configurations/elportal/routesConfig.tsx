@@ -173,23 +173,23 @@ const routes: GenericRoute[] = [
           summaryLinkText: 'View All People',
         },
       },
-      // {
-      //   name: 'RssFeedCards',
-      //   title: "What's New",
-      //   centerTitle: true,
-      //   outsideContainerClassName: 'home-spacer',
-      //   props: {
-      //     url: 'https://eliteportalstg.wpengine.com/',
-      //     itemsToShow: 3,
-      //     allowCategories: [],
-      //     // mailChimpListName: 'AMP-AD quarterly newsletter',
-      //     // mailChimpUrl:
-      //     //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-      //     lockedColumn: {
-      //       value: "what's-new",
-      //     },
-      //   },
-      // },
+      {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          url: 'https://news.eliteportal.org',
+          itemsToShow: 3,
+          allowCategories: [],
+          // mailChimpListName: 'AMP-AD quarterly newsletter',
+          // mailChimpUrl:
+          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
+          lockedColumn: {
+            value: "what's-new",
+          },
+        },
+      },
     ],
   },
   {

@@ -117,13 +117,12 @@ export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
             {this.state.rssFeed.items &&
               this.state.rssFeed.items.map((item: any, index: any) => {
                 // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-                const isItemVisible: boolean = index < this.props.itemsToShow
+                if (index >= this.props.itemsToShow) {
+                  return
+                }
 
                 return (
-                  <div
-                    key={item.guid}
-                    className={`FeedItem ${isItemVisible ? '' : 'hidden'}`}
-                  >
+                  <div key={item.guid} className={`FeedItem`}>
                     <div>
                       {this.props.allowCategories &&
                         this.props.allowCategories.length > 0 && (
