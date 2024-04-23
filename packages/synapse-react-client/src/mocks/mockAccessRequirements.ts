@@ -25,8 +25,11 @@ import {
   mockToUAccessRequirementWikiPage,
 } from './mockWiki'
 import { mockDucTemplateFileHandle } from './mock_file_handle'
+import { MOCK_TEAM_ID } from './team/mockTeam'
 import { DAY_IN_MS } from '../utils/SynapseConstants'
 
+export const MOCK_NEWLY_CREATED_AR_ID = 1000
+export const MOCK_AR_ETAG = 'mock-ar-etag'
 const MOCK_PROJECT_ID = mockProjectData.id
 
 const defaultAccessRequirement = {
@@ -150,6 +153,18 @@ export const mockACTAccessRequirementWithWikiPageKey: WikiPageKey = {
   ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
 }
 
+export const mockTeamSelfSignAccessRequirement: SelfSignAccessRequirement = {
+  ...mockSelfSignAccessRequirement,
+  id: 8,
+  subjectIds: [
+    {
+      id: MOCK_TEAM_ID.toString(),
+      type: RestrictableObjectType.TEAM,
+    },
+  ],
+  accessType: ACCESS_TYPE.PARTICIPATE,
+}
+
 export const mockSearchResults: AccessRequirementSearchResponse = {
   results: [
     {
@@ -203,6 +218,7 @@ export const mockAccessRequirements: AccessRequirement[] = [
   mockLockAccessRequirement,
   mockToUAccessRequirementWithWiki,
   mockACTAccessRequirementWithWiki,
+  mockTeamSelfSignAccessRequirement,
 ]
 
 export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [

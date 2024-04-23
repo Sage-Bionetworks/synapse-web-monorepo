@@ -1,5 +1,6 @@
 import { rest } from 'msw'
 import {
+  ACCESS_REQUIREMENT,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -18,6 +19,8 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import {
+  MOCK_AR_ETAG,
+  MOCK_NEWLY_CREATED_AR_ID,
   mockAccessRequirements,
   mockAccessRequirementWikiPageKeys,
   mockSelfSignAccessRequirement,
@@ -71,6 +74,24 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     },
   ),
 ]
+
+export function createAccessRequirement(backendOrigin: string) {
+  return rest.post(
+    `${backendOrigin}${ACCESS_REQUIREMENT}`,
+    async (req, res, ctx) => {
+      const requestBody: AccessRequirement = await req.json()
+      return res(
+        ctx.status(201),
+        ctx.json({
+          ...requestBody,
+          id: MOCK_NEWLY_CREATED_AR_ID,
+          etag: MOCK_AR_ETAG,
+        }),
+      )
+    },
+  )
+}
+
 export function updateAccessRequirement(backendOrigin: string) {
   return rest.put(
     `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
@@ -201,6 +222,7 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
 export function getAllAccessRequirementHandlers(backendOrigin: string) {
   return [
     ...getAccessRequirementHandlers(backendOrigin),
+    createAccessRequirement(backendOrigin),
     updateAccessRequirement(backendOrigin),
     ...getAccessRequirementEntityBindingHandlers(backendOrigin),
     getAccessRequirementsBoundToTeamHandler(backendOrigin),

@@ -89,6 +89,10 @@ describe('AccessRequirementWikiInstructions', () => {
     await user.type(markdownField, newMarkdown)
     expect(markdownField).toHaveValue(newMarkdown)
 
+    // change getGetWikiPage since MarkdownSynapse will GET wiki rather than
+    // ...reading from react query cache
+    changeGetWikiPageHandlerOnce({ ...createdWikiPage, markdown: newMarkdown })
+
     const saveBtn = within(editDialog).getByRole('button', { name: 'Save' })
     await user.click(saveBtn)
 
@@ -96,7 +100,6 @@ describe('AccessRequirementWikiInstructions', () => {
       expect(editDialog).not.toBeInTheDocument()
     })
 
-    changeGetWikiPageHandlerOnce({ ...createdWikiPage, markdown: newMarkdown })
     await waitForMarkdownSynapseToGetWiki(2)
     await confirmMarkdownSynapseTextContent(newMarkdown)
   })
@@ -108,11 +111,14 @@ describe('AccessRequirementWikiInstructions', () => {
     const { user, editBtn } = setUp(props)
 
     await waitForMarkdownSynapseToGetWiki()
+    await waitFor(() => {
+      expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
+      expect(editBtn).not.toBeDisabled()
+    })
+
     await confirmMarkdownSynapseTextContent(
       mockToUAccessRequirementWikiPage.markdown,
     )
-    expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
-    expect(editBtn).not.toBeDisabled()
 
     await user.click(editBtn)
 
@@ -129,6 +135,13 @@ describe('AccessRequirementWikiInstructions', () => {
     await user.type(markdownField, newMarkdown)
     expect(markdownField).toHaveValue(newMarkdown)
 
+    // change getGetWikiPage since MarkdownSynapse will GET wiki rather than
+    // ...reading from react query cache
+    changeGetWikiPageHandlerOnce({
+      ...mockToUAccessRequirementWikiPage,
+      markdown: newMarkdown,
+    })
+
     const saveBtn = within(editDialog).getByRole('button', { name: 'Save' })
     await user.click(saveBtn)
 
@@ -136,10 +149,6 @@ describe('AccessRequirementWikiInstructions', () => {
       expect(editDialog).not.toBeInTheDocument()
     })
 
-    changeGetWikiPageHandlerOnce({
-      ...mockToUAccessRequirementWikiPage,
-      markdown: newMarkdown,
-    })
     await waitForMarkdownSynapseToGetWiki(2)
     await confirmMarkdownSynapseTextContent(newMarkdown)
   })

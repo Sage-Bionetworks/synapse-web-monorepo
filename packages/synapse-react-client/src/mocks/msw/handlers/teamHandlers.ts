@@ -51,7 +51,14 @@ export function getTeamHandler(backendOrigin: string) {
     async (req, res, ctx) => {
       const team = getMockTeamById(req.params.teamId as string)
 
-      return res(ctx.status(200), ctx.json(team))
+      if (team) {
+        return res(ctx.status(200), ctx.json(team))
+      }
+
+      const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+        reason: `Team id: '${req.params.teamId}' does not exist`,
+      }
+      return res(ctx.status(404), ctx.json(errorResponse))
     },
   )
 }
@@ -61,12 +68,17 @@ export function getTeamListHandler(backendOrigin: string) {
     `${backendOrigin}/repo/v1/teamList`,
     async (req, res, ctx) => {
       const requestBody: { list: number[] } = await req.json()
-
-      const teams = requestBody.list
-        .map(teamId => {
-          return getMockTeamById(String(teamId))
-        })
-        .filter((team): team is Team => !!team)
+      const teams: Team[] = []
+      for (const teamId of requestBody.list) {
+        const team = getMockTeamById(teamId.toString())
+        if (!team) {
+          const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+            reason: `Team with id ${teamId} not found`,
+          }
+          return res(ctx.status(404), ctx.json(errorResponse))
+        }
+        teams.push(team)
+      }
 
       const response: SynapseApiResponse<ListWrapper<Team>> = {
         concreteType: 'org.sagebionetworks.repo.model.Team',

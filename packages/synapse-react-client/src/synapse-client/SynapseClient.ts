@@ -3094,6 +3094,28 @@ export const getAccessRequirementById = <T extends AccessRequirement>(
 }
 
 /**
+ * Add an Access Requirement to an Entity, or Team. This service may only be
+ * used by the Synapse Access and Compliance Team.
+ *
+ * See https://rest-docs.synapse.org/rest/POST/accessRequirement.html
+ *
+ * @param accessToken token of user
+ * @param accessRequirement access requirement to create
+ * @returns created access requirement
+ */
+export const createAccessRequirement = <T extends AccessRequirement>(
+  accessToken: string | undefined,
+  accessRequirement: Partial<T>,
+): Promise<T> => {
+  return doPost<T>(
+    ACCESS_REQUIREMENT,
+    accessRequirement,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Modify an existing Access Requirement. This service may only be used by the
  * Synapse Access and Compliance Team.
  *
