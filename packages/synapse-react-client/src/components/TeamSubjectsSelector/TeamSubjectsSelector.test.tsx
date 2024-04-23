@@ -193,7 +193,7 @@ describe('TeamSubjectsSelector', () => {
 
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent(
-      `Team with id ${nonTeamSubject.id} not found`,
+      `Team id: '${nonTeamSubject.id}' does not exist`,
     )
   })
 })

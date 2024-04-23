@@ -1,6 +1,7 @@
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,
+  Skeleton,
   Stack,
   TextField,
   Tooltip,
@@ -25,7 +26,6 @@ import {
 } from '../../synapse-queries'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import TeamSubjectsSelector from '../TeamSubjectsSelector'
 import { RadioGroup } from '../widgets/RadioGroup'
 
@@ -249,7 +249,19 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     )
 
     if (isLoadingAr || !subjectsType) {
-      return <SynapseSpinner />
+      return (
+        <>
+          <Skeleton width={100} height={30} />
+          <Skeleton width={125} height={30} />
+          <Skeleton width="100%">
+            <TextField />
+          </Skeleton>
+          <Skeleton width={100} height={30} />
+          <Skeleton width="100%">
+            <TextField />
+          </Skeleton>
+        </>
+      )
     }
 
     if (getArError) {

@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react'
-import { useGetTeamList } from '../../synapse-queries'
-import { Skeleton, Stack, Typography } from '@mui/material'
 import { ErrorTwoTone } from '@mui/icons-material'
+import { Skeleton, Stack, Typography } from '@mui/material'
+import React from 'react'
+import { useGetTeam } from '../../synapse-queries'
 import TeamBadge from '../TeamBadge'
 
 export type TeamBadgeOrErrorProps = {
@@ -13,13 +13,7 @@ export const TeamBadgeOrError: React.FunctionComponent<
 > = (props: TeamBadgeOrErrorProps) => {
   const { teamId } = props
 
-  const { data: teamList, isLoading, error } = useGetTeamList([teamId])
-  const team = useMemo(() => {
-    if (teamList && teamList.list.length === 1) {
-      return teamList.list[0]
-    }
-    return undefined
-  }, [teamList])
+  const { data: team, isLoading, error } = useGetTeam(teamId)
 
   if (error) {
     return (

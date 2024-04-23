@@ -51,7 +51,14 @@ export function getTeamHandler(backendOrigin: string) {
     async (req, res, ctx) => {
       const team = getMockTeamById(req.params.teamId as string)
 
-      return res(ctx.status(200), ctx.json(team))
+      if (team) {
+        return res(ctx.status(200), ctx.json(team))
+      }
+
+      const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+        reason: `Team id: '${req.params.teamId}' does not exist`,
+      }
+      return res(ctx.status(404), ctx.json(errorResponse))
     },
   )
 }

@@ -22,6 +22,8 @@ export async function waitForMarkdownSynapseToGetWiki(times: number = 1) {
 // Note - matches text content rendered by MarkdownSynapse, but does not
 // confirm that formatting was applied or widgets embedded
 export async function confirmMarkdownSynapseTextContent(textContent: string) {
-  const markdownField = await screen.findByTestId('markdown')
-  expect(markdownField).toHaveTextContent(textContent)
+  await waitFor(() => {
+    const markdownField = screen.getByTestId('markdown')
+    expect(markdownField).toHaveTextContent(textContent)
+  })
 }
