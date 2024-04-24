@@ -142,7 +142,7 @@ const selectReviewerUser = async (
   confirmItem(rows[rows.length - 1], userName, 'Can Review')
 }
 
-describe('ResourceAccessEditor', () => {
+describe('AccessRequirementAclEditor', () => {
   beforeEach(() => jest.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())

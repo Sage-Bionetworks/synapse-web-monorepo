@@ -6,13 +6,13 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useImperativeHandle, useState } from 'react'
-import { SynapseClientError } from '../..'
 import {
   useCreateAccessRequirementACL,
   useDeleteAccessRequirementACL,
   useGetAccessRequirementACL,
   useUpdateAccessRequirementACL,
 } from '../../synapse-queries'
+import { SynapseClientError } from '../../utils'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { ResourceAccessItem } from './ResourceAccessItem'
 
