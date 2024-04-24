@@ -75,8 +75,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   const { accessToken } = useSynapseContext()
   const [tempNodes, setTempNodes] = React.useState<Node[]>(initialNodes)
   const [tempEdges, setTempEdges] = React.useState<Edge[]>(initialEdges)
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [nodes, setNodes] = useNodesState([])
+  const [edges, setEdges] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
   const handleError = useErrorHandler()
 
