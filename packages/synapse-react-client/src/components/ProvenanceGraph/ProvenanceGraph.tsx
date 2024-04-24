@@ -75,8 +75,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   const { accessToken } = useSynapseContext()
   const [tempNodes, setTempNodes] = React.useState<Node[]>(initialNodes)
   const [tempEdges, setTempEdges] = React.useState<Edge[]>(initialEdges)
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [nodes, setNodes] = useNodesState([])
+  const [edges, setEdges] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
   const handleError = useErrorHandler()
 
@@ -396,7 +396,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     },
     [],
   )
-
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
@@ -408,8 +407,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         nodes={nodes}
         edges={edges}
         onNodeClick={onClickNode}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        // onNodesChange={onNodesChange}  // SWC-6804: When the nodes/edges are updated (expanded) the graph is already re-rendered.
+        // onEdgesChange={onEdgesChange}  // Specifying these callbacks causes an infinite re-rendering loop.
         attributionPosition="bottom-right"
         onConnect={undefined}
         zoomOnScroll={false}
