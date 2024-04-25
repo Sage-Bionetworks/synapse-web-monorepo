@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 import UpsetPlot from './UpsetPlot'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
+import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
+import { Query } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Home Page/UpsetPlot',
@@ -17,6 +20,24 @@ export const Demo: Story = {
     combinationName: 'Individuals (#)',
     summaryLink: '#',
     summaryLinkText: 'Explore All Of Something',
+    onClick: selection => {
+      const sets = (selection as any).sets
+      const query: Query = {
+        sql: 'select * from syn12345', // stub files sql
+        selectedFacets: [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            columnName: 'Assays',
+            facetValues: [...sets.values()].map((v: any) => v.name) as string[],
+          },
+        ],
+      }
+      const url = `/Explore/Data%20by%20Files?QueryWrapper0=${JSON.stringify(
+        query,
+      )}`
+      console.log(url)
+    },
   },
 }
 export const ElitePortalDemo: Story = {
