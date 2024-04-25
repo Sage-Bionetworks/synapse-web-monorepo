@@ -50,12 +50,9 @@ export default function ImposeRestrictionDialog(
   } = useCreateLockAccessRequirement({
     onSuccess: () => {
       displayToast('Successfully imposed restriction', 'success')
-      // PORTALS-2664: Send the user to the the ACT Service Desk
-      // so they can tell ACT more information about what kind of
-      // Conditions For Use (or Data Access Restriction) should be
-      // added.
+      // SWC-6808: Direct users to the SYNSD Sage Plans Request form instead of the ACT form (which will be retired)
       window.open(
-        'https://sagebionetworks.jira.com/servicedesk/customer/portal/8/group/15/create/134',
+        'https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162',
         '_blank',
       )
       onClose()
