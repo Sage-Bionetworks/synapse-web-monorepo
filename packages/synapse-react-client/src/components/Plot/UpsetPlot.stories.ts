@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
 import UpsetPlot from './UpsetPlot'
-import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
-import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { Query } from '@sage-bionetworks/synapse-types'
 
 const meta = {
