@@ -27,7 +27,8 @@
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
     "sass": "^1.71.1",
-    "synapse-react-client": "workspace:*"
+    "synapse-react-client": "workspace:*",
+    "@upsetjs/react": "^1.11.0"
   },
   "scripts": {
     "clean": "rimraf coverage",

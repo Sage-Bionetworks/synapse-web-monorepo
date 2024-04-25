@@ -264,6 +264,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.2.0)
+      '@upsetjs/react':
+        specifier: ^1.11.0
+        version: 1.11.0(react@18.2.0)
       clone-deep:
         specifier: ^4.0.1
         version: 4.0.1

@@ -8,6 +8,7 @@ import {
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import { peopleSql, projectsSql, upsetPlotSql } from './resources'
+import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
 const routes: GenericRoute[] = [
   {
@@ -63,6 +64,7 @@ const routes: GenericRoute[] = [
           maxBarCount: 20,
           setName: '# Files per data type',
           combinationName: '# Files',
+          onClick: handleUpsetPlotClick,
           // summaryLinkText: 'Explore All Data',
           // summaryLink: '/Explore/Data',
         },
