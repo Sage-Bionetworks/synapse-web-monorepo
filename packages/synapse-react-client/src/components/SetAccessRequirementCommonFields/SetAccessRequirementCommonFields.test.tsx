@@ -82,10 +82,19 @@ function renderComponent(props: SetAccessRequirementCommonFieldsProps) {
 async function setUp(props: SetAccessRequirementCommonFieldsProps) {
   const user = userEvent.setup()
   const { ref, component } = renderComponent(props)
-
+  const isEntitySubject = props.subject?.type == RestrictableObjectType.ENTITY
   const nameInput = await screen.findByRole('textbox', { name: 'Name' })
+  const subjectsDefinedByAnnotationsCheckbox = isEntitySubject
+    ? await screen.findByRole('checkbox')
+    : undefined
 
-  return { ref, component, user, nameInput }
+  return {
+    ref,
+    component,
+    user,
+    nameInput,
+    subjectsDefinedByAnnotationsCheckbox,
+  }
 }
 
 function getRadioButtons() {
@@ -105,11 +114,13 @@ describe('SetAccessRequirementCommonFields', () => {
   afterAll(() => server.close())
 
   test('creates a new managed entity AR', async () => {
-    const { ref, user, nameInput } = await setUp(newEntityArProps)
+    const { ref, user, nameInput, subjectsDefinedByAnnotationsCheckbox } =
+      await setUp(newEntityArProps)
 
     await waitFor(() => {
       expect(screen.getByText(MOCK_FILE_NAME)).toBeVisible()
       expect(nameInput).toHaveValue('')
+      expect(subjectsDefinedByAnnotationsCheckbox).not.toBeChecked()
     })
 
     const radioButtons = getRadioButtons()
@@ -128,12 +139,68 @@ describe('SetAccessRequirementCommonFields', () => {
     await waitFor(() => {
       const managedAr: Pick<
         ManagedACTAccessRequirement,
-        'concreteType' | 'name' | 'subjectIds' | 'accessType'
+        | 'concreteType'
+        | 'name'
+        | 'subjectIds'
+        | 'accessType'
+        | 'subjectsDefinedByAnnotations'
       > = {
         concreteType: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
         name: name,
         subjectIds: [entitySubject],
         accessType: ACCESS_TYPE.DOWNLOAD,
+        subjectsDefinedByAnnotations: false,
+      }
+
+      expect(createAccessRequirementSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        managedAr,
+      )
+      expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
+
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onSave).toHaveBeenLastCalledWith(
+        MOCK_NEWLY_CREATED_AR_ID.toString(),
+        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      )
+      expect(onError).not.toHaveBeenCalled()
+    })
+  })
+
+  test('creates a new managed entity AR with subjects defined by annotation', async () => {
+    const { ref, user, nameInput, subjectsDefinedByAnnotationsCheckbox } =
+      await setUp(newEntityArProps)
+
+    await waitFor(() => {
+      expect(subjectsDefinedByAnnotationsCheckbox).not.toBeChecked()
+    })
+
+    const name = 'some name'
+    await user.type(nameInput, name)
+    await user.click(subjectsDefinedByAnnotationsCheckbox)
+
+    expect(subjectsDefinedByAnnotationsCheckbox).toBeChecked()
+    expect(nameInput).toHaveValue(name)
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onError).not.toHaveBeenCalled()
+
+    // parent calls save
+    ref.current?.save()
+
+    await waitFor(() => {
+      const managedAr: Pick<
+        ManagedACTAccessRequirement,
+        | 'concreteType'
+        | 'name'
+        | 'subjectIds'
+        | 'accessType'
+        | 'subjectsDefinedByAnnotations'
+      > = {
+        concreteType: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+        name: name,
+        subjectIds: [],
+        accessType: ACCESS_TYPE.DOWNLOAD,
+        subjectsDefinedByAnnotations: true,
       }
 
       expect(createAccessRequirementSpy).toHaveBeenCalledWith(
@@ -176,12 +243,17 @@ describe('SetAccessRequirementCommonFields', () => {
     await waitFor(() => {
       const selfSignAr: Pick<
         SelfSignAccessRequirement,
-        'concreteType' | 'name' | 'subjectIds' | 'accessType'
+        | 'concreteType'
+        | 'name'
+        | 'subjectIds'
+        | 'accessType'
+        | 'subjectsDefinedByAnnotations'
       > = {
         concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
         name: name,
         subjectIds: [entitySubject],
         accessType: ACCESS_TYPE.DOWNLOAD,
+        subjectsDefinedByAnnotations: false,
       }
 
       expect(createAccessRequirementSpy).toHaveBeenCalledWith(
@@ -243,12 +315,17 @@ describe('SetAccessRequirementCommonFields', () => {
     await waitFor(() => {
       const selfSignAr: Pick<
         SelfSignAccessRequirement,
-        'concreteType' | 'name' | 'subjectIds' | 'accessType'
+        | 'concreteType'
+        | 'name'
+        | 'subjectIds'
+        | 'accessType'
+        | 'subjectsDefinedByAnnotations'
       > = {
         concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
         name: name,
         subjectIds: [teamSubject],
         accessType: ACCESS_TYPE.PARTICIPATE,
+        subjectsDefinedByAnnotations: false,
       }
 
       expect(createAccessRequirementSpy).toHaveBeenCalledWith(
