@@ -51,15 +51,15 @@ const headerProps: Partial<TypographyProps> = {
   fontWeight: 700,
 }
 
-function getAccessType(subject: RestrictableObjectDescriptor) {
-  switch (subject.type) {
+function getAccessType(subjectType: RestrictableObjectType) {
+  switch (subjectType) {
     case RestrictableObjectType.ENTITY:
       return ACCESS_TYPE.DOWNLOAD
     case RestrictableObjectType.TEAM:
       return ACCESS_TYPE.PARTICIPATE
     default:
       throw new Error(
-        `RestrictableObjectType ${subject.type} does not have an access type specified.`,
+        `RestrictableObjectType ${subjectType} does not have an access type specified.`,
       )
   }
 }
@@ -227,9 +227,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
                 return
               }
             }
-            const newAccessType = subjectsDefinedByAnnotations
-              ? ACCESS_TYPE.DOWNLOAD
-              : getAccessType(subjects[0])
+            const newAccessType = getAccessType(subjectsType)
             if (!isEditing) {
               const newAr: Partial<AccessRequirement> = {
                 concreteType: arType,
