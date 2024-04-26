@@ -219,7 +219,7 @@ describe('SetAccessRequirementCommonFields', () => {
   test('updates an existing self-sign team AR with subjects defined by annotation', async () => {
     const { nameInput } = await setUp({
       accessRequirementId:
-        mockSelfSignAnnotationBasedSubjectsAccessRequirement.id,
+        mockSelfSignAnnotationBasedSubjectsAccessRequirement.id.toString(),
       onSave,
       onError,
     })
