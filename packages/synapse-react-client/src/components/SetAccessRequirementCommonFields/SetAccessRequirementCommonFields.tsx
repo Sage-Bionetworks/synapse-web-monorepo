@@ -28,6 +28,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
 import TeamSubjectsSelector from '../TeamSubjectsSelector'
 import { RadioGroup } from '../widgets/RadioGroup'
+import { Checkbox } from '../widgets/Checkbox'
 
 export const EMPTY_SUBJECT_LIST_ERROR_MESSAGE =
   'Please select at least one resource for this Access Requirement to be associated with.'
@@ -97,6 +98,8 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     const [hasPendingSubjects, setHasPendingSubjects] = useState<boolean>(false)
     const [subjectsError, setSubjectsError] = useState<string | null>(null)
     const [name, setName] = useState<string>('')
+    const [subjectsDefinedByAnnotations, setSubjectsDefinedByAnnotations] =
+      useState<boolean>(false)
     const [arType, setArType] = useState<ACCESS_REQUIREMENT_CONCRETE_TYPE>(
       subject?.type === RestrictableObjectType.TEAM
         ? SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
@@ -137,6 +140,9 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
         setArType(accessRequirement.concreteType)
         setName(accessRequirement.name)
         setSubjects(accessRequirement.subjectIds)
+        setSubjectsDefinedByAnnotations(
+          accessRequirement.subjectsDefinedByAnnotations,
+        )
       }
     }, [accessRequirement])
 
@@ -166,6 +172,9 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
         setHasPendingSubjects(value.trim() !== '')
       }
 
+      if (subjectsDefinedByAnnotations) {
+        return <></>
+      }
       switch (subjectsType) {
         case RestrictableObjectType.TEAM:
           return (
@@ -189,7 +198,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
           )
           return <></>
       }
-    }, [subjectsType, subjects])
+    }, [subjectsType, subjects, subjectsDefinedByAnnotations])
 
     useImperativeHandle(
       ref,
@@ -199,26 +208,32 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
             const isStillLoading =
               (isEditing && !accessRequirement) || !subjectsType
             const hasSubjectsError = hasPendingSubjects || subjects.length === 0
-
-            if (isStillLoading || hasSubjectsError) {
-              if (hasSubjectsError && !isStillLoading) {
-                if (hasPendingSubjects) {
-                  setSubjectsError(UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType))
-                } else if (subjects.length === 0) {
-                  setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
+            if (!subjectsDefinedByAnnotations) {
+              if (isStillLoading || hasSubjectsError) {
+                if (hasSubjectsError && !isStillLoading) {
+                  if (hasPendingSubjects) {
+                    setSubjectsError(
+                      UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType),
+                    )
+                  } else if (subjects.length === 0) {
+                    setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
+                  }
                 }
+
+                onError()
+                return
               }
-
-              onError()
-              return
             }
-
+            const newAccessType = subjectsDefinedByAnnotations
+              ? ACCESS_TYPE.DOWNLOAD
+              : getAccessType(subjects[0])
             if (!isEditing) {
               const newAr: Partial<AccessRequirement> = {
                 concreteType: arType,
                 subjectIds: subjects,
                 name: name,
-                accessType: getAccessType(subjects[0]),
+                accessType: newAccessType,
+                subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
               }
               createAccessRequirement(newAr)
             }
@@ -228,7 +243,8 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
                 ...accessRequirement,
                 subjectIds: subjects,
                 name: name,
-                accessType: getAccessType(subjects[0]),
+                accessType: newAccessType,
+                subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
               })
             }
           },
@@ -245,6 +261,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
         onError,
         createAccessRequirement,
         updateAccessRequirement,
+        subjectsDefinedByAnnotations,
       ],
     )
 
@@ -271,6 +288,29 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
     return (
       <>
         <Typography {...headerProps}>Resources</Typography>
+        {subjectsType !== RestrictableObjectType.TEAM && (
+          <>
+            <Checkbox
+              label="Associated entities should be defined by annotations (DUO)"
+              checked={subjectsDefinedByAnnotations}
+              onChange={() => {
+                setSubjectsError(null)
+                // if we are switching from DUO to manually defining the subjects (and the AR has been retrieved), then
+                // reset to the AR subject IDs or the original subject ID.  Otherwise, clear out the subjects.
+                let newSubjectIds: RestrictableObjectDescriptor[] = []
+                if (subjectsDefinedByAnnotations) {
+                  if (accessRequirement) {
+                    newSubjectIds = accessRequirement.subjectIds
+                  } else if (subject) {
+                    newSubjectIds = [subject]
+                  }
+                }
+                setSubjects(newSubjectIds)
+                setSubjectsDefinedByAnnotations(!subjectsDefinedByAnnotations)
+              }}
+            />
+          </>
+        )}
         {selectorContent}
         {subjectsError && <Alert severity="error">{subjectsError}</Alert>}
         <Stack direction="row" gap={1} alignItems="center" mb={1} mt={2}>
