@@ -156,8 +156,11 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
           return initialSubjects[0].type
         }
       }
+      if (subjectsDefinedByAnnotations) {
+        return RestrictableObjectType.ENTITY
+      }
       return null
-    }, [subject, accessRequirement])
+    }, [subject, accessRequirement, subjectsDefinedByAnnotations])
 
     const selectorContent = useMemo(() => {
       if (!subjectsType) return <></>
