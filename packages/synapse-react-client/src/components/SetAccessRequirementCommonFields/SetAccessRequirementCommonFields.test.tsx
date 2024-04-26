@@ -172,12 +172,12 @@ describe('SetAccessRequirementCommonFields', () => {
       await setUp(newEntityArProps)
 
     await waitFor(() => {
-      expect(subjectsDefinedByAnnotationsCheckbox).not.toBeChecked()
+      expect(subjectsDefinedByAnnotationsCheckbox!).not.toBeChecked()
     })
 
     const name = 'some name'
     await user.type(nameInput, name)
-    await user.click(subjectsDefinedByAnnotationsCheckbox)
+    await user.click(subjectsDefinedByAnnotationsCheckbox!)
 
     expect(subjectsDefinedByAnnotationsCheckbox).toBeChecked()
     expect(nameInput).toHaveValue(name)
