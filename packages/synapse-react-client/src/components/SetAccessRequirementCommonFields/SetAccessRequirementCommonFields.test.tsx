@@ -24,6 +24,7 @@ import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
+  mockSelfSignAnnotationBasedSubjectsAccessRequirement,
   mockTeamSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '../../mocks/mockAccessRequirements'
@@ -82,19 +83,17 @@ function renderComponent(props: SetAccessRequirementCommonFieldsProps) {
 async function setUp(props: SetAccessRequirementCommonFieldsProps) {
   const user = userEvent.setup()
   const { ref, component } = renderComponent(props)
-  const isEntitySubject = props.subject?.type == RestrictableObjectType.ENTITY
   const nameInput = await screen.findByRole('textbox', { name: 'Name' })
-  const subjectsDefinedByAnnotationsCheckbox = isEntitySubject
-    ? await screen.findByRole('checkbox')
-    : undefined
-
   return {
     ref,
     component,
     user,
     nameInput,
-    subjectsDefinedByAnnotationsCheckbox,
   }
+}
+
+async function findSubjectsDefinedByAnnotationsCheckbox() {
+  return await screen.findByRole('checkbox')
 }
 
 function getRadioButtons() {
@@ -114,9 +113,9 @@ describe('SetAccessRequirementCommonFields', () => {
   afterAll(() => server.close())
 
   test('creates a new managed entity AR', async () => {
-    const { ref, user, nameInput, subjectsDefinedByAnnotationsCheckbox } =
-      await setUp(newEntityArProps)
-
+    const { ref, user, nameInput } = await setUp(newEntityArProps)
+    const subjectsDefinedByAnnotationsCheckbox =
+      await findSubjectsDefinedByAnnotationsCheckbox()
     await waitFor(() => {
       expect(screen.getByText(MOCK_FILE_NAME)).toBeVisible()
       expect(nameInput).toHaveValue('')
@@ -168,16 +167,16 @@ describe('SetAccessRequirementCommonFields', () => {
   })
 
   test('creates a new managed entity AR with subjects defined by annotation', async () => {
-    const { ref, user, nameInput, subjectsDefinedByAnnotationsCheckbox } =
-      await setUp(newEntityArProps)
-
+    const { ref, user, nameInput } = await setUp(newEntityArProps)
+    const subjectsDefinedByAnnotationsCheckbox =
+      await findSubjectsDefinedByAnnotationsCheckbox()
     await waitFor(() => {
-      expect(subjectsDefinedByAnnotationsCheckbox!).not.toBeChecked()
+      expect(subjectsDefinedByAnnotationsCheckbox).not.toBeChecked()
     })
 
     const name = 'some name'
     await user.type(nameInput, name)
-    await user.click(subjectsDefinedByAnnotationsCheckbox!)
+    await user.click(subjectsDefinedByAnnotationsCheckbox)
 
     expect(subjectsDefinedByAnnotationsCheckbox).toBeChecked()
     expect(nameInput).toHaveValue(name)
@@ -215,6 +214,26 @@ describe('SetAccessRequirementCommonFields', () => {
         MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
       )
       expect(onError).not.toHaveBeenCalled()
+    })
+  })
+  test('updates an existing self-sign team AR with subjects defined by annotation', async () => {
+    const { nameInput } = await setUp({
+      accessRequirementId:
+        mockSelfSignAnnotationBasedSubjectsAccessRequirement.id,
+      onSave,
+      onError,
+    })
+
+    const subjectsDefinedByAnnotationsCheckbox =
+      await findSubjectsDefinedByAnnotationsCheckbox()
+
+    await waitFor(() => {
+      expect(nameInput).toHaveValue(
+        mockSelfSignAnnotationBasedSubjectsAccessRequirement.name,
+      )
+      // cannot select access type for existing AR
+      expect(screen.queryByRole('radiogroup')).toBeNull()
+      expect(subjectsDefinedByAnnotationsCheckbox).toBeChecked()
     })
   })
 

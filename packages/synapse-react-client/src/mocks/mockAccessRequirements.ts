@@ -165,6 +165,15 @@ export const mockTeamSelfSignAccessRequirement: SelfSignAccessRequirement = {
   accessType: ACCESS_TYPE.PARTICIPATE,
 }
 
+export const mockSelfSignAnnotationBasedSubjectsAccessRequirement: SelfSignAccessRequirement =
+  {
+    ...mockSelfSignAccessRequirement,
+    id: 9,
+    name: 'Mock Self Sign Annotation Based Subjects AR',
+    subjectsDefinedByAnnotations: true,
+    subjectIds: [],
+  }
+
 export const mockSearchResults: AccessRequirementSearchResponse = {
   results: [
     {
@@ -219,6 +228,7 @@ export const mockAccessRequirements: AccessRequirement[] = [
   mockToUAccessRequirementWithWiki,
   mockACTAccessRequirementWithWiki,
   mockTeamSelfSignAccessRequirement,
+  mockSelfSignAnnotationBasedSubjectsAccessRequirement,
 ]
 
 export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [

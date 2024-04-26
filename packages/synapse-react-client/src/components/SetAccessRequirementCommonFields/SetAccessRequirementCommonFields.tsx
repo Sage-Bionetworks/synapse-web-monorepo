@@ -227,7 +227,10 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
                 return
               }
             }
-            const newAccessType = getAccessType(subjectsType)
+            if (isStillLoading) {
+              return
+            }
+            const newAccessType = getAccessType(subjectsType!)
             if (!isEditing) {
               const newAr: Partial<AccessRequirement> = {
                 concreteType: arType,
