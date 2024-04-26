@@ -210,27 +210,23 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
           save() {
             const isStillLoading =
               (isEditing && !accessRequirement) || !subjectsType
-            const hasSubjectsError = hasPendingSubjects || subjects.length === 0
-            if (!subjectsDefinedByAnnotations) {
-              if (isStillLoading || hasSubjectsError) {
-                if (hasSubjectsError && !isStillLoading) {
-                  if (hasPendingSubjects) {
-                    setSubjectsError(
-                      UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType),
-                    )
-                  } else if (subjects.length === 0) {
-                    setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
-                  }
+            const hasSubjectsError =
+              !subjectsDefinedByAnnotations &&
+              (hasPendingSubjects || subjects.length === 0)
+            if (isStillLoading || hasSubjectsError) {
+              if (hasSubjectsError && !isStillLoading) {
+                if (hasPendingSubjects) {
+                  setSubjectsError(UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType))
+                } else if (subjects.length === 0) {
+                  setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
                 }
-
-                onError()
-                return
               }
-            }
-            if (isStillLoading) {
+
+              onError()
               return
             }
-            const newAccessType = getAccessType(subjectsType!)
+
+            const newAccessType = getAccessType(subjectsType)
             if (!isEditing) {
               const newAr: Partial<AccessRequirement> = {
                 concreteType: arType,
