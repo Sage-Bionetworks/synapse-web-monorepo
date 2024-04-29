@@ -343,5 +343,22 @@ describe('MarkdownSynapse tests', () => {
       })
       expect(container).toMatchSnapshot()
     })
+    it('supports bootstrap rows and columns', () => {
+      const { container } = renderComponent({
+        markdown:
+          '{row}\n' +
+          ' {column width=4}\n' +
+          'Left\n' +
+          '{column}\n' +
+          ' {column width=4} \n' +
+          'Center\n' +
+          '{column}\n' +
+          ' {column width=4} \n' +
+          'Right\n' +
+          ' {column}\n' +
+          '{row}',
+      })
+      expect(container).toMatchSnapshot()
+    })
   })
 })
