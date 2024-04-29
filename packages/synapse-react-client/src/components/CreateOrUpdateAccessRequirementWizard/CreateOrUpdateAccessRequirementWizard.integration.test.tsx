@@ -268,12 +268,17 @@ describe('CreateOrUpdateAccessRequirementWizard', () => {
     const arName = 'new self-sign ar'
     const ar: Pick<
       SelfSignAccessRequirement,
-      'concreteType' | 'subjectIds' | 'accessType' | 'name'
+      | 'concreteType'
+      | 'subjectIds'
+      | 'accessType'
+      | 'name'
+      | 'subjectsDefinedByAnnotations'
     > = {
       concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
       subjectIds: [entitySubject],
       accessType: ACCESS_TYPE.DOWNLOAD,
       name: arName,
+      subjectsDefinedByAnnotations: false,
     }
 
     // step 1: common AR fields

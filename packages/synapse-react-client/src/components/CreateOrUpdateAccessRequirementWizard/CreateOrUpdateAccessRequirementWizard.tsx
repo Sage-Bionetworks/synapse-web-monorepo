@@ -25,7 +25,7 @@ import {
 export type CreateOrUpdateAccessRequirementWizardProps = {
   open: boolean
   onCancel: () => void
-  onComplete: () => void
+  onComplete: (accessRequirementID?: string) => void // return the (possibly new) Access Requirement ID
 } & Pick<
   SetAccessRequirementCommonFieldsProps,
   'subject' | 'accessRequirementId'
@@ -96,7 +96,7 @@ export const CreateOrUpdateAccessRequirementWizard: React.FunctionComponent<
             accessRequirementId={accessRequirementId!}
             onSaveComplete={saveSuccessful => {
               if (saveSuccessful) {
-                onComplete()
+                onComplete(accessRequirementId)
               }
               setIsLoading(false)
             }}
@@ -108,7 +108,7 @@ export const CreateOrUpdateAccessRequirementWizard: React.FunctionComponent<
             ref={setBasicArFieldsRef}
             accessRequirementId={accessRequirementId!}
             onSave={() => {
-              onComplete()
+              onComplete(accessRequirementId)
               setIsLoading(false)
             }}
             onError={() => setIsLoading(false)}
