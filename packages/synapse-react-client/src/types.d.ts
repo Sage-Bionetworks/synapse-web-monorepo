@@ -36,7 +36,7 @@ declare module 'markdown-it-strikethrough-alt' {
   const plugin = MarkdownIt.PluginSimple
   export = plugin
 }
-declare module 'markdown-it-container' {
+declare module '@sage-bionetworks/markdown-it-container' {
   import type MarkdownIt from 'markdown-it'
   const plugin = MarkdownIt.PluginSimple
   export = plugin
