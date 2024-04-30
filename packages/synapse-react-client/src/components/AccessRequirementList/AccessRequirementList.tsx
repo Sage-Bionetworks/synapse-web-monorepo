@@ -76,9 +76,9 @@ export type AccessRequirementListProps = {
     }
   | {
       /* The ID of the object for which access is being requested */
-      subjectId: string
+      subjectId?: string
       /* The type of the object for which access is being requested */
-      subjectType: RestrictableObjectType
+      subjectType?: RestrictableObjectType
     }
 )
 
@@ -195,14 +195,17 @@ export default function AccessRequirementList(
   const canShowManagedACTWikiInWizard = useCanShowManagedACTWikiInWizard()
 
   const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
-    subjectId,
+    subjectId!,
     {
-      enabled: subjectType === RestrictableObjectType.TEAM,
+      enabled:
+        subjectId !== undefined && subjectType === RestrictableObjectType.TEAM,
     },
   )
   const { data: fetchedRequirementsForEntity } =
-    useGetAccessRequirementsForEntity(subjectId, {
-      enabled: subjectType === RestrictableObjectType.ENTITY,
+    useGetAccessRequirementsForEntity(subjectId!, {
+      enabled:
+        subjectId !== undefined &&
+        subjectType === RestrictableObjectType.ENTITY,
     })
 
   const requirementsFromProps = isShowingRequirementsFromProps
@@ -284,7 +287,10 @@ export default function AccessRequirementList(
           File(s)
         </>
       )
-    if (subjectType === RestrictableObjectType.ENTITY) {
+    if (
+      subjectId !== undefined &&
+      subjectType === RestrictableObjectType.ENTITY
+    ) {
       return <EntityLink entity={subjectId} />
     } else if (subjectType === RestrictableObjectType.TEAM) {
       return <UserOrTeamBadge principalId={subjectId} />
