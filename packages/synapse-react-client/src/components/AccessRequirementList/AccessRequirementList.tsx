@@ -158,6 +158,7 @@ export default function AccessRequirementList(
   } = props
 
   const isShowingRequirementsForEntity = 'entityId' in props
+  const isShowingRequirementsForTeam = 'teamId' in props
   const isShowingRequirementsFromProps = 'accessRequirementFromProps' in props
 
   const subjectId =
@@ -165,14 +166,18 @@ export default function AccessRequirementList(
       ? props.subjectId
       : isShowingRequirementsForEntity
       ? props.entityId
-      : props.teamId
+      : isShowingRequirementsForTeam
+      ? props.teamId
+      : undefined
 
   const subjectType =
     'subjectType' in props
       ? props.subjectType
       : isShowingRequirementsForEntity
       ? RestrictableObjectType.ENTITY
-      : RestrictableObjectType.TEAM
+      : isShowingRequirementsForTeam
+      ? RestrictableObjectType.TEAM
+      : undefined
 
   let { dialogTitle = 'Data Access Request' } = props
   const { accessToken } = useSynapseContext()
