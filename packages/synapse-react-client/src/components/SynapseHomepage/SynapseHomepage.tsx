@@ -20,7 +20,7 @@ import CommunicateFindings from '../../assets/icons/CommunicateFindings'
 import RecordProvenance from '../../assets/icons/RecordProvenance'
 import ShareYourResearch from '../../assets/icons/ShareYourResearch'
 import MintDoi from '../../assets/icons/MintDoi'
-import SynapsePlans from '../../assets/SynapsePlans'
+import SynapsePlans from './SynapsePlans'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -464,13 +464,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             View Frequently Asked Questions
           </Link>
           {/* SWC-6708:  Pricing table release, change to be a simple image */}
-          <a
-            href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SynapsePlans />
-          </a>
+          <SynapsePlans />
         </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
