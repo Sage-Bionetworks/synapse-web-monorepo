@@ -1,8 +1,6 @@
-# markdown-it-container
+# @sage-bionetworks/markdown-it-container
 
-[![CI](https://github.com/markdown-it/markdown-it-container/actions/workflows/ci.yml/badge.svg)](https://github.com/markdown-it/markdown-it-container/actions/workflows/ci.yml)
-[![NPM version](https://img.shields.io/npm/v/markdown-it-container.svg?style=flat)](https://www.npmjs.org/package/markdown-it-container)
-[![Coverage Status](https://img.shields.io/coveralls/markdown-it/markdown-it-container/master.svg?style=flat)](https://coveralls.io/r/markdown-it/markdown-it-container?branch=master)
+[![NPM version](https://img.shields.io/npm/v/@sage-bionetworks/markdown-it-container.svg?style=flat)](https://www.npmjs.org/package/@sage-bionetworks/markdown-it-container)
 
 > Plugin for creating block-level custom containers for [markdown-it](https://github.com/markdown-it/markdown-it) markdown parser.
 
