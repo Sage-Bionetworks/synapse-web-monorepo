@@ -4,22 +4,16 @@ import { babel } from '@rollup/plugin-babel'
 import { readFileSync } from 'fs'
 
 const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)))
-
-function globalName (name) {
-  const parts = name.split('-')
-  for (let i = 2; i < parts.length; i++) {
-    parts[i] = parts[i][0].toUpperCase() + parts[i].slice(1)
-  }
-  return parts.join('')
-}
+const pkgName = "markdown-it-container"
+const globalName = "markdownitContainer"
 
 const config_umd_full = {
   input: 'index.mjs',
   output: [
     {
-      file: `dist/${pkg.name}.js`,
+      file: `dist/${pkgName}.js`,
       format: 'umd',
-      name: globalName(pkg.name),
+      name: globalName,
       plugins: [
         // Here terser is used only to force ascii output
         terser({
@@ -30,9 +24,9 @@ const config_umd_full = {
       ]
     },
     {
-      file: `dist/${pkg.name}.min.js`,
+      file: `dist/${pkgName}.min.js`,
       format: 'umd',
-      name: globalName(pkg.name),
+      name: globalName,
       plugins: [
         terser({
           format: { ascii_only: true }
