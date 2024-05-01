@@ -27,9 +27,10 @@ export function EnableTwoFaRequirementCard(
 
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
     useState<boolean>(false)
-  const subjectIds = ar?.subjectIds
-  const subjectId = subjectIds ? subjectIds[0].id : undefined
-  const subjectType = subjectIds ? subjectIds[0].type : undefined
+  const hasSubjectId = ar?.subjectIds && ar?.subjectIds.length > 0
+  const subjectId = hasSubjectId ? ar?.subjectIds[0].id : undefined
+  const subjectType = hasSubjectId ? ar?.subjectIds[0].type : undefined
+
   return (
     <>
       <ActionRequiredCard
