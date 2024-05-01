@@ -341,6 +341,9 @@ export function ThemesPlot({
                           xMax={xMaxForSideBarPlot}
                           label={label}
                           colors={fadeColors({ ...topBarPlot.colors }, '1')}
+                          onClick={(e: any) =>
+                            onPointClick(getClickTargetData(e, false))
+                          }
                         />
                       </div>
                     </ElementWithTooltip>

@@ -25,6 +25,7 @@ export const onPointClick = ({
   type,
   event,
 }: ClickCallbackParams) => {
+  debugger
   const typeUpperCase = type.slice(0, 1).toUpperCase() + type.slice(1)
   let facet = 'theme'
   if (typeUpperCase === 'Grants' || typeUpperCase === 'Projects') {
