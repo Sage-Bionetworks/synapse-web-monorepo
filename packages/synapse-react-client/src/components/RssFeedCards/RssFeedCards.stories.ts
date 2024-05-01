@@ -16,7 +16,7 @@ export const Demo: Story = {
     mailChimpListName: 'AMP-AD quarterly newsletter',
     mailChimpUrl:
       'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-    lockedColumn: { value: 'MSBB' },
+    filter: { value: 'MSBB' },
     viewAllNewsButtonText: 'View All AD News',
   },
 }
