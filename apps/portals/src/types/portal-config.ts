@@ -254,6 +254,8 @@ type Metadata = {
   // applied to outer most container of the object
   containerClassName?: string
   outsideContainerClassName?: string
+  // if set, will show a help icon next to the title with this text
+  helpText?: string
 }
 
 type SynapseFormWrapper = {

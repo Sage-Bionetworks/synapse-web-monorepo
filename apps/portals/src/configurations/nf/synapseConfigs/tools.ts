@@ -170,6 +170,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         {
           name: 'CardContainerLogic',
           title: 'Development Publication',
+          helpText:
+            'The first report providing a detailed characterization of a tool.',
           props: {
             ...publicationsV2CardConfiguration,
             initialLimit: 3,
@@ -219,6 +221,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         {
           name: 'CardContainerLogic',
           title: 'Publications',
+          helpText:
+            'Subsequent reports that utilize the tool outlined in the development publication.',
           props: {
             ...publicationsV2CardConfiguration,
             initialLimit: 3,
