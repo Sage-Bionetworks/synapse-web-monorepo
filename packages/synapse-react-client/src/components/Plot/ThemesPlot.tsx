@@ -27,6 +27,11 @@ import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
+  onIndividualThemeBarPlotPointClick?: ({
+    facetValue,
+    type,
+    event,
+  }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -206,6 +211,7 @@ export function ThemesPlot({
   sideBarPlot,
   tooltipProps = tooltipVisualProps,
   onPointClick,
+  onIndividualThemeBarPlotPointClick,
   dotPlotYAxisLabel = 'Research Themes',
 }: ThemesPlotProps) {
   const { accessToken } = useSynapseContext()
@@ -233,7 +239,7 @@ export function ThemesPlot({
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
-  let xMaxForSideBarPlot = 0
+  // let xMaxForSideBarPlot = 0
   let topBarPlotDataSorted: TotalsGroupByY[] = []
   let totalsByDotPlotY: TotalsGroupByY[] = []
   if (isLoaded) {
@@ -241,7 +247,9 @@ export function ThemesPlot({
     yLabelsForDotPlot = totalsByDotPlotY
       .sort((a, b) => b.count - a.count)
       .map(item => item.y)
-    xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
+    // PORTALS-3061: No longer use a global x max for the side bar (where the bar size of 1 grant is consistent),
+    //    Instead, each bar chart is independent (the size of 1 grant differs across bar charts).
+    // xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
     topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
       'y',
@@ -338,12 +346,17 @@ export function ThemesPlot({
                           optionsConfig={optionsConfig}
                           plotData={sideBarPlotData}
                           isTop={false}
-                          xMax={xMaxForSideBarPlot}
+                          xMax={totalsByDotPlotY[i].count}
+                          // xMax={xMaxForSideBarPlot}
                           label={label}
                           colors={fadeColors({ ...topBarPlot.colors }, '1')}
-                          onClick={(e: any) =>
-                            onPointClick(getClickTargetData(e, false))
-                          }
+                          onClick={(e: any) => {
+                            if (onIndividualThemeBarPlotPointClick) {
+                              onIndividualThemeBarPlotPointClick(
+                                getClickTargetData(e, false),
+                              )
+                            }
+                          }}
                         />
                       </div>
                     </ElementWithTooltip>
