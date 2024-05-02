@@ -128,7 +128,7 @@ const routes: GenericRoute[] = [
           ],
           // mailChimpListName: 'NF quarterly newsletter',
           // mailChimpUrl:'https://sagebase.us7.list-manage.com/subscribe/post?u=abcdefghi...',
-          lockedColumn: {
+          filter: {
             value: 'featured',
           },
         },

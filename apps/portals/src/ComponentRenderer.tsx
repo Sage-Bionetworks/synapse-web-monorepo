@@ -4,6 +4,7 @@ import React from 'react'
 import { scrollToWithOffset } from './utils'
 import { SynapseComponent } from './SynapseComponent'
 import Layout from './portal-components/Layout'
+import { SynapseComponents } from 'synapse-react-client'
 
 const ignoreSearchParamsSet: Set<string> = new Set([
   'utm_source',
@@ -21,6 +22,7 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
     title,
     centerTitle,
     subtitle,
+    helpText,
   } = props.config
   const { search, hash } = useLocation()
   // If url has search params transform into key-value dictionary that can be passed into
@@ -49,15 +51,22 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
       scrollToWithOffset(scrollToRef.current)
     }
   }, 500)
+  const titleComponent = title && (
+    <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
+      {title}
+      {helpText && (
+        <>
+          {' '}
+          <SynapseComponents.HelpPopover markdownText={helpText} />
+        </>
+      )}
+    </h2>
+  )
   return (
     <React.Fragment key={JSON.stringify(props)}>
       {isOutsideContainer ? (
         <div className={containerClassName}>
-          {title && (
-            <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
-              {title}
-            </h2>
-          )}
+          {titleComponent}
           {subtitle && (
             <p className={`${centerTitle ? 'center-title' : ''}`}>{subtitle}</p>
           )}
@@ -74,11 +83,7 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
         >
           {scrollToJsx}
           {/* re-think how this renders! remove specific styling */}
-          {title && (
-            <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
-              {title}
-            </h2>
-          )}
+          {titleComponent}
           {subtitle && (
             <p className={`${centerTitle ? 'center-title' : ''}`}>{subtitle}</p>
           )}

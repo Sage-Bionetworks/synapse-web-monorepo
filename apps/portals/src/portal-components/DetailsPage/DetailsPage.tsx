@@ -9,6 +9,7 @@ import {
   SynapseQueries,
   IconSvg,
   SynapseUtilityFunctions,
+  SynapseComponents,
 } from 'synapse-react-client'
 import type { LockedColumn } from 'synapse-react-client'
 import {
@@ -41,11 +42,14 @@ const goToExplorePage = () => {
   window.location.assign(lastPlace)
 }
 
-function HeadlineWithLink(props: { title: string; id: string }) {
-  const { title, id } = props
+function HeadlineWithLink(props: {
+  title: string
+  id: string
+  helpText?: string
+}) {
+  const { title, id, helpText } = props
   const [showLink, setShowLink] = useState(false)
   const [copied, setCopied] = useState(false)
-
   return (
     <div
       onMouseOver={() => {
@@ -57,6 +61,12 @@ function HeadlineWithLink(props: { title: string; id: string }) {
     >
       <Typography variant="sectionTitle" role="heading">
         {title}
+        {helpText && (
+          <>
+            {' '}
+            <SynapseComponents.HelpPopover markdownText={helpText} />
+          </>
+        )}
         <span
           style={{
             position: 'absolute',
@@ -368,7 +378,11 @@ export const SplitStringToComponent: React.FC<{
       <>
         {entityTitle && (
           <div id={id}>
-            <HeadlineWithLink id={id} title={`${el.title}: ${entityTitle}`} />
+            <HeadlineWithLink
+              id={id}
+              title={`${el.title}: ${entityTitle}`}
+              helpText={el.helpText}
+            />
             <hr />
           </div>
         )}
@@ -423,7 +437,13 @@ export const DetailsPageSynapseConfigArray: React.FC<{
         if (!hasTitleFromSynId) {
           title = (
             <>
-              {el.title && <HeadlineWithLink title={el.title} id={id} />}
+              {el.title && (
+                <HeadlineWithLink
+                  title={el.title}
+                  id={id}
+                  helpText={el.helpText}
+                />
+              )}
               {showTitleSeperator && el.title && <hr />}
               {el.subtitle && (
                 <div className="bootstrap-4-backport">

@@ -3,7 +3,6 @@ import Parser from 'rss-parser'
 import dayjs from 'dayjs'
 import { ReactComponent as SubscribePlus } from '../../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-import { LockedColumn } from '../QueryContext/QueryContext'
 import NoData from '../../assets/icons/NoData'
 import LargeButton from '../../components/styled/LargeButton'
 
@@ -15,9 +14,14 @@ type RssState = {
   allItemsUrl?: string
 }
 
+export type RssFilter = {
+  type?: 'tag' | 'category'
+  value: string
+}
+
 export type RssFeedCardsProps = {
   url: string
-  lockedColumn?: LockedColumn // optional tag to filter by, typically set by using this component on a DetailsPage
+  filter?: RssFilter // optional tag or category to use as a filter
   itemsToShow: number
   allowCategories?: string[]
   mailChimpListName?: string
@@ -39,10 +43,11 @@ export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
 
   componentDidMount() {
     this._isMounted = true
-    const { url, lockedColumn } = this.props
-    const lockedColumnValue = lockedColumn?.value
-    const tagPath = lockedColumnValue
-      ? `/tag/${lockedColumnValue.replace(' ', '-')}`
+    const { url, filter } = this.props
+    const filterValue = filter?.value
+    const filterType = filter?.type
+    const tagPath = filterValue
+      ? `/${filterType ?? 'tag'}/${filterValue.replace(' ', '-')}`
       : ''
     const allItems = `${url}${tagPath}`
     const feedUrl = `${allItems}/feed/`
