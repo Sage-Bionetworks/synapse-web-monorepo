@@ -239,7 +239,6 @@ export function ThemesPlot({
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
-  // let xMaxForSideBarPlot = 0
   let topBarPlotDataSorted: TotalsGroupByY[] = []
   let totalsByDotPlotY: TotalsGroupByY[] = []
   if (isLoaded) {
@@ -247,9 +246,6 @@ export function ThemesPlot({
     yLabelsForDotPlot = totalsByDotPlotY
       .sort((a, b) => b.count - a.count)
       .map(item => item.y)
-    // PORTALS-3061: No longer use a global x max for the side bar (where the bar size of 1 grant is consistent),
-    //    Instead, each bar chart is independent (the size of 1 grant differs across bar charts).
-    // xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
     topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
       'y',
@@ -346,8 +342,9 @@ export function ThemesPlot({
                           optionsConfig={optionsConfig}
                           plotData={sideBarPlotData}
                           isTop={false}
+                          // PORTALS-3061: No longer use a global x max for the side bar (where the bar size of 1 grant is consistent),
+                          //    Instead, each bar chart is independent (the size of 1 grant differs across bar charts).
                           xMax={totalsByDotPlotY[i].count}
-                          // xMax={xMaxForSideBarPlot}
                           label={label}
                           colors={fadeColors({ ...topBarPlot.colors }, '1')}
                           onClick={(e: any) => {
