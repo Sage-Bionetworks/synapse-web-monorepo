@@ -1,7 +1,11 @@
 import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
-import { ACCESS_TOKEN_COOKIE_KEY, SynapseConstants } from '../utils'
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  OAuth2State,
+  SynapseConstants,
+} from '../utils'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
@@ -131,6 +135,7 @@ import {
   ChallengeTeamPagedResults,
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
+  ChangePasswordWithTwoFactorAuthToken,
   ColumnModel,
   CreateAccessApprovalRequest,
   CreateChallengeTeamRequest,
@@ -171,6 +176,7 @@ import {
   EntityJson,
   EntityLookupRequest,
   EntityPath,
+  EntityType,
   Evaluation,
   EvaluationRound,
   EvaluationRoundListRequest,
@@ -269,9 +275,11 @@ import {
   TotpSecret,
   TotpSecretActivationRequest,
   TrashedEntity,
+  TwoFactorAuthDisableRequest,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
   TwoFactorAuthRecoveryCodes,
+  TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
   TYPE_FILTER,
   UpdateDiscussionReply,
@@ -284,6 +292,7 @@ import {
   UserGroupHeaderResponse,
   UserGroupHeaderResponsePage,
   UserProfile,
+  ValidateDefiningSqlResponse,
   ValidationResults,
   VerificationSubmission,
   VersionInfo,
@@ -292,9 +301,6 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
-  EntityType,
-  ValidateDefiningSqlResponse,
-  ChangePasswordWithTwoFactorAuthToken,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -634,12 +640,16 @@ export function loginWith2fa(
 export const oAuthUrlRequest = (
   provider: string,
   redirectUrl: string,
-  state?: string,
+  state?: OAuth2State,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
   return doPost<{ authorizationUrl: string }>(
     '/auth/v1/oauth2/authurl',
-    { provider, redirectUrl, state },
+    {
+      provider,
+      redirectUrl,
+      state: state ? encodeURIComponent(JSON.stringify(state)) : undefined,
+    },
     undefined,
     endpoint,
   )
@@ -734,6 +744,33 @@ export function createRecoveryCodes(accessToken?: string) {
     '/auth/v1/2fa/recoveryCodes',
     null,
     accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Initiates the reset of two-factor authentication, sending a notification to the user with a signed token. The request
+ * can be performed using the twoFaToken received from an authentication request that requires two-factor authentication.
+ */
+export function resetTwoFactorAuth(request: TwoFactorAuthResetRequest) {
+  return doPost<void>(
+    '/auth/v1/2fa/reset',
+    request,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Disables two-factor authentication for the user encoded in the signed token received by email following a call to the
+ * POST /2fa/reset endpoint. The request should include the signed token and a twoFaToken received from an authentication
+ * request that requires two-factor authentication.
+ */
+export function disableTwoFactorAuth(request: TwoFactorAuthDisableRequest) {
+  return doPost<void>(
+    '/auth/v1/2fa/disable',
+    request,
+    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }

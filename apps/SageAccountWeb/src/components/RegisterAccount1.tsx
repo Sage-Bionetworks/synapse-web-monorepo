@@ -145,7 +145,7 @@ export const RegisterAccount1 = () => {
         SynapseClient.oAuthUrlRequest(
           SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
           redirectUrl,
-          username,
+          { registrationUsername: username },
         )
           .then((data: any) => {
             const authUrl = data.authorizationUrl

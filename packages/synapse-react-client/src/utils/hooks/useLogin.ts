@@ -83,6 +83,8 @@ export default function useLogin(
         setStep('VERIFICATION_CODE')
       }
     }
+    // We do NOT want to rerun this effect on step change. It should only run once, when we get the error.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twoFaErrorResponse])
 
   /* When the step changes, clear the old error message. */

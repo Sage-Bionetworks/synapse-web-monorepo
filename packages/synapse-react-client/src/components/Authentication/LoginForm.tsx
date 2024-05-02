@@ -7,6 +7,7 @@ import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
+import { OAuth2State } from '../../utils'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -22,11 +23,14 @@ type Props = {
   submitOneTimePassword: UseLoginReturn['submitOneTimePassword']
   errorMessage: UseLoginReturn['errorMessage']
   isLoading: UseLoginReturn['isLoading']
+  // Optional state passed to and returned by an identity provider on SSO
+  ssoState?: OAuth2State
 }
 
 export default function LoginForm(props: Props) {
   const {
     ssoRedirectUrl,
+    ssoState,
     registerAccountUrl = `${getEndpoint(
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )}#!RegisterAccount:0`,
@@ -47,6 +51,7 @@ export default function LoginForm(props: Props) {
           onSelectUsernameAndPassword={() => onStepChange('USERNAME_PASSWORD')}
           onBeginOAuthSignIn={onBeginOAuthSignIn}
           ssoRedirectUrl={ssoRedirectUrl}
+          state={ssoState}
         />
       )}
       {step === 'USERNAME_PASSWORD' && (

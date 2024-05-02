@@ -8,6 +8,7 @@ import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from './Constants'
+import { OAuth2State } from '../../utils'
 
 export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string
@@ -19,6 +20,7 @@ export type StandaloneLoginFormProps = {
   showUsernameOrPassword?: boolean | undefined
   /* optionally pass the 2FA error response to directly start the 2FA challenge */
   twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
+  ssoState?: OAuth2State
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -28,6 +30,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     registerAccountUrl,
     resetPasswordUrl,
     onBeginOAuthSignIn,
+    ssoState,
   } = props
 
   const {
@@ -74,6 +77,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         resetPasswordUrl={resetPasswordUrl}
         onBeginOAuthSignIn={onBeginOAuthSignIn}
         isLoading={isLoading}
+        ssoState={ssoState}
       />
     </Box>
   )

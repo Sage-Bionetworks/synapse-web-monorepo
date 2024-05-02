@@ -1,6 +1,6 @@
 import { renderHook as _renderHook, waitFor } from '@testing-library/react'
 import useDetectSSOCode, { UseDetectSSOCodeOptions } from './useDetectSSOCode'
-import { SynapseClient } from '../../index'
+import { OAuth2State, SynapseClient } from '../../index'
 import {
   ErrorResponseCode,
   LoginResponse,
@@ -81,11 +81,12 @@ describe('useDetectSSOCode tests', () => {
   })
 
   it('Handles successful account registration with Google', async () => {
-    const state = 'newUsername'
+    const state: OAuth2State = { registrationUsername: 'newUsername' }
+    const encodedState = encodeURIComponent(JSON.stringify(state))
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}&state=${state}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}&state=${encodedState}`,
     )
     mockOAuthRegisterAccountStep2.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
@@ -94,7 +95,7 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockOAuthRegisterAccountStep2).toHaveBeenCalledWith(
-        state,
+        state.registrationUsername,
         OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
         `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
@@ -243,6 +244,49 @@ describe('useDetectSSOCode tests', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )
         expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
+        expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+        expect(onSignInComplete).not.toHaveBeenCalled()
+        expect(hookReturn.result.current.isLoading).toBe(false)
+      })
+    },
+  )
+
+  test.each(Object.values(OAUTH2_PROVIDERS))(
+    'Handles 2fa scenario on login with %p where a twoFaResetToken is passed in state',
+    async provider => {
+      const state: OAuth2State = {
+        twoFaResetToken: 'asdf',
+      }
+      const encodedState = encodeURIComponent(JSON.stringify(state))
+      history.replaceState(
+        {},
+        '',
+        `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
+      )
+      const mockOn2faReset = jest.fn()
+      mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
+
+      const hookReturn = renderHook(
+        {
+          onSignInComplete,
+          onTwoFactorAuthResetTokenPresent: mockOn2faReset,
+        },
+        UNAUTHENTICATED_CONTEXT,
+      )
+
+      expect(hookReturn.result.current.isLoading).toBe(true)
+
+      await waitFor(() => {
+        expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+          provider,
+          authorizationCode,
+          `http://localhost/?provider=${provider}`,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )
+        expect(mockOn2faReset).toHaveBeenCalledWith(
+          twoFactorAuthErrorResponse,
+          state.twoFaResetToken,
+        )
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
         expect(hookReturn.result.current.isLoading).toBe(false)

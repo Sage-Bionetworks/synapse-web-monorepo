@@ -2,7 +2,10 @@ import {
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
 } from '../functions/getEndpoint'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
+import {
+  LoginResponse,
+  TwoFactorAuthErrorResponse,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../SynapseClientError'
 import {
   bindOAuthProviderToAccount,
@@ -10,12 +13,11 @@ import {
   oAuthRegisterAccountStep2,
   oAuthSessionRequest,
   setAccessTokenCookie,
-} from '../../synapse-client/SynapseClient'
+} from '../../synapse-client'
 import { useEffect, useState } from 'react'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
-
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { useSynapseContext } from '../context'
+import { OAuth2State } from '../types'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -27,6 +29,10 @@ export type UseDetectSSOCodeOptions = {
   registerAccountUrl?: string
   onError?: (err: unknown) => void
   onTwoFactorAuthRequired?: (resp: TwoFactorAuthErrorResponse) => void
+  onTwoFactorAuthResetTokenPresent?: (
+    resp: TwoFactorAuthErrorResponse,
+    encodedTwoFaResetToken: string,
+  ) => void
 }
 
 /*
@@ -43,6 +49,7 @@ export default function useDetectSSOCode(
     registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
     onError,
     onTwoFactorAuthRequired,
+    onTwoFactorAuthResetTokenPresent,
   } = opts
 
   const redirectURL = getRootURL()
@@ -53,7 +60,10 @@ export default function useDetectSSOCode(
   const code = searchParams?.get('code')
   const provider = searchParams?.get('provider')
   // state is used during OAuth based Synapse account creation (it's the username)
-  const state = searchParams?.get('state')
+  const encodedState = searchParams?.get('state')
+  const state = encodedState
+    ? (JSON.parse(decodeURIComponent(encodedState)) as OAuth2State)
+    : null
 
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(!!(code && provider))
@@ -91,9 +101,21 @@ export default function useDetectSSOCode(
             if ('accessToken' in response) {
               setAccessTokenCookie(response.accessToken).then(onSignInComplete)
             } else {
-              // The app will redirect or open a modal to handle 2FA
+              // The app will redirect or open a modal to handle a standard 2FA sign in
               if (onTwoFactorAuthRequired) {
                 onTwoFactorAuthRequired(response)
+              }
+              if (
+                // The user logged in with OAuth while attempting to disable 2FA using an emailed signed token
+                state &&
+                state.twoFaResetToken &&
+                onTwoFactorAuthResetTokenPresent
+              ) {
+                // Let the app handle redirecting to the 2FA reset page
+                onTwoFactorAuthResetTokenPresent(
+                  response,
+                  state.twoFaResetToken,
+                )
               }
             }
           }
@@ -109,9 +131,12 @@ export default function useDetectSSOCode(
           }
         }
 
-        if (OAUTH2_PROVIDERS.GOOGLE == provider && state) {
+        if (
+          OAUTH2_PROVIDERS.GOOGLE == provider &&
+          state?.registrationUsername
+        ) {
           oAuthRegisterAccountStep2(
-            state,
+            state.registrationUsername,
             provider,
             code,
             redirectUrl,
