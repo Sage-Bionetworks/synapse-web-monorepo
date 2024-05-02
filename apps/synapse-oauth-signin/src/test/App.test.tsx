@@ -2,7 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
+import {
+  OAuth2State,
+  SynapseClient,
+  SynapseConstants,
+} from 'synapse-react-client'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
@@ -34,11 +38,12 @@ const mockConsentToOAuth2Request = vi.mocked(
 const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
   SynapseConstants
 function createParams(prompt?: string) {
+  const state: OAuth2State = { registrationUsername: '1ga1bi0qm' }
   const params = new URLSearchParams()
   params.set('response_type', 'code')
   params.set('client_id', '1234')
   params.set('scope', 'openid')
-  params.set('state', '1ga1bi0qm')
+  params.set('state', encodeURIComponent(JSON.stringify(state)))
   params.set('redirect_uri', 'https://some-client-uri.abc/redirect')
   params.set('claims', JSON.stringify({ id_token: { userid: null } }))
   if (prompt) {
