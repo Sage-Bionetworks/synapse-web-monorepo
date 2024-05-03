@@ -10,16 +10,12 @@ import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import {
-  getFileColumnModelId,
-  isEntityViewOrDataset,
-} from '../SynapseTable/SynapseTableUtils'
+import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import {
   entityIdColumnNameAtom,
   entityVersionColumnNameAtom,
   tableQueryDataAtom,
-  tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
 import {
   hasSelectedRowsAtom,
@@ -35,25 +31,16 @@ export function TableQueryDownloadConfirmation() {
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
-  const entity = useAtomValue(tableQueryEntityAtom)
   const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
   const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
-  const areFileIdAndVersionColumnIdsRequired = entity
-    ? !isEntityViewOrDataset(entity)
-    : false
 
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-
     // set the query.selectFileColumn
-    if (
-      areFileIdAndVersionColumnIdsRequired &&
-      fileIdColumnName &&
-      fileVersionColumnName
-    ) {
+    if (fileIdColumnName && fileVersionColumnName) {
       // find the column model ID and set the parameters
       const fileIdColumnModel = data?.columnModels?.find(
         col => col.name == fileIdColumnName,

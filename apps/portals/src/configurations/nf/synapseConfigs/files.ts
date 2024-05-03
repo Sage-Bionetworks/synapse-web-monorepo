@@ -17,7 +17,7 @@ const files: SynapseConfig = {
     rowSelectionPrimaryKey: ['id'],
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
-    fileVersionColumnName: 'fileVersion',
+    fileVersionColumnName: 'currentVersion',
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
