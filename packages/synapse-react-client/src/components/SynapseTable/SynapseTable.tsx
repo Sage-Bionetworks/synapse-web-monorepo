@@ -39,7 +39,8 @@ import { SynapseTableContext } from './SynapseTableContext'
 import { usePrefetchTableData } from './usePrefetchTableData'
 import { useAtomValue } from 'jotai'
 import {
-  QueryWrapperProps,
+  fileIdColumnNameAtom,
+  fileVersionColumnNameAtom,
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
   tableQueryEntityAtom,
@@ -59,10 +60,7 @@ export type SynapseTableProps = {
   hideAddToDownloadListColumn?: boolean
   /** Configuration to override cell renderers with e.g. a link to a portals detail page */
   columnLinks?: LabelLinkConfig
-} & Pick<
-  QueryWrapperProps,
-  'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
->
+}
 
 const columnHelper = createColumnHelper<Row>()
 
@@ -73,8 +71,6 @@ export function SynapseTable(props: SynapseTableProps) {
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
     columnLinks,
-    fileIdColumnName,
-    fileVersionColumnName,
   } = props
   const { getCurrentQueryRequest } = useQueryContext()
   const queryRequest = useMemo(
@@ -87,6 +83,8 @@ export function SynapseTable(props: SynapseTableProps) {
   const { columnsToShowInTable, NoContentPlaceholder } =
     useQueryVisualizationContext()
   const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
+  const fileIdColumnName = useAtomValue(fileIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(fileVersionColumnNameAtom)
 
   const { selectColumns = [] } = data ?? {}
 
