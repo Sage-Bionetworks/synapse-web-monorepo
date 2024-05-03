@@ -13,8 +13,8 @@ import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import {
-  entityIdColumnNameAtom,
-  entityVersionColumnNameAtom,
+  fileIdColumnNameAtom,
+  fileVersionColumnNameAtom,
   tableQueryDataAtom,
 } from '../QueryWrapper/QueryWrapper'
 import {
@@ -31,8 +31,8 @@ export function TableQueryDownloadConfirmation() {
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
-  const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
-  const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
+  const fileIdColumnName = useAtomValue(fileIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(fileVersionColumnNameAtom)
 
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()

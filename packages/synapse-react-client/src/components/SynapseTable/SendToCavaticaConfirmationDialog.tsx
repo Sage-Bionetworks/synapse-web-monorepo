@@ -13,9 +13,9 @@ import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLeve
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import {
-  entityIdColumnNameAtom,
-  entityNameColumnNameAtom,
-  entityVersionColumnNameAtom,
+  fileIdColumnNameAtom,
+  fileNameColumnNameAtom,
+  fileVersionColumnNameAtom,
   tableQueryDataAtom,
 } from '../QueryWrapper/QueryWrapper'
 import { useAtomValue } from 'jotai'
@@ -52,9 +52,9 @@ export default function SendToCavaticaConfirmationDialog(
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
-  const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
-  const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
-  const fileNameColumnName = useAtomValue(entityNameColumnNameAtom)
+  const fileIdColumnName = useAtomValue(fileIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(fileVersionColumnNameAtom)
+  const fileNameColumnName = useAtomValue(fileNameColumnNameAtom)
 
   const {
     isShowingExportToCavaticaModal,

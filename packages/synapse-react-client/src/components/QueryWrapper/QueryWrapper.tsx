@@ -77,16 +77,16 @@ export const lockedColumnAtom = atom<LockedColumn | undefined>(undefined)
 /**
  * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row entity ID
  */
-export const entityIdColumnNameAtom = atom<string | undefined>(undefined)
+export const fileIdColumnNameAtom = atom<string | undefined>(undefined)
 
 /**
  * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row (entity) version
  */
-export const entityVersionColumnNameAtom = atom<string | undefined>(undefined)
+export const fileVersionColumnNameAtom = atom<string | undefined>(undefined)
 /**
  * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row (entity) name
  */
-export const entityNameColumnNameAtom = atom<string | undefined>(undefined)
+export const fileNameColumnNameAtom = atom<string | undefined>(undefined)
 
 /**
  * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
@@ -233,20 +233,20 @@ function _QueryWrapper(props: QueryWrapperProps) {
 
   const setSelectedRows = useSetAtom(selectedRowsAtom)
 
-  const setEntityIdColumnName = useSetAtom(entityIdColumnNameAtom)
+  const setFileIdColumnName = useSetAtom(fileIdColumnNameAtom)
   useEffect(() => {
-    setEntityIdColumnName(fileIdColumnName)
-  }, [fileIdColumnName, setEntityIdColumnName])
+    setFileIdColumnName(fileIdColumnName)
+  }, [fileIdColumnName, setFileIdColumnName])
 
-  const setEntityVersionColumnName = useSetAtom(entityVersionColumnNameAtom)
+  const setFileVersionColumnName = useSetAtom(fileVersionColumnNameAtom)
   useEffect(() => {
-    setEntityVersionColumnName(fileVersionColumnName)
-  }, [fileVersionColumnName, setEntityVersionColumnName])
+    setFileVersionColumnName(fileVersionColumnName)
+  }, [fileVersionColumnName, setFileVersionColumnName])
 
-  const setEntityNameColumnName = useSetAtom(entityNameColumnNameAtom)
+  const setFileNameColumnName = useSetAtom(fileNameColumnNameAtom)
   useEffect(() => {
-    setEntityNameColumnName(fileIdColumnName)
-  }, [fileIdColumnName, setEntityNameColumnName])
+    setFileNameColumnName(fileIdColumnName)
+  }, [fileIdColumnName, setFileNameColumnName])
 
   const context: InfiniteQueryContextType | PaginatedQueryContextType =
     useDeepCompareMemoize({
