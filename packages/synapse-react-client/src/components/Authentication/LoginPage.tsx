@@ -16,6 +16,7 @@ import LoginForm from './LoginForm'
 import { StyledComponent } from '@emotion/styled'
 import SystemUseNotification from '../SystemUseNotification/SystemUseNotification'
 import { TOTP_GUIDANCE_TEXT } from './Constants'
+import { OAuth2State } from '../../utils'
 
 const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
   'Lost access to my Synapse account',
@@ -28,6 +29,7 @@ const LOST_ACCOUNT_ACCESS_CONTACT_URL = `https://sagebionetworks.jira.com/servic
 export type LoginPageProps = {
   ssoRedirectUrl?: string
   sessionCallback: () => void // Callback is invoked after login
+  ssoState?: OAuth2State
 }
 
 const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
@@ -62,7 +64,7 @@ function BackupCodeInstructions(props: TypographyProps) {
 }
 
 export default function LoginPage(props: LoginPageProps) {
-  const { ssoRedirectUrl, sessionCallback } = props
+  const { ssoRedirectUrl, sessionCallback, ssoState } = props
   const showDesktop = useShowDesktop(910)
   const theme = useTheme()
 
@@ -125,6 +127,7 @@ export default function LoginPage(props: LoginPageProps) {
         submitOneTimePassword={submitOneTimePassword}
         errorMessage={errorMessage}
         isLoading={isLoading}
+        ssoState={ssoState}
       />
     </Stack>
   )

@@ -5,7 +5,7 @@ import { redirectAfterSSO } from '../AppUtils'
 import { useHistory } from 'react-router-dom'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
-import { SynapseContextProvider } from '../../context/SynapseContext'
+import { SynapseContextProvider } from '../../context'
 import dayjs from 'dayjs'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
@@ -46,14 +46,14 @@ export function ApplicationSessionManager(
   } = props
   const history = useHistory()
 
-  const [token, setToken] = useState<string | undefined>(undefined)
+  const [token, setToken] = useState<string | undefined>()
   const [acceptsTermsOfUse, setAcceptsTermsOfUse] = useState<
     boolean | undefined
-  >(undefined)
+  >()
   const [hasInitializedSession, setHasInitializedSession] = useState(false)
   const [twoFactorAuthSSOError, setTwoFactorAuthSSOError] = useState<
     TwoFactorAuthErrorResponse | undefined
-  >(undefined)
+  >()
   const initAnonymousUserState = useCallback(() => {
     if (onNoAccessTokenFound) {
       onNoAccessTokenFound()
