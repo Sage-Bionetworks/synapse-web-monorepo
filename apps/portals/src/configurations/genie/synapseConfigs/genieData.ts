@@ -15,7 +15,7 @@ const genieData: SynapseConfig = {
     visibleColumnCount: 6,
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
-    fileVersionColumnName: 'fileVersion',
+    fileVersionColumnName: 'currentVersion',
     tableConfiguration: {
       showAccessColumn: true,
     },
