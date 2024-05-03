@@ -39,6 +39,7 @@ import { SynapseTableContext } from './SynapseTableContext'
 import { usePrefetchTableData } from './usePrefetchTableData'
 import { useAtomValue } from 'jotai'
 import {
+  QueryWrapperProps,
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
   tableQueryEntityAtom,
@@ -58,11 +59,10 @@ export type SynapseTableProps = {
   hideAddToDownloadListColumn?: boolean
   /** Configuration to override cell renderers with e.g. a link to a portals detail page */
   columnLinks?: LabelLinkConfig
-  /** If provided, will use the value in this column instead of the rowID for the access column, download column, etc */
-  rowEntityIDColumnName?: string
-  /** If provided, will use the value in this column instead of the row version number for the access column, download column, etc */
-  rowEntityVersionColumnName?: string
-}
+} & Pick<
+  QueryWrapperProps,
+  'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
+>
 
 const columnHelper = createColumnHelper<Row>()
 
@@ -73,8 +73,8 @@ export function SynapseTable(props: SynapseTableProps) {
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
     columnLinks,
-    rowEntityIDColumnName,
-    rowEntityVersionColumnName,
+    fileIdColumnName,
+    fileVersionColumnName,
   } = props
   const { getCurrentQueryRequest } = useQueryContext()
   const queryRequest = useMemo(
@@ -102,14 +102,13 @@ export function SynapseTable(props: SynapseTableProps) {
     showAccessColumn &&
       entity &&
       ((isEntityViewOrDataset(entity) && allRowsHaveId(data)) ||
-        rowEntityIDColumnName),
+        fileIdColumnName),
   )
 
   const rowsAreDownloadable =
     entity &&
     isLoggedIn &&
-    ((isFileViewOrDataset(entity) && allRowsHaveId(data)) ||
-      rowEntityIDColumnName)
+    ((isFileViewOrDataset(entity) && allRowsHaveId(data)) || fileIdColumnName)
 
   const isShowingDirectDownloadColumn = Boolean(
     rowsAreDownloadable && showDirectDownloadColumn,
@@ -120,14 +119,14 @@ export function SynapseTable(props: SynapseTableProps) {
       !hideAddToDownloadListColumn &&
       !isRowSelectionVisible,
   )
-  const rowEntityIDColumnIndex = rowEntityIDColumnName
+  const rowEntityIDColumnIndex = fileIdColumnName
     ? data?.queryResult?.queryResults.headers.findIndex(
-        col => col.name == rowEntityIDColumnName,
+        col => col.name == fileIdColumnName,
       )
     : undefined
-  const rowEntityVersionColumnIndex = rowEntityVersionColumnName
+  const rowEntityVersionColumnIndex = fileVersionColumnName
     ? data?.queryResult?.queryResults.headers.findIndex(
-        col => col.name == rowEntityVersionColumnName,
+        col => col.name == fileVersionColumnName,
       )
     : undefined
 

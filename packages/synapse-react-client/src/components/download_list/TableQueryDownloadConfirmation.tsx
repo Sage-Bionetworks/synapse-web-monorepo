@@ -10,9 +10,17 @@ import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
+import {
+  getFileColumnModelId,
+  isEntityViewOrDataset,
+} from '../SynapseTable/SynapseTableUtils'
 import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import {
+  entityIdColumnNameAtom,
+  entityVersionColumnNameAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../QueryWrapper/QueryWrapper'
 import {
   hasSelectedRowsAtom,
   rowSelectionPrimaryKeyAtom,
@@ -26,15 +34,46 @@ export function TableQueryDownloadConfirmation() {
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
+
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
+  const areFileIdAndVersionColumnIdsRequired = entity
+    ? !isEntityViewOrDataset(entity)
+    : false
+
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-    const fileColumnId = getFileColumnModelId(data?.columnModels)
-    if (fileColumnId) {
-      requestCopy.query.selectFileColumn = Number(fileColumnId)
+
+    // set the query.selectFileColumn
+    if (
+      areFileIdAndVersionColumnIdsRequired &&
+      fileIdColumnName &&
+      fileVersionColumnName
+    ) {
+      // find the column model ID and set the parameters
+      const fileIdColumnModel = data?.columnModels?.find(
+        col => col.name == fileIdColumnName,
+      )
+      const fileVersionColumnModel = data?.columnModels?.find(
+        col => col.name == fileVersionColumnName,
+      )
+      requestCopy.query.selectFileColumn = fileIdColumnModel
+        ? Number(fileIdColumnModel.id)
+        : undefined
+      requestCopy.query.selectFileVersionColumn = fileVersionColumnModel
+        ? Number(fileVersionColumnModel.id)
+        : undefined
+    } else {
+      const fileColumnId = getFileColumnModelId(data?.columnModels)
+      if (fileColumnId) {
+        requestCopy.query.selectFileColumn = Number(fileColumnId)
+      }
     }
+
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
       const primaryKeyINFilter = getPrimaryKeyINFilter(
         rowSelectionPrimaryKey,
@@ -54,6 +93,7 @@ export function TableQueryDownloadConfirmation() {
     rowSelectionPrimaryKey,
     selectedRows,
   ])
+
   const { downloadCartPageUrl } = useSynapseContext()
 
   function onClose() {

@@ -24,6 +24,9 @@ import {
 import IconSvg from '../../IconSvg'
 import { useAtomValue } from 'jotai'
 import {
+  entityIdColumnNameAtom,
+  entityNameColumnNameAtom,
+  entityVersionColumnNameAtom,
   lockedColumnAtom,
   tableQueryDataAtom,
   tableQueryEntityAtom,
@@ -47,9 +50,6 @@ export type TopLevelControlsProps = {
   showColumnSelection?: boolean
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
-  fileIdColumnName?: string
-  fileNameColumnName?: string
-  fileVersionColumnName?: string
   cavaticaConnectAccountURL?: string
   remount?: () => void
 }
@@ -88,9 +88,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaConnectAccountURL,
-    fileIdColumnName,
-    fileNameColumnName,
-    fileVersionColumnName,
     remount,
   } = props
 
@@ -102,6 +99,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+
+  const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
+  const fileNameColumnName = useAtomValue(entityNameColumnNameAtom)
 
   const {
     setShowSearchBar,
@@ -339,9 +340,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           <SendToCavaticaConfirmationDialog
             cavaticaConnectAccountURL={cavaticaConnectAccountURL}
-            fileIdColumnName={fileIdColumnName}
-            fileNameColumnName={fileNameColumnName}
-            fileVersionColumnName={fileVersionColumnName}
           />
         </div>
       </div>

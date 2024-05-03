@@ -13,11 +13,11 @@ const genieData: SynapseConfig = {
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['id'],
     visibleColumnCount: 6,
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'fileVersion',
     tableConfiguration: {
       showAccessColumn: true,
-      // set the entity ID column and version column to use (instead of the Row ID and Version)
-      rowEntityIDColumnName: 'id',
-      rowEntityVersionColumnName: 'currentVersion',
     },
     defaultShowPlots: false,
   },

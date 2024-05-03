@@ -136,8 +136,6 @@ export const filesView: SynapseConfig = {
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
-      rowEntityIDColumnName: 'id',
-      rowEntityVersionColumnName: 'fileVersion',
       columnLinks: [
         {
           matchColumnName: 'Study',
