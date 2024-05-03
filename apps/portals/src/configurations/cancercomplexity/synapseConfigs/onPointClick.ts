@@ -40,3 +40,22 @@ export const onPointClick = ({
   const target = event.ctrlKey || event.metaKey ? '_blank' : '_self'
   window.open(url, target)
 }
+
+export const onIndividualThemeBarPlotPointClick = ({
+  facetValue,
+  type,
+  event,
+}: ClickCallbackParams) => {
+  //facetValue in this case is the Theme facet value (ie "Microenvironment"), and the type is Consortium facet value (ie "CSBC")
+  const targetType = 'Grants'
+  const url = generateEncodedPathAndQueryForSelectedFacetURL(
+    `/Explore/${targetType}`,
+    sqlAndEntityMap[targetType],
+    [
+      { facet: 'theme', facetValue },
+      { facet: 'consortium', facetValue: type },
+    ],
+  )
+  const target = event.ctrlKey || event.metaKey ? '_blank' : '_self'
+  window.open(url, target)
+}

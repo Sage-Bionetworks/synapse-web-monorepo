@@ -8,7 +8,10 @@ import { publicationsCardConfiguration } from './synapseConfigs/publications'
 import { grantsCardConfiguration } from './synapseConfigs/grants'
 import { peopleCardConfiguration } from './synapseConfigs/people'
 import { educationDetailsCardConfiguration } from './synapseConfigs/education'
-import { onPointClick } from './synapseConfigs/onPointClick'
+import {
+  onPointClick,
+  onIndividualThemeBarPlotPointClick,
+} from './synapseConfigs/onPointClick'
 import columnAliases from './columnAliases'
 import {
   datasetsSql,
@@ -55,6 +58,7 @@ const routes: GenericRoute[] = [
         centerTitle: true,
         props: {
           onPointClick,
+          onIndividualThemeBarPlotPointClick,
           topBarPlot: {
             entityId: 'syn21641485',
             xField: 'totalCount',
