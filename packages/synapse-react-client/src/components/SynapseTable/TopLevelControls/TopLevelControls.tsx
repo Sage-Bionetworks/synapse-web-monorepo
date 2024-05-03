@@ -24,9 +24,6 @@ import {
 import IconSvg from '../../IconSvg'
 import { useAtomValue } from 'jotai'
 import {
-  entityIdColumnNameAtom,
-  entityNameColumnNameAtom,
-  entityVersionColumnNameAtom,
   lockedColumnAtom,
   tableQueryDataAtom,
   tableQueryEntityAtom,
@@ -99,10 +96,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
-
-  const fileIdColumnName = useAtomValue(entityIdColumnNameAtom)
-  const fileVersionColumnName = useAtomValue(entityVersionColumnNameAtom)
-  const fileNameColumnName = useAtomValue(entityNameColumnNameAtom)
 
   const {
     setShowSearchBar,
