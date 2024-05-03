@@ -238,7 +238,7 @@ export const studiesDetailPage: DetailsPageProps = {
             rowSelectionPrimaryKey: ['id'],
             fileIdColumnName: 'id',
             fileNameColumnName: 'name',
-            fileVersionColumnName: 'fileVersion',
+            fileVersionColumnName: 'currentVersion',
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -272,7 +272,7 @@ export const studiesDetailPage: DetailsPageProps = {
             showDownloadColumn: true,
             fileIdColumnName: 'id',
             fileNameColumnName: 'name',
-            fileVersionColumnName: 'fileVersion',
+            fileVersionColumnName: 'currentVersion',
           },
           className: 'metadata-table',
         },

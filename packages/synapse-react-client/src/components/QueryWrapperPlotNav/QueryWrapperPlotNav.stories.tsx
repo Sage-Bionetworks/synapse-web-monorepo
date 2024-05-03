@@ -420,6 +420,6 @@ export const MaterializedViewOfFiles: Story = {
     showExportToCavatica: true,
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
-    fileVersionColumnName: 'fileVersion',
+    fileVersionColumnName: 'currentVersion',
   },
 }
