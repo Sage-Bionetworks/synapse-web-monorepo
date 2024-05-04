@@ -48,6 +48,7 @@ export function TableQueryDownloadConfirmation() {
       const fileVersionColumnModel = data?.columnModels?.find(
         col => col.name == fileVersionColumnName,
       )
+
       requestCopy.query.selectFileColumn = fileIdColumnModel
         ? Number(fileIdColumnModel.id)
         : undefined
@@ -75,10 +76,13 @@ export function TableQueryDownloadConfirmation() {
     return requestCopy
   }, [
     data?.columnModels,
+    data?.selectColumns,
     getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
     selectedRows,
+    fileIdColumnName,
+    fileVersionColumnName,
   ])
 
   const { downloadCartPageUrl } = useSynapseContext()
@@ -108,19 +112,15 @@ export function TableQueryDownloadConfirmation() {
     ? undefined
     : queryResultResponse?.responseBody?.sumFileSizes?.sumFileSizesBytes
 
-  // PORTALS-2954: We can only rely on the row version number if the rowID is meaningful.
-  // If rowSelectionPrimaryKey is undefined, then try to use the row version number
-  const useVersionNumber = rowSelectionPrimaryKey == undefined
   return (
     <DownloadConfirmationUI
-      onAddToDownloadCart={() =>
+      onAddToDownloadCart={() => {
         addToDownloadList({
           query: queryBundleRequest?.query,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-          useVersionNumber: useVersionNumber,
         })
-      }
+      }}
       fileCount={fileCount}
       fileSize={fileSizeTotal}
       isAddingToDownloadCart={isAddingToDownloadCart}
