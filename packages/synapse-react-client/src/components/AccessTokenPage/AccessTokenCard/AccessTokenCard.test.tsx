@@ -133,4 +133,16 @@ describe('AccessTokenCard', () => {
       expect(mockOnDelete).toHaveBeenCalled()
     })
   })
+
+  test('renders unknown scope definitions', () => {
+    const tokenProps: AccessTokenCardProps = {
+      accessToken: {
+        ...activeTokenProps.accessToken,
+        scopes: ['unknownscope'],
+      },
+      onDelete: mockOnDelete,
+    }
+    renderComponent(tokenProps)
+    expect(screen.queryByText('Unknownscope')).toBeInTheDocument()
+  })
 })
