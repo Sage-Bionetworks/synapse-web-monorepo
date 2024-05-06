@@ -134,7 +134,7 @@ describe('AccessTokenCard', () => {
     })
   })
 
-  test('renders unknown scope definitions', () => {
+  test('SWC-6827: renders unknown scope definitions without crashing', () => {
     const tokenProps: AccessTokenCardProps = {
       accessToken: {
         ...activeTokenProps.accessToken,
