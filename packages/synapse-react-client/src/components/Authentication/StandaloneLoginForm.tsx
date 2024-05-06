@@ -20,7 +20,15 @@ export type StandaloneLoginFormProps = {
   showUsernameOrPassword?: boolean | undefined
   /* optionally pass the 2FA error response to directly start the 2FA challenge */
   twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
+  /* If a twoFactorAuthError is encountered (including passed in the twoFactorAuthenticationRequired prop), this callback will be invoked */
+  onTwoFactorAuthRequired?: (
+    twoFaToken: Pick<TwoFactorAuthErrorResponse, 'twoFaToken' | 'userId'>,
+  ) => void
+  hideRegisterButton?: boolean
+  hideForgotPasswordButton?: boolean
   ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -30,7 +38,11 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     registerAccountUrl,
     resetPasswordUrl,
     onBeginOAuthSignIn,
+    onTwoFactorAuthRequired,
+    hideRegisterButton,
+    hideForgotPasswordButton,
     ssoState,
+    twoFactorAuthResetUri,
   } = props
 
   const {
@@ -39,8 +51,15 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
-  } = useLogin(sessionCallback, props.twoFactorAuthenticationRequired)
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
+  } = useLogin({
+    sessionCallback,
+    twoFaErrorResponse: props.twoFactorAuthenticationRequired,
+    onTwoFactorAuthRequired,
+  })
 
   return (
     <Box
@@ -76,8 +95,14 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         registerAccountUrl={registerAccountUrl}
         resetPasswordUrl={resetPasswordUrl}
         onBeginOAuthSignIn={onBeginOAuthSignIn}
-        isLoading={isLoading}
+        loginIsPending={loginIsPending}
+        beginTwoFactorAuthReset={beginTwoFactorAuthReset}
+        hideRegisterButton={hideRegisterButton}
+        hideForgotPasswordButton={hideForgotPasswordButton}
+        twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+        twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         ssoState={ssoState}
+        twoFactorAuthResetUri={twoFactorAuthResetUri}
       />
     </Box>
   )

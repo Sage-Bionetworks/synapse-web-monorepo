@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import { BrowserRouter } from 'react-router-dom'
 import * as serviceWorker from './serviceWorker'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
@@ -12,7 +13,9 @@ const root = createRoot(container!)
 
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
 )
 
