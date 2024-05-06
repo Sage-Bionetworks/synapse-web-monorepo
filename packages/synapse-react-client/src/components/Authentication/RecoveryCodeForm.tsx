@@ -8,11 +8,11 @@ const RECOVERY_CODE_LENGTH = 19
 
 type RecoveryCodeFormProps = {
   onSubmit: (value: string) => void
-  isLoading: UseLoginReturn['isLoading']
+  loginIsPending: UseLoginReturn['loginIsPending']
 }
 
 export default function RecoveryCodeForm(props: RecoveryCodeFormProps) {
-  const { onSubmit, isLoading } = props
+  const { onSubmit, loginIsPending } = props
   const [recoveryCode, setRecoveryCode] = React.useState('')
   return (
     <Box>
@@ -38,13 +38,15 @@ export default function RecoveryCodeForm(props: RecoveryCodeFormProps) {
           mt: 4,
           mb: 2,
         }}
-        disabled={recoveryCode.length !== RECOVERY_CODE_LENGTH || isLoading}
+        disabled={
+          recoveryCode.length !== RECOVERY_CODE_LENGTH || loginIsPending
+        }
         onClick={e => {
           e.preventDefault()
           onSubmit(recoveryCode)
         }}
       >
-        {isLoading ? 'Verifying...' : 'Submit'}
+        {loginIsPending ? 'Verifying...' : 'Submit'}
       </Button>
     </Box>
   )

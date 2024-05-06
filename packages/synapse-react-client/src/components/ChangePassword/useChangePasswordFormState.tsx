@@ -52,54 +52,52 @@ export default function useChangePasswordFormState(
     },
   })
 
-  function handleChangePasswordWithCurrentPassword(
-    username: string,
-    currentPassword: string,
-    newPassword: string,
-  ) {
-    setNewPassword(newPassword)
-    const changeRequest: ChangePasswordWithCurrentPassword = {
-      username,
-      currentPassword,
-      newPassword,
-      concreteType:
-        'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
-    }
-    changePassword(changeRequest)
-  }
-
-  function handleChangePasswordWithResetToken(
-    newPassword: string,
-    passwordChangeToken: PasswordResetSignedToken,
-  ) {
-    setNewPassword(newPassword)
-    const changeRequest: ChangePasswordWithTokenObject = {
-      newPassword,
-      concreteType:
-        'org.sagebionetworks.repo.model.auth.ChangePasswordWithToken',
-      passwordChangeToken: passwordChangeToken,
-    }
-    changePassword(changeRequest)
-  }
-
-  function handleChangePasswordWithOtp(
-    newPassword: string,
-    code: string,
-    otpType: TwoFactorAuthOtpType,
-  ) {
-    if (twoFactorAuthErrorResponse) {
-      const changeRequest: ChangePasswordWithTwoFactorAuthToken = {
+  const handleChangePasswordWithCurrentPassword = useCallback(
+    (username: string, currentPassword: string, newPassword: string) => {
+      setNewPassword(newPassword)
+      const changeRequest: ChangePasswordWithCurrentPassword = {
+        username,
+        currentPassword,
         newPassword,
         concreteType:
-          'org.sagebionetworks.repo.model.auth.ChangePasswordWithTwoFactorAuthToken',
-        userId: twoFactorAuthErrorResponse.userId,
-        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
-        otpType: otpType,
-        otpCode: code,
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
       }
       changePassword(changeRequest)
-    }
-  }
+    },
+    [changePassword],
+  )
+
+  const handleChangePasswordWithResetToken = useCallback(
+    (newPassword: string, passwordChangeToken: PasswordResetSignedToken) => {
+      setNewPassword(newPassword)
+      const changeRequest: ChangePasswordWithTokenObject = {
+        newPassword,
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithToken',
+        passwordChangeToken: passwordChangeToken,
+      }
+      changePassword(changeRequest)
+    },
+    [changePassword],
+  )
+
+  const handleChangePasswordWithOtp = useCallback(
+    (newPassword: string, code: string, otpType: TwoFactorAuthOtpType) => {
+      if (twoFactorAuthErrorResponse) {
+        const changeRequest: ChangePasswordWithTwoFactorAuthToken = {
+          newPassword,
+          concreteType:
+            'org.sagebionetworks.repo.model.auth.ChangePasswordWithTwoFactorAuthToken',
+          userId: twoFactorAuthErrorResponse.userId,
+          twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+          otpType: otpType,
+          otpCode: code,
+        }
+        changePassword(changeRequest)
+      }
+    },
+    [changePassword, twoFactorAuthErrorResponse],
+  )
   const promptForTwoFactorAuth = Boolean(twoFactorAuthErrorResponse)
 
   const TwoFactorAuthPrompt = useCallback(() => {
@@ -130,6 +128,9 @@ export default function useChangePasswordFormState(
           onSubmit={(code, otpType) =>
             handleChangePasswordWithOtp(newPassword, code, otpType)
           }
+          hideReset2FA={true}
+          twoFactorAuthResetIsPending={false}
+          twoFactorAuthResetIsSuccess={false}
         />
         <Alert severity={'info'} sx={{ my: 2 }}>
           Two-factor authentication is required to change your password.

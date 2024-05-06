@@ -1,16 +1,14 @@
 import { Button, Link } from '@mui/material'
 import React, { useState } from 'react'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
   resetPasswordUrl?: string
-  isLoading: UseLoginReturn['isLoading']
+  loginIsPending: UseLoginReturn['loginIsPending']
+  hideForgotPasswordButton?: boolean
 }
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
@@ -19,7 +17,8 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )}#!PasswordReset:0`,
     onSubmit,
-    isLoading,
+    loginIsPending,
+    hideForgotPasswordButton,
   } = props
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -55,20 +54,22 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         value={password}
         onChange={e => setPassword(e.target.value)}
       />
-      <Link href={resetPasswordUrl}>Forgot password?</Link>
+      {!hideForgotPasswordButton && (
+        <Link href={resetPasswordUrl}>Forgot password?</Link>
+      )}
       <Button
         fullWidth
         type="submit"
         color="primary"
         variant="contained"
-        disabled={isLoading}
+        disabled={loginIsPending}
         sx={{
           height: '50px',
           mt: 4,
           mb: 2,
         }}
       >
-        {isLoading ? 'Logging you in...' : 'Sign in'}
+        {loginIsPending ? 'Logging you in...' : 'Sign in'}
       </Button>
     </form>
   )

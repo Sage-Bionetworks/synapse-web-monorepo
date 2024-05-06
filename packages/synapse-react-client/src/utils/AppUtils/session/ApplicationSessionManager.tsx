@@ -17,6 +17,15 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   onNoAccessTokenFound?: () => void
   /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
   forceRelogin?: boolean
+  /*
+   * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
+   * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
+   * This only needs to be implemented if the app implements the workflow to disable 2FA (i.e. only if the app supports account management).
+   */
+  onTwoFactorAuthResetThroughSSO?: (
+    twoFactorAuthSSOError: TwoFactorAuthErrorResponse,
+    twoFaResetToken: string,
+  ) => void
 }>
 
 /**
@@ -43,6 +52,7 @@ export function ApplicationSessionManager(
     maxAge,
     onNoAccessTokenFound,
     forceRelogin,
+    onTwoFactorAuthResetThroughSSO,
   } = props
   const history = useHistory()
 
@@ -144,6 +154,12 @@ export function ApplicationSessionManager(
     },
     onTwoFactorAuthRequired: twoFactorAuthError => {
       setTwoFactorAuthSSOError(twoFactorAuthError)
+    },
+    onTwoFactorAuthResetTokenPresent: (twoFactorAuthError, twoFaResetToken) => {
+      setTwoFactorAuthSSOError(twoFactorAuthError)
+      if (onTwoFactorAuthResetThroughSSO) {
+        onTwoFactorAuthResetThroughSSO(twoFactorAuthError, twoFaResetToken)
+      }
     },
   })
 

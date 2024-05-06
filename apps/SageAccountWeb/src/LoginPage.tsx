@@ -18,6 +18,7 @@ import {
   StyledOuterContainer,
 } from './components/StyledComponents.js'
 import { useSourceApp } from './components/useSourceApp'
+import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 
 export type LoginPageProps = {
   returnToUrl?: string
@@ -93,6 +94,7 @@ function LoginPage(props: LoginPageProps) {
                   preparePostSSORedirect()
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
+                twoFactorAuthResetUri={`${window.location.origin}${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
               />
             </Box>
           </Box>

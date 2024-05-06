@@ -22,9 +22,16 @@ type Props = {
   submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword']
   submitOneTimePassword: UseLoginReturn['submitOneTimePassword']
   errorMessage: UseLoginReturn['errorMessage']
-  isLoading: UseLoginReturn['isLoading']
+  loginIsPending: UseLoginReturn['loginIsPending']
+  beginTwoFactorAuthReset: UseLoginReturn['beginTwoFactorAuthReset']
+  twoFactorAuthResetIsSuccess: UseLoginReturn['twoFactorAuthResetIsSuccess']
+  twoFactorAuthResetIsPending: UseLoginReturn['twoFactorAuthResetIsPending']
+  hideRegisterButton?: boolean
+  hideForgotPasswordButton?: boolean
   // Optional state passed to and returned by an identity provider on SSO
   ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
 }
 
 export default function LoginForm(props: Props) {
@@ -41,7 +48,13 @@ export default function LoginForm(props: Props) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    hideRegisterButton,
+    hideForgotPasswordButton,
+    twoFactorAuthResetIsSuccess,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetUri = `${window.location.origin}/reset2FA?twoFAResetToken=`,
   } = props
 
   return (
@@ -56,17 +69,20 @@ export default function LoginForm(props: Props) {
       )}
       {step === 'USERNAME_PASSWORD' && (
         <UsernamePasswordForm
-          isLoading={isLoading}
+          loginIsPending={loginIsPending}
           resetPasswordUrl={resetPasswordUrl}
           onSubmit={(username, password) => {
             submitUsernameAndPassword(username, password)
           }}
+          hideForgotPasswordButton={hideForgotPasswordButton}
         />
       )}
-      {(step === 'VERIFICATION_CODE' || step === 'RECOVERY_CODE') && (
+      {(step === 'VERIFICATION_CODE' ||
+        step === 'RECOVERY_CODE' ||
+        step === 'DISABLE_2FA_PROMPT') && (
         <OneTimePasswordForm
           step={step}
-          isLoading={isLoading}
+          loginIsPending={loginIsPending}
           onSubmit={(totp, otpType) => {
             submitOneTimePassword(totp, otpType)
           }}
@@ -76,15 +92,24 @@ export default function LoginForm(props: Props) {
           onClickUseBackupCode={() => {
             onStepChange('RECOVERY_CODE')
           }}
+          onClickPromptReset2FA={() => {
+            onStepChange('DISABLE_2FA_PROMPT')
+          }}
+          onClickReset2FA={() => {
+            beginTwoFactorAuthReset(twoFactorAuthResetUri)
+          }}
+          twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+          twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         />
       )}
-      {(step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '10px' }}>
-          <Link href={registerAccountUrl} align={'center'}>
-            Don&apos;t have an account? Create one now
-          </Link>
-        </Box>
-      )}
+      {!hideRegisterButton &&
+        (step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: '10px' }}>
+            <Link href={registerAccountUrl} align={'center'}>
+              Don&apos;t have an account? Create one now
+            </Link>
+          </Box>
+        )}
       {errorMessage && (
         <FullWidthAlert
           variant={'warning'}

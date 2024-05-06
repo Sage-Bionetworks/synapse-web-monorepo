@@ -32,6 +32,7 @@ const onSuccessfulLoginFn = jest.fn()
 
 const mockLogIn = jest.spyOn(SynapseClient, 'login')
 const mockLogInWith2FA = jest.spyOn(SynapseClient, 'loginWith2fa')
+const mockReset2FA = jest.spyOn(SynapseClient, 'resetTwoFactorAuth')
 const mockSetAccessTokenCookie = jest
   .spyOn(SynapseClient, 'setAccessTokenCookie')
   .mockResolvedValue(undefined)
@@ -40,7 +41,7 @@ function renderUseLogin(
   sessionCallback: () => void,
   twoFaErrorResponse?: TwoFactorAuthErrorResponse,
 ) {
-  return renderHook(() => useLogin(sessionCallback, twoFaErrorResponse), {
+  return renderHook(() => useLogin({ sessionCallback, twoFaErrorResponse }), {
     wrapper: createWrapper(),
   })
 }
@@ -272,7 +273,7 @@ describe('useLogin tests', () => {
     consoleErrorSpy.mockRestore()
   })
 
-  it('Handles 2fa error where there is no token or userId', async () => {
+  it('Handles 2fa login error where there is no token or userId', async () => {
     const timedOneTimePassword = '123456'
 
     const { result } = renderUseLogin(onSuccessfulLoginFn)
@@ -385,5 +386,94 @@ describe('useLogin tests', () => {
     })
     consoleWarnSpy.mockRestore()
     consoleErrorSpy.mockRestore()
+  })
+
+  it('Allows the user to begin the 2fa reset process', async () => {
+    const resetEndpoint = 'https://test.synapse.org/reset-2fa'
+
+    mockLogIn.mockResolvedValue(twoFactorAuthErrorResponse)
+    mockReset2FA.mockResolvedValue()
+
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
+
+    act(() => {
+      result.current.submitUsernameAndPassword(username, password)
+    })
+
+    await waitFor(() => {
+      expect(mockLogIn).toHaveBeenCalledWith(username, password, null)
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    act(() => {
+      result.current.beginTwoFactorAuthReset(resetEndpoint)
+    })
+
+    await waitFor(() => {
+      expect(mockReset2FA).toHaveBeenCalledWith({
+        userId: twoFactorAuthErrorResponse.userId,
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        twoFaResetEndpoint: resetEndpoint,
+      })
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
+    })
+  })
+
+  it('Handles reset 2fa error where there is no token or userId', async () => {
+    const resetEndpoint = 'https://test.synapse.org/reset-2fa'
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
+
+    act(() => {
+      result.current.beginTwoFactorAuthReset(resetEndpoint)
+    })
+
+    await waitFor(() => {
+      expect(mockReset2FA).not.toHaveBeenCalled()
+      expect(result.current.errorMessage).toContain(
+        'You did not first log in with your password or a third-party identity provider',
+      )
+      expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
+    })
+  })
+
+  it('Returns an error if resetting 2FA fails', async () => {
+    const resetEndpoint = 'https://test.synapse.org/reset-2fa'
+    const error: SynapseClientError = new SynapseClientError(
+      400,
+      'error msg',
+      expect.getState().currentTestName!,
+    )
+
+    mockLogIn.mockResolvedValue(twoFactorAuthErrorResponse)
+    mockReset2FA.mockRejectedValue(error)
+
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
+
+    act(() => {
+      result.current.submitUsernameAndPassword(username, password)
+    })
+
+    await waitFor(() => {
+      expect(mockLogIn).toHaveBeenCalledWith(username, password, null)
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    act(() => {
+      result.current.beginTwoFactorAuthReset(resetEndpoint)
+    })
+
+    await waitFor(() => {
+      expect(mockReset2FA).toHaveBeenCalledWith({
+        userId: twoFactorAuthErrorResponse.userId,
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        twoFaResetEndpoint: resetEndpoint,
+      })
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
+      expect(result.current.errorMessage).toBe(error.reason)
+    })
   })
 })

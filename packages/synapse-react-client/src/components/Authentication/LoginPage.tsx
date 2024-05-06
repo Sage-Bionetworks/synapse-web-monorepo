@@ -30,6 +30,8 @@ export type LoginPageProps = {
   ssoRedirectUrl?: string
   sessionCallback: () => void // Callback is invoked after login
   ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
 }
 
 const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
@@ -64,7 +66,8 @@ function BackupCodeInstructions(props: TypographyProps) {
 }
 
 export default function LoginPage(props: LoginPageProps) {
-  const { ssoRedirectUrl, sessionCallback, ssoState } = props
+  const { ssoRedirectUrl, sessionCallback, ssoState, twoFactorAuthResetUri } =
+    props
   const showDesktop = useShowDesktop(910)
   const theme = useTheme()
 
@@ -74,8 +77,11 @@ export default function LoginPage(props: LoginPageProps) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
-  } = useLogin(sessionCallback)
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
+  } = useLogin({ sessionCallback })
 
   const loginForm = (
     <Stack
@@ -126,8 +132,12 @@ export default function LoginPage(props: LoginPageProps) {
         submitUsernameAndPassword={submitUsernameAndPassword}
         submitOneTimePassword={submitOneTimePassword}
         errorMessage={errorMessage}
-        isLoading={isLoading}
+        loginIsPending={loginIsPending}
+        beginTwoFactorAuthReset={beginTwoFactorAuthReset}
+        twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+        twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         ssoState={ssoState}
+        twoFactorAuthResetUri={twoFactorAuthResetUri}
       />
     </Stack>
   )

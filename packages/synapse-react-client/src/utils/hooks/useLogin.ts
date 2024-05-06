@@ -1,15 +1,28 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
+  ErrorResponseCode,
   LoginResponse,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
   TwoFactorAuthOtpType,
+  TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from '@tanstack/react-query'
 import { SynapseClientError } from '../SynapseClientError'
 import SynapseClient from '../../synapse-client'
 import { ONE_TIME_PASSWORD_STEP } from '../../components'
+import { noop } from 'lodash-es'
+import { useResetTwoFactorAuth } from '../../synapse-queries'
+
+export type UseLoginOptions = {
+  sessionCallback?: () => void
+  twoFaErrorResponse?: TwoFactorAuthErrorResponse
+  /* If a twoFactorAuthError is encountered (including passed in the twoFactorAuthenticationRequired arg), this callback will be invoked */
+  onTwoFactorAuthRequired?: (
+    twoFaToken: Pick<TwoFactorAuthErrorResponse, 'twoFaToken' | 'userId'>,
+  ) => void
+}
 
 export type UseLoginReturn = {
   step:
@@ -24,21 +37,37 @@ export type UseLoginReturn = {
     /* The type of one time password code that can be used to authenticate through two-factor authentication. Default is based on current value of `step` */
     otpType?: TwoFactorAuthOtpType,
   ) => void
+  /* Trigger sending an email which can be used to disable 2FA */
+  beginTwoFactorAuthReset: (twoFaResetEndpoint: string) => void
+  twoFactorAuthResetIsPending: boolean
+  twoFactorAuthResetIsSuccess: boolean
   errorMessage: string | undefined
-  isLoading: boolean
+  loginIsPending: boolean
 }
 
 /**
  * Stateful hook that manages logging into Synapse
  */
-export default function useLogin(
-  sessionCallback?: () => void,
-  twoFaErrorResponse?: TwoFactorAuthErrorResponse,
-): UseLoginReturn {
+export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
+  const {
+    sessionCallback = noop,
+    twoFaErrorResponse: twoFaErrorResponseFromProps,
+    onTwoFactorAuthRequired = noop,
+  } = opts
   const [step, setStep] = useState<UseLoginReturn['step']>('CHOOSE_AUTH_METHOD')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
-  const [userId, setUserId] = useState<number>()
-  const [twoFaToken, setTwoFaToken] = useState<string>()
+  const [twoFaErrorResponse, setTwoFaErrorResponse] = useState<
+    TwoFactorAuthErrorResponse | undefined
+  >()
+
+  /**
+   * Update state variable if optional prop changes
+   */
+  useEffect(() => {
+    if (twoFaErrorResponseFromProps) {
+      setTwoFaErrorResponse(twoFaErrorResponseFromProps)
+    }
+  }, [twoFaErrorResponseFromProps])
 
   /*
    * In SWC, if logging in with OAuth, the servlet will call POST /oauth2/session2 to get the access token.
@@ -57,8 +86,14 @@ export default function useLogin(
       const userId = searchParams.get('userId')
       const twoFaToken = searchParams.get('twoFaToken')
       if (userId && twoFaToken) {
-        setUserId(parseInt(userId, 10))
-        setTwoFaToken(twoFaToken)
+        setTwoFaErrorResponse({
+          errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
+          reason: '',
+          userId: parseInt(userId, 10),
+          twoFaToken,
+          concreteType:
+            'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
+        })
         if (
           !['VERIFICATION_CODE', 'RECOVERY_CODE', 'LOGGED_IN'].includes(step)
         ) {
@@ -77,8 +112,7 @@ export default function useLogin(
    */
   useEffect(() => {
     if (twoFaErrorResponse) {
-      setTwoFaToken(twoFaErrorResponse.twoFaToken)
-      setUserId(twoFaErrorResponse.userId)
+      setTwoFaErrorResponse(twoFaErrorResponse)
       if (!['VERIFICATION_CODE', 'RECOVERY_CODE', 'LOGGED_IN'].includes(step)) {
         setStep('VERIFICATION_CODE')
       }
@@ -86,6 +120,15 @@ export default function useLogin(
     // We do NOT want to rerun this effect on step change. It should only run once, when we get the error.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twoFaErrorResponse])
+
+  /**
+   * Call the onTwoFactorAuthRequired callback when a twoFaToken is present
+   */
+  useEffect(() => {
+    if (twoFaErrorResponse) {
+      onTwoFactorAuthRequired(twoFaErrorResponse)
+    }
+  }, [onTwoFactorAuthRequired, twoFaErrorResponse])
 
   /* When the step changes, clear the old error message. */
   useEffect(() => {
@@ -107,7 +150,7 @@ export default function useLogin(
 
   const {
     mutate: mutateLoginWithUsernameAndPassword,
-    isPending: isLoadingLoginWithUsernameAndPassword,
+    isPending: loginWithUsernameAndPasswordIsPending,
   } = useMutation<
     LoginResponse | TwoFactorAuthErrorResponse,
     SynapseClientError,
@@ -122,8 +165,7 @@ export default function useLogin(
       if (loginResponse) {
         if ('errorCode' in loginResponse) {
           setStep('VERIFICATION_CODE')
-          setTwoFaToken(loginResponse.twoFaToken)
-          setUserId(loginResponse.userId)
+          setTwoFaErrorResponse(loginResponse)
         } else {
           await finishLogin(loginResponse)
         }
@@ -133,7 +175,7 @@ export default function useLogin(
 
   const {
     mutate: mutateLoginWith2FACode,
-    isPending: isLoadingLoginWith2FACode,
+    isPending: loginWith2FACodeIsPending,
   } = useMutation<LoginResponse, SynapseClientError, TwoFactorAuthLoginRequest>(
     {
       mutationFn: SynapseClient.loginWith2fa,
@@ -168,6 +210,16 @@ export default function useLogin(
     },
   )
 
+  const {
+    mutate: resetTwoFactorAuth,
+    isSuccess: twoFactorAuthResetIsSuccess,
+    isPending: twoFactorAuthResetIsPending,
+  } = useResetTwoFactorAuth({
+    onError: e => {
+      setErrorMessage(e.reason)
+    },
+  })
+
   const submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword'] =
     (username, password) => {
       setErrorMessage(undefined)
@@ -181,25 +233,47 @@ export default function useLogin(
       })
     }
 
+  function verifyTwoFaErrorIsPresent(
+    twoFaErrorResponse: TwoFactorAuthErrorResponse | null | undefined,
+  ): twoFaErrorResponse is TwoFactorAuthErrorResponse {
+    if (twoFaErrorResponse == null) {
+      // This type of error could happen if the 2FA component exists on its own route, and the user directly navigates to it without first logging in with credentials/OAuth
+      setErrorMessage(
+        'You did not first log in with your password or a third-party identity provider.',
+      )
+      return false
+    }
+    return true
+  }
+
   const submitOneTimePassword: UseLoginReturn['submitOneTimePassword'] = (
     code,
     otpType = step === 'RECOVERY_CODE' ? 'RECOVERY_CODE' : 'TOTP',
   ) => {
     setErrorMessage(undefined)
-    if (twoFaToken == null || userId == null) {
-      // This could happen if the 2FA component exists on its own route, and the user directly navigates to it without first logging in with credentials/OAuth
-      setErrorMessage(
-        'You did not first log in with your password or a third-party identity provider.',
-      )
-      return
+    if (verifyTwoFaErrorIsPresent(twoFaErrorResponse)) {
+      const request: TwoFactorAuthLoginRequest = {
+        userId: twoFaErrorResponse.userId,
+        twoFaToken: twoFaErrorResponse.twoFaToken,
+        otpCode: code,
+        otpType: otpType,
+      }
+      mutateLoginWith2FACode(request)
     }
-    const request: TwoFactorAuthLoginRequest = {
-      userId: userId,
-      twoFaToken: twoFaToken,
-      otpCode: code,
-      otpType: otpType,
+  }
+
+  const beginTwoFactorAuthReset: UseLoginReturn['beginTwoFactorAuthReset'] = (
+    twoFaResetEndpoint: string,
+  ) => {
+    setErrorMessage(undefined)
+    if (verifyTwoFaErrorIsPresent(twoFaErrorResponse)) {
+      const request: TwoFactorAuthResetRequest = {
+        userId: twoFaErrorResponse.userId,
+        twoFaToken: twoFaErrorResponse.twoFaToken,
+        twoFaResetEndpoint: twoFaResetEndpoint,
+      }
+      resetTwoFactorAuth(request)
     }
-    mutateLoginWith2FACode(request)
   }
 
   return {
@@ -208,7 +282,10 @@ export default function useLogin(
     submitUsernameAndPassword,
     submitOneTimePassword: submitOneTimePassword,
     errorMessage,
-    isLoading:
-      isLoadingLoginWithUsernameAndPassword || isLoadingLoginWith2FACode,
+    loginIsPending:
+      loginWithUsernameAndPasswordIsPending || loginWith2FACodeIsPending,
+    beginTwoFactorAuthReset,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
   }
 }
