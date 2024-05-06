@@ -77,7 +77,6 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
       open={showModal}
     />
   )
-
   return (
     <Card
       sx={{
@@ -103,23 +102,25 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
           <div>
             <span>Permissions: </span>
             {accessToken.scopes.map(scope => {
+              const scopeDescriptionKey =
+                scope as keyof typeof scopeDescriptions
+              let scopeDescription = scopeDescriptions[scopeDescriptionKey]
+              if (scopeDescription === undefined) {
+                const titleCaseScope =
+                  scope.charAt(0).toUpperCase() + scope.slice(1)
+                scopeDescription = {
+                  displayName: titleCaseScope,
+                  description: titleCaseScope,
+                }
+              }
               return (
-                <Tooltip
-                  key={scope}
-                  title={
-                    scopeDescriptions[scope as keyof typeof scopeDescriptions]
-                      .description
-                  }
-                >
+                <Tooltip key={scope} title={scopeDescription.description}>
                   <Typography
                     component={'span'}
                     variant={'smallText1'}
                     sx={{ mx: 0.25, cursor: 'default', color: 'primary.main' }}
                   >
-                    {
-                      scopeDescriptions[scope as keyof typeof scopeDescriptions]
-                        .displayName
-                    }
+                    {scopeDescription.displayName}
                   </Typography>
                 </Tooltip>
               )

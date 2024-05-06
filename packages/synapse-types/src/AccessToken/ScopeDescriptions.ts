@@ -26,4 +26,13 @@ export const scopeDescriptions = {
     description:
       'Permission to access the resources authorized here when you are not logged in, until you explicitly revoke access',
   },
+  email: {
+    displayName: 'Email',
+    description:
+      'Permission to access the email address associated to your account',
+  },
+  profile: {
+    displayName: 'User Profile',
+    description: 'Permission to access your user profile information',
+  },
 }
