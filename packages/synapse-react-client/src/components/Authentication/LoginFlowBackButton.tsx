@@ -22,6 +22,8 @@ function getPreviousStep(currentStep: UseLoginReturn['step']) {
       return 'CHOOSE_AUTH_METHOD'
     case 'RECOVERY_CODE':
       return 'VERIFICATION_CODE'
+    case 'DISABLE_2FA_PROMPT':
+      return 'VERIFICATION_CODE'
     case 'LOGGED_IN':
       // Should never happen
       return 'LOGGED_IN'

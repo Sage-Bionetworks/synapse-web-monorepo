@@ -124,7 +124,7 @@ export default function useChangePasswordFormState(
           onClickUseBackupCode={() => {
             setOtpStep('RECOVERY_CODE')
           }}
-          isLoading={isPending}
+          loginIsPending={isPending}
           onSubmit={(code, otpType) =>
             handleChangePasswordWithOtp(newPassword, code, otpType)
           }
