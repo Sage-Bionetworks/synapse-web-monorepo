@@ -106,11 +106,11 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
                 scope as keyof typeof scopeDescriptions
               let scopeDescription = scopeDescriptions[scopeDescriptionKey]
               if (scopeDescription === undefined) {
-                const upperCaseScope =
+                const titleCaseScope =
                   scope.charAt(0).toUpperCase() + scope.slice(1)
                 scopeDescription = {
-                  displayName: upperCaseScope,
-                  description: upperCaseScope,
+                  displayName: titleCaseScope,
+                  description: titleCaseScope,
                 }
               }
               return (
