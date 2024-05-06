@@ -85,6 +85,7 @@ import {
   Superscript,
   SyncTwoTone,
   TableChartTwoTone,
+  TableViewTwoTone,
   Title,
   UploadTwoTone,
   ViewAgendaTwoTone,
@@ -122,10 +123,12 @@ import CreateVersion from '../../assets/icons/CreateVersion'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 import { ORCIDIcon } from '../../assets/icons/ORCIDIcon'
+import ActionKey from '../../assets/mui_components/ActionKey'
 
 export const IconStrings = [
   'accessOpen',
   'accessClosed',
+  'actionKey',
   'arrowBack',
   'arrowForward',
   'arrowDropUp',
@@ -247,6 +250,7 @@ export const IconStrings = [
   'orcid',
   'google24',
   'openInFull',
+  'tableview',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -276,6 +280,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <AddTwoTone {...otherProps} />
     case 'addConditions':
       return <FactCheckTwoTone {...otherProps} />
+    case 'actionKey':
+      return <ActionKey {...otherProps} />
     case 'arrowBack':
       return <ArrowBack {...otherProps} />
     case 'arrowForward':
@@ -423,6 +429,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <LinkTwoTone {...otherProps} />
     case 'table':
       return <TableChartTwoTone {...otherProps} />
+    case 'tableview':
+      return <TableViewTwoTone {...otherProps} />
     case 'entityview':
       return <ListTwoTone {...otherProps} />
     case 'submissionview':
@@ -557,9 +565,9 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   folder: 'folder',
   table: 'table',
   link: 'link',
-  entityview: 'entityview',
-  materializedview: 'entityview',
-  virtualtable: 'entityview',
+  entityview: 'actionKey',
+  materializedview: 'tableview',
+  virtualtable: 'columns',
   dockerrepo: 'docker',
   submissionview: 'submissionview',
   dataset: 'dataset',
