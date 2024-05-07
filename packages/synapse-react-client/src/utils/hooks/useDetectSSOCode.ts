@@ -14,7 +14,7 @@ import {
   oAuthSessionRequest,
   setAccessTokenCookie,
 } from '../../synapse-client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { useSynapseContext } from '../context'
 import { OAuth2State } from '../types'
@@ -59,11 +59,33 @@ export default function useDetectSSOCode(
   const { searchParams } = fullUrl
   const code = searchParams?.get('code')
   const provider = searchParams?.get('provider')
-  // state is used during OAuth based Synapse account creation (it's the username)
-  const encodedState = searchParams?.get('state')
-  const state = encodedState
-    ? (JSON.parse(decodeURIComponent(encodedState)) as OAuth2State)
-    : null
+
+  // If the URL contains a client_id and redirect_uri, then we are acting as an identity provider for an external OAuth client
+  const isHandlingSynapseOAuthSignIn = Boolean(
+    searchParams?.get('client_id') && searchParams?.get('redirect_uri'),
+  )
+
+  // If the Synapse user signed in with an external IdP, we may have passed data in the 'state' param
+  // Parse it (if appropriate)
+  const state: OAuth2State | null = useMemo(() => {
+    // If we are acting as an OIDC identity provider, then we should not parse the state param -- it was sent to us, and we should return it untouched
+    if (!isHandlingSynapseOAuthSignIn) {
+      const encodedState = searchParams?.get('state')
+      try {
+        return encodedState
+          ? (JSON.parse(decodeURIComponent(encodedState)) as OAuth2State)
+          : null
+      } catch (e) {
+        console.error(
+          'Error parsing state param:\n',
+          e,
+          '\nEncoded value:\n',
+          encodedState,
+        )
+      }
+    }
+    return null
+  }, [isHandlingSynapseOAuthSignIn, searchParams])
 
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(!!(code && provider))

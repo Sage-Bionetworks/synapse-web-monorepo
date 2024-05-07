@@ -8,7 +8,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { BackendDestinationEnum } from '../functions'
 import { SynapseClientError } from '../SynapseClientError'
-import { OAUTH2_PROVIDERS } from '../SynapseConstants'
+import {
+  LOGIN_METHOD_OAUTH2_GOOGLE,
+  OAUTH2_PROVIDERS,
+} from '../SynapseConstants'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../context'
@@ -384,4 +387,47 @@ describe('useDetectSSOCode tests', () => {
       consoleSpy.mockReset()
     },
   )
+
+  test('Does not attempt to use the state param if we are acting as identity provider', async () => {
+    const provider = OAUTH2_PROVIDERS[LOGIN_METHOD_OAUTH2_GOOGLE]
+    const state: string = 'd9320jdmfion2f' // arbitrary string passed by external client -- should NOT be parsed
+    const encodedState = encodeURIComponent(state)
+
+    // The client_id and redirect_uri are set, so the hook will recognize that an external client is using Synapse as an IdP
+    const urlParams = new URLSearchParams()
+    urlParams.set('client_id', '10000')
+    urlParams.set(
+      'redirect_uri',
+      'https://www.certification.openid.net/test/a/Synapse/callback',
+    )
+    urlParams.set('state', encodedState)
+    urlParams.set('provider', provider)
+    urlParams.set('code', authorizationCode)
+
+    history.replaceState({}, '', `/?${urlParams.toString()}`)
+    const mockOn2faReset = jest.fn()
+    mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
+
+    const hookReturn = renderHook(
+      {
+        onSignInComplete,
+        onTwoFactorAuthResetTokenPresent: mockOn2faReset,
+      },
+      UNAUTHENTICATED_CONTEXT,
+    )
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        provider,
+        authorizationCode,
+        `http://localhost/?provider=${provider}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      // mockOn2faReset would only be called if noParseStateParam was false
+      expect(mockOn2faReset).not.toHaveBeenCalled()
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+  })
 })

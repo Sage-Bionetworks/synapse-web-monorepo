@@ -1,17 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, waitForOptions } from '@testing-library/react'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
-import {
-  OAuth2State,
-  SynapseClient,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { waitForOptions } from '@testing-library/react'
 
 const overrideWaitForOptions: waitForOptions = {
   timeout: 5000,
@@ -38,12 +33,11 @@ const mockConsentToOAuth2Request = vi.mocked(
 const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
   SynapseConstants
 function createParams(prompt?: string) {
-  const state: OAuth2State = { registrationUsername: '1ga1bi0qm' }
   const params = new URLSearchParams()
   params.set('response_type', 'code')
   params.set('client_id', '1234')
   params.set('scope', 'openid')
-  params.set('state', encodeURIComponent(JSON.stringify(state)))
+  params.set('state', '1ga1bi0qm') // This `state` is passed by the 3rd party client. See PORTALS-3073
   params.set('redirect_uri', 'https://some-client-uri.abc/redirect')
   params.set('claims', JSON.stringify({ id_token: { userid: null } }))
   if (prompt) {
