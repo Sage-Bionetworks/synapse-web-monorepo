@@ -1,4 +1,11 @@
-import { Button, Link, Paper, Typography } from '@mui/material'
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Link,
+  Paper,
+  Typography,
+} from '@mui/material'
 import {
   AccessCodeResponse,
   FileHandleAssociateType,
@@ -30,8 +37,12 @@ export function OAuth2Form() {
   const isMounted = useRef(true)
 
   const { accessToken } = useSynapseContext()
-  const { refreshSession, twoFactorAuthSSOErrorResponse, clearSession } =
-    AppUtils.useApplicationSessionContext()
+  const {
+    refreshSession,
+    twoFactorAuthSSOErrorResponse,
+    clearSession,
+    hasInitializedSession,
+  } = AppUtils.useApplicationSessionContext()
   const history = useHistory()
 
   const [error, setError] = useState<any>()
@@ -319,6 +330,9 @@ export function OAuth2Form() {
 
   return (
     <StyledOuterContainer>
+      <Backdrop open={!hasInitializedSession} sx={{ zIndex: 5 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {!error && oauthClientInfo && !oauthClientInfo.verified && (
         <FullWidthAlert
           variant="warning"
