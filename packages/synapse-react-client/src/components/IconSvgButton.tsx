@@ -28,7 +28,7 @@ export function IconSvgButton(props: IconSvgButtonProps) {
   } = props
   const iconSvg = <IconSvg icon={icon} wrap={false} fontSize={'inherit'} />
   const button = (
-    <span>
+    <>
       {href ? (
         <IconButton
           color={color}
@@ -54,11 +54,11 @@ export function IconSvgButton(props: IconSvgButtonProps) {
       ) : (
         <></>
       )}
-    </span>
+    </>
   )
   return tooltipText ? (
     <Tooltip key={tooltipText} title={tooltipText} placement={tooltipPlacement}>
-      {button}
+      <span>{button}</span>
     </Tooltip>
   ) : (
     button
