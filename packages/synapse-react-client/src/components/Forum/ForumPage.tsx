@@ -57,7 +57,7 @@ export const ForumPage: React.FC<ForumPageProps> = ({
   }
 
   return (
-    <div className="ForumTable bootstrap-4-backport">
+    <div className="ForumTable">
       <div className="ForumTable__top-level-control">
         <SubscribersModal
           id={forumId}
