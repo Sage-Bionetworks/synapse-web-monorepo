@@ -1,12 +1,11 @@
 import React from 'react'
-import { IconButton, Tooltip } from '@mui/material'
-import IconSvg from '../IconSvg'
 import {
   FacetColumnResultValues,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { SkeletonInlineBlock } from '../Skeleton/SkeletonInlineBlock'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
+import { IconSvgButton } from '../IconSvgButton'
 
 export type PlotPanelHeaderProps = {
   data?: QueryResultBundle
@@ -32,17 +31,21 @@ export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
           <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
         )}
         {setShowModal && (
-          <Tooltip title={'Expand to large graph'}>
-            <IconButton onClick={() => setShowModal(true)} size={'small'}>
-              <IconSvg icon={'openInFull'} wrap={false} fontSize={'inherit'} />
-            </IconButton>
-          </Tooltip>
+          <IconSvgButton
+            tooltipText="Expand to large graph"
+            placement="bottom"
+            onClick={() => setShowModal(true)}
+            size="small"
+            icon="openInFull"
+          />
         )}
-        <Tooltip title={'Hide graph under Show More'}>
-          <IconButton onClick={() => onHide()} size={'small'}>
-            <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
-          </IconButton>
-        </Tooltip>
+        <IconSvgButton
+          tooltipText="Hide graph under Show More"
+          placement="bottom"
+          onClick={() => onHide()}
+          size="small"
+          icon="close"
+        />
       </div>
     </div>
   )

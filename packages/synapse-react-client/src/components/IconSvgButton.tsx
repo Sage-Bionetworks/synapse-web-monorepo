@@ -1,42 +1,71 @@
 import React from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import {
+  IconButton,
+  IconButtonProps,
+  SxProps,
+  Tooltip,
+  TooltipProps,
+} from '@mui/material'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
-export type IconSvgButtonProps = {
+export type IconSvgButtonProps = Omit<IconButtonProps, 'children'> & {
   icon: IconName
-  tooltipText: string
-  onClick?: (e: React.MouseEvent) => void
-  disabled?: boolean
+  tooltipText?: string
   href?: string
-}
+  iconButtonSx?: SxProps
+  iconSx?: SxProps
+} & Pick<TooltipProps, 'placement'>
+
 export function IconSvgButton(props: IconSvgButtonProps) {
-  const { icon, tooltipText, onClick, disabled, href } = props
-  const iconSvg = <IconSvg icon={icon} wrap={false} />
-  return (
-    <Tooltip key={tooltipText} title={tooltipText} placement={'top'}>
-      <span>
-        {href ? (
-          <IconButton
-            color="primary"
-            disabled={disabled}
-            aria-label={tooltipText}
-            href={href}
-          >
-            {iconSvg}
-          </IconButton>
-        ) : onClick ? (
-          <IconButton
-            color="primary"
-            disabled={disabled}
-            aria-label={tooltipText}
-            onClick={onClick}
-          >
-            {iconSvg}
-          </IconButton>
-        ) : (
-          <></>
-        )}
-      </span>
+  const {
+    icon,
+    tooltipText,
+    onClick,
+    disabled,
+    href,
+    iconSx,
+    iconButtonSx,
+    color,
+    size,
+    placement = 'top',
+  } = props
+  const iconSvg = (
+    <IconSvg icon={icon} wrap={false} fontSize={'inherit'} sx={iconSx} />
+  )
+  const button = (
+    <span>
+      {href ? (
+        <IconButton
+          color={color}
+          disabled={disabled}
+          aria-label={tooltipText}
+          href={href}
+          sx={iconButtonSx}
+          size={size}
+        >
+          {iconSvg}
+        </IconButton>
+      ) : onClick ? (
+        <IconButton
+          color={color}
+          disabled={disabled}
+          aria-label={tooltipText}
+          onClick={onClick}
+          sx={iconButtonSx}
+          size={size}
+        >
+          {iconSvg}
+        </IconButton>
+      ) : (
+        <></>
+      )}
+    </span>
+  )
+  return tooltipText ? (
+    <Tooltip key={tooltipText} title={tooltipText} placement={placement}>
+      {button}
     </Tooltip>
+  ) : (
+    button
   )
 }
