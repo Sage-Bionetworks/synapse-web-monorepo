@@ -124,6 +124,7 @@ import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 import { ORCIDIcon } from '../../assets/icons/ORCIDIcon'
 import ActionKey from '../../assets/mui_components/ActionKey'
+import HelpChatBubble from '../../assets/mui_components/HelpChatBubble'
 
 export const IconStrings = [
   'accessOpen',
@@ -164,6 +165,7 @@ export const IconStrings = [
   'history',
   'time',
   'login',
+  'helpChatBubble',
   'helpOutlined',
   'helpOutlineTwoTone',
   'expandLess',
@@ -376,6 +378,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <WatchLater {...otherProps} />
     case 'login':
       return <Login {...otherProps} />
+    case 'helpChatBubble':
+      return <HelpChatBubble {...otherProps} />
     case 'helpOutlineTwoTone':
       return <HelpOutlineTwoTone {...otherProps} />
     case 'helpOutlined':

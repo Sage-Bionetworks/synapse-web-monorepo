@@ -1,10 +1,10 @@
-import { IconButton, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import IconSvg from '../IconSvg'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { PermissionLevelMenu } from './PermissionLevelMenu'
+import { IconSvgButton } from '../IconSvgButton'
 
 export const REMOVE_BUTTON_LABEL = 'Remove from AR Permissions'
 
@@ -44,17 +44,16 @@ export const ResourceAccessItem: React.FunctionComponent<
             availablePermissionLevels={availablePermissionLevels}
             onChange={onChange}
           />
-          <IconButton
+          <IconSvgButton
             aria-label={REMOVE_BUTTON_LABEL}
             onClick={() => onRemove()}
+            icon="delete"
             sx={{
               '&:hover': {
                 color: 'error.main',
               },
             }}
-          >
-            <IconSvg icon={'delete'} fontSize={'inherit'} wrap={false} />
-          </IconButton>
+          />
         </Stack>
       </Stack>
     </>

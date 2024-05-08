@@ -1,10 +1,11 @@
-import { Collapse, IconButton, TextField } from '@mui/material'
+import { Collapse, TextField } from '@mui/material'
 import React, { ChangeEvent, useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
+import { IconSvgButton } from './IconSvgButton'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -89,14 +90,13 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
               endAdornment: (
                 <>
                   {searchText.length > 0 && (
-                    <IconButton
-                      size={'small'}
+                    <IconSvgButton
+                      icon="close"
+                      size="small"
                       onClick={() => {
                         setSearchText('')
                       }}
-                    >
-                      <IconSvg icon="close" wrap={false} fontSize={'inherit'} />
-                    </IconButton>
+                    />
                   )}
                   <HelpPopover
                     markdownText={helpMessage}
