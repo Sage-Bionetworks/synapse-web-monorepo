@@ -33,7 +33,7 @@ export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
         {setShowModal && (
           <IconSvgButton
             tooltipText="Expand to large graph"
-            placement="bottom"
+            tooltipPlacement="bottom"
             onClick={() => setShowModal(true)}
             size="small"
             icon="openInFull"
@@ -41,7 +41,7 @@ export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
         )}
         <IconSvgButton
           tooltipText="Hide graph under Show More"
-          placement="bottom"
+          tooltipPlacement="bottom"
           onClick={() => onHide()}
           size="small"
           icon="close"

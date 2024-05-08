@@ -48,7 +48,7 @@ export const ResourceAccessItem: React.FunctionComponent<
             aria-label={REMOVE_BUTTON_LABEL}
             onClick={() => onRemove()}
             icon="delete"
-            iconButtonSx={{
+            sx={{
               '&:hover': {
                 color: 'error.main',
               },

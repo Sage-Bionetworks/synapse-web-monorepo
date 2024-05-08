@@ -2,7 +2,6 @@ import React from 'react'
 import {
   IconButton,
   IconButtonProps,
-  SxProps,
   Tooltip,
   TooltipProps,
 } from '@mui/material'
@@ -11,10 +10,9 @@ import IconSvg, { IconName } from './IconSvg/IconSvg'
 export type IconSvgButtonProps = Omit<IconButtonProps, 'children'> & {
   icon: IconName
   tooltipText?: string
+  tooltipPlacement?: TooltipProps['placement']
   href?: string
-  iconButtonSx?: SxProps
-  iconSx?: SxProps
-} & Pick<TooltipProps, 'placement'>
+}
 
 export function IconSvgButton(props: IconSvgButtonProps) {
   const {
@@ -23,15 +21,12 @@ export function IconSvgButton(props: IconSvgButtonProps) {
     onClick,
     disabled,
     href,
-    iconSx,
-    iconButtonSx,
     color,
     size,
-    placement = 'top',
+    sx,
+    tooltipPlacement = 'top',
   } = props
-  const iconSvg = (
-    <IconSvg icon={icon} wrap={false} fontSize={'inherit'} sx={iconSx} />
-  )
+  const iconSvg = <IconSvg icon={icon} wrap={false} fontSize={'inherit'} />
   const button = (
     <span>
       {href ? (
@@ -40,7 +35,7 @@ export function IconSvgButton(props: IconSvgButtonProps) {
           disabled={disabled}
           aria-label={tooltipText}
           href={href}
-          sx={iconButtonSx}
+          sx={sx}
           size={size}
         >
           {iconSvg}
@@ -51,7 +46,7 @@ export function IconSvgButton(props: IconSvgButtonProps) {
           disabled={disabled}
           aria-label={tooltipText}
           onClick={onClick}
-          sx={iconButtonSx}
+          sx={sx}
           size={size}
         >
           {iconSvg}
@@ -62,7 +57,7 @@ export function IconSvgButton(props: IconSvgButtonProps) {
     </span>
   )
   return tooltipText ? (
-    <Tooltip key={tooltipText} title={tooltipText} placement={placement}>
+    <Tooltip key={tooltipText} title={tooltipText} placement={tooltipPlacement}>
       {button}
     </Tooltip>
   ) : (
