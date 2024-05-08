@@ -9,7 +9,7 @@ import IconSvg, { IconName } from './IconSvg/IconSvg'
 
 export type IconSvgButtonProps = Pick<
   IconButtonProps,
-  'onClick' | 'disabled' | 'color' | 'size' | 'sx'
+  'onClick' | 'disabled' | 'color' | 'size' | 'sx' | 'aria-label'
 > & {
   icon: IconName
   tooltipText?: string
@@ -28,30 +28,28 @@ export function IconSvgButton(props: IconSvgButtonProps) {
     size,
     sx,
     tooltipPlacement = 'top',
+    'aria-label': ariaLabel,
   } = props
   const iconSvg = <IconSvg icon={icon} wrap={false} fontSize={'inherit'} />
+  const sharedIconButtonProps: Pick<
+    IconButtonProps,
+    'role' | 'disabled' | 'color' | 'size' | 'sx' | 'aria-label'
+  > = {
+    role: 'button',
+    color: color,
+    disabled: disabled,
+    sx: sx,
+    size: size,
+    'aria-label': ariaLabel ?? tooltipText,
+  }
   const button = (
     <>
       {href ? (
-        <IconButton
-          color={color}
-          disabled={disabled}
-          aria-label={tooltipText}
-          href={href}
-          sx={sx}
-          size={size}
-        >
+        <IconButton {...sharedIconButtonProps} href={href}>
           {iconSvg}
         </IconButton>
       ) : onClick ? (
-        <IconButton
-          color={color}
-          disabled={disabled}
-          aria-label={tooltipText}
-          onClick={onClick}
-          sx={sx}
-          size={size}
-        >
+        <IconButton {...sharedIconButtonProps} onClick={onClick}>
           {iconSvg}
         </IconButton>
       ) : (
