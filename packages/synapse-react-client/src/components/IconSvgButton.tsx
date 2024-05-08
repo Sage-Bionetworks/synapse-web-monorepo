@@ -7,7 +7,10 @@ import {
 } from '@mui/material'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
-export type IconSvgButtonProps = Omit<IconButtonProps, 'children'> & {
+export type IconSvgButtonProps = Pick<
+  IconButtonProps,
+  'onClick' | 'disabled' | 'color' | 'size' | 'sx'
+> & {
   icon: IconName
   tooltipText?: string
   tooltipPlacement?: TooltipProps['placement']
