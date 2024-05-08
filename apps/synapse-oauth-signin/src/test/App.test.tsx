@@ -231,17 +231,23 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
-  test('Redirects if a token is provided and the user has already consented, and prompt is not consent', () => {
-    const prompt = ''
+  test('Redirects if a token is provided and the user has already consented, and prompt is none', async () => {
+    const prompt = 'none'
     // Consent has already been granted:
     resetConsentedInMockService(true)
 
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    renderApp(prompt)
+    const { params } = renderApp(prompt)
 
-    expect(window.location.replace).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get('redirect_uri')}?state=${params.get(
+          'state',
+        )}&code=${ACCESS_CODE_PROVIDED_BY_SERVER}`,
+      )
+    })
   })
 
   test('Shows an error if a the redirect URI is invalid', async () => {
