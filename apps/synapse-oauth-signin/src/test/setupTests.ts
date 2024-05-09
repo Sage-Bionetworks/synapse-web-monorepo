@@ -28,6 +28,7 @@ afterEach(() => {
 })
 
 // Mock window.location
+// https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
 const oldWindowLocation = window.location
 vi.stubGlobal(
   'location',
