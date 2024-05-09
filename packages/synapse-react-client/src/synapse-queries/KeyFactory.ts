@@ -15,6 +15,7 @@ import {
   GetEvaluationParameters,
   GetProjectsParameters,
   ObjectType,
+  OIDCAuthorizationRequest,
   PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
@@ -594,6 +595,16 @@ export class KeyFactory {
 
   public getMyOAuthClientsQueryKey() {
     return this.getKey('oauthClient')
+  }
+
+  public getOAuthClientQueryKey(clientId: string) {
+    return this.getKey('oauthClient', clientId)
+  }
+
+  public getHasCurrentUserAuthorizedOAuthClientQueryKey(
+    request: OIDCAuthorizationRequest,
+  ) {
+    return this.getKey('currentUserHasAuthorizedClient', request)
   }
 
   public getDOIAssociationQueryKey(

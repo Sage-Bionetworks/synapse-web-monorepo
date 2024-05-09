@@ -21,7 +21,6 @@ export function useGetOAuth2RequestDescription(
     UseQueryOptions<OIDCAuthorizationRequestDescription, SynapseClientError>
   >,
 ) {
-  // const { keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: ['useGetOAuth2RequestDescription', request],
@@ -33,9 +32,10 @@ export function useGetOAuth2Client(
   clientId: string,
   options?: Partial<UseQueryOptions<OAuthClientPublic, SynapseClientError>>,
 ) {
+  const { keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
-    queryKey: ['useGetOAuth2Client', clientId],
+    queryKey: keyFactory.getOAuthClientQueryKey(clientId),
     queryFn: () => SynapseClient.getOAuth2Client(clientId),
   })
 }
@@ -46,9 +46,11 @@ export function useGetHasUserAuthorizedOAuthClient(
     UseQueryOptions<OAuthConsentGrantedResponse, SynapseClientError>
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery({
-    queryKey: ['hasAuthorizedClient', request],
+    ...options,
+    queryKey:
+      keyFactory.getHasCurrentUserAuthorizedOAuthClientQueryKey(request),
     queryFn: () =>
       SynapseClient.hasUserAuthorizedOAuthClient(request, accessToken!),
   })
@@ -63,8 +65,7 @@ export function useConsentToOAuth2Request(
     >
   >,
 ) {
-  // TODO: use keyfactory
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   return useMutation<
     AccessCodeResponse,
@@ -74,10 +75,13 @@ export function useConsentToOAuth2Request(
     ...options,
     mutationFn: request =>
       SynapseClient.consentToOAuth2Request(request, accessToken),
-    onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries({ queryKey: ['hasAuthorizedClient'] })
+    onSuccess: async (data, request, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey:
+          keyFactory.getHasCurrentUserAuthorizedOAuthClientQueryKey(request),
+      })
       if (options?.onSuccess) {
-        options.onSuccess(data, vars, ctx)
+        options.onSuccess(data, request, ctx)
       }
     },
   })
