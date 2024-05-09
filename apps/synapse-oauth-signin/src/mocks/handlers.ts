@@ -55,7 +55,7 @@ export const handlers = [
 
   rest.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck',
-    (req, res, ctx) => {
+    async (req, res, ctx) => {
       return res(
         ctx.status(200),
         ctx.json({

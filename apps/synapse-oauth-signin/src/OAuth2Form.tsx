@@ -60,13 +60,17 @@ export function OAuth2Form() {
   const [error, setError] = useState<
     Error | SynapseClientError | OAuthClientError
   >()
+  // The target URL may take a while to respond, so we show a loader to inform the user that the delay is not our fault
+  const [showPendingRedirectUI, setShowPendingRedirectUI] = useState(false)
+
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
       if (error instanceof SynapseClientError && error.status === 401) {
         // invalid token, so clear it
         clearSession()
       } else {
-        handleErrorRedirect(error)
+        const isRedirecting = handleErrorRedirect(error)
+        setShowPendingRedirectUI(isRedirecting)
         setError(error)
       }
     },
@@ -168,6 +172,7 @@ export function OAuth2Form() {
           return
         }
         // done!  redirect with access code.
+        setShowPendingRedirectUI(true)
         const redirectUri = queryParams.get('redirect_uri')!
         redirectToURL(
           `${redirectUri}?${getStateParam()}code=${encodeURIComponent(
@@ -214,7 +219,7 @@ export function OAuth2Form() {
   const onDeny = () => {
     sendGTagEvent('UserDeniedConsent')
     // Redirect with 'access_denied' per https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
-    handleErrorRedirect(new OAuthClientError('access_denied'))
+    onError(new OAuthClientError('access_denied'))
   }
 
   const { data: oidcRequestDescription, error: oidcRequestDescriptionError } =
@@ -235,16 +240,16 @@ export function OAuth2Form() {
       const requestObject = queryParams.get('request')
       const requestUri = queryParams.get('request_uri')
       if (requestObject) {
-        handleErrorRedirect(new OAuthClientError('request_not_supported'))
+        onError(new OAuthClientError('request_not_supported'))
       }
       if (requestUri) {
-        handleErrorRedirect(new OAuthClientError('request_uri_not_supported'))
+        onError(new OAuthClientError('request_uri_not_supported'))
       }
       // sorry, we don't support registration (yet?)
       // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
       const registration = queryParams.get('registration')
       if (registration) {
-        handleErrorRedirect(new OAuthClientError('registration_not_supported'))
+        onError(new OAuthClientError('registration_not_supported'))
       }
     }
   }, [oidcRequestDescription, queryParams])
@@ -271,6 +276,9 @@ export function OAuth2Form() {
       }}
     >
       <div style={{ marginTop: '50px' }}>
+        {showPendingRedirectUI && (
+          <p>Waiting for {oauthClientInfo?.client_name}...</p>
+        )}
         <span
           style={{
             marginLeft: '10px',
@@ -299,6 +307,7 @@ export function OAuth2Form() {
             onClick: () => {
               // The client verification warning appears before the user has a chance to sign in
               // So there is no risk of going 'back' to an external IdP to sign in to synapse
+              setShowPendingRedirectUI(true)
               window.history.back()
             },
           }}
@@ -309,6 +318,7 @@ export function OAuth2Form() {
         accessToken &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
+        !showPendingRedirectUI &&
         oidcRequestDescription && (
           <StyledInnerContainer>
             <UserCard
@@ -369,12 +379,13 @@ export function OAuth2Form() {
             </div>
           </StyledInnerContainer>
         )}
-      {isLoading && loadingSpinner}
+      {(isLoading || showPendingRedirectUI) && loadingSpinner}
       {(!!twoFactorAuthSSOErrorResponse ||
         (!error &&
           !accessToken &&
           oauthClientInfo &&
           oauthClientInfo.verified &&
+          !showPendingRedirectUI &&
           oidcRequestDescription)) && (
         <Paper sx={{ width: '400px', py: 8, px: 4, margin: '0 auto' }}>
           <StandaloneLoginForm

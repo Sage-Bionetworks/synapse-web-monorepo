@@ -179,6 +179,7 @@ describe('App integration tests', () => {
 
     // Should redirect back to the client app with the code provided by the server, and the original state provided by the client via the browser.
     await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
@@ -186,11 +187,12 @@ describe('App integration tests', () => {
       )
     })
   })
+
   test('Deny consent to app terms', async () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    const { params } = renderApp()
+    const { params } = renderApp('consent')
 
     // The user has logged in but has not granted consent, so check for the consent text
     await screen.findByText(mockOauthClient.client_name!)
@@ -207,13 +209,14 @@ describe('App integration tests', () => {
     // Note that no code is provided because the user denied consent
     // The state is still returned
     // and the 'access_denied' error is sent
-    await waitFor(() =>
+    await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
         )}&error=access_denied`,
-      ),
-    )
+      )
+    })
   })
 
   test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', async () => {
@@ -242,6 +245,7 @@ describe('App integration tests', () => {
     const { params } = renderApp(prompt)
 
     await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
