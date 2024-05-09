@@ -30,11 +30,9 @@ afterEach(() => {
 // Mock window.location
 // https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
 const oldWindowLocation = window.location
-beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
-  delete window.location
-  window.location = Object.defineProperties(
+vi.stubGlobal(
+  'location',
+  Object.defineProperties(
     {},
     {
       ...Object.getOwnPropertyDescriptors(oldWindowLocation),
@@ -47,10 +45,5 @@ beforeAll(() => {
         value: vi.fn(),
       },
     },
-  ) as Location
-})
-afterAll(() => {
-  // restore `window.location` to the original `jsdom`
-  // `Location` object
-  window.location = oldWindowLocation
-})
+  ),
+)
