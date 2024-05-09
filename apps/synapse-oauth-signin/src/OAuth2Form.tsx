@@ -211,11 +211,6 @@ export function OAuth2Form() {
     }
   }, [hasUserAuthorizedOAuthClient, onConsent, onError, queryParams])
 
-  const onGoBack = () => {
-    // TODO: Does this work with Google signin?
-    window.history.back()
-  }
-
   const onDeny = () => {
     sendGTagEvent('UserDeniedConsent')
     // Redirect with 'access_denied' per https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
@@ -301,7 +296,11 @@ export function OAuth2Form() {
           description="This app has not been verified by Sage Bionetworks yet."
           primaryButtonConfig={{
             text: 'Back to Safety',
-            onClick: onGoBack,
+            onClick: () => {
+              // The client verification warning appears before the user has a chance to sign in
+              // So there is no risk of going 'back' to an external IdP to sign in to synapse
+              window.history.back()
+            },
           }}
           isGlobal={false}
         />
