@@ -79,6 +79,9 @@ type QueryWrapperPlotNavOwnProps = {
     | 'isRowSelectionVisible'
     | 'rowSelectionPrimaryKey'
     | 'isRowSelectionUIFloating'
+    | 'fileIdColumnName'
+    | 'fileNameColumnName'
+    | 'fileVersionColumnName'
   > &
   Pick<
     QueryVisualizationWrapperProps,
@@ -122,10 +125,10 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'showExportToCavatica'
   | 'cavaticaConnectAccountURL'
   | 'customControls'
+  | 'customPlots'
   | 'fileIdColumnName'
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
-  | 'customPlots'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -144,9 +147,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     searchConfiguration,
     showExportToCavatica = false,
     cavaticaConnectAccountURL,
-    fileIdColumnName,
-    fileNameColumnName,
-    fileVersionColumnName,
     customControls,
     remount,
     isFullTextSearchEnabled,
@@ -221,9 +221,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                 customControls={customControls}
                 remount={remount}
-                fileIdColumnName={fileIdColumnName}
-                fileNameColumnName={fileNameColumnName}
-                fileVersionColumnName={fileVersionColumnName}
               />
             </SynapseErrorBoundary>
             {isFaceted && (

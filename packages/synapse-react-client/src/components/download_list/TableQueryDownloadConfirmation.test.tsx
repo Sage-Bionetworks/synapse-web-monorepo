@@ -44,7 +44,8 @@ const mockUseGetQueryResultBundle = jest.mocked(
   useGetQueryResultBundleWithAsyncStatus,
 )
 const mockUseAddQueryToDownloadList = jest.mocked(useAddQueryToDownloadList)
-
+const ID_COLUMN_ID = 11112
+const CURRENT_VERSION_COLUMN_ID = 11113
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
 const mockDownloadConfirmationUi = jest
   .spyOn(DownloadConfirmationUIModule, 'DownloadConfirmationUI')
@@ -52,6 +53,15 @@ const mockDownloadConfirmationUi = jest
     <div data-testid={DOWNLOAD_CONFIRMATION_UI_TEST_ID}></div>
   ))
 
+const mockQueryWithSelectFileColumn = {
+  ...mockQueryBundleRequest.query,
+  selectFileColumn: ID_COLUMN_ID,
+}
+const mockQueryWithSelectFileAndVersionColumn = {
+  ...mockQueryBundleRequest.query,
+  selectFileColumn: ID_COLUMN_ID,
+  selectFileVersionColumn: CURRENT_VERSION_COLUMN_ID,
+}
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
@@ -64,17 +74,18 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
 
 let receivedQueryVisualizationContext: QueryVisualizationContextType | undefined
 
-async function setUp(rowSelectionPrimaryKeyColumn?: string) {
+async function setUp(
+  fileIdColumnName?: string,
+  fileVersionColumnName?: string,
+) {
   const user = userEvent.setup()
   let component
-  const rowSelectionPrimaryKey = rowSelectionPrimaryKeyColumn
-    ? [rowSelectionPrimaryKeyColumn]
-    : undefined
   act(() => {
     component = render(
       <QueryWrapper
         initQueryRequest={mockQueryBundleRequest}
-        rowSelectionPrimaryKey={rowSelectionPrimaryKey}
+        fileIdColumnName={fileIdColumnName}
+        fileVersionColumnName={fileVersionColumnName}
       >
         <QueryVisualizationWrapper>
           <QueryVisualizationContextConsumer>
@@ -138,6 +149,18 @@ describe('TableQueryDownloadConfirmation', () => {
             sumFileSizesBytes: 40128868,
             greaterThan: false,
           },
+          columnModels: [
+            {
+              columnType: 'ENTITYID',
+              name: 'id',
+              id: ID_COLUMN_ID.toString(),
+            },
+            {
+              columnType: 'INTEGER',
+              name: 'currentVersion',
+              id: CURRENT_VERSION_COLUMN_ID.toString(),
+            },
+          ],
         },
       }),
     )
@@ -177,10 +200,9 @@ describe('TableQueryDownloadConfirmation', () => {
 
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-      query: mockQueryBundleRequest.query,
+      query: mockQueryWithSelectFileColumn,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-      useVersionNumber: true,
     })
 
     act(() => {
@@ -191,7 +213,8 @@ describe('TableQueryDownloadConfirmation', () => {
           numberOfFilesAdded: 1,
         },
         {
-          query: mockQueryBundleRequest.query,
+          //'id' column discovered, so selectFileColumn is set
+          query: mockQueryWithSelectFileColumn,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         },
@@ -239,10 +262,9 @@ describe('TableQueryDownloadConfirmation', () => {
 
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-      query: mockQueryBundleRequest.query,
+      query: mockQueryWithSelectFileColumn,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-      useVersionNumber: true,
     })
 
     act(() => {
@@ -253,7 +275,7 @@ describe('TableQueryDownloadConfirmation', () => {
           expect.getState().currentTestName!,
         ),
         {
-          query: mockQueryBundleRequest.query,
+          query: mockQueryWithSelectFileColumn,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         },
@@ -265,9 +287,8 @@ describe('TableQueryDownloadConfirmation', () => {
       false,
     )
   })
-
-  it('setting the row primary key indicates that the row version should not be used', async () => {
-    await setUp('fileSynapseID')
+  it('setting the fileIdColumnName and fileVersionColumnName should update the AddToDownloadListRequest query if ColumnModels are available in the result', async () => {
+    await setUp('id', 'currentVersion')
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
     const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
@@ -278,10 +299,9 @@ describe('TableQueryDownloadConfirmation', () => {
 
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
     expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-      query: mockQueryBundleRequest.query,
+      query: mockQueryWithSelectFileAndVersionColumn,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-      useVersionNumber: false,
     })
   })
 })

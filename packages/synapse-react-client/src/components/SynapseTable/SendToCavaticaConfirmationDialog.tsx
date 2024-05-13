@@ -12,7 +12,12 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import {
+  fileIdColumnNameAtom,
+  fileNameColumnNameAtom,
+  fileVersionColumnNameAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
 import { useAtomValue } from 'jotai'
 import {
   hasSelectedRowsAtom,
@@ -30,21 +35,13 @@ const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
   'SendToCavaticaButtonFromConfirmationDialog'
 
 export type SendToCavaticaConfirmationDialogProps = {
-  fileIdColumnName?: string
-  fileNameColumnName?: string
-  fileVersionColumnName?: string
   cavaticaConnectAccountURL?: string
 }
 
 export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
-  const {
-    fileIdColumnName,
-    fileNameColumnName,
-    fileVersionColumnName,
-    cavaticaConnectAccountURL,
-  } = props
+  const { cavaticaConnectAccountURL } = props
   const {
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
@@ -54,6 +51,10 @@ export default function SendToCavaticaConfirmationDialog(
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+
+  const fileIdColumnName = useAtomValue(fileIdColumnNameAtom)
+  const fileVersionColumnName = useAtomValue(fileVersionColumnNameAtom)
+  const fileNameColumnName = useAtomValue(fileNameColumnNameAtom)
 
   const {
     isShowingExportToCavaticaModal,
