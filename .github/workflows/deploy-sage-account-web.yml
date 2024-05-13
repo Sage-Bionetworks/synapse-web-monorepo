@@ -1,4 +1,4 @@
-name: "Deploy SageAccountWeb"
+name: 'Deploy SageAccountWeb'
 
 on:
   push:
@@ -32,15 +32,15 @@ jobs:
       # if in main branch then bucket name is empty
       # checkout and build
       - name: checkout
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v4
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
         run: pnpm nx run SageAccountWeb:build
       - name: Assume AWS Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          role-to-assume: "arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra"
+          role-to-assume: 'arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra'
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
       # if not main branch deploy build to S3 bucket
