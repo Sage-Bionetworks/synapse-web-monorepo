@@ -36,17 +36,8 @@ const routes: GenericRoute[] = [
     exact: true,
     synapseConfigArray: [
       {
-        name: 'Programs',
-        title: 'Consortia',
-        outsideContainerClassName: 'home-spacer cancercomplexity-consortia',
-        centerTitle: true,
-        props: {
-          ...consortiaHomePageConfig,
-        },
-      },
-      {
         name: 'ConsortiaGoals',
-        title: 'Consortia Activity',
+        title: 'Portal Goals',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer home-bg-dark',
         props: undefined,
@@ -115,12 +106,22 @@ const routes: GenericRoute[] = [
         },
       },
       {
+        name: 'Programs',
+        title: 'Consortia',
+        outsideContainerClassName:
+          'home-spacer cancercomplexity-consortia home-bg-dark',
+        centerTitle: true,
+        props: {
+          ...consortiaHomePageConfig,
+        },
+      },
+      {
         name: 'Ecosystem',
         title: 'The Cancer Resource Information Ecosystem',
         centerTitle: true,
         subtitle:
           'The Cancer Resource Information ecosystem contains a growing list of tools and resources. Explore some of them below.',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
+        outsideContainerClassName: 'home-spacer',
         props: {
           config: [
             {
@@ -172,7 +173,7 @@ const routes: GenericRoute[] = [
         subtitle:
           'The portal is built to disseminate resources to accelerate discovery and collaboration in the cancer research community. We aim to provide rich context about and access to activities and contributors that have produced the resources hosted within this and other repositories.',
         centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
           cardProps: [
             { ownerId: 'syn21498902', wikiId: '601369' },
