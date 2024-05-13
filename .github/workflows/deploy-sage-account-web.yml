@@ -37,7 +37,7 @@ jobs:
       - name: build
         run: pnpm nx run SageAccountWeb:build
       - name: Assume AWS Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           role-to-assume: "arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra"
