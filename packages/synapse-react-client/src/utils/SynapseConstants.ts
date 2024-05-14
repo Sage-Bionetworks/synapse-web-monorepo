@@ -169,6 +169,7 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
 
 /* Persistent localStorage keys on SWC logout */
-export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS.push(
+export const PERSISTENT_LOCAL_STORAGE_KEYS = [
+  ...ORIENTATION_BANNER_KEYS,
   EXTERNAL_COMPUTE_ENV_DISCLAIMER,
-)
+]
