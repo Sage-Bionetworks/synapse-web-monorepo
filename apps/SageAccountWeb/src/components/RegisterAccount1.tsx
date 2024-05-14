@@ -14,6 +14,9 @@ import {
   SynapseConstants,
   displayToast,
   useLastLoginInfo,
+  useSynapseContext,
+  RegisterPageLogoutPrompt,
+  useApplicationSessionContext,
 } from 'synapse-react-client'
 import {
   AliasType,
@@ -40,7 +43,10 @@ export enum Pages {
 }
 
 export const RegisterAccount1 = () => {
+  const { accessToken } = useSynapseContext()
+  const isSignedIn = !!accessToken
   const appContext = useAppContext()
+  const sessionContext = useApplicationSessionContext()
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -166,6 +172,21 @@ export const RegisterAccount1 = () => {
     display: 'box',
     ...useLastLoginInfo(),
   })
+
+  if (isSignedIn) {
+    return (
+      <StyledOuterContainer className="RegisterAccount1">
+        <Box mx={'auto'} mt={15} width={'fit-content'}>
+          <RegisterPageLogoutPrompt
+            onLogout={() => {
+              sessionContext.refreshSession()
+            }}
+            logo={<SourceAppLogo sx={{ width: '100%' }} />}
+          />
+        </Box>
+      </StyledOuterContainer>
+    )
+  }
 
   return (
     <>
