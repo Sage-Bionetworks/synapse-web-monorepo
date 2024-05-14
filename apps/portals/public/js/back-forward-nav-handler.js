@@ -3,27 +3,26 @@
  * Detect Back/Forward navigation, and force a page reload.
  */
 
-
 // See https://stackoverflow.com/questions/25806608/how-to-detect-browser-back-button-event-cross-browser
 
-var html = document.getElementsByTagName("HTML")[0];
+var html = document.getElementsByTagName('HTML')[0]
 
-html.onmouseenter = function() {
-	//User's mouse is inside the page.
-	window.innerDocClick = true;
+html.onmouseenter = function () {
+  //User's mouse is inside the page.
+  window.innerDocClick = true
 }
 
-html.onmouseleave = function() {
-	//User's mouse has left the page.
-	window.innerDocClick = false;
+html.onmouseleave = function () {
+  //User's mouse has left the page.
+  window.innerDocClick = false
 }
 
-window.onpopstate = function() {
-	if (!window.innerDocClick) {
-		// history change invoked by action outside of window (like the back/forward button).
-		console.log('detected popstate change outside of doc, reloading');
-		location.reload();
-	} else {
-		console.log('detected popstate change inside of doc, propagating');
-	}
+window.onpopstate = function () {
+  if (!window.innerDocClick) {
+    // history change invoked by action outside of window (like the back/forward button).
+    console.log('detected popstate change outside of doc, reloading')
+    location.reload()
+  } else {
+    console.log('detected popstate change inside of doc, propagating')
+  }
 }

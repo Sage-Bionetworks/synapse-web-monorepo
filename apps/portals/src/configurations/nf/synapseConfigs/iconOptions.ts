@@ -5,9 +5,9 @@ import nfri from './icons/NFRI.png'
 import ntap from './icons/NTAP.png'
 
 export const iconOptions = {
-  'CTF': ctf,
-  'NTAP': ntap,
-  'GFF': gff,
+  CTF: ctf,
+  NTAP: ntap,
+  GFF: gff,
   'DHART SPORE': dhartSpore,
-  'NFRI': nfri,
+  NFRI: nfri,
 }

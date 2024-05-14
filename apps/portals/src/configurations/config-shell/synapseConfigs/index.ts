@@ -1,4 +1,4 @@
 // TODO: Export configurations
-export { }
+export {}
 
-export default { }
+export default {}
