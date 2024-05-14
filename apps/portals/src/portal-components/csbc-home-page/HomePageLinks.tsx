@@ -50,7 +50,6 @@ const links: LinkProps[] = [
 const PortalHomePageLinks = () => {
   return (
     <div className="HomePageLinks">
-      <h2 className="title center-title">Portal Goals</h2>
       <p>
         The Cancer Complexity Knowledge Portal is a Community Research resource
         which aims to
