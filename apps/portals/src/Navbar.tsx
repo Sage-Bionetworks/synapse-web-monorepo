@@ -282,7 +282,7 @@ function Navbar() {
                         <Dropdown.Item
                           key={el.text}
                           className={`SRC-primary-background-color-hover SRC-nested-color ${borderBottomClass}`}
-                          href={`https://www.synapse.org/#!Profile:${
+                          href={`https://www.synapse.org/Profile:${
                             userProfile.ownerId
                           }${el.settingSubPath ? `/${el.settingSubPath}` : ''}`}
                         >
@@ -303,7 +303,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="Settings"
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
-                      href={`https://www.synapse.org/#!Profile:${userProfile.ownerId}/settings`}
+                      href={`https://www.synapse.org/Profile:${userProfile.ownerId}/settings`}
                     >
                       Settings
                     </Dropdown.Item>
@@ -320,7 +320,7 @@ function Navbar() {
 
                 <a
                   className="user-loggedIn-mb" // mobile version, shows the user icon and name, no dropdown
-                  href={`https://www.synapse.org/#!Profile:${userProfile.ownerId}/projects/all`}
+                  href={`https://www.synapse.org/Profile:${userProfile.ownerId}/projects/all`}
                 >
                   <NavUserLink userProfile={userProfile} />
                 </a>

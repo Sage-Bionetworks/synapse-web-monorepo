@@ -293,7 +293,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
+                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${item.fileEntityId}.${item.versionNumber}`}
                         >
                           {item.fileName}
                         </a>

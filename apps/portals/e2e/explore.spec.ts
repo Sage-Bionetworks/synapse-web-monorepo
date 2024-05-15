@@ -331,7 +331,7 @@ const expectCharts = async (
 }
 
 const expectSynapseProfileHref = (href: string) => {
-  expect(href).toMatch(/^https:\/\/www\.synapse\.org\/#!Profile:\d{6,}$/)
+  expect(href).toMatch(/^https:\/\/www\.synapse\.org\/Profile:\d{6,}$/)
 }
 
 const expectPeopleCards = async (page: Page) => {

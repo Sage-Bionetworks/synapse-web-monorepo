@@ -77,7 +77,7 @@ const ChallengeDetailPageWrapper = () => {
                       href={`${SynapseUtilityFunctions.getEndpoint(
                         SynapseUtilityFunctions.BackendDestinationEnum
                           .PORTAL_ENDPOINT,
-                      )}#!Team:${challenge?.participantTeamId}`}
+                      )}Team:${challenge?.participantTeamId}`}
                       sx={{
                         color: 'white',
                         '&:hover': {

@@ -36,15 +36,15 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
   const { accessToken } = useSynapseContext()
   const LOGIN_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}#!LoginPlace:0`
+  )}LoginPlace:0`
   const REGISTRATION_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}#!RegisterAccount:0`
+  )}RegisterAccount:0`
 
   // 'v' will resolve to the user's profile ID
   const DASHBOARD_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}#!Profile:v/projects`
+  )}Profile:v/projects`
 
   const contactUsHref =
     'https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162'
@@ -133,7 +133,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       <div className="SearchLinkBar SynapseHomepage__Section">
         <div className="FlexContainer">
           <a
-            href="#!Search:"
+            href="Search:"
             rel="noopener noreferrer"
             className="SRC-whiteText ignoreLink"
           >

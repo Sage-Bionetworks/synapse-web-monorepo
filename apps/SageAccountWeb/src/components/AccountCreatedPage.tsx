@@ -47,7 +47,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                     sx={{ padding: '10px', height: '100%' }}
                     onClick={() => {
                       window.location.assign(
-                        `https://www.synapse.org/#!Team:${membershipInvitation.teamId}`,
+                        `https://www.synapse.org/Team:${membershipInvitation.teamId}`,
                       )
                     }}
                   >

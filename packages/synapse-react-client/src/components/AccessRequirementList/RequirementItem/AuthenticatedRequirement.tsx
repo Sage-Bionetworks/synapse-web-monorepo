@@ -31,7 +31,7 @@ export default function AuthenticatedRequirement() {
             with a Sage Platform (Synapse) user account. If you do not have a
             Sage account, you can{' '}
             <Link
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
+              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}RegisterAccount:0`}
             >
               register for free.
             </Link>

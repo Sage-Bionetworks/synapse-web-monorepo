@@ -39,7 +39,7 @@ export default function TeamBadge(props: TeamBadgeProps) {
         href={
           disableHref
             ? undefined
-            : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${teamId}`
+            : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Team:${teamId}`
         }
       >
         {teamName}

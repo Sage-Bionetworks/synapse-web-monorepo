@@ -61,7 +61,7 @@ export default function UnmanagedACTAccessRequirementItem(
     const subjectTypeFilter = subjectType ? `&TYPE=${subjectType}` : ''
     const subjectIdFilter = subjectId ? `&ID=${subjectId}` : ''
     window.open(
-      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${accessRequirement.id}${subjectTypeFilter}${subjectIdFilter}`,
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${accessRequirement.id}${subjectTypeFilter}${subjectIdFilter}`,
     )
   }
   const onAcceptClicked = () => {

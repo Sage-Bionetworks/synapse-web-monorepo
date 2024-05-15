@@ -14,7 +14,7 @@ export type RequestDownloadCardProps = {
 const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED: RequestDownloadCardProps['onViewSharingSettingsClicked'] =
   benefactorEntityId =>
     window.open(
-      `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+      `https://www.synapse.org/Synapse:${benefactorEntityId}`,
       '_blank',
     )
 

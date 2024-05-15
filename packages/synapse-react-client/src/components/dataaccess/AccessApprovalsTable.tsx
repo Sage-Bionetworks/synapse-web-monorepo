@@ -103,7 +103,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <tr key={item.id}>
                 <td>
                   <a
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.accessRequirementId}`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${item.accessRequirementId}`}
                   >
                     {item.accessRequirementId}
                   </a>

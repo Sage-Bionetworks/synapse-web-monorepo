@@ -351,7 +351,7 @@ describe('GenericCard tests', () => {
   describe('it makes the correct URL for the title', () => {
     test('creates a link to synapse', () => {
       const synId = 'syn12345678'
-      const synLink = `https://www.synapse.org/#!Synapse:${synId}`
+      const synLink = `https://www.synapse.org/Synapse:${synId}`
       const { href, target } = getLinkParams(
         synId,
         undefined,

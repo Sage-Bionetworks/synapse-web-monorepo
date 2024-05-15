@@ -64,7 +64,7 @@ export default function useMembershipInvitationTokenHandler():
                   },
                   secondaryButtonConfig: {
                     text: 'Team Page',
-                    href: `https://www.synapse.org/#!Team:${membershipInvitation.teamId}`,
+                    href: `https://www.synapse.org/Team:${membershipInvitation.teamId}`,
                   },
                 },
               )

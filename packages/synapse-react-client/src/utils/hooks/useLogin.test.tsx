@@ -148,7 +148,7 @@ describe('useLogin tests', () => {
   test.each([
     ['Regular path', '/'],
     // The hashbang URL is used by SWC but isn't normally compatible with URL.searchParams
-    ['SWC-style path', '/#!LoginPlace:0'],
+    ['SWC-style path', '/LoginPlace:0'],
   ])(
     'Handles case where 2fa token is provided via search params, %s',
     async (name, path) => {
@@ -345,7 +345,7 @@ describe('useLogin tests', () => {
     history.replaceState(
       {},
       '',
-      `#!LoginPlace:0?` +
+      `LoginPlace:0?` +
         `twoFaToken=${twoFactorAuthErrorResponse.twoFaToken}` +
         `&userId=${twoFactorAuthErrorResponse.userId}` +
         // add another param to ensure it isn't cleared
@@ -380,9 +380,7 @@ describe('useLogin tests', () => {
       expect(
         localStorage.getItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY),
       ).toBe(null)
-      expect(window.location.href).toBe(
-        'http://localhost/#!LoginPlace:0?foo=bar',
-      )
+      expect(window.location.href).toBe('http://localhost/LoginPlace:0?foo=bar')
     })
     consoleWarnSpy.mockRestore()
     consoleErrorSpy.mockRestore()

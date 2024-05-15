@@ -40,7 +40,7 @@ export default function LoginForm(props: Props) {
     ssoState,
     registerAccountUrl = `${getEndpoint(
       BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}#!RegisterAccount:0`,
+    )}RegisterAccount:0`,
     resetPasswordUrl,
     onBeginOAuthSignIn,
     onStepChange,

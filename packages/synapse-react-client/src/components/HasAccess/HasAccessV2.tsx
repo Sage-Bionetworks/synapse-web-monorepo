@@ -205,7 +205,7 @@ export function HasAccessV2(props: HasAccessProps) {
           window.open(
             `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+            )}AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
             '_blank',
           )
         } else {

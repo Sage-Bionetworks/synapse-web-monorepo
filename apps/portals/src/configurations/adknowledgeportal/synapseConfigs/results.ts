@@ -2,7 +2,7 @@ import { SynapseConfig } from 'types/portal-config'
 
 export const results: SynapseConfig = {
   name: 'Markdown',
-  // https://www.synapse.org/#!Synapse:syn12666371/wiki/595383
+  // https://www.synapse.org/Synapse:syn12666371/wiki/595383
   props: {
     ownerId: 'syn12666371',
     wikiId: '595383',

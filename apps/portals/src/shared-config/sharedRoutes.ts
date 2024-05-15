@@ -44,7 +44,7 @@ const routes: NestedRoute = {
           props: {
             onViewSharingSettingsClicked: (benefactorEntityId) => {
               window.open(
-                `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+                `https://www.synapse.org/Synapse:${benefactorEntityId}`,
                 '_blank',
               )
             },

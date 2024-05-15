@@ -96,7 +96,7 @@ export const ReleaseCardMedium: React.FunctionComponent<
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1">
         {releaseEntityId && (
           <Link
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${releaseEntityId}`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${releaseEntityId}`}
             target="_blank"
             rel="noreferrer"
             fontSize="14px"

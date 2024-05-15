@@ -171,7 +171,7 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
                 <tr key={ar.id}>
                   <td>
                     <a
-                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${ar.id}`}
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${ar.id}`}
                     >
                       {ar.id}
                     </a>
