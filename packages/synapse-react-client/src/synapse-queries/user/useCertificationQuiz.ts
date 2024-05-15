@@ -13,7 +13,7 @@ import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
 
 export function useGetPassingRecord(
   userId: string = '',
-  options?: Partial<UseQueryOptions<PassingRecord, SynapseClientError>>,
+  options?: Partial<UseQueryOptions<PassingRecord | null, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery({

@@ -1298,9 +1298,11 @@ export const getUserChallenges = (
 export const getPassingRecord = (
   userId: string | number,
   accessToken: string | undefined,
-): Promise<PassingRecord> => {
+): Promise<PassingRecord | null> => {
   const url = `/repo/v1//user/${userId}/certifiedUserPassingRecord`
-  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+  return allowNotFoundError(() =>
+    doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
 }
 
 /**

@@ -66,8 +66,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
       throwOnError: true,
     })
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
-  const isTakingQuiz =
-    !isCertified && (passingRecord == undefined || isRetakingQuiz)
+  const isTakingQuiz = !isCertified && (passingRecord == null || isRetakingQuiz)
   useEffect(() => {
     if (accessToken) {
       getQuiz()
@@ -129,26 +128,27 @@ const CertificationQuiz: React.FunctionComponent = () => {
     <div>
       {passingRecord && !isTakingQuiz && (
         <>
-          {passingRecord.revokedOn && !isCertified && (
-            <Alert severity="error">
-              {!passingRecord.passed && (
-                <AlertTitle>Certification Revoked</AlertTitle>
-              )}
-              <Typography variant="body1" sx={{ marginTop: '5px' }}>
-                Your certification was revoked. To become certified, you must{' '}
-                <Link
-                  href="#"
-                  onClick={e => {
-                    e.preventDefault()
-                    handleRetakeQuiz()
-                  }}
-                >
-                  retake the quiz
-                </Link>
-                .
-              </Typography>
-            </Alert>
-          )}
+          {(passingRecord.revokedOn || passingRecord.passed) &&
+            !isCertified && (
+              <Alert severity="error">
+                {!passingRecord.passed && (
+                  <AlertTitle>Certification Revoked</AlertTitle>
+                )}
+                <Typography variant="body1" sx={{ marginTop: '5px' }}>
+                  Your certification was revoked. To become certified, you must{' '}
+                  <Link
+                    href="#"
+                    onClick={e => {
+                      e.preventDefault()
+                      handleRetakeQuiz()
+                    }}
+                  >
+                    retake the quiz
+                  </Link>
+                  .
+                </Typography>
+              </Alert>
+            )}
           {!passingRecord.passed && !isCertified && (
             <Alert severity="error">
               {!passingRecord.passed && <AlertTitle>Quiz Failed</AlertTitle>}
