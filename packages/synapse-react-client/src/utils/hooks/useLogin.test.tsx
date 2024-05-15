@@ -147,7 +147,6 @@ describe('useLogin tests', () => {
 
   test.each([
     ['Regular path', '/'],
-    // The hashbang URL is used by SWC but isn't normally compatible with URL.searchParams
     ['SWC-style path', '/LoginPlace:0'],
   ])(
     'Handles case where 2fa token is provided via search params, %s',

@@ -520,7 +520,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href="SynapseForum:default"
+                    href="/SynapseForum:default"
                     rel="noopener noreferrer"
                   >
                     Help Forum

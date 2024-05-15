@@ -40,7 +40,7 @@ function LinkTab(props: {
 }
 
 type ReviewerDashboardProps = {
-  /** Used to determine the base path for the component. Default is #ataAccessManagement:default */
+  /** Used to determine the base path for the component. Default is DataAccessManagement:default */
   routerBaseName?: string
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For demo purposes only. */
   useMemoryRouter?: boolean
