@@ -8,15 +8,15 @@ import {
   useTheme,
 } from '@mui/material'
 import {
+  displayToast,
   IconSvg,
   LastLoginInfo,
+  RegisterPageLogoutPrompt,
   SynapseClient,
   SynapseConstants,
-  displayToast,
+  useApplicationSessionContext,
   useLastLoginInfo,
   useSynapseContext,
-  RegisterPageLogoutPrompt,
-  useApplicationSessionContext,
 } from 'synapse-react-client'
 import {
   AliasType,
@@ -33,7 +33,7 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './StyledComponents'
-import { useSourceApp } from './useSourceApp'
+import { DEFAULT_SOURCE_APP_ID, useSourceApp } from './useSourceApp'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -52,7 +52,7 @@ export const RegisterAccount1 = () => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
-  const sourceAppName = useSourceApp()?.friendlyName
+  const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
 
@@ -328,17 +328,25 @@ export const RegisterAccount1 = () => {
                 <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
-                <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                  Your <strong>{sourceAppName}</strong> account is also a{' '}
-                  <strong>Sage account</strong>. You can also use it to access
-                  many other resources from Sage.
-                </Typography>
+                {sourceAppId != DEFAULT_SOURCE_APP_ID && (
+                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                    Your <strong>{sourceAppName}</strong> account is also a{' '}
+                    <strong>Synapse account</strong>. You can also use it to
+                    access many other resources from Sage Bionetworks.
+                  </Typography>
+                )}
+                {sourceAppId === DEFAULT_SOURCE_APP_ID && (
+                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                    Your <strong>Synapse</strong> account can also be used to
+                    access many other resources from Sage Bionetworks.
+                  </Typography>
+                )}
                 <Link
                   color="primary"
                   component={RouterLink}
                   to="/sageresources"
                 >
-                  More about Sage accounts
+                  More about Synapse accounts
                 </Link>
               </Box>
             </>

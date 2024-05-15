@@ -14,7 +14,7 @@ export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
   appId: '',
   appURL: '',
   description: '',
-  friendlyName: 'Sage Bionetworks',
+  friendlyName: 'Synapse',
   requestAffiliation: false,
   logo: <></>,
   isPublicized: true,

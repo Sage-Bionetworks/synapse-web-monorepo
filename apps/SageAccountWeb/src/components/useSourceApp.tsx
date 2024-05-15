@@ -15,7 +15,7 @@ export type SourceAppContextType = SourceAppConfig
 
 const SOURCE_APP_ID_QUERY_PARAM_KEY = 'appId'
 const SOURCE_APP_ID_LOCALSTORAGE_KEY = 'sourceAppId'
-export const DEFAULT_SOURCE_APP_ID = 'SAGE'
+export const DEFAULT_SOURCE_APP_ID = 'synapse.org'
 export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
 
 /**
@@ -38,7 +38,7 @@ function useConfigureSourceAppFromQueryParams() {
     if (appIdFromSearchParam) {
       setLocalStorageAppId(appIdFromSearchParam)
     } else if (!localStorageAppId) {
-      // fallback to Sage Bionetworks
+      // fallback to synapse.org
       setLocalStorageAppId(DEFAULT_SOURCE_APP_ID)
     }
   }, [localStorageAppId, setLocalStorageAppId])
@@ -85,7 +85,7 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
     sourceAppConfigs?.find(config => config.appId === DEFAULT_SOURCE_APP_ID) ??
     STATIC_SOURCE_APP_CONFIG
 
-  // PORTALS-2746: Find target source app.  Fallback to Sage Bionetworks source app if target not found.
+  // PORTALS-2746: Find target source app.  Fallback to synapse.org source app if target not found.
   const sourceApp = sourceAppConfigs?.find(
     config => config.appId === sourceAppId,
   )
