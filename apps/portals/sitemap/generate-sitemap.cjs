@@ -27,7 +27,7 @@ fs.readFile('src/config/routesConfig.ts', (err, data) => {
     }
   } while (m)
   fileContent += '</urlset>'
-  fs.writeFile('build/sitemap.xml', fileContent, err => {
+  fs.writeFile('build/sitemap.xml', fileContent, (err) => {
     if (err) {
       console.error(err)
       throw err

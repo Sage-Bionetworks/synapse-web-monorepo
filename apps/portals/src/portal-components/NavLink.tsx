@@ -26,7 +26,7 @@ export default function NavLink(props: Props) {
   }
 
   return isExternal() ? (
-    <a href={link} target={target} rel='noreferrer noopener' {...props}>
+    <a href={link} target={target} rel="noreferrer noopener" {...props}>
       {props.text}
     </a>
   ) : (

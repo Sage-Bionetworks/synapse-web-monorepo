@@ -1,6 +1,5 @@
 import { FooterConfig } from 'types/portal-config'
 
-const footer: FooterConfig = {
-}
+const footer: FooterConfig = {}
 
 export default footer
