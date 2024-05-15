@@ -129,7 +129,27 @@ const CertificationQuiz: React.FunctionComponent = () => {
     <div>
       {passingRecord && !isTakingQuiz && (
         <>
-          {(!passingRecord.passed || !isCertified) && (
+          {passingRecord.revokedOn && !isCertified && (
+            <Alert severity="error">
+              {!passingRecord.passed && (
+                <AlertTitle>Certification Revoked</AlertTitle>
+              )}
+              <Typography variant="body1" sx={{ marginTop: '5px' }}>
+                Your certification was revoked. To become certified, you must{' '}
+                <Link
+                  href="#"
+                  onClick={e => {
+                    e.preventDefault()
+                    handleRetakeQuiz()
+                  }}
+                >
+                  retake the quiz
+                </Link>
+                .
+              </Typography>
+            </Alert>
+          )}
+          {!passingRecord.passed && !isCertified && (
             <Alert severity="error">
               {!passingRecord.passed && <AlertTitle>Quiz Failed</AlertTitle>}
               <Typography variant="body1" sx={{ marginTop: '5px' }}>

@@ -1304,6 +1304,18 @@ export const getPassingRecord = (
 }
 
 /**
+ * Revokes the certification for the user. Only an ACT member can perform this operation.
+ * https://rest-docs.synapse.org/rest/PUT/user/id/revokeCertification.html
+ */
+export const revokeCertification = (
+  userId: string,
+  accessToken: string,
+): Promise<PassingRecord> => {
+  const url = `/repo/v1/user/${userId}/revokeCertification`
+  return doPut(url, null, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
  * Get a list of teams registered to the given challenge.
  * see http://rest-docs.synapse.org/rest/GET/challenge.html
  */
