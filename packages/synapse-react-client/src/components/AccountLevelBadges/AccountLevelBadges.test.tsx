@@ -1,20 +1,41 @@
 import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import React from 'react'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
+import {
+  mockUserBundle,
+  mockUserProfileData,
+} from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
-  AccountLevelBadgeType,
   accountLevelBadgeConfig,
+  AccountLevelBadgeType,
 } from '../AccountLevelBadge/AccountLevelBadge'
 import { AccountLevelBadges } from './AccountLevelBadges'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import userEvent from '@testing-library/user-event'
+
+const USER_ID = '345424'
 
 jest.mock('../../synapse-client', () => ({
+  getMyUserBundle: jest.fn(),
   getUserBundle: jest.fn(),
+  revokeCertification: jest.fn(),
 }))
 
+const mockGetMyUserBundle = jest.mocked(SynapseClient.getMyUserBundle)
 const mockGetUserBundle = jest.mocked(SynapseClient.getUserBundle)
+const mockRevokeCertification = jest
+  .mocked(SynapseClient.revokeCertification)
+  .mockResolvedValue({
+    userId: USER_ID,
+    quizId: 1,
+    responseId: 1,
+    passed: true,
+    revokedOn: new Date().toISOString(),
+    score: 10,
+    passedOn: new Date().toISOString(),
+  })
 
 const getMockUserBundle = (
   isCertified: boolean,
@@ -22,7 +43,7 @@ const getMockUserBundle = (
   twoFactorAuthEnabled?: boolean,
 ) => {
   const bundle: UserBundle = {
-    userId: '345424',
+    userId: USER_ID,
     isCertified: isCertified,
     isVerified: isVerified,
   }
@@ -39,105 +60,141 @@ const getMockUserBundle = (
 const queryForBadgeLabel = (badgeType: AccountLevelBadgeType) => {
   return screen.queryByText(accountLevelBadgeConfig[badgeType].label)
 }
+const props = {
+  userId: USER_ID,
+}
+
+function renderComponent() {
+  const component = render(<AccountLevelBadges {...props} />, {
+    wrapper: createWrapper(),
+  })
+
+  const user = userEvent.setup()
+
+  return { component, user }
+}
 
 describe('AccountLevelBadges', () => {
-  const props = {
-    userId: '1234',
-  }
-
-  function renderComponent() {
-    return render(<AccountLevelBadges {...props} />, {
-      wrapper: createWrapper(),
-    })
-  }
-
   beforeEach(() => {
     jest.clearAllMocks()
+    mockGetMyUserBundle.mockResolvedValue(mockUserBundle)
   })
 
   it('registered user', () => {
-    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(false, false))
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(false, false))
 
     renderComponent()
 
-    expect(queryForBadgeLabel('certified')).toBeNull()
-    expect(queryForBadgeLabel('validated')).toBeNull()
-    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+    expect(queryForBadgeLabel('certified')).not.toBeInTheDocument()
+    expect(queryForBadgeLabel('validated')).not.toBeInTheDocument()
+    expect(queryForBadgeLabel('enabledMFA')).not.toBeInTheDocument()
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(true, false))
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(true, false))
 
     renderComponent()
 
     await waitFor(() => {
-      expect(queryForBadgeLabel('certified')).not.toBeNull()
+      expect(queryForBadgeLabel('certified')).toBeInTheDocument()
     })
-    expect(queryForBadgeLabel('validated')).toBeNull()
-    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+    expect(queryForBadgeLabel('validated')).not.toBeInTheDocument()
+    expect(queryForBadgeLabel('enabledMFA')).not.toBeInTheDocument()
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('verified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(false, true))
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(false, true))
 
     renderComponent()
 
     await waitFor(() => {
-      expect(queryForBadgeLabel('validated')).not.toBeNull()
+      expect(queryForBadgeLabel('validated')).toBeInTheDocument()
+      expect(queryForBadgeLabel('certified')).not.toBeInTheDocument()
+      expect(queryForBadgeLabel('enabledMFA')).not.toBeInTheDocument()
     })
-    expect(queryForBadgeLabel('certified')).toBeNull()
-    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('enabled mfa user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(
-      getMockUserBundle(false, false, true),
-    )
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(false, false, true))
 
     renderComponent()
 
     await waitFor(() => {
-      expect(queryForBadgeLabel('enabledMFA')).not.toBeNull()
+      expect(queryForBadgeLabel('enabledMFA')).toBeInTheDocument()
+      expect(queryForBadgeLabel('certified')).not.toBeInTheDocument()
+      expect(queryForBadgeLabel('validated')).not.toBeInTheDocument()
     })
-    expect(queryForBadgeLabel('certified')).toBeNull()
-    expect(queryForBadgeLabel('validated')).toBeNull()
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified and verified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(
-      getMockUserBundle(true, true, false),
-    )
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(true, true, false))
 
     renderComponent()
 
     await waitFor(() => {
-      expect(queryForBadgeLabel('certified')).not.toBeNull()
-      expect(queryForBadgeLabel('validated')).not.toBeNull()
+      expect(queryForBadgeLabel('certified')).toBeInTheDocument()
+      expect(queryForBadgeLabel('validated')).toBeInTheDocument()
+      expect(queryForBadgeLabel('enabledMFA')).not.toBeInTheDocument()
     })
-    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified, verified, and enabled mfa user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(true, true, true))
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(true, true, true))
 
     renderComponent()
 
     await waitFor(() => {
-      expect(queryForBadgeLabel('certified')).not.toBeNull()
-      expect(queryForBadgeLabel('validated')).not.toBeNull()
-      expect(queryForBadgeLabel('enabledMFA')).not.toBeNull()
+      expect(queryForBadgeLabel('certified')).toBeInTheDocument()
+      expect(queryForBadgeLabel('validated')).toBeInTheDocument()
+      expect(queryForBadgeLabel('enabledMFA')).toBeInTheDocument()
     })
 
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(1)
+  })
+
+  it('ACT can revoke certification', async () => {
+    // Current user must be ACT to see the button
+    mockGetMyUserBundle.mockResolvedValue({
+      ...mockUserBundle,
+      isACTMember: true,
+    })
+    mockGetUserBundle.mockResolvedValue(getMockUserBundle(true, false))
+
+    const { user } = renderComponent()
+
+    await waitFor(() => {
+      expect(queryForBadgeLabel('certified')).toBeInTheDocument()
+    })
+
+    const revokeButton = await screen.findByRole('button', {
+      name: 'Revoke Certification',
+    })
+
+    await user.click(revokeButton)
+
+    const confirmationDialog = await screen.findByRole('dialog')
+    within(confirmationDialog).getByText('Revoke user certification?')
+    const confirmButton = within(confirmationDialog).getByRole('button', {
+      name: 'Revoke',
+    })
+
+    await user.click(confirmButton)
+
+    expect(mockRevokeCertification).toHaveBeenCalledWith(
+      USER_ID,
+      MOCK_ACCESS_TOKEN,
+    )
+    // Get bundle should have been called twice. Revoking certification will invalidate the cache
+    expect(mockGetUserBundle).toHaveBeenCalledTimes(2)
   })
 })

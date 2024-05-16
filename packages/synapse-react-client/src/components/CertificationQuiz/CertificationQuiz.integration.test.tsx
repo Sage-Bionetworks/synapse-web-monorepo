@@ -5,23 +5,23 @@ import CertificationQuiz from './CertificationQuiz'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
-  mockQuiz,
-  mockPassingRecordPassed,
   mockPassingRecordFailed,
+  mockPassingRecordPassed,
+  mockQuiz,
 } from '../../mocks/mockCertificationQuiz'
 import {
   useGetPassingRecord,
   usePostCertifiedUserTestResponse,
 } from '../../synapse-queries/user/useCertificationQuiz'
-import { getUseMutationMock } from '../../testutils/ReactQueryMockUtils'
+import {
+  getUseMutationMock,
+  getUseQuerySuccessMock,
+} from '../../testutils/ReactQueryMockUtils'
 import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { rest, server } from '../../mocks/msw/server'
-import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
+import { useGetCurrentUserBundle } from '../../synapse-queries'
 import { mockUserBundle } from '../../mocks/user/mock_user_profile'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
@@ -35,16 +35,17 @@ jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
   }
 })
 
-const mockUsePostCertifiedUserTestResponse =
-  usePostCertifiedUserTestResponse as jest.Mock
-const mockUseGetPassingRecord = useGetPassingRecord as jest.Mock
+const mockUsePostCertifiedUserTestResponse = jest.mocked(
+  usePostCertifiedUserTestResponse,
+)
+const mockUseGetPassingRecord = jest.mocked(useGetPassingRecord)
 
 jest.mock('../../synapse-queries/user/useUserBundle', () => {
   return {
     useGetCurrentUserBundle: jest.fn(),
   }
 })
-const mockUseGetCurrentUserBundle = useGetCurrentUserBundle as jest.Mock
+const mockUseGetCurrentUserBundle = jest.mocked(useGetCurrentUserBundle)
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -79,10 +80,10 @@ describe('CertificationQuiz tests', () => {
     mockUsePostCertifiedUserTestResponse.mockReturnValue(
       mutationMockReturnValue,
     )
-    mockUseGetPassingRecord.mockReturnValue({ data: undefined })
-    mockUseGetCurrentUserBundle.mockReturnValue({
-      data: { ...mockUserBundle, isCertified: false },
-    })
+    mockUseGetPassingRecord.mockReturnValue(getUseQuerySuccessMock(null))
+    mockUseGetCurrentUserBundle.mockReturnValue(
+      getUseQuerySuccessMock({ ...mockUserBundle, isCertified: false }),
+    )
   })
 
   afterEach(() => {
@@ -119,7 +120,9 @@ describe('CertificationQuiz tests', () => {
 
   it('Submit quiz that did not pass', async () => {
     // set up and verify quiz failed UI. click retry
-    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordFailed })
+    mockUseGetPassingRecord.mockReturnValue(
+      getUseQuerySuccessMock(mockPassingRecordFailed),
+    )
 
     renderComponent()
 
@@ -170,10 +173,12 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Verify passing UI', async () => {
-    mockUseGetCurrentUserBundle.mockReturnValue({
-      data: { ...mockUserBundle, isCertified: true },
-    })
-    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordPassed })
+    mockUseGetCurrentUserBundle.mockReturnValue(
+      getUseQuerySuccessMock({ ...mockUserBundle, isCertified: true }),
+    )
+    mockUseGetPassingRecord.mockReturnValue(
+      getUseQuerySuccessMock(mockPassingRecordPassed),
+    )
 
     renderComponent()
 
@@ -186,13 +191,22 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Test ACT revoked case - Passed quiz but not certified', async () => {
-    mockUseGetCurrentUserBundle.mockReturnValue({
-      data: { ...mockUserBundle, isCertified: false },
-    })
-    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordPassed })
+    mockUseGetCurrentUserBundle.mockReturnValue(
+      getUseQuerySuccessMock({
+        ...mockUserBundle,
+        isCertified: false,
+      }),
+    )
+    mockUseGetPassingRecord.mockReturnValue(
+      getUseQuerySuccessMock({
+        ...mockPassingRecordPassed,
+        revokedOn: new Date().toISOString(),
+      }),
+    )
 
     renderComponent()
 
+    await screen.findByText('Your certification was revoked', { exact: false })
     await screen.findByText('retake the quiz')
   })
 })
