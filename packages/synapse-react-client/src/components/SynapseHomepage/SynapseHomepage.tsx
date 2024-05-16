@@ -5,10 +5,6 @@ import Python from '../../assets/icons/Python'
 import Terminal from '../../assets/icons/Terminal'
 import Java from '../../assets/icons/Java'
 import ProjectViewCarousel from '../ProjectViewCarousel/ProjectViewCarousel'
-import {
-  getEndpoint,
-  BackendDestinationEnum,
-} from '../../utils/functions/getEndpoint'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
