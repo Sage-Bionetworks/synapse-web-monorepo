@@ -49,7 +49,7 @@ export function SageResourcesPageInternal() {
               variant="subtitle1"
               sx={{ marginTop: '30px', paddingBottom: '30px', fontWeight: 500 }}
             >
-              Your Sage Account gets you access to all these tools.
+              Your Synapse account gets you access to all these tools.
             </Typography>
 
             <Typography
@@ -63,8 +63,8 @@ export function SageResourcesPageInternal() {
               variant="body1"
               sx={{ paddingBottom: '30px', fontWeight: 500 }}
             >
-              Your Sage Account can be used across all these different products.
-              You can manage your account at{' '}
+              Your Synapse account can be used across all these different
+              products. You can manage your account at{' '}
               <a href="/authenticated/myaccount">accounts.sagebionetwork.org</a>
             </Typography>
           </Box>

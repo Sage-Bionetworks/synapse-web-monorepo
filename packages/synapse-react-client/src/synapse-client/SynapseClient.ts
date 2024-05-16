@@ -1298,9 +1298,23 @@ export const getUserChallenges = (
 export const getPassingRecord = (
   userId: string | number,
   accessToken: string | undefined,
-): Promise<PassingRecord> => {
+): Promise<PassingRecord | null> => {
   const url = `/repo/v1//user/${userId}/certifiedUserPassingRecord`
-  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+  return allowNotFoundError(() =>
+    doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
+}
+
+/**
+ * Revokes the certification for the user. Only an ACT member can perform this operation.
+ * https://rest-docs.synapse.org/rest/PUT/user/id/revokeCertification.html
+ */
+export const revokeCertification = (
+  userId: string,
+  accessToken: string,
+): Promise<PassingRecord> => {
+  const url = `/repo/v1/user/${userId}/revokeCertification`
+  return doPut(url, null, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
