@@ -113,8 +113,8 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
               variant="subtitle1"
               sx={{ paddingTop: '10px', paddingBottom: '10px' }}
             >
-              To join this team, you must register for a Sage account using the
-              same email address that was invited to the team.
+              To join this team, you must register for a Synapse account using
+              the same email address that was invited to the team.
             </Typography>
             <Box
               sx={{
