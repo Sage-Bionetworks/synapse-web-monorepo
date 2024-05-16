@@ -344,7 +344,7 @@ describe('useLogin tests', () => {
     history.replaceState(
       {},
       '',
-      `LoginPlace:0?` +
+      `/LoginPlace:0?` +
         `twoFaToken=${twoFactorAuthErrorResponse.twoFaToken}` +
         `&userId=${twoFactorAuthErrorResponse.userId}` +
         // add another param to ensure it isn't cleared
