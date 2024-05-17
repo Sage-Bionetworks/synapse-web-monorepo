@@ -33,7 +33,7 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './StyledComponents'
-import { DEFAULT_SOURCE_APP_ID, useSourceApp } from './useSourceApp'
+import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from './useSourceApp'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -328,14 +328,14 @@ export const RegisterAccount1 = () => {
                 <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
-                {sourceAppId != DEFAULT_SOURCE_APP_ID && (
+                {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
                   <Typography variant="body1" sx={{ marginBottom: '20px' }}>
                     Your <strong>{sourceAppName}</strong> account is also a{' '}
                     <strong>Synapse account</strong>. You can also use it to
                     access many other resources from Sage Bionetworks.
                   </Typography>
                 )}
-                {sourceAppId === DEFAULT_SOURCE_APP_ID && (
+                {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
                   <Typography variant="body1" sx={{ marginBottom: '20px' }}>
                     Your <strong>Synapse</strong> account can also be used to
                     access many other resources from Sage Bionetworks.

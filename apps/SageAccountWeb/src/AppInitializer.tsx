@@ -11,13 +11,11 @@ import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
-  const [redirectURL, setRedirectURL] = useState<string>()
-
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
   const isFramed = useFramebuster()
-  const { appId } = useSourceApp()
+  const { appId, appURL } = useSourceApp()
 
   useEffect(() => {
     const searchParamSignedToken = getSearchParam('signedToken')
@@ -36,34 +34,13 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     }
   }, [])
 
-  useEffect(() => {
-    const searchParamRedirectURL = getSearchParam('redirectURL')
-    const localStorageRedirectURL = localStorage.getItem('sourceAppRedirectURL')
-    if (searchParamRedirectURL) {
-      const hostName = new URL(searchParamRedirectURL).hostname
-      if (hostName.toLowerCase().endsWith('.synapse.org')) {
-        localStorage.setItem('sourceAppRedirectURL', searchParamRedirectURL)
-        setRedirectURL(searchParamRedirectURL)
-      } else {
-        console.error(
-          `Invalid redirectURL (${searchParamRedirectURL}) - Must be a subdomain of .synapse.org`,
-        )
-      }
-    } else if (localStorageRedirectURL) {
-      setRedirectURL(localStorageRedirectURL)
-    } else {
-      // fallback to Synapse.org
-      setRedirectURL('https://www.synapse.org/Profile:v/projects/all')
-    }
-  }, [appId])
-
   const { acceptsTermsOfUse } = useApplicationSessionContext()
 
   return (
     <AppContextProvider
       appContext={{
         appId,
-        redirectURL,
+        redirectURL: appURL,
         signedToken,
       }}
     >
