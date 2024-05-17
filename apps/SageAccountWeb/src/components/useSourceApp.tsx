@@ -29,18 +29,16 @@ export type SourceAppContextProviderProps = React.PropsWithChildren<{
 }>
 
 function useConfigureSourceAppFromQueryParams() {
-  const { value: localStorageAppId, set: setLocalStorageAppId } =
-    useLocalStorageValue(SOURCE_APP_ID_LOCALSTORAGE_KEY)
+  const { set: setLocalStorageAppId } = useLocalStorageValue(
+    SOURCE_APP_ID_LOCALSTORAGE_KEY,
+  )
 
   useEffect(() => {
     const appIdFromSearchParam = getSearchParam(SOURCE_APP_ID_QUERY_PARAM_KEY)
     if (appIdFromSearchParam) {
       setLocalStorageAppId(appIdFromSearchParam)
-    } else if (!localStorageAppId) {
-      // fallback to synapse.org
-      setLocalStorageAppId(SYNAPSE_SOURCE_APP_ID)
     }
-  }, [localStorageAppId, setLocalStorageAppId])
+  }, [setLocalStorageAppId])
 }
 
 /**
