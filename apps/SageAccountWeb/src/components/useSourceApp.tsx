@@ -15,7 +15,6 @@ export type SourceAppContextType = SourceAppConfig
 
 const SOURCE_APP_ID_QUERY_PARAM_KEY = 'appId'
 const SOURCE_APP_ID_LOCALSTORAGE_KEY = 'sourceAppId'
-export const DEFAULT_SOURCE_APP_ID = 'synapse.org'
 export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
 
 /**
@@ -39,7 +38,7 @@ function useConfigureSourceAppFromQueryParams() {
       setLocalStorageAppId(appIdFromSearchParam)
     } else if (!localStorageAppId) {
       // fallback to synapse.org
-      setLocalStorageAppId(DEFAULT_SOURCE_APP_ID)
+      setLocalStorageAppId(SYNAPSE_SOURCE_APP_ID)
     }
   }, [localStorageAppId, setLocalStorageAppId])
 }
@@ -82,7 +81,7 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const sourceAppConfigs = useSourceAppConfigs()
   const defaultSageSourceApp =
-    sourceAppConfigs?.find(config => config.appId === DEFAULT_SOURCE_APP_ID) ??
+    sourceAppConfigs?.find(config => config.appId === SYNAPSE_SOURCE_APP_ID) ??
     STATIC_SOURCE_APP_CONFIG
 
   // PORTALS-2746: Find target source app.  Fallback to synapse.org source app if target not found.
@@ -95,7 +94,7 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
     )
     if (idFromProps == null) {
       // The invalid sourceAppId came from localStorage; reset it to the default
-      setIdFromLocalStorage(DEFAULT_SOURCE_APP_ID)
+      setIdFromLocalStorage(SYNAPSE_SOURCE_APP_ID)
     }
   }
 

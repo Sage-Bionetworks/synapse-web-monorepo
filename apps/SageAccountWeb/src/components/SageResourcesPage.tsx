@@ -6,7 +6,7 @@ import { StyledOuterContainer } from './StyledComponents'
 import { BackButton } from './BackButton'
 import { useSourceAppConfigs } from './useSourceAppConfigs'
 import {
-  DEFAULT_SOURCE_APP_ID,
+  SYNAPSE_SOURCE_APP_ID,
   SourceAppProvider,
   useSourceApp,
 } from './useSourceApp'
@@ -107,8 +107,8 @@ export function SageResourcesPageInternal() {
 
 export function SageResourcesPage() {
   return (
-    // This page should always use the Sage Bionetworks resources and theme
-    <SourceAppProvider sourceAppId={DEFAULT_SOURCE_APP_ID}>
+    // This page should always use the Synapse resources and theme
+    <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
       <SageResourcesPageInternal />
     </SourceAppProvider>
   )
