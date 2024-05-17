@@ -53,7 +53,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setRedirectURL(localStorageRedirectURL)
     } else {
       // fallback to Synapse.org
-      setRedirectURL('https://www.synapse.org/#!Profile:v/projects/all')
+      setRedirectURL('https://www.synapse.org/Profile:v/projects/all')
     }
   }, [appId])
 

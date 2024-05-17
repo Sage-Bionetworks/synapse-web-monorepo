@@ -339,7 +339,7 @@ export const TableWithNoDownloadAccess: Story = {
         {
           primaryButtonConfig: {
             text: 'Open Entity Page',
-            href: `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+            href: `https://www.synapse.org/Synapse:${benefactorEntityId}`,
           },
         },
       )

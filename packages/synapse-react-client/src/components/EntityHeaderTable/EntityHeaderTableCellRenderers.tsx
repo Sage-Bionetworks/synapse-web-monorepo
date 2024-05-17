@@ -14,9 +14,7 @@ export function EntityHeaderNameCell(
   const { original } = row
   const { id, isDummy } = original
   return isDummy ? (
-    <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${id}`}>
-      {id}
-    </Link>
+    <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${id}`}>{id}</Link>
   ) : (
     <EntityLink entity={original} />
   )

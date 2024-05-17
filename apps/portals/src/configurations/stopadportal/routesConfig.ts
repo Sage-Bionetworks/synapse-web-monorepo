@@ -106,7 +106,7 @@ const routes: GenericRoute[] = [
       },
     ],
   },
-  // https://www.synapse.org/#!Synapse:syn20717442/wiki/596047
+  // https://www.synapse.org/Synapse:syn20717442/wiki/596047
   {
     path: 'Contact Us',
     exact: true,

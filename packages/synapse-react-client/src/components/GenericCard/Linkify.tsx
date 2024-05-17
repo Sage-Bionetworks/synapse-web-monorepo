@@ -15,7 +15,7 @@ export type LinkifyRule = {
 
 const synapseIdRule: LinkifyRule = {
   regex: /(syn\d+(?:\.\d+)?)/,
-  onMatch: value => `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${value}`,
+  onMatch: value => `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${value}`,
 }
 
 const httpRule: LinkifyRule = {

@@ -57,7 +57,7 @@ export default function UserChallenges({ userId }: UserChallengesProps) {
                   <a
                     target="_self"
                     rel="noopener noreferrer"
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.challenge.projectId}/challenge`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${item.challenge.projectId}/challenge`}
                   >
                     {item.projectHeader.name}
                   </a>

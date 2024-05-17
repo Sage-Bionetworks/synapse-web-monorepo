@@ -169,8 +169,7 @@ describe('SynapseCardLabel tests', () => {
       },
     ]
     // make sure it doesn't parse out the extra commas
-    const value =
-      '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
+    const value = '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/)"]'
     const { container } = render(
       <SynapseCardLabel
         value={value}
@@ -203,7 +202,7 @@ describe('SynapseCardLabel tests', () => {
     )
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toEqual(
-      `https://www.synapse.org/#!Synapse:${value}`,
+      `https://www.synapse.org/Synapse:${value}`,
     )
   })
 

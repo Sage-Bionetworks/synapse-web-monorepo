@@ -78,7 +78,7 @@ function SubmissionDirectoryList({
   const HEADERS_PER_PAGE = 50
   const PROJECT_URL = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}#!Synapse:${challengeProjectId}`
+  )}Synapse:${challengeProjectId}`
 
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
@@ -204,7 +204,7 @@ function SubmissionDirectoryList({
           to={{
             pathname: `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!Synapse:${params.row.id}`,
+            )}Synapse:${params.row.id}`,
           }}
           target="_blank"
         >

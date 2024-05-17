@@ -186,7 +186,7 @@ export const VersionLabel: React.FC<{
       <a
         target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
-        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synapseId}.${version}`}
+        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${synapseId}.${version}`}
       >
         (Show Version History on Synapse)
       </a>
@@ -259,7 +259,7 @@ export function getLinkParams(
   let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
-    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
+    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
   } else if (link.match(DOI_REGEX)) {
     defaultTarget = TargetEnum.NEW_WINDOW
     href = `https://dx.doi.org/${link}`

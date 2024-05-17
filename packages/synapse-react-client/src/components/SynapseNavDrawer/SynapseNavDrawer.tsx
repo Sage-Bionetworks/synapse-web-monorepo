@@ -224,7 +224,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   const onProjectSearch = (searchTerm: string) => {
     projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/)
-    window.location.href = `/#!Search:${encodeURI(
+    window.location.href = `/Search:${encodeURI(
       JSON.stringify(projectSearchJson),
     )}`
   }
@@ -240,7 +240,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
             <a
               className="synapseIcon"
               rel="noopener noreferrer"
-              href="/#!Home:0"
+              href="/Home:0"
               aria-label="Synapse Home"
             >
               <SynapseIconWhite />
@@ -260,28 +260,28 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Favorites"
                   iconName="favTwoTone"
-                  onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/favorites`}
+                  onClickGoToUrl={`/Profile:${currentUserProfile.ownerId}/favorites`}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
                   tooltip="Teams"
                   iconName="peopleTwoTone"
-                  onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/teams`}
+                  onClickGoToUrl={`/Profile:${currentUserProfile.ownerId}/teams`}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
                   tooltip="Challenges"
                   iconName="challengesTwoTone"
-                  onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/challenges`}
+                  onClickGoToUrl={`/Profile:${currentUserProfile.ownerId}/challenges`}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
                   tooltip="Download Cart"
                   iconName="download"
-                  onClickGoToUrl="/#!DownloadCart:0"
+                  onClickGoToUrl="/DownloadCart:0"
                   badgeContent={numberOfFilesInDownloadList}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
@@ -289,7 +289,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Trash Can"
                   iconName="delete"
-                  onClickGoToUrl="/#!Trash:0"
+                  onClickGoToUrl="/Trash:0"
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
@@ -297,7 +297,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   <NavDrawerListItem
                     tooltip="Data Access Management"
                     iconName="accessManagement"
-                    onClickGoToUrl="/#!DataAccessManagement:default/Submissions"
+                    onClickGoToUrl="/DataAccessManagement:default/Submissions"
                     badgeContent={countOfOpenSubmissionsForReview}
                     handleDrawerClose={handleDrawerClose}
                     handleDrawerOpen={handleDrawerOpen}
@@ -308,7 +308,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
             <NavDrawerListItem
               tooltip="Search"
               iconName="search"
-              onClickGoToUrl="/#!Search:"
+              onClickGoToUrl="/Search:"
               handleDrawerClose={handleDrawerClose}
               handleDrawerOpen={handleDrawerOpen}
             />
@@ -335,7 +335,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
               <NavDrawerListItem
                 tooltip="Sign in"
                 iconName="login"
-                onClickGoToUrl="/#!LoginPlace:0"
+                onClickGoToUrl="/LoginPlace:0"
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
               />
@@ -397,35 +397,35 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <div className="linkList" onClick={handleDrawerClose}>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/projects/all`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/projects/all`}
                     rel="noopener noreferrer"
                   >
                     All
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/projects/created_by_me`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/projects/created_by_me`}
                     rel="noopener noreferrer"
                   >
                     Created By Me
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/projects/favorites`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/projects/favorites`}
                     rel="noopener noreferrer"
                   >
                     Favorite Projects
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`}
                     rel="noopener noreferrer"
                   >
                     Shared With Me
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/projects/all_my_team_projects`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/projects/all_my_team_projects`}
                     rel="noopener noreferrer"
                   >
                     Team Projects
@@ -443,21 +443,21 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <div className="linkList" onClick={handleDrawerClose}>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/profile`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/profile`}
                     rel="noopener noreferrer"
                   >
                     View Profile
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Profile:${currentUserProfile?.ownerId}/settings`}
+                    href={`/Profile:${currentUserProfile?.ownerId}/settings`}
                     rel="noopener noreferrer"
                   >
                     Account Settings
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/#!Following:0`}
+                    href={`/Following:0`}
                     rel="noopener noreferrer"
                   >
                     Following
@@ -520,7 +520,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href="#!SynapseForum:default"
+                    href="/SynapseForum:default"
                     rel="noopener noreferrer"
                   >
                     Help Forum

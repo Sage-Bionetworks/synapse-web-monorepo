@@ -15,7 +15,7 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
   const {
     resetPasswordUrl = `${getEndpoint(
       BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}#!PasswordReset:0`,
+    )}PasswordReset:0`,
     onSubmit,
     loginIsPending,
     hideForgotPasswordButton,

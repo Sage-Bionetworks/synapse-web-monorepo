@@ -24,7 +24,7 @@ export default function CertificationRequirement() {
     <RequirementItem status={requirementItemState}>
       <Typography variant="body1">
         You must first become a{' '}
-        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Quiz:`}>
+        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Quiz:`}>
           certified user
         </Link>
       </Typography>

@@ -70,7 +70,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
   }, [])
 
   const getUrl = (threadId: string, projectId: string, replyId?: string) => {
-    let url = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${projectId}/discussion/threadId=${threadId}`
+    let url = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${projectId}/discussion/threadId=${threadId}`
     if (replyId) {
       url += `&replyId=${replyId}`
     }

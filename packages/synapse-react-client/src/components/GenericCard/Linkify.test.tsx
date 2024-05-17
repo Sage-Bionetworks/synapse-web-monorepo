@@ -22,7 +22,7 @@ describe('Linkify tests', () => {
 
     const link = container.querySelector('a')!
     expect(link.getAttribute('href')).toEqual(
-      `https://www.synapse.org/#!Synapse:${value}`,
+      `https://www.synapse.org/Synapse:${value}`,
     )
   })
 
@@ -104,7 +104,7 @@ describe('Linkify tests', () => {
     })
     const link = container.querySelector('a')!
     expect(link.getAttribute('href')).toEqual(
-      `https://www.synapse.org/#!Synapse:syn1234567`,
+      `https://www.synapse.org/Synapse:syn1234567`,
     )
     expect(link.textContent).toEqual('syn1234567')
     expect(container).toHaveTextContent(value)

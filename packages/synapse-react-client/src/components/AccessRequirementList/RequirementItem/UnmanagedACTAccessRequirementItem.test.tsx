@@ -106,7 +106,7 @@ describe('UnmanagedACTAccessRequirement tests', () => {
 
     expect(window.open).toHaveBeenLastCalledWith(
       expect.stringContaining(
-        `#!AccessRequirement:AR_ID=${mockACTAccessRequirement.id}&TYPE=${RestrictableObjectType.ENTITY}&ID=${MOCK_FILE_ENTITY_ID}`,
+        `AccessRequirement:AR_ID=${mockACTAccessRequirement.id}&TYPE=${RestrictableObjectType.ENTITY}&ID=${MOCK_FILE_ENTITY_ID}`,
       ),
     )
 

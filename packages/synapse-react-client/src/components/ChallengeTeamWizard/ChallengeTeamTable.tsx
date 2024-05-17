@@ -120,7 +120,7 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
           <Link
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}/#!Team:${row.id}`}
+            )}/Team:${row.id}`}
             target="_blank"
             underline={'hover'}
           >

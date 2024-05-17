@@ -76,7 +76,7 @@ export function UserBadge(props: UserBadgeProps) {
   )
 
   if (link == null) {
-    link = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userId}`
+    link = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${userId}`
   }
 
   const { OverlayComponent, toggleShow, toggleHide } = useOverlay(

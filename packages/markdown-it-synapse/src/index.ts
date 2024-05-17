@@ -395,7 +395,7 @@ function init_markdown_it(
       },
       normalize: function (match) {
         match.url =
-          baseURL + '#!Synapse:' + match.url.replace(/[.]/, '/version/')
+          baseURL + '/Synapse:' + match.url.replace(/[.]/, '/version/')
       },
     })
 
@@ -479,7 +479,7 @@ function init_markdown_it(
         if (synapseRE.test(testString)) {
           // this is a synapse ID
           res.str =
-            baseURL + '#!Synapse:' + testString.replace(/[.]/, '/version/')
+            baseURL + '/Synapse:' + testString.replace(/[.]/, '/version/')
         } else if (urlWithoutProtocolRE.test(testString)) {
           res.str = 'http://' + testString
         } else if (doiRE.test(testString)) {

@@ -46,7 +46,7 @@ export default function useDetectSSOCode(
 ): UseDetectSSOCodeReturnType {
   const {
     onSignInComplete,
-    registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+    registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}RegisterAccount:0`,
     onError,
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,

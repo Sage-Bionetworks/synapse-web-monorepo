@@ -46,7 +46,7 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
 
   useEffect(() => {
     if (redirectToTeamPage) {
-      window.location.href = `https://www.synapse.org/#!Team:${joinTeamToken?.teamId}`
+      window.location.href = `https://www.synapse.org/Team:${joinTeamToken?.teamId}`
     }
   }, [redirectToTeamPage])
 

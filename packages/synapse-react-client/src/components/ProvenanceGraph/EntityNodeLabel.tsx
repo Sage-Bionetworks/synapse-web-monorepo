@@ -23,7 +23,7 @@ export const EntityNodeLabel = (data: EntityHeader) => {
           <div>
             <Tooltip title={data.name} placement="top" enterNextDelay={300}>
               <Link
-                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${entityVersionString}`}
               >
                 {data.name}
               </Link>

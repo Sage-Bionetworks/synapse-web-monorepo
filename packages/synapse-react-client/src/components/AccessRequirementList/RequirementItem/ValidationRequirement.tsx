@@ -26,7 +26,7 @@ export default function ValidationRequirement() {
     >
       <Typography variant={'body1'}>
         You must first apply to have your{' '}
-        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:v/settings`}>
+        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:v/settings`}>
           user profile validated
         </Link>
       </Typography>

@@ -16,7 +16,7 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
    - **OAuth Client ID**: If using an OAuth Client to connect, please provide your 'client ID'. This value will be used as your 'appId'.
 3. Web Engineering will send you an 'appId'. To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below). You should also provide the 'redirectURL' query parameter.
 
-_Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/#!Synapse:syn45291362/tables/) as the data source.
+_Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/Synapse:syn45291362/tables/) as the data source.
 
 ## Entry points
 

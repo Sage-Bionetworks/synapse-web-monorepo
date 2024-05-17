@@ -34,7 +34,7 @@ export type UserCardProps = {
   hideTooltip?: boolean
   /** Specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. If left undefined, the menu will not render to the screen. */
   menuActions?: MenuAction[]
-  /** The link to point to on the username, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
+  /** The link to point to on the username, defaults to https://www.synapse.org/Profile:${userProfile.ownerId} */
   link?: string
   openLinkInNewTab?: boolean
   /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */

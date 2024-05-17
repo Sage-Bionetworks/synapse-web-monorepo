@@ -170,7 +170,7 @@ export default class Uploader extends React.Component<
             to
             <a
               style={{ marginLeft: '2px' }}
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${this.props.parentContainerId}`}
+              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${this.props.parentContainerId}`}
               rel="noopener noreferrer"
               target="_blank"
             >

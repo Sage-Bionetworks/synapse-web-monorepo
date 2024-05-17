@@ -333,7 +333,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
         expect(window.location.replace).toHaveBeenCalledWith(
-          'https://www.synapse.org/#!RegisterAccount:0',
+          'https://www.synapse.org/RegisterAccount:0',
         )
         expect(hookReturn.result.current.isLoading).toBe(false)
       })
@@ -380,7 +380,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOnError).toHaveBeenCalledWith(unhandledError.reason)
         // Should not redirect to account creation
         expect(window.location.href).not.toEqual(
-          'https://www.synapse.org/#!RegisterAccount:0',
+          'https://www.synapse.org/RegisterAccount:0',
         )
         expect(hookReturn.result.current.isLoading).toBe(false)
       })
