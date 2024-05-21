@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { OAuth2State } from '../types'
+import { useSynapseContext } from '../context'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -32,8 +33,7 @@ export type UseDetectSSOCodeOptions = {
     resp: TwoFactorAuthErrorResponse,
     encodedTwoFaResetToken: string,
   ) => void
-  hasInitializedSession?: boolean
-  token?: string
+  isInitializingSession: boolean
 }
 
 /*
@@ -43,7 +43,7 @@ export type UseDetectSSOCodeOptions = {
  * used for account creation, where we pass the username through the process.
  */
 export default function useDetectSSOCode(
-  opts: UseDetectSSOCodeOptions = {},
+  opts: UseDetectSSOCodeOptions = { isInitializingSession: true },
 ): UseDetectSSOCodeReturnType {
   const {
     onSignInComplete,
@@ -51,8 +51,7 @@ export default function useDetectSSOCode(
     onError,
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,
-    hasInitializedSession = false,
-    token,
+    isInitializingSession,
   } = opts
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
@@ -90,14 +89,15 @@ export default function useDetectSSOCode(
   }, [isHandlingSynapseOAuthSignIn, searchParams])
 
   const [isLoading, setIsLoading] = useState(!!(code && provider))
+  const { accessToken } = useSynapseContext()
 
   useEffect(() => {
-    if (hasInitializedSession) {
+    if (!isInitializingSession) {
       if (code && provider) {
         const redirectUrl = `${redirectURL}?provider=${provider}`
 
         //If user is already logged in, and the provider is ORCID, then try to bind this OAuth provider to the account.
-        if (OAUTH2_PROVIDERS.ORCID == provider && token !== undefined) {
+        if (OAUTH2_PROVIDERS.ORCID == provider && accessToken !== undefined) {
           // now bind this to the user account
           const onFailure = (err: SynapseClientError) => {
             console.error('Error binding ORCiD to account: ', err)
@@ -190,7 +190,7 @@ export default function useDetectSSOCode(
     }
     // Intentionally only monitoring initialization of the session -- only running on mount after the session detection has completed since this uses URL params that come from a redirect
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasInitializedSession])
+  }, [isInitializingSession])
 
   return { isLoading }
 }
