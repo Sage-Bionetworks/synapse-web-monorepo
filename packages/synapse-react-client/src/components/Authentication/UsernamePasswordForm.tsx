@@ -1,6 +1,5 @@
 import { Button, Link } from '@mui/material'
 import React, { useState } from 'react'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
 
@@ -13,9 +12,7 @@ type UsernamePasswordFormProps = {
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
   const {
-    resetPasswordUrl = `${getEndpoint(
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}PasswordReset:0`,
+    resetPasswordUrl = `https://accounts.sagebionetworks.synapse.org/resetPassword`,
     onSubmit,
     loginIsPending,
     hideForgotPasswordButton,
