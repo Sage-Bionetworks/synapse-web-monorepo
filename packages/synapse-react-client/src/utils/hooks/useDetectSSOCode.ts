@@ -32,7 +32,7 @@ export type UseDetectSSOCodeOptions = {
     resp: TwoFactorAuthErrorResponse,
     encodedTwoFaResetToken: string,
   ) => void
-  hasInitializedSession?: boolean
+  isInitializingSession: boolean
   token?: string
 }
 
@@ -43,7 +43,7 @@ export type UseDetectSSOCodeOptions = {
  * used for account creation, where we pass the username through the process.
  */
 export default function useDetectSSOCode(
-  opts: UseDetectSSOCodeOptions = {},
+  opts: UseDetectSSOCodeOptions = { isInitializingSession: true },
 ): UseDetectSSOCodeReturnType {
   const {
     onSignInComplete,
@@ -51,7 +51,7 @@ export default function useDetectSSOCode(
     onError,
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,
-    hasInitializedSession = false,
+    isInitializingSession,
     token,
   } = opts
   const redirectURL = getRootURL()
@@ -92,7 +92,7 @@ export default function useDetectSSOCode(
   const [isLoading, setIsLoading] = useState(!!(code && provider))
 
   useEffect(() => {
-    if (hasInitializedSession) {
+    if (!isInitializingSession) {
       if (code && provider) {
         const redirectUrl = `${redirectURL}?provider=${provider}`
 
@@ -190,7 +190,7 @@ export default function useDetectSSOCode(
     }
     // Intentionally only monitoring initialization of the session -- only running on mount after the session detection has completed since this uses URL params that come from a redirect
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasInitializedSession])
+  }, [isInitializingSession])
 
   return { isLoading }
 }
