@@ -161,7 +161,8 @@ export function ApplicationSessionManager(
         onTwoFactorAuthResetThroughSSO(twoFactorAuthError, twoFaResetToken)
       }
     },
-    isInitializingSession: !hasInitializedSession,
+    hasInitializedSession,
+    token,
   })
 
   return (
