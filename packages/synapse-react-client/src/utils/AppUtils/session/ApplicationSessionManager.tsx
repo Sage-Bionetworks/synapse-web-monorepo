@@ -162,6 +162,7 @@ export function ApplicationSessionManager(
       }
     },
     isInitializingSession: !hasInitializedSession,
+    token,
   })
 
   return (

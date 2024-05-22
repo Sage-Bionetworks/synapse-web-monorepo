@@ -17,7 +17,6 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { OAuth2State } from '../types'
-import { useSynapseContext } from '../context'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -34,6 +33,7 @@ export type UseDetectSSOCodeOptions = {
     encodedTwoFaResetToken: string,
   ) => void
   isInitializingSession: boolean
+  token?: string
 }
 
 /*
@@ -52,6 +52,7 @@ export default function useDetectSSOCode(
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,
     isInitializingSession,
+    token,
   } = opts
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
@@ -89,7 +90,6 @@ export default function useDetectSSOCode(
   }, [isHandlingSynapseOAuthSignIn, searchParams])
 
   const [isLoading, setIsLoading] = useState(!!(code && provider))
-  const { accessToken } = useSynapseContext()
 
   useEffect(() => {
     if (!isInitializingSession) {
@@ -97,7 +97,7 @@ export default function useDetectSSOCode(
         const redirectUrl = `${redirectURL}?provider=${provider}`
 
         //If user is already logged in, and the provider is ORCID, then try to bind this OAuth provider to the account.
-        if (OAUTH2_PROVIDERS.ORCID == provider && accessToken !== undefined) {
+        if (OAUTH2_PROVIDERS.ORCID == provider && token !== undefined) {
           // now bind this to the user account
           const onFailure = (err: SynapseClientError) => {
             console.error('Error binding ORCiD to account: ', err)

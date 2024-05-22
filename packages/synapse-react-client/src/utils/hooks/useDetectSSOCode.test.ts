@@ -12,9 +12,7 @@ import {
   LOGIN_METHOD_OAUTH2_GOOGLE,
   OAUTH2_PROVIDERS,
 } from '../SynapseConstants'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../context'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const authorizationCode = '12345'
 
@@ -49,23 +47,11 @@ const mockBindOAuthProviderToAccount = jest.spyOn(
   'bindOAuthProviderToAccount',
 )
 
-const AUTHENTICATED_CONTEXT: SynapseContextType = {
-  ...MOCK_CONTEXT_VALUE,
-}
-
-const UNAUTHENTICATED_CONTEXT: SynapseContextType = {
-  ...MOCK_CONTEXT_VALUE,
-  accessToken: undefined,
-}
-
 describe('useDetectSSOCode tests', () => {
-  function renderHook(
-    options: UseDetectSSOCodeOptions,
-    contextOverrides?: Partial<SynapseContextType>,
-  ) {
-    return _renderHook(() => useDetectSSOCode(options), {
-      wrapper: createWrapper(contextOverrides),
-    })
+  function renderHook(options: UseDetectSSOCodeOptions) {
+    return _renderHook(() =>
+      useDetectSSOCode({ ...options, isInitializingSession: false }),
+    )
   }
 
   beforeEach(() => {
@@ -96,10 +82,10 @@ describe('useDetectSSOCode tests', () => {
     )
     mockOAuthRegisterAccountStep2.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
-    const hookReturn = renderHook(
-      { onSignInComplete, isInitializingSession: false },
-      UNAUTHENTICATED_CONTEXT,
-    )
+    const hookReturn = renderHook({
+      onSignInComplete,
+      isInitializingSession: false,
+    })
     expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
@@ -129,9 +115,11 @@ describe('useDetectSSOCode tests', () => {
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
     const hookReturn = renderHook(
-      { onSignInComplete, isInitializingSession: false },
-      // User is logged in
-      AUTHENTICATED_CONTEXT,
+      {
+        onSignInComplete,
+        token: MOCK_ACCESS_TOKEN,
+        isInitializingSession: false,
+      }, // User is logged in
     )
     expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -165,9 +153,12 @@ describe('useDetectSSOCode tests', () => {
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
     const hookReturn = renderHook(
-      { onSignInComplete, onError: mockOnError, isInitializingSession: false },
-      // User is logged in
-      AUTHENTICATED_CONTEXT,
+      {
+        onSignInComplete,
+        onError: mockOnError,
+        token: MOCK_ACCESS_TOKEN,
+        isInitializingSession: false,
+      }, // User is logged in
     )
     expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -199,10 +190,10 @@ describe('useDetectSSOCode tests', () => {
       mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
       mockSetAccessTokenCookie.mockResolvedValue(undefined)
 
-      const hookReturn = renderHook(
-        { onSignInComplete: onSignInComplete, isInitializingSession: false },
-        UNAUTHENTICATED_CONTEXT,
-      )
+      const hookReturn = renderHook({
+        onSignInComplete: onSignInComplete,
+        isInitializingSession: false,
+      })
 
       // Should initially be loading
       expect(hookReturn.result.current.isLoading).toBe(true)
@@ -235,14 +226,11 @@ describe('useDetectSSOCode tests', () => {
       const mockOn2fa = jest.fn()
       mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-      const hookReturn = renderHook(
-        {
-          onSignInComplete,
-          onTwoFactorAuthRequired: mockOn2fa,
-          isInitializingSession: false,
-        },
-        UNAUTHENTICATED_CONTEXT,
-      )
+      const hookReturn = renderHook({
+        onSignInComplete,
+        onTwoFactorAuthRequired: mockOn2fa,
+        isInitializingSession: false,
+      })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -276,14 +264,11 @@ describe('useDetectSSOCode tests', () => {
       const mockOn2faReset = jest.fn()
       mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-      const hookReturn = renderHook(
-        {
-          onSignInComplete,
-          onTwoFactorAuthResetTokenPresent: mockOn2faReset,
-          isInitializingSession: false,
-        },
-        UNAUTHENTICATED_CONTEXT,
-      )
+      const hookReturn = renderHook({
+        onSignInComplete,
+        onTwoFactorAuthResetTokenPresent: mockOn2faReset,
+        isInitializingSession: false,
+      })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -324,10 +309,10 @@ describe('useDetectSSOCode tests', () => {
 
       mockOAuthSessionRequest.mockRejectedValue(notFoundError)
 
-      const hookReturn = renderHook(
-        { onSignInComplete, isInitializingSession: false },
-        UNAUTHENTICATED_CONTEXT,
-      )
+      const hookReturn = renderHook({
+        onSignInComplete,
+        isInitializingSession: false,
+      })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -369,14 +354,11 @@ describe('useDetectSSOCode tests', () => {
       mockOAuthSessionRequest.mockRejectedValue(unhandledError)
       const mockOnError = jest.fn()
 
-      const hookReturn = renderHook(
-        {
-          onSignInComplete,
-          onError: mockOnError,
-          isInitializingSession: false,
-        },
-        UNAUTHENTICATED_CONTEXT,
-      )
+      const hookReturn = renderHook({
+        onSignInComplete,
+        onError: mockOnError,
+        isInitializingSession: false,
+      })
       expect(hookReturn.result.current.isLoading).toBe(true)
 
       await waitFor(() => {
@@ -420,14 +402,11 @@ describe('useDetectSSOCode tests', () => {
     const mockOn2faReset = jest.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-    const hookReturn = renderHook(
-      {
-        onSignInComplete,
-        onTwoFactorAuthResetTokenPresent: mockOn2faReset,
-        isInitializingSession: false,
-      },
-      UNAUTHENTICATED_CONTEXT,
-    )
+    const hookReturn = renderHook({
+      onSignInComplete,
+      onTwoFactorAuthResetTokenPresent: mockOn2faReset,
+      isInitializingSession: false,
+    })
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
