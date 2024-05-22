@@ -35,6 +35,12 @@ import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { BackButton } from '../BackButton'
 import { useSourceApp } from '../useSourceApp'
 
+const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
+  'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+
+const NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK =
+  'https://help.synapse.org/__attachments/2007072795/notarized_letter.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+
 const STEP_CONTENT = [
   {
     title: 'Identity verification',
@@ -103,7 +109,7 @@ const STEP_CONTENT = [
               identity (
               <Link
                 color="primary"
-                href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                href={IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK}
                 rel="nofollow"
               >
                 {' '}
@@ -127,7 +133,7 @@ const STEP_CONTENT = [
               A notarized letter attesting to your identity (
               <Link
                 color="primary"
-                href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                href={NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK}
                 rel="nofollow"
               >
                 template here
