@@ -409,32 +409,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     }
   }
 
-  // Useful for verification state logic, in account settings
-  // if (verificationSubmission) {
-  //   //is there an existing verification submission?
-  //   if (verificationSubmission.stateHistory && verificationSubmission.stateHistory.length > 0) {
-  //     //what is the state of the submission?
-  //     const  currentVerificationState:VerificationState = verificationSubmission.stateHistory[verificationSubmission.stateHistory.length-1]
-
-  //     switch(currentVerificationState.state) {
-  //       case VerificationStateEnum.APPROVED:
-  //       case VerificationStateEnum.REJECTED:
-  //         // can resubmit
-  //         break
-  //       case VerificationStateEnum.SUBMITTED:
-  //         // can  cancel
-  //         break
-  //       case VerificationStateEnum.SUSPENDED:
-  //         // show suspended "reason"
-  //         break
-  //     }
-  //   } else {
-  //     } else {
-  //       // give user a chance to create a submission
-  //     }
-  //   }
-  // }
-
   return (
     <StyledOuterContainer>
       {step !== ValidationWizardStep.THANK_YOU ? (
