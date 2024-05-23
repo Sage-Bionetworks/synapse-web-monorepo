@@ -605,8 +605,7 @@ export const AccountSettings = () => {
                   {verificationState?.state ==
                     VerificationStateEnum.SUSPENDED && (
                     <Alert severity="warning">
-                      Application has been suspended:{' '}
-                      {verificationState?.reason}
+                      Validated profile suspension: {verificationState?.reason}
                     </Alert>
                   )}
                   <p style={{ marginTop: '7px' }}>
