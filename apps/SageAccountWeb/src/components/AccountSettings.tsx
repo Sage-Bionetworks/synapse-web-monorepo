@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -31,6 +32,8 @@ import UniversalCookies from 'universal-cookie'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
 import { useSourceAppConfigs } from './useSourceAppConfigs'
+import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
+import { VerificationState } from '@sage-bionetworks/synapse-types'
 
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
@@ -66,6 +69,8 @@ export const AccountSettings = () => {
   const [changeInForm, setChangeInForm] = useState(false)
   const [orcid, setOrcid] = useState<string>()
   const [verified, setVerified] = useState<boolean>()
+  const [verificationState, setCurrentVerificationState] =
+    useState<VerificationState>()
   const [isCertified, setIsCertified] = useState<boolean>()
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
@@ -117,6 +122,11 @@ export const AccountSettings = () => {
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
+    const stateHistory = bundle.verificationSubmission?.stateHistory
+    const currentState = stateHistory
+      ? stateHistory[stateHistory.length - 1]
+      : undefined
+    setCurrentVerificationState(currentState)
   }
 
   const getUserData = async () => {
@@ -173,6 +183,9 @@ export const AccountSettings = () => {
   const handleScroll = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
+  const isRequestValidationButtonDisabled =
+    verificationState?.state == VerificationStateEnum.APPROVED ||
+    verificationState?.state == VerificationStateEnum.SUBMITTED
 
   return (
     <div className="account-settings-page">
@@ -572,8 +585,30 @@ export const AccountSettings = () => {
                 </div>
                 <div className="credential-partition">
                   <h4>Profile Validation</h4>
-                  <CompletionStatus isComplete={verified} />
-                  <p>
+                  {(verificationState === undefined ||
+                    verificationState.state ===
+                      VerificationStateEnum.APPROVED) && (
+                    <CompletionStatus isComplete={verified} />
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.SUBMITTED && (
+                    <Alert severity="info">
+                      Application is currently pending review
+                    </Alert>
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.REJECTED && (
+                    <Alert severity="error">
+                      Application has been rejected: {verificationState?.reason}
+                    </Alert>
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.SUSPENDED && (
+                    <Alert severity="warning">
+                      Validated profile suspension: {verificationState?.reason}
+                    </Alert>
+                  )}
+                  <p style={{ marginTop: '7px' }}>
                     <i>
                       Users with a validated profile can access more features
                       and data.
@@ -588,7 +623,7 @@ export const AccountSettings = () => {
                   </Typography>
                   <div className="primary-button-container">
                     <Button
-                      disabled={!!verified}
+                      disabled={isRequestValidationButtonDisabled}
                       variant="outlined"
                       sx={credentialButtonSX}
                       onClick={() => handleChangesFn('validate')}
