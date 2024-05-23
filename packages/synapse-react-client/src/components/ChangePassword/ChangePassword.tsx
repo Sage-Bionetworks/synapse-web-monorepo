@@ -5,6 +5,9 @@ import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
 
+export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
+  'Your password was successfully changed.'
+
 export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
@@ -16,17 +19,11 @@ export default function ChangePassword() {
   const {
     promptForTwoFactorAuth,
     TwoFactorAuthPrompt,
+    successfullyChangedPassword,
     isPending: changePasswordIsPending,
     handleChangePasswordWithCurrentPassword,
     error,
-  } = useChangePasswordFormState({
-    onChangePasswordSuccess: () => {
-      setOldPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-      displayToast('Password successfully changed.', 'success')
-    },
-  })
+  } = useChangePasswordFormState()
 
   const handleChangePassword = (clickEvent: React.FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
@@ -39,6 +36,12 @@ export default function ChangePassword() {
         newPassword,
       )
     }
+  }
+
+  if (successfullyChangedPassword) {
+    return (
+      <Alert severity={'success'}>{PASSWORD_CHANGED_SUCCESS_MESSAGE}</Alert>
+    )
   }
 
   return (

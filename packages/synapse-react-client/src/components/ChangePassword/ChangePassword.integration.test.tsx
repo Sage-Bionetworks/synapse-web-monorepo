@@ -1,5 +1,7 @@
 import React from 'react'
-import ChangePassword from './ChangePassword'
+import ChangePassword, {
+  PASSWORD_CHANGED_SUCCESS_MESSAGE,
+} from './ChangePassword'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
@@ -44,6 +46,11 @@ function getNewPasswordField() {
 
 function getConfirmPasswordField() {
   return screen.getByLabelText(/Confirm password/i)
+}
+
+function verifySuccessAlertIsShown() {
+  const alert = screen.getByRole('alert')
+  within(alert).getByText(PASSWORD_CHANGED_SUCCESS_MESSAGE)
 }
 
 function setUp() {
@@ -141,13 +148,10 @@ describe('ChangePassword tests', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Password successfully changed.',
-        'success',
-      )
-      expect(currentPasswordField).toHaveValue('')
-      expect(newPasswordField).toHaveValue('')
-      expect(confirmPasswordField).toHaveValue('')
+      verifySuccessAlertIsShown()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
       expect(changePasswordSpy).toHaveBeenCalledTimes(1)
       expect(changePasswordSpy).toHaveBeenCalledWith({
         concreteType:
@@ -293,16 +297,11 @@ describe('ChangePassword tests', () => {
         otpType: 'TOTP',
       })
 
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Password successfully changed.',
-        'success',
-      )
+      verifySuccessAlertIsShown()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
     })
-
-    // The form should be reset
-    expect(getCurrentPasswordField()).toHaveValue('')
-    expect(getNewPasswordField()).toHaveValue('')
-    expect(getConfirmPasswordField()).toHaveValue('')
   })
 
   it('supports entering a recovery code if the server requires 2FA', async () => {
@@ -363,15 +362,10 @@ describe('ChangePassword tests', () => {
         otpType: 'RECOVERY_CODE',
       })
 
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Password successfully changed.',
-        'success',
-      )
-
-      // The form should be reset
-      expect(getCurrentPasswordField()).toHaveValue('')
-      expect(getNewPasswordField()).toHaveValue('')
-      expect(getConfirmPasswordField()).toHaveValue('')
+      verifySuccessAlertIsShown()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
     })
   })
 

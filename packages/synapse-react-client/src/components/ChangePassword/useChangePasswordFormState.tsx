@@ -24,7 +24,7 @@ export type UseChangePasswordFormStateOptions = {
  * @param options
  */
 export default function useChangePasswordFormState(
-  options: UseChangePasswordFormStateOptions,
+  options?: UseChangePasswordFormStateOptions,
 ) {
   // Store new password in state so that we can re-use it if 2FA is required
   const [newPassword, setNewPassword] = useState<string>('')
@@ -33,6 +33,8 @@ export default function useChangePasswordFormState(
   >()
   const [otpStep, setOtpStep] =
     useState<ONE_TIME_PASSWORD_STEP>('VERIFICATION_CODE')
+  const [successfullyChangedPassword, setSuccessfullyChangedPassword] =
+    useState(false)
   const {
     mutate: changePassword,
     isPending,
@@ -44,8 +46,9 @@ export default function useChangePasswordFormState(
         // e.g. if the user enters the wrong 2FA code
         setTwoFactorAuthErrorResponse(maybeTwoFactorResponse)
       } else {
+        setSuccessfullyChangedPassword(true)
         setTwoFactorAuthErrorResponse(undefined)
-        if (options.onChangePasswordSuccess) {
+        if (options?.onChangePasswordSuccess) {
           options.onChangePasswordSuccess()
         }
       }
@@ -146,6 +149,7 @@ export default function useChangePasswordFormState(
   ])
 
   return {
+    successfullyChangedPassword,
     isPending,
     error,
     promptForTwoFactorAuth,
