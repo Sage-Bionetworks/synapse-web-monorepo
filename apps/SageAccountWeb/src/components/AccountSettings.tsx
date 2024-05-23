@@ -183,20 +183,9 @@ export const AccountSettings = () => {
   const handleScroll = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
-
-  let requestProfileValidationButtonText = 'Request validation'
-  if (verificationState !== undefined) {
-    switch (verificationState.state) {
-      case VerificationStateEnum.APPROVED:
-      case VerificationStateEnum.REJECTED:
-      case VerificationStateEnum.SUSPENDED:
-        requestProfileValidationButtonText = 'Re-request validation'
-        break
-      case VerificationStateEnum.SUBMITTED:
-        requestProfileValidationButtonText = 'Update validation application'
-        break
-    }
-  }
+  const isRequestValidationButtonDisabled =
+    verificationState?.state == VerificationStateEnum.APPROVED ||
+    verificationState?.state == VerificationStateEnum.SUBMITTED
 
   return (
     <div className="account-settings-page">
@@ -596,7 +585,11 @@ export const AccountSettings = () => {
                 </div>
                 <div className="credential-partition">
                   <h4>Profile Validation</h4>
-                  <CompletionStatus isComplete={verified} />
+                  {(verificationState === undefined ||
+                    verificationState.state ===
+                      VerificationStateEnum.APPROVED) && (
+                    <CompletionStatus isComplete={verified} />
+                  )}
                   {verificationState?.state ==
                     VerificationStateEnum.SUBMITTED && (
                     <Alert severity="info">
@@ -616,7 +609,7 @@ export const AccountSettings = () => {
                       {verificationState?.reason}
                     </Alert>
                   )}
-                  <p>
+                  <p style={{ marginTop: '7px' }}>
                     <i>
                       Users with a validated profile can access more features
                       and data.
@@ -631,15 +624,12 @@ export const AccountSettings = () => {
                   </Typography>
                   <div className="primary-button-container">
                     <Button
-                      disabled={
-                        verificationState?.state !==
-                        VerificationStateEnum.APPROVED
-                      }
+                      disabled={isRequestValidationButtonDisabled}
                       variant="outlined"
                       sx={credentialButtonSX}
                       onClick={() => handleChangesFn('validate')}
                     >
-                      {requestProfileValidationButtonText}
+                      Request validation
                     </Button>
                     <Link
                       href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers"
