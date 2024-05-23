@@ -485,7 +485,7 @@ export const AccountSettings = () => {
                 </Typography>
                 <div className="credential-partition">
                   <h4>Terms and Conditions for Use</h4>
-                  <CompletionStatus isComplete={verified} />
+                  <CompletionStatus isComplete={termsOfUse} />
                   <Typography variant={'body1'} sx={{ my: 1 }}>
                     <i>Required to register</i>
                   </Typography>
