@@ -120,29 +120,51 @@ export function OAuth2Form() {
     )
   }
 
+  /**
+   * Parse the URL search params to construct an OIDC Authorization Request
+   *
+   * @returns OIDCAuthorizationRequest if the request is valid
+   * @returns undefined if the request is invalid. `onError` will be called with an error message.
+   */
   const oidcAuthorizationRequestFromSearchParams:
     | OIDCAuthorizationRequest
     | undefined = useMemo(() => {
-    const clientId = queryParams.get('client_id')
-    const scope = queryParams.get('scope')
-    const responseType = queryParams.get('response_type')
-    const redirectUri = queryParams.get('redirect_uri')
+    const missingParams: string[] = []
 
-    if (
-      clientId == null ||
-      scope == null ||
-      responseType == null ||
-      redirectUri == null
-    ) {
-      // We don't have the params to construct the request
+    const clientId = queryParams.get('client_id')
+    if (clientId == null) {
+      missingParams.push('client_id')
+    }
+    const scope = queryParams.get('scope')
+    if (scope == null) {
+      missingParams.push('scope')
+    }
+    const responseType = queryParams.get('response_type')
+    if (responseType == null) {
+      missingParams.push('response_type')
+    }
+    const redirectUri = queryParams.get('redirect_uri')
+    if (redirectUri == null) {
+      missingParams.push('redirect_uri')
+    }
+
+    if (missingParams.length > 0) {
+      // We don't have the params required to construct the request
+      onError(
+        new Error(
+          `Invalid request. Missing required parameter(s): ${missingParams.join(
+            ', ',
+          )}`,
+        ),
+      )
       return undefined
     }
 
     const authRequest: OIDCAuthorizationRequest = {
-      clientId: clientId,
-      scope: scope,
-      responseType: responseType,
-      redirectUri: redirectUri,
+      clientId: clientId!,
+      scope: scope!,
+      responseType: responseType!,
+      redirectUri: redirectUri!,
       nonce: queryParams.get('nonce') || undefined,
     }
     const claimsString = queryParams.get('claims')
@@ -150,7 +172,7 @@ export function OAuth2Form() {
       authRequest.claims = JSON.parse(claimsString)
     }
     return authRequest
-  }, [queryParams])
+  }, [onError, queryParams])
 
   const { data: hasUserAuthorizedOAuthClient } =
     SynapseQueries.useGetHasUserAuthorizedOAuthClient(

@@ -32,24 +32,45 @@ const overrideWaitForOptions: waitForOptions = {
 const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
   SynapseConstants
 
-function createParams(prompt?: string) {
-  const params = new URLSearchParams()
-  params.set('response_type', 'code')
-  params.set('client_id', '1234')
-  params.set('scope', 'openid')
-  params.set('state', '1ga1bi0qm') // This `state` is passed by the 3rd party client. See PORTALS-3073
-  params.set('redirect_uri', 'https://some-client-uri.abc/redirect')
-  params.set('claims', JSON.stringify({ id_token: { userid: null } }))
-  if (prompt) {
-    params.set('prompt', prompt)
+type ParamOverrides = Partial<
+  Record<
+    | 'response_type'
+    | 'client_id'
+    | 'scope'
+    | 'state'
+    | 'redirect_uri'
+    | 'claims'
+    | 'prompt',
+    string | null
+  >
+>
+
+function createParams(paramOverrides?: ParamOverrides) {
+  const paramsObject = {
+    response_type: 'code',
+    client_id: '1234',
+    scope: 'openid',
+    state: '1ga1bi0qm',
+    redirect_uri: 'https://some-client-uri.abc/redirect',
+    claims: JSON.stringify({ id_token: { userid: null } }),
+    ...paramOverrides,
   }
+
+  const params = new URLSearchParams()
+  Object.entries(paramsObject).forEach(([key, value]) => {
+    if (value == null) {
+      params.delete(key)
+    } else {
+      params.set(key, value)
+    }
+  })
   return params
 }
 
-function renderApp(prompt?: string, updateHistory = true) {
+function renderApp(paramOverrides?: ParamOverrides, updateHistory = true) {
   // create a query client that is isolated to each test to prevent undesirable cache hits between tests
   const queryClient = new QueryClient(defaultQueryClientConfig)
-  const params = createParams(prompt)
+  const params = createParams(paramOverrides)
   if (updateHistory) {
     window.history.pushState(null, '', `/?${params.toString()}`)
   }
@@ -192,7 +213,7 @@ describe('App integration tests', () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    const { params } = renderApp('consent')
+    const { params } = renderApp({ prompt: 'consent' })
 
     // The user has logged in but has not granted consent, so check for the consent text
     await screen.findByText(mockOauthClient.client_name!)
@@ -227,7 +248,7 @@ describe('App integration tests', () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    renderApp(prompt)
+    renderApp({ prompt })
     // Verify that the consent button appears
     await screen.findByRole('button', { name: 'Allow' })
 
@@ -242,7 +263,7 @@ describe('App integration tests', () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    const { params } = renderApp(prompt)
+    const { params } = renderApp({ prompt })
 
     await waitFor(() => {
       screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
@@ -429,4 +450,22 @@ describe('App integration tests', () => {
       )
     })
   })
+
+  test.each(['client_id', 'scope', 'response_type', 'redirect_uri'])(
+    `An error is shown if the required parameter %s is missing`,
+    async missingParam => {
+      renderApp({
+        // Delete the param from the URLSearchParams
+        [missingParam]: null,
+      })
+
+      await waitFor(() => {
+        const alert = screen.getByRole('alert')
+        within(alert).findByText(
+          `Invalid request. Missing required parameter(s): ${missingParam}`,
+        )
+      })
+      expect(window.location.replace).not.toHaveBeenCalled()
+    },
+  )
 })
