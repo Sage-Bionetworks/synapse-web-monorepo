@@ -105,7 +105,17 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           name: 'MarkdownCollapse',
           columnName: 'Acknowledgement',
           props: {
+            title: 'Acknowledgement Statement',
             textDescription: 'full statement',
+            showCopyPlainText: true,
+          },
+        },
+        {
+          name: 'MarkdownCollapse',
+          columnName: 'Citations',
+          props: {
+            title: 'Citations',
+            textDescription: 'all citations',
             showCopyPlainText: true,
           },
         },
