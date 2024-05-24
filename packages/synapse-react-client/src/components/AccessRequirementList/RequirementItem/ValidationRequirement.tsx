@@ -1,9 +1,9 @@
 import React from 'react'
 import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { ONE_SAGE_PRODUCTION_URL } from '../../../utils/SynapseConstants'
 
 /**
  * When creating requests for access requirements on a particular file, one or more access requirements may require that the
@@ -26,7 +26,10 @@ export default function ValidationRequirement() {
     >
       <Typography variant={'body1'}>
         You must first apply to have your{' '}
-        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:v/settings`}>
+        <Link
+          href={`${ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount#trust`}
+          target={'_blank'}
+        >
           user profile validated
         </Link>
       </Typography>

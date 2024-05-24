@@ -1,5 +1,4 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -8,6 +7,7 @@ import {
   IconSvg,
   StandaloneLoginForm,
   SynapseComponents,
+  SynapseConstants,
   SynapseQueries,
   SystemUseNotification,
   useSynapseContext,
@@ -303,7 +303,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="Settings"
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
-                      href={`https://www.synapse.org/Profile:${userProfile.ownerId}/settings`}
+                      href={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount`}
                     >
                       Settings
                     </Dropdown.Item>

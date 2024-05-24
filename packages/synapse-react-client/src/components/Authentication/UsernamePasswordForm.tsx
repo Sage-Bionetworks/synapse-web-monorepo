@@ -2,6 +2,7 @@ import { Button, Link } from '@mui/material'
 import React, { useState } from 'react'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
+import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
@@ -12,7 +13,7 @@ type UsernamePasswordFormProps = {
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
   const {
-    resetPasswordUrl = `https://accounts.sagebionetworks.synapse.org/resetPassword`,
+    resetPasswordUrl = `${ONE_SAGE_PRODUCTION_URL}/resetPassword`,
     onSubmit,
     loginIsPending,
     hideForgotPasswordButton,
@@ -52,7 +53,17 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         onChange={e => setPassword(e.target.value)}
       />
       {!hideForgotPasswordButton && (
-        <Link href={resetPasswordUrl}>Forgot password?</Link>
+        <Link
+          href={resetPasswordUrl}
+          target={
+            // If not on OneSage, open in new tab
+            location.origin != new URL(resetPasswordUrl).origin
+              ? '_blank'
+              : undefined
+          }
+        >
+          Forgot password?
+        </Link>
       )}
       <Button
         fullWidth

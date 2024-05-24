@@ -18,6 +18,7 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
+import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -450,7 +451,8 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`/Profile:${currentUserProfile?.ownerId}/settings`}
+                    href={`${ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount`}
+                    target="_blank"
                     rel="noopener noreferrer"
                   >
                     Account Settings
