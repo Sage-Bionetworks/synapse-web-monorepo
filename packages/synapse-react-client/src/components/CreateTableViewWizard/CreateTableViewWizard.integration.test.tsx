@@ -70,6 +70,25 @@ async function getLatestCreatedColumnModelIdsFromSpy(
   ).list.map(cm => cm.id)
 }
 
+function useGetFeatureFlagsOverride() {
+  server.use(
+    rest.get(
+      `${getEndpoint(
+        BackendDestinationEnum.PORTAL_ENDPOINT,
+      )}Portal/featureflags`,
+      (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            'mock feature flag': true,
+          }),
+          ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
+        )
+      },
+    ),
+  )
+}
+
 describe('CreateTableWizard integration tests', () => {
   function renderComponent(props: CreateTableViewWizardProps) {
     return {
@@ -86,6 +105,11 @@ describe('CreateTableWizard integration tests', () => {
   beforeAll(() => {
     server.listen()
   })
+
+  beforeEach(() => {
+    useGetFeatureFlagsOverride()
+  })
+
   afterEach(() => {
     server.resetHandlers()
     jest.clearAllMocks()

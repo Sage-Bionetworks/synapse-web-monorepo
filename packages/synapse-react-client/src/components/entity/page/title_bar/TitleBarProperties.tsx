@@ -58,8 +58,6 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
 
   const [showAllProperties, setShowAllProperties] = useState(false)
 
-  console.log(featureFlags)
-
   return (
     <Box sx={{ padding: '20px 40px' }}>
       <Stack

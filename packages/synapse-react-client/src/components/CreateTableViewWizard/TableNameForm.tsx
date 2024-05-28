@@ -19,7 +19,6 @@ export default function TableNameForm(props: TableNameFormProps) {
   const { name, setName, description, setDescription } = props
   const { isInExperimentalMode } = useSynapseContext()
   const { data: featureFlags } = useGetFeatureFlags()
-  console.log(featureFlags)
   return (
     <>
       <TextField
