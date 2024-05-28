@@ -4,7 +4,8 @@ import { useGetEntityBundle } from '../../../../synapse-queries'
 import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'
-
+import { useGetFeatureFlags } from '../../../../synapse-queries'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 export type TitleBarPropertiesProps = {
   entityId: string
   versionNumber?: number
@@ -50,10 +51,14 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
   // We don't need the entire bundle, but it's fetched for the rest of the title bar and useGetEntityTitleBarProperties below, so the cache will be hot.
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
+  const { data: featureFlags } = useGetFeatureFlags()
+
   // Actual entity data is fetched and transformed in this custom hook
   const properties = useGetEntityTitleBarProperties(entityId, versionNumber)
 
   const [showAllProperties, setShowAllProperties] = useState(false)
+
+  console.log(featureFlags)
 
   return (
     <Box sx={{ padding: '20px 40px' }}>
@@ -125,11 +130,13 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
           </table>
         </Box>
       )}
-      {bundle?.entity?.description && isInExperimentalMode && (
-        <Box sx={{ marginTop: '10px', maxWidth: '720px' }}>
-          {bundle?.entity?.description}
-        </Box>
-      )}
+      {bundle?.entity?.description &&
+        (isInExperimentalMode ||
+          featureFlags?.[FeatureFlagEnum.DESCRIPTION_FIELD]) && (
+          <Box sx={{ marginTop: '10px', maxWidth: '720px' }}>
+            {bundle?.entity?.description}
+          </Box>
+        )}
     </Box>
   )
 }
