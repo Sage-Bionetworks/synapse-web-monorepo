@@ -17,6 +17,7 @@ import RecordProvenance from '../../assets/icons/RecordProvenance'
 import ShareYourResearch from '../../assets/icons/ShareYourResearch'
 import MintDoi from '../../assets/icons/MintDoi'
 import SynapsePlans from './SynapsePlans'
+import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -31,7 +32,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
 }) => {
   const { accessToken } = useSynapseContext()
   const LOGIN_LINK = '/LoginPlace:0'
-  const REGISTRATION_LINK = '/RegisterAccount:0'
+  const REGISTRATION_LINK = ONE_SAGE_PRODUCTION_URL + '/register1'
 
   // 'v' will resolve to the user's profile ID
   const DASHBOARD_LINK = '/Profile:v/projects'

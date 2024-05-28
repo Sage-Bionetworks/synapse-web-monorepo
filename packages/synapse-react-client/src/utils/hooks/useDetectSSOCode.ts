@@ -1,7 +1,4 @@
-import {
-  BackendDestinationEnum,
-  PRODUCTION_ENDPOINT_CONFIG,
-} from '../functions/getEndpoint'
+import { BackendDestinationEnum } from '../functions/getEndpoint'
 import {
   LoginResponse,
   TwoFactorAuthErrorResponse,
@@ -15,7 +12,7 @@ import {
   setAccessTokenCookie,
 } from '../../synapse-client'
 import { useEffect, useMemo, useState } from 'react'
-import { OAUTH2_PROVIDERS } from '../SynapseConstants'
+import { OAUTH2_PROVIDERS, ONE_SAGE_PRODUCTION_URL } from '../SynapseConstants'
 import { OAuth2State } from '../types'
 
 export type UseDetectSSOCodeReturnType = {
@@ -47,7 +44,7 @@ export default function useDetectSSOCode(
 ): UseDetectSSOCodeReturnType {
   const {
     onSignInComplete,
-    registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}RegisterAccount:0`,
+    registerAccountUrl = `${ONE_SAGE_PRODUCTION_URL}/register1`,
     onError,
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,

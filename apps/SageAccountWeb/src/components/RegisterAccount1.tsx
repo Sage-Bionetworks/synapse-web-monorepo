@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -23,7 +23,7 @@ import {
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { SourceAppLogo } from './SourceApp'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
@@ -55,6 +55,20 @@ export const RegisterAccount1 = () => {
   const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
+
+  const { search } = useLocation()
+  const queryParams = useMemo(() => new URLSearchParams(search), [search])
+  const emailFromParams = queryParams.get('email')
+
+  // If we have an email param, initialize the email address with the param
+  useEffect(() => {
+    if (emailFromParams) {
+      setEmail(emailFromParams)
+      setPage(Pages.EMAIL_REGISTRATION)
+    }
+    // Initialize the email address field with the email query parameter, but allow the user to change it or register using OAuth
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // If we have a MembershipInvtnSignedToken, initialize the email address with the membership invitation invitee email.
   useEffect(() => {
