@@ -97,6 +97,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                     color="primary"
                     component={RouterLink}
                     to="/sageresources"
+                    target="_blank"
                   >
                     More about these resources
                   </Link>

@@ -346,7 +346,7 @@ export const RegisterAccount1 = () => {
                   component={RouterLink}
                   to="/sageresources"
                 >
-                  More about Synapse accounts
+                  More about Synapse account
                 </Link>
               </Box>
             </>
