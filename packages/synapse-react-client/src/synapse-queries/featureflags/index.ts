@@ -1,1 +1,1 @@
-export * from './useGetFeatureFlags'
+export * from './useGetFeatureFlag'

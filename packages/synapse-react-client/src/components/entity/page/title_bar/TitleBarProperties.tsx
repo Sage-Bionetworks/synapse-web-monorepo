@@ -3,7 +3,7 @@ import { Box, Divider, Link, Stack, Typography } from '@mui/material'
 import { useGetEntityBundle } from '../../../../synapse-queries'
 import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'
-import { useGetFeatureFlags } from '../../../../synapse-queries'
+import { useGetFeatureFlag } from '../../../../synapse-queries'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 export type TitleBarPropertiesProps = {
   entityId: string
@@ -49,7 +49,7 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
   // We don't need the entire bundle, but it's fetched for the rest of the title bar and useGetEntityTitleBarProperties below, so the cache will be hot.
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
-  const isFeatureEnabled = useGetFeatureFlags(FeatureFlagEnum.DESCRIPTION_FIELD)
+  const isFeatureEnabled = useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD)
 
   // Actual entity data is fetched and transformed in this custom hook
   const properties = useGetEntityTitleBarProperties(entityId, versionNumber)

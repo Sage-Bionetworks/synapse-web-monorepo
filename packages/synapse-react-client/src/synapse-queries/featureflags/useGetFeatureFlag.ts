@@ -3,7 +3,7 @@ import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import { FeatureFlags, FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
-export function useGetFeatureFlags(
+export function useGetFeatureFlag(
   featureFlag: FeatureFlagEnum,
   options?: Partial<UseQueryOptions<FeatureFlags, SynapseClientError>>,
 ): boolean {
