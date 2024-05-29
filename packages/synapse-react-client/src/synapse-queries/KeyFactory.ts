@@ -219,6 +219,10 @@ export class KeyFactory {
     ]
   }
 
+  public getFeatureFlagQueryKey() {
+    return this.getKey('featureflag')
+  }
+
   public getAllEntityDataQueryKey() {
     return this.getKey(entityQueryKeyObjects.all)
   }
