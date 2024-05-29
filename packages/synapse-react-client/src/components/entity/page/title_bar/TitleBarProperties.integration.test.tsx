@@ -36,6 +36,7 @@ import {
   mockExternalS3UploadDestination,
 } from '../../../../mocks/mock_upload_destination'
 import { getEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
+import { useGetFeatureFlagsOverride } from '../../../../mocks/msw/handlers/featureFlagHandlers'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -66,25 +67,6 @@ function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
           return res(ctx.status(404), ctx.json({}))
         }
         return res(ctx.status(200), ctx.json(doiAssociation))
-      },
-    ),
-  )
-}
-
-function useGetFeatureFlagsOverride() {
-  server.use(
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.PORTAL_ENDPOINT,
-      )}Portal/featureflags`,
-      (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            'mock feature flag': true,
-          }),
-          ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
-        )
       },
     ),
   )

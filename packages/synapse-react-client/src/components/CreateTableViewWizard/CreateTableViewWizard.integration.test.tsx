@@ -32,6 +32,7 @@ import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { omit } from 'lodash-es'
+import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -68,25 +69,6 @@ async function getLatestCreatedColumnModelIdsFromSpy(
       typeof SynapseClient.createColumnModels
     >)
   ).list.map(cm => cm.id)
-}
-
-function useGetFeatureFlagsOverride() {
-  server.use(
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.PORTAL_ENDPOINT,
-      )}Portal/featureflags`,
-      (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            'mock feature flag': true,
-          }),
-          ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
-        )
-      },
-    ),
-  )
 }
 
 describe('CreateTableWizard integration tests', () => {

@@ -1,6 +1,5 @@
 import React from 'react'
 import { TextField } from '@mui/material'
-import { useSynapseContext } from '../../utils'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlags } from '../../synapse-queries'
 
@@ -17,8 +16,7 @@ type TableNameFormProps = {
  */
 export default function TableNameForm(props: TableNameFormProps) {
   const { name, setName, description, setDescription } = props
-  const { isInExperimentalMode } = useSynapseContext()
-  const { data: featureFlags } = useGetFeatureFlags()
+  const isFeatureEnabled = useGetFeatureFlags(FeatureFlagEnum.DESCRIPTION_FIELD)
   return (
     <>
       <TextField
@@ -30,8 +28,7 @@ export default function TableNameForm(props: TableNameFormProps) {
         }}
         fullWidth
       />
-      {(isInExperimentalMode ||
-        featureFlags?.[FeatureFlagEnum.DESCRIPTION_FIELD]) && (
+      {isFeatureEnabled && (
         <TextField
           label={'Description'}
           value={description}
