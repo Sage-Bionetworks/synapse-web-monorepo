@@ -18,7 +18,7 @@ import { ConfigRoute, GenericRoute } from './types/portal-config'
 import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useHistory } from 'react-router-dom'
-import { PORTAL_KEY, RESPONSIVE_SIDE_PADDING } from './utils'
+import { RESPONSIVE_SIDE_PADDING } from './utils'
 
 type SynapseSettingLink = {
   text: string
@@ -147,6 +147,7 @@ function Navbar() {
     (config) => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
+  const PORTAL_KEY = import.meta.env.VITE_PORTAL_KEY
   return (
     <React.Fragment>
       <Box

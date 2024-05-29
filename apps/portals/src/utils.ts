@@ -28,7 +28,3 @@ export const NEGATIVE_RESPONSIVE_SIDE_MARGIN = {
     md: -5,
   },
 } satisfies SxProps
-
-export const PORTAL_KEY = document
-  .querySelector("meta[property='portalkey']")
-  ?.getAttribute('content')
