@@ -18,7 +18,7 @@ import { ConfigRoute, GenericRoute } from './types/portal-config'
 import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useHistory } from 'react-router-dom'
-import { RESPONSIVE_SIDE_PADDING } from './utils'
+import { PORTAL_KEY, RESPONSIVE_SIDE_PADDING } from './utils'
 
 type SynapseSettingLink = {
   text: string
@@ -239,6 +239,7 @@ function Navbar() {
                   </IconButton>
                   <DialogContent dividers={false}>
                     <StandaloneLoginForm
+                      registerAccountUrl={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/register1?appId=${PORTAL_KEY}`}
                       twoFactorAuthenticationRequired={
                         twoFactorAuthSSOErrorResponse
                       }
@@ -303,7 +304,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="Settings"
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
-                      href={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount`}
+                      href={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount?appId=${PORTAL_KEY}`}
                     >
                       Settings
                     </Dropdown.Item>
