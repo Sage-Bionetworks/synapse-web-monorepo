@@ -2,9 +2,12 @@ import React from 'react'
 import TOTPForm from './TOTPForm'
 import { Alert, Button, Link, Typography } from '@mui/material'
 import RecoveryCodeForm from './RecoveryCodeForm'
-import { TwoFactorAuthOtpType } from '@sage-bionetworks/synapse-types'
+import {
+  TwoFactorAuthOtpType,
+  FeatureFlagEnum,
+} from '@sage-bionetworks/synapse-types'
 import { UseLoginReturn } from '../../utils/hooks'
-import { useSynapseContext } from '../../utils'
+import { useGetFeatureFlag } from '../../synapse-queries'
 
 export type ONE_TIME_PASSWORD_STEP =
   | 'VERIFICATION_CODE'
@@ -52,9 +55,9 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetIsPending,
   } = props
-
-  const { isInExperimentalMode } = useSynapseContext()
-
+  const isFeatureEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.CHANGE_PASSWORD_2FA_CHECK,
+  )
   return (
     <>
       {step === 'VERIFICATION_CODE' && (
@@ -102,7 +105,7 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
         onClickReset2FA &&
         step !== 'DISABLE_2FA_PROMPT' &&
         // TODO: Remove from experimental mode once feature flag is toggled
-        isInExperimentalMode && (
+        isFeatureEnabled && (
           <Link
             align={'center'}
             color={'grey.700'}
