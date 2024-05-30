@@ -1,0 +1,9 @@
+import{j as t}from"./jsx-runtime-Du8NFWEI.js";import{r as l}from"./index-Dl6G-zuu.js";import{E as s}from"./EntityViewMaskEditor-D6gVBaru.js";import{l as _,p as T}from"./index-S3N2_v0E.js";import{P as I}from"./Paper-BWoP1bRz.js";import"./Checkbox-ByKpZRhl.js";import"./uniqueId-DePWDRrE.js";import"./toString-DMqudUWC.js";import"./isArray-D3Xc0Edl.js";import"./index-DMoHWj5j.js";import"./isSymbol-BVHl_2sa.js";import"./Typography-B88_J_TK.js";import"./createTheme-CwlmBDro.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-Bpxk95mn.js";import"./styled-OgyJf9MH.js";import"./FormGroup-Cukz5z2O.js";import"./useFormControl-EHw8eS4L.js";import"./Alert-HJYNNEvY.js";import"./mergeSlotProps-DHTQkAbv.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-CEBgoE3Z.js";import"./createSvgIcon-BYNyJbGL.js";import"./IconButton-CgTC7RgJ.js";import"./ButtonBase-5SeL_6IU.js";import"./TransitionGroupContext-DGN18uA0.js";import"./assertThisInitialized-B9jnkVVz.js";import"./inheritsLoose-B7h9gheN.js";import"./useIsFocusVisible-DHYsnH_Q.js";const G={title:"Synapse/EntityView/Mask Editor",component:s,decorators:[e=>t.jsx(I,{sx:{mx:"auto",p:4,maxWidth:"720px"},children:t.jsx(e,{})})],render:function(m){const[u,d]=l.useState(m.value);return t.jsx(s,{...m,value:u,onChange:d})}},r={args:{value:_}},o={args:{value:_|T}};var a,p,i;r.parameters={...r.parameters,docs:{...(a=r.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  args: {
+    value: ENTITY_VIEW_TYPE_MASK_FILE
+  }
+}`,...(i=(p=r.parameters)==null?void 0:p.docs)==null?void 0:i.source}}};var n,E,c;o.parameters={...o.parameters,docs:{...(n=o.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    value: ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
+  }
+}`,...(c=(E=o.parameters)==null?void 0:E.docs)==null?void 0:c.source}}};const H=["FileView","CustomScope"];export{o as CustomScope,r as FileView,H as __namedExportsOrder,G as default};
