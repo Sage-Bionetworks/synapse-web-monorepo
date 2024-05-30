@@ -42,7 +42,7 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
    * Currently, schema/validation features are only shown in experimental mode.
    */
   const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.JSONSCHEMA_ANNOTATION_VALIDATION_STATUS,
+    FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
   )
 
   const {
