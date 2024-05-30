@@ -418,6 +418,8 @@ describe('App integration tests', () => {
       )
     })
 
+    // No errors should be shown (such as in PORTALS-3094)
+    expect(screen.queryByRole('alert')).toBe(null)
     // Verify the TOTP prompt is on-screen and type in '123456'
     await screen.findByText(
       'Enter the 6-digit, time-based verification code provided by your authenticator app.',

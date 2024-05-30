@@ -63,6 +63,9 @@ export function OAuth2Form() {
   // The target URL may take a while to respond, so we show a loader to inform the user that the delay is not our fault
   const [showPendingRedirectUI, setShowPendingRedirectUI] = useState(false)
 
+  // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
+  const isHandlingSignInFromExternalIdP = Boolean(queryParams.get('provider'))
+
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
       if (error instanceof SynapseClientError && error.status === 401) {
@@ -129,6 +132,11 @@ export function OAuth2Form() {
   const oidcAuthorizationRequestFromSearchParams:
     | OIDCAuthorizationRequest
     | undefined = useMemo(() => {
+    if (isHandlingSignInFromExternalIdP) {
+      // The user is in the middle of signing in with an external IdP, so the URL will not yet have the required parameters
+      // Don't make the OIDC authorization request, and don't show an error.
+      return undefined
+    }
     const missingParams: string[] = []
 
     const clientId = queryParams.get('client_id')
@@ -172,7 +180,7 @@ export function OAuth2Form() {
       authRequest.claims = JSON.parse(claimsString)
     }
     return authRequest
-  }, [onError, queryParams])
+  }, [isHandlingSignInFromExternalIdP, onError, queryParams])
 
   const { data: hasUserAuthorizedOAuthClient } =
     SynapseQueries.useGetHasUserAuthorizedOAuthClient(
