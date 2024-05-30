@@ -16,6 +16,7 @@ import {
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
+import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -116,6 +117,9 @@ async function typeAndSubmitTOTP(
 describe('ChangePasswordWithToken tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    useGetFeatureFlagsOverride()
+  })
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
