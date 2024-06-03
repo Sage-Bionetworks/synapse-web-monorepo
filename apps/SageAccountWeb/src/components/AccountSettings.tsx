@@ -30,7 +30,6 @@ import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { useSourceAppConfigs } from './useSourceAppConfigs'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 import { VerificationState } from '@sage-bionetworks/synapse-types'
 
@@ -75,7 +74,6 @@ export const AccountSettings = () => {
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
   const history = useHistory()
-  const sourceAppConfigs = useSourceAppConfigs()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
   const timezoneRef = useRef<HTMLDivElement>(null)
