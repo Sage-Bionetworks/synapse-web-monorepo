@@ -359,39 +359,6 @@ export const AccountSettings = () => {
                       onChange={e => setCompany(e.target.value)}
                       value={company}
                     />
-                    <Grid
-                      container
-                      spacing={1}
-                      mx={{ paddingTop: '5px', paddingBottom: '20px' }}
-                    >
-                      <Typography
-                        variant="smallText1"
-                        sx={{ paddingLeft: '10px', paddingTop: '8px' }}
-                      >
-                        Used by
-                      </Typography>
-                      {sourceAppConfigs?.map(config => {
-                        if (config.requestAffiliation) {
-                          return (
-                            <Grid
-                              item
-                              key={config.appId}
-                              xs={2}
-                              className="sourceAppItem"
-                            >
-                              <a
-                                style={{ display: 'block' }}
-                                href={config.appURL}
-                              >
-                                {config.logo}
-                              </a>
-                            </Grid>
-                          )
-                        } else {
-                          return <></>
-                        }
-                      })}
-                    </Grid>
                   </StyledFormControl>
                   <TextField
                     fullWidth
