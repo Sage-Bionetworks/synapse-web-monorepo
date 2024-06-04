@@ -34,10 +34,6 @@ import { SourceAppProvider } from './components/useSourceApp'
 import { ResetTwoFactorAuth } from './components/ResetTwoFactorAuth'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 
-const isCodeSearchParam = getSearchParam('code') !== undefined
-const isProviderSearchParam = getSearchParam('provider') !== undefined
-const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -75,15 +71,23 @@ function App() {
                         } else {
                           return (
                             <AppContextConsumer>
-                              {appContext => (
-                                <>
-                                  {appContext?.redirectURL &&
-                                    !isInSSOFlow &&
-                                    window.location.replace(
-                                      appContext?.redirectURL,
-                                    )}
-                                </>
-                              )}
+                              {appContext => {
+                                const isCodeSearchParam =
+                                  getSearchParam('code') !== undefined
+                                const isProviderSearchParam =
+                                  getSearchParam('provider') !== undefined
+                                const isInSSOFlow =
+                                  isCodeSearchParam && isProviderSearchParam
+                                return (
+                                  <>
+                                    {appContext?.redirectURL &&
+                                      !isInSSOFlow &&
+                                      window.location.replace(
+                                        appContext?.redirectURL,
+                                      )}
+                                  </>
+                                )
+                              }}
                             </AppContextConsumer>
                           )
                         }
