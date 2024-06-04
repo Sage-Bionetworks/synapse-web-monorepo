@@ -2,7 +2,7 @@ import { Button, Link } from '@mui/material'
 import React, { useState } from 'react'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
-import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
@@ -12,8 +12,9 @@ type UsernamePasswordFormProps = {
 }
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
+  const defaultResetPasswordUrl = useOneSageURL('/resetPassword')
   const {
-    resetPasswordUrl = `${ONE_SAGE_PRODUCTION_URL}/resetPassword`,
+    resetPasswordUrl = defaultResetPasswordUrl.toString(),
     onSubmit,
     loginIsPending,
     hideForgotPasswordButton,

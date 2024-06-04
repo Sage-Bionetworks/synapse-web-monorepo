@@ -7,7 +7,7 @@ import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
 import { OAuth2State } from '../../utils'
-import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -35,10 +35,11 @@ type Props = {
 }
 
 export default function LoginForm(props: Props) {
+  const defaultRegistrationUrl = useOneSageURL('/register1')
   const {
     ssoRedirectUrl,
     ssoState,
-    registerAccountUrl = `${ONE_SAGE_PRODUCTION_URL}/register1`,
+    registerAccountUrl = defaultRegistrationUrl.toString(),
     resetPasswordUrl,
     onBeginOAuthSignIn,
     onStepChange,

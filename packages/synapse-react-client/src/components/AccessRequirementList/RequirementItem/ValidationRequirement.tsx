@@ -3,7 +3,7 @@ import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
-import { ONE_SAGE_PRODUCTION_URL } from '../../../utils/SynapseConstants'
+import { useOneSageURL } from '../../../utils/hooks/useOneSageURL'
 
 /**
  * When creating requests for access requirements on a particular file, one or more access requirements may require that the
@@ -13,6 +13,11 @@ import { ONE_SAGE_PRODUCTION_URL } from '../../../utils/SynapseConstants'
  */
 export default function ValidationRequirement() {
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
+  const validationURL = useOneSageURL(
+    '/authenticated/myaccount',
+    undefined,
+    'trust',
+  )
 
   return (
     <RequirementItem
@@ -26,10 +31,7 @@ export default function ValidationRequirement() {
     >
       <Typography variant={'body1'}>
         You must first apply to have your{' '}
-        <Link
-          href={`${ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount#trust`}
-          target={'_blank'}
-        >
+        <Link href={validationURL.toString()} target={'_blank'}>
           user profile validated
         </Link>
       </Typography>

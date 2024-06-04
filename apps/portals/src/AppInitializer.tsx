@@ -111,6 +111,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       onResetSessionComplete={() => {
         setShowLoginDialog(false)
       }}
+      appId={import.meta.env.VITE_PORTAL_KEY}
     >
       {!isFramed && props.children}
       <RedirectDialog

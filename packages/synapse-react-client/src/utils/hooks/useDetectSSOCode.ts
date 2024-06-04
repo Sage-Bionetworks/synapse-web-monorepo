@@ -1,4 +1,4 @@
-import { BackendDestinationEnum } from '../functions/getEndpoint'
+import { BackendDestinationEnum } from '../functions'
 import {
   LoginResponse,
   TwoFactorAuthErrorResponse,
@@ -12,8 +12,9 @@ import {
   setAccessTokenCookie,
 } from '../../synapse-client'
 import { useEffect, useMemo, useState } from 'react'
-import { OAUTH2_PROVIDERS, ONE_SAGE_PRODUCTION_URL } from '../SynapseConstants'
+import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { OAuth2State } from '../types'
+import { useOneSageURL } from './useOneSageURL'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -42,9 +43,11 @@ export type UseDetectSSOCodeOptions = {
 export default function useDetectSSOCode(
   opts: UseDetectSSOCodeOptions = { isInitializingSession: true },
 ): UseDetectSSOCodeReturnType {
+  const defaultRegisterAccountURL = useOneSageURL('/register1')
+
   const {
     onSignInComplete,
-    registerAccountUrl = `${ONE_SAGE_PRODUCTION_URL}/register1`,
+    registerAccountUrl = defaultRegisterAccountURL.toString(),
     onError,
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,

@@ -14,11 +14,11 @@ import {
   useGetDownloadListStatistics,
   useSearchAccessSubmissionsInfinite,
 } from '../../synapse-queries'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
-import { ONE_SAGE_PRODUCTION_URL } from '../../utils/SynapseConstants'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -229,6 +229,8 @@ export const SynapseNavDrawer: React.FunctionComponent<
       JSON.stringify(projectSearchJson),
     )}`
   }
+
+  const accountSettingsURL = useOneSageURL('/authenticated/myaccount')
 
   return (
     <>
@@ -451,7 +453,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href={`${ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount`}
+                    href={accountSettingsURL.toString()}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

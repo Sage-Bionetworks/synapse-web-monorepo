@@ -326,7 +326,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
         expect(window.location.replace).toHaveBeenCalledWith(
-          'https://accounts.sagebionetworks.synapse.org/register1',
+          'https://accounts.synapse.org/register1',
         )
         expect(hookReturn.result.current.isLoading).toBe(false)
       })
@@ -374,7 +374,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOnError).toHaveBeenCalledWith(unhandledError.reason)
         // Should not redirect to account creation
         expect(window.location.href).not.toEqual(
-          'https://accounts.sagebionetworks.synapse.org/register1',
+          'https://accounts.synapse.org/register1',
         )
         expect(hookReturn.result.current.isLoading).toBe(false)
       })
