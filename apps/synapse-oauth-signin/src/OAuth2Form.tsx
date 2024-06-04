@@ -419,6 +419,7 @@ export function OAuth2Form() {
           oidcRequestDescription)) && (
         <Paper sx={{ width: '400px', py: 8, px: 4, margin: '0 auto' }}>
           <StandaloneLoginForm
+            registerAccountUrl={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/register1?appId=${clientId}`}
             onBeginOAuthSignIn={() => {
               // save current route (so that we can go back here after SSO)
               AppUtils.preparePostSSORedirect()

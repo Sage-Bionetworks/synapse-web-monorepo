@@ -147,6 +147,7 @@ function Navbar() {
     (config) => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
+  const PORTAL_KEY = import.meta.env.VITE_PORTAL_KEY
   return (
     <React.Fragment>
       <Box
@@ -239,6 +240,7 @@ function Navbar() {
                   </IconButton>
                   <DialogContent dividers={false}>
                     <StandaloneLoginForm
+                      registerAccountUrl={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/register1?appId=${PORTAL_KEY}`}
                       twoFactorAuthenticationRequired={
                         twoFactorAuthSSOErrorResponse
                       }
@@ -303,7 +305,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="Settings"
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
-                      href={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount`}
+                      href={`${SynapseConstants.ONE_SAGE_PRODUCTION_URL}/authenticated/myaccount?appId=${PORTAL_KEY}`}
                     >
                       Settings
                     </Dropdown.Item>
