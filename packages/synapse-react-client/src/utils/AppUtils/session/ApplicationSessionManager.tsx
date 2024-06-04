@@ -26,7 +26,7 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
     twoFactorAuthSSOError: TwoFactorAuthErrorResponse,
     twoFaResetToken: string,
   ) => void
-  appId: SynapseContextType['appId']
+  appId?: SynapseContextType['appId']
 }>
 
 /**

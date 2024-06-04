@@ -17,7 +17,7 @@ function AppInitializer(
     maxAge = parseInt(maxAgeURLParam)
   }
 
-  const clientId = urlSearchParams.get('client_id')
+  const clientId = urlSearchParams.get('client_id') ?? undefined
 
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
