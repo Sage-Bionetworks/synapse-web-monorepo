@@ -20,6 +20,7 @@ import {
   getSuccessfulChangePasswordHandler,
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -120,6 +121,9 @@ async function typeAndSubmitTOTP(
 describe('ChangePassword tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    useGetFeatureFlagsOverride()
+  })
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

@@ -1,6 +1,6 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import { columnAliases, searchConfiguration } from './commonProps'
+import { columnAliases } from './commonProps'
 
 import studyActiveSvg from '../style/study-active.svg?url'
 import studyCompleteSvg from '../style/study-complete.svg?url'
@@ -15,12 +15,12 @@ import {
   studiesSql,
   datasetsSql,
   publicationsSql,
-  filesSql,
   metadataFilesSql,
   toolStudySql,
 } from '../resources'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { NoContentPlaceholderType } from 'synapse-react-client'
+import { filesPlotNavProps } from './files'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -229,23 +229,10 @@ export const studiesDetailPage: DetailsPageProps = {
           name: 'QueryWrapperPlotNav',
           title: 'Study Files',
           props: {
+            ...filesPlotNavProps,
             rgbIndex: 8,
             shouldDeepLink: false,
-            sql: filesSql,
-            visibleColumnCount: 7,
             sqlOperator: ColumnSingleValueFilterOperator.LIKE,
-            isRowSelectionVisible: true,
-            rowSelectionPrimaryKey: ['id'],
-            fileIdColumnName: 'id',
-            fileNameColumnName: 'name',
-            fileVersionColumnName: 'currentVersion',
-            tableConfiguration: {
-              showAccessColumn: true,
-              showDownloadColumn: true,
-            },
-            // name: 'Study Files',
-            columnAliases,
-            searchConfiguration,
           },
           tableSqlKeys: ['studyId'],
           columnName: 'studyId',

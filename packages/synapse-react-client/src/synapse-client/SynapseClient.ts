@@ -301,6 +301,7 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
+  FeatureFlags,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5075,6 +5076,17 @@ export function getPortalFileHandleServletUrl(
   return `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}/Portal/filehandleassociation?${search.toString()}`
+}
+
+/**
+ * Get the feature flags from the SWC appconfig servlet.
+ */
+export const getFeatureFlags = () => {
+  return doGet<FeatureFlags>(
+    `Portal/featureflags`,
+    undefined,
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html

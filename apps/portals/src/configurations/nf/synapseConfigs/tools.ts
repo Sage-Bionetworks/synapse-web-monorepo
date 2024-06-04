@@ -56,6 +56,7 @@ export const toolsSchema: GenericCardSchema = {
     'specimenFormat',
     'specimenType',
     'dateModified',
+    'species',
   ],
 }
 
