@@ -90,6 +90,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     try {
       await SynapseClient.updateNotificationEmail(email, accessToken)
       refetchNotificationEmail()
+      displayToast('Notification email has been updated', 'success')
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
