@@ -118,6 +118,13 @@ testing internal link [Explore/Data](/Explore/Data)
 <p>testing internal link <a href="/Explore/Data">Explore/Data</a></p>
 .
 
+.
+testing Synapse link [Research Communities](#!Synapse:syn3722562/wiki/219258)
+.
+<p>testing Synapse link <a href="/Synapse:syn3722562/wiki/219258">Research Communities</a></p>
+.
+
+
 coverage
 .
 *~f

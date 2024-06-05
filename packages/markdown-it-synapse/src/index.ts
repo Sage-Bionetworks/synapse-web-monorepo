@@ -337,6 +337,11 @@ function init_markdown_it(
         tokens[idx].attrs[hrefIndex][1],
         '#!',
       )
+      if (isInternalSynapseLink) {
+        tokens[idx].attrs[hrefIndex][1] = `/${tokens[idx].attrs[
+          hrefIndex
+        ][1].substring(2)}`
+      }
       const isInternalPageLink = isInternalLink(tokens[idx].attrs[hrefIndex][1])
       if (aIndex < 0) {
         // if it has no href OR it is neither a synapse link or internal page link
