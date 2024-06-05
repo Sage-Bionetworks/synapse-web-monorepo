@@ -4256,7 +4256,7 @@ export const addEmailAddressStep2 = (
  */
 export const deleteEmail = (accessToken: string | undefined, email: string) => {
   return doDelete(
-    `/repo/v1/email?email=${email}`,
+    `/repo/v1/email?email=${encodeURIComponent(email)}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

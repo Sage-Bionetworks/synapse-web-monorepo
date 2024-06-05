@@ -69,6 +69,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
           accessToken,
         ).then(() => {
           displayToast('Email has been successfully added', 'success')
+          refetchCurrentProfile()
           history.replaceState(
             {},
             '',
@@ -99,6 +100,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     try {
       await SynapseClient.deleteEmail(accessToken, email)
       refetchCurrentProfile()
+      displayToast('Email has been successfully removed', 'success')
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
