@@ -152,21 +152,21 @@ const routes: GenericRoute[] = [
           ],
         },
       },
-      // {
-      //   name: 'RssFeedCards',
-      //   title: "What's New",
-      //   centerTitle: true,
-      //   outsideContainerClassName: 'home-spacer',
-      //   props: {
-      //     url: 'https://news.cancercomplexity.synapse.org/',
-      //     itemsToShow: 3,
-      //     allowCategories: [],
-      //     filter: {
-      //       value: 'CCKP',
-      //       type: 'category',
-      //     },
-      //   },
-      // },
+      {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          url: 'https://news.cancercomplexity.synapse.org/',
+          itemsToShow: 3,
+          allowCategories: [],
+          filter: {
+            value: 'CCKP',
+            type: 'category',
+          },
+        },
+      },
       {
         name: 'AboutPortal',
         title: 'About the Cancer Complexity Knowledge Portal',
