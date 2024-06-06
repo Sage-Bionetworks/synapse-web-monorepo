@@ -106,10 +106,24 @@ const routes: GenericRoute[] = [
         },
       },
       {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          url: 'https://news.cancercomplexity.synapse.org/',
+          itemsToShow: 3,
+          allowCategories: [],
+          filter: {
+            value: 'CCKP',
+            type: 'category',
+          },
+        },
+      },
+      {
         name: 'Programs',
         title: 'Consortia',
-        outsideContainerClassName:
-          'home-spacer cancercomplexity-consortia home-bg-dark',
+        outsideContainerClassName: 'home-spacer cancercomplexity-consortia',
         centerTitle: true,
         props: {
           ...consortiaHomePageConfig,
@@ -121,7 +135,7 @@ const routes: GenericRoute[] = [
         centerTitle: true,
         subtitle:
           'The Cancer Resource Information ecosystem contains a growing list of tools and resources. Explore some of them below.',
-        outsideContainerClassName: 'home-spacer',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
           config: [
             {
@@ -153,27 +167,12 @@ const routes: GenericRoute[] = [
         },
       },
       {
-        name: 'RssFeedCards',
-        title: "What's New",
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          url: 'https://news.cancercomplexity.synapse.org/',
-          itemsToShow: 3,
-          allowCategories: [],
-          filter: {
-            value: 'CCKP',
-            type: 'category',
-          },
-        },
-      },
-      {
         name: 'AboutPortal',
         title: 'About the Cancer Complexity Knowledge Portal',
         subtitle:
           'The portal is built to disseminate resources to accelerate discovery and collaboration in the cancer research community. We aim to provide rich context about and access to activities and contributors that have produced the resources hosted within this and other repositories.',
         centerTitle: true,
-        outsideContainerClassName: 'home-spacer home-bg-dark',
+        outsideContainerClassName: 'home-spacer',
         props: {
           cardProps: [
             { ownerId: 'syn21498902', wikiId: '601369' },
