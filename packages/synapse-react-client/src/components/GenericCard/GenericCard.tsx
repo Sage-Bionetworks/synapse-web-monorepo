@@ -240,7 +240,7 @@ export function getCardLinkHref(
       const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
       if (value) {
         // value is defined!
-        return `/${baseURL}?${URLColumnName}=${value}`
+        return `/${baseURL}?${URLColumnName}=${encodeURIComponent(value)}`
       }
     }
   }

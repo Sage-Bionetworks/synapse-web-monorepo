@@ -409,7 +409,7 @@ describe('GenericCard tests', () => {
     })
 
     test('creates an internal details page link', () => {
-      const value = '1234'
+      const value = '1234+5+6'
       const data = [value]
       const URLColumnName = 'Grant Number'
       const matchColumnName = 'Funder'
@@ -422,7 +422,9 @@ describe('GenericCard tests', () => {
         matchColumnName,
         URLColumnName,
       }
-      const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+      const expectedLink = `/${
+        titleLinkConfig.baseURL
+      }?${URLColumnName}=${encodeURIComponent(value)}`
       const { href: href1, target: target1 } = getLinkParams(
         '',
         titleLinkConfig,
