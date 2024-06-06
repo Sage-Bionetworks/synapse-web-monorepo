@@ -95,7 +95,6 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
       fontWeight: 400,
       fontSize: '14px',
       lineHeight: '21px',
-      color: '#878E95',
     },
   },
 }
