@@ -158,7 +158,7 @@ const SynapsePlans = () => {
             sx={{
               gridColumnStart: 5,
               gridRowStart: 2,
-              gridRowEnd: 'span 16',
+              gridRowEnd: 'span 15',
             }}
           >
             {dataCoordinationPlanCellContent}
