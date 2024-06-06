@@ -28,7 +28,7 @@ export const TermsOfUseRightPanelText = () => {
         holders to affirm their agreement with our governance policies before
         finishing registration.
       </Typography>
-      <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+      <Typography variant="smallText1" sx={{ marginBottom: '20px' }}>
         If you have questions, please contact{' '}
         <Link href={'mailto:act@sagebionetworks.org'}>
           act@sagebionetworks.org
