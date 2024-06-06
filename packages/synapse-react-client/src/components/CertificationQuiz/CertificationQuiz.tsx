@@ -196,7 +196,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
             >
               <HelpOutlineTwoTone
                 className="HelpButton"
-                style={{ marginRight: '4px' }}
+                style={{ marginRight: '4px', color: 'white' }}
               />
               Help
             </Button>
