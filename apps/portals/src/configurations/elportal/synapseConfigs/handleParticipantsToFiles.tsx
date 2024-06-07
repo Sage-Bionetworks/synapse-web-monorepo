@@ -54,7 +54,7 @@ export const handleSelectedParticipantsToFiles = async (
     const sessionStorageFilter: ColumnSingleValueQueryFilter = {
       concreteType:
         'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-      columnName: 'individualID',
+      columnName: 'individualId',
       operator: ColumnSingleValueFilterOperator.IN,
       isDefiningCondition: true,
       values: ids,
