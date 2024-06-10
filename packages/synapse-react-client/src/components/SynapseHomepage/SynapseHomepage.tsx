@@ -6,7 +6,7 @@ import Terminal from '../../assets/icons/Terminal'
 import Java from '../../assets/icons/Java'
 import ProjectViewCarousel from '../ProjectViewCarousel/ProjectViewCarousel'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
 import IconSvg from '../IconSvg/IconSvg'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
@@ -17,6 +17,7 @@ import RecordProvenance from '../../assets/icons/RecordProvenance'
 import ShareYourResearch from '../../assets/icons/ShareYourResearch'
 import MintDoi from '../../assets/icons/MintDoi'
 import SynapsePlans from './SynapsePlans'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -31,7 +32,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
 }) => {
   const { accessToken } = useSynapseContext()
   const LOGIN_LINK = '/LoginPlace:0'
-  const REGISTRATION_LINK = '/RegisterAccount:0'
+  const registrationLink = useOneSageURL('/register1')
 
   // 'v' will resolve to the user's profile ID
   const DASHBOARD_LINK = '/Profile:v/projects'
@@ -108,7 +109,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                   Log in to Synapse
                 </Button>
                 <Button
-                  href={REGISTRATION_LINK}
+                  href={registrationLink.toString()}
                   variant="contained"
                   color="darkPrimary"
                   sx={buttonSx}
@@ -600,7 +601,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                   Log in to Synapse
                 </Button>
                 <Button
-                  href={REGISTRATION_LINK}
+                  href={registrationLink.toString()}
                   variant="contained"
                   color="darkPrimary"
                   sx={buttonSx}

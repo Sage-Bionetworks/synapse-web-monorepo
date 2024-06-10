@@ -1,8 +1,8 @@
 ## This project is code for OneSage user account portal.
 
-_Production_ branch is automatically deployed to https://accounts.sagebionetworks.org
+_Production_ branch is automatically deployed to https://accounts.synapse.org
 
-_Staging_ branch is automatically deployed to https://staging.accounts.sagebionetworks.org
+_Staging_ branch is automatically deployed to https://staging.accounts.synapse.org
 
 ## How do I add my app to OneSage?
 
@@ -19,7 +19,6 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
 _Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/Synapse:syn45291362/tables/) as the data source.
 
 ## Entry points
-
 
 ### Redirect to App
 

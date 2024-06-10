@@ -174,6 +174,8 @@ export const AccountSettings = () => {
   useEffect(() => {
     if (hash === '#trust') {
       handleScroll(trustCredentialRef)
+    } else if (hash === '#ChangePassword') {
+      handleScroll(changePasswordRef)
     }
   }, [hash])
 

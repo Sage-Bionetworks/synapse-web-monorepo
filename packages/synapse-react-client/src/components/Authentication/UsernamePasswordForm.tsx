@@ -1,8 +1,8 @@
 import { Button, Link } from '@mui/material'
 import React, { useState } from 'react'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
@@ -12,10 +12,9 @@ type UsernamePasswordFormProps = {
 }
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
+  const defaultResetPasswordUrl = useOneSageURL('/resetPassword')
   const {
-    resetPasswordUrl = `${getEndpoint(
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}PasswordReset:0`,
+    resetPasswordUrl = defaultResetPasswordUrl.toString(),
     onSubmit,
     loginIsPending,
     hideForgotPasswordButton,
@@ -55,7 +54,17 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         onChange={e => setPassword(e.target.value)}
       />
       {!hideForgotPasswordButton && (
-        <Link href={resetPasswordUrl}>Forgot password?</Link>
+        <Link
+          href={resetPasswordUrl}
+          target={
+            // If not on OneSage, open in new tab
+            location.origin != new URL(resetPasswordUrl).origin
+              ? '_blank'
+              : undefined
+          }
+        >
+          Forgot password?
+        </Link>
       )}
       <Button
         fullWidth

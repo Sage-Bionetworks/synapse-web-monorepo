@@ -5,7 +5,7 @@ import { redirectAfterSSO } from '../AppUtils'
 import { useHistory } from 'react-router-dom'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
-import { SynapseContextProvider } from '../../context'
+import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
@@ -26,6 +26,7 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
     twoFactorAuthSSOError: TwoFactorAuthErrorResponse,
     twoFaResetToken: string,
   ) => void
+  appId?: SynapseContextType['appId']
 }>
 
 /**
@@ -53,6 +54,7 @@ export function ApplicationSessionManager(
     onNoAccessTokenFound,
     forceRelogin,
     onTwoFactorAuthResetThroughSSO,
+    appId,
   } = props
   const history = useHistory()
 
@@ -183,6 +185,7 @@ export function ApplicationSessionManager(
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
+          appId: appId,
         }}
       >
         {children}

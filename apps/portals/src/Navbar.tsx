@@ -1,5 +1,4 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -11,6 +10,7 @@ import {
   SynapseQueries,
   SystemUseNotification,
   useSynapseContext,
+  SynapseHookUtils,
 } from 'synapse-react-client'
 import NavLink from './portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
@@ -147,6 +147,11 @@ function Navbar() {
     (config) => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
+  const registrationPageUrl = SynapseHookUtils.useOneSageURL('/register1')
+  const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
+    '/authenticated/myaccount',
+  )
+
   return (
     <React.Fragment>
       <Box
@@ -239,6 +244,7 @@ function Navbar() {
                   </IconButton>
                   <DialogContent dividers={false}>
                     <StandaloneLoginForm
+                      registerAccountUrl={registrationPageUrl.toString()}
                       twoFactorAuthenticationRequired={
                         twoFactorAuthSSOErrorResponse
                       }
@@ -303,7 +309,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="Settings"
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
-                      href={`https://www.synapse.org/Profile:${userProfile.ownerId}/settings`}
+                      href={accountSettingsUrl.toString()}
                     >
                       Settings
                     </Dropdown.Item>

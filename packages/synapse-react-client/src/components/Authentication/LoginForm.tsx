@@ -1,5 +1,4 @@
 import React from 'react'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseLoginReturn } from '../../utils/hooks'
@@ -8,6 +7,7 @@ import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
 import { OAuth2State } from '../../utils'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -35,12 +35,11 @@ type Props = {
 }
 
 export default function LoginForm(props: Props) {
+  const defaultRegistrationUrl = useOneSageURL('/register1')
   const {
     ssoRedirectUrl,
     ssoState,
-    registerAccountUrl = `${getEndpoint(
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}RegisterAccount:0`,
+    registerAccountUrl = defaultRegistrationUrl.toString(),
     resetPasswordUrl,
     onBeginOAuthSignIn,
     onStepChange,
