@@ -58,9 +58,7 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
           href={resetPasswordUrl}
           target={
             // If not on OneSage, open in new tab
-            location.origin != new URL(resetPasswordUrl).origin
-              ? '_blank'
-              : undefined
+            resetPasswordUrl.startsWith('/') ? undefined : '_blank'
           }
         >
           Forgot password?
