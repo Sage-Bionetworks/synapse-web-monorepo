@@ -7,6 +7,7 @@ import {
   SynapseClient,
   useApplicationSessionContext,
 } from 'synapse-react-client'
+import { Link } from '@mui/material'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()
@@ -40,9 +41,8 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
           <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
         </Box>
       </Box>
-      <Button
-        variant="text"
-        sx={{ color: '#515359', marginRight: '15px' }}
+      <Link
+        sx={{ marginRight: '15px' }}
         onClick={() => {
           SynapseClient.signOut().then(() => {
             refreshSession()
@@ -50,7 +50,7 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
         }}
       >
         Sign out
-      </Button>
+      </Link>
     </Box>
   )
 }
