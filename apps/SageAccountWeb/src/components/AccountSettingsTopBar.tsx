@@ -1,6 +1,6 @@
 import React from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
-import { Box, Button, SxProps, Typography } from '@mui/material'
+import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { useAppContext } from '../AppContext'
 import {
