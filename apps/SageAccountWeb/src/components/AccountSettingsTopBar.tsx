@@ -1,12 +1,13 @@
 import React from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
-import { Box, Button, SxProps, Typography } from '@mui/material'
+import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { useAppContext } from '../AppContext'
 import {
   SynapseClient,
   useApplicationSessionContext,
 } from 'synapse-react-client'
+import { Link } from '@mui/material'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()
@@ -40,9 +41,8 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
           <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
         </Box>
       </Box>
-      <Button
-        variant="text"
-        sx={{ color: '#515359', marginRight: '15px' }}
+      <Link
+        sx={{ marginRight: '15px' }}
         onClick={() => {
           SynapseClient.signOut().then(() => {
             refreshSession()
@@ -50,7 +50,7 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
         }}
       >
         Sign out
-      </Button>
+      </Link>
     </Box>
   )
 }

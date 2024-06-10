@@ -233,9 +233,14 @@ export const AccountSettings = () => {
                 </Typography>
                 <Typography variant={'body1'}>
                   This information is reused across all{' '}
-                  <RouterLink to="/sageresources">
-                    Synapse resources.
-                  </RouterLink>
+                  <Link
+                    color="primary"
+                    component={RouterLink}
+                    to="/sageresources"
+                  >
+                    Synapse resources
+                  </Link>
+                  .
                 </Typography>
                 <ProfileAvatar
                   userProfile={userProfile}
