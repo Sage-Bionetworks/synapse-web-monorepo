@@ -18,6 +18,31 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const { appId, appURL } = useSourceApp()
 
   useEffect(() => {
+    // PORTALS-3138: override endpoints if staging or dev are inthe hostname
+    const isStaging: boolean = window.location.hostname.includes('staging')
+    const isDev: boolean = window.location.hostname.includes('dev')
+
+    const stagingConfig = {
+      REPO: 'https://repo-staging.prod.sagebase.org',
+      PORTAL: 'https://staging.synapse.org',
+    }
+
+    const devConfig = {
+      REPO: 'https://repo-dev.dev.sagebase.org',
+      PORTAL: 'https://portal-dev.dev.sagebase.org',
+    }
+
+    if (isStaging || isDev) {
+      if (!(window as any).SRC) {
+        ;(window as any).SRC = {}
+      }
+
+      ;(window as any).SRC.OVERRIDE_ENDPOINT_CONFIG = isStaging
+        ? stagingConfig
+        : devConfig
+    }
+  }, [])
+  useEffect(() => {
     const searchParamSignedToken = getSearchParam('signedToken')
     const localStorageSignedToken = localStorage.getItem('signedToken')
     if (searchParamSignedToken) {
