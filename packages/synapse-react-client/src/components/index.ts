@@ -68,6 +68,7 @@ export * from './UserProfileLinks'
 export * from './EntityHeaderTable'
 export * from './AccessRequirementRelatedProjectsList'
 export * from './HelpPopover'
+export * from './MuiContainer'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'

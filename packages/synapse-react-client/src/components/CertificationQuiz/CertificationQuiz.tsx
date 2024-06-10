@@ -27,6 +27,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import CertificationAnswer from './CertificationAnswer'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
+import { Box } from '@mui/material'
 
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
@@ -191,16 +192,32 @@ const CertificationQuiz: React.FunctionComponent = () => {
             <Button
               onClick={() => window.open(GETTING_STARTED_URL, '_blank')}
               className="help-button"
-              color="secondary"
+              color="primary"
               variant="contained"
             >
-              <HelpOutlineTwoTone
-                className="HelpButton"
-                style={{ marginRight: '4px', color: 'white' }}
-              />
-              Help
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <HelpOutlineTwoTone
+                  className="HelpButton"
+                  style={{ marginRight: '4px', color: 'white' }}
+                />
+                <>Help</>
+              </Box>
             </Button>
-            <div dangerouslySetInnerHTML={{ __html: quiz.header }}></div>
+            <Typography variant="headline1" sx={{ marginBottom: '25px' }}>
+              Certified User Quiz
+            </Typography>
+            <Typography variant="body1" sx={{ marginBottom: '15px' }}>
+              Certified users are authorized to use the full Synapse
+              functionality. In order to ensure that users who create content in
+              the system and/or wish to interact more freely within Synapse are
+              familiar with the governance process and Synapse operating
+              procedures when dealing with possibly sensitive data, users must
+              pass a short quiz (approximately 15 minutes) to become Synapse
+              certified.
+            </Typography>
+            <Typography variant="body1" sx={{ marginBottom: '15px' }}>
+              Please answer the following questions to become certified.
+            </Typography>
             <form ref={formRef} onSubmit={e => e.preventDefault()}>
               <ol>
                 {quiz?.questions.map(question => {
@@ -211,10 +228,9 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       role={question.exclusive ? 'radiogroup' : undefined}
                     >
                       <Typography
-                        component={'div'}
-                        variant={'body1'}
+                        variant={'headline3'}
                         dangerouslySetInnerHTML={{ __html: question.prompt }}
-                        sx={{ marginTop: '20px' }}
+                        sx={{ marginTop: '40px', marginBottom: '10px' }}
                       />
                       {question.answers.map(choice => (
                         <CertificationAnswer
@@ -244,13 +260,19 @@ const CertificationQuiz: React.FunctionComponent = () => {
                           actionButton={actionButtonConfig(question.docLink)}
                           showCloseButton={true}
                         >
-                          <Typography variant="hintText" color="primary">
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                            }}
+                          >
                             <HelpOutlineTwoTone
                               className="HelpButton"
                               style={{ marginRight: '4px' }}
                             />
-                            Need help answering this question?
-                          </Typography>
+                            <Link>Need help answering this question?</Link>
+                          </Box>
                         </MarkdownPopover>
                       )}
                     </li>
@@ -283,13 +305,12 @@ const CertificationQuiz: React.FunctionComponent = () => {
               return (
                 <li key={question.questionIndex}>
                   <Typography
-                    component={'div'}
-                    variant={'body1'}
+                    variant={'headline3'}
                     dangerouslySetInnerHTML={{ __html: question.prompt }}
                     className={
                       responseCorrectness.isCorrect ? '' : 'incorrectQuestion'
                     }
-                    sx={{ marginTop: '20px' }}
+                    sx={{ marginTop: '40px', marginBottom: '10px' }}
                   />
                   {question.answers.map(choice => (
                     <CertificationAnswer
