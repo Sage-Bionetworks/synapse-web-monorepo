@@ -284,6 +284,18 @@ const routes: GenericRoute[] = [
                         columnAliases,
                       },
                     },
+                    {
+                      name: 'CardContainerLogic',
+                      columnName: 'grantNumber',
+                      title: 'Related Educational Resources',
+                      tableSqlKeys: ['grantNumber'],
+                      props: {
+                        sqlOperator: ColumnMultiValueFunction.HAS,
+                        sql: educationSql,
+                        ...educationDetailsCardConfiguration,
+                        columnAliases,
+                      },
+                    },
                   ],
                 },
               },
