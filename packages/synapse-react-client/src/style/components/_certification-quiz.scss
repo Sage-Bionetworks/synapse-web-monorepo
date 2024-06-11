@@ -10,13 +10,8 @@
   }
 
   &__container {
-    border: solid 1px #ddd;
-    border-radius: 4px;
     padding: 10px;
 
-    a {
-      color: SRC.$primary-action-color;
-    }
     .help-button {
       display: block;
       margin-left: auto;
