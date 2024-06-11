@@ -73,8 +73,7 @@ const arXivRule: LinkifyRule = {
 const cbioPortalRule: LinkifyRule = {
   regex: /(cbioportal:[a-zA-Z0-9._]+)/,
   onMatch: value => {
-    const id = value.slice('cbioportal:'.length)
-    return `https://identifiers.org/cbioportal:${id}`
+    return `https://identifiers.org/${value}`
   },
 }
 
