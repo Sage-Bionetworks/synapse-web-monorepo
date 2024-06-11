@@ -94,7 +94,8 @@ describe('CertificationQuiz tests', () => {
 
   it('Shows loads the certification quiz', async () => {
     renderComponent()
-    await screen.findByText('Mock Certification Quiz')
+    // PORTALS-3131: Quiz header not shown - it's now hard-coded
+    await screen.findByText('Certified User Quiz')
     expect(await screen.findAllByRole('radiogroup')).toHaveLength(2)
   })
 
