@@ -23,13 +23,13 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     const isDev: boolean = window.location.hostname.includes('dev')
 
     const stagingConfig = {
-      REPO: 'https://repo-staging.prod.sagebase.org/',
-      PORTAL: 'https://staging.synapse.org/',
+      REPO: 'https://repo-staging.prod.sagebase.org',
+      PORTAL: 'https://staging.synapse.org',
     }
 
     const devConfig = {
-      REPO: 'https://repo-dev.dev.sagebase.org/',
-      PORTAL: 'https://portal-dev.dev.sagebase.org/',
+      REPO: 'https://repo-dev.dev.sagebase.org',
+      PORTAL: 'https://portal-dev.dev.sagebase.org',
     }
 
     if (isStaging || isDev) {
