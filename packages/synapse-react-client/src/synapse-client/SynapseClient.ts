@@ -1894,7 +1894,7 @@ export const setAccessTokenCookie = async (
   } else {
     // will set cookie in the http header
     return doPost(
-      'Portal/sessioncookie',
+      '/Portal/sessioncookie',
       { sessionToken: token },
       undefined,
       BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -1915,7 +1915,7 @@ export const getAccessTokenFromCookie = async (): Promise<
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
-    'Portal/sessioncookie?validate=true',
+    '/Portal/sessioncookie?validate=true',
     undefined,
     BackendDestinationEnum.PORTAL_ENDPOINT,
     { credentials: 'include' },
@@ -5083,7 +5083,7 @@ export function getPortalFileHandleServletUrl(
  */
 export const getFeatureFlags = () => {
   return doGet<FeatureFlags>(
-    `Portal/featureflags`,
+    `/Portal/featureflags`,
     undefined,
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )
