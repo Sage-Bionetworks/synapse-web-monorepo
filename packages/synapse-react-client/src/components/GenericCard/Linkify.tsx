@@ -70,6 +70,14 @@ const arXivRule: LinkifyRule = {
   },
 }
 
+const cbioPortalRule: LinkifyRule = {
+  regex: /(cbioportal:[a-zA-Z0-9._]+)/,
+  onMatch: value => {
+    const id = value.slice('cbioportal:'.length)
+    return `https://identifiers.org/cbioportal:${id}`
+  },
+}
+
 const rules: LinkifyRule[] = [
   httpRule,
   synapseIdRule,
@@ -80,6 +88,7 @@ const rules: LinkifyRule[] = [
   clinVarRCVRule,
   doiRule,
   arXivRule,
+  cbioPortalRule,
 ]
 const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
 

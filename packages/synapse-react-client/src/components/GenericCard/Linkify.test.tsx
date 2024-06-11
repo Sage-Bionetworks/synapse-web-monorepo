@@ -133,4 +133,16 @@ describe('Linkify tests', () => {
       `https://arxiv.org/abs/2303.07469`,
     )
   })
+
+  test('auto-links cbioportal', () => {
+    const value = 'cbioportal:nst_nfosi_ntap'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://identifiers.org/cbioportal:nst_nfosi_ntap`,
+    )
+  })
 })
