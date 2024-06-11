@@ -30,6 +30,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       'dataType',
       'series',
       'yearProcessed',
+      'visualizeDataOn',
     ],
   },
   labelLinkConfig: [
