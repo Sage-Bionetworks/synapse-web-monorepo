@@ -1,13 +1,12 @@
 import React from 'react'
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { UseLoginReturn } from '../../utils/hooks'
+import { UseLoginReturn, useOneSageURL } from '../../utils/hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
 import { OAuth2State } from '../../utils'
-import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -36,6 +35,9 @@ type Props = {
 
 export default function LoginForm(props: Props) {
   const defaultRegistrationUrl = useOneSageURL('/register1')
+  const defaultTwoFactorAuthResetUrl = useOneSageURL(
+    '/reset2FA?twoFAResetToken=',
+  )
   const {
     ssoRedirectUrl,
     ssoState,
@@ -53,7 +55,7 @@ export default function LoginForm(props: Props) {
     hideForgotPasswordButton,
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetIsPending,
-    twoFactorAuthResetUri = `${window.location.origin}/reset2FA?twoFAResetToken=`,
+    twoFactorAuthResetUri = defaultTwoFactorAuthResetUrl.toString(),
   } = props
 
   return (
