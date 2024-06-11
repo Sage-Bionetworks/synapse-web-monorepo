@@ -30,7 +30,7 @@ type MenuItemParams = {
   tooltip: string
   iconName?: IconName
   onClickOpenNavMenu?: NavItem
-  onClickGotoPlace?: () => void
+  onClickGoToPlace?: () => void
   additionalChildren?: JSX.Element
   badgeContent?: string | number
   isCurrentlySelectedItem?: boolean
@@ -105,7 +105,7 @@ const NavDrawerListItem = (props: MenuItemParams) => {
     tooltip,
     iconName,
     onClickOpenNavMenu,
-    onClickGotoPlace,
+    onClickGoToPlace,
     additionalChildren,
     badgeContent,
     isCurrentlySelectedItem = false,
@@ -113,7 +113,7 @@ const NavDrawerListItem = (props: MenuItemParams) => {
     handleDrawerOpen,
   } = props
   const handler =
-    isCurrentlySelectedItem || onClickGotoPlace
+    isCurrentlySelectedItem || onClickGoToPlace
       ? handleDrawerClose
       : () => {
           handleDrawerOpen(onClickOpenNavMenu)
@@ -141,10 +141,10 @@ const NavDrawerListItem = (props: MenuItemParams) => {
     </Tooltip>
   )
 
-  return onClickGotoPlace ? (
+  return onClickGoToPlace ? (
     <li>
       <a
-        onClick={() => onClickGotoPlace()}
+        onClick={onClickGoToPlace}
         rel="noopener noreferrer"
         className="SRC-whiteText"
       >
@@ -262,7 +262,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Favorites"
                   iconName="favTwoTone"
-                  onClickGotoPlace={() =>
+                  onClickGoToPlace={() =>
                     gotoPlace(
                       `/Profile:${currentUserProfile.ownerId}/favorites`,
                     )
@@ -273,7 +273,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Teams"
                   iconName="peopleTwoTone"
-                  onClickGotoPlace={() =>
+                  onClickGoToPlace={() =>
                     gotoPlace(`/Profile:${currentUserProfile.ownerId}/teams`)
                   }
                   handleDrawerClose={handleDrawerClose}
@@ -282,7 +282,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Challenges"
                   iconName="challengesTwoTone"
-                  onClickGotoPlace={() =>
+                  onClickGoToPlace={() =>
                     gotoPlace(
                       `/Profile:${currentUserProfile.ownerId}/challenges`,
                     )
@@ -293,7 +293,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Download Cart"
                   iconName="download"
-                  onClickGotoPlace={() => gotoPlace('/DownloadCart:0')}
+                  onClickGoToPlace={() => gotoPlace('/DownloadCart:0')}
                   badgeContent={numberOfFilesInDownloadList}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
@@ -301,7 +301,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 <NavDrawerListItem
                   tooltip="Trash Can"
                   iconName="delete"
-                  onClickGotoPlace={() => gotoPlace('/Trash:0')}
+                  onClickGoToPlace={() => gotoPlace('/Trash:0')}
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
@@ -309,7 +309,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   <NavDrawerListItem
                     tooltip="Data Access Management"
                     iconName="accessManagement"
-                    onClickGotoPlace={() =>
+                    onClickGoToPlace={() =>
                       gotoPlace('/DataAccessManagement:default/Submissions')
                     }
                     badgeContent={countOfOpenSubmissionsForReview}
@@ -322,7 +322,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
             <NavDrawerListItem
               tooltip="Search"
               iconName="search"
-              onClickGotoPlace={() => gotoPlace('/Search:')}
+              onClickGoToPlace={() => gotoPlace('/Search:')}
               handleDrawerClose={handleDrawerClose}
               handleDrawerOpen={handleDrawerOpen}
             />
@@ -349,7 +349,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
               <NavDrawerListItem
                 tooltip="Sign in"
                 iconName="login"
-                onClickGotoPlace={() => gotoPlace('/LoginPlace:0')}
+                onClickGoToPlace={() => gotoPlace('/LoginPlace:0')}
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
               />
