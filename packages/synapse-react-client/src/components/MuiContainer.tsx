@@ -1,11 +1,10 @@
 import { StyledComponent } from '@emotion/styled'
-import { Paper } from '@mui/material'
-import { PaperProps, styled } from '@mui/material'
+import { Box, BoxProps, styled } from '@mui/material'
 
 /**
  * Drop in MUI substitute class for Bootstrap Container component
  */
-export const MuiContainer: StyledComponent<PaperProps> = styled(Paper, {
+export const MuiContainer: StyledComponent<BoxProps> = styled(Box, {
   label: 'MuiContainer',
 })(({ theme }) => ({
   paddingRight: 15,
