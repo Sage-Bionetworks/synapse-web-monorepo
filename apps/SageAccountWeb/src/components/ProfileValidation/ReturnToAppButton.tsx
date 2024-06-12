@@ -25,7 +25,7 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
   }
   const element = !children ? (
     <Button variant="text" onClick={() => setOpen(true)} fullWidth>
-      Cancel Validation and Return to Website
+      Cancel Validation
     </Button>
   ) : (
     React.cloneElement(children as React.ReactElement, {
