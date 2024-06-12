@@ -46,6 +46,22 @@ function renderUseLogin(
   })
 }
 
+async function verify2FAResetStarted(
+  result: ReturnType<typeof renderUseLogin>['result'],
+  resetEndpoint: string,
+) {
+  await waitFor(() => {
+    expect(mockReset2FA).toHaveBeenCalledWith({
+      userId: twoFactorAuthErrorResponse.userId,
+      twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+      twoFaResetEndpoint: resetEndpoint,
+    })
+    expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+    expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
+    expect(result.current.step).toBe('DISABLE_2FA_PROMPT')
+  })
+}
+
 describe('useLogin tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -403,20 +419,91 @@ describe('useLogin tests', () => {
       expect(result.current.step).toBe('VERIFICATION_CODE')
     })
 
+    // Change the step so the UI shows the correct prompt
+    act(() => {
+      result.current.onStepChange('DISABLE_2FA_PROMPT')
+    })
+    await waitFor(() => {
+      expect(result.current.step).toBe('DISABLE_2FA_PROMPT')
+    })
+
+    // Trigger sending the email
     act(() => {
       result.current.beginTwoFactorAuthReset(resetEndpoint)
     })
 
-    await waitFor(() => {
-      expect(mockReset2FA).toHaveBeenCalledWith({
-        userId: twoFactorAuthErrorResponse.userId,
-        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
-        twoFaResetEndpoint: resetEndpoint,
-      })
-      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
-      expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
-    })
+    await verify2FAResetStarted(result, resetEndpoint)
   })
+
+  it('Allows the user to begin the 2fa reset process when a 2FA token is passed via props', async () => {
+    const resetEndpoint = 'https://test.synapse.org/reset-2fa'
+
+    mockReset2FA.mockResolvedValue()
+
+    const { result } = renderUseLogin(
+      onSuccessfulLoginFn,
+      twoFactorAuthErrorResponse,
+    )
+
+    await waitFor(() => {
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    // Change the step so the UI shows the correct prompt
+    act(() => {
+      result.current.onStepChange('DISABLE_2FA_PROMPT')
+    })
+    await waitFor(() => {
+      expect(result.current.step).toBe('DISABLE_2FA_PROMPT')
+    })
+
+    // Trigger sending the email
+    act(() => {
+      result.current.beginTwoFactorAuthReset(resetEndpoint)
+    })
+
+    await verify2FAResetStarted(result, resetEndpoint)
+  })
+
+  test.each([
+    ['Regular path', '/'],
+    ['SWC-style path', '/LoginPlace:0'],
+  ])(
+    'Allows resetting 2FA when token is provided via search params, %s',
+    async (name, path) => {
+      history.replaceState(
+        {},
+        '',
+        `${path}?` +
+          `twoFaToken=${twoFactorAuthErrorResponse.twoFaToken}` +
+          `&userId=${twoFactorAuthErrorResponse.userId}`,
+      )
+
+      const resetEndpoint = 'https://test.synapse.org/reset-2fa'
+      mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)
+
+      const { result } = renderUseLogin(onSuccessfulLoginFn)
+
+      await waitFor(() => {
+        expect(result.current.step).toBe('VERIFICATION_CODE')
+      })
+
+      // Change the step so the UI shows the correct prompt
+      act(() => {
+        result.current.onStepChange('DISABLE_2FA_PROMPT')
+      })
+      await waitFor(() => {
+        expect(result.current.step).toBe('DISABLE_2FA_PROMPT')
+      })
+
+      // Trigger sending the email
+      act(() => {
+        result.current.beginTwoFactorAuthReset(resetEndpoint)
+      })
+
+      await verify2FAResetStarted(result, resetEndpoint)
+    },
+  )
 
   it('Handles reset 2fa error where there is no token or userId', async () => {
     const resetEndpoint = 'https://test.synapse.org/reset-2fa'
