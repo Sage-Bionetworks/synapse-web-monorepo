@@ -102,6 +102,12 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
         shouldDeepLink: false,
         columnAliases,
         defaultShowPlots: false,
+        showExportToCavatica: true,
+        isRowSelectionVisible: true,
+        rowSelectionPrimaryKey: ['id'],
+        fileIdColumnName: 'id',
+        fileNameColumnName: 'name',
+        fileVersionColumnName: 'currentVersion',
       },
       // tableSqlKeys: ['id'],  // Do not modify the sql where condition based on search params
       overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>).<rowVersionNumber>
