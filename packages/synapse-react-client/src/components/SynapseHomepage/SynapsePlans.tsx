@@ -117,31 +117,6 @@ const SynapsePlans = () => {
         )}
         {/* end header */}
         <RowDescriptionCell>
-          <Typography variant="body1">Content Uploaders</Typography>
-        </RowDescriptionCell>
-        <BasicPlanCell>
-          <Typography variant="body1">1</Typography>
-        </BasicPlanCell>
-        <SelfManagedPlanCell>
-          <Typography variant="body1">Unlimited</Typography>
-        </SelfManagedPlanCell>
-        <SelfManagedPlanCell>
-          <Typography variant="body1">Unlimited</Typography>
-        </SelfManagedPlanCell>
-        {/* Data Coordination Plan single cell */}
-        {!isMobileView && (
-          <DataCoordinationPlanCell
-            sx={{
-              gridColumnStart: 5,
-              gridRowStart: 2,
-              gridRowEnd: 'span 16',
-            }}
-          >
-            {dataCoordinationPlanCellContent}
-          </DataCoordinationPlanCell>
-        )}
-
-        <RowDescriptionCell>
           <Typography variant="body1">User Content Limit</Typography>
         </RowDescriptionCell>
         <BasicPlanCell>
@@ -177,7 +152,18 @@ const SynapsePlans = () => {
             </Typography>
           </Box>
         </SelfManagedPlanCell>
-
+        {/* Data Coordination Plan single cell */}
+        {!isMobileView && (
+          <DataCoordinationPlanCell
+            sx={{
+              gridColumnStart: 5,
+              gridRowStart: 2,
+              gridRowEnd: 'span 15',
+            }}
+          >
+            {dataCoordinationPlanCellContent}
+          </DataCoordinationPlanCell>
+        )}
         <RowDescriptionCell>
           <Typography variant="body1">Storage Environment</Typography>
         </RowDescriptionCell>
