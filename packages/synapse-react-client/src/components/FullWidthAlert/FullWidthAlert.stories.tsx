@@ -70,7 +70,12 @@ export const SynapseNavDrawerIsShowing: Story = {
   },
   render: args => (
     <>
-      <SynapseNavDrawer initIsOpen={false} />
+      <SynapseNavDrawer
+        initIsOpen={false}
+        gotoPlace={(href: string) => {
+          window.alert(`Nav bar calling back to change route to ${href}`)
+        }}
+      />
       <FullWidthAlert {...args} />
     </>
   ),

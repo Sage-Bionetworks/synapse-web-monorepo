@@ -17,6 +17,7 @@ import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
   signoutCallback: jest.fn(),
+  gotoPlace: jest.fn(),
 }
 
 function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
