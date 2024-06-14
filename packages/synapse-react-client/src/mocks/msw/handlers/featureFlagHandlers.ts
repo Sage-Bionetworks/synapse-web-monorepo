@@ -1,8 +1,14 @@
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { server, rest } from '../server'
+import { rest } from 'msw'
+import { server } from '../server'
+import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
+import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
+
+const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = {
+  [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
+  [FeatureFlagEnum.CHANGE_PASSWORD_2FA_CHECK]: false,
+  [FeatureFlagEnum.VIRTUALTABLE_SUPPORT]: false,
+  [FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS]: false,
+}
 
 export function useGetFeatureFlagsOverride() {
   server.use(
@@ -13,9 +19,7 @@ export function useGetFeatureFlagsOverride() {
       (req, res, ctx) => {
         return res(
           ctx.status(200),
-          ctx.json({
-            'mock feature flag': true,
-          }),
+          ctx.json(MOCK_FEATURE_FLAGS_VALUE),
           ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
         )
       },
