@@ -219,6 +219,10 @@ export class KeyFactory {
     ]
   }
 
+  private getKeyAnonymous(...args: unknown[]): QueryKey {
+    return ['anonymous', ...removeTrailingUndefinedElements(args)]
+  }
+
   public getFeatureFlagQueryKey() {
     return this.getKey('featureflag')
   }
@@ -387,7 +391,8 @@ export class KeyFactory {
     queryBundleRequest: QueryBundleRequest,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
+    const _getKey = forceAnonymous ? this.getKeyAnonymous : this.getKey
+    return _getKey(
       ...entityQueryKeyObjects.fullTableQueryResult(
         queryBundleRequest,
         forceAnonymous,
@@ -518,7 +523,8 @@ export class KeyFactory {
     fileHandleAssociation: FileHandleAssociation,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
+    const _getKey = forceAnonymous ? this.getKeyAnonymous : this.getKey
+    return _getKey(
       'presignedUrlContentFromFHA',
       fileHandleAssociation,
       forceAnonymous,
