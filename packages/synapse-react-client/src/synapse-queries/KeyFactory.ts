@@ -132,13 +132,10 @@ const entityQueryKeyObjects = {
     },
   ],
 
-  fullTableQueryResult: (
-    queryBundleRequest: QueryBundleRequest,
-    forceAnonymous: boolean,
-  ) => [
+  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
     { type: 'tableQueryResult', allResults: true },
-    { tableQueryBundleRequest: queryBundleRequest, forceAnonymous },
+    { tableQueryBundleRequest: queryBundleRequest },
   ],
 
   boundJSONSchema: (id: string) => [
@@ -393,17 +390,11 @@ export class KeyFactory {
   ) {
     if (forceAnonymous) {
       return this.getKeyAnonymous(
-        ...entityQueryKeyObjects.fullTableQueryResult(
-          queryBundleRequest,
-          forceAnonymous,
-        ),
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
       )
     } else {
       return this.getKey(
-        ...entityQueryKeyObjects.fullTableQueryResult(
-          queryBundleRequest,
-          forceAnonymous,
-        ),
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
       )
     }
   }
@@ -535,14 +526,9 @@ export class KeyFactory {
       return this.getKeyAnonymous(
         'presignedUrlContentFromFHA',
         fileHandleAssociation,
-        forceAnonymous,
       )
     } else {
-      return this.getKey(
-        'presignedUrlContentFromFHA',
-        fileHandleAssociation,
-        forceAnonymous,
-      )
+      return this.getKey('presignedUrlContentFromFHA', fileHandleAssociation)
     }
   }
 

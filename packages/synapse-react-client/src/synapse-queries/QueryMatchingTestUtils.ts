@@ -31,12 +31,25 @@ function doesQueryKeyMatch(
 }
 
 export function expectQueryKeyToMatch(queryKey: QueryKey, matcher: QueryKey) {
-  expect(doesQueryKeyMatch(queryKey, matcher)).toBe(true)
+  const isMatch = doesQueryKeyMatch(queryKey, matcher)
+  if (!isMatch) {
+    console.error(`Expected query key: ${JSON.stringify(queryKey)}`)
+    console.error(`Received query key: ${JSON.stringify(matcher)}`)
+  }
+  expect(isMatch).toBe(true)
 }
 
 export function expectQueryKeyNotToMatch(
   queryKey: QueryKey,
   matcher: QueryKey,
 ) {
-  expect(doesQueryKeyMatch(queryKey, matcher)).toBe(false)
+  const isMatch = doesQueryKeyMatch(queryKey, matcher)
+  if (isMatch) {
+    console.error(
+      `Expected query keys to differ, but they matched: ${JSON.stringify(
+        queryKey,
+      )}`,
+    )
+  }
+  expect(isMatch).toBe(false)
 }
