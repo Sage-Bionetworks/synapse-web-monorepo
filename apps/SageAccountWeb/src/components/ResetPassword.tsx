@@ -21,6 +21,8 @@ export const ResetPassword = (props: ResetPasswordProps) => {
   const history = useHistory()
   const [userName, setUserName] = useState('')
 
+  const [hasClickedResetPassword, setHasClickedResetPassword] = useState(false)
+
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
 
   const token = useMemo(() => {
@@ -38,6 +40,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     clickEvent.preventDefault()
     try {
       await SynapseClient.resetPassword(userName)
+      setHasClickedResetPassword(true)
       displayToast(
         'If a matching account was found, then your password reset request has been sent. Please check your email.',
         'success',
@@ -84,7 +87,10 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 label={'Email address or username'}
                 id="username"
                 name="username"
-                onChange={e => setUserName(e.target.value)}
+                onChange={e => {
+                  setHasClickedResetPassword(false)
+                  setUserName(e.target.value)
+                }}
                 value={userName || ''}
                 sx={formControlSx}
               />
@@ -96,7 +102,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 }}
                 sx={buttonSx}
                 type="button"
-                disabled={!userName}
+                disabled={!userName || hasClickedResetPassword}
               >
                 Reset my password
               </Button>

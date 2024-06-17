@@ -7,6 +7,7 @@ import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
 import { OAuth2State } from '../../utils'
+import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -33,18 +34,6 @@ type Props = {
   twoFactorAuthResetUri?: string
 }
 
-function appendTwoFAResetTokenQueryParam(url: URL): string {
-  const queryParam = 'twoFAResetToken'
-
-  if (url.searchParams.size === 0) {
-    // No params, so use `?`
-    return `${url.toString()}?${queryParam}=`
-  } else {
-    // Already has params, so use '&'
-    return `${url.toString()}&${queryParam}=`
-  }
-}
-
 export default function LoginForm(props: Props) {
   const defaultRegistrationUrl = useOneSageURL('/register1')
   const defaultTwoFactorAuthResetUrl = useOneSageURL('/reset2FA')
@@ -66,8 +55,9 @@ export default function LoginForm(props: Props) {
     hideForgotPasswordButton,
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetIsPending,
-    twoFactorAuthResetUri = appendTwoFAResetTokenQueryParam(
+    twoFactorAuthResetUri = appendFinalQueryParamKey(
       defaultTwoFactorAuthResetUrl,
+      'twoFAResetToken',
     ),
   } = props
 
