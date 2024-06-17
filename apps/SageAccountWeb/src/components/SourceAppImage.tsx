@@ -20,14 +20,12 @@ const SourceAppImage: React.FC<SourceAppImageProps> = (
     associateObjectType: FileHandleAssociateType.TableEntity,
     fileHandleId: fileHandleId ?? '',
   }
-  const { data: svg } = SynapseQueries.useGetPresignedUrlContentFromFHA(
-    fha,
-    true,
-    { enabled: !!fileHandleId },
-  )
+  const imageUrl = SynapseQueries.useGetStablePresignedUrl(fha, true, {
+    enabled: !!fileHandleId,
+  })
 
-  const icon = svg ? (
-    <div className="SourceAppImage" dangerouslySetInnerHTML={{ __html: svg }} />
+  const icon = imageUrl ? (
+    <img className="SourceAppImage" alt="App Logo" src={imageUrl} />
   ) : (
     <Skeleton variant="rectangular" width={250} height={65} />
   )

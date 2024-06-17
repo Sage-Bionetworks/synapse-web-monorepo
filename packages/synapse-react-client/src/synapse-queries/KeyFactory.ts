@@ -532,6 +532,20 @@ export class KeyFactory {
     }
   }
 
+  public getStablePresignedUrlFromFHAQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
+  ) {
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'stablePresignedUrlFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey('stablePresignedUrlFromFHA', fileHandleAssociation)
+    }
+  }
+
   public getProfileImageQueryKey(userId: string) {
     return this.getKey('profileImageData', userId)
   }

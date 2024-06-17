@@ -13,6 +13,50 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import { fetchBlob, useCreateUrlForData } from '../../utils/hooks'
+import { useEffect } from 'react'
+
+export function useGetStablePresignedUrl(
+  fileHandleAssociation: FileHandleAssociation,
+  forceAnonymous: boolean = false,
+  options?: Partial<
+    Omit<UseQueryOptions<Blob, SynapseClientError>, 'staleTime'>
+  >,
+): string | undefined {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryFn = async () => {
+    const batchFileResult = await SynapseClient.getFiles(
+      {
+        requestedFiles: [fileHandleAssociation],
+        includeFileHandles: false,
+        includePreSignedURLs: true,
+        includePreviewPreSignedURLs: false,
+      },
+      forceAnonymous ? undefined : accessToken,
+    )
+    return await fetchBlob(batchFileResult.requestedFiles[0].preSignedURL!)
+  }
+  const { data: blob, error } = useQuery({
+    ...options,
+    queryKey: keyFactory.getStablePresignedUrlFromFHAQueryKey(
+      fileHandleAssociation,
+      forceAnonymous,
+    ),
+    queryFn,
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (error) {
+      console.error(
+        `Failed to fetch file object. See network log for details: FileHandleAssociation=${JSON.stringify(
+          fileHandleAssociation,
+        )}`,
+      )
+    }
+  }, [error, fileHandleAssociation])
+  return useCreateUrlForData(blob)
+}
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -65,6 +109,7 @@ export function useGetPresignedUrlContentFromFHA(
       },
       forceAnonymous ? undefined : accessToken,
     )
+
     const data = await SynapseClient.getFileHandleContent(
       batchFileResult.requestedFiles[0].fileHandle!,
       batchFileResult.requestedFiles[0].preSignedURL!,
