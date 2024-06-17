@@ -8,13 +8,14 @@ import Skeleton from '@mui/material/Skeleton'
 
 export type SourceAppImageProps = {
   fileHandleId: string | null
+  friendlyName?: string
 }
 
 // Refactored into it's own class, thinking that using a prefetch resource would improve loading performance of the images, but it does not.
 const SourceAppImage: React.FC<SourceAppImageProps> = (
   props: SourceAppImageProps,
 ) => {
-  const { fileHandleId } = props
+  const { fileHandleId, friendlyName } = props
   const fha: FileHandleAssociation = {
     associateObjectId: 'syn45291362',
     associateObjectType: FileHandleAssociateType.TableEntity,
@@ -25,7 +26,11 @@ const SourceAppImage: React.FC<SourceAppImageProps> = (
   })
 
   const icon = imageUrl ? (
-    <img className="SourceAppImage" alt="App Logo" src={imageUrl} />
+    <img
+      className="SourceAppImage"
+      alt={friendlyName ? `${friendlyName} logo` : 'Application logo'}
+      src={imageUrl}
+    />
   ) : (
     <Skeleton variant="rectangular" width={250} height={65} />
   )
