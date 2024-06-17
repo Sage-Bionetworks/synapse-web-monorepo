@@ -311,6 +311,7 @@ import {
 } from './SynapseClientUtils'
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import { SetOptional } from 'type-fest'
+import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
 
 const cookies = new UniversalCookies()
 
@@ -4204,11 +4205,19 @@ export const changePassword = (
 
 // http://rest-docs.synapse.org/rest/POST/user/password/reset.html
 export const resetPassword = (email: string) => {
-  const endpoint = window.location.href + '?passwordResetToken='
+  const endpoint = appendFinalQueryParamKey(
+    new URL(window.location.href),
+    'passwordResetToken',
+  )
   const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(
     endpoint,
   )}`
-  return doPost(url, { email }, undefined, BackendDestinationEnum.REPO_ENDPOINT)
+  return doPost<''>(
+    url,
+    { email },
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**

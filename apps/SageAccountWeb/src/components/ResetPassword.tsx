@@ -4,8 +4,8 @@ import { useHistory } from 'react-router-dom'
 import {
   ChangePasswordWithToken,
   displayToast,
-  SynapseClient,
   SynapseClientError,
+  SynapseQueries,
 } from 'synapse-react-client'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
@@ -22,6 +22,20 @@ export const ResetPassword = (props: ResetPasswordProps) => {
   const [userName, setUserName] = useState('')
 
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
+  const [hasInitiatedResetPassword, setHasInitiatedResetPassword] =
+    useState(false)
+  const { mutate, isPending } = SynapseQueries.useResetPassword({
+    onSuccess: () => {
+      setHasInitiatedResetPassword(true)
+      displayToast(
+        'If a matching account was found, then your password reset request has been sent. Please check your email.',
+        'success',
+      )
+    },
+    onError: err => {
+      displayToast((err as SynapseClientError).reason, 'danger')
+    },
+  })
 
   const token = useMemo(() => {
     if (passwordResetTokenValue) {
@@ -32,19 +46,9 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     return undefined
   }, [passwordResetTokenValue])
 
-  const handleResetPassword = async (
-    clickEvent: React.FormEvent<HTMLElement>,
-  ) => {
+  const handleResetPassword = (clickEvent: React.FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
-    try {
-      await SynapseClient.resetPassword(userName)
-      displayToast(
-        'If a matching account was found, then your password reset request has been sent. Please check your email.',
-        'success',
-      )
-    } catch (err: unknown) {
-      displayToast((err as SynapseClientError).reason, 'danger')
-    }
+    mutate(userName)
   }
 
   const formControlSx: SxProps = {
@@ -84,7 +88,10 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 label={'Email address or username'}
                 id="username"
                 name="username"
-                onChange={e => setUserName(e.target.value)}
+                onChange={e => {
+                  setHasInitiatedResetPassword(false)
+                  setUserName(e.target.value)
+                }}
                 value={userName || ''}
                 sx={formControlSx}
               />
@@ -96,7 +103,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 }}
                 sx={buttonSx}
                 type="button"
-                disabled={!userName}
+                disabled={!userName || hasInitiatedResetPassword || isPending}
               >
                 Reset my password
               </Button>
