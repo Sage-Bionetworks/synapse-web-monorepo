@@ -111,7 +111,7 @@ const routes: GenericRoute[] = [
         centerTitle: true,
         outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
-          url: 'https://news.cancercomplexity.synapse.org/',
+          url: 'https://news.cancercomplexity.synapse.org',
           itemsToShow: 3,
           allowCategories: [],
           filter: {
