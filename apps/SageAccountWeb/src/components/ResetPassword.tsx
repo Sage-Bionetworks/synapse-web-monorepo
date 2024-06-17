@@ -72,11 +72,13 @@ export const ResetPassword = (props: ResetPasswordProps) => {
             </>
           ) : (
             <Box>
-              <BackButton
-                onClick={() => {
-                  history.goBack()
-                }}
-              />
+              {history.length > 1 && (
+                <BackButton
+                  onClick={() => {
+                    history.goBack()
+                  }}
+                />
+              )}
               <SourceAppLogo />
               <TextField
                 fullWidth

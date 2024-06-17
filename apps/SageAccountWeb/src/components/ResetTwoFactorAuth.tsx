@@ -115,11 +115,13 @@ export function ResetTwoFactorAuth() {
               )}
               {!token && (
                 <Box>
-                  <BackButton
-                    onClick={() => {
-                      history.goBack()
-                    }}
-                  />
+                  {history.length > 1 && (
+                    <BackButton
+                      onClick={() => {
+                        history.goBack()
+                      }}
+                    />
+                  )}
                   <SourceAppLogo />
                   <Alert severity={'error'}>
                     No token was found in the URL.
