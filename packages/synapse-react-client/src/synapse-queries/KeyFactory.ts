@@ -391,13 +391,21 @@ export class KeyFactory {
     queryBundleRequest: QueryBundleRequest,
     forceAnonymous: boolean,
   ) {
-    const _getKey = forceAnonymous ? this.getKeyAnonymous : this.getKey
-    return _getKey(
-      ...entityQueryKeyObjects.fullTableQueryResult(
-        queryBundleRequest,
-        forceAnonymous,
-      ),
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        ...entityQueryKeyObjects.fullTableQueryResult(
+          queryBundleRequest,
+          forceAnonymous,
+        ),
+      )
+    } else {
+      return this.getKey(
+        ...entityQueryKeyObjects.fullTableQueryResult(
+          queryBundleRequest,
+          forceAnonymous,
+        ),
+      )
+    }
   }
 
   public getDownloadListBaseQueryKey() {
@@ -523,12 +531,19 @@ export class KeyFactory {
     fileHandleAssociation: FileHandleAssociation,
     forceAnonymous: boolean,
   ) {
-    const _getKey = forceAnonymous ? this.getKeyAnonymous : this.getKey
-    return _getKey(
-      'presignedUrlContentFromFHA',
-      fileHandleAssociation,
-      forceAnonymous,
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'presignedUrlContentFromFHA',
+        fileHandleAssociation,
+        forceAnonymous,
+      )
+    } else {
+      return this.getKey(
+        'presignedUrlContentFromFHA',
+        fileHandleAssociation,
+        forceAnonymous,
+      )
+    }
   }
 
   public getProfileImageQueryKey(userId: string) {
