@@ -4212,7 +4212,12 @@ export const resetPassword = (email: string) => {
   const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(
     endpoint,
   )}`
-  return doPost(url, { email }, undefined, BackendDestinationEnum.REPO_ENDPOINT)
+  return doPost<''>(
+    url,
+    { email },
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
