@@ -14,6 +14,7 @@ import SynapseClient from '../../synapse-client'
 import { ONE_TIME_PASSWORD_STEP } from '../../components'
 import { noop } from 'lodash-es'
 import { useResetTwoFactorAuth } from '../../synapse-queries'
+import { useOneSageURL } from './useOneSageURL'
 
 export type UseLoginOptions = {
   sessionCallback?: () => void
@@ -67,7 +68,15 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
   const [twoFaErrorResponse, setTwoFaErrorResponse] = useState<
     TwoFactorAuthErrorResponse | undefined
   >()
-
+  const changePasswordSearchParams = new URLSearchParams()
+  changePasswordSearchParams.set(
+    'errorCode',
+    ErrorResponseCode.PASSWORD_RESET_VIA_EMAIL_REQUIRED,
+  )
+  const changePasswordUrl = useOneSageURL(
+    '/changePassword',
+    changePasswordSearchParams,
+  )
   /**
    * Update state variable if optional prop changes
    */
@@ -166,6 +175,15 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
       SynapseClient.login(username, password, authenticationReceipt),
     onError: error => {
       setErrorMessage(error.reason)
+      const { errorResponse } = error
+      if (
+        errorResponse &&
+        'errorCode' in errorResponse &&
+        errorResponse.errorCode ==
+          ErrorResponseCode.PASSWORD_RESET_VIA_EMAIL_REQUIRED
+      ) {
+        window.location.assign(changePasswordUrl.toString())
+      }
     },
     onSuccess: async loginResponse => {
       if (loginResponse) {

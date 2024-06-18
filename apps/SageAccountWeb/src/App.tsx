@@ -33,6 +33,7 @@ import { OAuthClientManagementPage } from './components/OAuthClientManagementPag
 import { SourceAppProvider } from './components/useSourceApp'
 import { ResetTwoFactorAuth } from './components/ResetTwoFactorAuth'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
+import { ChangePasswordPage } from './components/ChangePasswordPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,6 +112,11 @@ function App() {
                   <Route exact path="/register1" component={RegisterAccount1} />
                   <Route exact path="/register2" component={RegisterAccount2} />
                   <Route exact path="/jointeam" component={JoinTeamPage} />
+                  <Route
+                    exact
+                    path="/changePassword"
+                    component={ChangePasswordPage}
+                  />
                   <Route
                     exact
                     path="/sageresources"

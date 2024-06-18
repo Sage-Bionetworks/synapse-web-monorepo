@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
+import { useSynapseContext } from '../../utils'
 
 export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
   'Your password was successfully changed.'
@@ -12,9 +13,18 @@ export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [userName, setUserName] = useState<string>('')
+  const { accessToken } = useSynapseContext()
+  const isSignedIn = !!accessToken
 
   const { data: userProfile, isLoading: isLoadingUserProfile } =
-    useGetCurrentUserProfile()
+    useGetCurrentUserProfile({
+      enabled: isSignedIn,
+    })
+
+  if (userProfile && userName == '') {
+    setUserName(userProfile.userName)
+  }
 
   const {
     promptForTwoFactorAuth,
@@ -31,7 +41,7 @@ export default function ChangePassword() {
       displayToast('Passwords do not match.', 'danger')
     } else {
       handleChangePasswordWithCurrentPassword(
-        userProfile?.userName!,
+        userName,
         oldPassword,
         newPassword,
       )
@@ -54,6 +64,19 @@ export default function ChangePassword() {
             handleChangePassword(e)
           }}
         >
+          {!isSignedIn && (
+            <TextField
+              required
+              fullWidth
+              autoFocus
+              autoComplete="username"
+              label="Username or Email Address"
+              id="username"
+              type="text"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
+            />
+          )}
           <TextField
             fullWidth
             required
@@ -91,6 +114,7 @@ export default function ChangePassword() {
                 !oldPassword ||
                 !newPassword ||
                 !confirmPassword ||
+                !userName ||
                 isLoadingUserProfile ||
                 changePasswordIsPending
               }
@@ -99,7 +123,11 @@ export default function ChangePassword() {
             >
               Change Password
             </Button>
-            <Link component={RouterLink} to="/resetPassword">
+            <Link
+              component={RouterLink}
+              to="/resetPassword"
+              sx={{ display: 'block', marginTop: '1em', marginLeft: '5px' }}
+            >
               Forgot password?
             </Link>
           </div>
