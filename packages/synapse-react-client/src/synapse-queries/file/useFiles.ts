@@ -1,5 +1,6 @@
 import {
   UseQueryOptions,
+  UseQueryResult,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -13,6 +14,56 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import { fetchBlob, useCreateUrlForData } from '../../utils/hooks'
+import { useEffect } from 'react'
+
+export type StablePresignedUrl = {
+  dataUrl?: string
+  queryResult: UseQueryResult<Blob, SynapseClientError>
+}
+
+export function useGetStablePresignedUrl(
+  fileHandleAssociation: FileHandleAssociation,
+  forceAnonymous: boolean = false,
+  options?: Partial<
+    Omit<UseQueryOptions<Blob, SynapseClientError>, 'staleTime'>
+  >,
+): StablePresignedUrl | undefined {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryFn = async () => {
+    const batchFileResult = await SynapseClient.getFiles(
+      {
+        requestedFiles: [fileHandleAssociation],
+        includeFileHandles: false,
+        includePreSignedURLs: true,
+        includePreviewPreSignedURLs: false,
+      },
+      forceAnonymous ? undefined : accessToken,
+    )
+    return await fetchBlob(batchFileResult.requestedFiles[0].preSignedURL!)
+  }
+  const queryResult = useQuery({
+    ...options,
+    queryKey: keyFactory.getStablePresignedUrlFromFHAQueryKey(
+      fileHandleAssociation,
+      forceAnonymous,
+    ),
+    queryFn,
+    staleTime: Infinity,
+  })
+  const { data: blob, error } = queryResult
+
+  useEffect(() => {
+    if (error) {
+      console.error(
+        `Failed to fetch file object. See network log for details: FileHandleAssociation=${JSON.stringify(
+          fileHandleAssociation,
+        )}`,
+      )
+    }
+  }, [error, fileHandleAssociation])
+  return { dataUrl: useCreateUrlForData(blob), queryResult }
+}
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -65,6 +116,7 @@ export function useGetPresignedUrlContentFromFHA(
       },
       forceAnonymous ? undefined : accessToken,
     )
+
     const data = await SynapseClient.getFileHandleContent(
       batchFileResult.requestedFiles[0].fileHandle!,
       batchFileResult.requestedFiles[0].preSignedURL!,

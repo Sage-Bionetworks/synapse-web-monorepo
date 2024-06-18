@@ -132,13 +132,10 @@ const entityQueryKeyObjects = {
     },
   ],
 
-  fullTableQueryResult: (
-    queryBundleRequest: QueryBundleRequest,
-    forceAnonymous: boolean,
-  ) => [
+  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
     { type: 'tableQueryResult', allResults: true },
-    { tableQueryBundleRequest: queryBundleRequest, forceAnonymous },
+    { tableQueryBundleRequest: queryBundleRequest },
   ],
 
   boundJSONSchema: (id: string) => [
@@ -217,6 +214,10 @@ export class KeyFactory {
         : btoa(String(hashCode(this.accessToken))),
       ...removeTrailingUndefinedElements(args),
     ]
+  }
+
+  private getKeyAnonymous(...args: unknown[]): QueryKey {
+    return ['anonymous', ...removeTrailingUndefinedElements(args)]
   }
 
   public getFeatureFlagQueryKey() {
@@ -387,12 +388,15 @@ export class KeyFactory {
     queryBundleRequest: QueryBundleRequest,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
-      ...entityQueryKeyObjects.fullTableQueryResult(
-        queryBundleRequest,
-        forceAnonymous,
-      ),
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      )
+    } else {
+      return this.getKey(
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      )
+    }
   }
 
   public getDownloadListBaseQueryKey() {
@@ -518,11 +522,28 @@ export class KeyFactory {
     fileHandleAssociation: FileHandleAssociation,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
-      'presignedUrlContentFromFHA',
-      fileHandleAssociation,
-      forceAnonymous,
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'presignedUrlContentFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey('presignedUrlContentFromFHA', fileHandleAssociation)
+    }
+  }
+
+  public getStablePresignedUrlFromFHAQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
+  ) {
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'stablePresignedUrlFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey('stablePresignedUrlFromFHA', fileHandleAssociation)
+    }
   }
 
   public getProfileImageQueryKey(userId: string) {
