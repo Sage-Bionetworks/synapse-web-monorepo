@@ -1,5 +1,6 @@
 import {
   UseQueryOptions,
+  UseQueryResult,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -16,13 +17,18 @@ import { cloneDeep } from 'lodash-es'
 import { fetchBlob, useCreateUrlForData } from '../../utils/hooks'
 import { useEffect } from 'react'
 
+export type StablePresignedUrl = {
+  dataUrl?: string
+  queryResult: UseQueryResult<Blob, SynapseClientError>
+}
+
 export function useGetStablePresignedUrl(
   fileHandleAssociation: FileHandleAssociation,
   forceAnonymous: boolean = false,
   options?: Partial<
     Omit<UseQueryOptions<Blob, SynapseClientError>, 'staleTime'>
   >,
-): string | undefined {
+): StablePresignedUrl | undefined {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const batchFileResult = await SynapseClient.getFiles(
@@ -36,7 +42,7 @@ export function useGetStablePresignedUrl(
     )
     return await fetchBlob(batchFileResult.requestedFiles[0].preSignedURL!)
   }
-  const { data: blob, error } = useQuery({
+  const queryResult = useQuery({
     ...options,
     queryKey: keyFactory.getStablePresignedUrlFromFHAQueryKey(
       fileHandleAssociation,
@@ -45,6 +51,7 @@ export function useGetStablePresignedUrl(
     queryFn,
     staleTime: Infinity,
   })
+  const { data: blob, error } = queryResult
 
   useEffect(() => {
     if (error) {
@@ -55,7 +62,7 @@ export function useGetStablePresignedUrl(
       )
     }
   }, [error, fileHandleAssociation])
-  return useCreateUrlForData(blob)
+  return { dataUrl: useCreateUrlForData(blob), queryResult }
 }
 
 export function useGetPresignedUrlContent(

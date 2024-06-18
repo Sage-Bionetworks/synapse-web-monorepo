@@ -21,15 +21,25 @@ const SourceAppImage: React.FC<SourceAppImageProps> = (
     associateObjectType: FileHandleAssociateType.TableEntity,
     fileHandleId: fileHandleId ?? '',
   }
-  const imageUrl = SynapseQueries.useGetStablePresignedUrl(fha, true, {
-    enabled: !!fileHandleId,
-  })
+  const stablePresignedUrl = SynapseQueries.useGetStablePresignedUrl(
+    fha,
+    true,
+    {
+      enabled: !!fileHandleId,
+    },
+  )
 
-  const icon = imageUrl ? (
+  const dataUrl = stablePresignedUrl?.dataUrl
+  const error = stablePresignedUrl?.queryResult?.error
+
+  if (error) {
+    return <></>
+  }
+  const icon = dataUrl ? (
     <img
       className="SourceAppImage"
       alt={friendlyName ? `${friendlyName} logo` : 'Application logo'}
-      src={imageUrl}
+      src={dataUrl}
     />
   ) : (
     <Skeleton variant="rectangular" width={250} height={65} />
