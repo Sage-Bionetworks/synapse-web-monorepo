@@ -21,6 +21,8 @@ import {
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { SynapseContextType } from '../../utils'
+import { KeyFactory } from '../../synapse-queries'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -28,13 +30,22 @@ const mockDisplayToast = jest
 
 const changePasswordSpy = jest.spyOn(SynapseClient, 'changePassword')
 
-function renderComponent() {
+function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
   return render(
     <MemoryRouter>
       <ChangePassword />
     </MemoryRouter>,
-    { wrapper: createWrapper() },
+    { wrapper: createWrapper(wrapperProps) },
   )
+}
+
+function getUsernameField() {
+  try {
+    return screen.getByLabelText(/Username or Email Address/i)
+  } catch (error) {
+    // console.log('unable to find Username field in ChangePassword UI')
+  }
+  return undefined
 }
 
 function getCurrentPasswordField() {
@@ -54,9 +65,10 @@ function verifySuccessAlertIsShown() {
   within(alert).getByText(PASSWORD_CHANGED_SUCCESS_MESSAGE)
 }
 
-function setUp() {
+function setUp(wrapperProps?: Partial<SynapseContextType>) {
   const user = userEvent.setup()
-  const result = renderComponent()
+  const result = renderComponent(wrapperProps)
+  const usernameField = getUsernameField()
   const currentPasswordField = getCurrentPasswordField()
   const newPasswordField = getNewPasswordField()
   const confirmPasswordField = getConfirmPasswordField()
@@ -65,6 +77,7 @@ function setUp() {
   return {
     user,
     result,
+    usernameField,
     currentPasswordField,
     newPasswordField,
     confirmPasswordField,
@@ -139,12 +152,14 @@ describe('ChangePassword tests', () => {
 
     const {
       user,
+      usernameField,
       currentPasswordField,
       newPasswordField,
       confirmPasswordField,
       submitButton,
     } = setUp()
 
+    expect(usernameField).toBeUndefined() //logged in, username should not be present
     await user.type(currentPasswordField, currentPassword)
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
@@ -161,6 +176,53 @@ describe('ChangePassword tests', () => {
         concreteType:
           'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
         username: mockUserProfileData.userName,
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      })
+    })
+  })
+
+  it('anonymous changing password', async () => {
+    server.use(
+      getSuccessfulChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      ),
+    )
+    const userName = 'ralphwiggum'
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      usernameField,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp({
+      keyFactory: new KeyFactory(undefined),
+      accessToken: undefined,
+    })
+
+    expect(usernameField).toBeDefined() //not logged in, username should be present
+    await user.type(usernameField!, userName)
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      verifySuccessAlertIsShown()
+      expect(usernameField).not.toBeInTheDocument()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
+      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+      expect(changePasswordSpy).toHaveBeenCalledWith({
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+        username: userName,
         newPassword: newPassword,
         currentPassword: currentPassword,
       })

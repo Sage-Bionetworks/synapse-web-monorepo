@@ -5,7 +5,7 @@ import StandaloneLoginForm, {
   StandaloneLoginFormProps,
 } from './StandaloneLoginForm'
 import SynapseClient from '../../synapse-client'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
+import { ErrorResponse, LoginResponse } from '@sage-bionetworks/synapse-types'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
@@ -29,6 +29,12 @@ const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
   twoFaToken: 'a1b2c3',
   reason: 'need 2fa plz',
   errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
+}
+
+const weakPasswordErrorResponse: ErrorResponse = {
+  concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+  reason: 'your "password" is weak',
+  errorCode: ErrorResponseCode.PASSWORD_RESET_VIA_EMAIL_REQUIRED,
 }
 
 function renderComponent(props: StandaloneLoginFormProps) {
@@ -215,5 +221,41 @@ describe('StandaloneLoginForm', () => {
       expect(callback).toHaveBeenCalled()
       expect(SynapseClient.login).not.toHaveBeenCalled()
     })
+  })
+
+  it('Log in with weak password', async () => {
+    jest.spyOn(SynapseClient, 'login').mockRejectedValue({
+      reason: 'weak pw',
+      errorResponse: weakPasswordErrorResponse,
+    })
+
+    renderComponent({ sessionCallback: callback })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Sign in with your email' }),
+    )
+
+    await userEvent.type(
+      screen.getByLabelText('Username or Email Address', { exact: false }),
+      username,
+    )
+    await userEvent.type(
+      screen.getByLabelText('Password', { exact: false }),
+      password,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await waitFor(() =>
+      expect(SynapseClient.login).toHaveBeenCalledWith(
+        username,
+        password,
+        null,
+      ),
+    )
+    expect(callback).not.toHaveBeenCalled()
+    expect(window.location.assign).toHaveBeenCalledWith(
+      'https://accounts.synapse.org/changePassword?errorCode=PASSWORD_RESET_VIA_EMAIL_REQUIRED',
+    )
   })
 })
