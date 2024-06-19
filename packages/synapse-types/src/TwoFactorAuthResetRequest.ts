@@ -6,8 +6,10 @@
 export type TwoFactorAuthResetRequest = {
   /* The id of the user that attempted to authenticate. */
   userId: number
+  /* The current user password that can be used in place of the twoFaToken (e.g. when authenticating with user/password or during a change password workflow). */
+  password?: string
   /* The token that was included in the error response when authenticating. */
-  twoFaToken: string
+  twoFaToken?: string
   /* The portal endpoint used as reset link prefix, must be a domain owned by sage. */
   twoFaResetEndpoint: string
 }

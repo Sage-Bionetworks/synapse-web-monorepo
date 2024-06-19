@@ -11,10 +11,11 @@ export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
 
 export type ChangePasswordProps = {
   redirectToRoute?: string //optional target to send user after successfully changing the password
+  hideReset2FA?: boolean
 }
 
 export default function ChangePassword(props: ChangePasswordProps) {
-  const { redirectToRoute } = props
+  const { redirectToRoute, hideReset2FA = false } = props
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
@@ -40,7 +41,9 @@ export default function ChangePassword(props: ChangePasswordProps) {
     isPending: changePasswordIsPending,
     handleChangePasswordWithCurrentPassword,
     error,
-  } = useChangePasswordFormState()
+  } = useChangePasswordFormState({
+    hideReset2FA,
+  })
 
   const handleChangePassword = (clickEvent: React.FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()

@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
   displayToast,
+  PasswordField,
   StandaloneLoginForm,
   SynapseQueries,
   useApplicationSessionContext,
@@ -40,14 +41,19 @@ export function ResetTwoFactorAuth() {
     Pick<TwoFactorAuthErrorResponse, 'twoFaToken' | 'userId'> | undefined
   >()
 
-  const promptForSignIn = token && !twoFaRequiredToken
-  const promptConfirmDisable2FA = token && twoFaRequiredToken
+  const [password, setPassword] = useState('')
+  const [showPasswordField, setShowPasswordField] = useState(false)
+
+  const promptForSignIn = token && !(twoFaRequiredToken || showPasswordField)
+  const promptConfirmDisable2FA =
+    token && (twoFaRequiredToken || showPasswordField)
 
   const {
     mutate: disableTwoFactorAuth,
     isSuccess,
     isPending,
     error,
+    reset: resetDisable2FAMutation,
   } = SynapseQueries.useDisableTwoFactorAuthWithResetToken({
     onSuccess: () => {
       displayToast('2FA has been successfully disabled on your account.')
@@ -83,11 +89,24 @@ export function ResetTwoFactorAuth() {
                     ssoState={{
                       twoFaResetToken: twoFactorAuthResetTokenParam,
                     }}
+                    onPasswordLoginSelected={() => {
+                      // We will render our own password form
+                      setShowPasswordField(true)
+                      //
+                    }}
                   />
                 </>
               )}
               {promptConfirmDisable2FA && (
                 <>
+                  {showPasswordField && (
+                    <BackButton
+                      onClick={() => {
+                        resetDisable2FAMutation()
+                        setShowPasswordField(false)
+                      }}
+                    />
+                  )}
                   <Typography variant={'body1'} my={2}>
                     If you disable two-factor authentication, your account will
                     be less secure. Additionally, you may be unable to download
@@ -98,6 +117,12 @@ export function ResetTwoFactorAuth() {
                     You can re-activate two-factor authentication at any time in
                     your account settings.
                   </Typography>
+                  {showPasswordField && (
+                    <PasswordField
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                    />
+                  )}
                   <Button
                     fullWidth
                     variant={'contained'}
@@ -105,9 +130,12 @@ export function ResetTwoFactorAuth() {
                       disableTwoFactorAuth({
                         ...twoFaRequiredToken,
                         twoFaResetToken: token,
+                        password: password,
                       })
                     }}
-                    disabled={isSuccess || isPending}
+                    disabled={
+                      isSuccess || isPending || (showPasswordField && !password)
+                    }
                   >
                     Disable Two-Factor Authentication
                   </Button>

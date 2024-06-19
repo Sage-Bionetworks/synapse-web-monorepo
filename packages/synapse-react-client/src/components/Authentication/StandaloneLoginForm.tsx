@@ -17,18 +17,22 @@ export type StandaloneLoginFormProps = {
   resetPasswordUrl?: string
   /* Invoked before redirecting to Google. Useful in portals where we may want to store the current URL to redirect back here. */
   onBeginOAuthSignIn?: () => void
-  showUsernameOrPassword?: boolean | undefined
   /* optionally pass the 2FA error response to directly start the 2FA challenge */
   twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
   /* If a twoFactorAuthError is encountered (including passed in the twoFactorAuthenticationRequired prop), this callback will be invoked */
   onTwoFactorAuthRequired?: (
-    twoFaToken: Pick<TwoFactorAuthErrorResponse, 'twoFaToken' | 'userId'>,
+    twoFaErrorResponse: Pick<
+      TwoFactorAuthErrorResponse,
+      'twoFaToken' | 'userId'
+    >,
   ) => void
   hideRegisterButton?: boolean
   hideForgotPasswordButton?: boolean
   ssoState?: OAuth2State
   /* The URI where the user should be directed in an email when attempting to reset 2FA */
   twoFactorAuthResetUri?: string
+  /* Invoked when password login is selected */
+  onPasswordLoginSelected?: () => void
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -43,6 +47,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     hideForgotPasswordButton,
     ssoState,
     twoFactorAuthResetUri,
+    onPasswordLoginSelected,
   } = props
 
   const {
@@ -103,6 +108,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         ssoState={ssoState}
         twoFactorAuthResetUri={twoFactorAuthResetUri}
+        onPasswordLoginSelected={onPasswordLoginSelected}
       />
     </Box>
   )

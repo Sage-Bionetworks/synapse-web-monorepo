@@ -400,7 +400,10 @@ export const AccountSettings = () => {
                 className="account-setting-panel main-panel"
               >
                 <Typography variant={'headline2'}>Change Password</Typography>
-                <ChangePassword />
+                <ChangePassword
+                  // The user is logged in. If they want to disable 2FA, they can do so from this page.
+                  hideReset2FA={true}
+                />
               </Paper>
               <Paper
                 ref={timezoneRef}

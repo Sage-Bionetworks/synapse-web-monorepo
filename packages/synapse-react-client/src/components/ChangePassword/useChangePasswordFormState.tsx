@@ -6,16 +6,20 @@ import {
   PasswordResetSignedToken,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthOtpType,
+  TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useChangePassword } from '../../synapse-queries'
+import { useChangePassword, useResetTwoFactorAuth } from '../../synapse-queries'
 import { Alert, Typography } from '@mui/material'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from '../Authentication/Constants'
 import { ONE_TIME_PASSWORD_STEP, OneTimePasswordForm } from '../Authentication'
+import { useOneSageURL } from '../../utils/hooks'
+import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
 
 export type UseChangePasswordFormStateOptions = {
+  hideReset2FA?: boolean
   onChangePasswordSuccess?: () => void
 }
 
@@ -26,7 +30,14 @@ export type UseChangePasswordFormStateOptions = {
 export default function useChangePasswordFormState(
   options?: UseChangePasswordFormStateOptions,
 ) {
-  // Store new password in state so that we can re-use it if 2FA is required
+  const defaultTwoFactorAuthResetUrl = useOneSageURL('/reset2FA')
+  const twoFactorAuthResetUri = appendFinalQueryParamKey(
+    defaultTwoFactorAuthResetUrl,
+    'twoFAResetToken',
+  )
+
+  // Store current and new password in state so that we can re-use it if 2FA is required
+  const [currentPassword, setCurrentPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [twoFactorAuthErrorResponse, setTwoFactorAuthErrorResponse] = useState<
     TwoFactorAuthErrorResponse | undefined
@@ -57,6 +68,7 @@ export default function useChangePasswordFormState(
 
   const handleChangePasswordWithCurrentPassword = useCallback(
     (username: string, currentPassword: string, newPassword: string) => {
+      setCurrentPassword(currentPassword)
       setNewPassword(newPassword)
       const changeRequest: ChangePasswordWithCurrentPassword = {
         username,
@@ -102,6 +114,26 @@ export default function useChangePasswordFormState(
     [changePassword, twoFactorAuthErrorResponse],
   )
   const promptForTwoFactorAuth = Boolean(twoFactorAuthErrorResponse)
+  const {
+    mutate: resetTwoFactorAuth,
+    isSuccess: twoFactorAuthResetIsSuccess,
+    isPending: twoFactorAuthResetIsPending,
+  } = useResetTwoFactorAuth()
+
+  const beginTwoFactorAuthReset = useCallback(
+    (twoFaResetEndpoint: string) => {
+      if (twoFactorAuthErrorResponse) {
+        const request: TwoFactorAuthResetRequest = {
+          userId: twoFactorAuthErrorResponse.userId,
+          twoFaResetEndpoint: twoFaResetEndpoint,
+          // When attempting to reset 2FA while resetting a password, the current password must be used to request 2FA reset
+          password: currentPassword,
+        }
+        resetTwoFactorAuth(request)
+      }
+    },
+    [currentPassword, resetTwoFactorAuth, twoFactorAuthErrorResponse],
+  )
 
   const TwoFactorAuthPrompt = useCallback(() => {
     if (!promptForTwoFactorAuth) {
@@ -131,21 +163,42 @@ export default function useChangePasswordFormState(
           onSubmit={(code, otpType) =>
             handleChangePasswordWithOtp(newPassword, code, otpType)
           }
-          hideReset2FA={true}
-          twoFactorAuthResetIsPending={false}
-          twoFactorAuthResetIsSuccess={false}
+          hideReset2FA={options?.hideReset2FA}
+          onClickPromptReset2FA={() => {
+            setOtpStep('DISABLE_2FA_PROMPT')
+          }}
+          onClickReset2FA={() => {
+            beginTwoFactorAuthReset(twoFactorAuthResetUri)
+          }}
+          twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+          twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         />
-        <Alert severity={'info'} sx={{ my: 2 }}>
-          Two-factor authentication is required to change your password.
-        </Alert>
+        {(otpStep === 'RECOVERY_CODE' || otpStep === 'VERIFICATION_CODE') && (
+          <Alert severity={'info'} sx={{ my: 2 }}>
+            Two-factor authentication is required to change your password. Your
+            password has not yet been changed.
+          </Alert>
+        )}
+        {otpStep === 'DISABLE_2FA_PROMPT' && twoFactorAuthResetIsSuccess && (
+          <Alert severity={'warning'} sx={{ my: 2 }}>
+            <strong>Your password has not been changed.</strong> To disable
+            two-factor authentication, you will be required to enter your
+            current password after clicking the link sent to your email address.
+          </Alert>
+        )}
       </>
     )
   }, [
+    beginTwoFactorAuthReset,
     handleChangePasswordWithOtp,
     isPending,
     newPassword,
+    options?.hideReset2FA,
     otpStep,
     promptForTwoFactorAuth,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
+    twoFactorAuthResetUri,
   ])
 
   return {
