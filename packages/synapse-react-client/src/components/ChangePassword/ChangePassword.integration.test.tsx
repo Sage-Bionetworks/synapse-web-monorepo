@@ -1,5 +1,6 @@
 import React from 'react'
 import ChangePassword, {
+  ChangePasswordProps,
   PASSWORD_CHANGED_SUCCESS_MESSAGE,
 } from './ChangePassword'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -8,7 +9,6 @@ import userEvent from '@testing-library/user-event'
 import { server } from '../../mocks/msw/server'
 import { noop } from 'lodash-es'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
-import { MemoryRouter } from 'react-router-dom'
 import SynapseClient from '../../synapse-client'
 import {
   MOCK_USER_ID,
@@ -28,15 +28,21 @@ const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
+jest.mock('react-router-dom', () => {
+  return {
+    Redirect: jest.fn(({ to }) => `Redirected to ${to}`),
+  }
+})
+
 const changePasswordSpy = jest.spyOn(SynapseClient, 'changePassword')
 
-function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
-  return render(
-    <MemoryRouter>
-      <ChangePassword />
-    </MemoryRouter>,
-    { wrapper: createWrapper(wrapperProps) },
-  )
+function renderComponent(
+  changePasswordProps?: ChangePasswordProps,
+  wrapperProps?: Partial<SynapseContextType>,
+) {
+  return render(<ChangePassword {...changePasswordProps} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
 }
 
 function getUsernameField() {
@@ -60,9 +66,12 @@ function verifySuccessAlertIsShown() {
   within(alert).getByText(PASSWORD_CHANGED_SUCCESS_MESSAGE)
 }
 
-function setUp(wrapperProps?: Partial<SynapseContextType>) {
+function setUp(
+  changePasswordProps?: ChangePasswordProps,
+  wrapperProps?: Partial<SynapseContextType>,
+) {
   const user = userEvent.setup()
-  const result = renderComponent(wrapperProps)
+  const result = renderComponent(changePasswordProps, wrapperProps)
   const usernameField = getUsernameField()
   const currentPasswordField = getCurrentPasswordField()
   const newPasswordField = getNewPasswordField()
@@ -177,6 +186,48 @@ describe('ChangePassword tests', () => {
     })
   })
 
+  it('verify redirect changing password', async () => {
+    server.use(
+      getSuccessfulChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      ),
+    )
+
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      usernameField,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp({ redirectToRoute: '/MyHome' })
+
+    expect(usernameField).not.toBeInTheDocument() //logged in, username should not be present
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Redirected to /MyHome')).toBeInTheDocument()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
+      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+      expect(changePasswordSpy).toHaveBeenCalledWith({
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+        username: mockUserProfileData.userName,
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      })
+    })
+  })
+
   it('anonymous changing password', async () => {
     server.use(
       getSuccessfulChangePasswordHandler(
@@ -194,10 +245,13 @@ describe('ChangePassword tests', () => {
       newPasswordField,
       confirmPasswordField,
       submitButton,
-    } = setUp({
-      keyFactory: new KeyFactory(undefined),
-      accessToken: undefined,
-    })
+    } = setUp(
+      {},
+      {
+        keyFactory: new KeyFactory(undefined),
+        accessToken: undefined,
+      },
+    )
 
     expect(usernameField).toBeInTheDocument() //not logged in, username should be present
     await user.type(usernameField!, userName)
