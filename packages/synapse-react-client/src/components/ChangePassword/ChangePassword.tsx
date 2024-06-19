@@ -1,20 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Button, Link, TextField } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { Redirect, Link as RouterLink } from 'react-router-dom'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
+import { useSynapseContext } from '../../utils'
 
 export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
   'Your password was successfully changed.'
 
-export default function ChangePassword() {
+export type ChangePasswordProps = {
+  redirectToRoute?: string //optional target to send user after successfully changing the password
+}
+
+export default function ChangePassword(props: ChangePasswordProps) {
+  const { redirectToRoute } = props
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [userName, setUserName] = useState<string>('')
+  const { accessToken } = useSynapseContext()
+  const isSignedIn = !!accessToken
 
   const { data: userProfile, isLoading: isLoadingUserProfile } =
-    useGetCurrentUserProfile()
+    useGetCurrentUserProfile({
+      enabled: isSignedIn,
+    })
+
+  useEffect(() => {
+    if (userProfile && userName == '') {
+      setUserName(userProfile.userName)
+    }
+  }, [userName, userProfile, userProfile?.userName])
 
   const {
     promptForTwoFactorAuth,
@@ -31,7 +48,7 @@ export default function ChangePassword() {
       displayToast('Passwords do not match.', 'danger')
     } else {
       handleChangePasswordWithCurrentPassword(
-        userProfile?.userName!,
+        userName,
         oldPassword,
         newPassword,
       )
@@ -39,9 +56,14 @@ export default function ChangePassword() {
   }
 
   if (successfullyChangedPassword) {
-    return (
-      <Alert severity={'success'}>{PASSWORD_CHANGED_SUCCESS_MESSAGE}</Alert>
-    )
+    if (redirectToRoute) {
+      displayToast(PASSWORD_CHANGED_SUCCESS_MESSAGE, 'success')
+      return <Redirect to={redirectToRoute} />
+    } else {
+      return (
+        <Alert severity={'success'}>{PASSWORD_CHANGED_SUCCESS_MESSAGE}</Alert>
+      )
+    }
   }
 
   return (
@@ -54,6 +76,19 @@ export default function ChangePassword() {
             handleChangePassword(e)
           }}
         >
+          {!isSignedIn && (
+            <TextField
+              required
+              fullWidth
+              autoFocus
+              autoComplete="username"
+              label="Username or Email Address"
+              id="username"
+              type="text"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
+            />
+          )}
           <TextField
             fullWidth
             required
@@ -91,6 +126,7 @@ export default function ChangePassword() {
                 !oldPassword ||
                 !newPassword ||
                 !confirmPassword ||
+                !userName ||
                 isLoadingUserProfile ||
                 changePasswordIsPending
               }
@@ -99,7 +135,11 @@ export default function ChangePassword() {
             >
               Change Password
             </Button>
-            <Link component={RouterLink} to="/resetPassword">
+            <Link
+              component={RouterLink}
+              to="/resetPassword"
+              sx={{ display: 'block', marginTop: '1em', marginLeft: '5px' }}
+            >
               Forgot password?
             </Link>
           </div>

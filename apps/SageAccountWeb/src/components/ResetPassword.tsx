@@ -17,6 +17,24 @@ export type ResetPasswordProps = {
   returnToUrl: string
 }
 
+export type SetPasswordInstructionsProps = {
+  title: string
+}
+
+export const SetPasswordInstructions = (
+  props: SetPasswordInstructionsProps,
+) => (
+  <div>
+    <Typography variant="headline2">{props.title}</Typography>
+    <Typography variant="smallText1">
+      We recommend using a strong, unique <strong>password</strong> of between
+      16-32 characters. A valid password must be at least 8 characters long and
+      must include letters, digits (0-9), and special characters
+      ~!@#$%^&*_-+=`|\(){}[]:;&quot;&apos;&lt;&gt;,.?/
+    </Typography>
+  </div>
+)
+
 export const ResetPassword = (props: ResetPasswordProps) => {
   const history = useHistory()
   const [userName, setUserName] = useState('')
@@ -114,14 +132,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
         }
         rightContent={
           token ? (
-            <div>
-              <Typography variant="headline2">Set a new password</Typography>
-              <Typography variant="smallText1">
-                We recommend using a strong, unique <strong>password</strong> of
-                between 16-32 characters. You can use letters, numbers, and
-                punctuation marks.
-              </Typography>
-            </div>
+            <SetPasswordInstructions title="Set a new password" />
           ) : (
             <div>
               <Typography variant="headline2">Reset your password</Typography>

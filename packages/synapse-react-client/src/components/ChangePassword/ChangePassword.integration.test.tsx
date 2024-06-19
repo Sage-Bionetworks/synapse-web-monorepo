@@ -1,5 +1,6 @@
 import React from 'react'
 import ChangePassword, {
+  ChangePasswordProps,
   PASSWORD_CHANGED_SUCCESS_MESSAGE,
 } from './ChangePassword'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -8,7 +9,6 @@ import userEvent from '@testing-library/user-event'
 import { server } from '../../mocks/msw/server'
 import { noop } from 'lodash-es'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
-import { MemoryRouter } from 'react-router-dom'
 import SynapseClient from '../../synapse-client'
 import {
   MOCK_USER_ID,
@@ -21,20 +21,32 @@ import {
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { SynapseContextType } from '../../utils'
+import { KeyFactory } from '../../synapse-queries'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
+jest.mock('react-router-dom', () => {
+  return {
+    Redirect: jest.fn(({ to }) => `Redirected to ${to}`),
+  }
+})
+
 const changePasswordSpy = jest.spyOn(SynapseClient, 'changePassword')
 
-function renderComponent() {
-  return render(
-    <MemoryRouter>
-      <ChangePassword />
-    </MemoryRouter>,
-    { wrapper: createWrapper() },
-  )
+function renderComponent(
+  changePasswordProps?: ChangePasswordProps,
+  wrapperProps?: Partial<SynapseContextType>,
+) {
+  return render(<ChangePassword {...changePasswordProps} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
+}
+
+function getUsernameField() {
+  return screen.queryByLabelText(/Username or Email Address/i)
 }
 
 function getCurrentPasswordField() {
@@ -54,9 +66,13 @@ function verifySuccessAlertIsShown() {
   within(alert).getByText(PASSWORD_CHANGED_SUCCESS_MESSAGE)
 }
 
-function setUp() {
+function setUp(
+  changePasswordProps?: ChangePasswordProps,
+  wrapperProps?: Partial<SynapseContextType>,
+) {
   const user = userEvent.setup()
-  const result = renderComponent()
+  const result = renderComponent(changePasswordProps, wrapperProps)
+  const usernameField = getUsernameField()
   const currentPasswordField = getCurrentPasswordField()
   const newPasswordField = getNewPasswordField()
   const confirmPasswordField = getConfirmPasswordField()
@@ -65,6 +81,7 @@ function setUp() {
   return {
     user,
     result,
+    usernameField,
     currentPasswordField,
     newPasswordField,
     confirmPasswordField,
@@ -139,12 +156,14 @@ describe('ChangePassword tests', () => {
 
     const {
       user,
+      usernameField,
       currentPasswordField,
       newPasswordField,
       confirmPasswordField,
       submitButton,
     } = setUp()
 
+    expect(usernameField).not.toBeInTheDocument() //logged in, username should not be present
     await user.type(currentPasswordField, currentPassword)
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
@@ -161,6 +180,98 @@ describe('ChangePassword tests', () => {
         concreteType:
           'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
         username: mockUserProfileData.userName,
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      })
+    })
+  })
+
+  it('verify redirect changing password', async () => {
+    server.use(
+      getSuccessfulChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      ),
+    )
+
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      usernameField,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp({ redirectToRoute: '/MyHome' })
+
+    expect(usernameField).not.toBeInTheDocument() //logged in, username should not be present
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Redirected to /MyHome')).toBeInTheDocument()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
+      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+      expect(changePasswordSpy).toHaveBeenCalledWith({
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+        username: mockUserProfileData.userName,
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      })
+    })
+  })
+
+  it('anonymous changing password', async () => {
+    server.use(
+      getSuccessfulChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      ),
+    )
+    const userName = 'ralphwiggum'
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      usernameField,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp(
+      {},
+      {
+        keyFactory: new KeyFactory(undefined),
+        accessToken: undefined,
+      },
+    )
+
+    expect(usernameField).toBeInTheDocument() //not logged in, username should be present
+    await user.type(usernameField!, userName)
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      verifySuccessAlertIsShown()
+      expect(usernameField).not.toBeInTheDocument()
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
+      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+      expect(changePasswordSpy).toHaveBeenCalledWith({
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+        username: userName,
         newPassword: newPassword,
         currentPassword: currentPassword,
       })
