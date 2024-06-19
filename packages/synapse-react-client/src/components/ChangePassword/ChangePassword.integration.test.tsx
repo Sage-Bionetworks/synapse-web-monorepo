@@ -40,12 +40,7 @@ function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
 }
 
 function getUsernameField() {
-  try {
-    return screen.getByLabelText(/Username or Email Address/i)
-  } catch (error) {
-    // console.log('unable to find Username field in ChangePassword UI')
-  }
-  return undefined
+  return screen.queryByLabelText(/Username or Email Address/i)
 }
 
 function getCurrentPasswordField() {
@@ -159,7 +154,7 @@ describe('ChangePassword tests', () => {
       submitButton,
     } = setUp()
 
-    expect(usernameField).toBeUndefined() //logged in, username should not be present
+    expect(usernameField).not.toBeInTheDocument() //logged in, username should not be present
     await user.type(currentPasswordField, currentPassword)
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
@@ -204,7 +199,7 @@ describe('ChangePassword tests', () => {
       accessToken: undefined,
     })
 
-    expect(usernameField).toBeDefined() //not logged in, username should be present
+    expect(usernameField).toBeInTheDocument() //not logged in, username should be present
     await user.type(usernameField!, userName)
     await user.type(currentPasswordField, currentPassword)
     await user.type(newPasswordField, newPassword)
