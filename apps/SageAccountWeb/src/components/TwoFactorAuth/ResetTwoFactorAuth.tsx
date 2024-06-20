@@ -3,26 +3,28 @@ import React, { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
   displayToast,
+  PasswordField,
   StandaloneLoginForm,
   SynapseQueries,
   useApplicationSessionContext,
+  useQuerySearchParam,
 } from 'synapse-react-client'
 import {
   TwoFactorAuthErrorResponse,
   TwoFactorAuthResetToken,
 } from '@sage-bionetworks/synapse-types'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
-import { BackButton } from './BackButton'
-import { LeftRightPanel } from './LeftRightPanel'
-import { SourceAppLogo } from './SourceApp'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants'
+import { hexDecodeAndDeserialize } from '../../URLUtils'
+import { BackButton } from '../BackButton'
+import { LeftRightPanel } from '../LeftRightPanel'
+import { SourceAppLogo } from '../SourceApp'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 
 export function ResetTwoFactorAuth() {
   const history = useHistory()
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
 
-  const twoFactorAuthResetTokenParam = getSearchParam(
+  const twoFactorAuthResetTokenParam = useQuerySearchParam(
     RESET_2FA_SIGNED_TOKEN_PARAM,
   )
 
@@ -40,14 +42,19 @@ export function ResetTwoFactorAuth() {
     Pick<TwoFactorAuthErrorResponse, 'twoFaToken' | 'userId'> | undefined
   >()
 
-  const promptForSignIn = token && !twoFaRequiredToken
-  const promptConfirmDisable2FA = token && twoFaRequiredToken
+  const [password, setPassword] = useState('')
+  const [showPasswordField, setShowPasswordField] = useState(false)
+
+  const promptForSignIn = token && !(twoFaRequiredToken || showPasswordField)
+  const promptConfirmDisable2FA =
+    token && (twoFaRequiredToken || showPasswordField)
 
   const {
     mutate: disableTwoFactorAuth,
     isSuccess,
     isPending,
     error,
+    reset: resetDisable2FAMutation,
   } = SynapseQueries.useDisableTwoFactorAuthWithResetToken({
     onSuccess: () => {
       displayToast('2FA has been successfully disabled on your account.')
@@ -83,11 +90,23 @@ export function ResetTwoFactorAuth() {
                     ssoState={{
                       twoFaResetToken: twoFactorAuthResetTokenParam,
                     }}
+                    onPasswordLoginSelected={() => {
+                      // We will render our own password form
+                      setShowPasswordField(true)
+                    }}
                   />
                 </>
               )}
               {promptConfirmDisable2FA && (
                 <>
+                  {showPasswordField && (
+                    <BackButton
+                      onClick={() => {
+                        resetDisable2FAMutation()
+                        setShowPasswordField(false)
+                      }}
+                    />
+                  )}
                   <Typography variant={'body1'} my={2}>
                     If you disable two-factor authentication, your account will
                     be less secure. Additionally, you may be unable to download
@@ -98,6 +117,12 @@ export function ResetTwoFactorAuth() {
                     You can re-activate two-factor authentication at any time in
                     your account settings.
                   </Typography>
+                  {showPasswordField && (
+                    <PasswordField
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                    />
+                  )}
                   <Button
                     fullWidth
                     variant={'contained'}
@@ -105,9 +130,12 @@ export function ResetTwoFactorAuth() {
                       disableTwoFactorAuth({
                         ...twoFaRequiredToken,
                         twoFaResetToken: token,
+                        password: password,
                       })
                     }}
-                    disabled={isSuccess || isPending}
+                    disabled={
+                      isSuccess || isPending || (showPasswordField && !password)
+                    }
                   >
                     Disable Two-Factor Authentication
                   </Button>
@@ -122,7 +150,6 @@ export function ResetTwoFactorAuth() {
                       }}
                     />
                   )}
-                  <SourceAppLogo />
                   <Alert severity={'error'}>
                     No token was found in the URL.
                   </Alert>

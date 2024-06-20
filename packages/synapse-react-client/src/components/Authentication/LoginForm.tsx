@@ -8,6 +8,7 @@ import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
 import { OAuth2State } from '../../utils'
 import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
+import { noop } from 'lodash-es'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -32,6 +33,8 @@ type Props = {
   ssoState?: OAuth2State
   /* The URI where the user should be directed in an email when attempting to reset 2FA */
   twoFactorAuthResetUri?: string
+  /* Invoked when password login is selected */
+  onPasswordLoginSelected?: () => void
 }
 
 export default function LoginForm(props: Props) {
@@ -59,13 +62,17 @@ export default function LoginForm(props: Props) {
       defaultTwoFactorAuthResetUrl,
       'twoFAResetToken',
     ),
+    onPasswordLoginSelected = noop,
   } = props
 
   return (
     <>
       {step == 'CHOOSE_AUTH_METHOD' && (
         <AuthenticationMethodSelection
-          onSelectUsernameAndPassword={() => onStepChange('USERNAME_PASSWORD')}
+          onSelectUsernameAndPassword={() => {
+            onPasswordLoginSelected()
+            onStepChange('USERNAME_PASSWORD')
+          }}
           onBeginOAuthSignIn={onBeginOAuthSignIn}
           ssoRedirectUrl={ssoRedirectUrl}
           state={ssoState}

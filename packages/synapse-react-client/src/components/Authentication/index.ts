@@ -5,6 +5,7 @@ import {
   useLastLoginInfoState,
 } from './LastLoginInfo'
 import type { LoginMethod } from './LoginMethod'
+import { default as PasswordField } from './PasswordField'
 import type { StandaloneLoginFormProps } from './StandaloneLoginForm'
 import { default as StandaloneLoginForm } from './StandaloneLoginForm'
 import type { TwoFactorAuthSettingsPanelProps } from './TwoFactorAuthSettingsPanel'
@@ -24,6 +25,7 @@ export {
   LastLoginInfo,
   LastLoginInfoProps,
   LoginMethod,
+  PasswordField,
   StandaloneLoginForm,
   StandaloneLoginFormProps,
   TwoFactorAuthSettingsPanel,

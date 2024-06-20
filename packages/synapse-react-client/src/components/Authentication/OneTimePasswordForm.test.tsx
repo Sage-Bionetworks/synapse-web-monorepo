@@ -65,9 +65,8 @@ describe('OneTimePasswordForm', () => {
     await userEvent.click(switchToRecoveryCodeFormButton)
     expect(props.onClickUseBackupCode).toHaveBeenCalled()
 
-    // No button is shown to reset 2FA (experimental mode only)
-    const reset2FAButton = screen.queryByText(BEGIN_RESET_2FA_BUTTON_TEXT)
-    expect(reset2FAButton).not.toBeInTheDocument()
+    // A button is shown to reset 2FA
+    await screen.findByText(BEGIN_RESET_2FA_BUTTON_TEXT)
   })
 
   it('shows the RecoveryCodeForm when the step is RECOVERY_CODE', async () => {
@@ -88,35 +87,8 @@ describe('OneTimePasswordForm', () => {
     await userEvent.click(switchToTotpFormButton)
     expect(props.onClickUseTOTP).toHaveBeenCalled()
 
-    // No button is shown to reset 2FA (experimental mode only)
-    const reset2FAButton = screen.queryByText(BEGIN_RESET_2FA_BUTTON_TEXT)
-    expect(reset2FAButton).not.toBeInTheDocument()
-  })
-
-  it('shows a button to prompt to reset 2FA when the step is VERIFICATION_CODE (experimental mode only)', async () => {
-    const props = {
-      ...defaultProps,
-      step: 'VERIFICATION_CODE',
-    } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
-
     // A button is shown to reset 2FA
-    const reset2FAButton = await screen.findByText(BEGIN_RESET_2FA_BUTTON_TEXT)
-    await userEvent.click(reset2FAButton)
-    expect(props.onClickPromptReset2FA).toHaveBeenCalled()
-  })
-
-  it('shows a button to prompt to reset 2FA when the step is RECOVERY_CODE (experimental mode only)', async () => {
-    const props = {
-      ...defaultProps,
-      step: 'RECOVERY_CODE',
-    } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
-
-    // A button is shown to reset 2FA
-    const reset2FAButton = await screen.findByText(BEGIN_RESET_2FA_BUTTON_TEXT)
-    await userEvent.click(reset2FAButton)
-    expect(props.onClickPromptReset2FA).toHaveBeenCalled()
+    await screen.findByText(BEGIN_RESET_2FA_BUTTON_TEXT)
   })
 
   it('shows a prompt to send the reset 2FA email when the step is DISABLE_2FA_PROMPT', async () => {
@@ -124,7 +96,7 @@ describe('OneTimePasswordForm', () => {
       ...defaultProps,
       step: 'DISABLE_2FA_PROMPT',
     } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
+    setUp(props)
 
     // A button is shown to reset 2FA
     const reset2FAButton = await screen.findByText(
@@ -140,7 +112,7 @@ describe('OneTimePasswordForm', () => {
       step: 'DISABLE_2FA_PROMPT',
       twoFactorAuthResetIsPending: true,
     } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
+    setUp(props)
 
     const reset2FAButton = await screen.findByText(
       SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
@@ -155,7 +127,7 @@ describe('OneTimePasswordForm', () => {
       step: 'DISABLE_2FA_PROMPT',
       twoFactorAuthResetIsSuccess: true,
     } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
+    setUp(props)
 
     const reset2FAButton = await screen.findByText(
       SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
@@ -170,7 +142,7 @@ describe('OneTimePasswordForm', () => {
       step: 'DISABLE_2FA_PROMPT',
       twoFactorAuthResetIsSuccess: true,
     } satisfies OneTimePasswordFormProps
-    setUp(props, { isInExperimentalMode: true })
+    setUp(props)
 
     const useTwoFaButton = await screen.findByText('Go back')
     await userEvent.click(useTwoFaButton)

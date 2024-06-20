@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
 import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
+import PasswordField from './PasswordField'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
@@ -43,13 +44,7 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         value={username}
         onChange={e => setUsername(e.target.value)}
       />
-      <TextField
-        required
-        fullWidth
-        autoComplete="current-password"
-        label="Password"
-        id="current-password"
-        type="password"
+      <PasswordField
         value={password}
         onChange={e => setPassword(e.target.value)}
       />

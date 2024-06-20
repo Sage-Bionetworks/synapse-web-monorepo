@@ -2,12 +2,8 @@ import React from 'react'
 import TOTPForm from './TOTPForm'
 import { Alert, Button, Link, Typography } from '@mui/material'
 import RecoveryCodeForm from './RecoveryCodeForm'
-import {
-  TwoFactorAuthOtpType,
-  FeatureFlagEnum,
-} from '@sage-bionetworks/synapse-types'
+import { TwoFactorAuthOtpType } from '@sage-bionetworks/synapse-types'
 import { UseLoginReturn } from '../../utils/hooks'
-import { useGetFeatureFlag } from '../../synapse-queries'
 
 export type ONE_TIME_PASSWORD_STEP =
   | 'VERIFICATION_CODE'
@@ -33,7 +29,8 @@ export const SHOW_RECOVERY_CODE_FORM_BUTTON_TEXT = 'Use a backup code instead'
 export const SHOW_TOTP_FORM_BUTTON_TEXT = 'Use authenticator app instead'
 export const BEGIN_RESET_2FA_BUTTON_TEXT = 'Lost access to your codes?'
 export const SEND_RESET_2FA_EMAIL_BUTTON_TEXT = 'Send Instructions'
-
+export const TWO_FACTOR_RESET_CONFIRMATION_TEXT =
+  'Instructions to reset two-factor authentication were sent to the primary email address associated with your account.'
 /**
  * Component that allows the user to enter a one-time password second authentication factor,
  * such as a timed one-time password (TOTP) generated using a shared secret, or a single-use recovery code.
@@ -55,9 +52,7 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetIsPending,
   } = props
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.CHANGE_PASSWORD_2FA_CHECK,
-  )
+
   return (
     <>
       {step === 'VERIFICATION_CODE' && (
@@ -103,9 +98,7 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
       {!hideReset2FA &&
         onClickPromptReset2FA &&
         onClickReset2FA &&
-        step !== 'DISABLE_2FA_PROMPT' &&
-        // TODO: Remove from experimental mode once feature flag is toggled
-        isFeatureEnabled && (
+        step !== 'DISABLE_2FA_PROMPT' && (
           <Link
             align={'center'}
             color={'grey.700'}
@@ -137,8 +130,7 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
           </Button>
           {twoFactorAuthResetIsSuccess && (
             <Alert severity={'success'} sx={{ my: 1 }}>
-              Instructions to reset two-factor authentication were sent to the
-              primary email address associated with your account.
+              {TWO_FACTOR_RESET_CONFIRMATION_TEXT}
             </Alert>
           )}
           <Link

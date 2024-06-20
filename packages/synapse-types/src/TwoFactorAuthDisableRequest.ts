@@ -4,10 +4,12 @@
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/TwoFactorAuthDisableRequest.html
  */
 export type TwoFactorAuthDisableRequest = {
-  /* The token that was included in the error response when authenticating. */
-  twoFaToken: string
   /* Signed token containing the information necessary to reset 2fa for a user. */
   twoFaResetToken: TwoFactorAuthResetToken
+  /* The current user password that can be used in place of the twoFaToken (e.g. when authenticating with user/password or during a change password workflow). */
+  password?: string
+  /* The token that was included in the error response when authenticating. */
+  twoFaToken?: string
 }
 
 /**

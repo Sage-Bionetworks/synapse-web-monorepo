@@ -8,6 +8,7 @@ import {
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
 
 const meta: Meta<typeof ChangePassword> = {
   title: 'Authentication/ChangePassword/WithCurrentPassword',
@@ -50,7 +51,7 @@ export const WithTwoFactorAuth: Story = {
           MOCK_USER_ID,
           'mock-2fa-token',
         ),
-        getSuccessfulChangePasswordHandler(MOCK_REPO_ORIGIN),
+        ...getResetTwoFactorAuthHandlers(MOCK_REPO_ORIGIN),
       ],
     },
   },
