@@ -234,7 +234,7 @@
     "type-fest": "^3.13.1",
     "typescript": "5.4.2",
     "util": "^0.12.5",
-    "vite": "^5.1.6",
+    "vite": "^5.1.7",
     "vite-config": "workspace:*",
     "vite-plugin-svgr": "^4.2.0",
     "weak-napi": "^2.0.2",

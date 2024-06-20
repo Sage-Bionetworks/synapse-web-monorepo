@@ -39,7 +39,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "svgo": "^3.2.0",
     "typescript": "5.4.2",
-    "vite": "^5.1.6",
+    "vite": "^5.1.7",
     "vite-plugin-node-polyfills": "0.17.0",
     "vite-plugin-svgr": "^4.2.0",
     "vitest": "^0.34.6"
