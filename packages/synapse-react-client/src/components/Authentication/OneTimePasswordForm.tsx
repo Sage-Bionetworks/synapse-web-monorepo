@@ -29,7 +29,8 @@ export const SHOW_RECOVERY_CODE_FORM_BUTTON_TEXT = 'Use a backup code instead'
 export const SHOW_TOTP_FORM_BUTTON_TEXT = 'Use authenticator app instead'
 export const BEGIN_RESET_2FA_BUTTON_TEXT = 'Lost access to your codes?'
 export const SEND_RESET_2FA_EMAIL_BUTTON_TEXT = 'Send Instructions'
-
+export const TWO_FACTOR_RESET_CONFIRMATION_TEXT =
+  'Instructions to reset two-factor authentication were sent to the primary email address associated with your account.'
 /**
  * Component that allows the user to enter a one-time password second authentication factor,
  * such as a timed one-time password (TOTP) generated using a shared secret, or a single-use recovery code.
@@ -129,8 +130,7 @@ export default function OneTimePasswordForm(props: OneTimePasswordFormProps) {
           </Button>
           {twoFactorAuthResetIsSuccess && (
             <Alert severity={'success'} sx={{ my: 1 }}>
-              Instructions to reset two-factor authentication were sent to the
-              primary email address associated with your account.
+              {TWO_FACTOR_RESET_CONFIRMATION_TEXT}
             </Alert>
           )}
           <Link

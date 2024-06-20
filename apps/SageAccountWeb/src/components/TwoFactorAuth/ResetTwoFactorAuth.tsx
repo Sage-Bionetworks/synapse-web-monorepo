@@ -7,23 +7,24 @@ import {
   StandaloneLoginForm,
   SynapseQueries,
   useApplicationSessionContext,
+  useQuerySearchParam,
 } from 'synapse-react-client'
 import {
   TwoFactorAuthErrorResponse,
   TwoFactorAuthResetToken,
 } from '@sage-bionetworks/synapse-types'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
-import { BackButton } from './BackButton'
-import { LeftRightPanel } from './LeftRightPanel'
-import { SourceAppLogo } from './SourceApp'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants'
+import { hexDecodeAndDeserialize } from '../../URLUtils'
+import { BackButton } from '../BackButton'
+import { LeftRightPanel } from '../LeftRightPanel'
+import { SourceAppLogo } from '../SourceApp'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 
 export function ResetTwoFactorAuth() {
   const history = useHistory()
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
 
-  const twoFactorAuthResetTokenParam = getSearchParam(
+  const twoFactorAuthResetTokenParam = useQuerySearchParam(
     RESET_2FA_SIGNED_TOKEN_PARAM,
   )
 
@@ -92,7 +93,6 @@ export function ResetTwoFactorAuth() {
                     onPasswordLoginSelected={() => {
                       // We will render our own password form
                       setShowPasswordField(true)
-                      //
                     }}
                   />
                 </>
@@ -150,7 +150,6 @@ export function ResetTwoFactorAuth() {
                       }}
                     />
                   )}
-                  <SourceAppLogo />
                   <Alert severity={'error'}>
                     No token was found in the URL.
                   </Alert>

@@ -17,6 +17,7 @@ import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -91,9 +92,7 @@ async function typeAndSubmitTOTP(
 
   await waitFor(() => {
     const alert = screen.getByRole('alert')
-    within(alert).getByText(
-      'Two-factor authentication is required to change your password.',
-    )
+    within(alert).getByText(TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT)
 
     expect(mockDisplayToast).not.toHaveBeenCalled()
     expect(newPasswordField).not.toBeInTheDocument()
@@ -233,10 +232,6 @@ describe('ChangePasswordWithToken tests', () => {
         userId,
         twoFaToken,
       ),
-      // Update the mock server so the second request will succeed
-      getSuccessfulChangePasswordHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-      ),
     )
 
     const newPassword = 'newPassword'
@@ -354,11 +349,6 @@ describe('ChangePasswordWithToken tests', () => {
         userId,
         twoFaToken,
       ),
-      // Update the mock server so the next request will fail with a meaningful error
-      getBadRequestChangePasswordHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-        errorMessage,
-      ),
     )
 
     const newPassword = 'newPassword'
@@ -370,6 +360,14 @@ describe('ChangePasswordWithToken tests', () => {
     await user.type(confirmPasswordField, newPassword)
 
     await user.click(submitButton)
+
+    server.use(
+      // Update the mock server so the next request will fail with a meaningful error
+      getBadRequestChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        errorMessage,
+      ),
+    )
 
     // TOTP form should pop up
     await typeAndSubmitTOTP(

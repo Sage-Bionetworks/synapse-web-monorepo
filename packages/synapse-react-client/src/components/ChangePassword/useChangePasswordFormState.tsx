@@ -18,6 +18,9 @@ import { ONE_TIME_PASSWORD_STEP, OneTimePasswordForm } from '../Authentication'
 import { useOneSageURL } from '../../utils/hooks'
 import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
 
+export const TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT =
+  'Two-factor authentication is required to change your password. Your password has not yet been changed.'
+
 export type UseChangePasswordFormStateOptions = {
   hideReset2FA?: boolean
   onChangePasswordSuccess?: () => void
@@ -175,15 +178,14 @@ export default function useChangePasswordFormState(
         />
         {(otpStep === 'RECOVERY_CODE' || otpStep === 'VERIFICATION_CODE') && (
           <Alert severity={'info'} sx={{ my: 2 }}>
-            Two-factor authentication is required to change your password. Your
-            password has not yet been changed.
+            {TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT}
           </Alert>
         )}
         {otpStep === 'DISABLE_2FA_PROMPT' && twoFactorAuthResetIsSuccess && (
           <Alert severity={'warning'} sx={{ my: 2 }}>
             <strong>Your password has not been changed.</strong> To disable
-            two-factor authentication, you will be required to enter your
-            current password after clicking the link sent to your email address.
+            two-factor authentication, you may be required to enter your current
+            password after clicking the link sent to your email address.
           </Alert>
         )}
       </>

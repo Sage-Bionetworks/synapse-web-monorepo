@@ -5,7 +5,6 @@ import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
 
 const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = {
   [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
-  [FeatureFlagEnum.CHANGE_PASSWORD_2FA_CHECK]: false,
   [FeatureFlagEnum.VIRTUALTABLE_SUPPORT]: false,
   [FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS]: false,
 }

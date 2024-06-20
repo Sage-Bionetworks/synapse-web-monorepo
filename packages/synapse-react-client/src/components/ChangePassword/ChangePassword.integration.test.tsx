@@ -23,6 +23,13 @@ import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 import { SynapseContextType } from '../../utils'
 import { KeyFactory } from '../../synapse-queries'
+import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
+import {
+  BEGIN_RESET_2FA_BUTTON_TEXT,
+  SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
+  TWO_FACTOR_RESET_CONFIRMATION_TEXT,
+} from '../Authentication/OneTimePasswordForm'
+import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -35,6 +42,7 @@ jest.mock('react-router-dom', () => {
 })
 
 const changePasswordSpy = jest.spyOn(SynapseClient, 'changePassword')
+const reset2faSpy = jest.spyOn(SynapseClient, 'resetTwoFactorAuth')
 
 function renderComponent(
   changePasswordProps?: ChangePasswordProps,
@@ -110,9 +118,7 @@ async function typeAndSubmitTOTP(
 
   await waitFor(() => {
     const alert = screen.getByRole('alert')
-    within(alert).getByText(
-      'Two-factor authentication is required to change your password.',
-    )
+    within(alert).getByText(TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT)
 
     expect(mockDisplayToast).not.toHaveBeenCalled()
     expect(currentPasswordField).not.toBeInTheDocument()
@@ -495,11 +501,6 @@ describe('ChangePassword tests', () => {
         userId,
         twoFaToken,
       ),
-      // Update the mock server so the next request will fail with a meaningful error
-      getBadRequestChangePasswordHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-        errorMessage,
-      ),
     )
 
     const currentPassword = 'currentPassword'
@@ -518,6 +519,14 @@ describe('ChangePassword tests', () => {
     await user.type(confirmPasswordField, newPassword)
 
     await user.click(submitButton)
+
+    server.use(
+      // Update the mock server so the next request will fail with a meaningful error
+      getBadRequestChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        errorMessage,
+      ),
+    )
 
     // TOTP form should pop up
     await typeAndSubmitTOTP(
@@ -550,5 +559,80 @@ describe('ChangePassword tests', () => {
     // The TOTP form should still be shown
     const otpInputs = await getTOTPInputs()
     expect(otpInputs).toHaveLength(6)
+  })
+
+  it('supports requesting 2FA reset using a password', async () => {
+    const userId = MOCK_USER_ID
+    const twoFaToken = 'mock-2fa-token'
+    server.use(
+      // The first call will indicate that 2FA is required
+      getRequires2FAChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        userId,
+        twoFaToken,
+      ),
+      ...getResetTwoFactorAuthHandlers(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      ),
+    )
+
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp()
+
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    // TOTP form should pop up, click to reset
+    const show2FAResetOptionsButton = await screen.findByText(
+      BEGIN_RESET_2FA_BUTTON_TEXT,
+    )
+    await user.click(show2FAResetOptionsButton)
+
+    const sendResetEmailButton = await screen.findByRole('button', {
+      name: SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
+    })
+
+    await user.click(sendResetEmailButton)
+
+    // Verify the alert is shown confirming that an email was sent
+    await screen.findByText(TWO_FACTOR_RESET_CONFIRMATION_TEXT)
+
+    // Ensure the user is informed that their password has NOT been changed.
+    // They will have to enter their old password after following the link sent via email!
+    await screen.findByText(/Your password has not been changed./)
+
+    await waitFor(() => {
+      expect(changePasswordSpy).toHaveBeenCalledTimes(1)
+      expect(changePasswordSpy).toHaveBeenLastCalledWith({
+        concreteType:
+          'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
+        username: mockUserProfileData.userName,
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      })
+
+      expect(reset2faSpy).toHaveBeenCalledTimes(1)
+      expect(reset2faSpy).toHaveBeenCalledWith({
+        userId: MOCK_USER_ID,
+        twoFaResetEndpoint: expect.any(String),
+        // The current password must be used. A twoFaToken returned by the changePassword service cannot be used to reset 2FA.
+        password: currentPassword,
+      })
+
+      expect(currentPasswordField).not.toBeInTheDocument()
+      expect(newPasswordField).not.toBeInTheDocument()
+      expect(confirmPasswordField).not.toBeInTheDocument()
+    })
   })
 })
