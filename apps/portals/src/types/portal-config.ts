@@ -42,6 +42,7 @@ import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObject
 import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
 import { RedirectToURLProps } from 'portal-components/RedirectToURL'
 import { SynapseComponentCollapseProps } from 'portal-components/SynapseComponentCollapse'
+import { HelmetWrapperProps } from 'portal-components/HelmetWrapper'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -313,6 +314,11 @@ type Redirect = {
   props: RedirectProps
 }
 
+type HelmetWrapper = {
+  name: 'HelmetWrapper'
+  props: HelmetWrapperProps
+}
+
 type Header = {
   name: 'Header'
   props: undefined
@@ -373,6 +379,7 @@ export type SynapseConfig = (
   | ChallengeDataDownloadWrapper
   | ChallengeSubmissionWrapper
   | TimelinePlot
+  | HelmetWrapper
 ) &
   Metadata
 

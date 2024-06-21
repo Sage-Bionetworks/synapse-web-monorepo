@@ -4,6 +4,7 @@ import { GenericRoute } from './types/portal-config'
 import routesConfig from './config/routesConfig'
 import sharedRouteConfig from './shared-config/sharedRoutes'
 import { ComponentRenderer } from './ComponentRenderer'
+import HelmetWrapper from './portal-components/HelmetWrapper'
 
 const ROUTES: GenericRoute = {
   ...sharedRouteConfig,
@@ -33,6 +34,7 @@ function RecursiveRouteRenderer(props: {
 
   return (
     <>
+      <HelmetWrapper description={document.title} />
       {'synapseConfigArray' in route &&
         route.synapseConfigArray &&
         route.synapseConfigArray.map((config, index) => {

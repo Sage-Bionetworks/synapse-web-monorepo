@@ -25,6 +25,7 @@ import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWra
 import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 import SynapseComponentCollapse from './SynapseComponentCollapse'
+import HelmetWrapper from './HelmetWrapper'
 
 const PortalComponents = {
   RouteControlWrapper,
@@ -54,6 +55,7 @@ const PortalComponents = {
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
   SynapseComponentCollapse,
+  HelmetWrapper,
 }
 
 export default PortalComponents

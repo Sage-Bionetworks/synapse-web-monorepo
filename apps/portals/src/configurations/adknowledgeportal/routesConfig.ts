@@ -29,6 +29,12 @@ const routes: GenericRoute[] = [
     exact: true,
     synapseConfigArray: [
       {
+        name: 'HelmetWrapper',
+        props: {
+          description: 'ADKP main page description',
+        },
+      },
+      {
         name: 'Programs',
         title: 'Programs',
         className: 'ProgramsHomePage',

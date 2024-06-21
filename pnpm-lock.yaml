@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 overrides:
   word-wrap: ^1.2.4
   semver: ^7.5.4
@@ -277,6 +273,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.2.0)
+      '@types/react-helmet':
+        specifier: ^6.1.11
+        version: 6.1.11
       '@upsetjs/react':
         specifier: ^1.11.0
         version: 1.11.0(react@18.2.0)
@@ -310,6 +309,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-helmet:
+        specifier: ^6.1.0
+        version: 6.1.0(react@18.2.0)
       react-plotly.js:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.28.0)(react@18.2.0)
@@ -6937,6 +6939,12 @@ packages:
       - react
       - react-dom
     dev: true
+
+  /@types/react-helmet@6.1.11:
+    resolution: {integrity: sha512-0QcdGLddTERotCXo3VFlUSWO3ztraw8nZ6e3zJSgG7apwV5xt+pJUS8ewPBqT4NYB1optGLprNQzFleIY84u/g==}
+    dependencies:
+      '@types/react': 18.2.64
+    dev: false
 
   /@types/react-mailchimp-subscribe@2.1.4:
     resolution: {integrity: sha512-RyI79t0t8j3wT8Upw2jcGFYx/d8r1HTIADg+GNMbY03u+GTvGCu1k6h76Uli7YAwqorzN9PBYEf+8RV2vIM/dg==}
@@ -15133,6 +15141,18 @@ packages:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
     dev: false
 
+  /react-helmet@6.1.0(react@18.2.0):
+    resolution: {integrity: sha512-4uMzEY9nlDlgxr61NL3XbKRy1hEkXmKNXhjbAIOVw5vcFrsdYbH2FEwcNyWvWinl103nXgzYNlns9ca+8kFiWw==}
+    peerDependencies:
+      react: '>=16.3.0'
+    dependencies:
+      object-assign: 4.1.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-fast-compare: 3.2.2
+      react-side-effect: 2.1.2(react@18.2.0)
+    dev: false
+
   /react-hot-toast@2.2.0(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-248rXw13uhf/6TNDVzagX+y7R8J183rp7MwUMNkcrBRyHj/jWOggfXTGlM8zAOuh701WyVW+eUaWG2LeSufX9g==}
     engines: {node: '>=10'}
@@ -15405,6 +15425,14 @@ packages:
       react: 18.2.0
       react-is: 18.2.0
     dev: true
+
+  /react-side-effect@2.1.2(react@18.2.0):
+    resolution: {integrity: sha512-PVjOcvVOyIILrYoyGEpDN3vmYNLdy1CajSFNt4TDsVQC5KpTijDvWVoR+/7Rz2xT978D8/ZtFceXxzsPwZEDvw==}
+    peerDependencies:
+      react: ^16.3.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-sizeme@3.0.2:
     resolution: {integrity: sha512-xOIAOqqSSmKlKFJLO3inBQBdymzDuXx4iuwkNcJmC96jeiOg5ojByvL+g3MW9LPEsojLbC6pf68zOfobK8IPlw==}
@@ -18248,3 +18276,7 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false

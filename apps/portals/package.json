@@ -12,6 +12,8 @@
     "@sage-bionetworks/react-base-table": "^1.13.4",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/react-query": "5.22.2",
+    "@types/react-helmet": "^6.1.11",
+    "@upsetjs/react": "^1.11.0",
     "clone-deep": "^4.0.1",
     "dayjs": "^1.11.10",
     "katex": "^0.16.10",
@@ -22,13 +24,13 @@
     "react-bootstrap": "^1.6.8",
     "react-cookie": "4.0.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-plotly.js": "^2.6.0",
     "react-router-dom": "^5.3.4",
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
     "sass": "^1.71.1",
-    "synapse-react-client": "workspace:*",
-    "@upsetjs/react": "^1.11.0"
+    "synapse-react-client": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf coverage",
