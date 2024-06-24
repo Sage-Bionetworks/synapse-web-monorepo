@@ -232,7 +232,7 @@
     "timers-browserify": "^2.0.12",
     "tsup": "^8.0.2",
     "type-fest": "^3.13.1",
-    "typescript": "5.4.2",
+    "typescript": "5.5.2",
     "util": "^0.12.5",
     "vite": "^5.1.6",
     "vite-config": "workspace:*",
