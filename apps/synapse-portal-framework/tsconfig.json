@@ -1,0 +1,17 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "moduleResolution": "bundler",
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "files": ["src/types.d.ts"]
+}

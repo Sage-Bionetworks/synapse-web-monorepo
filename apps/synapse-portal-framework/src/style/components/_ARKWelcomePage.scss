@@ -1,0 +1,54 @@
+@use '../variables' as Portal;
+
+.ARKWelcomePage {
+  padding-top: 50px;
+  padding-bottom: 70px;
+  .flexLayout {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .mainWelcomeContent {
+    max-width: 700px;
+    color: #3c3c42;
+  }
+  .description {
+    color: #1d1d22;
+  }
+  .welcomeARKLogo {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.25;
+    transform: rotate(10deg);
+    margin-top: 20px;
+    margin-left: 50px;
+  }
+}
+.lowerRightARKLogo {
+  position: absolute;
+  right: 0px;
+  z-index: -1;
+  bottom: 0px;
+  overflow: hidden;
+  width: 300px;
+  height: 450px;
+  img {
+    transform: rotate(-180deg);
+    opacity: 0.25;
+    max-width: 500px;
+  }
+}
+
+.lowerLeftARKLogo {
+  position: absolute;
+  left: -100px;
+  opacity: 0.25;
+  z-index: -1;
+  max-width: 200px;
+  bottom: -50px;
+  transform: matrix(-0.34, 0.94, 0.94, 0.34, 0, 0);
+}

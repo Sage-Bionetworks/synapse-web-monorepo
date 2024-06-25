@@ -1,0 +1,17 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+
+#header,
+#footer {
+  background-color: hsl(182, 35%, 45%);
+  background-blend-mode: multiply;
+}
+
+.arc-diagram {
+  margin-top: 20px;
+  width: 100%;
+}
+
+p.center-title {
+  max-width: 80%;
+  margin-left: 10%;
+}
