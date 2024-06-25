@@ -9,6 +9,9 @@
     "paths": {
       "@sage-bionetworks/synapse-portal-framework": [
         "../../synapse-portal-framework/src"
+      ],
+      "@sage-bionetworks/synapse-portal-framework/*": [
+        "../../synapse-portal-framework/src/*"
       ]
     }
   },
