@@ -11,7 +11,7 @@ const dismissBannerConfig: Record<BannerType, DismissBannerConfig> = {
   beta: { bodyText: 'beta version', closeButtonLabel: 'Close' },
   cookies: {
     bodyText: 'Our site uses cookies',
-    closeButtonText: 'Accept and Continue',
+    closeButtonText: 'ALLOW ALL',
   },
   survey: { bodyText: 'survey', closeButtonLabel: 'Close' },
 }
