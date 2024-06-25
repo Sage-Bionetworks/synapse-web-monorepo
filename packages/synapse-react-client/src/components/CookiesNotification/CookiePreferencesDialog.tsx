@@ -14,6 +14,7 @@ import {
   CookiePreference,
   useCookiePreferences,
 } from '../../utils/hooks/useCookiePreferences'
+import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
 
 export type CookiePreferencesDialogProps = {
   isOpen: boolean
@@ -22,7 +23,7 @@ export type CookiePreferencesDialogProps = {
   onHide: () => void
 }
 
-export type CookiePreferenceItemProps = {
+type CookiePreferenceItemProps = {
   title: string
   description: string
 } & (
@@ -35,7 +36,7 @@ export type CookiePreferenceItemProps = {
     }
 )
 
-export function CookiePreferenceItem(props: CookiePreferenceItemProps) {
+function CookiePreferenceItem(props: CookiePreferenceItemProps) {
   const { title, description } = props
   const isCheckbox = 'onChange' in props
   const cursor = isCheckbox ? 'pointer' : undefined
@@ -104,11 +105,7 @@ export default function CookiePreferencesDialog(
           websites work the way you expect them to.
         </Typography>
         <Typography variant={'body1'} sx={{ marginBottom: '30px' }}>
-          Read our{' '}
-          <Link href="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf">
-            privacy policy
-          </Link>
-          .
+          Read our <Link href={PRIVACY_POLICY_LINK}>privacy policy</Link>.
         </Typography>
         <CookiePreferenceItem
           title="Strictly necessary cookies"
@@ -117,13 +114,13 @@ export default function CookiePreferencesDialog(
         />
         <CookiePreferenceItem
           title="Functional cookies"
-          description="This includes important customization preferences, for example, your local time, and whether you are using experimental features. You can turn off this setting, however it may impact your experience of using our website."
+          description="This includes important customization preferences, for example, your local time, and whether you are using experimental features. You can turn off this setting, however it may impact your experience of using our websites."
           checked={isFunctionalCookiesAllowed}
           onChange={setIsFunctionalCookiesAllowed}
         />
         <CookiePreferenceItem
           title="Analytics cookie"
-          description="If you allow us to, we store information about how you use our website. This helps us identify problems and improve our products. While we do not attempt to track you, it may be possible to identify individual users. Deactivating this setting will not affect your experience of using our websites."
+          description="If you allow us to, we store information about how you use our websites. This helps us identify problems and improve our products. While we do not attempt to track you, it may be possible to identify individual users. Deactivating this setting will not affect your experience of using our websites."
           checked={isAnalyticsCookiesAllowed}
           onChange={setIsAnalyticsCookiesAllowed}
         />

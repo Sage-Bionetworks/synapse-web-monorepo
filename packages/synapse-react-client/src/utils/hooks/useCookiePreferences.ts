@@ -1,21 +1,37 @@
 import { useCallback } from 'react'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
-
-export const getCurrentCookiePreferences = () => {
-  const prefs = localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
-  const allowNone: CookiePreference = {
-    functionalAllowed: false,
-    analyticsAllowed: false,
-  }
-  return prefs != null ? (JSON.parse(prefs) as CookiePreference) : allowNone
-}
-export const COOKIES_AGREEMENT_LOCALSTORAGE_KEY =
-  'org.sagebionetworks.security.cookies.portal.preference'
+import { atom, useAtom } from 'jotai'
 
 export type CookiePreference = {
   functionalAllowed: boolean
   analyticsAllowed: boolean
 }
+
+export const allowAll: CookiePreference = {
+  functionalAllowed: true,
+  analyticsAllowed: true,
+}
+export const allowNone: CookiePreference = {
+  functionalAllowed: false,
+  analyticsAllowed: false,
+}
+
+export const getCurrentCookiePreferences = () => {
+  const prefs = localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
+  let cookiePreference = allowNone
+  try {
+    if (prefs != null) {
+      cookiePreference = JSON.parse(prefs) as CookiePreference
+    }
+  } catch (err) {
+    console.error(
+      `Failed to parse CookiePreference from value, falling back to allow none. value=${prefs}`,
+    )
+  }
+
+  return cookiePreference
+}
+export const COOKIES_AGREEMENT_LOCALSTORAGE_KEY =
+  'org.sagebionetworks.security.cookies.portal.preference'
 
 const cookiePreferencesAtom = atom<CookiePreference>(
   getCurrentCookiePreferences(),
@@ -25,8 +41,9 @@ export const useCookiePreferences = (): [
   CookiePreference,
   (pref: CookiePreference) => void,
 ] => {
-  const cookiePreferences = useAtomValue(cookiePreferencesAtom)
-  const setCookiePreferencesAtomValue = useSetAtom(cookiePreferencesAtom)
+  const [cookiePreferences, setCookiePreferencesAtomValue] = useAtom(
+    cookiePreferencesAtom,
+  )
   const setCookiePreferences = useCallback(
     (prefs: CookiePreference) => {
       if (!prefs.functionalAllowed) {

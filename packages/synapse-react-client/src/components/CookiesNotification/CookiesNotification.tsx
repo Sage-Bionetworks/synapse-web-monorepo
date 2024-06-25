@@ -5,8 +5,11 @@ import CookiePreferencesDialog from './CookiePreferencesDialog'
 import {
   COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
   CookiePreference,
+  allowAll,
+  allowNone,
   useCookiePreferences,
 } from '../../utils/hooks/useCookiePreferences'
+import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
 
 export const alertConfig = {
   title: 'Our site uses cookies.',
@@ -15,25 +18,14 @@ export const alertConfig = {
       We use necessary cookies and store your data to ensure our websites
       function properly. With your consent, we would also like to use cookies to
       remember your preferences and improve our websites. Review our{' '}
-      <Link href="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf">
-        Privacy Policy
-      </Link>
-      . By clicking “Accept All” you consent to our use of cookies. You can
-      change your cookie preference at any time from the Settings page.
+      <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link>. By clicking
+      “Accept All” you consent to our use of cookies. You can change your cookie
+      preference at any time from the Settings page.
     </Typography>
   ),
   primaryButtonText: 'ALLOW ALL',
   secondaryButtonText: 'Disable All',
   tertiaryButtonText: 'Customize',
-}
-
-const allowAll: CookiePreference = {
-  functionalAllowed: true,
-  analyticsAllowed: true,
-}
-const allowNone: CookiePreference = {
-  functionalAllowed: false,
-  analyticsAllowed: false,
 }
 
 export type CookieNotificationProps = {
