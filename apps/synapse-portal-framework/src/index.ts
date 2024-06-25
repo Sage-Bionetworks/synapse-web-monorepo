@@ -1,3 +1,3 @@
-import App from './App'
+import Portal from './Portal'
 
-export default App
+export default Portal

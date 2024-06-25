@@ -19,7 +19,7 @@ import { PortalContextProvider } from './components/PortalContext'
 const RouteResolver = React.lazy(() => import('./components/RouteResolver'))
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
-function App(props: PortalProps) {
+function Portal(props: PortalProps) {
   const { palette, ...context } = props
   const theme = useMemo(
     () => createTheme(SynapseTheme.mergeTheme({ palette })),
@@ -55,4 +55,4 @@ function App(props: PortalProps) {
   )
 }
 
-export default App
+export default Portal
