@@ -22,12 +22,6 @@
     "test": {
       "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",
       "dependsOn": ["^build"]
-    },
-    "start": {
-      "dependsOn": ["^build"]
-    },
-    "type-check": {
-      "dependsOn": ["^build"]
     }
   },
   "defaultBase": "main"

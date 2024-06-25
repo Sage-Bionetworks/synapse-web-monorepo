@@ -1,8 +1,12 @@
 {
   "name": "@sage-bionetworks/synapse-portal-framework",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
+  "files": [
+    "dist",
+    "style"
+  ],
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
@@ -31,6 +35,7 @@
   "scripts": {
     "clean": "rimraf coverage",
     "lint": "eslint src",
+    "build": "vite build",
     "test": "vitest",
     "test:ci": "vitest run --coverage",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs",
