@@ -1,8 +1,9 @@
 import React from 'react'
-import { SynapseComponents } from 'synapse-react-client'
+import { SynapseComponents, SynapseHookUtils } from 'synapse-react-client'
 const NF_SURVEY_LOCALSTORAGE_KEY =
   'org.sagebionetworks.security.cookies.portal.nfsurvey.dismissed'
 const NFSurveyToast = () => {
+  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [showBanner, setShowBanner] = React.useState(
     localStorage.getItem(NF_SURVEY_LOCALSTORAGE_KEY) === null,
   )
@@ -12,7 +13,9 @@ const NFSurveyToast = () => {
     <SynapseComponents.FullWidthAlert
       isGlobal={true}
       onClose={() => {
-        localStorage.setItem(NF_SURVEY_LOCALSTORAGE_KEY, 'true')
+        if (cookiePreferences.functionalAllowed) {
+          localStorage.setItem(NF_SURVEY_LOCALSTORAGE_KEY, 'true')
+        }
         setShowBanner(false)
       }}
       variant={'info'}

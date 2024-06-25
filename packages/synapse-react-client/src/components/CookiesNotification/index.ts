@@ -1,3 +1,4 @@
 import CookiesNotification from './CookiesNotification'
-export { CookiesNotification }
+import CookiePreferencesDialog from './CookiePreferencesDialog'
+export { CookiesNotification, CookiePreferencesDialog }
 export default CookiesNotification

@@ -18,8 +18,10 @@ import {
   IconSvg,
   SynapseClient,
   SynapseConstants,
+  SynapseHookUtils,
   TwoFactorAuthSettingsPanel,
   useSynapseContext,
+  CookiePreferencesDialog,
 } from 'synapse-react-client'
 import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { Form } from 'react-bootstrap'
@@ -82,6 +84,11 @@ export const AccountSettings = () => {
   const twoFactorAuthRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
   const oauthClientManagementRef = useRef<HTMLDivElement>(null)
+  const cookieManagementRef = useRef<HTMLDivElement>(null)
+  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
+    useState(false)
+
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     SynapseClient.getUseUtcTimeFromCookie().toString(),
@@ -222,6 +229,9 @@ export const AccountSettings = () => {
                 onClick={() => handleScroll(oauthClientManagementRef)}
               >
                 OAuth Clients
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
+                Privacy Preferences
               </ListItemButton>
             </Paper>
 
@@ -422,6 +432,7 @@ export const AccountSettings = () => {
                     value={isUTCTimeStaged}
                     fullWidth
                     select
+                    disabled={!cookiePreferences.functionalAllowed}
                     onChange={event => {
                       setUTCTimeStaged(event.target.value)
                     }}
@@ -679,6 +690,36 @@ export const AccountSettings = () => {
                     More information
                   </Link>
                 </div>
+              </Paper>
+              <Paper
+                ref={cookieManagementRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>
+                  Privacy Preferences
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  Modify consent settings for how Sage Bionetworks products can
+                  save your data (cookies, browser storage, etc).
+                </Typography>
+                <div className="primary-button-container">
+                  <Button
+                    variant="outlined"
+                    sx={credentialButtonSX}
+                    onClick={() => setIsCookiePrefsDialogVisible(true)}
+                  >
+                    Manage Privacy Preferences
+                  </Button>
+                </div>
+                <CookiePreferencesDialog
+                  isOpen={isCookiePrefsDialogVisible}
+                  onSave={() => {
+                    setIsCookiePrefsDialogVisible(false)
+                  }}
+                  onHide={() => {
+                    setIsCookiePrefsDialogVisible(false)
+                  }}
+                />
               </Paper>
             </div>
           </Box>
