@@ -4,7 +4,7 @@ import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
 
-export type ChangePasswordWithTokenProps = {
+type ChangePasswordWithTokenProps = {
   passwordChangeToken: PasswordResetSignedToken
   onSuccess: () => void
 }

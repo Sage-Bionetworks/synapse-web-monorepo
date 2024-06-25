@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "build",
+    "outDir": "${configDir}/build",
     "noEmit": true,
     "strict": true,
     "composite": false,
@@ -8,7 +8,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
+    "baseUrl": "${configDir}",
     "module": "esnext",
     "target": "es5",
     "lib": ["esnext", "dom"],

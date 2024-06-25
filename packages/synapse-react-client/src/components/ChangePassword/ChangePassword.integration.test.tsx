@@ -520,6 +520,9 @@ describe('ChangePassword tests', () => {
 
     await user.click(submitButton)
 
+    // Wait for the UI to update before we change the server behavior
+    await getTOTPInputs()
+
     server.use(
       // Update the mock server so the next request will fail with a meaningful error
       getBadRequestChangePasswordHandler(
