@@ -34,11 +34,13 @@ export interface FullWidthAlertProps {
   description?: React.ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
+  tertiaryButtonConfig?: AlertButtonConfig
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
   icon?: React.ReactNode
   sx?: AlertProps['sx']
+  globalAlertSx?: AlertProps['sx']
 }
 
 function variantToSeverity(variant: string | undefined) {
@@ -89,6 +91,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     description,
     primaryButtonConfig,
     secondaryButtonConfig,
+    tertiaryButtonConfig,
     show = true,
     onClose,
     autoCloseAfterDelayInSeconds,
@@ -96,6 +99,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     isGlobal = true,
     icon,
     sx,
+    globalAlertSx,
   } = props
 
   useEffect(() => {
@@ -136,7 +140,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           {title && <AlertTitle>{title}</AlertTitle>}
           {description}
         </Box>
-        {(primaryButtonConfig || secondaryButtonConfig) && (
+        {(primaryButtonConfig ||
+          secondaryButtonConfig ||
+          tertiaryButtonConfig) && (
           <Stack
             spacing={{ xs: 1, lg: 2 }}
             direction={{
@@ -148,6 +154,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
             display="flex"
             flexShrink={0}
           >
+            {tertiaryButtonConfig && (
+              <ButtonFromConfig config={tertiaryButtonConfig} variant="text" />
+            )}
             {secondaryButtonConfig && (
               <ButtonFromConfig config={secondaryButtonConfig} variant="text" />
             )}
@@ -173,6 +182,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
             width: '96%',
             filter:
               'drop-shadow(0px 8px 8px rgba(0, 0, 0, 0.05)) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.05)) drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05))',
+            ...globalAlertSx,
           }}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           TransitionProps={{

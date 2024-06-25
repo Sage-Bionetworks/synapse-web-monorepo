@@ -80,6 +80,9 @@ import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEdit
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
 import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
+import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
+import { CookiesNotification } from './components/CookiesNotification'
+import { getCurrentCookiePreferences } from './utils/hooks'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -165,6 +168,9 @@ const SynapseComponents = {
   SubmissionViewScopeEditorModal,
   AccessRequirementAclEditor,
   CreateOrUpdateAccessRequirementWizard,
+  GoogleAnalytics,
+  CookiesNotification,
+  getCurrentCookiePreferences,
 }
 
 // Include the version in the build

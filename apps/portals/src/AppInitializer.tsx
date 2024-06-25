@@ -2,24 +2,26 @@ import RedirectDialog, {
   redirectInstructionsMap,
 } from './portal-components/RedirectDialog'
 import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 import {
   ApplicationSessionManager,
   SynapseClient,
   SynapseConstants,
   useFramebuster,
+  SynapseHookUtils,
 } from 'synapse-react-client'
+import { useCookies } from 'react-cookie'
 import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
 function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
+  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
   const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
   const isFramed = useFramebuster()
-
+  SynapseHookUtils.useGoogleAnalytics()
   useEffect(() => {
     /**
      * PORTALS-490: Set Synapse callback cookie
@@ -27,7 +29,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
      * back to this portal after visiting www.synapse.org.
      */
     function updateSynapseCallbackCookie(ev: MouseEvent) {
-      if (!cookies) {
+      if (!cookies || !cookiePreferences.functionalAllowed) {
         return
       }
       let isInvokingDownloadTable: boolean = false
@@ -103,7 +105,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       window.removeEventListener('click', updateSynapseCallbackCookie)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
-  }, [])
+  }, [cookiePreferences])
 
   return (
     <ApplicationSessionManager

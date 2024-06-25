@@ -174,5 +174,8 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
   EXTERNAL_COMPUTE_ENV_DISCLAIMER,
 ]
 
+export const PRIVACY_POLICY_LINK =
+  'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf'
+
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
 export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
