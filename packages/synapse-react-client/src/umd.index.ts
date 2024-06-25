@@ -82,7 +82,7 @@ import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
 
 // Also include scss in the bundle
-import './style/main.scss'
+import '../style/main.scss'
 
 const SynapseEnums = {
   BackendDestinationEnum,

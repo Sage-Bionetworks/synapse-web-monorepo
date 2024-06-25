@@ -1,0 +1,12 @@
+{
+  "extends": "../../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noImplicitAny": false,
+    "moduleResolution": "bundler",
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "files": ["src/types.d.ts"]
+}

@@ -16,6 +16,7 @@ jobs:
             markdown-it-synapse,
             '@sage-bionetworks/markdown-it-container',
             '@sage-bionetworks/synapse-types',
+            '@sage-bionetworks/synapse-portal-framework',
           ]
     runs-on: ubuntu-latest
     steps:

@@ -69,9 +69,9 @@ For a list of variables you can override, see [`src/style/abstracts/_variables.s
 Override the variables by importing the SCSS in your project like so:
 
 ```scss
-@use 'synapse-react-client/dist/style/main.scss' with ($primary-action-color:
+@use 'synapse-react-client/style/main.scss' with ($primary-action-color:
       $-my-primary-color, $secondary-action-color: $-my-secondary-color, // ...any other overrides continue);
-@use 'synapse-react-client/dist/template_style/Index.scss';
+@use 'synapse-react-client/template_style/Index.scss';
 ```
 
 In this example, make sure that your `node_modules` folder is in your Dart Sass load path.

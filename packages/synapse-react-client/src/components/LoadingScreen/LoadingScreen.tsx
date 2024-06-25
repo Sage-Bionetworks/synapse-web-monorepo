@@ -6,7 +6,7 @@ import {
   LinearProgress,
   Typography,
 } from '@mui/material'
-import '../../style/components/_spinner.scss'
+import '../../../style/components/_spinner.scss'
 
 const loadingScreen = (
   <div className="bar-loader">

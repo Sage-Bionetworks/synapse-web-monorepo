@@ -15,7 +15,9 @@
       "require": "./dist/*"
     },
     "./package.json": "./package.json",
-    "./ThemeTypes": "./src/theme/ThemeTypes.d.ts"
+    "./ThemeTypes": "./src/theme/ThemeTypes.d.ts",
+    "./style/*": "./style/*",
+    "./template_style/*": "./template_style/*"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
@@ -191,7 +193,7 @@
     "@types/tinycolor2": "^1.4.6",
     "@types/ua-parser-js": "^0.7.39",
     "@types/xml2js": "^0.4.14",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "@welldone-software/why-did-you-render": "^7.0.1",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.1.3",
@@ -234,7 +236,7 @@
     "type-fest": "^3.13.1",
     "typescript": "5.5.2",
     "util": "^0.12.5",
-    "vite": "^5.1.6",
+    "vite": "^5.3.1",
     "vite-config": "workspace:*",
     "vite-plugin-svgr": "^4.2.0",
     "weak-napi": "^2.0.2",
@@ -252,7 +254,9 @@
     "build": "rimraf dist && pnpm build:copy-assets && pnpm build:js && pnpm build:esbuild",
     "build:js": "tsup",
     "build:fix-extension": "mv dist/synapse-react-client.js dist/synapse-react-client.mjs",
-    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
+    "build:copy-src-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
+    "build:copy-style-assets": "copyfiles \"style/**/*.{css,scss,svg}\" \"template_style/**/*.{css,scss,svg}\" dist",
+    "build:copy-assets": "pnpm build:copy-src-assets && pnpm build:copy-style-assets",
     "build:esbuild": "node esbuild.config.mjs",
     "build:docs": "pnpm storybook build",
     "build:gh-pages": "pnpm storybook build && touch storybook-static/.nojekyll",

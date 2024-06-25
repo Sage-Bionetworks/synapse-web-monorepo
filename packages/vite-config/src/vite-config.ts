@@ -4,6 +4,7 @@ import { defineConfig, UserConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { fileURLToPath } from 'url'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -17,6 +18,7 @@ export const config: UserConfig = {
     },
   },
   plugins: [
+    tsconfigPaths(),
     react(),
     svgr({
       svgrOptions: {

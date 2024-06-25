@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "rimraf": "^5.0.5",
+    "tslib": "^2.6.3",
     "tsup": "^8.0.2",
     "typescript": "5.5.2"
   }
