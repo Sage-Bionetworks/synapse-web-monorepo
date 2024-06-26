@@ -62,7 +62,7 @@ export const useCookiePreferences = (): [
       cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, prefs, {
         path: '/',
         expires: nextYear,
-        domain: hostname.endsWith('.synapse.org') ? '.synapse.org' : undefined,
+        domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
       })
 
       setCookiePreferencesAtomValue(prefs)
