@@ -1,13 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import CookiesNotification from './CookiesNotification'
-import { COOKIES_AGREEMENT_LOCALSTORAGE_KEY } from '../../utils/hooks/useCookiePreferences'
+import UniversalCookies from 'universal-cookie'
+import { COOKIES_AGREEMENT_COOKIE_KEY } from '../../utils/hooks/useCookiePreferences'
+
+const cookies = new UniversalCookies()
 
 const meta = {
   title: 'UI/CookiesNotification',
   component: CookiesNotification,
   render: () => {
-    localStorage.removeItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
+    cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
     return (
       <CookiesNotification
         onClose={prefs => {

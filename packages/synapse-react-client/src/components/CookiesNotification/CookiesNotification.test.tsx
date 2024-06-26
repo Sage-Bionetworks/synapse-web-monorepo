@@ -4,11 +4,13 @@ import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import CookiesNotification, { alertConfig } from './CookiesNotification'
+import UniversalCookies from 'universal-cookie'
 import {
-  COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
+  COOKIES_AGREEMENT_COOKIE_KEY,
   CookiePreference,
 } from '../../utils/hooks/useCookiePreferences'
 
+const cookies = new UniversalCookies()
 const mockOnCloseFn = jest.fn()
 function renderComponent(wrapperProps?: SynapseContextType) {
   const component = render(<CookiesNotification onClose={mockOnCloseFn} />, {
@@ -23,8 +25,7 @@ describe('CookiesNotification', () => {
     jest.clearAllMocks()
   })
   afterEach(() => {
-    localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY) &&
-      localStorage.removeItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
+    cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
   })
 
   it('displays alert and allows user to accept all cookies', async () => {
@@ -40,11 +41,10 @@ describe('CookiesNotification', () => {
     await user.click(acceptButton)
 
     expect(alert).not.toBeInTheDocument()
-    const localStorageValue = localStorage.getItem(
-      COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
-    )
-    expect(localStorageValue).toBeDefined()
-    const cookiePreference = JSON.parse(localStorageValue!) as CookiePreference
+    const cookiePreference = cookies.get(
+      COOKIES_AGREEMENT_COOKIE_KEY,
+    ) as CookiePreference
+    expect(cookiePreference).toBeDefined()
     expect(cookiePreference.analyticsAllowed).toBe(true)
     expect(cookiePreference.functionalAllowed).toBe(true)
   })
@@ -62,11 +62,10 @@ describe('CookiesNotification', () => {
     await user.click(disableAllButton)
 
     expect(alert).not.toBeInTheDocument()
-    const localStorageValue = localStorage.getItem(
-      COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
-    )
-    expect(localStorageValue).toBeDefined()
-    const cookiePreference = JSON.parse(localStorageValue!) as CookiePreference
+    const cookiePreference = cookies.get(
+      COOKIES_AGREEMENT_COOKIE_KEY,
+    ) as CookiePreference
+    expect(cookiePreference).toBeDefined()
     expect(cookiePreference.analyticsAllowed).toBe(false)
     expect(cookiePreference.functionalAllowed).toBe(false)
   })
@@ -92,7 +91,11 @@ describe('CookiesNotification', () => {
   })
 
   it('does not display the alert when cookies have been accepted', () => {
-    localStorage.setItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY, 'true')
+    const cookiePrefence: CookiePreference = {
+      analyticsAllowed: true,
+      functionalAllowed: true,
+    }
+    cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, cookiePrefence)
     const { alert } = renderComponent()
     expect(alert).not.toBeInTheDocument()
   })
