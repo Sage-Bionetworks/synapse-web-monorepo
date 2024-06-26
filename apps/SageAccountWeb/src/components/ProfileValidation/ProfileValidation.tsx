@@ -94,7 +94,8 @@ const STEP_CONTENT = [
       <>
         <Typography variant="body1" paragraph>
           This document must be current within the past month. Acceptable forms
-          of documentation, in English, are any one of the following:{' '}
+          of documentation, <strong>in English</strong>, are any one of the
+          following:{' '}
         </Typography>
 
         <ul
