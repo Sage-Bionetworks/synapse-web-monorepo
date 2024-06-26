@@ -289,7 +289,9 @@ describe('Access Requirement Table tests', () => {
     )
 
     // clicking the current sort should reverse the direction
-    const createdOnSortButton = screen.getByLabelText('Sort by Created On')
+    const createdOnSortButton = screen.getByRole('button', {
+      name: 'Sort by Created On',
+    })
     await userEvent.click(createdOnSortButton)
 
     // desc -> asc
@@ -313,13 +315,15 @@ describe('Access Requirement Table tests', () => {
       ),
     )
 
-    // clicking a different column (name) should sort by that column, descending
-    const nameSortButton = screen.getByLabelText('Sort by Name')
+    // clicking a different column (name) should sort by that column, ascending
+    const nameSortButton = screen.getByLabelText(
+      'Sort by Access Requirement Name',
+    )
     await userEvent.click(nameSortButton)
     await waitFor(() =>
       expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          sort: [{ field: 'NAME', direction: 'DESC' }],
+          sort: [{ field: 'NAME', direction: 'ASC' }],
         }),
       ),
     )

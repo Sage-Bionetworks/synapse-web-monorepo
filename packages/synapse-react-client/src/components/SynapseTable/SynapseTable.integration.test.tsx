@@ -412,9 +412,9 @@ describe('SynapseTable tests', () => {
     // simulate having clicked the sort button on the first column, projectName
     const sortedColumn = 'projectName'
 
-    const sortButton = (
-      await screen.findAllByRole('button', { name: 'sort' })
-    )[0]
+    const sortButton = await screen.findByRole('button', {
+      name: 'Sort by Project Name',
+    })
     await userEvent.click(sortButton)
 
     // below we match only the part of the object that we expect to have changed

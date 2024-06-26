@@ -1,34 +1,43 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
-import { Table } from 'react-bootstrap'
-import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
+import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
   ACCESS_TYPE,
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-} from '@sage-bionetworks/synapse-types'
-import {
   AccessRequirementSearchRequest,
+  AccessRequirementSearchResult,
   AccessRequirementSearchSort,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  SortDirection,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { Button, Typography } from '@mui/material'
+import { Button, Link, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+import { StyledTableContainer } from '../styled/StyledTableContainer'
+import {
+  ColumnSort,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  SortingState,
+  Table,
+  useReactTable,
+} from '@tanstack/react-table'
+import ColumnHeader from '../styled/ColumnHeader'
 
 export type AccessRequirementTableProps = {
   nameOrID?: string
@@ -61,6 +70,90 @@ const isIntegerInput = (v: string): boolean => {
   return /^\d+$/.test(v)
 }
 
+const columnHelper = createColumnHelper<AccessRequirementSearchResult>()
+
+const columns = [
+  columnHelper.accessor('id', {
+    header: props => <ColumnHeader {...props} title={'AR ID'} />,
+    cell: ({ getValue }) => (
+      <Link
+        href={`${
+          PRODUCTION_ENDPOINT_CONFIG.PORTAL
+        }AccessRequirement:AR_ID=${getValue()}`}
+      >
+        {getValue()}
+      </Link>
+    ),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('name', {
+    header: props => (
+      <ColumnHeader {...props} title={'Access Requirement Name'} />
+    ),
+    cell: ({ getValue }) => getValue(),
+    enableSorting: true,
+  }),
+  columnHelper.accessor('type', {
+    header: props => <ColumnHeader {...props} title={'Type'} />,
+    cell: ({ getValue }) =>
+      accessRequirementConcreteTypeValueToDisplayValue(getValue()),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('relatedProjectIds', {
+    header: props => <ColumnHeader {...props} title={'Related to Projects'} />,
+    cell: ({ getValue }) => (
+      <>
+        {getValue().map(projectId => (
+          <React.Fragment key={projectId}>
+            <EntityLink entity={projectId} />{' '}
+            <Typography
+              component={'span'}
+              variant={'smallText1'}
+              color={'grey.700'}
+            >
+              ({projectId})
+            </Typography>
+            <br />
+          </React.Fragment>
+        ))}
+      </>
+    ),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('reviewerIds', {
+    header: props => <ColumnHeader {...props} title={'Reviewer'} />,
+    cell: ({ getValue }) => (
+      <>
+        {getValue().length === 0 ? (
+          <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+        ) : (
+          getValue().map(reviewerId => (
+            <UserOrTeamBadge key={reviewerId} principalId={reviewerId} />
+          ))
+        )}
+      </>
+    ),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('modifiedOn', {
+    header: props => <ColumnHeader {...props} title={'Last Modified'} />,
+    cell: ({ getValue }) => formatDate(dayjs(getValue())),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('createdOn', {
+    header: props => <ColumnHeader {...props} title={'Created On'} />,
+    cell: ({ getValue }) => formatDate(dayjs(getValue())),
+    enableSorting: true,
+  }),
+]
+
+const DEFAULT_SORTING_STATE: SortingState = [
+  {
+    desc: true,
+    id: 'createdOn',
+  },
+]
+
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
   const {
     nameOrID,
@@ -70,14 +163,36 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
     onCreateNewAccessRequirementClicked,
   } = props
 
-  const [sort, setSort] = useState<AccessRequirementSearchSort>({
-    field: 'CREATED_ON',
-    direction: 'DESC',
-  })
+  const [sortingState, setSortingState] = useState<SortingState>(
+    DEFAULT_SORTING_STATE,
+  )
+
+  const requestSortState: AccessRequirementSearchRequest['sort'] =
+    useMemo(() => {
+      return sortingState.map((s: ColumnSort): AccessRequirementSearchSort => {
+        const direction: SortDirection = s.desc ? 'DESC' : 'ASC'
+
+        if (s.id == 'createdOn') {
+          return {
+            field: 'CREATED_ON',
+            direction,
+          }
+        } else if (s.id == 'name') {
+          return {
+            field: 'NAME',
+            direction,
+          }
+        } else {
+          throw new Error(
+            `Could not map sort field ${s.id} to AccessRequirementSortField`,
+          )
+        }
+      })
+    }, [sortingState])
 
   const searchRequest: Omit<AccessRequirementSearchRequest, 'nextPageToken'> =
     useMemo(() => {
-      // SWC-6615: If the input string is a single integer, assume it's the AR ID.  Otherwise use as the nameContains field.
+      // SWC-6615: If the input string is a single integer, assume it's the AR ID.  Otherwise, use as the nameContains field.
       let nameContains: string | undefined = undefined
       let ids: number[] | undefined = undefined
       if (nameOrID !== undefined) {
@@ -94,24 +209,37 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
         relatedProjectId,
         reviewerId,
         accessType,
-        sort: [sort],
+        sort: requestSortState,
       }
-    }, [nameOrID, relatedProjectId, reviewerId, accessType, sort])
+    }, [nameOrID, relatedProjectId, reviewerId, accessType, requestSortState])
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessRequirementsInfinite(searchRequest)
 
-  const accessRequirements = data?.pages.flatMap(page => page.results) ?? []
-  const onSort = (field: AccessRequirementSearchSort['field']) => {
-    if (sort.field === field) {
-      setSort({ field, direction: sort.direction === 'DESC' ? 'ASC' : 'DESC' })
-    } else {
-      setSort({ field, direction: 'DESC' })
-    }
-  }
+  const accessRequirements = useMemo(
+    () => data?.pages.flatMap(page => page.results) ?? [],
+    [data],
+  )
+
+  const table: Table<AccessRequirementSearchResult> =
+    useReactTable<AccessRequirementSearchResult>({
+      data: accessRequirements,
+      columns: columns,
+      state: {
+        sorting: sortingState,
+      },
+      onSortingChange: setSortingState,
+      getRowId: row => row.id,
+      getCoreRowModel: getCoreRowModel(),
+      columnResizeMode: 'onChange',
+      manualSorting: true,
+      enableMultiSort: false,
+      // Sort is required for this API call, so prevent the user from removing the sort.
+      enableSortingRemoval: false,
+    })
 
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       <div className="SRC-split">
         <Typography variant="headline3" style={{ marginBottom: 0 }}>
           Access Requirements
@@ -128,86 +256,71 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
         )}
       </div>
 
-      <div className="AccessRequirementsTable">
-        <Table striped borderless bordered={false}>
-          <thead className="access-requirements-header">
-            <tr>
-              <th>AR ID</th>
-              <th>
-                <span className="SRC-split">
-                  <span>Access Requirement Name</span>
-                  <SortIcon
-                    role="button"
-                    onClick={() => onSort('NAME')}
-                    aria-label="Sort by Name"
-                    active={sort.field === 'NAME'}
-                    direction={sort.field === 'NAME' ? sort.direction : 'DESC'}
-                  />
-                </span>
-              </th>
-              <th>Type</th>
-              <th>Related to Projects</th>
-              <th>Reviewer</th>
-              <th>Last Modified</th>
-              <th>
-                <span className="SRC-split">
-                  <span>Created On</span>
-                  <SortIcon
-                    role="button"
-                    onClick={() => onSort('CREATED_ON')}
-                    active={sort.field === 'CREATED_ON'}
-                    aria-label="Sort by Created On"
-                    direction={
-                      sort.field === 'CREATED_ON' ? sort.direction : 'DESC'
-                    }
-                  />
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {accessRequirements.map(ar => {
-              return (
-                <tr key={ar.id}>
-                  <td>
-                    <a
-                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${ar.id}`}
-                    >
-                      {ar.id}
-                    </a>
-                  </td>
-                  <td>{ar.name}</td>
-                  <td>
-                    {accessRequirementConcreteTypeValueToDisplayValue(ar.type)}
-                  </td>
-                  <td>
-                    {ar.relatedProjectIds.map(projectId => (
-                      <React.Fragment key={projectId}>
-                        <EntityLink entity={projectId} />{' '}
-                        <span className="InlineLabel">({projectId})</span>
-                        <br />
-                      </React.Fragment>
+      <div>
+        <StyledTableContainer
+          sx={{
+            my: 2,
+            ['th,td']: { px: 1 },
+            td: {
+              py: 1,
+            },
+          }}
+        >
+          <table style={{ width: '100%' }}>
+            <thead>
+              {table.getHeaderGroups().map(headerGroup => {
+                return (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        style={{ width: header.getSize() }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                        {header.column.getCanResize() && (
+                          <div
+                            className={`resizer ${
+                              header.column.getIsResizing() ? 'isResizing' : ''
+                            }`}
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                          />
+                        )}
+                      </th>
                     ))}
-                  </td>
-                  <td>
-                    {ar.reviewerIds.length === 0 ? (
-                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                    ) : (
-                      ar.reviewerIds.map(reviewerId => (
-                        <UserOrTeamBadge
-                          key={reviewerId}
-                          principalId={reviewerId}
-                        />
-                      ))
-                    )}
-                  </td>
-                  <td>{formatDate(dayjs(ar.modifiedOn))}</td>
-                  <td>{formatDate(dayjs(ar.createdOn))}</td>
+                  </tr>
+                )
+              })}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map(row => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map(cell => {
+                    return (
+                      <td
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    )
+                  })}
                 </tr>
-              )
-            })}
-          </tbody>
-        </Table>
+              ))}
+            </tbody>
+          </table>
+        </StyledTableContainer>
         {isLoading && (
           <div className="SRC-center-text">
             <SynapseSpinner size={40} />

@@ -61,11 +61,11 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
         )}
         {column.getCanFilter() && filterControl}
         {column.getCanSort() && (
-          <Tooltip title={`Sort ${title}`} placement={'top'}>
+          <Tooltip title={`Sort by ${title}`} placement={'top'}>
             <IconButton
               role="button"
-              aria-label="sort"
               size={'small'}
+              aria-label={`Sort by ${title}`}
               tabIndex={0}
               onKeyPress={() => column.toggleSorting()}
               onClick={() => column.toggleSorting()}
