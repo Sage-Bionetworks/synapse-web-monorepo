@@ -101,9 +101,11 @@ export const AccountSettings = () => {
     const current = new Date()
     const nextYear = new Date()
     nextYear.setFullYear(current.getFullYear() + 1)
+    const hostname = window.location.hostname.toLowerCase()
     cookies.set(SynapseConstants.DATETIME_UTC_COOKIE_KEY, isUTCTime, {
       path: '/',
       expires: nextYear,
+      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
     })
   }, [isUTCTime])
 
