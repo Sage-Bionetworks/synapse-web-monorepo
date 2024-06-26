@@ -605,10 +605,10 @@ export const AccountSettings = () => {
                   </p>
                   <Typography variant={'body1'} sx={{ my: 1 }}>
                     Profile validation requires you to complete your profile,
-                    link an ORCID profile, sign and date the Synapse pledge, and
-                    upload both the pledge and an identity attestation document,
-                    after which your application will be manually reviewed
-                    (which may take several days).
+                    link an ORCID profile, agree to the Synapse pledge, and
+                    upload an identity attestation document, after which your
+                    application will be manually reviewed (which may take
+                    several days).
                   </Typography>
                   <div className="primary-button-container">
                     <Button
