@@ -4,7 +4,7 @@ import { Button, Typography } from '@mui/material'
 import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'
-import StyledTanstackTable from '../Table/Table'
+import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
 
 export type AccessRequirementTableProps = {
   nameOrID?: string
@@ -50,7 +50,7 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
       </div>
 
       <div>
-        <StyledTanstackTable
+        <StyledTanStackTable
           table={table}
           styledTableContainerProps={{ sx: { my: 2 } }}
         />

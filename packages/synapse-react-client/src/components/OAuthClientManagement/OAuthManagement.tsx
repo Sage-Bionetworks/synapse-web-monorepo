@@ -20,7 +20,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import ColumnHeader from '../styled/ColumnHeader'
-import StyledTanstackTable from '../Table/Table'
+import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 
@@ -155,7 +155,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           Create New Client
         </Button>
       </Box>
-      <StyledTanstackTable table={table} />
+      <StyledTanStackTable table={table} />
       {hasNextPage && (
         <div className="text-center">
           <Button

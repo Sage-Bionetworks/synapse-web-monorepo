@@ -25,7 +25,7 @@ import {
   CheckBoxCell,
   CheckBoxHeader,
 } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
-import StyledTanstackTable from '../Table/Table'
+import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
 
 /**
  * Convert an array of Promise results to an array of errors
@@ -199,7 +199,7 @@ export function TrashCanList() {
       )}
       {!isLoading && items.length > 0 && (
         <>
-          <StyledTanstackTable
+          <StyledTanStackTable
             table={table}
             styledTableContainerProps={{ sx: { my: 4 } }}
           />

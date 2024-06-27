@@ -21,7 +21,7 @@ import {
 } from '@tanstack/react-table'
 import ColumnHeader from '../styled/ColumnHeader'
 import { isEmpty } from 'lodash-es'
-import StyledTanstackTable from '../Table/Table'
+import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
 
 export type ForumTableProps = {
   forumId: string
@@ -152,9 +152,9 @@ export const ForumTable: React.FC<ForumTableProps> = ({
 
   return (
     <div className="ForumTable">
-      <StyledTanstackTable
+      <StyledTanStackTable
         table={table}
-        styledTableContainerProps={{ sx: { my: 2 } }}
+        styledTableContainerProps={{ sx: { my: 2, maxHeight: '250px' } }}
       />
       {hasNextPage && (
         <Button

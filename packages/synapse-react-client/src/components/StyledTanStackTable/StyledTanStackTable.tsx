@@ -5,13 +5,13 @@ import {
   StyledTableContainerProps,
 } from '../styled/StyledTableContainer'
 
-type StyledTanstackTableProps<T = unknown> = {
+type StyledTanStackTableProps<T = unknown> = {
   table: Table<T>
   styledTableContainerProps?: StyledTableContainerProps
 }
 
-export default function StyledTanstackTable<T = unknown>(
-  props: StyledTanstackTableProps<T>,
+export default function StyledTanStackTable<T = unknown>(
+  props: StyledTanStackTableProps<T>,
 ) {
   const { table, styledTableContainerProps } = props
   return (

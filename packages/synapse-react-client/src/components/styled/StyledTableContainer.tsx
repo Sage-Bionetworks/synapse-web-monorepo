@@ -8,7 +8,6 @@ export type StyledTableContainerProps = BoxProps & {
 export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
   styled(Box)<StyledTableContainerProps>(({ theme, density = 'default' }) => ({
     overflow: 'auto',
-    maxHeight: '250px',
     paddingLeft: '2px',
     th: {
       height: '38px',
