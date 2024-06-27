@@ -25,6 +25,7 @@ import {
   UserCardProps,
   ChallengeDataDownloadProps,
   TimelinePlotProps,
+  DatasetJsonLdScriptProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
@@ -318,6 +319,11 @@ type Header = {
   props: undefined
 }
 
+type DatasetJsonLdScript = {
+  name: 'DatasetJsonLdScript'
+  props: DatasetJsonLdScriptProps
+}
+
 export type SynapseConfig = (
   | RedirectToURL
   | RedirectWithQuery
@@ -373,6 +379,7 @@ export type SynapseConfig = (
   | ChallengeDataDownloadWrapper
   | ChallengeSubmissionWrapper
   | TimelinePlot
+  | DatasetJsonLdScript
 ) &
   Metadata
 
