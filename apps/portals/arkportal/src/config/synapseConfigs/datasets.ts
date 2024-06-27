@@ -35,7 +35,6 @@ const dataset: SynapseConfig = {
     searchConfiguration: {
       searchable: ['name', 'program', 'project', 'datasetType', 'assay'],
     },
-    defaultShowPlots: false,
   },
 }
 

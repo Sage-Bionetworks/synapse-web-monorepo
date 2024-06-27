@@ -3,13 +3,16 @@ import FullWidthAlert from '../FullWidthAlert'
 import { Link, Typography } from '@mui/material'
 import CookiePreferencesDialog from './CookiePreferencesDialog'
 import {
-  COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
+  COOKIES_AGREEMENT_COOKIE_KEY,
   CookiePreference,
   allowAll,
   allowNone,
   useCookiePreferences,
 } from '../../utils/hooks/useCookiePreferences'
 import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
+import UniversalCookies from 'universal-cookie'
+
+const cookies = new UniversalCookies()
 
 export const alertConfig = {
   title: 'Our site uses cookies.',
@@ -37,7 +40,7 @@ const CookiesNotification = (props: CookieNotificationProps) => {
   const [, setCookiePreferences] = useCookiePreferences()
 
   const [notificationDismissed, setNotificationDismissed] = useState(
-    localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY) !== null,
+    !!cookies.get(COOKIES_AGREEMENT_COOKIE_KEY),
   )
 
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =

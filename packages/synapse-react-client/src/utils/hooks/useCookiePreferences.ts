@@ -1,5 +1,8 @@
 import { useCallback } from 'react'
 import { atom, useAtom } from 'jotai'
+import UniversalCookies from 'universal-cookie'
+
+const cookies = new UniversalCookies()
 
 export type CookiePreference = {
   functionalAllowed: boolean
@@ -16,10 +19,12 @@ export const allowNone: CookiePreference = {
 }
 
 export const getCurrentCookiePreferences = () => {
-  const prefs = localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
+  const prefs = cookies.get(COOKIES_AGREEMENT_COOKIE_KEY, {
+    doNotParse: true,
+  }) as string | undefined
   let cookiePreference = allowNone
   try {
-    if (prefs != null) {
+    if (prefs != undefined) {
       cookiePreference = JSON.parse(prefs) as CookiePreference
     }
   } catch (err) {
@@ -27,10 +32,9 @@ export const getCurrentCookiePreferences = () => {
       `Failed to parse CookiePreference from value, falling back to allow none. value=${prefs}`,
     )
   }
-
   return cookiePreference
 }
-export const COOKIES_AGREEMENT_LOCALSTORAGE_KEY =
+export const COOKIES_AGREEMENT_COOKIE_KEY =
   'org.sagebionetworks.security.cookies.portal.preference'
 
 const cookiePreferencesAtom = atom<CookiePreference>(
@@ -50,10 +54,17 @@ export const useCookiePreferences = (): [
         localStorage.clear()
         sessionStorage.clear()
       }
-      localStorage.setItem(
-        COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
-        JSON.stringify(prefs),
-      )
+
+      const current = new Date()
+      const nextYear = new Date()
+      nextYear.setFullYear(current.getFullYear() + 1)
+      const hostname = window.location.hostname.toLowerCase()
+      cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, prefs, {
+        path: '/',
+        expires: nextYear,
+        domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
+      })
+
       setCookiePreferencesAtomValue(prefs)
     },
     [setCookiePreferencesAtomValue],
