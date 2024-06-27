@@ -6,7 +6,6 @@ import { QueryClient } from '@tanstack/react-query'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,
-  accessRequirementConcreteTypeValueToDisplayValue,
 } from './AccessRequirementTable'
 import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
@@ -39,6 +38,7 @@ import {
 } from '../../mocks/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
+import { accessRequirementConcreteTypeValueToDisplayValue } from './UseAccessRequirementTable'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 const MOCK_PROJECT_NAME = mockProjectData.name
