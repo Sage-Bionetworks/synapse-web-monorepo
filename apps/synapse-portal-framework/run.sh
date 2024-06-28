@@ -31,7 +31,9 @@ if [ "$1" != "WARNING-push-production" ] && [ "$1" != "push-staging" ]; then
   exit 1
 fi
 
-PORTAL_APP="$(pnpm nx show project "$2" --json | jq -r '.sourceRoot')"
+# PORTAL_APP="$(pnpm nx show project "$2" --json | jq -r '.sourceRoot')"
+# jq is not installed on the build machine, so use node
+PORTAL_APP="$(pnpm nx show project "$2" --json | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).sourceRoot")"
 
 # Check that directory exists
 if [ ! -d ./"$PORTAL_APP" ]; then
