@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - 'apps/portals/**'
-      - '!apps/portals/src/configurations/**'
-      - 'apps/portals/src/configurations/adknowledgeportal/**'
+      - '.github/**' # temporarily track GH Actions changes to test
+      - 'apps/portals/adknowledgeportal/**'
+      - 'apps/synapse-portal-framework/**'
       - 'packages/synapse-react-client/**'
 
 jobs:

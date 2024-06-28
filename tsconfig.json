@@ -1,8 +1,6 @@
 {
   "extends": "./shared/tsconfig.base.json",
-  "files": [
-    ".eslintrc.cjs"
-  ],
+  "files": ["eslint.config.mjs"],
   "include": [],
   "compilerOptions": {
     "rootDir": ".",

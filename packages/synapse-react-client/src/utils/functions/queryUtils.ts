@@ -14,7 +14,6 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
@@ -97,7 +96,7 @@ export const getNextPageOfData = async (
       // push on the new data retrieved from the API call
       const hasMoreData =
         newData.queryResult!.queryResults.rows.length ===
-          queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE
+        (queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE)
       oldData.queryResult!.queryResults.rows.push(
         ...newData.queryResult!.queryResults.rows,
       )

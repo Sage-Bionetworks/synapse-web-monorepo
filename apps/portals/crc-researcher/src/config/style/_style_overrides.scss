@@ -1,0 +1,19 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+
+#header,
+#footer {
+  background-blend-mode: multiply;
+}
+
+.SynapseTable td {
+  .markdown.markdown-inline {
+    a {
+      white-space: nowrap;
+    }
+
+    a::after {
+      font-family: 'Font Awesome 5 Free';
+      content: '\f35d';
+    }
+  }
+}

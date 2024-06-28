@@ -1,0 +1,13 @@
+node_modules/
+build/
+src/config/
+*.css
+*.css.map
+.DS_Store
+.vscode/
+.idea/
+public/build-date.txt
+public/deploy_date.txt
+public/favicon.svg
+public/logo.svg
+public/socialmedia.png
