@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap challengeportal",
     "preview": "vite preview",
     "type-check": "tsc",
     "lint": "eslint src",

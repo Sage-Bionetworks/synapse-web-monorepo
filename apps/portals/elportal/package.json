@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap elportal",
     "preview": "vite preview",
     "type-check": "tsc",
     "lint": "eslint src",
