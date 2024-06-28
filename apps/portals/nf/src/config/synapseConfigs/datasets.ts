@@ -89,6 +89,12 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
     //   props: {},
     // },
     {
+      name: 'DatasetJsonLdScript',
+      columnName: 'id',
+      tableSqlKeys: ['id'],
+      props: {},
+    },
+    {
       name: 'QueryWrapperPlotNav',
       // title: 'Files',
       props: {

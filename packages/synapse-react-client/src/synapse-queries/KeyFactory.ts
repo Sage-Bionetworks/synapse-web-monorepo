@@ -383,6 +383,9 @@ export class KeyFactory {
       wikiPageKey.wikiPageId,
     )
   }
+  public getWikiPageKey(ownerId: string, wikiPageId: string) {
+    return this.getKey('ownerId', ownerId, 'wikiPageId', wikiPageId)
+  }
 
   public getFullTableQueryResultQueryKey(
     queryBundleRequest: QueryBundleRequest,

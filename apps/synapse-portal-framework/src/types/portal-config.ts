@@ -21,6 +21,7 @@ import {
   TableFeedCardsProps,
   ThemesPlotProps,
   TimelinePlotProps,
+  DatasetJsonLdScriptProps,
   UpsetPlotProps,
   UserCardListGroupsProps,
   UserCardListRotateProps,
@@ -319,6 +320,11 @@ type Header = {
   props: undefined
 }
 
+type DatasetJsonLdScript = {
+  name: 'DatasetJsonLdScript'
+  props: DatasetJsonLdScriptProps
+}
+
 export type SynapseConfig = (
   | RedirectToURL
   | RedirectWithQuery
@@ -374,6 +380,7 @@ export type SynapseConfig = (
   | ChallengeDataDownloadWrapper
   | ChallengeSubmissionWrapper
   | TimelinePlot
+  | DatasetJsonLdScript
 ) &
   Metadata
 

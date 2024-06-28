@@ -69,6 +69,12 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
 
   synapseConfigArray: [
     {
+      name: 'DatasetJsonLdScript',
+      columnName: 'id',
+      tableSqlKeys: ['id'],
+      props: {},
+    },
+    {
       name: 'Markdown',
       columnName: 'datasetDescription',
       title: 'Description',
