@@ -1,0 +1,40 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+
+#header,
+#footer {
+  background-color: Portal.$primary-action-color;
+}
+
+.SRC-primary-background-color-border-left {
+  border-left-color: Portal.$primary-action-color !important;
+}
+.SRC-mailchimpSubscribeContainer {
+  button {
+    background-color: Portal.$primary-action-color !important;
+  }
+}
+
+footer {
+  img.nav-logo {
+    width: 250px;
+  }
+}
+
+.amp-project-component {
+  margin-top: 30px;
+}
+
+.ProgramCardList {
+  .SRC-imageThumbnail img {
+    max-width: 100px;
+    padding-top: 20px;
+    padding-right: 30px;
+    float: right;
+  }
+}
+
+.ProgramsHomePage {
+  .Programs__Card {
+    width: 32%;
+  }
+}
