@@ -3,8 +3,8 @@ import { WithContext, Dataset } from 'schema-dts'
 import useJsonLdScriptElement from '../utils/hooks/useJsonLdScriptElement'
 import MarkdownIt from 'markdown-it'
 import dayjs from 'dayjs'
-import { useGetEntityBundle } from '../synapse-queries'
-import { useWikiPage } from '../synapse-queries/wiki/useWikiPage'
+import { useGetEntityBundle, useGetWikiPage } from '../synapse-queries'
+import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 
 const md = MarkdownIt({ html: true })
 
@@ -50,7 +50,12 @@ export const DatasetJsonLdScript: React.FunctionComponent<
     }
   }
   const { data: entityBundle } = useGetEntityBundle(entityId!, version)
-  const { data: wikiPage } = useWikiPage(entityId!)
+  const wikiPageKey: WikiPageKey = {
+    ownerObjectType: ObjectType.ENTITY,
+    ownerObjectId: entityId!,
+    wikiPageId: '',
+  }
+  const { data: wikiPage } = useGetWikiPage(wikiPageKey)
   const html = md.renderInline(wikiPage?.markdown ?? '')
   const plainTextWiki = getPlainText(html)
   const datasetDescription =
