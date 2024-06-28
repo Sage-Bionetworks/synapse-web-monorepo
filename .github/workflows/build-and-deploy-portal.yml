@@ -35,11 +35,11 @@ jobs:
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
       - name: build
-        run: pnpm nx run ${{ inputs.app-name }}:build
+        run: pnpm nx run ${{ inputs.portal-name }}:build
       - name: Get package path
         id: package-path
         run: |
-          packagePath=$(pnpm nx show project ${{ inputs.app-name }} --json | jq -r '.sourceRoot')
+          packagePath=$(pnpm nx show project ${{ inputs.portal-name }} --json | jq -r '.sourceRoot')
           echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
       - name: setup-outputbucket-staging
         run: |
