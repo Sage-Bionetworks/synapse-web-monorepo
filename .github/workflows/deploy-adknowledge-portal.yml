@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/**' # temporarily track GH Actions changes to test
       - 'apps/portals/adknowledgeportal/**'
       - 'apps/synapse-portal-framework/**'
       - 'packages/synapse-react-client/**'
