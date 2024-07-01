@@ -6,7 +6,6 @@ import { QueryClient } from '@tanstack/react-query'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,
-  accessRequirementConcreteTypeValueToDisplayValue,
 } from './AccessRequirementTable'
 import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
@@ -39,6 +38,7 @@ import {
 } from '../../mocks/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
+import { accessRequirementConcreteTypeValueToDisplayValue } from './UseAccessRequirementTable'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 const MOCK_PROJECT_NAME = mockProjectData.name
@@ -289,7 +289,9 @@ describe('Access Requirement Table tests', () => {
     )
 
     // clicking the current sort should reverse the direction
-    const createdOnSortButton = screen.getByLabelText('Sort by Created On')
+    const createdOnSortButton = screen.getByRole('button', {
+      name: 'Sort by Created On',
+    })
     await userEvent.click(createdOnSortButton)
 
     // desc -> asc
@@ -313,13 +315,15 @@ describe('Access Requirement Table tests', () => {
       ),
     )
 
-    // clicking a different column (name) should sort by that column, descending
-    const nameSortButton = screen.getByLabelText('Sort by Name')
+    // clicking a different column (name) should sort by that column, ascending
+    const nameSortButton = screen.getByLabelText(
+      'Sort by Access Requirement Name',
+    )
     await userEvent.click(nameSortButton)
     await waitFor(() =>
       expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          sort: [{ field: 'NAME', direction: 'DESC' }],
+          sort: [{ field: 'NAME', direction: 'ASC' }],
         }),
       ),
     )

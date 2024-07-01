@@ -16,7 +16,6 @@ import WarningDialog from '../SynapseForm/WarningDialog'
 import {
   ColumnDef,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   RowSelectionState,
   Table,
@@ -26,7 +25,7 @@ import {
   CheckBoxCell,
   CheckBoxHeader,
 } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
-import { StyledTableContainer } from '../styled/StyledTableContainer'
+import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
 
 /**
  * Convert an array of Promise results to an array of errors
@@ -200,65 +199,10 @@ export function TrashCanList() {
       )}
       {!isLoading && items.length > 0 && (
         <>
-          <StyledTableContainer my={4}>
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-              <thead>
-                {table.getHeaderGroups().map(headerGroup => {
-                  return (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          style={{ width: header.getSize() }}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                          {header.column.getCanResize() && (
-                            <div
-                              className={`resizer ${
-                                header.column.getIsResizing()
-                                  ? 'isResizing'
-                                  : ''
-                              }`}
-                              onMouseDown={header.getResizeHandler()}
-                              onTouchStart={header.getResizeHandler()}
-                            />
-                          )}
-                        </th>
-                      ))}
-                    </tr>
-                  )
-                })}
-              </thead>
-
-              <tbody>
-                {table.getRowModel().rows.map(row => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map(cell => {
-                      return (
-                        <td
-                          key={cell.id}
-                          style={{
-                            width: cell.column.getSize(),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </StyledTableContainer>
+          <StyledTanStackTable
+            table={table}
+            styledTableContainerProps={{ sx: { my: 4 } }}
+          />
           {errors.length > 0 && (
             <Alert severity={'error'} sx={{ mb: 1 }}>
               The following errors were encountered:

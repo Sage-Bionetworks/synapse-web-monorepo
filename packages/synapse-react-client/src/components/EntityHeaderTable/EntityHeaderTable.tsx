@@ -367,6 +367,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           sx={{
             th: {
               zIndex: 100,
+              maxHeight: '250px',
             },
           }}
         >
