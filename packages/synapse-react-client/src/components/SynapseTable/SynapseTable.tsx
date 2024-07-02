@@ -284,8 +284,8 @@ export function SynapseTable(props: SynapseTableProps) {
                         key={cell.id}
                         style={{
                           width: cell.column.getSize(),
+                          textAlign: cell.column.columnDef.meta?.textAlign,
                         }}
-                        align={(cell.column.columnDef.meta as any)?.align}
                       >
                         {renderPlaceholder ? (
                           <p>

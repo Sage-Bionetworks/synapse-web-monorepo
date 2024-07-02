@@ -1,10 +1,4 @@
-declare module '*.svg' {
-  import React from 'react'
-
-  export const ReactComponent: React.FunctionComponent<
-    React.SVGProps<SVGSVGElement> & { title?: string }
-  >
-}
+// Type definitions & module augmentation for markdown-it plugins
 
 declare module 'markdown-it-sub-alt' {
   import type MarkdownIt from 'markdown-it'

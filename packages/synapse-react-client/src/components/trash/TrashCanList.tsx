@@ -25,7 +25,7 @@ import {
   CheckBoxCell,
   CheckBoxHeader,
 } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
-import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 /**
  * Convert an array of Promise results to an array of errors

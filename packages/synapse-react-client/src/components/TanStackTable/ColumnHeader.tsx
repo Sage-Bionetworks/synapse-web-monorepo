@@ -2,10 +2,11 @@ import { HeaderContext } from '@tanstack/react-table'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { HelpTwoTone } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
-import React from 'react'
+import React, { useCallback } from 'react'
+import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 
 type ColumnHeaderProps = {
-  title?: React.ReactNode
+  title?: string
   helpText?: React.ReactNode
   additionalButtons?: React.ReactNode
 
@@ -24,9 +25,27 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
     column,
     title = props.column.id,
     helpText,
-    filterControl,
+    filterControl: filterControlFromProps,
     additionalButtons,
   } = props
+
+  const getFilterControl = useCallback(() => {
+    if (filterControlFromProps) {
+      return filterControlFromProps
+    }
+    if (column.getCanFilter()) {
+      if (column.columnDef.meta?.filterVariant === 'enumeration') {
+        return <ColumnHeaderEnumFilter column={column} title={title} />
+      }
+      // As needed, extend ColumnMeta.filterVariant to support other types of filters
+      console.warn(
+        `column.getCanFilter() was true for column ID: ${column.id} but no filterControlFromProps was passed and component for filterVariant: ${column.columnDef.meta?.filterVariant} is not implemented`,
+      )
+    }
+    return <></>
+  }, [column, filterControlFromProps, title])
+
+  const filterControl = getFilterControl()
 
   return (
     <Box

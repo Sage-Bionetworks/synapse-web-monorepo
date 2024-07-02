@@ -12,7 +12,7 @@ import {
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../../../QueryContext'
-import { isFacetColumnValuesRequest } from '../../../../utils/types/IsType'
+import { isFacetColumnValuesRequest } from '../../../../utils'
 import { cloneDeep, pick, sortBy } from 'lodash-es'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
 import { useAtomValue } from 'jotai'
@@ -130,7 +130,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
           }
         },
       ),
-      fv => -1 * fv.count,
+      fv => -1 * fv.count!,
     )
   }, [
     currentSelectedFacet?.facetValues,
@@ -147,7 +147,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
   return (
     <EnumFacetFilterUI
       facetTitle={getColumnDisplayName(facet.columnName, facet.jsonPath)}
-      allIsSelected={allIsSelected}
+      filterIsActive={!allIsSelected}
       facetValues={displayedFacetValues}
       containerAs={containerAs}
       dropdownType={dropdownType}
@@ -178,6 +178,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
       onRemoveAllFacetSelections={() =>
         removeSelectedFacet(pick(facet, ['columnName', 'jsonPath']))
       }
+      canMultiSelect={true}
     />
   )
 }

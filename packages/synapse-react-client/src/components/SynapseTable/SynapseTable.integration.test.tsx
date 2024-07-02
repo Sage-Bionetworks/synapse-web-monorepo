@@ -389,7 +389,7 @@ describe('SynapseTable tests', () => {
     await waitFor(() => {
       expect(
         screen.getAllByRole('button', {
-          name: 'Filter by specific facet',
+          name: /Filter by .*/,
         }),
       ).toHaveLength(5)
     })

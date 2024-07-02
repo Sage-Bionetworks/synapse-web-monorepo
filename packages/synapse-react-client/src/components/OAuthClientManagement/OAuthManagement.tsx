@@ -19,8 +19,8 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table'
-import ColumnHeader from '../styled/ColumnHeader'
-import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 

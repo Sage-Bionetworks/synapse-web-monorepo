@@ -10,11 +10,18 @@ import EnumFacetFilterUI, {
   RenderedFacetValue,
 } from './EnumFacetFilterUI'
 import { fn } from '@storybook/test'
+import { Paper } from '@mui/material'
 
 const meta: Meta<EnumFacetFilterUIProps> = {
   title: 'Explore/Components/Facets/EnumFacetFilter',
   component: EnumFacetFilterUI,
-  decorators: [Story => <Story />],
+  decorators: [
+    Story => (
+      <Paper sx={{ p: 4, maxWidth: '400px' }}>
+        <Story />
+      </Paper>
+    ),
+  ],
   args: {
     onAddValueToSelection: fn(),
     onRemoveValueFromSelection: fn(),
@@ -47,7 +54,7 @@ const facetValues: RenderedFacetValue[] = [
 
 export const PanelNoneSelected: Story = {
   args: {
-    allIsSelected: false,
+    filterIsActive: false,
     facetTitle: 'Column Named Foo',
     facetValues: cloneDeep(facetValues).map(facetValue => ({
       ...facetValue,
@@ -55,12 +62,13 @@ export const PanelNoneSelected: Story = {
     })),
     containerAs: 'Collapsible',
     dropdownType: 'Icon',
+    canMultiSelect: true,
   },
 }
 
 export const PanelWithSelections: Story = {
   args: {
-    allIsSelected: false,
+    filterIsActive: true,
     facetValues: cloneDeep(facetValues).map((facetValue, i) => ({
       ...facetValue,
       isSelected: i < 3,
@@ -68,12 +76,13 @@ export const PanelWithSelections: Story = {
     facetTitle: 'Column Named Foo',
     containerAs: 'Collapsible',
     dropdownType: 'Icon',
+    canMultiSelect: true,
   },
 }
 
 export const IconDropdown: Story = {
   args: {
-    allIsSelected: true,
+    filterIsActive: false,
     facetValues: cloneDeep(facetValues).map(facetValue => ({
       ...facetValue,
       isSelected: false,
@@ -82,12 +91,13 @@ export const IconDropdown: Story = {
     facetTitle: 'Column Named Foo',
     containerAs: 'Dropdown',
     dropdownType: 'Icon',
+    canMultiSelect: true,
   },
 }
 
 export const MenuDropdown: Story = {
   args: {
-    allIsSelected: true,
+    filterIsActive: false,
     facetValues: cloneDeep(facetValues).map(facetValue => ({
       ...facetValue,
       isSelected: false,
@@ -95,5 +105,20 @@ export const MenuDropdown: Story = {
     facetTitle: 'Column Named Foo',
     containerAs: 'Dropdown',
     dropdownType: 'SelectBox',
+    canMultiSelect: true,
+  },
+}
+
+export const SingleSelectRadioButtons: Story = {
+  args: {
+    filterIsActive: true,
+    facetTitle: 'Column Named Foo',
+    facetValues: cloneDeep(facetValues).map((facetValue, i) => ({
+      ...facetValue,
+      isSelected: i == 2,
+    })),
+    containerAs: 'Collapsible',
+    dropdownType: 'Icon',
+    canMultiSelect: false,
   },
 }
