@@ -1,4 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  getDefaultNormalizer,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import React from 'react'
 import AccessRequirementList, {
   AccessRequirementListProps,
@@ -61,7 +67,8 @@ describe('AccessRequirementList tests', () => {
     // Must be logged in
     await screen.findByText('signed in', { exact: false })
     // Must be certified (since one or more of the ARs requires it)
-    await screen.findByText('certified', { exact: false })
+    await screen.findByText(/You must first become a/)
+    await screen.findAllByText(/certified user/) // may appear multiple times since we also display if the current user is a certified user
     // Must have a verified profile (since one or more of the ARs requires it)
     await screen.findByText('user profile validated', { exact: false })
     // Must have 2fa enabled (since one or more of the ARs requires it)
