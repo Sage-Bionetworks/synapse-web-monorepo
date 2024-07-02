@@ -17,16 +17,18 @@ import {
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import {
+  ColumnFiltersState,
   ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   SortingState,
   Table,
+  Updater,
   useReactTable,
 } from '@tanstack/react-table'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
-import ColumnHeader from '../styled/ColumnHeader'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { Link, Typography } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityLink } from '../EntityLink'
@@ -34,6 +36,7 @@ import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import { noop } from 'lodash-es'
 
 export function accessRequirementConcreteTypeValueToDisplayValue(
   accessRequirementConcreteTypeValue: ACCESS_REQUIREMENT_CONCRETE_TYPE,
@@ -72,6 +75,7 @@ const columns = [
       </Link>
     ),
     enableSorting: false,
+    enableColumnFilter: false,
   }),
   columnHelper.accessor('name', {
     header: props => (
@@ -79,12 +83,42 @@ const columns = [
     ),
     cell: ({ getValue }) => getValue(),
     enableSorting: true,
+    enableColumnFilter: false,
   }),
   columnHelper.accessor('type', {
     header: props => <ColumnHeader {...props} title={'Type'} />,
     cell: ({ getValue }) =>
       accessRequirementConcreteTypeValueToDisplayValue(getValue()),
     enableSorting: false,
+    enableColumnFilter: true,
+    meta: {
+      filterVariant: 'enumeration',
+      enumValues: [
+        {
+          value: TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+          displayText:
+            TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+        },
+        {
+          value: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+          displayText: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+        },
+        {
+          value: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+          displayText:
+            MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+        },
+        {
+          value: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+          displayText: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+        },
+        {
+          value: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+          displayText: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+        },
+      ],
+      enableMultipleSelect: false,
+    },
   }),
   columnHelper.accessor('relatedProjectIds', {
     header: props => <ColumnHeader {...props} title={'Related to Projects'} />,
@@ -106,6 +140,7 @@ const columns = [
       </>
     ),
     enableSorting: false,
+    enableColumnFilter: false,
   }),
   columnHelper.accessor('reviewerIds', {
     header: props => <ColumnHeader {...props} title={'Reviewer'} />,
@@ -121,16 +156,19 @@ const columns = [
       </>
     ),
     enableSorting: false,
+    enableColumnFilter: false,
   }),
   columnHelper.accessor('modifiedOn', {
     header: props => <ColumnHeader {...props} title={'Last Modified'} />,
     cell: ({ getValue }) => formatDate(dayjs(getValue())),
     enableSorting: false,
+    enableColumnFilter: false,
   }),
   columnHelper.accessor('createdOn', {
     header: props => <ColumnHeader {...props} title={'Created On'} />,
     cell: ({ getValue }) => formatDate(dayjs(getValue())),
     enableSorting: true,
+    enableColumnFilter: false,
   }),
 ]
 const DEFAULT_SORTING_STATE: SortingState = [
@@ -144,39 +182,83 @@ type UseAccessRequirementTableOptions = {
   relatedProjectId?: string
   reviewerId?: string
   accessType?: ACCESS_TYPE
+  typeFilter?: string
+  onTypeFilterChange?: (typeFilter: string | undefined) => void
+}
+
+function columnSortToAccessRequirementSearchSort(
+  columnSort: ColumnSort,
+): AccessRequirementSearchSort {
+  const direction: SortDirection = columnSort.desc ? 'DESC' : 'ASC'
+
+  if (columnSort.id == 'createdOn') {
+    return {
+      field: 'CREATED_ON',
+      direction,
+    }
+  } else if (columnSort.id == 'name') {
+    return {
+      field: 'NAME',
+      direction,
+    }
+  } else {
+    throw new Error(
+      `Could not map sort field ${columnSort.id} to AccessRequirementSortField`,
+    )
+  }
+}
+
+function getTypeFilterFromColumnFilters(
+  columnFilters?: ColumnFiltersState,
+): string | undefined {
+  const matchingFilter = (columnFilters || []).find(f => f.id === 'type')
+  const filterValues = matchingFilter?.value
+  if (filterValues) {
+    return (filterValues as string[])[0]
+  }
+  return undefined
 }
 
 export function useAccessRequirementTable(
   opts: UseAccessRequirementTableOptions,
 ) {
-  const { nameOrID, relatedProjectId, reviewerId, accessType } = opts
+  const {
+    nameOrID,
+    relatedProjectId,
+    reviewerId,
+    accessType,
+    typeFilter,
+    onTypeFilterChange = noop,
+  } = opts
   const [sortingState, setSortingState] = useState<SortingState>(
     DEFAULT_SORTING_STATE,
   )
 
-  // Map the @tanstack/react-table state object to the Synapse API object
-  const apiRequestSortState: AccessRequirementSearchRequest['sort'] =
-    useMemo(() => {
-      return sortingState.map((s: ColumnSort): AccessRequirementSearchSort => {
-        const direction: SortDirection = s.desc ? 'DESC' : 'ASC'
+  const columnFilters = useMemo(
+    () => (typeFilter ? [{ id: 'type', value: [typeFilter] }] : []),
+    [typeFilter],
+  )
 
-        if (s.id == 'createdOn') {
-          return {
-            field: 'CREATED_ON',
-            direction,
-          }
-        } else if (s.id == 'name') {
-          return {
-            field: 'NAME',
-            direction,
-          }
-        } else {
-          throw new Error(
-            `Could not map sort field ${s.id} to AccessRequirementSortField`,
-          )
-        }
-      })
-    }, [sortingState])
+  const onColumnFiltersChange = useCallback(
+    (updaterOrValue: Updater<ColumnFiltersState>) => {
+      const newValue: ColumnFiltersState =
+        typeof updaterOrValue === 'function'
+          ? updaterOrValue(columnFilters)
+          : updaterOrValue
+
+      // Unlike the other controls, the type filter control is inside the table. State is still stored in the parent component.
+      // When the user updates the filter, this function will fire, so we must propagate changes to the type filter to the parent.
+      const typeFilter = getTypeFilterFromColumnFilters(newValue)
+      onTypeFilterChange(typeFilter)
+    },
+    [columnFilters, onTypeFilterChange],
+  )
+
+  // Map the @tanstack/react-table sort state object to the Synapse API object
+  const apiRequestSortState: AccessRequirementSearchRequest['sort'] = useMemo(
+    () => sortingState.map(columnSortToAccessRequirementSearchSort),
+    [sortingState],
+  )
 
   const searchRequest: Omit<AccessRequirementSearchRequest, 'nextPageToken'> =
     useMemo(() => {
@@ -198,6 +280,7 @@ export function useAccessRequirementTable(
         reviewerId,
         accessType,
         sort: apiRequestSortState,
+        type: typeFilter,
       }
     }, [
       nameOrID,
@@ -205,6 +288,7 @@ export function useAccessRequirementTable(
       reviewerId,
       accessType,
       apiRequestSortState,
+      typeFilter,
     ])
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
@@ -221,8 +305,10 @@ export function useAccessRequirementTable(
       columns: columns,
       state: {
         sorting: sortingState,
+        columnFilters: columnFilters,
       },
       onSortingChange: setSortingState,
+      onColumnFiltersChange: onColumnFiltersChange,
       getRowId: row => row.id,
       getCoreRowModel: getCoreRowModel(),
       columnResizeMode: 'onChange',
@@ -230,6 +316,7 @@ export function useAccessRequirementTable(
       enableMultiSort: false,
       // Sort is required for this API call, so prevent the user from removing the sort.
       enableSortingRemoval: false,
+      manualFiltering: true,
     })
 
   return { table, isLoading, hasNextPage, fetchNextPage }
