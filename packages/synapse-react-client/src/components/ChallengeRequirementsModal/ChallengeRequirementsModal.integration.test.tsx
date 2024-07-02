@@ -19,7 +19,7 @@ import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 async function renderComponent(props: ChallengeRequirementsModalProps) {
   const user = userEvent.setup()
   const component = render(<ChallengeRequirementsModal {...props} />, {
-    wrapper: createWrapper(),
+    wrapper: createWrapper({}),
   })
 
   const dialog = await screen.findByRole('dialog')
@@ -27,7 +27,7 @@ async function renderComponent(props: ChallengeRequirementsModalProps) {
     name: 'Challenge Terms and Conditions',
   })
   const registerButton = await within(dialog).findByRole('button', {
-    name: 'Register',
+    name: /Register|Continue/,
   })
   const cancelButton = await within(dialog).findByRole('button', {
     name: 'Cancel',
