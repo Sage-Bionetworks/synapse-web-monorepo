@@ -138,7 +138,6 @@ describe('UnmanagedACTAccessRequirement tests', () => {
     expect(
       screen.queryByRole('button', {
         name: 'Request access',
-        exact: false,
       }),
     ).not.toBeInTheDocument()
 

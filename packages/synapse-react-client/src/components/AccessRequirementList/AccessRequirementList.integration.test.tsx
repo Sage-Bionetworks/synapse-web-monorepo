@@ -63,7 +63,7 @@ describe('AccessRequirementList tests', () => {
     // Must be certified (since one or more of the ARs requires it)
     await screen.findByText('certified', { exact: false })
     // Must have a verified profile (since one or more of the ARs requires it)
-    await screen.findByText('validated', { exact: false })
+    await screen.findByText('user profile validated', { exact: false })
     // Must have 2fa enabled (since one or more of the ARs requires it)
     await screen.findByText('2FA', { exact: false })
 
