@@ -19,7 +19,7 @@ import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 async function renderComponent(props: ChallengeRequirementsModalProps) {
   const user = userEvent.setup()
   const component = render(<ChallengeRequirementsModal {...props} />, {
-    wrapper: createWrapper({}),
+    wrapper: createWrapper(),
   })
 
   const dialog = await screen.findByRole('dialog')
