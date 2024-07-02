@@ -24,7 +24,7 @@ import {
   mockAccessRequirements,
   mockAccessRequirementWikiPageKeys,
   mockSelfSignAccessRequirement,
-} from '../../mockAccessRequirements'
+} from '../../accessRequirement/mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 

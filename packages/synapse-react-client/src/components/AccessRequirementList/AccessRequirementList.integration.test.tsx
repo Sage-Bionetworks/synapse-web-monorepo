@@ -12,7 +12,7 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id

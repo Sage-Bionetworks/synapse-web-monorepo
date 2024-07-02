@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
 } from './DataAccessRequestAccessorsFilesForm'
-import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_FOLDER_ID } from '../../../../mocks/entity/mockEntity'
 import { MOCK_RESEARCH_PROJECT_ID } from '../../../../mocks/dataaccess/MockResearchProject'
 import { MOCK_DATA_ACCESS_REQUEST } from '../../../../mocks/dataaccess/MockDataAccessRequest'

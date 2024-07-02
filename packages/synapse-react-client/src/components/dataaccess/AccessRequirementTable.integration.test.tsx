@@ -32,10 +32,10 @@ import {
   mockACTAccessRequirement,
   mockLockAccessRequirement,
   mockManagedACTAccessRequirement,
-  mockSearchResults,
+  mockSearchResultsPageOne as mockSearchResults,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
 import { accessRequirementConcreteTypeValueToDisplayValue } from './UseAccessRequirementTable'

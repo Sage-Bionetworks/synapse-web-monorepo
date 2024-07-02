@@ -11,7 +11,7 @@ import {
 import { SynapseClient } from '../../index'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
 
 const defaultProps: SynapseNavDrawerProps = {

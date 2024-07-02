@@ -6,7 +6,7 @@ import {
   DATA_ACCESS_SUBMISSION_BY_ID,
 } from '../../utils/APIConstants'
 import { mockSubmissions } from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'

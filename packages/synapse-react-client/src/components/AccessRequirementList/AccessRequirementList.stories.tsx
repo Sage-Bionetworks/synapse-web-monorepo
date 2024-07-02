@@ -8,7 +8,7 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import {
   SynapseContextConsumer,

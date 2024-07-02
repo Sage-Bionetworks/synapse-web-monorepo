@@ -10,7 +10,7 @@ import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import {
   MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
   MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
-} from '../../mocks/mockAccessRequirementAcls'
+} from '../../mocks/accessRequirement/mockAccessRequirementAcls'
 import { rest, server } from '../../mocks/msw/server'
 import { mockTeamData, mockTeamData2 } from '../../mocks/team/mockTeam'
 import {

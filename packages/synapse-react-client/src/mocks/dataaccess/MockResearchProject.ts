@@ -1,5 +1,5 @@
 import { ResearchProject } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../accessRequirement/mockAccessRequirements'
 
 export const MOCK_RESEARCH_PROJECT_ID = '1981321'
 export const MOCK_RESEARCH_PROJECT: ResearchProject = {
