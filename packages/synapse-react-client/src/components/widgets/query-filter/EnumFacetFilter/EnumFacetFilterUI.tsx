@@ -25,7 +25,7 @@ export type EnumFacetFilterUIProps<TValue = string> = {
   /* List of all facet values and information associated with each value */
   facetValues: RenderedFacetValue<TValue>[]
   /* Determines how the component is styled and whether the 'All' checkbox should be selected. */
-  filterIsActive: boolean // allIsSelected cannot be derived from facetValues[*].isSelected. See PORTALS-2680
+  filterIsActive: boolean // filterIsActive cannot be derived from facetValues[*].isSelected. See PORTALS-2680
   /* The EnumFacetFilter can be rendered as a collapsible panel or a dropdown. Default is `'Collapsible'` */
   containerAs?: 'Collapsible' | 'Dropdown'
   /* If `containerAs` is a dropdown, the dropdown can be either an IconButton or a SelectBox. Default is `'Icon'` */
