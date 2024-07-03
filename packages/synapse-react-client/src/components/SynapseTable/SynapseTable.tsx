@@ -19,7 +19,6 @@ import { TablePagination } from './TablePagination'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
 import { Box, Skeleton } from '@mui/material'
 import {
-  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -128,7 +127,7 @@ export function SynapseTable(props: SynapseTableProps) {
       )
     : undefined
 
-  const columns: ColumnDef<Row, string | null>[] = useMemo(
+  const columns = useMemo(
     () => [
       rowSelectionColumn,
       addToDownloadListColumn,
