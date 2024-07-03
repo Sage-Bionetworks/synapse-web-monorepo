@@ -430,7 +430,6 @@ describe('CreateTableWizard integration tests', () => {
     // Verify that the selections were added by querying for the "Remove" buttons
     const removeButtons = await screen.findAllByRole('button', {
       name: /Remove .+ from scope/,
-      exact: false,
     })
     expect(removeButtons).toHaveLength(1)
 

@@ -12,11 +12,16 @@ import {
   mockRegisteredChallengeTeams,
 } from '../../challenge/mockChallenge'
 import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../team/mockTeam'
-import { uniqueId } from 'lodash-es'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-const registeredChallengeTeams: ChallengeTeam[] = [
-  ...mockRegisteredChallengeTeams,
-]
+const registeredChallengeTeamService = new BasicMockedCrudService<
+  ChallengeTeam,
+  'id'
+>({
+  initialData: mockRegisteredChallengeTeams,
+  idField: 'id',
+  autoGenerateId: true,
+})
 
 export function getChallengeHandler(backendOrigin: string) {
   return rest.get(
@@ -37,9 +42,10 @@ export function getRegisteredChallengeTeamsHandler(backendOrigin: string) {
   return rest.get(
     `${backendOrigin}/repo/v1/challenge/:challengeId/challengeTeam`,
     async (req, res, ctx) => {
+      const results = registeredChallengeTeamService.getAll()
       const response: SynapseApiResponse<ChallengeTeamPagedResults> = {
-        results: registeredChallengeTeams,
-        totalNumberOfResults: registeredChallengeTeams.length,
+        results: results,
+        totalNumberOfResults: results.length,
       }
       return res(ctx.status(200), ctx.json(response))
     },
@@ -51,13 +57,11 @@ export function getRegisterTeamForChallengeHandler(backendOrigin: string) {
     `${backendOrigin}/repo/v1/challenge/:challengeId/challengeTeam`,
     async (req, res, ctx) => {
       const request: CreateChallengeTeamRequest = await req.json()
-      const response: SynapseApiResponse<ChallengeTeam> = {
+      const created = registeredChallengeTeamService.create({
         ...request,
-        id: uniqueId(),
         etag: 'abcdef0987654321',
-      }
-      registeredChallengeTeams.push(response)
-      return res(ctx.status(200), ctx.json(response))
+      })
+      return res(ctx.status(200), ctx.json(created))
     },
   )
 }

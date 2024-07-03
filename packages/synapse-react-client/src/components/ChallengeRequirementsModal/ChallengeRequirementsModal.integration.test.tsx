@@ -27,7 +27,7 @@ async function renderComponent(props: ChallengeRequirementsModalProps) {
     name: 'Challenge Terms and Conditions',
   })
   const registerButton = await within(dialog).findByRole('button', {
-    name: 'Register',
+    name: /Register|Continue/,
   })
   const cancelButton = await within(dialog).findByRole('button', {
     name: 'Cancel',
