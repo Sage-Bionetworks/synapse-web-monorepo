@@ -34,7 +34,6 @@ $-splitter-width: 12px;
 
 .EntityFinder {
   width: 100%;
-  max-width: max-content;
   margin: auto;
 
   &__Search__Input {
@@ -57,14 +56,8 @@ $-splitter-width: 12px;
     height: $-finder-height + ($-border-size * 2);
   }
 
-  &__MainPanel.MainPanelSearch {
-    width: 85vw;
-  }
   &__MainPanel.MainPanelSinglePane {
     width: $-tree-only-width + ($-border-size * 2);
-  }
-  &__MainPanel.MainPanelDualPane {
-    width: 85vw;
   }
 
   .reflex-container.vertical > .reflex-splitter {
