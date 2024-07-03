@@ -56,7 +56,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
           }
         }}
         content={
-          <Box>
+          <Box width={props.configuration.treeOnly ? 'min-content' : undefined}>
             <Typography variant="body1" mb="10px">
               {props.promptCopy}
             </Typography>
