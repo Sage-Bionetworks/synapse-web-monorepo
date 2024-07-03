@@ -16,12 +16,12 @@ export default class BasicMockedCrudService<
 > {
   private data: T[]
   private idField: TIDField | undefined
-  private autoGenerateIdField: boolean | undefined
+  private autoGenerateId: boolean | undefined
 
   constructor(options?: BasicMockedCrudServiceConstructorOptions<T, TIDField>) {
     this.data = cloneDeep(options?.initialData) || []
     this.idField = options?.idField
-    this.autoGenerateIdField = options?.autoGenerateId
+    this.autoGenerateId = options?.autoGenerateId
   }
 
   getAll() {
@@ -50,7 +50,7 @@ export default class BasicMockedCrudService<
   create(newItem: SetOptional<T, TIDField>): T {
     const cloned = cloneDeep(newItem)
     const idField = this.idField
-    if (idField && this.autoGenerateIdField) {
+    if (idField && this.autoGenerateId) {
       cloned[idField] = uniqueId() as T[TIDField] // TODO -- support non-string IDs
     } else if (idField && !cloned[idField]) {
       throw new Error(
