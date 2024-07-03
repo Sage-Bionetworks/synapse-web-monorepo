@@ -55,9 +55,8 @@ export function AccessRequirementDashboard(
     urlSearchParams.get(REVIEWER_ID_SEARCH_PARAM_KEY) ?? undefined,
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
-  const [typeFilter, setTypeFilter] = useDebouncedState<string | undefined>(
+  const [typeFilter, setTypeFilter] = useState<string | undefined>(
     urlSearchParams.get(AR_TYPE_SEARCH_PARAM_KEY) ?? undefined,
-    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
   const projectFilterFieldIsError: boolean = useMemo(
