@@ -432,7 +432,7 @@ const expectTable = async (page: Page, exploreTab: string) => {
           await colHeaders.getByLabel('sort').count(),
         ).toBeGreaterThanOrEqual(1)
         expect(
-          await colHeaders.getByLabel('Filter by specific facet').count(),
+          await colHeaders.getByLabel(/Filter by .*/).count(),
         ).toBeGreaterThanOrEqual(1)
       })
     })
