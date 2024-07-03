@@ -56,8 +56,16 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
           }
         }}
         content={
-          <Box width={props.configuration.treeOnly ? 'min-content' : undefined}>
-            <Typography variant="body1" mb="10px">
+          <Box>
+            <Typography
+              variant="body1"
+              mb="10px"
+              sx={{
+                // Do not allow the help text to expand the dialog width
+                minWidth: '100%',
+                width: 0,
+              }}
+            >
               {props.promptCopy}
             </Typography>
             <EntityFinder
