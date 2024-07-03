@@ -52,7 +52,10 @@ const expectCards = async (page: Page) => {
   })
 }
 
-const expectButtons = async (locator: Locator, buttonNames: string[]) => {
+const expectButtons = async (
+  locator: Locator,
+  buttonNames: (string | RegExp)[],
+) => {
   for (const buttonName of buttonNames) {
     await expect(
       locator.getByRole('button', { name: buttonName }),
@@ -284,7 +287,7 @@ const expectFacetCharts = async (page: Page) => {
           const chartTitleText = await chartTitle.textContent()
           expect(availableFacetNames).toContain(chartTitleText)
           await expectButtons(chartTitle, [
-            'Filter by specific facet',
+            /Filter by .*/,
             'Expand to large graph',
             'Hide graph under Show More',
           ])
