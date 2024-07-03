@@ -10,13 +10,17 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import { forumSubscriptions, threadSubscriptions } from '../../mockSubscription'
-import { remove, uniqueId } from 'lodash-es'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-const subscriptions: Subscription[] = [
-  ...forumSubscriptions,
-  ...threadSubscriptions,
-]
+const subscriptionService = new BasicMockedCrudService<
+  Subscription,
+  'subscriptionId'
+>({
+  initialData: [...forumSubscriptions, ...threadSubscriptions],
+  idField: 'subscriptionId',
+  autoGenerateId: true,
+})
 
 function getSubscriptions(
   objectType?: SubscriptionObjectType,
@@ -25,7 +29,8 @@ function getSubscriptions(
   limit = 10,
   idList?: string[],
 ): SubscriptionPagedResults {
-  const allResults = subscriptions
+  const allResults = subscriptionService
+    .getAll()
     .filter(s => {
       if (objectType) {
         return s.objectType === objectType
@@ -101,15 +106,12 @@ export function getSubscriptionHandlers(backendOrigin: string) {
       async (req, res, ctx) => {
         const requestBody: Topic = await req.json()
 
-        const newSubscription: Subscription = {
-          subscriptionId: uniqueId(),
+        const newSubscription = subscriptionService.create({
           subscriberId: String(MOCK_USER_ID),
           objectId: requestBody.objectId,
           objectType: requestBody.objectType,
           createdOn: new Date().toISOString(),
-        }
-
-        subscriptions.push(newSubscription)
+        })
         return res(ctx.status(201), ctx.json(newSubscription))
       },
     ),
@@ -117,7 +119,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
       `${backendOrigin}/repo/v1/subscription/:id`,
       async (req, res, ctx) => {
         const subscriptionId = req.params.id as string
-        remove(subscriptions, s => s.subscriptionId === subscriptionId)
+        subscriptionService.delete(subscriptionId)
         return res(ctx.status(200), ctx.body(''))
       },
     ),
@@ -126,7 +128,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
       async (req, res, ctx) => {
         const topic: Topic = await req.json()
 
-        const matchingSubscriptions = subscriptions.filter(
+        const matchingSubscriptions = subscriptionService.getMany(
           s =>
             s.objectType === topic.objectType && s.objectId === topic.objectId,
         )

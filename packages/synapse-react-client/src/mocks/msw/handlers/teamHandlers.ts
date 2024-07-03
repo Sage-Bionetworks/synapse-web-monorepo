@@ -19,26 +19,27 @@ import {
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { uniqueId } from 'lodash-es'
 import { delay } from '../../../synapse-client/HttpClient'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-const teams: Team[] = [...mockTeams]
+const mockedTeamService = new BasicMockedCrudService<Team, 'id'>({
+  initialData: mockTeams as Team[],
+  idField: 'id',
+  autoGenerateId: true,
+})
 
-function getMockTeamById(id: string): Team | undefined {
-  return teams.find(team => team.id === id)
-}
+const mockedTeamMembershipService =
+  new BasicMockedCrudService<TeamMembershipStatus>({
+    initialData: mockTeamMembershipStatuses as TeamMembershipStatus[],
+  })
 
-const teamMemberships: TeamMembershipStatus[] = [...mockTeamMembershipStatuses]
 function getTeamMembershipStatusByTeamIdMemberId(
   teamId: string,
   memberId: string,
 ): TeamMembershipStatus | undefined {
-  return teamMemberships.find(
+  return mockedTeamMembershipService.getOneByPredicate(
     membership =>
       membership.teamId === teamId && membership.userId === memberId,
   )
-}
-
-function addTeamMembershipStatus(teamMembershipStatus: TeamMembershipStatus) {
-  teamMemberships.push(teamMembershipStatus)
 }
 
 const teamMembershipInvitations: MembershipInvitation[] = [
@@ -49,7 +50,7 @@ export function getTeamHandler(backendOrigin: string) {
   return rest.get(
     `${backendOrigin}/repo/v1/team/:teamId`,
     async (req, res, ctx) => {
-      const team = getMockTeamById(req.params.teamId as string)
+      const team = mockedTeamService.getOneById(req.params.teamId as string)
 
       if (team) {
         return res(ctx.status(200), ctx.json(team))
@@ -70,7 +71,7 @@ export function getTeamListHandler(backendOrigin: string) {
       const requestBody: { list: number[] } = await req.json()
       const teams: Team[] = []
       for (const teamId of requestBody.list) {
-        const team = getMockTeamById(teamId.toString())
+        const team = mockedTeamService.getOneById(teamId.toString())
         if (!team) {
           const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
             reason: `Team with id ${teamId} not found`,
@@ -93,19 +94,18 @@ export function getTeamListHandler(backendOrigin: string) {
 export function getCreateTeamHandler(backendOrigin: string) {
   return rest.post(`${backendOrigin}/repo/v1/team`, async (req, res, ctx) => {
     const requestBody: CreateTeamRequest = await req.json()
-    const team: Team = {
+
+    const createdTeam = mockedTeamService.create({
       ...requestBody,
       createdBy: String(MOCK_USER_ID),
       createdOn: new Date().toISOString(),
       etag: 'etag',
-      id: uniqueId(),
       modifiedBy: String(MOCK_USER_ID),
       modifiedOn: new Date().toISOString(),
-    }
+    })
 
-    teams.push(team)
-    teamMemberships.push({
-      teamId: team.id,
+    mockedTeamMembershipService.create({
+      teamId: createdTeam.id,
       userId: String(MOCK_USER_ID),
       isMember: true,
       hasOpenInvitation: false,
@@ -119,7 +119,7 @@ export function getCreateTeamHandler(backendOrigin: string) {
     // Avoid a race condition where the data in the arrays may not have updated before subsequent calls are made by the client
     await delay(250)
 
-    return res(ctx.status(201), ctx.json(getMockTeamById(team.id)))
+    return res(ctx.status(201), ctx.json(createdTeam))
   })
 }
 
@@ -132,7 +132,7 @@ export function getTeamMembershipStatusHandler(backendOrigin: string) {
       let response: SynapseApiResponse<TeamMembershipStatus>
       let status: number
 
-      const team = getMockTeamById(teamId)
+      const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
@@ -169,7 +169,7 @@ export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
       let response: SynapseApiResponse<void> | ''
       let status: number
 
-      const team = getMockTeamById(teamId)
+      const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
@@ -187,7 +187,7 @@ export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
           hasUnmetAccessRequirement: false, // TODO
           canSendEmail: false, // TODO
         }
-        addTeamMembershipStatus(membershipStatus)
+        mockedTeamMembershipService.create(membershipStatus)
         response = ''
         status = 201
       }
