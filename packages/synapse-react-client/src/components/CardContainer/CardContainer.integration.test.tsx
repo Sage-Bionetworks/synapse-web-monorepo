@@ -157,17 +157,17 @@ describe('CardContainer tests', () => {
     await waitForCardCount(STUDY, DEFAULT_PAGE_SIZE)
     expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalledTimes(1)
 
-    // go through calling handle view more
-    const viewMoreButton = await screen.findByRole('button', {
-      name: 'View More',
-    })
-
     const appendNextPageSpy = jest.spyOn(
       capturedQueryContext!,
       'appendNextPageToResults',
     )
 
     server.use(...getHandlersForTableQuery(dataWithMultiplePagesSecondPage))
+
+    // go through calling handle view more
+    const viewMoreButton = await screen.findByRole('button', {
+      name: 'View More',
+    })
     await user.click(viewMoreButton)
 
     // Verify that the next page was appended

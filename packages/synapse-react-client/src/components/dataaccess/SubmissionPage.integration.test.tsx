@@ -31,7 +31,7 @@ import {
   mockSubmissions,
   mockSubmittedSubmission,
 } from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,

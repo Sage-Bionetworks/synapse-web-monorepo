@@ -1,13 +1,12 @@
-import { ObjectType, WikiPage } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   mockACTAccessRequirement,
   mockToUAccessRequirementWithWiki,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { mockToUAccessRequirementWikiPage } from '../../mocks/mockWiki'
-import { rest, server } from '../../mocks/msw/server'
+import { server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
@@ -15,8 +14,6 @@ import {
   waitForMarkdownSynapseToGetWiki,
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_PAGE_ID } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   AccessRequirementWikiInstructions,
@@ -24,20 +21,7 @@ import {
 } from './AccessRequirementWikiInstructions'
 
 const createWikiPageSpy = jest.spyOn(SynapseClient, 'createWikiPage')
-const changeGetWikiPageHandlerOnce = (wikiPage: WikiPage) => {
-  return server.use(
-    rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
-        ObjectType.ACCESS_REQUIREMENT,
-        ':ownerObjectId',
-        ':wikiPageId',
-      )}`,
-      async (req, res, ctx) => {
-        return res.once(ctx.status(200), ctx.json(wikiPage))
-      },
-    ),
-  )
-}
+const updateWikiPageSpy = jest.spyOn(SynapseClient, 'updateWikiPage')
 
 function renderComponent(props: AccessRequirementWikiInstructionsProps) {
   return render(<AccessRequirementWikiInstructions {...props} />, {
@@ -72,10 +56,7 @@ describe('AccessRequirementWikiInstructions', () => {
 
     await user.click(editBtn)
 
-    const createdWikiPage = (await createWikiPageSpy.mock.results[0]
-      .value) as WikiPage
-    changeGetWikiPageHandlerOnce(createdWikiPage)
-    await waitForMarkdownSynapseToGetWiki()
+    await waitFor(() => expect(createWikiPageSpy).toHaveBeenCalledTimes(1))
 
     const editDialog = await screen.findByRole('dialog', {
       name: 'Edit Wiki Markdown',
@@ -91,7 +72,7 @@ describe('AccessRequirementWikiInstructions', () => {
 
     // change getGetWikiPage since MarkdownSynapse will GET wiki rather than
     // ...reading from react query cache
-    changeGetWikiPageHandlerOnce({ ...createdWikiPage, markdown: newMarkdown })
+    // changeGetWikiPageHandler({ ...createdWikiPage, markdown: newMarkdown })
 
     const saveBtn = within(editDialog).getByRole('button', { name: 'Save' })
     await user.click(saveBtn)
@@ -135,21 +116,20 @@ describe('AccessRequirementWikiInstructions', () => {
     await user.type(markdownField, newMarkdown)
     expect(markdownField).toHaveValue(newMarkdown)
 
-    // change getGetWikiPage since MarkdownSynapse will GET wiki rather than
-    // ...reading from react query cache
-    changeGetWikiPageHandlerOnce({
-      ...mockToUAccessRequirementWikiPage,
-      markdown: newMarkdown,
-    })
-
     const saveBtn = within(editDialog).getByRole('button', { name: 'Save' })
     await user.click(saveBtn)
 
+    // Verify the update call is made and the edit dialog disappears
     await waitFor(() => {
+      expect(updateWikiPageSpy).toHaveBeenCalledTimes(1)
       expect(editDialog).not.toBeInTheDocument()
     })
 
+    // Verify that the data is refreshed and the new markdown is displayed
     await waitForMarkdownSynapseToGetWiki(2)
     await confirmMarkdownSynapseTextContent(newMarkdown)
+
+    // Verify no wiki page was ever created
+    expect(createWikiPageSpy).not.toHaveBeenCalled()
   })
 })

@@ -16,8 +16,8 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResults,
-} from '../../../mocks/mockAccessRequirements'
+  mockSearchResultsPageOne as mockSearchResults,
+} from '../../../mocks/accessRequirement/mockAccessRequirements'
 import { rest, server } from '../../../mocks/msw/server'
 
 const mockOnChange = jest.fn()

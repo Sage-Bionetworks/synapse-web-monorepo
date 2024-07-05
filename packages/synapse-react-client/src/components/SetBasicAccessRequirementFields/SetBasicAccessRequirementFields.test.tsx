@@ -11,7 +11,7 @@ import {
   mockACTAccessRequirementWithWiki,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import {
   mockACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,

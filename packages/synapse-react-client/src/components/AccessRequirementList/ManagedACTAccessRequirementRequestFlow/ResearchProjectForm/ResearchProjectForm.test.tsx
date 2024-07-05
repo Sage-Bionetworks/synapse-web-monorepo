@@ -8,7 +8,7 @@ import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../../mocks/mockAccessRequirements'
+} from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { SynapseClient } from '../../../../index'
 import {
   MOCK_EMPTY_RESEARCH_PROJECT,

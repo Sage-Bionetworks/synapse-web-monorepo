@@ -3,17 +3,19 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
-import {
-  AccessRequirementTable,
-  AccessRequirementTableProps,
-} from './AccessRequirementTable'
+import { AccessRequirementTable } from './AccessRequirementTable'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { InputSizedButton } from '../styled/InputSizedButton'
+import { useDebouncedState } from '@react-hookz/web'
+
+export const AR_NAME_OR_ID_SEARCH_PARAM_KEY = 'nameOrID'
+export const RELATED_PROJECT_ID_SEARCH_PARAM_KEY = 'relatedProjectId'
+export const REVIEWER_ID_SEARCH_PARAM_KEY = 'reviewerId'
+export const AR_TYPE_SEARCH_PARAM_KEY = 'type'
 
 export type AccessRequirementDashboardProps = {
   onCreateNewAccessRequirementClicked?: () => void
@@ -28,13 +30,34 @@ export function AccessRequirementDashboard(
   const { onCreateNewAccessRequirementClicked } = props
 
   const location = useLocation()
+  const urlSearchParams = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search],
+  )
   const history = useHistory()
 
-  const [nameOrID, setNameOrID] = useState<string>('')
-  const [relatedProjectId, setRelatedProjectId] = useState<string | undefined>(
-    undefined,
+  /**
+   * When an input changes, update the props passed to the table and update the search params.
+   *
+   * Debounced to prevent firing many queries while the user is entering text.
+   */
+  const [nameOrID, setNameOrID] = useDebouncedState<string>(
+    urlSearchParams.get(AR_NAME_OR_ID_SEARCH_PARAM_KEY) ?? '',
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
-  const [reviewerId, setReviewerId] = useState<string | undefined>(undefined)
+  const [relatedProjectId, setRelatedProjectId] = useDebouncedState<
+    string | undefined
+  >(
+    urlSearchParams.get(RELATED_PROJECT_ID_SEARCH_PARAM_KEY) ?? undefined,
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
+  )
+  const [reviewerId, setReviewerId] = useDebouncedState<string | undefined>(
+    urlSearchParams.get(REVIEWER_ID_SEARCH_PARAM_KEY) ?? undefined,
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
+  )
+  const [typeFilter, setTypeFilter] = useState<string | undefined>(
+    urlSearchParams.get(AR_TYPE_SEARCH_PARAM_KEY) ?? undefined,
+  )
 
   const projectFilterFieldIsError: boolean = useMemo(
     () =>
@@ -42,82 +65,48 @@ export function AccessRequirementDashboard(
     [relatedProjectId],
   )
 
-  useEffect(() => {
-    function initializeFromSearchParams() {
-      const initialParams = new URLSearchParams(location.search)
-      setNameOrID(initialParams.get('nameOrID') ?? '')
-      setRelatedProjectId(initialParams.get('relatedProjectId') ?? undefined)
-      setReviewerId(initialParams.get('reviewerId') ?? undefined)
-    }
-    initializeFromSearchParams()
-  }, [location.search])
-
   const [showEntityFinder, setShowEntityFinder] = useState(false)
 
-  const [tableProps, setTableProps] = useState<AccessRequirementTableProps>({
+  // Update the QueryParams when the filter state changes
+  useEffect(() => {
+    // Don't include undefined/empty parameters
+    const params = omitBy(
+      {
+        // Sync the search params state with the debounced props
+        [AR_NAME_OR_ID_SEARCH_PARAM_KEY]: nameOrID,
+        [RELATED_PROJECT_ID_SEARCH_PARAM_KEY]: relatedProjectId,
+        [REVIEWER_ID_SEARCH_PARAM_KEY]: reviewerId,
+        [AR_TYPE_SEARCH_PARAM_KEY]: typeFilter, // typeFilter state is not debounced
+      },
+      item => item === undefined || item === '',
+    ) as Record<string, string>
+
+    // Add the new params to the URL
+    // Replace history because intuitively, the user has not navigated to a new page
+    const paramsObject = new URLSearchParams(params)
+    history.replace({
+      pathname: location.pathname,
+      search: paramsObject.toString(),
+    })
+  }, [
     nameOrID,
     relatedProjectId,
     reviewerId,
-    onCreateNewAccessRequirementClicked,
-  })
+    typeFilter,
+    history,
+    location.pathname,
+  ])
 
-  /**
-   * When an input changes, update the props passed to the table and update the search params.
-   *
-   * Debounced to prevent firing many queries while the user is entering text.
-   */
-  useDebouncedEffect(
-    () => {
-      function updateQueryParams(
-        nameOrID: string | undefined,
-        relatedProjectId: string | undefined,
-        reviewerId: string | undefined,
-      ) {
-        // Don't include undefined/empty parameters
-        const params = omitBy(
-          {
-            nameOrID,
-            relatedProjectId,
-            reviewerId,
-          },
-          item => item === undefined || item === '',
-        ) as Record<string, string>
-
-        // Add the new params to the URL
-        // Replace history because intuitively, the user has not navigated to a new page
-        const paramsObject = new URLSearchParams(params)
-        history.replace({
-          pathname: location.pathname,
-          search: paramsObject.toString(),
-        })
+  const onReviewerChange = useCallback(
+    (selected: string | null) => {
+      if (selected) {
+        setReviewerId(selected)
+      } else {
+        setReviewerId(undefined)
       }
-
-      setTableProps({
-        nameOrID,
-        relatedProjectId,
-        reviewerId,
-        onCreateNewAccessRequirementClicked,
-      })
-      updateQueryParams(nameOrID, relatedProjectId, reviewerId)
     },
-    [
-      nameOrID,
-      relatedProjectId,
-      reviewerId,
-      onCreateNewAccessRequirementClicked,
-      history,
-      location.pathname,
-    ],
-    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
+    [setReviewerId],
   )
-
-  const onReviewerChange = useCallback((selected: string | null) => {
-    if (selected) {
-      setReviewerId(selected)
-    } else {
-      setReviewerId(undefined)
-    }
-  }, [])
 
   return (
     <div className="AccessRequirementDashboard">
@@ -151,7 +140,6 @@ export function AccessRequirementDashboard(
             type="text"
             fullWidth
             placeholder="Search for an Access Requirement Name or ID"
-            value={nameOrID}
             onChange={e => {
               setNameOrID(e.target.value)
             }}
@@ -177,7 +165,6 @@ export function AccessRequirementDashboard(
                 ? 'Value must be a Synapse ID, e.g. "syn1234"'
                 : undefined
             }
-            value={relatedProjectId}
             onChange={e => {
               const newValue = e.target.value
               if (newValue === '') {
@@ -213,7 +200,16 @@ export function AccessRequirementDashboard(
           />
         </div>
       </form>
-      <AccessRequirementTable {...tableProps} />
+      <AccessRequirementTable
+        nameOrID={nameOrID}
+        relatedProjectId={relatedProjectId}
+        reviewerId={reviewerId}
+        onCreateNewAccessRequirementClicked={
+          onCreateNewAccessRequirementClicked
+        }
+        typeFilter={typeFilter}
+        onTypeFilterChange={setTypeFilter}
+      />
     </div>
   )
 }

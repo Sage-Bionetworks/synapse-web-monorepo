@@ -89,7 +89,9 @@ describe('FacetNavPanel tests', () => {
 
     const buttons = await screen.findAllByRole<HTMLButtonElement>('button')
     expect(buttons.length).toBe(3)
-    await screen.findByRole('button', { name: 'Filter by specific facet' })
+    await screen.findByRole('button', {
+      name: `Filter by ${stringFacetValues.columnName}`,
+    })
     await screen.findByRole('button', { name: 'Expand to large graph' })
     await screen.findByRole('button', { name: 'Hide graph under Show More' })
 

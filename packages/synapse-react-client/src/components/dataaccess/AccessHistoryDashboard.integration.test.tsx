@@ -16,8 +16,8 @@ import {
 } from '../../utils/APIConstants'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResults,
-} from '../../mocks/mockAccessRequirements'
+  mockSearchResultsPageOne as mockSearchResults,
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import userEvent from '@testing-library/user-event'
 import {
   MOCK_USER_ID,

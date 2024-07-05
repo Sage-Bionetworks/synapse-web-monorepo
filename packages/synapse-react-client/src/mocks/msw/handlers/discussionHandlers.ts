@@ -14,16 +14,24 @@ import {
   mockForums,
 } from '../../discussion/mock_discussion'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
-import { uniqueId } from 'lodash-es'
 import mockProject from '../../entity/mockProject'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-const forums: Forum[] = [...mockForums]
+const forumService = new BasicMockedCrudService<Forum, 'id'>({
+  initialData: mockForums,
+  idField: 'id',
+  autoGenerateId: true,
+})
 
-const threads: DiscussionThreadBundle[] = [...mockDiscussionThreadBundles]
+const threadService = new BasicMockedCrudService<DiscussionThreadBundle, 'id'>({
+  initialData: mockDiscussionThreadBundles,
+  idField: 'id',
+  autoGenerateId: true,
+})
 
 function getAllThreadsMatchingForum(forumId: string, filter: DiscussionFilter) {
-  return threads
-    .filter(thread => thread.forumId === forumId)
+  return threadService
+    .getMany(thread => thread.forumId === forumId)
     .filter(thread => {
       switch (filter) {
         case DiscussionFilter.NO_FILTER:
@@ -44,7 +52,7 @@ export function getDiscussionHandlers(backendOrigin: string) {
         reason: `MSW could not find a mock forum object with ID ${req.params.id}`,
       }
 
-      const match = forums.find(f => f.id === req.params.id)
+      const match = forumService.getOneById(req.params.id as string)
       if (match) {
         status = 200
         resp = match
@@ -65,7 +73,7 @@ export function getDiscussionHandlers(backendOrigin: string) {
         }
       }
 
-      const match = threads.find(dtb => dtb.id === req.params.id)
+      const match = threadService.getOneById(req.params.id as string)
       if (match) {
         status = 200
         resp = match
@@ -77,8 +85,7 @@ export function getDiscussionHandlers(backendOrigin: string) {
     rest.post(`${backendOrigin}${THREAD}`, async (req, res, ctx) => {
       const request: CreateDiscussionThread = await req.json()
 
-      const newDiscussionThreadBundle: DiscussionThreadBundle = {
-        id: uniqueId(),
+      const newDiscussionThreadBundle = threadService.create({
         forumId: request.forumId,
         projectId: mockProject.id,
         title: request.title,
@@ -94,9 +101,8 @@ export function getDiscussionHandlers(backendOrigin: string) {
         isEdited: false,
         isDeleted: false,
         isPinned: false,
-      }
+      })
 
-      threads.push(newDiscussionThreadBundle)
       return res(ctx.status(201), ctx.json(newDiscussionThreadBundle))
     }),
 
