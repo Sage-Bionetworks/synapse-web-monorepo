@@ -27,7 +27,7 @@ import {
   mockSelfSignAnnotationBasedSubjectsAccessRequirement,
   mockTeamSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { server } from '../../mocks/msw/server'
 import { MOCK_TEAM_ID, mockTeamData } from '../../mocks/team/mockTeam'
 import SynapseClient from '../../synapse-client'

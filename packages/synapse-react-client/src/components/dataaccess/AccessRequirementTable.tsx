@@ -4,7 +4,8 @@ import { Button, Typography } from '@mui/material'
 import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'
-import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { noop } from 'lodash-es'
 
 export type AccessRequirementTableProps = {
   nameOrID?: string
@@ -12,6 +13,8 @@ export type AccessRequirementTableProps = {
   reviewerId?: string
   accessType?: ACCESS_TYPE
   onCreateNewAccessRequirementClicked?: () => void
+  typeFilter?: string
+  onTypeFilterChange?: (typeFilter: string | undefined) => void
 }
 
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
@@ -21,6 +24,8 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
     reviewerId,
     accessType,
     onCreateNewAccessRequirementClicked,
+    typeFilter,
+    onTypeFilterChange = noop,
   } = props
 
   const { table, isLoading, hasNextPage, fetchNextPage } =
@@ -29,6 +34,8 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
       relatedProjectId,
       reviewerId,
       accessType,
+      typeFilter,
+      onTypeFilterChange,
     })
 
   return (

@@ -4,8 +4,9 @@ import { Fade, IconButton, Menu, Tooltip } from '@mui/material'
 import IconSvg from '../../../IconSvg'
 
 export type EnumFacetFilterDropdownProps = React.PropsWithChildren<{
+  facetTitle: string
   menuText: string
-  hasSelection: boolean
+  filterIsActive: boolean
   dropdownType?: 'Icon' | 'SelectBox'
 }>
 
@@ -34,7 +35,7 @@ function EnumFacetFilterSelectBox(
 function EnumFacetFilterIconDropdown(
   props: Omit<EnumFacetFilterDropdownProps, 'dropdownType'>,
 ) {
-  const { children, hasSelection } = props
+  const { children, filterIsActive, facetTitle } = props
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const handleClickDropdownIcon = (event: React.MouseEvent<HTMLElement>) => {
@@ -48,13 +49,13 @@ function EnumFacetFilterIconDropdown(
 
   return (
     <div className="EnumFacetFilter">
-      <Tooltip title={'Filter by specific facet'}>
+      <Tooltip title={`Filter by ${facetTitle}`}>
         <IconButton onClick={handleClickDropdownIcon} size={'small'}>
           <IconSvg
             icon={'filter'}
             wrap={false}
             sx={{
-              color: hasSelection ? 'primary.main' : 'grey.700',
+              color: filterIsActive ? 'primary.main' : 'grey.700',
               fontSize: '20px',
             }}
           />

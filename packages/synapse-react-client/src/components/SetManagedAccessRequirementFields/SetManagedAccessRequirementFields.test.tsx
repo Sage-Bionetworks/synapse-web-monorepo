@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
 import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
 import {
   mockDucTemplateFileHandle,

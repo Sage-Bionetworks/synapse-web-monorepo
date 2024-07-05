@@ -13,7 +13,7 @@ import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../mocks/team/mockTeam'
 import { getAccessRequirementStatusHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { mockSelfSignAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockSelfSignAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 async function renderComponent(props: ChallengeRequirementsModalProps) {

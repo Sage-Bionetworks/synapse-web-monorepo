@@ -4,7 +4,7 @@ import React from 'react'
 import {
   mockACTAccessRequirement,
   mockToUAccessRequirementWithWiki,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { mockToUAccessRequirementWikiPage } from '../../mocks/mockWiki'
 import { server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'

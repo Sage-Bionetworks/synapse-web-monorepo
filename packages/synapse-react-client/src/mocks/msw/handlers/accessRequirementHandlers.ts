@@ -2,6 +2,7 @@ import { rest } from 'msw'
 import {
   ACCESS_REQUIREMENT,
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ENTITY_ACCESS_REQUIREMENTS,
@@ -9,6 +10,7 @@ import {
 import {
   AccessApproval,
   AccessRequirement,
+  AccessRequirementSearchRequest,
   AccessRequirementStatus,
   CreateAccessApprovalRequest,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -23,8 +25,10 @@ import {
   MOCK_NEWLY_CREATED_AR_ID,
   mockAccessRequirements,
   mockAccessRequirementWikiPageKeys,
+  mockSearchResultsPageOne,
+  mockSearchResultsPageTwo,
   mockSelfSignAccessRequirement,
-} from '../../mockAccessRequirements'
+} from '../../accessRequirement/mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 
@@ -219,6 +223,26 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
   )
 }
 
+export function getAccessRequirementSearchHandler(backendOrigin: string) {
+  return rest.post(
+    `${backendOrigin}${ACCESS_REQUIREMENT_SEARCH}`,
+
+    async (req, res, ctx) => {
+      let response
+      if (
+        (await req.json<AccessRequirementSearchRequest>()).nextPageToken ===
+        mockSearchResultsPageOne.nextPageToken
+      ) {
+        response = mockSearchResultsPageTwo
+      } else {
+        response = mockSearchResultsPageOne
+      }
+
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+}
+
 export function getAllAccessRequirementHandlers(backendOrigin: string) {
   return [
     ...getAccessRequirementHandlers(backendOrigin),
@@ -228,5 +252,6 @@ export function getAllAccessRequirementHandlers(backendOrigin: string) {
     getAccessRequirementsBoundToTeamHandler(backendOrigin),
     ...getAccessRequirementStatusHandlers(backendOrigin),
     getCreateAccessApprovalHandler(backendOrigin),
+    getAccessRequirementSearchHandler(backendOrigin),
   ]
 }

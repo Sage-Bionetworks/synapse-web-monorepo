@@ -5,7 +5,7 @@ import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import {
   mockACTAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 
 const meta = {
   title: 'Governance/CreateOrUpdateAccessRequirementWizard',

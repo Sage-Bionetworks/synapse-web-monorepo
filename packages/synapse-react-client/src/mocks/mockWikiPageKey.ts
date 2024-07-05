@@ -1,7 +1,7 @@
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 import { MOCK_FILE_ENTITY_ID } from './entity/mockFileEntity'
 import { mockEntityRootWikiPage, mockEntityWikiPage } from './mockWiki'
-import { mockAccessRequirementWikiPageKeys } from './mockAccessRequirements'
+import { mockAccessRequirementWikiPageKeys } from './accessRequirement/mockAccessRequirements'
 
 export const mockEntityRootWikiPageKey: WikiPageKey = {
   ownerObjectType: ObjectType.ENTITY,

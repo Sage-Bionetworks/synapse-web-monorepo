@@ -8,7 +8,7 @@ import {
   EnableTwoFaRequirementCardProps,
   REQUIRES_2FA_CARD_TITLE,
 } from './EnableTwoFaRequirementCard'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import * as AccessRequirementListModule from '../AccessRequirementList/AccessRequirementList'
 
 const MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT =

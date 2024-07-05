@@ -389,7 +389,7 @@ describe('SynapseTable tests', () => {
     await waitFor(() => {
       expect(
         screen.getAllByRole('button', {
-          name: 'Filter by specific facet',
+          name: /Filter by .*/,
         }),
       ).toHaveLength(5)
     })
@@ -592,7 +592,7 @@ describe('SynapseTable tests', () => {
     // No facet filter controls should be visible, since the only facet on the study column is a JSON subcolumn facet
     expect(
       screen.queryByRole('button', {
-        name: 'Filter by specific facet',
+        name: /Filter by .*/,
       }),
     ).not.toBeInTheDocument()
   })

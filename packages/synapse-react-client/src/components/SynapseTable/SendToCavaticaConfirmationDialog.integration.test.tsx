@@ -14,7 +14,7 @@ import {
   useQueryVisualizationContext,
 } from '../QueryVisualizationWrapper'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import * as UseExportToCavaticaModule from '../../synapse-queries/entity/useExportToCavatica'
 import * as UseActionsRequiredForTableQueryModule from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { server } from '../../mocks/msw/server'

@@ -12,7 +12,7 @@ import {
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
 

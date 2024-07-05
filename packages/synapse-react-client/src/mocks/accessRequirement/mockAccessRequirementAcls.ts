@@ -1,7 +1,7 @@
 import { ACCESS_TYPE, AccessControlList } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from './mockAccessRequirements'
-import { MOCK_TEAM_ID, MOCK_TEAM_ID_2 } from './team/mockTeam'
-import { MOCK_USER_ID } from './user/mock_user_profile'
+import { MOCK_TEAM_ID, MOCK_TEAM_ID_2 } from '../team/mockTeam'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
 
 export const MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID = '1234567'
 

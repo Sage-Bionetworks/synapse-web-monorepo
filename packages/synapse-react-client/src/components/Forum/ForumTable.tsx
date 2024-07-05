@@ -19,9 +19,9 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table'
-import ColumnHeader from '../styled/ColumnHeader'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { isEmpty } from 'lodash-es'
-import StyledTanStackTable from '../StyledTanStackTable/StyledTanStackTable'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 export type ForumTableProps = {
   forumId: string
@@ -148,6 +148,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
       columnResizeMode: 'onChange',
       manualSorting: true,
       enableMultiSort: false,
+      enableFilters: false,
     })
 
   return (

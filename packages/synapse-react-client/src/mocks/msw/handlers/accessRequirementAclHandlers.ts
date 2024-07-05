@@ -1,6 +1,6 @@
 import { SynapseApiResponse } from '../handlers'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { mockAccessRequirementAcls } from '../../mockAccessRequirementAcls'
+import { mockAccessRequirementAcls } from '../../accessRequirement/mockAccessRequirementAcls'
 import { rest } from 'msw'
 import { ACCESS_REQUIREMENT_ACL } from '../../../utils/APIConstants'
 
