@@ -90,6 +90,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
         rel={'href' in menuItem ? 'noopener noreferrer' : undefined}
         onClick={'onClick' in menuItem ? menuItem.onClick : undefined}
         disabled={menuItem.disabled}
+        endIcon={menuItem.icon && <IconSvg icon={menuItem.icon} wrap={false} />}
       >
         <Typography variant={'buttonLink'}>{menuItem.text}</Typography>
       </Button>

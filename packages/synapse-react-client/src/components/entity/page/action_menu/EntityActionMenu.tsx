@@ -193,7 +193,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
 
   const downloadMenuConfig: DropdownMenuProps = {
     dropdownButtonText: 'Download Options',
-    convertSingleItemToButton: false,
+    convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {
