@@ -3,39 +3,27 @@ const esModules = [
   '@react-hook',
   'lodash-es',
   'nanoid',
-  'mui-one-time-password-input'
+  'mui-one-time-password-input',
 ]
-
-/** @type {import('jest').Config} */
-const shared = {
-  testEnvironment: 'jsdom',
-  moduleNameMapper: {
-    '\\.(css|less|scss)$': 'identity-obj-proxy',
-    // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
-    '\\.svg$': '<rootDir>/test/testutils/svg.js',
-  },
-  transformIgnorePatterns: [
-    `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
-  ],
-  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
-  resetMocks: false,
-}
 
 /** @type {import('jest').Config} */
 module.exports = {
   projects: [
     {
-      displayName: 'synapse-react-client unit tests',
+      displayName: 'synapse-react-client tests',
       testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
-      testPathIgnorePatterns: ['/node_modules/', 'integration.test\\.'],
-      ...shared,
-    },
-    {
-      displayName: 'synapse-react-client integration tests',
-      testMatch: ['<rootDir>/**/*.integration.test.[jt]s?(x)'],
-      // Use jest-serial-runner since these integration tests use a shared mock server
-      runner: 'jest-serial-runner',
-      ...shared,
+      testPathIgnorePatterns: ['/node_modules/'],
+      testEnvironment: 'jsdom',
+      moduleNameMapper: {
+        '\\.(css|less|scss)$': 'identity-obj-proxy',
+        // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
+        '\\.svg$': '<rootDir>/test/testutils/svg.js',
+      },
+      transformIgnorePatterns: [
+        `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
+      ],
+      setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
+      resetMocks: false,
     },
   ],
   reporters: [
