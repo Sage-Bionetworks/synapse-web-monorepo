@@ -6,7 +6,7 @@ import packageJson from './package.json'
 const SynapseReactClientVersion = packageJson.version
 
 const externals = [
-  'react', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
+  'react',
   'react-dom',
   'react-router',
   'react-router-dom',
