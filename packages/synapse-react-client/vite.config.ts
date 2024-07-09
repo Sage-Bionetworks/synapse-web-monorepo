@@ -13,7 +13,7 @@ export default mergeConfig(viteConfig, {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'SRC',
       fileName: 'index',
-      formats: ['es'],
+      formats: ['es', 'cjs'],
     },
   },
   plugins: [
