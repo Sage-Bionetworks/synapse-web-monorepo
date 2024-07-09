@@ -2,6 +2,7 @@ import { resolve } from 'path'
 import { mergeConfig } from 'vite'
 import viteConfig from 'vite-config'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import dts from 'vite-plugin-dts'
 
 export default mergeConfig(viteConfig, {
   root: '.',
@@ -15,5 +16,10 @@ export default mergeConfig(viteConfig, {
       formats: ['es'],
     },
   },
-  plugins: [externalizeDeps()],
+  plugins: [
+    externalizeDeps(),
+    dts({
+      rollupTypes: true,
+    }),
+  ],
 })

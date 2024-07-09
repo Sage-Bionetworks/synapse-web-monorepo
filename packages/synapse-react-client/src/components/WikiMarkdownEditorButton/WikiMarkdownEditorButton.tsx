@@ -9,7 +9,9 @@ import {
   useGetWikiPage,
 } from '../../synapse-queries'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { MarkdownSynapse, MarkdownSynapseProps } from '../Markdown'
+import MarkdownSynapse, {
+  MarkdownSynapseProps,
+} from '../Markdown/MarkdownSynapse'
 import WikiMarkdownEditor from '../WikiMarkdownEditor/WikiMarkdownEditor'
 
 export const ERROR_LOADING_WIKI_FAILED = 'Failed to load the wiki page: '

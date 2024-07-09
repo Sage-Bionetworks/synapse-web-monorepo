@@ -14,7 +14,7 @@ import {
   mockToUAccessRequirement,
 } from '../../../mocks/accessRequirement/mockAccessRequirements'
 import userEvent from '@testing-library/user-event'
-import { MarkdownSynapseProps } from '../../Markdown'
+import { MarkdownSynapseProps } from '../../Markdown/MarkdownSynapse'
 import SelfSignAccessRequirementItem, {
   SelfSignAccessRequirementItemProps,
 } from './SelfSignAccessRequirementItem'
