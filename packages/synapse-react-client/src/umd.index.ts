@@ -175,7 +175,8 @@ const SynapseComponents = {
 
 // Include the version in the build
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-const SynapseReactClientVersion = require('../package.json').version
+// @ts-ignore
+const SynapseReactClientVersion = window._SRC_VERSION
 
 export {
   HttpClient,
