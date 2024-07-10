@@ -99,7 +99,7 @@ In this example, make sure that your `node_modules` folder is in your Dart Sass 
 
 To expose a component from the library you must export it from [index.ts](src/index.ts). Ideally, your component will get its own subfolder within `src/components/`, which will contain an `index.ts` file that exports the public API of the component (typically the component and its props type). In `src/components/index.ts`, you can then export the contents of the new subfolder.
 
-To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). Note that certain dependencies are not included in the UMD bundle. See the script that builds the bundle, `src/esbuild.config.mjs`, for more details.
+To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). Note that certain dependencies are not included in the UMD bundle. See the config used to build the bundle, `vite.config.umd.ts`, for more details.
 
 ## Available Scripts
 
@@ -128,20 +128,21 @@ Links to Resources on Testing:
 
 ### `pnpm build`
 
-Bundles the library for production to the `build` folder.
+Bundles the library for production to the `dist` folder.
 
 ### `pnpm build:js`
 
-Bundles the library for production to the `build` folder using `tsup`. This command creates CJS and ESM bundles with all dependencies removed, and also outputs a single TypeScript declaration file.
+Bundles the library for production to the `dist` folder using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). This command creates CJS and ESM bundles with all dependencies removed, and also outputs a single TypeScript declaration file.
 
 > Note - this script is run automatically as part of the build command.
 
-### `pnpm build:esbuild`
+### `pnpm build:umd`
 
-This project can be built as a umd bundle. It produces three files
+This project can be built as a umd bundle. It produces four files
 
-- `synapse-react-client.production.min.js`
-- `synapse-react-client.development.js`
-- `synapse-react-client.production.min.styles.css`.
+- `synapse-react-client.production.min.cjs`
+- `synapse-react-client.production.min.css`.
+- `synapse-react-client.development.cjs`
+- `synapse-react-client.development.css`.
 
 > Note - this script is run automatically as part of the build command.

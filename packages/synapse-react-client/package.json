@@ -2,20 +2,21 @@
   "name": "synapse-react-client",
   "version": "3.2.28",
   "private": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./dist/*": {
       "import": "./dist/*",
       "require": "./dist/*"
     },
     "./package.json": "./package.json",
-    "./ThemeTypes": "./src/theme/ThemeTypes.d.ts"
+    "./ThemeTypes": "./src/types/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
@@ -135,14 +136,11 @@
     "@babel/preset-typescript": "^7.23.3",
     "@babel/runtime": "^7.24.0",
     "@babel/types": "^7.24.0",
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@faker-js/faker": "^8.4.1",
-    "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@googlemaps/jest-mocks": "^2.21.4",
     "@jest/reporters": "^29.7.0",
     "@juggle/resize-observer": "^3.4.0",
     "@open-draft/deferred-promise": "^2.2.0",
-    "@rollup/plugin-inject": "^4.0.4",
     "@storybook/addon-actions": "^8.0.2",
     "@storybook/addon-designs": "^8.0.0",
     "@storybook/addon-essentials": "^8.0.2",
@@ -200,11 +198,6 @@
     "chromatic": "^11.0.8",
     "copyfiles": "^2.4.1",
     "core-js": "^3.36.0",
-    "esbuild": "^0.20.1",
-    "esbuild-plugin-globals": "^0.2.0",
-    "esbuild-plugin-node-polyfills": "^1.0.2",
-    "esbuild-plugin-svgr": "^2.1.0",
-    "esbuild-sass-plugin": "^2.16.1",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
@@ -230,12 +223,13 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
-    "tsup": "^8.0.2",
     "type-fest": "^4.21.0",
-    "typescript": "5.5.2",
+    "typescript": "5.5.3",
     "util": "^0.12.5",
-    "vite": "^5.3.1",
+    "vite": "^5.3.3",
     "vite-config": "workspace:*",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-externalize-deps": "^0.8.0",
     "vite-plugin-svgr": "^4.2.0",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.20"
@@ -249,14 +243,12 @@
     "test": "jest",
     "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
-    "build": "rimraf dist && pnpm build:copy-assets && pnpm build:js && pnpm build:esbuild",
-    "build:js": "tsup",
-    "build:fix-extension": "mv dist/synapse-react-client.js dist/synapse-react-client.mjs",
+    "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
-    "build:esbuild": "node esbuild.config.mjs",
-    "build:docs": "pnpm storybook build",
-    "build:gh-pages": "pnpm storybook build && touch storybook-static/.nojekyll",
-    "build-storybook": "pnpm storybook build",
+    "build:js": "vite build",
+    "build:umd:dev": "vite build -c vite.config.umd.ts --mode development",
+    "build:umd:prod": "vite build -c vite.config.umd.ts --mode production",
+    "storybook:build": "pnpm storybook build && touch storybook-static/.nojekyll",
     "type-check": "tsc --noEmit",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
     "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
@@ -265,7 +257,7 @@
   },
   "nx": {
     "targets": {
-      "build:gh-pages": {
+      "storybook:build": {
         "dependsOn": [
           "^build"
         ]

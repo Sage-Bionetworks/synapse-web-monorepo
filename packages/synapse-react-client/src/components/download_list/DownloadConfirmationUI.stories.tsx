@@ -7,7 +7,7 @@ import {
 import { SynapseContextConsumer, SynapseContextProvider } from '../../index'
 import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<DownloadConfirmationUIProps & { isAuthenticated: boolean }> = {
   title: 'Download/DownloadConfirmationUI',
   component: DownloadConfirmationUI,
   tags: ['autodocs'],
@@ -38,7 +38,7 @@ const meta = {
       </SynapseContextConsumer>
     ),
   ],
-} satisfies Meta<DownloadConfirmationUIProps & { isAuthenticated: boolean }>
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

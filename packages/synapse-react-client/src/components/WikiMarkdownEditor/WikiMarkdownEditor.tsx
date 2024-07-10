@@ -6,7 +6,7 @@ import { UpdateWikiPageInput, useUpdateWikiPage } from '../../synapse-queries'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { MarkdownEditor } from '../Markdown'
+import { MarkdownEditor } from '../Markdown/MarkdownEditor'
 
 export const UNSAVED_CHANGES = 'Unsaved Changes'
 export const NAVIGATE_AWAY_CONFIRMATION_MESSAGE =
