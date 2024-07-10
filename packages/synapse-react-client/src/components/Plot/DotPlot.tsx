@@ -41,7 +41,7 @@ function getLayout(
   }
   result.yaxis!.showgrid = false
   result.yaxis!.zeroline = true
-  result.yaxis!.zerolinecolor = '#b8b8b8'
+  result.yaxis!.zerolinecolor = '#aeb5bc'
   result.yaxis!.showticklabels = false
   if (result.xaxis!.type === 'log') {
     result.xaxis!.tickformat = 'f'
