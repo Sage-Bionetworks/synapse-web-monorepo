@@ -39,7 +39,7 @@ import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
 import mockDataset from '../../src/mocks/entity/mockDataset'
 import SynapseClient from '../../src/synapse-client'
 import { mockFileViewEntity } from '../../src/mocks/entity/mockFileView'
-import { UniqueFacetIdentifier } from '../../src/utils/types/UniqueFacetIdentifier'
+import mockDatasetCollection from '../../src/mocks/entity/mockDatasetCollection'
 
 jest.mock('../../src/synapse-client/SynapseClient', () => ({
   getQueryTableResults: jest.fn(),
@@ -311,6 +311,11 @@ describe('facet support', () => {
       expect(canTableQueryBeAddedToDownloadList(mockDataset.entity)).toEqual(
         true,
       )
+    })
+    test('dataset collection can not be added to download list', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(mockDatasetCollection.entity),
+      ).toEqual(false)
     })
   })
 

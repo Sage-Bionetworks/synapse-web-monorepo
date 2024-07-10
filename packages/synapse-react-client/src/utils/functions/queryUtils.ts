@@ -19,7 +19,12 @@ import {
   LockedColumn,
   UniqueFacetIdentifier,
 } from '../types'
-import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
+import {
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isFileView,
+} from './EntityTypeUtils'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -201,7 +206,8 @@ export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
 ) {
   return Boolean(
     entity &&
-      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)),
+      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)) &&
+      !isDatasetCollection(entity),
   )
 }
 
