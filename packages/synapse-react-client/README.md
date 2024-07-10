@@ -138,9 +138,11 @@ Bundles the library for production to the `dist` folder using [Vite's library mo
 
 ### `pnpm build:umd`
 
-This project can be built as a umd bundle. It produces two files
+This project can be built as a umd bundle. It produces four files
 
 - `synapse-react-client.production.min.cjs`
 - `synapse-react-client.production.min.css`.
+- `synapse-react-client.development.cjs`
+- `synapse-react-client.development.css`.
 
 > Note - this script is run automatically as part of the build command.
