@@ -24,11 +24,12 @@ import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
 } from '../../synapse-queries'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
 import TeamSubjectsSelector from '../TeamSubjectsSelector'
 import { RadioGroup } from '../widgets/RadioGroup'
 import { Checkbox } from '../widgets/Checkbox'
+import { SynapseErrorBoundary } from '../error'
 
 export const EMPTY_SUBJECT_LIST_ERROR_MESSAGE =
   'Please select at least one resource for this Access Requirement to be associated with.'
@@ -311,7 +312,7 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
             />
           </>
         )}
-        {selectorContent}
+        <SynapseErrorBoundary>{selectorContent}</SynapseErrorBoundary>
         {subjectsError && <Alert severity="error">{subjectsError}</Alert>}
         <Stack direction="row" gap={1} alignItems="center" mb={1} mt={2}>
           <Typography component="label" htmlFor="arName" {...headerProps}>
