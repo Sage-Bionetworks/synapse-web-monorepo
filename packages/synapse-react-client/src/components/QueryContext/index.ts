@@ -1,16 +1,16 @@
-import {
-  QueryContext,
-  QueryContextProvider,
-  QueryContextConsumer,
-  useQueryContext,
-  useInfiniteQueryContext,
-  usePaginatedQueryContext,
-} from './QueryContext'
 import type {
   QueryContextProviderProps,
-  LockedColumn,
   QueryContextType,
 } from './QueryContext'
+import {
+  QueryContext,
+  QueryContextConsumer,
+  QueryContextProvider,
+  useInfiniteQueryContext,
+  usePaginatedQueryContext,
+  useQueryContext,
+} from './QueryContext'
+
 export {
   QueryContext,
   QueryContextProvider,
@@ -18,7 +18,6 @@ export {
   useQueryContext,
   useInfiniteQueryContext,
   usePaginatedQueryContext,
-  LockedColumn,
   QueryContextProviderProps,
   QueryContextType,
 }

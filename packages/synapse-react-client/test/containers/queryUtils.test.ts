@@ -1,5 +1,9 @@
 import { getNextPageOfData } from '../../src/utils/functions'
-import { SynapseConstants } from '../../src/utils'
+import {
+  LockedColumn,
+  SynapseConstants,
+  UniqueFacetIdentifier,
+} from '../../src/utils'
 import syn16787123Json from '../../src/mocks/query/syn16787123'
 import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
@@ -31,7 +35,6 @@ import {
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
 } from '../../src/utils/functions/queryUtils'
-import { LockedColumn } from '../../src'
 import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
 import mockDataset from '../../src/mocks/entity/mockDataset'
 import SynapseClient from '../../src/synapse-client'

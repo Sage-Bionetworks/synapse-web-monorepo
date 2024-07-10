@@ -1,7 +1,6 @@
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
-import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -17,9 +16,10 @@ import {
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-} from '../types/IsType'
+  LockedColumn,
+  UniqueFacetIdentifier,
+} from '../types'
 import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
-import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
 
 type PartialStateObject = {
   hasMoreData: boolean
