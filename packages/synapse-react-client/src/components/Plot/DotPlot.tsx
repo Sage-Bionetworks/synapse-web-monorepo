@@ -1,8 +1,9 @@
-import React, { FunctionComponent /*, useState , useEffect */ } from 'react' // importing FunctionComponent
+import React, { FunctionComponent } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { GraphItem, PlotStyle, Dictionary } from './types'
-import _ from 'lodash-es'
+import _, { countBy } from 'lodash-es'
+
 const Plot = createPlotlyComponent(Plotly)
 
 export type DotPlotProps = {
@@ -38,8 +39,19 @@ function getLayout(
   if (layoutOptions.backgroundColor) {
     result.plot_bgcolor = layoutOptions.backgroundColor
   }
+  result.yaxis!.showgrid = false
+  result.yaxis!.zeroline = true
+  result.yaxis!.zerolinecolor = '#aeb5bc'
   result.yaxis!.showticklabels = false
-  result.xaxis!.range = [-5, layoutOptions.maxValue! + 30]
+  if (result.xaxis!.type === 'log') {
+    result.xaxis!.tickformat = 'f'
+    result.xaxis!.range = [-0.1, Math.log10(layoutOptions.maxValue!) + 0.1]
+  } else {
+    result.xaxis!.range = [
+      (layoutOptions.maxValue! / 50) * -1,
+      layoutOptions.maxValue! + 30,
+    ]
+  }
   result.xaxis!.visible = layoutOptions.isXAxis
   result.showlegend = layoutOptions.isLegend
   result.margin = {
@@ -49,7 +61,7 @@ function getLayout(
     r: 0,
     pad: 15,
   }
-  let height = 30
+  let height = 40
   if (layoutOptions.isLegend) {
     height = 35
     result.margin.pad = 0
@@ -83,13 +95,70 @@ function getLayout(
 function createArrayOfGroupValues(
   headers: string[],
   items: GraphItem[],
-): any[] {
-  const result = new Array(headers.length)
+): number[] {
+  const result: number[] = new Array(headers.length)
   items.forEach(item => {
     const index = headers.indexOf(item.y)
-    result[index] = item.x
+    if (index !== -1) {
+      result[index] = item.x
+    }
   })
   return result
+}
+
+/**
+ * Generates a sequence of n numbers centered around 0
+ *
+ * Examples:
+ * if n is 4, the result would be [-1.5, -0.5, 0.5, 1.5]
+ * if n is 5 the result would be [-2, -1, 0, 1, 2]
+ * @param n
+ */
+export function generateCenteredSequence(n: number): number[] {
+  const sequence = []
+  const half = (n - 1) / 2
+  for (let i = 0; i < n; i++) {
+    sequence.push(i - half)
+  }
+  return sequence
+}
+
+/**
+ * Returns a set of y values where
+ *  - if an x value is unique, the y value is 0
+ *  - if an x value is repeated, the y value is an offset from 0
+ *
+ * This has the effect of preventing overlapping points in a dot plot
+ * @param xDataByGroup
+ */
+export function getYDataForDotPlotOffset(
+  xDataByGroup: Record<string, number[]>,
+): Record<string, number[]> {
+  const counts = countBy(xDataByGroup, val => val[0])
+
+  const yDataByGroup: Record<string, number[]> = {}
+  // keep track of how many times we have seen each duplicate value
+  const seen: Record<number, number> = {}
+  Object.keys(xDataByGroup).forEach(group => {
+    const value = xDataByGroup[group][0]
+    if (counts[value] === 1) {
+      // The value is not duplicated by another group, so the y-value (vertical offset) is 0
+      yDataByGroup[group] = [0]
+    } else {
+      // The value is duplicated by another group, so get an offset value that will be
+      //   - centered around 0
+      //   - unique for this item among all items with the same value
+      if (seen[value] == undefined) {
+        seen[value] = 0
+      }
+      const offsets = generateCenteredSequence(counts[value])
+      const offset = offsets[seen[value]]
+
+      yDataByGroup[group] = [offset]
+      seen[value] = seen[value] + 1
+    }
+  })
+  return yDataByGroup
 }
 
 function getPlotDataPoints(
@@ -97,10 +166,9 @@ function getPlotDataPoints(
   plotStyle: PlotStyle,
   ySorted?: string[],
   markerSymbols?: Dictionary,
-): any[] {
+): Plotly.Data[] {
   const isFakeData = ySorted === undefined
   const groups = _.uniq(graphItems.map(item => item.group))
-  const data: any = []
   const defaultSymbols = [
     'y-down',
     'triangle-up',
@@ -110,17 +178,28 @@ function getPlotDataPoints(
     'diamond-x',
   ]
 
-  groups.forEach((group, i) => {
-    data.push({
-      type: 'scatter',
-
-      x: isFakeData
-        ? [-10] // fake datavalue outside of the bounds
+  const xDataByGroup: Record<string, number[]> = groups.reduce(
+    (prev, group) => {
+      const xDataForGroup = isFakeData
+        ? [-100] // fake datavalue outside of the bounds
         : createArrayOfGroupValues(
             ySorted,
             graphItems.filter(row => row.group === group),
-          ),
-      y: ySorted,
+          )
+      return { ...prev, [group]: xDataForGroup }
+    },
+    {},
+  )
+  const yDataByGroup: Record<string, number[]> =
+    getYDataForDotPlotOffset(xDataByGroup)
+
+  const data: Plotly.Data[] = groups.map((group, i) => {
+    const xData: number[] = xDataByGroup[group]
+    const yData: number[] = yDataByGroup[group]
+    return {
+      type: 'scatter',
+      x: xData,
+      y: yData,
       text: [group],
       hovertemplate: `%{x} %{text}<extra></extra>`,
       mode: 'markers',
@@ -135,8 +214,9 @@ function getPlotDataPoints(
         symbol: markerSymbols ? markerSymbols[group] : defaultSymbols[i],
         size: plotStyle.markerSize,
       },
-    })
+    }
   })
+
   return data
 }
 
