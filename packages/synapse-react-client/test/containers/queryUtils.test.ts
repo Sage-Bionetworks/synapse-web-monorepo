@@ -288,13 +288,53 @@ describe('facet support', () => {
       expect(canTableQueryBeAddedToDownloadList(mockTableEntity)).toEqual(false)
     })
 
+    test('table entity query can be added to download list with provided column ID', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(mockTableEntity, '123'),
+      ).toEqual(true)
+    })
+
     test('entity view that includes non-files cannot be added to download list', () => {
       expect(
         canTableQueryBeAddedToDownloadList({
           ...mockFileViewEntity,
           viewTypeMask:
-            ENTITY_VIEW_TYPE_MASK_FILE & ENTITY_VIEW_TYPE_MASK_FOLDER,
+            ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
         }),
+      ).toEqual(false)
+    })
+
+    test('entity view that includes non-files can be added to download list if a column ID is included', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(
+          {
+            ...mockFileViewEntity,
+            viewTypeMask:
+              ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
+          },
+          '123',
+        ),
+      ).toEqual(true)
+    })
+
+    test('entity view that never includes files not be added to download list', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList({
+          ...mockFileViewEntity,
+          viewTypeMask: ENTITY_VIEW_TYPE_MASK_FOLDER,
+        }),
+      ).toEqual(false)
+    })
+
+    test('entity view that never includes files not be added to download list even if a column ID is included', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(
+          {
+            ...mockFileViewEntity,
+            viewTypeMask: ENTITY_VIEW_TYPE_MASK_FOLDER,
+          },
+          '123',
+        ),
       ).toEqual(false)
     })
 
@@ -312,10 +352,28 @@ describe('facet support', () => {
         true,
       )
     })
-    test('dataset collection can not be added to download list', () => {
+    test('dataset collection cannot be added to download list', () => {
       expect(
         canTableQueryBeAddedToDownloadList(mockDatasetCollection.entity),
       ).toEqual(false)
+    })
+    test('dataset collection cannot be added to download list even with column ID', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(mockDatasetCollection.entity, '123'),
+      ).toEqual(false)
+    })
+
+    test('materializedview can be added to download list if a column ID is included', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList(
+          {
+            ...mockFileViewEntity,
+            concreteType:
+              'org.sagebionetworks.repo.model.table.MaterializedView',
+          },
+          '123',
+        ),
+      ).toEqual(true)
     })
   })
 
