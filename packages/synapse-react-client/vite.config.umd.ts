@@ -1,39 +1,12 @@
 import { resolve } from 'path'
-import { mergeConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vite'
 import viteConfig from 'vite-config'
 import packageJson from './package.json'
 
 const SynapseReactClientVersion = packageJson.version
 
-const externals = [
-  'react',
-  'react-dom',
-  'react-router',
-  'react-router-dom',
-  'react-measure',
-  'react-bootstrap',
-  'plotly.js-basic-dist',
-  'react-plotly.js',
-  'katex',
-  'rss-parser',
-  'react-mailchimp-subscribe',
-  'markdownit',
-  'markdownitSynapse',
-  'markdownitSub',
-  'markdownitSup',
-  'markdownitCentertext',
-  'markdownitSynapseHeading',
-  'markdownitSynapseTable',
-  'markdownitStrikethroughAlt',
-  'markdownitContainer',
-  'markdownitEmphasisAlt',
-  'markdownitInlineComments',
-  'markdownitBr',
-  'markdownitMath',
-  'universal-cookie',
-]
-
-const globals = {
+// The set of dependencies that will NOT be included in our UMD bundle. The dependency will be loaded from the global object matching the dependency key's value in this object.
+const globalExternals = {
   katex: 'katex',
   react: 'React',
   'react-dom': 'ReactDOM',
@@ -61,31 +34,42 @@ const globals = {
   'universal-cookie': 'UniversalCookie',
 }
 
-export default mergeConfig(viteConfig, {
-  root: '.',
-  define: {
-    _SRC_VERSION: JSON.stringify(SynapseReactClientVersion),
-  },
-  build: {
-    emptyOutDir: false,
-    outDir: './dist/umd',
-    lib: {
-      entry: resolve(__dirname, 'src/umd.index.ts'),
-      name: 'SRC',
-      fileName: () => 'synapse-react-client.production.min.cjs',
-      formats: ['umd'],
-      commonjsOptions: { transformMixedEsModules: true },
+/**
+ * A Vite configuration to create a UMD bundle for Synapse React Client. This bundle is primarily used to include Synapse
+ * React Client code in the Synapse Web Client, which does not use a JavaScript bundler that could bundle the ES module.
+ */
+export default defineConfig(({ mode = 'production' }) =>
+  mergeConfig(viteConfig, {
+    root: '.',
+    define: {
+      _SRC_VERSION: JSON.stringify(SynapseReactClientVersion),
     },
-    rollupOptions: {
-      external: externals,
-      output: {
-        globals,
-        assetFileNames: assetInfo => {
-          if (assetInfo.name === 'style.css')
-            return 'synapse-react-client.production.min.css'
-          return assetInfo.name
+    build: {
+      emptyOutDir: false,
+      outDir: './dist/umd',
+      minify: mode === 'production',
+      lib: {
+        entry: resolve(__dirname, 'src/umd.index.ts'),
+        name: 'SRC',
+        fileName: () =>
+          mode === 'production'
+            ? 'synapse-react-client.production.min.cjs'
+            : 'synapse-react-client.development.cjs',
+        formats: ['umd'],
+      },
+      rollupOptions: {
+        external: Object.keys(globalExternals),
+        output: {
+          globals: globalExternals,
+          assetFileNames: assetInfo => {
+            if (assetInfo.name === 'style.css')
+              return mode === 'production'
+                ? 'synapse-react-client.production.min.css'
+                : 'synapse-react-client.development.css'
+            return assetInfo.name
+          },
         },
       },
     },
-  },
-})
+  }),
+)
