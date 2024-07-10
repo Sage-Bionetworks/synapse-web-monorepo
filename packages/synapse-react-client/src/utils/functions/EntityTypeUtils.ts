@@ -305,8 +305,8 @@ export function getVersionDisplay(entity: Entity): string {
  * @param entityId
  */
 export function normalizeSynPrefix(entityId: string) {
-  if (entityId.startsWith('syn')) {
-    return entityId
+  if (entityId.toLowerCase().startsWith('syn')) {
+    return entityId.toLowerCase()
   }
   return `syn${entityId}`
 }
