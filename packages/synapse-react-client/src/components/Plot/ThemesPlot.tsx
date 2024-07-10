@@ -81,6 +81,7 @@ const dotPlotLayoutConfig: Partial<Plotly.Layout> = {
     autotick: true,
     ticks: 'outside',
     tickcolor: '#ddd',
+    type: 'log',
   },
 
   yaxis: {
