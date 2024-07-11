@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../../QueryContext'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
@@ -25,7 +21,8 @@ import {
   isFacetColumnRangeRequest,
   isFacetColumnValuesRequest,
   isTextMatchesQueryFilter,
-} from '../../../utils/types/IsType'
+  LockedColumn,
+} from '../../../utils'
 import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
 import { useAtomValue } from 'jotai'
