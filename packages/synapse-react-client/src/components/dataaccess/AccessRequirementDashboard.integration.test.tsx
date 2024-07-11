@@ -7,6 +7,10 @@ import selectEvent from 'react-select-event'
 import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,
+  AR_NAME_OR_ID_SEARCH_PARAM_KEY,
+  AR_TYPE_SEARCH_PARAM_KEY,
+  RELATED_PROJECT_ID_SEARCH_PARAM_KEY,
+  REVIEWER_ID_SEARCH_PARAM_KEY,
 } from './AccessRequirementDashboard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { server } from '../../mocks/msw/server'
@@ -14,19 +18,16 @@ import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
-import { AccessRequirementTable } from './AccessRequirementTable'
+import SynapseClient from '../../synapse-client'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
-const AR_TABLE_TEST_ID = 'AccessRequirementTableTestId'
 const NAME_CONTAINS_PREFIX = 'abc'
 const RELATED_PROJECT_ID = 'syn123'
 
-jest.mock('../../../src/components/dataaccess/AccessRequirementTable', () => ({
-  AccessRequirementTable: jest.fn().mockImplementation(() => {
-    return <div data-testid={AR_TABLE_TEST_ID}></div>
-  }),
-}))
-
-const mockAccessRequirementTable = jest.mocked(AccessRequirementTable)
+const searchAccessRequirementsSpy = jest.spyOn(
+  SynapseClient,
+  'searchAccessRequirements',
+)
 
 function renderComponent(
   props?: AccessRequirementDashboardProps,
@@ -58,16 +59,15 @@ describe('AccessRequirementDashboard tests', () => {
 
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
     expect(await screen.findAllByRole('textbox')).toHaveLength(2)
-    await screen.findByTestId(AR_TABLE_TEST_ID)
+    await screen.findByRole('table')
     await waitFor(() =>
-      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
-          nameOrID: '',
+          nameContains: '',
           relatedProjectId: undefined,
           reviewerId: undefined,
-          onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
         }),
-        expect.anything(),
       ),
     )
   })
@@ -84,13 +84,13 @@ describe('AccessRequirementDashboard tests', () => {
         new URLSearchParams(history.location.search).get('nameOrID'),
       ).toEqual(NAME_CONTAINS_PREFIX)
 
-      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
-          nameOrID: NAME_CONTAINS_PREFIX,
+          nameContains: NAME_CONTAINS_PREFIX,
           relatedProjectId: undefined,
           reviewerId: undefined,
         }),
-        expect.anything(),
       )
     })
   })
@@ -107,13 +107,13 @@ describe('AccessRequirementDashboard tests', () => {
         new URLSearchParams(history.location.search).get('relatedProjectId'),
       ).toEqual(RELATED_PROJECT_ID),
     )
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
+    expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+      MOCK_ACCESS_TOKEN,
       expect.objectContaining({
-        nameOrID: '',
+        nameContains: '',
         relatedProjectId: RELATED_PROJECT_ID,
         reviewerId: undefined,
       }),
-      expect.anything(),
     )
   })
 
@@ -131,13 +131,13 @@ describe('AccessRequirementDashboard tests', () => {
       ).toEqual(MOCK_USER_ID.toString()),
     )
     await waitFor(() =>
-      expect(mockAccessRequirementTable).toHaveBeenCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
-          nameOrID: '',
+          nameContains: '',
           relatedProjectId: undefined,
           reviewerId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
       ),
     )
   })
@@ -146,21 +146,28 @@ describe('AccessRequirementDashboard tests', () => {
     renderComponent(undefined, history => {
       // Modify the search parameters before rendering
       const searchParams = new URLSearchParams('')
-      searchParams.set('nameOrID', NAME_CONTAINS_PREFIX)
-      searchParams.set('relatedProjectId', RELATED_PROJECT_ID)
-      searchParams.set('reviewerId', MOCK_USER_ID.toString())
+      searchParams.set(AR_NAME_OR_ID_SEARCH_PARAM_KEY, NAME_CONTAINS_PREFIX)
+      searchParams.set(RELATED_PROJECT_ID_SEARCH_PARAM_KEY, RELATED_PROJECT_ID)
+      searchParams.set(REVIEWER_ID_SEARCH_PARAM_KEY, MOCK_USER_ID.toString())
+      searchParams.set(
+        AR_TYPE_SEARCH_PARAM_KEY,
+        'org.sagebionetworks.repo.model.LockAccessRequirement',
+      )
       history.push('?' + searchParams.toString())
     })
 
-    await waitFor(() =>
-      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          nameOrID: NAME_CONTAINS_PREFIX,
-          relatedProjectId: RELATED_PROJECT_ID,
-          reviewerId: MOCK_USER_ID.toString(),
-        }),
-        expect.anything(),
-      ),
+    await waitFor(
+      () =>
+        expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+          MOCK_ACCESS_TOKEN,
+          expect.objectContaining({
+            nameContains: NAME_CONTAINS_PREFIX,
+            relatedProjectId: RELATED_PROJECT_ID,
+            reviewerId: MOCK_USER_ID.toString(),
+            type: 'org.sagebionetworks.repo.model.LockAccessRequirement',
+          }),
+        ),
+      { timeout: 10_000 },
     )
   })
 })

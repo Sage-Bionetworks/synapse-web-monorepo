@@ -6,45 +6,41 @@ import { QueryClient } from '@tanstack/react-query'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,
-  accessRequirementConcreteTypeValueToDisplayValue,
 } from './AccessRequirementTable'
 import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
-import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
   ACCESS_TYPE,
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import {
-  AccessRequirementSearchRequest,
-  AccessRequirementSearchResponse,
-} from '@sage-bionetworks/synapse-types'
 import mockProjectData from '../../mocks/entity/mockProject'
 import {
   mockACTAccessRequirement,
   mockLockAccessRequirement,
   mockManagedACTAccessRequirement,
-  mockSearchResults,
+  mockSearchResultsPageOne,
+  mockSearchResultsPageTwo,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
-import { rest, server } from '../../mocks/msw/server'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
+import { server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
+import { accessRequirementConcreteTypeValueToDisplayValue } from './UseAccessRequirementTable'
+import SynapseClient from '../../synapse-client'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
-const MOCK_PROJECT_ID = mockProjectData.id
 const MOCK_PROJECT_NAME = mockProjectData.name
 
 const mockOnCreateNewAR = jest.fn()
 let queryClient: QueryClient
+const searchAccessRequirementsSpy = jest.spyOn(
+  SynapseClient,
+  'searchAccessRequirements',
+)
 
 function renderComponent(props: AccessRequirementTableProps) {
   const { wrapperFn, queryClient: wrapperQueryClient } =
@@ -61,57 +57,9 @@ function renderComponent(props: AccessRequirementTableProps) {
   )
 }
 
-const onServiceRecievedRequest = jest.fn()
-const onServiceRecievedRequestForNextPage = jest.fn()
-
-const nextPageToken = 'mock-npt'
-
-const mockSearchResultsPage2: AccessRequirementSearchResponse = {
-  results: [
-    {
-      id: '9608424',
-      createdOn: '2017-08-23T18:48:20.892Z',
-      type: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-      modifiedOn: '2022-05-20T22:26:44.406Z',
-      name: 'Access Requirement on Page 2',
-      version: '269',
-      relatedProjectIds: [MOCK_PROJECT_ID],
-      reviewerIds: [],
-    },
-  ],
-}
-
 describe('Access Requirement Table tests', () => {
   beforeAll(() => {
     server.listen()
-
-    // Configure MSW
-    server.use(
-      rest.post(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ACCESS_REQUIREMENT_SEARCH}`,
-
-        async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
-          let response
-          if (
-            (req.body as AccessRequirementSearchRequest).nextPageToken ===
-            nextPageToken
-          ) {
-            onServiceRecievedRequestForNextPage()
-            response = mockSearchResultsPage2
-          } else {
-            response = {
-              ...mockSearchResults,
-              nextPageToken: nextPageToken,
-            }
-          }
-
-          return res(ctx.status(200), ctx.json(response))
-        },
-      ),
-    )
   })
 
   afterEach(() => {
@@ -138,9 +86,16 @@ describe('Access Requirement Table tests', () => {
 
     renderComponent(props)
 
-    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
+    const resultTable = await screen.findByRole('table')
+    await waitFor(() => {
+      const tableRows = within(resultTable).getAllByRole('row')
+      expect(tableRows).toHaveLength(
+        1 + mockSearchResultsPageOne.results.length, // +1 for the header row
+      )
+    })
 
-    expect(onServiceRecievedRequest).toHaveBeenCalledWith(
+    expect(searchAccessRequirementsSpy).toHaveBeenCalledWith(
+      MOCK_ACCESS_TOKEN,
       expect.objectContaining({
         nameContains: nameOrID,
         relatedProjectId: relatedProject,
@@ -169,16 +124,17 @@ describe('Access Requirement Table tests', () => {
 
     renderComponent(props)
 
-    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
-
-    expect(onServiceRecievedRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        ids: [accessRequirementID],
-        relatedProjectId: relatedProject,
-        reviewerId,
-        accessType,
-        sort: defaultSort,
-      }),
+    await waitFor(() =>
+      expect(searchAccessRequirementsSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.objectContaining({
+          ids: [accessRequirementID],
+          relatedProjectId: relatedProject,
+          reviewerId,
+          accessType,
+          sort: defaultSort,
+        }),
+      ),
     )
   })
 
@@ -187,7 +143,7 @@ describe('Access Requirement Table tests', () => {
     await screen.findByRole('table')
     await waitFor(() =>
       expect(screen.getAllByRole('row')).toHaveLength(
-        mockSearchResults.results.length + 1, // +1 for the header row
+        mockSearchResultsPageOne.results.length + 1, // +1 for the header row
       ),
     )
 
@@ -204,21 +160,25 @@ describe('Access Requirement Table tests', () => {
 
     // check the first row of data
     const row = screen.getAllByRole('row')[1]
-    within(row).getByRole('cell', { name: mockSearchResults.results[0].id })
-    within(row).getByRole('cell', { name: mockSearchResults.results[0].name })
+    within(row).getByRole('cell', {
+      name: mockSearchResultsPageOne.results[0].id,
+    })
+    within(row).getByRole('cell', {
+      name: mockSearchResultsPageOne.results[0].name,
+    })
     within(row).getByRole('cell', {
       name: accessRequirementConcreteTypeValueToDisplayValue(
-        mockSearchResults.results[0].type,
+        mockSearchResultsPageOne.results[0].type,
       ),
     })
     // The related project and reviewer ID both get rendered
     await within(row).findByText(MOCK_PROJECT_NAME)
     await within(row).findByText('@' + MOCK_USER_NAME)
     within(row).getByRole('cell', {
-      name: formatDate(dayjs(mockSearchResults.results[0].modifiedOn)),
+      name: formatDate(dayjs(mockSearchResultsPageOne.results[0].modifiedOn)),
     })
     within(row).getByRole('cell', {
-      name: formatDate(dayjs(mockSearchResults.results[0].createdOn)),
+      name: formatDate(dayjs(mockSearchResultsPageOne.results[0].createdOn)),
     })
   })
 
@@ -239,7 +199,7 @@ describe('Access Requirement Table tests', () => {
     await screen.findByRole('table')
     await waitFor(() =>
       expect(screen.getAllByRole('row')).toHaveLength(
-        mockSearchResults.results.length + 1, // +1 for the header row
+        mockSearchResultsPageOne.results.length + 1, // +1 for the header row
       ),
     )
 
@@ -251,21 +211,24 @@ describe('Access Requirement Table tests', () => {
     // Clicking the button should make a request for the next page
     await userEvent.click(showMoreButton)
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
-        expect.objectContaining({ nextPageToken: nextPageToken }),
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.objectContaining({
+          nextPageToken: mockSearchResultsPageOne.nextPageToken,
+        }),
       ),
     )
-    expect(onServiceRecievedRequestForNextPage).toHaveBeenCalled()
 
-    // Second page of data should be shown
-
-    await waitFor(() =>
-      expect(screen.getAllByRole('row')).toHaveLength(
-        mockSearchResults.results.length +
-          mockSearchResultsPage2.results.length +
-          1, // +1 for the header row
-      ),
-    )
+    // First and second pages of data should be shown
+    const resultTable = await screen.findByRole('table')
+    await waitFor(() => {
+      const tableRows = within(resultTable).getAllByRole('row')
+      expect(tableRows).toHaveLength(
+        1 + // +1 for the header row
+          mockSearchResultsPageOne.results.length +
+          mockSearchResultsPageTwo.results.length,
+      )
+    })
 
     // No third page, so the next button should be gone
     expect(
@@ -278,23 +241,27 @@ describe('Access Requirement Table tests', () => {
   it('Handles sorting', async () => {
     renderComponent({})
 
-    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
-
     // By default, should sort by created on, descending
     const defaultSort = [{ field: 'CREATED_ON', direction: 'DESC' }]
-    expect(onServiceRecievedRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sort: defaultSort,
-      }),
+    await waitFor(() =>
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.objectContaining({
+          sort: defaultSort,
+        }),
+      ),
     )
 
     // clicking the current sort should reverse the direction
-    const createdOnSortButton = screen.getByLabelText('Sort by Created On')
+    const createdOnSortButton = screen.getByRole('button', {
+      name: 'Sort by Created On',
+    })
     await userEvent.click(createdOnSortButton)
 
     // desc -> asc
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
           sort: [{ field: 'CREATED_ON', direction: 'ASC' }],
         }),
@@ -306,20 +273,24 @@ describe('Access Requirement Table tests', () => {
     queryClient.clear()
     await userEvent.click(createdOnSortButton)
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
           sort: [{ field: 'CREATED_ON', direction: 'DESC' }],
         }),
       ),
     )
 
-    // clicking a different column (name) should sort by that column, descending
-    const nameSortButton = screen.getByLabelText('Sort by Name')
+    // clicking a different column (name) should sort by that column, ascending
+    const nameSortButton = screen.getByLabelText(
+      'Sort by Access Requirement Name',
+    )
     await userEvent.click(nameSortButton)
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
         expect.objectContaining({
-          sort: [{ field: 'NAME', direction: 'DESC' }],
+          sort: [{ field: 'NAME', direction: 'ASC' }],
         }),
       ),
     )

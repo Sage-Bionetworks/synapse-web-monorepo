@@ -9,7 +9,7 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
   mockToUAccessRequirementWithWiki,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import { rest } from 'msw'
 import {

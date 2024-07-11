@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react'
 import {
   MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
   MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
-} from '../../mocks/mockAccessRequirementAcls'
+} from '../../mocks/accessRequirement/mockAccessRequirementAcls'
 import { getAllAccessRequirementAclHandlers } from '../../mocks/msw/handlers/accessRequirementAclHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'

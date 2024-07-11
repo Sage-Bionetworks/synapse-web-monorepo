@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../../../utils/functions/getEndpoint'
 import ResearchProjectForm from './ResearchProjectForm'
 import { getResearchProjectHandlers } from '../../../../mocks/msw/handlers/researchProjectHandlers'

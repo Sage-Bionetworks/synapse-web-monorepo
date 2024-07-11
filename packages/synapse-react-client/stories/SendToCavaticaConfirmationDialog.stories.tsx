@@ -6,11 +6,11 @@ import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '../src/mocks/mockFileViewQuery'
-import { deepClone } from '@mui/x-data-grid/utils/utils'
 import { displayToast } from '../src/components/ToastMessage'
 import SendToCavaticaConfirmationDialog, {
   SendToCavaticaConfirmationDialogProps,
 } from '../src/components/SynapseTable/SendToCavaticaConfirmationDialog'
+import { cloneDeep } from 'lodash-es'
 
 const meta = {
   title: 'Explore/Send to CAVATICA Dialog',
@@ -53,7 +53,7 @@ export const Demo: Story = {
         <QueryContextProvider
           queryContext={{
             data: mockQueryResultBundle,
-            getCurrentQueryRequest: () => deepClone(mockQueryBundleRequest),
+            getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
             isRowSelectionVisible: args.hasRowSelection,
             selectedRows: args.hasRowSelection
               ? mockQueryResultBundle.queryResult!.queryResults.rows.slice(0, 2)

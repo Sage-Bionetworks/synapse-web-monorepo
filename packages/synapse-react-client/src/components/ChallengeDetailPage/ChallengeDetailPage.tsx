@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import {
+  useDeleteTeamMembership,
+  useGetCurrentUserProfile,
   useGetEntityChallenge,
   useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { displayToast, SynapseQueries, useSynapseContext } from '../..'
-import { useDeleteTeamMembership } from '../../synapse-queries/team/useTeamMembers'
 import ChallengeRequirementsModal from '../ChallengeRequirementsModal/ChallengeRequirementsModal'
+import { useSynapseContext } from '../../utils'
+import { displayToast } from '../ToastMessage'
 
 export type ChallengeDetailPageProps = {
   projectId: string
@@ -22,7 +24,7 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   const [showRegistrationModal, setShowRegistrationModal] =
     useState<boolean>(false)
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
-  const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
+  const { data: userProfile } = useGetCurrentUserProfile()
 
   const toggleShowWizard = (b: boolean) => {
     setShowSubmissionTeamWizard(b)

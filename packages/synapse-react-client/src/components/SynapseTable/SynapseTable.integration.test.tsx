@@ -389,7 +389,7 @@ describe('SynapseTable tests', () => {
     await waitFor(() => {
       expect(
         screen.getAllByRole('button', {
-          name: 'Filter by specific facet',
+          name: /Filter by .*/,
         }),
       ).toHaveLength(5)
     })
@@ -412,9 +412,9 @@ describe('SynapseTable tests', () => {
     // simulate having clicked the sort button on the first column, projectName
     const sortedColumn = 'projectName'
 
-    const sortButton = (
-      await screen.findAllByRole('button', { name: 'sort' })
-    )[0]
+    const sortButton = await screen.findByRole('button', {
+      name: 'Sort by Project Name',
+    })
     await userEvent.click(sortButton)
 
     // below we match only the part of the object that we expect to have changed
@@ -592,7 +592,7 @@ describe('SynapseTable tests', () => {
     // No facet filter controls should be visible, since the only facet on the study column is a JSON subcolumn facet
     expect(
       screen.queryByRole('button', {
-        name: 'Filter by specific facet',
+        name: /Filter by .*/,
       }),
     ).not.toBeInTheDocument()
   })

@@ -16,17 +16,17 @@ import {
   TermsOfUseAccessRequirement,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import mockProjectData from './entity/mockProject'
-import { MOCK_USER_ID } from './user/mock_user_profile'
+import mockProjectData from '../entity/mockProject'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
 import {
   mockACTAccessRequirementWikiPage,
   mockManagedACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
   mockToUAccessRequirementWikiPage,
-} from './mockWiki'
-import { mockDucTemplateFileHandle } from './mock_file_handle'
-import { MOCK_TEAM_ID } from './team/mockTeam'
-import { DAY_IN_MS } from '../utils/SynapseConstants'
+} from '../mockWiki'
+import { mockDucTemplateFileHandle } from '../mock_file_handle'
+import { MOCK_TEAM_ID } from '../team/mockTeam'
+import { DAY_IN_MS } from '../../utils/SynapseConstants'
 
 export const MOCK_NEWLY_CREATED_AR_ID = 1000
 export const MOCK_AR_ETAG = 'mock-ar-etag'
@@ -174,7 +174,7 @@ export const mockSelfSignAnnotationBasedSubjectsAccessRequirement: SelfSignAcces
     subjectIds: [],
   }
 
-export const mockSearchResults: AccessRequirementSearchResponse = {
+export const mockSearchResultsPageOne: AccessRequirementSearchResponse = {
   results: [
     {
       id: mockManagedACTAccessRequirement.id.toString(),
@@ -214,6 +214,22 @@ export const mockSearchResults: AccessRequirementSearchResponse = {
       name: 'Some mock ARs',
       version: '5',
       relatedProjectIds: [],
+      reviewerIds: [],
+    },
+  ],
+  nextPageToken: 'mock-npt',
+}
+
+export const mockSearchResultsPageTwo: AccessRequirementSearchResponse = {
+  results: [
+    {
+      id: '9608424',
+      createdOn: '2017-08-23T18:48:20.892Z',
+      type: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      modifiedOn: '2022-05-20T22:26:44.406Z',
+      name: 'Access Requirement on Page 2',
+      version: '269',
+      relatedProjectIds: [MOCK_PROJECT_ID],
       reviewerIds: [],
     },
   ],

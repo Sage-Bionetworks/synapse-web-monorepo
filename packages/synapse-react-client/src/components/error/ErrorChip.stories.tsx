@@ -1,11 +1,10 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ErrorChip, { ErrorChipProps } from './ErrorChip'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { SynapseContextConsumer } from '../../utils/context/SynapseContext'
+import { SynapseClientError, SynapseContextConsumer } from '../../utils'
 import FullContextProvider from '../../utils/context/FullContextProvider'
 
-const meta = {
+const meta: Meta<ErrorChipProps & { isAuthenticated: boolean }> = {
   title: 'Components/ErrorChip',
   component: ErrorChip,
   decorators: [
@@ -26,7 +25,7 @@ const meta = {
       </SynapseContextConsumer>
     ),
   ],
-} satisfies Meta<ErrorChipProps & { isAuthenticated: boolean }>
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

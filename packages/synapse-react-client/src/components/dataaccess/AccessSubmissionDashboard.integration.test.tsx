@@ -16,8 +16,8 @@ import {
 } from '../../mocks/user/mock_user_profile'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResults,
-} from '../../mocks/mockAccessRequirements'
+  mockSearchResultsPageOne,
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import {
   BackendDestinationEnum,
@@ -69,7 +69,7 @@ describe('AccessSubmissionDashboard tests', () => {
 
         async (req, res, ctx) => {
           onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResults))
+          return res(ctx.status(200), ctx.json(mockSearchResultsPageOne))
         },
       ),
       // Return an access requirement specified by ID

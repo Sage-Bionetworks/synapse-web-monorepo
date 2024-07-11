@@ -4,7 +4,7 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import {
   LOCK_ACCESS_REQUIREMENT_TEXT,
   getOldAccessRequirementInstructions,

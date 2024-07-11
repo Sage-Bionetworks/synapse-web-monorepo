@@ -22,6 +22,7 @@ const onClickFn = jest.fn()
 const ACTION_1 = 'action1'
 const ACTION_2 = 'action2'
 const ACTION_3 = 'action3'
+const ACTION_4 = 'action4'
 
 const actionConfiguration1: ActionConfiguration = {
   text: 'action 1 text',
@@ -42,6 +43,14 @@ const actionConfiguration3: ActionConfiguration = {
   visible: true,
   onClick: () => {
     onClickFn(ACTION_3)
+  },
+}
+
+const actionConfiguration4: ActionConfiguration = {
+  text: 'action 4 text',
+  visible: true,
+  onClick: () => {
+    onClickFn(ACTION_4)
   },
 }
 
@@ -92,14 +101,8 @@ describe('EntityActionMenu tests', () => {
   it('Renders the primary and dropdown menus', async () => {
     const layout: EntityActionMenuLayout = {
       buttonActions: [],
-      downloadMenuActions: [
-        [
-          {
-            action: ACTION_1,
-          },
-        ],
-      ],
-      primaryMenuActions: [[{ action: ACTION_2 }, { action: ACTION_3 }]],
+      downloadMenuActions: [[{ action: ACTION_1 }, { action: ACTION_2 }]],
+      primaryMenuActions: [[{ action: ACTION_3 }, { action: ACTION_4 }]],
       primaryMenuText: PRIMARY_MENU_TEXT,
       primaryMenuEndIcon: 'verticalEllipsis',
     }
@@ -107,6 +110,7 @@ describe('EntityActionMenu tests', () => {
       [ACTION_1]: actionConfiguration1,
       [ACTION_2]: actionConfiguration2,
       [ACTION_3]: actionConfiguration3,
+      [ACTION_4]: actionConfiguration4,
     }
 
     renderComponent({
@@ -129,11 +133,11 @@ describe('EntityActionMenu tests', () => {
       name: PRIMARY_MENU_TEXT,
     })
     await userEvent.click(primaryMenu)
-    const action2MenuItem = await screen.findByRole('menuitem', {
-      name: actionConfiguration2.text,
+    const action3MenuItem = await screen.findByRole('menuitem', {
+      name: actionConfiguration3.text,
     })
-    await userEvent.click(action2MenuItem)
-    expect(onClickFn).toHaveBeenCalledWith(ACTION_2)
+    await userEvent.click(action3MenuItem)
+    expect(onClickFn).toHaveBeenCalledWith(ACTION_3)
   })
 
   it('Handles an href dropdown menu item', async () => {

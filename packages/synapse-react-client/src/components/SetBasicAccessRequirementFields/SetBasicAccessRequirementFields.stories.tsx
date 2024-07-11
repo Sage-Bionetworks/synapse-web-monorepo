@@ -5,7 +5,7 @@ import {
   mockACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,

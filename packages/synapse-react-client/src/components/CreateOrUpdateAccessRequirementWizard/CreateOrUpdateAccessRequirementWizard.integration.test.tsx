@@ -13,14 +13,14 @@ import {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
 } from '../../mocks/entity/mockFileEntity'
-import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/mockAccessRequirementAcls'
+import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
 import {
   MOCK_AR_ETAG,
   MOCK_NEWLY_CREATED_AR_ID,
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'

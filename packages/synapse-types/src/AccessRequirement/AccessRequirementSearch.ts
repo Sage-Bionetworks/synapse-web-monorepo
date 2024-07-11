@@ -20,6 +20,8 @@ export interface AccessRequirementSearchRequest {
   sort?: AccessRequirementSearchSort[]
   /** A token used to get the next page of a particular search query. */
   nextPageToken?: string
+  /** Optional filter by the access requirement fully qualified concrete type (e.g. org.sagebionetworks.repo.model.ManagedACTAccessRequirement) */
+  type?: string
 }
 
 export type AccessRequirementSearchResult = {

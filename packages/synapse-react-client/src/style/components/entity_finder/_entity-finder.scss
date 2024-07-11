@@ -34,7 +34,6 @@ $-splitter-width: 12px;
 
 .EntityFinder {
   width: 100%;
-  max-width: max-content;
   margin: auto;
 
   &__Search__Input {
@@ -49,22 +48,19 @@ $-splitter-width: 12px;
       width: 0;
     }
   }
-
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
     border: $-border-size solid SRC.$border-color-gray;
     height: $-finder-height + ($-border-size * 2);
   }
-
+  &__MainPanel.MainPanelDualPane,
   &__MainPanel.MainPanelSearch {
     width: 85vw;
   }
+
   &__MainPanel.MainPanelSinglePane {
     width: $-tree-only-width + ($-border-size * 2);
-  }
-  &__MainPanel.MainPanelDualPane {
-    width: 85vw;
   }
 
   .reflex-container.vertical > .reflex-splitter {

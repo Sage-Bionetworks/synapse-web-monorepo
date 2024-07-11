@@ -2,11 +2,11 @@ import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
-import { RangeFacetFilterUI } from './RangeFacetFilterUI'
+import { RangeFacetFilterProps, RangeFacetFilterUI } from './RangeFacetFilterUI'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<RangeFacetFilterProps> = {
   title: 'Explore/Components/Facets/RangeFacetFilter',
   component: RangeFacetFilterUI,
   decorators: [
@@ -33,7 +33,7 @@ const meta = {
     onNotSetSelected: fn(),
     onRangeValueSelected: fn(),
   },
-} satisfies Meta
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

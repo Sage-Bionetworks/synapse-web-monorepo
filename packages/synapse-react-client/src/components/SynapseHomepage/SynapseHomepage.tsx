@@ -46,7 +46,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         <div className="HeroContainer">
           <div className="Headline WhiteText">
             <div className="SynapseLogoContainer">
-              <SynapseFullLogo />
+              <SynapseFullLogo textColor="white" />
             </div>
             <div className="HeadlineSentence">
               <span className="Headline-Strong">Organize</span>

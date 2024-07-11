@@ -12,7 +12,7 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
@@ -61,9 +61,10 @@ describe('AccessRequirementList tests', () => {
     // Must be logged in
     await screen.findByText('signed in', { exact: false })
     // Must be certified (since one or more of the ARs requires it)
-    await screen.findByText('certified', { exact: false })
+    await screen.findByText(/You must first become a/)
+    await screen.findAllByText(/certified user/) // may appear multiple times since we also display if the current user is a certified user
     // Must have a verified profile (since one or more of the ARs requires it)
-    await screen.findByText('validated', { exact: false })
+    await screen.findByText('user profile validated', { exact: false })
     // Must have 2fa enabled (since one or more of the ARs requires it)
     await screen.findByText('2FA', { exact: false })
 

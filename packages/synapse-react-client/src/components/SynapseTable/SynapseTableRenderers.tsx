@@ -30,7 +30,7 @@ import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
-import ColumnHeader from '../styled/ColumnHeader'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -75,7 +75,7 @@ export const rowSelectionColumn = columnHelper.display({
   cell: RowSelectionCell,
   maxSize: 36,
   meta: {
-    align: 'center',
+    textAlign: 'center',
   },
 })
 
@@ -104,7 +104,7 @@ export const addToDownloadListColumn = columnHelper.display({
   cell: AddToDownloadListCell,
   maxSize: 50,
   meta: {
-    align: 'center',
+    textAlign: 'center',
   },
 })
 
@@ -129,7 +129,7 @@ export const directDownloadColumn = columnHelper.display({
   cell: DirectDownloadCell,
   maxSize: 50,
   meta: {
-    align: 'center',
+    textAlign: 'center',
   },
 })
 
@@ -202,7 +202,7 @@ export const accessColumn = columnHelper.display({
   cell: AccessCell,
   maxSize: 50,
   meta: {
-    align: 'center',
+    textAlign: 'center',
   },
 })
 

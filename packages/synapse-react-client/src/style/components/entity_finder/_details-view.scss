@@ -13,7 +13,6 @@ $row-hovered-background-color: unset;
   .EntityFinderDetailsView {
     height: $-finder-height - $-breadcrumb-height;
     border-bottom: 1px solid SRC.$border-color-gray;
-    overflow-y: hidden;
   }
 }
 .DetailsViewTable {
@@ -27,6 +26,7 @@ $row-hovered-background-color: unset;
   height: $-finder-height;
   width: 100%;
   background-color: SRC.$background-color-gray-light;
+  overflow-y: hidden;
 
   select.form-control {
     margin-bottom: 0px;

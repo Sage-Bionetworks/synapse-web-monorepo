@@ -5,7 +5,7 @@ import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,
 } from './SynapseFormSubmissionGrid'
-import { SynapseContextConsumer } from '../../utils/context/SynapseContext'
+import { SynapseContextConsumer } from '../../utils'
 import FullContextProvider from '../../utils/context/FullContextProvider'
 import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
@@ -14,7 +14,9 @@ import {
 } from '../../mocks/mock_drug_tool_data'
 import { getHandlers } from '../../mocks/msw/handlers'
 
-const meta = {
+const meta: Meta<
+  SynapseFormSubmissionGridProps & { isAuthenticated?: boolean }
+> = {
   title: 'Portals/SynapseFormSubmissionsGrid',
   argTypes: {
     isAuthenticated: {
@@ -54,7 +56,7 @@ const meta = {
       </SynapseContextConsumer>
     )
   },
-} satisfies Meta<SynapseFormSubmissionGridProps & { isAuthenticated?: boolean }>
+}
 
 export default meta
 

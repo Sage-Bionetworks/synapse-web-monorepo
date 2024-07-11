@@ -1,10 +1,13 @@
 import { Box, BoxProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 
-export const StyledTableContainer: StyledComponent<BoxProps> = styled(Box)(
-  ({ theme }) => ({
+export type StyledTableContainerProps = BoxProps & {
+  density?: 'default' | 'compact'
+}
+
+export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
+  styled(Box)<StyledTableContainerProps>(({ theme, density = 'default' }) => ({
     overflow: 'auto',
-    maxHeight: '250px',
     paddingLeft: '2px',
     th: {
       height: '38px',
@@ -19,5 +22,12 @@ export const StyledTableContainer: StyledComponent<BoxProps> = styled(Box)(
     ['tr:nth-of-type(2n)']: {
       backgroundColor: theme.palette.grey[100],
     },
-  }),
-)
+    ['th,td']: {
+      paddingLeft: theme.spacing(density === 'compact' ? 0 : 1),
+      paddingRight: theme.spacing(density === 'compact' ? 0 : 1),
+    },
+    td: {
+      paddingTop: theme.spacing(density === 'compact' ? 0 : 1),
+      paddingBottom: theme.spacing(density === 'compact' ? 0 : 1),
+    },
+  }))

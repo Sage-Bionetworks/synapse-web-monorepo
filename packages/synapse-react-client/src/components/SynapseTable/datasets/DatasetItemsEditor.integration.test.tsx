@@ -98,7 +98,6 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
 
 async function addItemsViaEntityFinder() {
   const addItemsButton = screen.getAllByRole('button', {
-    exact: false,
     name: /Add (File|Dataset)s/,
   })[0]
   // Mocked entity finder is not visible
@@ -131,7 +130,6 @@ async function removeItem(id: string) {
 async function clickRemove() {
   await userEvent.click(
     screen.getByRole('button', {
-      exact: true,
       name: /Remove (File|Dataset)s/,
     }),
   )
@@ -162,7 +160,6 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
   await waitFor(() =>
     expect(
       screen.getAllByRole('button', {
-        exact: false,
         name: /Add (File|Dataset)s/,
       })[0],
     ).not.toBeDisabled(),
@@ -191,7 +188,6 @@ async function verifyNoneSelected() {
   await waitFor(() =>
     expect(
       screen.getByRole('button', {
-        exact: false,
         name: /Remove (File|Dataset)s/,
       }),
     ).toBeDisabled(),
@@ -267,7 +263,6 @@ describe('Dataset Items Editor tests', () => {
     await renderComponent()
     await screen.findByText(NO_ITEMS_IN_THIS_DATASET, { exact: true })
     const addItemsButtons = await screen.findAllByRole('button', {
-      exact: false,
       name: ADD_ITEMS,
     })
     expect(addItemsButtons.length).toBe(2)
@@ -284,7 +279,6 @@ describe('Dataset Items Editor tests', () => {
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
-          exact: false,
           name: ADD_ITEMS,
         })[0],
       ).not.toBeDisabled(),
@@ -306,7 +300,6 @@ describe('Dataset Items Editor tests', () => {
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
-          exact: false,
           name: ADD_ITEMS,
         })[1],
       ).not.toBeDisabled(),
@@ -444,7 +437,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getByRole('button', {
-            exact: false,
             name: REMOVE_ITEMS,
           }),
         ).toBeDisabled(),
@@ -456,7 +448,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getByRole('button', {
-            exact: false,
             name: REMOVE_ITEMS,
           }),
         ).not.toBeDisabled(),
@@ -746,7 +737,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getAllByRole('button', {
-            exact: false,
             name: ADD_ITEMS,
           })[1],
         ).not.toBeDisabled(),

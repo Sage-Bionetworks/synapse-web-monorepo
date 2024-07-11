@@ -58,10 +58,11 @@ function removeBundleFieldsUsingMask(
 export function getHandlersForTableQuery(
   response: QueryResultBundle,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  entityId = ':id',
 ) {
   return generateAsyncJobHandlers<QueryBundleRequest, QueryResultBundle>(
-    TABLE_QUERY_ASYNC_START(':id'),
-    tokenParam => TABLE_QUERY_ASYNC_GET(':entityId', tokenParam),
+    TABLE_QUERY_ASYNC_START(entityId),
+    tokenParam => TABLE_QUERY_ASYNC_GET(entityId, tokenParam),
     request => removeBundleFieldsUsingMask(response, request.partMask),
     backendOrigin,
   )

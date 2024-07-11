@@ -38,7 +38,7 @@ const mockOnHoverOverValue = jest.fn()
 
 const defaultProps = {
   onAddValueToSelection: mockOnAddValueToSelection,
-  allIsSelected: false,
+  filterIsActive: true,
   containerAs: undefined,
   dropdownType: undefined,
   facetTitle: '',
@@ -47,6 +47,7 @@ const defaultProps = {
   onRemoveAllFacetSelections: mockOnRemoveAllFacetSelections,
   onRemoveValueFromSelection: mockOnRemoveValueFromSelection,
   onHoverOverValue: mockOnHoverOverValue,
+  canMultiSelect: true,
 } satisfies EnumFacetFilterUIProps
 
 function renderComponent(overrides?: Partial<EnumFacetFilterUIProps>) {
@@ -81,9 +82,27 @@ describe('EnumFacetFilterUI (unit tests)', () => {
 
     expect(checkboxes).toHaveLength(4)
 
-    expect(checkboxes[0].checked).toBe(defaultProps.allIsSelected)
+    expect(checkboxes[0].checked).toBe(!defaultProps.filterIsActive)
     facetValues.forEach((facetValue, i) => {
       expect(checkboxes[i + 1].checked).toBe(facetValue.isSelected)
+    })
+  })
+
+  it('displays radio buttons if canMultiSelect is false', async () => {
+    renderComponent({
+      canMultiSelect: false,
+    })
+
+    const selectAllCheckbox = await screen.findByRole<HTMLInputElement>(
+      'checkbox',
+    )
+    expect(selectAllCheckbox.checked).toBe(!defaultProps.filterIsActive)
+
+    const radioOptions = await screen.findAllByRole<HTMLInputElement>('radio')
+    expect(radioOptions).toHaveLength(facetValues.length)
+
+    facetValues.forEach((facetValue, i) => {
+      expect(radioOptions[i].checked).toBe(facetValue.isSelected)
     })
   })
 

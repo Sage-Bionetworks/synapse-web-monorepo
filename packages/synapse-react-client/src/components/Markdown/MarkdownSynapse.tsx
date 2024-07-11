@@ -45,6 +45,8 @@ export type MarkdownSynapseProps = {
   onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
   showPlaceholderIfNoWikiContent?: boolean
 }
+type MarkdownSynapseComponent = React.ComponentType<MarkdownSynapseProps>
+
 const md = MarkdownIt({ html: true })
 
 type MarkdownSynapseState = {
@@ -60,7 +62,7 @@ type MarkdownSynapseState = {
  * @class Markdown
  * @extends {React.Component}
  */
-class MarkdownSynapse extends React.Component<
+const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends React.Component<
   MarkdownSynapseProps,
   MarkdownSynapseState
 > {
@@ -654,4 +656,6 @@ class MarkdownSynapse extends React.Component<
   }
 }
 
-export default MarkdownSynapse as React.ComponentType<MarkdownSynapseProps>
+export { MarkdownSynapse, MarkdownSynapse as Markdown }
+
+export default MarkdownSynapse
