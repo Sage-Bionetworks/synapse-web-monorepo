@@ -92,7 +92,7 @@ async function setUp(
   return { component, itemRows, user }
 }
 
-describe('AccessRequirementAclEditor', () => {
+describe('AclEditor', () => {
   beforeEach(() => jest.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
