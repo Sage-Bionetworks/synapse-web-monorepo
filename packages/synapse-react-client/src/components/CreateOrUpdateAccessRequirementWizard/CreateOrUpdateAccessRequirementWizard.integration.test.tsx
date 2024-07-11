@@ -239,7 +239,9 @@ describe('CreateOrUpdateAccessRequirementWizard', () => {
     })
     expect(removeBtns).toHaveLength(nPrincipalsOnACL)
     await user.click(removeBtns[nPrincipalsOnACL - 1])
-    expect(userOnAcl).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(userOnAcl).not.toBeInTheDocument()
+    })
 
     await user.click(getBtn('Save'))
     await waitFor(() => {
