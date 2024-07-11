@@ -1,7 +1,6 @@
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
-import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -17,9 +16,16 @@ import {
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-} from '../types/IsType'
-import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
-import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
+  LockedColumn,
+  UniqueFacetIdentifier,
+} from '../types'
+import {
+  hasFilesInView,
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isFileView,
+} from './EntityTypeUtils'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -196,12 +202,29 @@ export function hasResettableFilters(
   return hasFacetFilters || hasAdditionalFilters
 }
 
+/**
+ * Returns true iff a table query can be added to the download list.
+ * @param entity
+ * @param entityColumnId
+ */
 export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
   entity?: T,
+  entityColumnId?: string,
 ) {
+  const viewCannotIncludeFiles =
+    // EntityViews without the file bit mask cannot contain files
+    (entity && isEntityView(entity) && !hasFilesInView(entity)) ||
+    // DatasetCollections cannot contain files
+    (entity && isDatasetCollection(entity))
+
+  if (viewCannotIncludeFiles) {
+    return false
+  }
+
   return Boolean(
-    entity &&
-      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)),
+    entityColumnId ||
+      (entity &&
+        ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))),
   )
 }
 

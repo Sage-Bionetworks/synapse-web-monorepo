@@ -1,18 +1,14 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
-import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../QueryContext'
+import { QueryContextType, useQueryContext } from '../QueryContext'
 import {
   isLoadingNewBundleAtom,
   QueryWrapper,
   QueryWrapperProps,
   tableQueryDataAtom,
 } from './QueryWrapper'
-import { SynapseConstants } from '../../utils'
+import { LockedColumn, SynapseConstants } from '../../utils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
