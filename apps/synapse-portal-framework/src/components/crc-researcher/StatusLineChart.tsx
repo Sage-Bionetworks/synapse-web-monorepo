@@ -195,19 +195,19 @@ const StatusLineChart: FunctionComponent<StatusLineChartProps> = ({
           collected: SynapseUtilityFunctions.resultToJson(
             result[0].headers,
             result[0].rows,
-          ),
+          ) as unknown as GraphItem[],
           invited: SynapseUtilityFunctions.resultToJson(
             result[1].headers,
             result[1].rows,
-          ),
+          ) as unknown as GraphItem[],
           apptScheduled: SynapseUtilityFunctions.resultToJson(
             result[2].headers,
             result[2].rows,
-          ),
+          ) as unknown as GraphItem[],
           apptMade: SynapseUtilityFunctions.resultToJson(
             result[3].headers,
             result[3].rows,
-          ),
+          ) as unknown as GraphItem[],
         })
         setIsLoaded(true)
       })

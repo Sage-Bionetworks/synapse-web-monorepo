@@ -179,7 +179,7 @@ const ParticipantsBarPlot: FunctionComponent<ParticipantsBarPlotProps> = ({
           SynapseUtilityFunctions.resultToJson(
             result[0].headers,
             result[0].rows,
-          ),
+          ) as unknown as GraphItem[],
         )
         setIsLoaded(true)
       })

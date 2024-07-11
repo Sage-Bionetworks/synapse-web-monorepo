@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ModalDownload from '../../ModalDownload/ModalDownload'
-import {
-  hasFilesInView,
-  isDataset,
-  isEntityView,
-} from '../../../utils/functions/EntityTypeUtils'
+import { isDataset } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils'
 import { Tooltip } from '@mui/material'
 import { useQueryContext } from '../../QueryContext'
@@ -54,12 +50,11 @@ export const DownloadOptions: React.FunctionComponent<
 
   const fileColumnId = getFileColumnModelId(queryResultBundle?.columnModels)
 
-  const isEntityViewWithoutFiles =
-    entity && isEntityView(entity) && !hasFilesInView(entity)
+  const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(
+    entity,
+    fileColumnId,
+  )
 
-  const showAddQueryToDownloadList =
-    !isEntityViewWithoutFiles &&
-    (fileColumnId || canTableQueryBeAddedToDownloadList(entity))
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 

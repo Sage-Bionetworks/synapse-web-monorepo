@@ -81,6 +81,7 @@ const dotPlotLayoutConfig: Partial<Plotly.Layout> = {
     autotick: true,
     ticks: 'outside',
     tickcolor: '#ddd',
+    type: 'log',
   },
 
   yaxis: {
@@ -226,9 +227,24 @@ export function ThemesPlot({
     const sideBarPlotData = fetchData(accessToken!, sideBarPlot)
     Promise.all([dotPlotData, topBarPlotData, sideBarPlotData])
       .then(result => {
-        setDotPlotQueryData(resultToJson(result[0].headers, result[0].rows))
-        setTopBarQueryData(resultToJson(result[1].headers, result[1].rows))
-        setSideBarQueryData(resultToJson(result[2].headers, result[2].rows))
+        setDotPlotQueryData(
+          resultToJson(
+            result[0].headers,
+            result[0].rows,
+          ) as unknown as GraphItem[],
+        )
+        setTopBarQueryData(
+          resultToJson(
+            result[1].headers,
+            result[1].rows,
+          ) as unknown as GraphItem[],
+        )
+        setSideBarQueryData(
+          resultToJson(
+            result[2].headers,
+            result[2].rows,
+          ) as unknown as GraphItem[],
+        )
         setIsLoaded(true)
       })
       .catch(err => {
