@@ -85,7 +85,7 @@ export const SynapseFeaturedDatasets: React.FunctionComponent<
         return (
           <Box sx={{ maxWidth: '450px' }}>
             <SynapseFeaturedDatasetItem
-              key={row.rowId}
+              key={id}
               sourceTable={sourceTable}
               community={community}
               id={id}

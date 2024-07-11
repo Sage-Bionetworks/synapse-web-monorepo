@@ -650,14 +650,6 @@ export const SynapseHomepageV2: React.FunctionComponent<
               position: 'relative',
             }}
           />
-          {/* TODO: remove footer from here (it will be added on SWC side to all pages!) */}
-          <SynapseFooter
-            gotoPlace={() => {}}
-            portalVersion="portalV1"
-            repoVersion="repo V1"
-            srcVersion="SRC v1"
-            reportViolationCallback={() => {}}
-          />
         </Box>
       )}
     </Box>

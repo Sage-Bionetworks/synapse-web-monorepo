@@ -1,6 +1,6 @@
 import { Box, Link, Typography } from '@mui/material'
 import React from 'react'
-import { LinkProps } from '@mui/material'
+import { LinkProps, SxProps } from '@mui/material'
 
 export type SynapseLinksColumnProps = {
   category: string
@@ -14,6 +14,10 @@ export type SynapseLink = {
 export const SynapseLinksColumn: React.FunctionComponent<
   SynapseLinksColumnProps
 > = ({ category, synapseLinks }) => {
+  const linkStateSx: SxProps = {
+    color: 'white',
+    textDecoration: 'none',
+  }
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       <Typography
@@ -35,14 +39,9 @@ export const SynapseLinksColumn: React.FunctionComponent<
             fontWeight: 400,
             lineHeight: '24px',
             textDecoration: 'none',
-            '&:hover': {
-              color: 'white',
-              textDecoration: 'none',
-            },
-            '&:focus': {
-              color: 'white',
-              textDecoration: 'none',
-            },
+            '&:hover': linkStateSx,
+            '&:focus': linkStateSx,
+            '&:visited': linkStateSx,
           }}
           {...synapseLink.props}
         >

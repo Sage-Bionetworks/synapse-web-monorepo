@@ -30,7 +30,7 @@ export const SynapseInActionItem: React.FunctionComponent<
   link,
   onInView,
 }) => {
-  const { ref, inView } = useInView({ threshold: 0.9 }) //do not report this is in view until it is almost entirely shown (90%)
+  const { ref, inView } = useInView({ threshold: 0.9 }) //do not report this is in view until the description is almost entirely shown (90%)
   useEffect(() => {
     if (inView) {
       onInView()
@@ -41,7 +41,6 @@ export const SynapseInActionItem: React.FunctionComponent<
       sx={{
         padding: '15px',
       }}
-      ref={ref}
     >
       <Box>
         {tags &&
@@ -77,6 +76,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             marginTop: '32px',
             marginBottom: '32px',
           }}
+          ref={ref}
         >
           {description}
         </Typography>
