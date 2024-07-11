@@ -25,7 +25,7 @@ import { server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { REMOVE_BUTTON_LABEL } from '../AccessRequirementAclEditor/ResourceAccessItem'
+import { REMOVE_BUTTON_LABEL } from '../AclEditor/ResourceAccessItem'
 import CreateOrUpdateAccessRequirementWizard, {
   CreateOrUpdateAccessRequirementWizardProps,
 } from './CreateOrUpdateAccessRequirementWizard'

@@ -3,7 +3,7 @@ import {
   AccessControlList,
   ResourceAccess,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
@@ -26,9 +26,14 @@ import {
   AccessRequirementAclEditorHandle,
   AccessRequirementAclEditorProps,
   EMPTY_RESOURCE_ACCESS_LIST_TEXT,
-  REVIEWER_ALREADY_ADDED_ERROR_MESSAGE,
 } from './AccessRequirementAclEditor'
-import { REMOVE_BUTTON_LABEL } from './ResourceAccessItem'
+import {
+  addUserToAcl,
+  confirmItem,
+  removeItem,
+  updatePermissionLevel,
+} from '../AclEditor/AclEditorTestUtils'
+import { PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE } from '../AclEditor/useUpdateAcl'
 
 const onSaveComplete = jest.fn()
 const deleteAccessRequirementAclSpy = jest.spyOn(
@@ -84,62 +89,6 @@ async function setUp(
   expect(itemRows).toHaveLength(expectedResourceAccessItems)
 
   return { ref, component, itemRows, user }
-}
-
-const confirmItem = (
-  row: HTMLElement,
-  principalName: string,
-  accessTypeLabel: string,
-) => {
-  expect(within(row).getByRole('link')).toHaveTextContent(principalName)
-  expect(within(row).getByRole('combobox')).toHaveTextContent(accessTypeLabel)
-}
-
-const removeItem = async (
-  row: HTMLElement,
-  user: ReturnType<(typeof userEvent)['setup']>,
-) => {
-  const removeButton = within(row).getByRole('button', {
-    name: REMOVE_BUTTON_LABEL,
-  })
-  await user.click(removeButton)
-  expect(removeButton).not.toBeInTheDocument()
-  expect(row).not.toBeInTheDocument()
-}
-
-const updatePermissionLevel = async (
-  row: HTMLElement,
-  user: ReturnType<(typeof userEvent)['setup']>,
-  updatedPermissionLevelLabel: string,
-) => {
-  const menu = within(row).getByRole('combobox')
-  await user.click(menu)
-
-  const option = screen.getByRole('option', {
-    name: updatedPermissionLevelLabel,
-  })
-  await user.click(option)
-
-  await waitFor(() => {
-    expect(option).not.toBeInTheDocument()
-  })
-}
-
-const selectReviewerUser = async (
-  user: ReturnType<(typeof userEvent)['setup']>,
-  userName: string,
-) => {
-  const userInput = await screen.findByRole('combobox', {
-    name: 'Select a reviewer',
-  })
-  await user.type(userInput, userName)
-
-  const option = await screen.findByText(new RegExp(`\\(@${userName}\\)`))
-  await user.click(option)
-
-  await waitFor(() => expect(option).not.toBeInTheDocument())
-  const rows = screen.getAllByRole('row')
-  confirmItem(rows[rows.length - 1], userName, 'Can Review')
 }
 
 describe('AccessRequirementAclEditor', () => {
@@ -213,7 +162,8 @@ describe('AccessRequirementAclEditor', () => {
       const { user, ref } = await setUp()
       expect(onSaveComplete).not.toHaveBeenCalled()
 
-      await selectReviewerUser(user, MOCK_USER_NAME_2)
+      const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+      confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can Review')
 
       // parent calls save
       ref.current?.save()
@@ -299,7 +249,8 @@ describe('AccessRequirementAclEditor', () => {
       await removeItem(itemRows[index], user)
 
       // add back principal with same permissions
-      await selectReviewerUser(user, MOCK_USER_NAME)
+      const newUserRow = await addUserToAcl(user, MOCK_USER_NAME)
+      confirmItem(newUserRow, MOCK_USER_NAME, 'Can Review')
 
       const row = screen.getAllByRole('row')[index]
       const permissionLevelLabel = 'Can Review & Exempt Eligible'
@@ -347,7 +298,8 @@ describe('AccessRequirementAclEditor', () => {
       const { user, ref } = await setUp(noExistingAclProps, 0)
 
       await screen.findByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)
-      await selectReviewerUser(user, MOCK_USER_NAME_2)
+      const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+      confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can Review')
       expect(onSaveComplete).not.toHaveBeenCalled()
 
       // parent calls save
@@ -366,7 +318,8 @@ describe('AccessRequirementAclEditor', () => {
       const { user, ref } = await setUp(noExistingAclProps, 0)
 
       await screen.findByText(EMPTY_RESOURCE_ACCESS_LIST_TEXT)
-      await selectReviewerUser(user, MOCK_USER_NAME_2)
+      const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+      confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can Review')
 
       await removeItem(screen.getByRole('row'), user)
 
@@ -389,9 +342,15 @@ describe('AccessRequirementAclEditor', () => {
   test('displays an error when attempting to add an existing principalId', async () => {
     const { user } = await setUp()
 
-    await selectReviewerUser(user, MOCK_USER_NAME)
+    await addUserToAcl(user, MOCK_USER_NAME)
 
     const alert = screen.getByRole('alert')
-    expect(alert).toHaveTextContent(REVIEWER_ALREADY_ADDED_ERROR_MESSAGE)
+    expect(alert).toHaveTextContent(PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE)
+
+    // Verify the error goes away when a successful change is made
+    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can Review')
+
+    expect(alert).not.toBeInTheDocument()
   })
 })

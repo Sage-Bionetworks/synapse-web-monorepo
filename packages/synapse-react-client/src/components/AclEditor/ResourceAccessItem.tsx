@@ -8,14 +8,9 @@ import { IconSvgButton } from '../IconSvgButton'
 
 export const REMOVE_BUTTON_LABEL = 'Remove from AR Permissions'
 
-const availablePermissionLevels: PermissionLevel[] = [
-  'CAN_REVIEW_SUBMISSIONS',
-  'IS_EXEMPTION_ELIGIBLE',
-  'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
-]
-
 type ResourceAccessItemProps = {
   resourceAccess: ResourceAccess
+  availablePermissionLevels: PermissionLevel[]
   onChange: (accessType: ACCESS_TYPE[]) => void
   onRemove: () => void
 }
@@ -23,7 +18,8 @@ type ResourceAccessItemProps = {
 export const ResourceAccessItem: React.FunctionComponent<
   ResourceAccessItemProps
 > = (props: ResourceAccessItemProps) => {
-  const { resourceAccess, onChange, onRemove } = props
+  const { resourceAccess, availablePermissionLevels, onChange, onRemove } =
+    props
 
   return (
     <>
