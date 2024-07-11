@@ -352,7 +352,7 @@ describe('facet support', () => {
         true,
       )
     })
-    test('dataset collection cannot be added to download list', () => {
+    test('dataset collection cannot be added to download list (SWC-6927)', () => {
       expect(
         canTableQueryBeAddedToDownloadList(mockDatasetCollection.entity),
       ).toEqual(false)
