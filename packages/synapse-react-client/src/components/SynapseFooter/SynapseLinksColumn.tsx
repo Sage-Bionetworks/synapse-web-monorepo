@@ -24,7 +24,6 @@ export const SynapseLinksColumn: React.FunctionComponent<
         variant="body1"
         sx={{
           color: 'white',
-          fontSize: '18px',
         }}
       >
         {category}
@@ -39,9 +38,15 @@ export const SynapseLinksColumn: React.FunctionComponent<
             fontWeight: 400,
             lineHeight: '24px',
             textDecoration: 'none',
-            '&:hover': linkStateSx,
-            '&:focus': linkStateSx,
-            '&:visited': linkStateSx,
+            '&:hover': {
+              color: 'white',
+            },
+            '&:focus': {
+              color: '#B0BDC9',
+            },
+            '&:visited': {
+              color: '#B0BDC9',
+            },
           }}
           {...synapseLink.props}
         >

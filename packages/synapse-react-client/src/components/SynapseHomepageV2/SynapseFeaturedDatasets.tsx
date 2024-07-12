@@ -83,7 +83,7 @@ export const SynapseFeaturedDatasets: React.FunctionComponent<
         const size = row.values[sizeColIndex]
         const sizeUnit = row.values[sizeUnitColIndex]
         return (
-          <Box sx={{ maxWidth: '450px' }}>
+          <Box key={id} sx={{ maxWidth: '450px' }}>
             <SynapseFeaturedDatasetItem
               key={id}
               sourceTable={sourceTable}
