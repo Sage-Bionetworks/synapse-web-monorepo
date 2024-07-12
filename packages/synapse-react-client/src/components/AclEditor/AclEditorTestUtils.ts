@@ -8,7 +8,12 @@ export function confirmItem(
   accessTypeLabel: string,
 ) {
   expect(within(row).getByRole('link')).toHaveTextContent(principalName)
-  expect(within(row).getByRole('combobox')).toHaveTextContent(accessTypeLabel)
+  const editorCombobox = within(row).queryByRole('combobox')
+  if (editorCombobox) {
+    expect(editorCombobox).toHaveTextContent(accessTypeLabel)
+  } else {
+    within(row).getByText(accessTypeLabel)
+  }
 }
 
 export async function removeItem(

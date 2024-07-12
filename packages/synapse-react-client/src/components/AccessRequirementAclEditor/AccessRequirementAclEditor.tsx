@@ -164,6 +164,7 @@ export const AccessRequirementAclEditor = React.forwardRef(
           resourceAccessList={resourceAccessList}
           availablePermissionLevels={availablePermissionLevels}
           isLoading={isLoadingOriginalAcl}
+          isInEditMode={true}
           emptyText={EMPTY_RESOURCE_ACCESS_LIST_TEXT}
           addResourceAccessItem={addResourceAccessItem}
           updateResourceAccessItem={updateResourceAccessItem}
