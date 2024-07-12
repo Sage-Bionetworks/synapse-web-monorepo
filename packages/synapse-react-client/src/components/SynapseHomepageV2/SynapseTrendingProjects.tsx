@@ -2,18 +2,18 @@ import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import {
-  SynapseTrendingDatasetItem,
+  SynapseTrendingProjectItem,
   gridTemplateColumns,
-} from './SynapseTrendingDatasetItem'
+} from './SynapseTrendingProjectsItem'
 import { Box, useTheme, useMediaQuery } from '@mui/material'
 import { Typography } from '@mui/material'
 
-export type SynapseTrendingDatasetsProps = {
+export type SynapseTrendingProjectsProps = {
   past30DaysDownloadMetricsTable: string
 }
 
-export const SynapseTrendingDatasets: React.FunctionComponent<
-  SynapseTrendingDatasetsProps
+export const SynapseTrendingProjects: React.FunctionComponent<
+  SynapseTrendingProjectsProps
 > = ({ past30DaysDownloadMetricsTable }) => {
   const { data: past30DaysDownloadData } =
     useGetQueryResultBundleWithAsyncStatus({
@@ -68,7 +68,7 @@ export const SynapseTrendingDatasets: React.FunctionComponent<
         <Box></Box>
       </Box>
       {rowSet.rows.map((row, index) => (
-        <SynapseTrendingDatasetItem
+        <SynapseTrendingProjectItem
           key={row.rowId}
           rank={index + 1}
           rowValues={row.values}

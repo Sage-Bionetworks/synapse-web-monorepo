@@ -22,7 +22,7 @@ import { Search } from '../../assets/themed_icons'
 import { useOneSageURL } from '../../utils/hooks'
 import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
 import { useSynapseContext } from '../../utils'
-import { SynapseTrendingDatasets } from './SynapseTrendingDatasets'
+import { SynapseTrendingProjects } from './SynapseTrendingProjects'
 import { SynapseByTheNumbers } from './SynapseByTheNumbers'
 import { SynapseFeatures } from './SynapseFeatures'
 import { SynapseInAction } from './SynapseInAction'
@@ -499,7 +499,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               >
                 Projects trending this week
               </Typography>
-              <SynapseTrendingDatasets
+              <SynapseTrendingProjects
                 past30DaysDownloadMetricsTable={past30DaysDownloadMetricsTable}
               />
             </Box>

@@ -7,7 +7,7 @@ import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { ReactComponent as EgressIcon } from '../../assets/homepage/egress.svg'
 
 import { ReactComponent as UsersIcon } from '../../assets/homepage/users.svg'
-export type TrendingItemProps = {
+export type SynapseTrendingProjectItemProps = {
   rank: number
   rowValues: (string | null)[]
   entityIdColIndex: number
@@ -20,8 +20,8 @@ const formatter = Intl.NumberFormat('en')
 export const gridTemplateColumns = (isMobileView: boolean) =>
   isMobileView ? '100px auto 40px' : '100px auto 170px 150px 40px'
 
-export const SynapseTrendingDatasetItem: React.FunctionComponent<
-  TrendingItemProps
+export const SynapseTrendingProjectItem: React.FunctionComponent<
+  SynapseTrendingProjectItemProps
 > = ({
   rank,
   rowValues,
@@ -60,7 +60,18 @@ export const SynapseTrendingDatasetItem: React.FunctionComponent<
       borderRadius = '0px 0px 12px 12px'
       break
   }
-
+  const egress = (
+    <Typography variant="body1">
+      <EgressIcon />
+      {friendlyEgressSize}
+    </Typography>
+  )
+  const users = (
+    <Typography variant="body1">
+      <UsersIcon />
+      {friendlyUserCount}
+    </Typography>
+  )
   return (
     <div
       onClick={() => {
@@ -92,19 +103,21 @@ export const SynapseTrendingDatasetItem: React.FunctionComponent<
         <Typography variant="body1" sx={{ marginLeft: '30px' }}>
           {rank}
         </Typography>
-        <Typography variant="body1">{entityHeader?.name}</Typography>
-        {!isMobileView && (
-          <Typography variant="body1">
-            <EgressIcon />
-            {friendlyEgressSize}
-          </Typography>
-        )}
-        {!isMobileView && (
-          <Typography variant="body1">
-            <UsersIcon />
-            {friendlyUserCount}
-          </Typography>
-        )}
+        <Box>
+          <Typography variant="body1">{entityHeader?.name}</Typography>
+          {isMobileView && (
+            <Box
+              sx={{ display: 'flex', columnGap: '10px', alignItems: 'center' }}
+            >
+              {egress}
+              <span>•</span>
+              {users}
+            </Box>
+          )}
+        </Box>
+
+        {!isMobileView && egress}
+        {!isMobileView && users}
         <Box>
           <NavigateNext />
         </Box>
