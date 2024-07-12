@@ -37,7 +37,7 @@ export const SynapseFeatures: React.FunctionComponent = () => {
         image={<PrecisionGovernance key="precisionGovernanceIcon" />}
         subtitle="Precision Governance"
         description="Ethical openness is our top priority. Your sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient."
-        icons={[<Fisma />, <Hipaa />]}
+        icons={[<Fisma key="fismaIcon" />, <Hipaa key="hipaaIcon" />]}
         featureName="governance"
         link="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"
       />

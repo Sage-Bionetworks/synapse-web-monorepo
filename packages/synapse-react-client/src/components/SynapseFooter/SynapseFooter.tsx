@@ -262,6 +262,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             <a
               href="https://www.linkedin.com/company/sage-bionetworks"
               target="_blank"
+              rel="noreferrer"
             >
               <LinkedIn />
             </a>
