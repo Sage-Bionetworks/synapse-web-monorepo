@@ -78,7 +78,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             borderRadius: '12px',
           }}
         >
-          {rowSet.rows.map(row => {
+          {rowSet.rows.map((row, index) => {
             const title = row.values[titleColIndex]!
             const description = row.values[descriptionColIndex]!
             const tags: string[] = JSON.parse(row.values[tagsColIndex]!)
@@ -88,8 +88,24 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             const friendlyName = row.values[friendlyNameColIndex]!
             const primaryColor = row.values[primaryColorColIndex]!
             const secondaryColor = row.values[secondaryColorColIndex]!
+            const backgroundColor =
+              isMobileView && index % 2 ? '#DAE9E7' : undefined
             return (
-              <Box key={row.rowId} sx={{ marginBottom: '120px' }}>
+              <Box
+                key={row.rowId}
+                sx={{
+                  pt: '120px',
+                  pb: '120px',
+                  backgroundColor: { backgroundColor },
+                }}
+              >
+                {/* In any case, preload the image file handle ID so it is ready when the user scrolls down to view it */}
+                <Box sx={{ display: isMobileView ? 'block' : 'none' }}>
+                  <ImageFromSynapseTable
+                    tableId={tableId}
+                    fileHandleId={imageFileHandleId}
+                  />
+                </Box>
                 <SynapseInActionItem
                   tableId={tableId}
                   friendlyName={friendlyName}
@@ -102,16 +118,6 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
                   secondaryColor={secondaryColor}
                   onInView={() => setImageFileHandleIdInView(imageFileHandleId)}
                 />
-                {/* In any case, preload the image file handle ID so it is ready when the user scrolls down to view it */}
-                <Box sx={{ display: isMobileView ? 'block' : 'none' }}>
-                  <ImageFromSynapseTable
-                    tableId={tableId}
-                    fileHandleId={imageFileHandleId}
-                    style={{
-                      marginTop: '-100px',
-                    }}
-                  />
-                </Box>
               </Box>
             )
           })}

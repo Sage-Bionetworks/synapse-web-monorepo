@@ -52,6 +52,7 @@ export const SynapseInActionItem: React.FunctionComponent<
                   marginRight: '5px',
                   color: '#38756A',
                   backgroundColor: '#DAE9E7',
+                  border: '1px solid #6BA89D',
                 }}
                 label={tag}
               />
