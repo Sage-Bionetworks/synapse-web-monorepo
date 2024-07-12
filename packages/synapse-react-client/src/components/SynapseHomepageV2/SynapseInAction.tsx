@@ -15,8 +15,8 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
   tableId,
 }) => {
   const theme = useTheme()
-  // Show the associated image (in desktop mode) if 15% of the div is visible
-  const [ref, inView] = useInView({ threshold: 0.15 })
+  // Show the associated image (in desktop mode) if 10% of the div is visible
+  const [ref, inView] = useInView({ threshold: 0.1 })
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const [imageFileHandleIdInView, setImageFileHandleIdInView] = useState<
     string | undefined

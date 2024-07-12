@@ -14,10 +14,6 @@ export type SynapseLink = {
 export const SynapseLinksColumn: React.FunctionComponent<
   SynapseLinksColumnProps
 > = ({ category, synapseLinks }) => {
-  const linkStateSx: SxProps = {
-    color: 'white',
-    textDecoration: 'none',
-  }
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       <Typography
@@ -38,14 +34,17 @@ export const SynapseLinksColumn: React.FunctionComponent<
             fontWeight: 400,
             lineHeight: '24px',
             textDecoration: 'none',
-            '&:hover': {
-              color: 'white',
-            },
             '&:focus': {
               color: '#B0BDC9',
+              textDecoration: 'none',
             },
             '&:visited': {
               color: '#B0BDC9',
+              textDecoration: 'none',
+            },
+            '&:hover': {
+              color: 'white',
+              textDecoration: 'none',
             },
           }}
           {...synapseLink.props}

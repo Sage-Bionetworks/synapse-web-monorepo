@@ -138,7 +138,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             <Box
               sx={{
                 display: 'flex',
-                columnGap: '40px',
+                columnGap: '60px',
                 rowGap: '40px',
                 flexWrap: 'wrap',
               }}
@@ -168,17 +168,18 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                   },
                 ]}
               />
-              {/* TODO fill in link URLs */}
               <SynapseLinksColumn
                 category="Resources"
                 synapseLinks={[
                   {
                     text: 'Blog',
-                    props: { href: '' },
+                    props: { href: 'https://sagebionetworks.pubpub.org/' },
                   },
                   {
                     text: "FAQ's",
-                    props: { href: '' },
+                    props: {
+                      href: 'https://help.synapse.org/docs/FAQ.2047967233.html',
+                    },
                   },
                   {
                     text: 'Documentation',
@@ -192,10 +193,6 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                   {
                     text: 'Sage Home Page',
                     props: { href: 'https://sagebionetworks.org/' },
-                  },
-                  {
-                    text: 'Creative Commons License',
-                    props: { href: '' },
                   },
                   {
                     text: 'Report Violations',
