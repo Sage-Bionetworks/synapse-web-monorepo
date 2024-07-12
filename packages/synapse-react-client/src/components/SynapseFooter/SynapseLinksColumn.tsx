@@ -1,6 +1,6 @@
 import { Box, Link, Typography } from '@mui/material'
 import React from 'react'
-import { LinkProps, SxProps } from '@mui/material'
+import { LinkProps } from '@mui/material'
 
 export type SynapseLinksColumnProps = {
   category: string
