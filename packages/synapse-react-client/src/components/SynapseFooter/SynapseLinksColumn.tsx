@@ -28,6 +28,7 @@ export const SynapseLinksColumn: React.FunctionComponent<
         <Link
           key={synapseLink.text}
           target="_blank"
+          rel="noreferrer"
           sx={{
             color: '#B0BDC9',
             fontSize: '18px',

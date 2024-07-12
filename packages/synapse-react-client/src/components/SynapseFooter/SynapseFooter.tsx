@@ -245,10 +245,18 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
               },
             }}
           >
-            <a href="https://github.com/Sage-Bionetworks" target="_blank">
+            <a
+              href="https://github.com/Sage-Bionetworks"
+              target="_blank"
+              rel="noreferrer"
+            >
               <Github />
             </a>
-            <a href="https://twitter.com/sagebio" target="_blank">
+            <a
+              href="https://twitter.com/sagebio"
+              target="_blank"
+              rel="noreferrer"
+            >
               <Twitter />
             </a>
             <a
@@ -257,18 +265,24 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             >
               <LinkedIn />
             </a>
-            <a href="https://www.facebook.com/sagebionetworks/" target="_blank">
+            <a
+              href="https://www.facebook.com/sagebionetworks/"
+              target="_blank"
+              rel="noreferrer"
+            >
               <Facebook />
             </a>
             <a
               href="https://www.instagram.com/sagebionetworks/"
               target="_blank"
+              rel="noreferrer"
             >
               <Instagram />
             </a>
             <a
               href="https://www.youtube.com/channel/UCiWTMRdO82wNq6o8JOs3WzQ"
               target="_blank"
+              rel="noreferrer"
             >
               <Youtube />
             </a>
