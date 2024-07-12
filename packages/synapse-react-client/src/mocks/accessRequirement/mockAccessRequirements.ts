@@ -64,7 +64,6 @@ export const mockManagedACTAccessRequirement: ManagedACTAccessRequirement = {
   isIRBApprovalRequired: true,
   isValidatedProfileRequired: true,
   isTwoFaRequired: true,
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
@@ -80,7 +79,6 @@ export const mockToUAccessRequirement: TermsOfUseAccessRequirement = {
   concreteType: TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   termsOfUse:
     'These are the termsOfUse for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
@@ -90,7 +88,6 @@ export const mockSelfSignAccessRequirement: SelfSignAccessRequirement = {
   concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   isCertifiedUserRequired: true,
   isValidatedProfileRequired: true,
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
@@ -107,7 +104,6 @@ export const mockACTAccessRequirement: ACTAccessRequirement = {
   actContactInfo:
     'This is the actContactInfo for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
   openJiraIssue: true,
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
@@ -115,7 +111,6 @@ export const mockLockAccessRequirement: LockAccessRequirement = {
   ...defaultAccessRequirement,
   id: 5,
   concreteType: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  description: '',
   subjectsDefinedByAnnotations: false,
   jiraKey: '',
 }
@@ -126,7 +121,6 @@ export const mockToUAccessRequirementWithWiki: TermsOfUseAccessRequirement = {
   concreteType: TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   // termsOfUse:
   //   'These are the terms of use for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
@@ -143,7 +137,6 @@ export const mockACTAccessRequirementWithWiki: ACTAccessRequirement = {
   // actContactInfo:
   //   'This is the contact info for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
   openJiraIssue: true,
-  description: '',
   subjectsDefinedByAnnotations: false,
 }
 
