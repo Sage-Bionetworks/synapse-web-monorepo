@@ -1,14 +1,16 @@
 import { Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { PermissionLevelMenu } from './PermissionLevelMenu'
 import { IconSvgButton } from '../IconSvgButton'
+import { ReadOnlyPermissionLevel } from './ReadOnlyPermissionLevel'
+import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 
 export const REMOVE_BUTTON_LABEL = 'Remove from AR Permissions'
 
 type ResourceAccessItemProps = {
+  isInEditMode: boolean
   resourceAccess: ResourceAccess
   availablePermissionLevels: PermissionLevel[]
   onChange: (accessType: ACCESS_TYPE[]) => void
@@ -18,8 +20,13 @@ type ResourceAccessItemProps = {
 export const ResourceAccessItem: React.FunctionComponent<
   ResourceAccessItemProps
 > = (props: ResourceAccessItemProps) => {
-  const { resourceAccess, availablePermissionLevels, onChange, onRemove } =
-    props
+  const {
+    resourceAccess,
+    availablePermissionLevels,
+    isInEditMode,
+    onChange,
+    onRemove,
+  } = props
 
   return (
     <>
@@ -35,21 +42,28 @@ export const ResourceAccessItem: React.FunctionComponent<
           <UserOrTeamBadge principalId={resourceAccess.principalId} />
         </Typography>
         <Stack direction="row" gap="10px" alignItems="center" width="225px">
-          <PermissionLevelMenu
-            currentAccessType={resourceAccess.accessType}
-            availablePermissionLevels={availablePermissionLevels}
-            onChange={onChange}
-          />
-          <IconSvgButton
-            aria-label={REMOVE_BUTTON_LABEL}
-            onClick={() => onRemove()}
-            icon="delete"
-            sx={{
-              '&:hover': {
-                color: 'error.main',
-              },
-            }}
-          />
+          {!isInEditMode && (
+            <ReadOnlyPermissionLevel accessType={resourceAccess.accessType} />
+          )}
+          {isInEditMode && (
+            <>
+              <PermissionLevelMenu
+                currentAccessType={resourceAccess.accessType}
+                availablePermissionLevels={availablePermissionLevels}
+                onChange={onChange}
+              />
+              <IconSvgButton
+                aria-label={REMOVE_BUTTON_LABEL}
+                onClick={() => onRemove()}
+                icon="delete"
+                sx={{
+                  '&:hover': {
+                    color: 'error.main',
+                  },
+                }}
+              />
+            </>
+          )}
         </Stack>
       </Stack>
     </>
