@@ -11,11 +11,7 @@ import { ReactComponent as Fisma } from '../../assets/homepage/fisma.svg'
 import { ReactComponent as Hipaa } from '../../assets/homepage/hipaa-compliant.svg'
 import { useOneSageURL } from 'src/utils/hooks'
 
-export type SynapseFeaturesProps = {}
-
-export const SynapseFeatures: React.FunctionComponent<
-  SynapseFeaturesProps
-> = ({}) => {
+export const SynapseFeatures: React.FunctionComponent = () => {
   const sageResourcesUrl = useOneSageURL('/sageresources')
   return (
     <Box sx={{ position: 'relative' }}>
@@ -24,13 +20,13 @@ export const SynapseFeatures: React.FunctionComponent<
         image={<SeamlessIntegration />}
         subtitle="Seamless Integrations"
         description="Synapse provides you with APIs to access or query your data from your web browser, or programmatically  via R, Python, and the command line."
-        icons={[<Python />, <R />]}
+        icons={[<Python key="pythonIcon" />, <R key="rIcon" />]}
         featureName="integrations"
         link="https://help.synapse.org/docs/API-Clients-and-Documentation.1985446128.html"
       />
       <SynapseFeatureItem
         title="Display your provenance"
-        image={<ResearchCredit />}
+        image={<ResearchCredit key="researchCreditIcon" />}
         subtitle="Research Credit"
         description="Synapse records and displays the provenance of your analysis at every step. Analyses, data and code can all be referenced through DOIs (Digital Object Identifiers)."
         featureName="provenance"
@@ -38,7 +34,7 @@ export const SynapseFeatures: React.FunctionComponent<
       />
       <SynapseFeatureItem
         title="Safeguard your data"
-        image={<PrecisionGovernance />}
+        image={<PrecisionGovernance key="precisionGovernanceIcon" />}
         subtitle="Precision Governance"
         description="Ethical openness is our top priority. Your sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient."
         icons={[<Fisma />, <Hipaa />]}
@@ -47,7 +43,7 @@ export const SynapseFeatures: React.FunctionComponent<
       />
       <SynapseFeatureItem
         title="Accelerate biomedical progress"
-        image={<PoweredBySynapse />}
+        image={<PoweredBySynapse key="poweredBySynapseIcon" />}
         subtitle="Powered by Synapse"
         description="Synapse portals are the front door to innovation. Vibrant research communities exchange data, tools and ideas to accelerate biomedical progress."
         featureName="our portals"

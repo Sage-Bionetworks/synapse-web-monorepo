@@ -34,8 +34,6 @@ import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { LoginTwoTone, MenuTwoTone } from '@mui/icons-material'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 
-export type SynapseHomepageV2Props = {}
-
 const onSearch = (value: string) => {
   window.location.assign(`/Search:${encodeURIComponent(value)}`)
 }
@@ -64,9 +62,7 @@ export const homepageBodyText: SxProps = {
   color: darkTextColor,
 }
 
-export const SynapseHomepageV2: React.FunctionComponent<
-  SynapseHomepageV2Props
-> = ({}) => {
+export const SynapseHomepageV2: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
