@@ -7,6 +7,7 @@ import {
   Typography,
   useTheme,
   Link,
+  useMediaQuery,
 } from '@mui/material'
 import { ShowMore } from 'synapse-react-client'
 import { StyledOuterContainer } from './StyledComponents'
@@ -22,19 +23,20 @@ export function SageResourcesPageInternal() {
   const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()
   const sageSourceAppConfig = useSourceApp()
+  const isMobileView = useMediaQuery(theme.breakpoints.only('xs'))
   return (
     <StyledOuterContainer>
       <Paper
         className="SageResourcesPage"
         sx={{
           margin: '0 auto',
-          width: '900px',
+          maxWidth: '900px',
         }}
       >
         <Box
           sx={{
-            px: theme.spacing(8),
-            paddingTop: theme.spacing(8),
+            px: isMobileView ? '0px' : theme.spacing(8),
+            paddingTop: isMobileView ? '0px' : theme.spacing(8),
             position: 'relative',
           }}
         >
@@ -113,7 +115,8 @@ export function SageResourcesPageInternal() {
                 return (
                   <Grid
                     item
-                    xs={4}
+                    xs={12}
+                    lg={4}
                     className="sourceAppItem"
                     key={config.appId}
                   >
