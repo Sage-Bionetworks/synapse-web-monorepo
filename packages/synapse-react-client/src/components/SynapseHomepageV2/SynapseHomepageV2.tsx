@@ -31,7 +31,7 @@ import { SynapsePartners } from './SynapsePartners'
 import { SynapsePlans } from './SynapsePlans'
 import { useInView } from 'react-intersection-observer'
 import SageFullLogo from '../../assets/icons/SageFullLogo'
-import { LoginTwoTone, MenuTwoTone } from '@mui/icons-material'
+import { LoginTwoTone, MenuOutlined } from '@mui/icons-material'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 
 const onSearch = (value: string) => {
@@ -83,7 +83,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
 
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
-  const navButtonSx: SxProps = {
+  const navTextButtonSx: SxProps = {
     fontSize: '18px',
     lineHeight: '24px',
     fontWeight: 400,
@@ -106,6 +106,10 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
     fontSize: '72px',
     lineHeight: '82px',
     color: 'white',
+  }
+  const navButtonSx: SxProps = {
+    borderRadius: '0',
+    padding: '7px 30px',
   }
   return (
     <Box>
@@ -132,14 +136,14 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             }}
           >
             <Button
-              sx={navButtonSx}
+              sx={navTextButtonSx}
               href={resourcesLink.toString()}
               target="_blank"
             >
               Portals
             </Button>
             <Button
-              sx={{ ...navButtonSx, marginRight: '15px' }}
+              sx={{ ...navTextButtonSx, marginRight: '15px' }}
               href="https://sagebionetworks.org/"
               target="_blank"
             >
@@ -150,6 +154,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 size="large"
                 variant="contained"
                 color="secondary"
+                sx={navButtonSx}
                 href={MY_DASHBOARD_LINK}
               >
                 View My Dashboard
@@ -160,6 +165,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 size="large"
                 variant="outlined"
                 color="secondary"
+                sx={navButtonSx}
                 href={LOGIN_LINK}
               >
                 Login
@@ -170,6 +176,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 size="large"
                 variant="contained"
                 color="secondary"
+                sx={navButtonSx}
                 href={registrationLink.toString()}
               >
                 Register Now
@@ -182,10 +189,25 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
+              columnGap: '20px',
             }}
           >
-            <IconButton size="large" onClick={handleClick}>
-              <MenuTwoTone />
+            {!isSignedIn && (
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={navButtonSx}
+                href={registrationLink.toString()}
+              >
+                Register Now
+              </Button>
+            )}
+            <IconButton
+              color="secondary"
+              sx={{ borderWidth: 1, borderStyle: 'solid', borderRadius: '0' }}
+              onClick={handleClick}
+            >
+              <MenuOutlined />
             </IconButton>
             <Menu
               anchorEl={anchorEl}
@@ -201,18 +223,6 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              {!isSignedIn && (
-                <MenuItem
-                  onClick={() => {
-                    window.open(registrationLink.toString(), '_blank')
-                    handleClose()
-                  }}
-                >
-                  <Button variant="contained" color="secondary">
-                    Register Now
-                  </Button>
-                </MenuItem>
-              )}
               {!isSignedIn && (
                 <MenuItem
                   onClick={() => {
