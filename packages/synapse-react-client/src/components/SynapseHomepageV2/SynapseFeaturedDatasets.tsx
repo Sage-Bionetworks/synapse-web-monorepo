@@ -12,6 +12,7 @@ export const SynapseFeaturedDatasets: React.FunctionComponent<
   SynapseFeaturedDatasetsProps
 > = ({ sourceTable }) => {
   // TODO: Figure out how we should present the featured datasets.  Random selection?  Paginated with page nav?
+  // TODO: Only show 3 cards, and a "Show all datasets" which shows another 3?
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: sourceTable,
     query: {

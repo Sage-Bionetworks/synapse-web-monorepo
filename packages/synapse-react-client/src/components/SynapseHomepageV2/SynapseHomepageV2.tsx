@@ -92,6 +92,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
     lineHeight: '24px',
     fontWeight: 400,
   }
+  //TODO: tweak fonts and layout for mobile experience based on the new mobile design
   const h2Sx: SxProps = {
     fontSize: '52px',
     fontWeight: 600,
