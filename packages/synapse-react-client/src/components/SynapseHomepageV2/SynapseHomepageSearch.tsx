@@ -75,6 +75,7 @@ export const SynapseHomepageSearch: React.FunctionComponent<
         onOpen={() => setIsPopperOpen(true)}
         onClose={() => setIsPopperOpen(false)}
         PopperComponent={PopperAlwaysPlacedBelow}
+        groupBy={() => 'Most popular searches'}
         renderInput={params => (
           <TextField
             {...params}
