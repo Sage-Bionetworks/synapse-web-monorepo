@@ -51,16 +51,24 @@ export const SynapseHomepageSearch: React.FunctionComponent<
       limit: 10,
     },
   }
-  const { data: queryResultResponse } =
+  const { data: queryResultResponse, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(request)
 
   const rowSet = queryResultResponse?.responseBody?.queryResult?.queryResults
+  const headers = rowSet?.headers
+  const topSearchedColIndex = headers?.findIndex(
+    selectColumn => selectColumn.name == 'top_searched',
+  )!
   return (
     <FormControl fullWidth sx={{ m: 1 }}>
       <Autocomplete
         freeSolo
         disableClearable
-        options={rowSet ? rowSet.rows.map(row => row.values[0] ?? '') : []}
+        options={
+          rowSet && !isLoading
+            ? rowSet.rows.map(row => row.values[topSearchedColIndex] ?? '')
+            : ['...']
+        }
         onChange={(_event, newValue: string | null) => {
           onSearch(newValue ?? '')
         }}
