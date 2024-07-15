@@ -30,14 +30,22 @@ import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { LoginTwoTone, MenuOutlined } from '@mui/icons-material'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 import { onSearch, SynapseHomepageSearch } from './SynapseHomepageSearch'
-import { SynapsePopularSearches } from './SynapsePopularSearches'
 
 const synapseInActionTable = 'syn61670075'
 const past30DaysDownloadMetricsTable = 'syn61597084'
 const generalStatsMetricsTable = 'syn61588163'
 const featuredDatasetsTable = 'syn61609402'
 const searchAutocompleteTable = 'syn61670515'
-const popularSearchesTable = 'syn61775968'
+
+const popularSearches = [
+  "Alzheimer's Disease",
+  'Parkinson',
+  'Neurofibromatosis',
+  'HTAN',
+  'ukb-ppp',
+  'ROSMAP',
+  'GENIE',
+]
 const LOGIN_LINK = '/LoginPlace:0'
 const MY_DASHBOARD_LINK = '/Profile:v'
 
@@ -318,7 +326,34 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
       >
         <SynapseHomepageSearch sourceTable={searchAutocompleteTable} />
       </Box>
-      <SynapsePopularSearches sourceTable={popularSearchesTable} />
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: '30px',
+          flexWrap: 'wrap',
+        }}
+      >
+        {/* TODO: Do the popular searches match the autocomplete from the search box?  Maybe move these to SynapseHomepage Search */}
+        {popularSearches.map(value => {
+          return (
+            <Chip
+              key={value}
+              label={value}
+              onClick={() => onSearch(value)}
+              variant="outlined"
+              // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image
+              sx={{
+                color: '#2A5850',
+                backgroundColor: '#DAE9E7',
+                '&:hover': { backgroundColor: '#f5f5f3 !important' },
+              }}
+            />
+          )
+        })}
+      </Box>
       <Box
         sx={{
           display: isDesktopView ? 'grid' : 'relative',
