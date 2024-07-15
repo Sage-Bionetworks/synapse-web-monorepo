@@ -1,5 +1,5 @@
 import { Alert, Box, Stack, Typography } from '@mui/material'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
+import { ACCESS_TYPE, AccessControlList } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useImperativeHandle, useState } from 'react'
 import {
@@ -166,7 +166,9 @@ export const AccessRequirementAclEditor = React.forwardRef(
           isLoading={isLoadingOriginalAcl}
           isInEditMode={true}
           emptyText={EMPTY_RESOURCE_ACCESS_LIST_TEXT}
-          addResourceAccessItem={addResourceAccessItem}
+          onAddPrincipalToAcl={id =>
+            addResourceAccessItem(id, [ACCESS_TYPE.REVIEW_SUBMISSIONS])
+          }
           updateResourceAccessItem={updateResourceAccessItem}
           removeResourceAccessItem={removeResourceAccessItem}
         />
