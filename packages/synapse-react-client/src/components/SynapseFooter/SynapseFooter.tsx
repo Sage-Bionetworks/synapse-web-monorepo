@@ -12,6 +12,7 @@ import { ReactComponent as Facebook } from '../../assets/homepage/facebook.svg'
 import { ReactComponent as Instagram } from '../../assets/homepage/instagram.svg'
 import { ReactComponent as Youtube } from '../../assets/homepage/youtube.svg'
 import ExperimentalMode from '../ExperimentalMode'
+import { useTheme, useMediaQuery } from '@mui/material'
 
 export type SynapseFooterProps = {
   portalVersion: string
@@ -34,7 +35,8 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
   const sageResourcesUrl = useOneSageURL('/sageresources')
 
   const isLoggedIn = !!accessToken
-
+  const theme = useTheme()
+  const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
   // const signOut = async () => {
   //   if (signoutCallback) {
   //     signoutCallback()
@@ -207,7 +209,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-between',
+            justifyContent: isSmallView ? 'center' : 'space-between',
             alignItems: 'center',
             marginTop: '60px',
             rowGap: '40px',
@@ -219,6 +221,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
               columnGap: '20px',
               alignItems: 'center',
               flexWrap: 'wrap',
+              justifyContent: isSmallView ? 'center' : undefined,
             }}
           >
             <SageFullLogo textColor="white" width={285} />
