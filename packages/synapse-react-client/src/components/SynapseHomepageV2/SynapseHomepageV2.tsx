@@ -1,12 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Box,
   Button,
   SxProps,
   Typography,
-  FormControl,
-  OutlinedInput,
-  InputAdornment,
   Chip,
   useTheme,
   useMediaQuery,
@@ -18,7 +15,6 @@ import {
 } from '@mui/material'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
 import { TypeAnimation } from 'react-type-animation'
-import { Search } from '../../assets/themed_icons'
 import { useOneSageURL } from '../../utils/hooks'
 import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
 import { useSynapseContext } from '../../utils'
@@ -33,14 +29,13 @@ import { useInView } from 'react-intersection-observer'
 import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { LoginTwoTone, MenuOutlined } from '@mui/icons-material'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
+import { onSearch, SynapseHomepageSearch } from './SynapseHomepageSearch'
 
-const onSearch = (value: string) => {
-  window.location.assign(`/Search:${encodeURIComponent(value)}`)
-}
 const synapseInActionTable = 'syn61670075'
 const past30DaysDownloadMetricsTable = 'syn61597084'
 const generalStatsMetricsTable = 'syn61588163'
 const featuredDatasetsTable = 'syn61609402'
+const searchAutocompleteTable = 'syn61775968'
 
 const popularSearches = [
   "Alzheimer's Disease",
@@ -71,7 +66,6 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
   const isMobileView = useMediaQuery(theme.breakpoints.only('xs'))
-  const [searchValue, setSearchValue] = useState('')
 
   // mobile view nav bar menu
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -331,22 +325,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           margin: 'auto',
         }}
       >
-        <FormControl fullWidth sx={{ m: 1 }}>
-          <OutlinedInput
-            startAdornment={
-              <InputAdornment
-                position="start"
-                sx={{ marginLeft: '20px', marginRight: '18px' }}
-              >
-                <Search size={32} fill="#172430" />
-              </InputAdornment>
-            }
-            placeholder="Search Synapse"
-            sx={{ fontSize: '24px', borderRadius: 96.6 }}
-            onSubmit={() => onSearch(searchValue)}
-            onChange={event => setSearchValue(event.target.value)}
-          />
-        </FormControl>
+        <SynapseHomepageSearch sourceTable={searchAutocompleteTable} />
       </Box>
       <Box
         sx={{
