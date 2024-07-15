@@ -17,6 +17,7 @@ const meta: Meta<AclEditorProps> = {
     updateResourceAccessItem: fn(),
     removeResourceAccessItem: fn(),
     isLoading: false,
+    isInEditMode: true,
     emptyText: 'No permissions have been granted.',
   },
 }

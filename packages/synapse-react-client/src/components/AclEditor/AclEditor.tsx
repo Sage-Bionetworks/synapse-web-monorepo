@@ -9,6 +9,7 @@ import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type AclEditorProps = {
+  isInEditMode: boolean
   isLoading: boolean
   resourceAccessList: ResourceAccess[]
   availablePermissionLevels: PermissionLevel[]
@@ -26,6 +27,7 @@ export type AclEditorProps = {
 
 export function AclEditor(props: AclEditorProps) {
   const {
+    isInEditMode,
     isLoading,
     resourceAccessList,
     availablePermissionLevels,
@@ -60,6 +62,7 @@ export function AclEditor(props: AclEditorProps) {
                     key={resourceAccess.principalId}
                     resourceAccess={resourceAccess}
                     availablePermissionLevels={availablePermissionLevels}
+                    isInEditMode={isInEditMode}
                     onChange={accessType =>
                       updateResourceAccessItem(
                         resourceAccess.principalId,
@@ -76,38 +79,40 @@ export function AclEditor(props: AclEditorProps) {
           </TransitionGroup>
         )}
       </Box>
-      <Box>
-        <Typography variant="headline3" mb="10px">
-          Add More
-        </Typography>
-        <Typography
-          sx={{
-            variant: 'body1',
-            lineHeight: '20px',
-            fontStyle: 'italic',
-            color: 'grey.900',
-          }}
-          mb="20px"
-        >
-          Search for a username or team to add. You can search by username,
-          first or last names, or team name
-        </Typography>
+      {isInEditMode && (
         <Box>
-          <Typography
-            component="label"
-            variant="smallText2"
-            htmlFor="reviewer-search"
-          >
-            Add a user or team
+          <Typography variant="headline3" mb="10px">
+            Add More
           </Typography>
-          <UserSearchBoxV2
-            value={null}
-            inputId="reviewer-search"
-            placeholder="Username, name (first and last) or team name."
-            onChange={id => addResourceAccessItem(id)}
-          />
+          <Typography
+            sx={{
+              variant: 'body1',
+              lineHeight: '20px',
+              fontStyle: 'italic',
+              color: 'grey.900',
+            }}
+            mb="20px"
+          >
+            Search for a username or team to add. You can search by username,
+            first or last names, or team name
+          </Typography>
+          <Box>
+            <Typography
+              component="label"
+              variant="smallText2"
+              htmlFor="reviewer-search"
+            >
+              Add a user or team
+            </Typography>
+            <UserSearchBoxV2
+              value={null}
+              inputId="reviewer-search"
+              placeholder="Username, name (first and last) or team name."
+              onChange={id => addResourceAccessItem(id)}
+            />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   )
 }

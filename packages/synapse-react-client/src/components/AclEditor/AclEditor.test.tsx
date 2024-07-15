@@ -59,6 +59,7 @@ const defaultProps: AclEditorProps = {
   availablePermissionLevels: DEFAULT_AVAILABLE_PERMISSION_LEVELS,
   isLoading: false,
   emptyText: DEFAULT_EMPTY_TEXT,
+  isInEditMode: true,
   addResourceAccessItem: mockAddResourceAccessItem,
   updateResourceAccessItem: mockUpdateResourceAccessItem,
   removeResourceAccessItem: mockRemoveResourceAccessItem,
@@ -155,5 +156,22 @@ describe('AclEditor', () => {
     const verifyRemoval = false // these tests do not track state, so do not verify that the item was removed from the UI
     await removeItem(itemRows[0], user, verifyRemoval)
     expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(MOCK_TEAM_ID)
+  })
+
+  it('does not show edit controls when isInEditMode is false', async () => {
+    const { itemRows } = await setUp({ isInEditMode: false })
+
+    // Data should still be present
+    confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
+    confirmItem(
+      itemRows[2],
+      `@${mockUserData1.userProfile?.userName}`,
+      'Can Review & Exempt Eligible',
+    )
+
+    // No menus or buttons should be shown
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })
