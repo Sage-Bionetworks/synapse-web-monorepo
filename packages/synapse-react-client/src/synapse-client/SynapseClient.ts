@@ -3165,6 +3165,11 @@ export const createAccessRequirement = <T extends AccessRequirement>(
   accessToken: string | undefined,
   accessRequirement: Partial<T>,
 ): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
   return doPost<T>(
     ACCESS_REQUIREMENT,
     accessRequirement,
@@ -3187,6 +3192,11 @@ export const updateAccessRequirement = <T extends AccessRequirement>(
   accessToken: string | undefined,
   accessRequirement: T,
 ): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
   return doPut<T>(
     `${ACCESS_REQUIREMENT}/${accessRequirement.id}`,
     accessRequirement,

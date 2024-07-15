@@ -30,6 +30,7 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
 }) => {
   return (
     <div
+      role={'progressbar'}
       className="spinner"
       style={{
         height: `${size}px`,
