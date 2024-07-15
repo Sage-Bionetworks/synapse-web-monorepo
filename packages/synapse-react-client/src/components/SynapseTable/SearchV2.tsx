@@ -12,12 +12,13 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { LockedColumn, QueryContextType } from '../QueryContext/QueryContext'
+import { QueryContextType } from '../QueryContext'
 import IconSvg from '../IconSvg/IconSvg'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-} from '../../utils/types/IsType'
+  LockedColumn,
+} from '../../utils'
 import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
