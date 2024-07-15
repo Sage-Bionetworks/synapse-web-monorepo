@@ -100,7 +100,12 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
                 }}
               >
                 {/* In any case, preload the image file handle ID so it is ready when the user scrolls down to view it */}
-                <Box sx={{ display: isMobileView ? 'block' : 'none' }}>
+                <Box
+                  sx={{
+                    display: isMobileView ? 'block' : 'none',
+                    img: { width: '100%' },
+                  }}
+                >
                   <ImageFromSynapseTable
                     tableId={tableId}
                     fileHandleId={imageFileHandleId}
