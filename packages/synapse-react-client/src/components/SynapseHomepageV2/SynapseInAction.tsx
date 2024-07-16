@@ -46,6 +46,9 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
   const imageFileColIndex = headers?.findIndex(
     selectColumn => selectColumn.name == 'image',
   )!
+  const mobileImageFileColIndex = headers?.findIndex(
+    selectColumn => selectColumn.name == 'mobileImage',
+  )!
   const logoColIndex = headers?.findIndex(
     selectColumn => selectColumn.name == 'logo',
   )!
@@ -83,6 +86,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             const description = row.values[descriptionColIndex]!
             const tags: string[] = JSON.parse(row.values[tagsColIndex]!)
             const imageFileHandleId = row.values[imageFileColIndex]!
+            const mobileImageFileHandleId = row.values[mobileImageFileColIndex]!
             const logoFileHandleId = row.values[logoColIndex]!
             const link = row.values[linkColIndex]!
             const friendlyName = row.values[friendlyNameColIndex]!
@@ -94,21 +98,34 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
               <Box
                 key={row.rowId}
                 sx={{
-                  pt: '120px',
-                  pb: '120px',
+                  pt: isMobileView ? '30px' : '120px',
+                  pb: isMobileView ? '30px' : '120px',
                   backgroundColor: { backgroundColor },
                 }}
               >
-                {/* In any case, preload the image file handle ID so it is ready when the user scrolls down to view it */}
+                {/* Preload the desktop image file handle ID so it is ready when the user scrolls down to view it */}
                 <Box
                   sx={{
-                    display: isMobileView ? 'block' : 'none',
-                    img: { width: '100%' },
+                    display: 'none',
                   }}
                 >
                   <ImageFromSynapseTable
                     tableId={tableId}
                     fileHandleId={imageFileHandleId}
+                  />
+                </Box>
+                {/* If mobile, show the mobile image file */}
+                <Box
+                  sx={{
+                    display: isMobileView ? 'flex' : 'none',
+                    justifyContent: 'center',
+                    width: '100%',
+                    img: { width: '320px' },
+                  }}
+                >
+                  <ImageFromSynapseTable
+                    tableId={tableId}
+                    fileHandleId={mobileImageFileHandleId}
                   />
                 </Box>
                 <SynapseInActionItem

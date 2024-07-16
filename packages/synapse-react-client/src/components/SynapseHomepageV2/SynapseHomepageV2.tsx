@@ -337,7 +337,9 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           flexWrap: 'wrap',
         }}
       >
-        {/* TODO: Do the popular searches match the autocomplete from the search box?  Maybe move these to SynapseHomepage Search */}
+        {/* Hard-coded popular searches because these Chips are above the fold and immediately visible. Any delay showing these chips is a problem.
+        The hope is that these "popularSearches" will not change much over time, since they represent the types of data in the platform.
+        */}
         {popularSearches.map(value => {
           return (
             <Chip

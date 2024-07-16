@@ -1,4 +1,12 @@
-import { Box, Chip, Link, Typography } from '@mui/material'
+import {
+  Box,
+  Chip,
+  Link,
+  Typography,
+  useTheme,
+  useMediaQuery,
+  SxProps,
+} from '@mui/material'
 import React, { useEffect } from 'react'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
@@ -18,6 +26,13 @@ export type SynapseInActionItemProps = {
   onInView: () => void
 }
 
+const mobileViewSxProps: SxProps = {
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+}
 export const SynapseInActionItem: React.FunctionComponent<
   SynapseInActionItemProps
 > = ({
@@ -36,28 +51,32 @@ export const SynapseInActionItem: React.FunctionComponent<
       onInView()
     }
   }, [inView])
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <Box
       sx={{
         padding: '15px',
       }}
     >
-      <Box>
-        {tags &&
-          tags.map(tag => {
-            return (
-              <Chip
-                key={tag}
-                sx={{
-                  marginRight: '5px',
-                  color: '#38756A',
-                  backgroundColor: '#DAE9E7',
-                  border: '1px solid #6BA89D',
-                }}
-                label={tag}
-              />
-            )
-          })}
+      <Box sx={isMobileView ? mobileViewSxProps : undefined}>
+        <Box>
+          {tags &&
+            tags.map(tag => {
+              return (
+                <Chip
+                  key={tag}
+                  sx={{
+                    marginRight: '5px',
+                    color: '#38756A',
+                    backgroundColor: '#DAE9E7',
+                    border: '1px solid #6BA89D',
+                  }}
+                  label={tag}
+                />
+              )
+            })}
+        </Box>
         <Typography
           variant="body1"
           sx={{
