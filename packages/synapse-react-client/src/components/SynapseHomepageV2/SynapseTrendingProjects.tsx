@@ -52,7 +52,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
       <Box
         sx={{
           color: '#D7DEE4',
-          display: 'grid',
+          display: isMobileView ? 'none' : 'grid',
           ...trendingProjectsGridTemplateColumns,
           justifyItems: 'start',
         }}
@@ -61,10 +61,8 @@ export const SynapseTrendingProjects: React.FunctionComponent<
           Rank
         </Typography>
         <Typography variant="body1">Project</Typography>
-        {!isMobileView && (
-          <Typography variant="body1">Data Downloaded</Typography>
-        )}
-        {!isMobileView && <Typography variant="body1">Unique Users</Typography>}
+        <Typography variant="body1">Data Downloaded</Typography>
+        <Typography variant="body1">Unique Users</Typography>
         <Box></Box>
       </Box>
       {rowSet.rows.map((row, index) => (
