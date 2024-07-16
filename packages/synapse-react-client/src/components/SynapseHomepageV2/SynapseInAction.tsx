@@ -153,7 +153,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
               fileHandleId={imageFileHandleIdInView}
               fadeInTimeoutMs={600}
               style={{
-                mt: '-100px',
+                marginTop: '-100px',
               }}
             />
           )}
