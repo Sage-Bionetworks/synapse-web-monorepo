@@ -12,6 +12,7 @@ import {
   Divider,
   ListItemIcon,
   IconButton,
+  Link,
 } from '@mui/material'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
 import { TypeAnimation } from 'react-type-animation'
@@ -618,13 +619,25 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                   ...homepageBodyText,
                   color: 'white',
                   paddingTop: '20px',
-                  paddingBottom: '80px',
                 }}
               >
                 Synapse is free and open source for all. We offer different
                 plans to help you if you need extra storage or help with your
                 data management. Find out about managed plans
               </Typography>
+              <Link
+                href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
+                target="_blank"
+                sx={{
+                  color: 'white !important',
+                  textDecorationColor: 'white !important',
+                  paddingTop: '20px',
+                  paddingBottom: '30px',
+                  display: 'block',
+                }}
+              >
+                Learn more about our plans
+              </Link>
               <SynapsePlans />
             </Box>
           </Box>

@@ -20,12 +20,17 @@ export const onSearch = (value: string) => {
 export type SynapseHomepageSearchProps = {
   sourceTable: string
 }
+
+const boxShadow =
+  '0px 4px 4px 0px rgba(0, 0, 0, 0.05), 0px 1px 1px 0px rgba(0, 0, 0, 0.05)'
 const StyledPopper = styled(Popper)(() => ({
   '& .MuiAutocomplete-paper': {
     borderRadius: '0px 0px 40px 40px',
     padding: '0px 20px 20px 20px',
+    boxShadow,
   },
 }))
+
 const PopperAlwaysPlacedBelow = (props: PopperProps) => {
   // Modifier necessary to force placement to remain on the bottom of the anchor element, despite not having enough space to render
   return (
@@ -87,6 +92,7 @@ export const SynapseHomepageSearch: React.FunctionComponent<
                 fontSize: '24px',
                 borderRadius: isPopperOpen ? '40px 40px 0px 0px' : '40px',
                 backgroundColor: 'white',
+                boxShadow,
               },
               startAdornment: (
                 <InputAdornment position="start">
