@@ -16,7 +16,10 @@ export const SynapseByTheNumbersItem: React.FunctionComponent<
         display: 'flex',
         alignItems: 'center',
         gap: '15px',
-        p: '20px',
+        p: {
+          xs: '5px',
+          sm: '20px',
+        },
       }}
     >
       <Box>
@@ -43,7 +46,15 @@ export const SynapseByTheNumbersItem: React.FunctionComponent<
           {description}
         </Typography>
       </Box>
-      {plot}
+      <Box
+        sx={{
+          svg: {
+            width: '100%',
+          },
+        }}
+      >
+        {plot}
+      </Box>
     </Box>
   )
 }
