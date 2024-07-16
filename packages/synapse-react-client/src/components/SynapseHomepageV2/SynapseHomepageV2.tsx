@@ -289,7 +289,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
         sx={{
           textAlign: 'center',
           padding: isDesktopView ? '80px 0px 0px 0px' : '20px',
-          minHeight: isSmallView ? '240px' : undefined,
+          minHeight: isSmallView ? '270px' : undefined,
         }}
       >
         <Typography variant="headline1" sx={titleSx}>
@@ -367,7 +367,12 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
         }}
       >
         <Box
-          sx={{ padding: isDesktopView ? '70px 0px 25px 60px' : '25px' }}
+          sx={{
+            padding: isDesktopView ? '70px 0px 25px 60px' : '25px',
+            svg: {
+              maxWidth: '100%',
+            },
+          }}
           ref={ref} // use this UI to trigger loading the rest of the page content
         >
           <SageFullLogo width={350} />
