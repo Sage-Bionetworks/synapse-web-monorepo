@@ -12,7 +12,6 @@ import { ReactComponent as Facebook } from '../../assets/homepage/facebook.svg'
 import { ReactComponent as Instagram } from '../../assets/homepage/instagram.svg'
 import { ReactComponent as Youtube } from '../../assets/homepage/youtube.svg'
 import ExperimentalMode from '../ExperimentalMode'
-import { useTheme, useMediaQuery } from '@mui/material'
 
 export type SynapseFooterProps = {
   portalVersion: string
@@ -33,25 +32,14 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
   const { accessToken } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
   const sageResourcesUrl = useOneSageURL('/sageresources')
-
   const isLoggedIn = !!accessToken
-  const theme = useTheme()
-  const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
-  // const signOut = async () => {
-  //   if (signoutCallback) {
-  //     signoutCallback()
-  //   } else {
-  //     await SynapseClient.signOut()
-  //     window.location.reload()
-  //   }
-  // }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
           backgroundColor: '#172430',
-          padding: '50px 50px 20px 50px',
+          p: '50px 50px 20px 50px',
         }}
       >
         <Box
@@ -66,7 +54,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             <SynapseFullLogo textColor="white" />
             <Typography
               variant="body1Italic"
-              sx={{ color: '#B0BDC9', fontSize: '13px', marginBottom: '25px' }}
+              sx={{ color: '#B0BDC9', fontSize: '13px', mb: '25px' }}
             >
               Powered by Sage Bionetworks
             </Typography>
@@ -78,7 +66,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                   fontSize: '32px',
                   lineHeight: '46px',
                   fontWeight: 400,
-                  marginBottom: '30px',
+                  mb: '30px',
                 }}
               >
                 Sign up for Synapse today
@@ -109,7 +97,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                 </Button>
               </Box>
             )}
-            {/* Per Adam, this functionality is unnecessary 
+            {/* Logged in buttons not in the design, but it might look something like this...
             {isLoggedIn && (
               <Box sx={{ display: 'flex', columnGap: '20px' }}>
                 <Button
@@ -209,9 +197,9 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: isSmallView ? 'center' : 'space-between',
+            justifyContent: { xs: 'center', md: 'space-between' },
             alignItems: 'center',
-            marginTop: '60px',
+            mt: '60px',
             rowGap: '40px',
           }}
         >
@@ -221,7 +209,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
               columnGap: '20px',
               alignItems: 'center',
               flexWrap: 'wrap',
-              justifyContent: isSmallView ? 'center' : undefined,
+              justifyContent: { xs: 'center', md: undefined },
             }}
           >
             <SageFullLogo textColor="white" width={285} />
@@ -301,7 +289,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
           justifyContent: 'space-between',
           backgroundColor: '#121B23',
           alignItems: 'center',
-          padding: '15px 50px',
+          p: '15px 50px',
         }}
       >
         <Box
