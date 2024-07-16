@@ -44,4 +44,4 @@ jobs:
           exitOnceUploaded: true
           autoAcceptChanges: 'main'
           onlyChanged: true
-          buildScriptName: "storybook:build"
+          buildScriptName: 'storybook:build'
