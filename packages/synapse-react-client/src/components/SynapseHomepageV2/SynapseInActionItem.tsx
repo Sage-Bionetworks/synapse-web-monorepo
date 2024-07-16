@@ -56,7 +56,7 @@ export const SynapseInActionItem: React.FunctionComponent<
   return (
     <Box
       sx={{
-        padding: '15px',
+        p: '15px',
       }}
     >
       <Box sx={isMobileView ? mobileViewSxProps : undefined}>
@@ -67,7 +67,7 @@ export const SynapseInActionItem: React.FunctionComponent<
                 <Chip
                   key={tag}
                   sx={{
-                    marginRight: '5px',
+                    mr: '5px',
                     color: '#38756A',
                     backgroundColor: '#DAE9E7',
                     border: '1px solid #6BA89D',
@@ -83,7 +83,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             fontWeight: 400,
             fontSize: '36px',
             lineHeight: '46px',
-            marginTop: '32px',
+            mt: '32px',
             color: darkTextColor,
           }}
         >
@@ -93,8 +93,8 @@ export const SynapseInActionItem: React.FunctionComponent<
           variant="body1"
           sx={{
             ...homepageBodyText,
-            marginTop: '32px',
-            marginBottom: '32px',
+            mt: '32px',
+            mb: '32px',
           }}
           ref={ref}
         >
@@ -106,10 +106,10 @@ export const SynapseInActionItem: React.FunctionComponent<
           friendlyName={`${friendlyName} logo`}
           style={{ height: '40px' }}
         />
-        <Box sx={{ marginTop: '32px' }}>
+        <Box sx={{ mt: '32px' }}>
           <Link href={link} target="_blank">
             View {friendlyName.endsWith('Portal') ? 'the' : ''} {friendlyName}{' '}
-            <EastTwoTone sx={{ marginBottom: '-8px', marginLeft: '6px' }} />
+            <EastTwoTone sx={{ mb: '-8px', ml: '6px' }} />
           </Link>
         </Box>
       </Box>

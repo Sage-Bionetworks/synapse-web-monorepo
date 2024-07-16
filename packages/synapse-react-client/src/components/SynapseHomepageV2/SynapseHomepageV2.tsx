@@ -66,7 +66,6 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
   const theme = useTheme()
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
-  const isMobileView = useMediaQuery(theme.breakpoints.only('xs'))
 
   // mobile view nav bar menu
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -85,7 +84,10 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
     fontWeight: 400,
   }
   const h2Sx: SxProps = {
-    fontSize: isSmallView ? '36px' : '52px',
+    fontSize: {
+      xs: '36px',
+      md: '52px',
+    },
     fontWeight: 600,
     lineHeight: '52px',
     color: darkTextColor,
@@ -98,15 +100,33 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
   const titleSx: SxProps = {
     ...defaultHomepageText,
     fontWeight: 300,
-    fontSize: isSmallView ? '48px' : '72px',
-    lineHeight: isSmallView ? '120%' : '82px',
+    fontSize: {
+      xs: '48px',
+      md: '72px',
+    },
+    lineHeight: {
+      xs: '120%',
+      md: '82px',
+    },
     color: 'white',
   }
   const navButtonSx: SxProps = {
     borderRadius: '0',
-    padding: isMobileView ? '7px 10px' : '7px 30px',
+    p: {
+      xs: '7px 10px',
+      sm: '7px 30px',
+    },
   }
-  const standardSidePadding = isMobileView ? '15px' : '50px'
+  const sidePadding: SxProps = {
+    pl: {
+      xs: '15px',
+      sm: '50px',
+    },
+    pr: {
+      xs: '15px',
+      sm: '50px',
+    },
+  }
   return (
     <Box>
       {/* Top nav bar */}
@@ -116,7 +136,10 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           columnGap: '5px',
-          padding: isMobileView ? '10px 0px' : '20px 15px',
+          p: {
+            xs: '10px 0px',
+            sm: '20px 15px',
+          },
         }}
       >
         {/* Logo */}
@@ -140,7 +163,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               Portals
             </Button>
             <Button
-              sx={{ ...navTextButtonSx, marginRight: '15px' }}
+              sx={{ ...navTextButtonSx, mr: '15px' }}
               href="https://sagebionetworks.org/"
               target="_blank"
             >
@@ -264,7 +287,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           </Box>
         )}
       </Box>
-      <Box sx={{ position: 'relative', paddingBottom: '80px' }}>
+      <Box sx={{ position: 'relative', pb: '80px' }}>
         <Box
           sx={{
             position: 'absolute',
@@ -288,8 +311,14 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
       <Box
         sx={{
           textAlign: 'center',
-          padding: isDesktopView ? '80px 0px 0px 0px' : '20px',
-          minHeight: isSmallView ? '270px' : undefined,
+          p: {
+            xs: '20px',
+            lg: '80px 0px 0px 0px',
+          },
+          minHeight: {
+            xs: '270px',
+            md: undefined,
+          },
         }}
       >
         <Typography variant="headline1" sx={titleSx}>
@@ -320,9 +349,9 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
       {/* Search */}
       <Box
         sx={{
-          paddingTop: '70px',
+          pt: '70px',
           maxWidth: '600px',
-          margin: 'auto',
+          m: 'auto',
         }}
       >
         <SynapseHomepageSearch sourceTable={searchAutocompleteTable} />
@@ -333,7 +362,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           gap: '10px',
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: '30px',
+          mt: '30px',
           flexWrap: 'wrap',
         }}
       >
@@ -359,16 +388,16 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
       </Box>
       <Box
         sx={{
-          display: isDesktopView ? 'grid' : 'relative',
+          display: { xs: 'relative', lg: 'grid' },
           gridTemplateColumns: '50% 50%',
           backgroundColor: '#DAE9E7',
-          marginTop: '150px',
-          height: isDesktopView ? '608px' : undefined, //force container to the same height as the image
+          mt: '150px',
+          height: { lg: '608px' }, //force container to the same height as the image
         }}
       >
         <Box
           sx={{
-            padding: isDesktopView ? '70px 0px 25px 60px' : '25px',
+            p: { xs: '25px', lg: '70px 0px 25px 60px' },
             svg: {
               maxWidth: '100%',
             },
@@ -380,13 +409,19 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             variant="headline2"
             sx={{
               ...defaultHomepageText,
-              fontSize: isSmallView ? '24px' : '40px',
-              lineHeight: isSmallView ? '140%' : '60px',
+              fontSize: {
+                xs: '24px',
+                md: '40px',
+              },
+              lineHeight: {
+                xs: '140%',
+                md: '60px',
+              },
               maxWidth: '600px',
               color: '#38756A',
-              marginTop: '20px',
+              mt: '20px',
               fontWeight: 400,
-              marginBottom: '35px',
+              mb: '35px',
             }}
           >
             Created by <strong>Sage Bionetworks</strong>, Synapse empowers
@@ -399,7 +434,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             color="secondary"
             href="https://www.sagebionetworks.org"
             target="_blank"
-            sx={{ padding: '5px 25px' }}
+            sx={{ p: '5px 25px' }}
           >
             About Sage Bionetworks
           </Button>
@@ -419,21 +454,21 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               sx={{
                 ...defaultHomepageText,
                 textAlign: 'center',
-                marginTop: '100px',
-                fontSize: isSmallView ? '32px' : '40px',
+                mt: '100px',
+                fontSize: { xs: '32px', md: '40px' },
                 lineHeight: '42px',
                 mb: '30px',
               }}
             >
               We partner with scientific leaders
             </Typography>
-            <Box sx={{ margin: 'auto', maxWidth: '750px' }}>
+            <Box sx={{ m: 'auto', maxWidth: '750px' }}>
               <Typography
                 variant="headline1"
                 sx={{
                   ...homepageBodyText,
                   textAlign: 'center',
-                  marginBottom: '60px',
+                  mb: '60px',
                 }}
               >
                 Synapse is your ecosystem for responsible data sharing,
@@ -443,7 +478,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             <SynapsePartners />
             <Box
               sx={{
-                paddingBottom: '220px',
+                pb: '220px',
                 clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0% 100%)',
                 backgroundColor: 'white',
                 zIndex: 100,
@@ -451,11 +486,10 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             />
             <Box
               sx={{
+                ...sidePadding,
                 backgroundColor: '#223549',
-                paddingTop: '200px',
-                marginTop: '-200px',
-                pl: standardSidePadding,
-                pr: standardSidePadding,
+                pt: '200px',
+                mt: '-200px',
                 pb: '5px',
               }}
             >
@@ -464,8 +498,8 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 sx={{
                   ...h2Sx,
                   textAlign: 'center',
-                  marginTop: '100px',
-                  marginBottom: '70px',
+                  mt: '100px',
+                  mb: '70px',
                   color: 'white',
                 }}
               >
@@ -479,8 +513,8 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                   textAlign: 'center',
                   fontSize: '36px',
                   lineHeight: '40px',
-                  marginTop: '60px',
-                  marginBottom: '25px',
+                  mt: '60px',
+                  mb: '25px',
                   color: 'white',
                 }}
               >
@@ -492,7 +526,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             </Box>
             <Box
               sx={{
-                paddingBottom: '220px',
+                pb: '220px',
                 clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 0%)',
                 backgroundColor: '#223549',
                 zIndex: 100,
@@ -501,27 +535,33 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           </Box>
           <Box
             sx={{
-              paddingTop: '300px',
-              marginTop: '-220px',
+              pt: '300px',
+              mt: '-220px',
               backgroundColor: '#172430',
             }}
           />
 
           <Box
             sx={{
+              ...sidePadding,
               backgroundColor: '#172430',
-              paddingLeft: standardSidePadding,
             }}
           >
-            <Box sx={{ margin: 'auto', maxWidth: '1500px' }}>
+            <Box sx={{ m: 'auto', maxWidth: '1500px' }}>
               <Typography
                 variant="headline1"
                 sx={{
                   ...h2Sx,
                   color: 'white',
                   maxWidth: '700px',
-                  paddingBottom: isMobileView ? '20px' : '100px',
-                  textAlign: isMobileView ? 'center' : undefined,
+                  pb: {
+                    xs: '20px',
+                    sm: '100px',
+                  },
+                  textAlign: {
+                    xs: 'center',
+                    sm: undefined,
+                  },
                 }}
               >
                 Made for biomedical data reuse and discovery
@@ -529,14 +569,14 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               <SynapseFeatures />
             </Box>
           </Box>
-          <Box sx={{ marginLeft: '20px' }}>
+          <Box sx={{ ml: '20px' }}>
             <Typography
               variant="headline1"
               sx={{
                 ...h2Sx,
                 textAlign: 'center',
-                paddingTop: '75px',
-                paddingBottom: '75px',
+                pt: '75px',
+                pb: '75px',
               }}
             >
               Featured datasets
@@ -545,18 +585,18 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           </Box>
           <Box
             sx={{
-              paddingBottom: '190px',
+              pb: '190px',
               clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)',
               backgroundColor: '#f5f9f9',
               zIndex: -100,
-              marginTop: '-190px',
+              mt: '-190px',
               position: 'relative',
             }}
           />
           <Box
             sx={{
               backgroundColor: '#f5f9f9',
-              paddingBottom: '150px',
+              pb: '150px',
             }}
           >
             <Typography
@@ -564,7 +604,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               sx={{
                 ...h2Sx,
                 textAlign: 'center',
-                paddingTop: '75px',
+                pt: '75px',
                 position: 'relative',
                 zIndex: 100,
                 backgroundColor: 'rgba(245, 249, 249, .8)',
@@ -573,14 +613,14 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             >
               Synapse in action
             </Typography>
-            <Box sx={{ margin: 'auto', maxWidth: '1100px' }}>
+            <Box sx={{ m: 'auto', maxWidth: '1100px' }}>
               <Typography
                 variant="headline1"
                 sx={{
                   ...homepageBodyText,
                   textAlign: 'center',
-                  marginTop: '50px',
-                  marginBottom: '100px',
+                  mt: '50px',
+                  mb: '100px',
                   position: 'relative',
                   zIndex: 100,
                   backgroundColor: 'rgba(245, 249, 249, .8)',
@@ -596,10 +636,9 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           </Box>
           <Box
             sx={{
+              ...sidePadding,
               backgroundColor: '#223549',
-              paddingLeft: standardSidePadding,
-              paddingRight: standardSidePadding,
-              paddingBottom: '200px',
+              pb: '200px',
               position: 'relative',
               zIndex: 100,
             }}
@@ -607,7 +646,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             <Box
               sx={{
                 maxWidth: '1200px',
-                margin: 'auto',
+                m: 'auto',
               }}
             >
               <Typography
@@ -615,7 +654,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 sx={{
                   ...h2Sx,
                   color: 'white',
-                  paddingTop: '75px',
+                  pt: '75px',
                 }}
               >
                 Pricing and Plans
@@ -625,7 +664,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 sx={{
                   ...homepageBodyText,
                   color: 'white',
-                  paddingTop: '20px',
+                  pt: '20px',
                 }}
               >
                 Synapse is free and open source for all. We offer different
@@ -638,8 +677,8 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                 sx={{
                   color: 'white !important',
                   textDecorationColor: 'white !important',
-                  paddingTop: '20px',
-                  paddingBottom: '30px',
+                  pt: '20px',
+                  pb: '30px',
                   display: 'block',
                 }}
               >
@@ -650,11 +689,11 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           </Box>
           <Box
             sx={{
-              paddingBottom: '190px',
+              pb: '190px',
               clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)',
               backgroundColor: '#172430',
               zIndex: 101,
-              marginTop: '-190px',
+              mt: '-190px',
               position: 'relative',
             }}
           />

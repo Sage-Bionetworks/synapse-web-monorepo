@@ -70,11 +70,11 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
   }
   return (
     <Box sx={{ position: 'relative' }} ref={ref}>
-      <Box sx={{ width: isMobileView ? '100%' : '45%' }}>
+      <Box sx={{ width: { xs: '100%', sm: '45%' } }}>
         <Box
           sx={{
             maxWidth: '450px',
-            margin: 'auto',
+            m: 'auto',
             zIndex: 100,
             position: 'relative',
             backgroundColor: 'rgba(245, 249, 249, .8)',
@@ -98,8 +98,8 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
               <Box
                 key={row.rowId}
                 sx={{
-                  pt: isMobileView ? '30px' : '120px',
-                  pb: isMobileView ? '30px' : '120px',
+                  pt: { xs: '30px', sm: '120px' },
+                  pb: { xs: '30px', sm: '120px' },
                   backgroundColor: { backgroundColor },
                 }}
               >
@@ -117,7 +117,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
                 {/* If mobile, show the mobile image file */}
                 <Box
                   sx={{
-                    display: isMobileView ? 'flex' : 'none',
+                    display: { xs: 'flex', sm: 'none' },
                     justifyContent: 'center',
                     width: '100%',
                     img: { width: '320px' },
@@ -153,7 +153,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
               fileHandleId={imageFileHandleIdInView}
               fadeInTimeoutMs={600}
               style={{
-                marginTop: '-100px',
+                mt: '-100px',
               }}
             />
           )}

@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, SxProps } from '@mui/material'
 import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetEntityHeader } from '../../synapse-queries'
@@ -17,8 +17,12 @@ export type SynapseTrendingProjectItemProps = {
 }
 
 const formatter = Intl.NumberFormat('en')
-export const gridTemplateColumns = (isMobileView: boolean) =>
-  isMobileView ? '100px auto 40px' : '100px auto 170px 150px 40px'
+export const trendingProjectsGridTemplateColumns: SxProps = {
+  gridTemplateColumns: {
+    xs: '100px auto 40px',
+    sm: '100px auto 170px 150px 40px',
+  },
+}
 
 export const SynapseTrendingProjectItem: React.FunctionComponent<
   SynapseTrendingProjectItemProps
@@ -93,14 +97,14 @@ export const SynapseTrendingProjectItem: React.FunctionComponent<
             cursor: 'pointer',
             filter: 'brightness(105%)',
           },
-          padding: '15px 0px',
+          p: '15px 0px',
           display: 'grid',
-          gridTemplateColumns: gridTemplateColumns(isMobileView),
+          ...trendingProjectsGridTemplateColumns,
           justifyItems: 'start',
-          svg: { margin: '0 3px -3px 0' },
+          svg: { m: '0 3px -3px 0' },
         }}
       >
-        <Typography variant="body1" sx={{ marginLeft: '30px' }}>
+        <Typography variant="body1" sx={{ ml: '30px' }}>
           {rank}
         </Typography>
         <Box>

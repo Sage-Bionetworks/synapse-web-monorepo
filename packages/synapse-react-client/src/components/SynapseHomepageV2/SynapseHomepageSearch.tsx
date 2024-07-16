@@ -26,7 +26,7 @@ const boxShadow =
 const StyledPopper = styled(Popper)(() => ({
   '& .MuiAutocomplete-paper': {
     borderRadius: '0px 0px 40px 40px',
-    padding: '0px 20px 20px 20px',
+    p: '0px 20px 20px 20px',
     boxShadow,
   },
 }))
@@ -98,7 +98,7 @@ export const SynapseHomepageSearch: React.FunctionComponent<
                 <InputAdornment position="start">
                   <Box
                     sx={{
-                      marginLeft: '15px',
+                      ml: '15px',
                       display: 'flex',
                       alignItems: 'center',
                     }}

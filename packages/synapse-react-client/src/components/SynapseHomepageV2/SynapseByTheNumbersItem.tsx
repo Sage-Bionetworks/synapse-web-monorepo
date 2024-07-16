@@ -16,7 +16,7 @@ export const SynapseByTheNumbersItem: React.FunctionComponent<
         display: 'flex',
         alignItems: 'center',
         gap: '15px',
-        padding: '20px',
+        p: '20px',
       }}
     >
       <Box>

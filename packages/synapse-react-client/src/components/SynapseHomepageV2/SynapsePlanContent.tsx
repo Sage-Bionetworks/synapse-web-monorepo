@@ -19,7 +19,7 @@ export const SynapsePlanContent: React.FunctionComponent<
           fontWeight: 700,
           fontSize: '18px',
           lineHeight: '20px',
-          marginTop: '30px',
+          mt: '30px',
           color: darkTextColor,
         }}
       >
@@ -32,7 +32,7 @@ export const SynapsePlanContent: React.FunctionComponent<
             display: 'grid',
             gridTemplateColumns: '30px auto',
             alignItems: 'center',
-            marginTop: '10px',
+            mt: '10px',
           }}
         >
           <PlanItemIcon />
@@ -56,7 +56,7 @@ export const SynapsePlanContent: React.FunctionComponent<
             fontWeight: 400,
             fontSize: '16px',
             lineHeight: '20px',
-            marginTop: '20px',
+            mt: '20px',
           }}
         >
           {asteriskNote}

@@ -15,7 +15,7 @@ import { ReactComponent as Aacr } from '../../assets/homepage/aacr.svg'
 
 export const SynapsePartners: React.FunctionComponent = () => {
   return (
-    <Box sx={{ margin: 'auto', maxWidth: '1200px' }}>
+    <Box sx={{ m: 'auto', maxWidth: '1200px' }}>
       <Box
         sx={{
           display: 'flex',

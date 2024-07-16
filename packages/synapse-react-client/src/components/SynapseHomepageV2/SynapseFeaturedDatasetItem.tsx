@@ -47,7 +47,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
           display: 'flex',
           flexDirection: 'column',
           rowGap: '15px',
-          padding: '30px 30px 0px 30px',
+          p: '30px 30px 0px 30px',
         }}
       >
         <Box sx={{ display: 'flex', flexWrap: 'wrap', rowGap: '5px' }}>
@@ -57,7 +57,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
                 <Chip
                   key={tag}
                   sx={{
-                    marginRight: '5px',
+                    mr: '5px',
                     color: '#38756A',
                     backgroundColor: '#DAE9E7',
                   }}
@@ -79,7 +79,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         </Typography>
       </Box>
       {imageFileId && (
-        <Box sx={{ padding: '30px', backgroundColor: '#D7DEE4' }}>
+        <Box sx={{ p: '30px', backgroundColor: '#D7DEE4' }}>
           <ImageFromSynapseTable
             tableId={sourceTable}
             fileHandleId={imageFileId}
@@ -90,7 +90,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          padding: '0px 30px 30px 30px',
+          p: '0px 30px 30px 30px',
         }}
       >
         <Typography
@@ -99,7 +99,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
             fontSize: '16px',
             fontWeight: 400,
             lineHeight: '24px',
-            marginBottom: '20px',
+            mb: '20px',
           }}
         >
           {description}
@@ -110,7 +110,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         >
           Dimensions
         </Typography>
-        <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+        <Typography variant="body1" sx={{ mb: '20px' }}>
           {individuals} individuals, {size}
           {sizeUnit}
         </Typography>
@@ -121,7 +121,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
           Contributors
         </Typography>
         <Typography variant="body1">{contributors}</Typography>
-        <Box sx={{ marginTop: '32px' }}>
+        <Box sx={{ mt: '32px' }}>
           <Link
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -129,7 +129,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
             target="_blank"
           >
             Explore dataset
-            <EastTwoTone sx={{ marginBottom: '-8px', marginLeft: '6px' }} />
+            <EastTwoTone sx={{ mb: '-8px', ml: '6px' }} />
           </Link>
         </Box>
       </Box>

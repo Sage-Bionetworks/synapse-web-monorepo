@@ -23,7 +23,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         display: 'flex',
         flexDirection: 'column',
         rowGap: '20px',
-        padding: '50px 15px',
+        p: '50px 15px',
       }}
     >
       <Typography
@@ -65,7 +65,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         sx={{
           color: '#D7DEE4',
           fontSize: '16px',
-          marginBottom: '25px',
+          mb: '25px',
         }}
       >
         {description}
@@ -86,17 +86,17 @@ export const SynapseFeatureItem: React.FunctionComponent<
         display: 'flex',
         flexWrap: 'wrap',
         columnGap: '40px',
-        paddingBottom: '120px',
+        pb: '120px',
       }}
     >
-      <Box sx={{ marginBottom: '50px', width: '437px' }}>
+      <Box sx={{ mb: '50px', width: '437px' }}>
         <Typography
           variant="headline3"
           sx={{
             color: '#D7DEE4',
             fontSize: '36px',
             lineHeight: '24px',
-            marginBottom: '30px',
+            mb: '30px',
             fontWeight: 400,
           }}
         >
@@ -108,7 +108,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
             color: '#D7DEE4',
             fontSize: '24px',
             lineHeight: '32px',
-            marginBottom: '20px',
+            mb: '20px',
             fontWeight: 700,
           }}
         >
@@ -118,7 +118,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
           variant="body1"
           sx={{
             color: '#D7DEE4',
-            marginBottom: '30px',
+            mb: '30px',
           }}
         >
           {description}
@@ -128,7 +128,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
             display: 'flex',
             gap: '10px',
             alignItems: 'center',
-            marginBottom: '25px',
+            mb: '25px',
           }}
         >
           {icons && icons.map((icon, index) => <Box key={index}>{icon}</Box>)}
@@ -143,7 +143,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
           About {featureName}
         </Button>
       </Box>
-      <Box sx={{ marginRight: '25px', svg: { width: '100%' } }}>{image}</Box>
+      <Box sx={{ mr: '25px', svg: { width: '100%' } }}>{image}</Box>
     </Box>
   )
 }

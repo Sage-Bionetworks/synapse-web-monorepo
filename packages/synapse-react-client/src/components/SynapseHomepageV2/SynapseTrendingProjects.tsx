@@ -3,7 +3,7 @@ import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import {
   SynapseTrendingProjectItem,
-  gridTemplateColumns,
+  trendingProjectsGridTemplateColumns,
 } from './SynapseTrendingProjectsItem'
 import { Box, useTheme, useMediaQuery } from '@mui/material'
 import { Typography } from '@mui/material'
@@ -53,11 +53,11 @@ export const SynapseTrendingProjects: React.FunctionComponent<
         sx={{
           color: '#D7DEE4',
           display: 'grid',
-          gridTemplateColumns: gridTemplateColumns(isMobileView),
+          ...trendingProjectsGridTemplateColumns,
           justifyItems: 'start',
         }}
       >
-        <Typography variant="body1" sx={{ marginLeft: '15px' }}>
+        <Typography variant="body1" sx={{ ml: '15px' }}>
           Rank
         </Typography>
         <Typography variant="body1">Project</Typography>
