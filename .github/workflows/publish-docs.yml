@@ -16,6 +16,8 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build Storybook
         run: pnpm nx run synapse-react-client:storybook:build
+      - name: Create .nojekyll file for GitHub Actions
+        run: touch packages/synapse-react-client/storybook-static/.nojekyll
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
