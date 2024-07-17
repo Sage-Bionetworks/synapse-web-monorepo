@@ -53,8 +53,8 @@ export default defineConfig(({ mode = 'production' }) =>
         name: 'SRC',
         fileName: () =>
           mode === 'production'
-            ? 'synapse-react-client.production.min.cjs'
-            : 'synapse-react-client.development.cjs',
+            ? 'synapse-react-client.production.min.js'
+            : 'synapse-react-client.development.js',
         formats: ['umd'],
       },
       rollupOptions: {
