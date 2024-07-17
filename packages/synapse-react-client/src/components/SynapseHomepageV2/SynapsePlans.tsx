@@ -2,7 +2,7 @@ import React from 'react'
 import { Box } from '@mui/material'
 import { SynapsePlan } from './SynapsePlan'
 import { SynapsePlanContent } from './SynapsePlanContent'
-import { useOneSageURL } from 'src/utils/hooks'
+import { useOneSageURL } from '../../utils/hooks'
 
 export const SynapsePlans: React.FunctionComponent = () => {
   const registrationUrl = useOneSageURL('/register1')

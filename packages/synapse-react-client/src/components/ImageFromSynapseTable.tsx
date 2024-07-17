@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useGetStablePresignedUrl } from '../synapse-queries'
 import { Fade } from '@mui/material'
-import { useFadeTransition } from 'src/utils/hooks/useFadeTransition'
+import { useFadeTransition } from '../utils/hooks/useFadeTransition'
 
 export type ImageFromSynapseTableProps = {
   tableId: string

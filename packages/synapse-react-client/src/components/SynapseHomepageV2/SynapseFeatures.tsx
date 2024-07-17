@@ -9,7 +9,7 @@ import { ReactComponent as Python } from '../../assets/homepage/python.svg'
 import { ReactComponent as R } from '../../assets/homepage/r.svg'
 import { ReactComponent as Fisma } from '../../assets/homepage/fisma.svg'
 import { ReactComponent as Hipaa } from '../../assets/homepage/hipaa-compliant.svg'
-import { useOneSageURL } from 'src/utils/hooks'
+import { useOneSageURL } from '../../utils/hooks'
 
 export const SynapseFeatures: React.FunctionComponent = () => {
   const sageResourcesUrl = useOneSageURL('/sageresources')
