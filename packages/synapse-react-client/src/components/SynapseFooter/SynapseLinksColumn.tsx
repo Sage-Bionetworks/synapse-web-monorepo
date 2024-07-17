@@ -30,17 +30,17 @@ export const SynapseLinksColumn: React.FunctionComponent<
           target="_blank"
           rel="noreferrer"
           sx={{
-            color: '#B0BDC9',
+            color: 'primary.200',
             fontSize: '18px',
             fontWeight: 400,
             lineHeight: '24px',
             textDecoration: 'none',
             '&:focus': {
-              color: '#B0BDC9',
+              color: 'primary.200',
               textDecoration: 'none',
             },
             '&:visited': {
-              color: '#B0BDC9',
+              color: 'primary.200',
               textDecoration: 'none',
             },
             '&:hover': {

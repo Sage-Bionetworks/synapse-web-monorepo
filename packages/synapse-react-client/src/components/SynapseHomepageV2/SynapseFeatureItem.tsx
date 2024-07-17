@@ -16,7 +16,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
   SynapseFeatureItemProps
 > = ({ title, subtitle, description, featureName, link, icons, image }) => {
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.only('xs'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return isMobileView ? (
     <Box
       sx={{
@@ -29,7 +29,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
       <Typography
         variant="headline3"
         sx={{
-          color: '#D7DEE4',
+          color: 'primary.100',
           fontSize: '30px',
           lineHeight: '24px',
           fontWeight: 400,
@@ -41,7 +41,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
       <Typography
         variant="headline3"
         sx={{
-          color: '#D7DEE4',
+          color: 'primary.100',
           fontSize: '18px',
           fontWeight: 700,
           textAlign: 'center',
@@ -63,7 +63,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
       <Typography
         variant="body1"
         sx={{
-          color: '#D7DEE4',
+          color: 'primary.100',
           fontSize: '16px',
           mb: '25px',
         }}
@@ -93,7 +93,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         <Typography
           variant="headline3"
           sx={{
-            color: '#D7DEE4',
+            color: 'primary.100',
             fontSize: '36px',
             lineHeight: '24px',
             mb: '30px',
@@ -105,7 +105,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         <Typography
           variant="headline3"
           sx={{
-            color: '#D7DEE4',
+            color: 'primary.100',
             fontSize: '24px',
             lineHeight: '32px',
             mb: '20px',
@@ -117,7 +117,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         <Typography
           variant="body1"
           sx={{
-            color: '#D7DEE4',
+            color: 'primary.100',
             mb: '30px',
           }}
         >

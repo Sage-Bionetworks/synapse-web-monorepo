@@ -10,7 +10,7 @@ import { useFadeTransition } from 'src/utils/hooks/useFadeTransition'
 export type ImageFromSynapseTableProps = {
   tableId: string
   fileHandleId: string | null
-  friendlyName?: string
+  alt?: string
   style?: CSSProperties
   fadeInTimeoutMs?: number
 }
@@ -18,13 +18,7 @@ export type ImageFromSynapseTableProps = {
 const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
   props: ImageFromSynapseTableProps,
 ) => {
-  const {
-    tableId,
-    fileHandleId,
-    friendlyName,
-    style,
-    fadeInTimeoutMs = 0,
-  } = props
+  const { tableId, fileHandleId, alt, style, fadeInTimeoutMs = 0 } = props
   const { delayedState: fileHandleIdInState, visible } = useFadeTransition({
     state: fileHandleId,
     fadeInTimeoutMs,
@@ -48,7 +42,7 @@ const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
     <Fade in={visible} timeout={fadeInTimeoutMs}>
       <img
         style={style}
-        alt={friendlyName ? `${friendlyName}` : 'Image from table'}
+        alt={alt ? `${alt}` : 'Image from table'}
         src={dataUrl}
       />
     </Fade>

@@ -38,7 +38,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box
         sx={{
-          backgroundColor: '#172430',
+          backgroundColor: 'primary.800',
           p: '50px 50px 20px 50px',
         }}
       >
@@ -54,7 +54,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             <SynapseFullLogo textColor="white" />
             <Typography
               variant="body1Italic"
-              sx={{ color: '#B0BDC9', fontSize: '13px', mb: '25px' }}
+              sx={{ color: 'primary.200', fontSize: '13px', mb: '25px' }}
             >
               Powered by Sage Bionetworks
             </Typography>
@@ -76,12 +76,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
               <Box sx={{ display: 'flex', columnGap: '20px' }}>
                 <Button
                   variant="outlined"
-                  sx={{
-                    color: '#B0BDC9',
-                    '&:hover': {
-                      color: 'white',
-                    },
-                  }}
+                  color="lightPrimary"
                   onClick={() => {
                     gotoPlace('/LoginPlace:0')
                   }}
@@ -90,39 +85,13 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                 </Button>
                 <Button
                   variant="contained"
-                  color="light"
+                  color="lightPrimary"
                   href={registrationUrl.toString()}
                 >
                   Register Now
                 </Button>
               </Box>
             )}
-            {/* Logged in buttons not in the design, but it might look something like this...
-            {isLoggedIn && (
-              <Box sx={{ display: 'flex', columnGap: '20px' }}>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    color: '#B0BDC9',
-                    '&:hover': {
-                      color: 'white',
-                    },
-                  }}
-                  onClick={signOut}
-                >
-                  Sign out
-                </Button>
-                <Button
-                  variant="contained"
-                  color="light"
-                  onClick={() => {
-                    gotoPlace('/Profile:v')
-                  }}
-                >
-                  View My Dashboard
-                </Button>
-              </Box>
-            )} */}
           </Box>
           <Box>
             <Box
@@ -166,7 +135,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                     props: { href: 'https://sagebionetworks.pubpub.org/' },
                   },
                   {
-                    text: "FAQ's",
+                    text: 'FAQs',
                     props: {
                       href: 'https://help.synapse.org/docs/FAQ.2047967233.html',
                     },
@@ -216,7 +185,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             <Typography
               variant="body1"
               sx={{
-                color: '#B0BDC9',
+                color: 'primary.200',
                 fontSize: '18px',
               }}
             >
@@ -230,8 +199,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
               svg: {
                 '&:hover': {
                   stroke: 'rgba(255, 255, 255, .4)',
-                  // fill: 'rgba(245, 246, 241, .05)',
-                  cursor: 'pointer',
+                  // fill: 'rgba(245, 246, 241, .05)',  //uncomment if extra emphasis is needed
                 },
               },
             }}
@@ -298,7 +266,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             flexWrap: 'wrap',
             columnGap: '40px',
             rowGap: '0px',
-            color: '##889BAF',
+            color: 'primary.300',
           }}
         >
           <Typography

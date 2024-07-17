@@ -79,7 +79,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         </Typography>
       </Box>
       {imageFileId && (
-        <Box sx={{ p: '30px', backgroundColor: '#D7DEE4' }}>
+        <Box sx={{ p: '30px', backgroundColor: 'primary.100' }}>
           <ImageFromSynapseTable
             tableId={sourceTable}
             fileHandleId={imageFileId}

@@ -368,7 +368,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
                   },
                   textAlign: {
                     xs: 'center',
-                    sm: undefined,
+                    md: 'left',
                   },
                 }}
               >

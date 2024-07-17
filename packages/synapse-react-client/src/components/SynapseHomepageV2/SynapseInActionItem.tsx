@@ -103,7 +103,7 @@ export const SynapseInActionItem: React.FunctionComponent<
         <ImageFromSynapseTable
           tableId={tableId}
           fileHandleId={logoFileHandleId}
-          friendlyName={`${friendlyName} logo`}
+          alt={`${friendlyName} logo`}
           style={{ height: '40px' }}
         />
         <Box sx={{ mt: '32px' }}>
