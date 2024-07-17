@@ -238,7 +238,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                 md: '60px',
               },
               maxWidth: '600px',
-              color: '#38756A',
+              color: 'secondary.600',
               mt: '20px',
               fontWeight: 400,
               mb: '35px',

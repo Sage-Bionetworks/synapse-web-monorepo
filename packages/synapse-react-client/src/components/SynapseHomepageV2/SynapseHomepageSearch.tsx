@@ -3,8 +3,7 @@ import { PopperProps } from '@mui/material'
 import { FormControl } from '@mui/material'
 import { InputAdornment } from '@mui/material'
 import { Search } from '../../assets/themed_icons'
-
-import { Autocomplete } from '@mui/material'
+import { Autocomplete, useTheme } from '@mui/material'
 import { SynapseConstants } from 'src/utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
@@ -12,6 +11,7 @@ import { TextField } from '@mui/material'
 import { Popper } from '@mui/material'
 import { styled } from '@mui/material'
 import { Box } from '@mui/material'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 
 export type SynapseHomepageSearchProps = {
   sourceTable: string
@@ -43,6 +43,7 @@ export const SynapseHomepageSearch: React.FunctionComponent<
   SynapseHomepageSearchProps
 > = ({ sourceTable, gotoPlace }) => {
   const [isPopperOpen, setIsPopperOpen] = useState(false)
+  const theme = useTheme()
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
   const request: QueryBundleRequest = {
     partMask,
@@ -104,7 +105,10 @@ export const SynapseHomepageSearch: React.FunctionComponent<
                       alignItems: 'center',
                     }}
                   >
-                    <Search size={32} fill="#38756A" />
+                    <Search
+                      size={32}
+                      fill={(theme.palette.secondary as ColorPartial)[600]}
+                    />
                   </Box>
                 </InputAdornment>
               ),

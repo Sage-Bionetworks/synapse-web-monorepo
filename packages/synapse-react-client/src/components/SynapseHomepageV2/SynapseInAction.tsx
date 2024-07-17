@@ -98,8 +98,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
               <Box
                 key={row.rowId}
                 sx={{
-                  pt: { xs: '30px', sm: '120px' },
-                  pb: { xs: '30px', sm: '120px' },
+                  py: { xs: '30px', sm: '120px' },
                   backgroundColor: { backgroundColor },
                 }}
               >

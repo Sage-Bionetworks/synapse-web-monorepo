@@ -45,7 +45,7 @@ export const SynapseInActionItem: React.FunctionComponent<
   link,
   onInView,
 }) => {
-  const { ref, inView } = useInView({ threshold: 0.7 }) //do not report this is in view until the description is almost entirely shown (90%)
+  const { ref, inView } = useInView({ threshold: 0.7 }) //do not report this is in view until the description is almost entirely shown (70%)
   useEffect(() => {
     if (inView) {
       onInView()
