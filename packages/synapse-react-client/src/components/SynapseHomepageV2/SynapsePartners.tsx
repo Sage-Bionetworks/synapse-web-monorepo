@@ -25,33 +25,8 @@ export const SynapsePartners: React.FunctionComponent = () => {
           gap: '20px',
         }}
       >
-        <a href="https://www.nhlbi.nih.gov/" target="_blank" rel="noreferrer">
-          <NihHeart />
-        </a>
-        <a href="https://www.nimh.nih.gov/" target="_blank" rel="noreferrer">
-          <NihMental />
-        </a>
         <a href="https://sloan.org/" target="_blank" rel="noreferrer">
           <Sloan />
-        </a>
-        <a href="https://www.nia.nih.gov/" target="_blank" rel="noreferrer">
-          <NihAging />
-        </a>
-        <a href="https://www.ctf.org/" target="_blank" rel="noreferrer">
-          <Ctf />
-        </a>
-        <a href="https://www.n-tap.org/" target="_blank" rel="noreferrer">
-          <Ntap />
-        </a>
-        <a
-          href="https://gilbertfamilyfoundation.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Gff />
-        </a>
-        <a href="https://www.cancer.gov/" target="_blank" rel="noreferrer">
-          <Nci />
         </a>
         <a href="https://www.aacr.org/" target="_blank" rel="noreferrer">
           <Aacr />
@@ -63,11 +38,36 @@ export const SynapsePartners: React.FunctionComponent = () => {
         >
           <Cri />
         </a>
-        <a href="https://mlcommons.org/" target="_blank" rel="noreferrer">
-          <MlCommons />
+        <a href="https://www.ctf.org/" target="_blank" rel="noreferrer">
+          <Ctf />
+        </a>
+        <a
+          href="https://gilbertfamilyfoundation.org/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Gff />
         </a>
         <a href="http://grayfoundation.org/" target="_blank" rel="noreferrer">
           <Gray />
+        </a>
+        <a href="https://mlcommons.org/" target="_blank" rel="noreferrer">
+          <MlCommons />
+        </a>
+        <a href="https://www.cancer.gov/" target="_blank" rel="noreferrer">
+          <Nci />
+        </a>
+        <a href="https://www.nhlbi.nih.gov/" target="_blank" rel="noreferrer">
+          <NihHeart />
+        </a>
+        <a href="https://www.nia.nih.gov/" target="_blank" rel="noreferrer">
+          <NihAging />
+        </a>
+        <a href="https://www.nimh.nih.gov/" target="_blank" rel="noreferrer">
+          <NihMental />
+        </a>
+        <a href="https://www.n-tap.org/" target="_blank" rel="noreferrer">
+          <Ntap />
         </a>
       </Box>
     </Box>
