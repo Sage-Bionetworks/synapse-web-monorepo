@@ -22,8 +22,8 @@ export const SynapseTrendingProjects: React.FunctionComponent<
         sql: `SELECT * FROM ${past30DaysDownloadMetricsTable}`,
         limit: 10,
         sort: [
-          { column: 'last_updated', direction: 'DESC' }, // First sort by export date desc (only the most recent export)
-          { column: 'N_UNIQUE_USERS', direction: 'DESC' }, // TODO: Is this the correct secondary sort?
+          { column: 'last_updated', direction: 'DESC' }, // likely unnecessary (I think this MV always contains only the most recent snapshot)
+          { column: 'N_UNIQUE_USERS', direction: 'DESC' },
         ],
       },
       partMask: BUNDLE_MASK_QUERY_RESULTS,
@@ -51,7 +51,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
     <>
       <Box
         sx={{
-          color: '#D7DEE4',
+          color: 'primary.100',
           display: isMobileView ? 'none' : 'grid',
           ...trendingProjectsGridTemplateColumns,
           justifyItems: 'start',

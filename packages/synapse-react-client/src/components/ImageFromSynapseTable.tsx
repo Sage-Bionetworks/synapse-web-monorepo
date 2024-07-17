@@ -1,10 +1,11 @@
-import React, { CSSProperties, useEffect, useState } from 'react'
+import React, { CSSProperties } from 'react'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { useGetStablePresignedUrl } from '../synapse-queries'
 import { Fade } from '@mui/material'
+import { useFadeTransition } from 'src/utils/hooks/useFadeTransition'
 
 export type ImageFromSynapseTableProps = {
   tableId: string
@@ -24,26 +25,14 @@ const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
     style,
     fadeInTimeoutMs = 0,
   } = props
-  const [visible, setVisible] = useState(true)
-  const [fileHandleIdInState, setFileHandleIdInState] = useState(fileHandleId)
-  useEffect(() => {
-    // Trigger fade out
-    setVisible(false)
-
-    // Wait for the fade out duration and then change content and fade in
-    const timeoutId = setTimeout(() => {
-      setFileHandleIdInState(fileHandleId)
-      setVisible(true)
-    }, fadeInTimeoutMs)
-
-    // Cleanup timeout if the component unmounts or if fileHandleId changes again before timeout
-    return () => clearTimeout(timeoutId)
-  }, [fileHandleId])
-
+  const { delayedState: fileHandleIdInState, visible } = useFadeTransition({
+    state: fileHandleId,
+    fadeInTimeoutMs,
+  })
   const fha: FileHandleAssociation = {
     associateObjectId: tableId,
     associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: fileHandleIdInState ?? '',
+    fileHandleId: (fileHandleIdInState as string) ?? '',
   }
   const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
     enabled: !!fileHandleIdInState,

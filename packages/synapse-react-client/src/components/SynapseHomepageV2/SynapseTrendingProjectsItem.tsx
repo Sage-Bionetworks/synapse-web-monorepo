@@ -1,4 +1,4 @@
-import { Box, Typography, SxProps } from '@mui/material'
+import { Box, Typography, SxProps, useTheme } from '@mui/material'
 import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetEntityHeader } from '../../synapse-queries'
@@ -7,6 +7,7 @@ import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { ReactComponent as EgressIcon } from '../../assets/homepage/egress.svg'
 
 import { ReactComponent as UsersIcon } from '../../assets/homepage/users.svg'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 export type SynapseTrendingProjectItemProps = {
   rank: number
   rowValues: (string | null)[]
@@ -34,6 +35,7 @@ export const SynapseTrendingProjectItem: React.FunctionComponent<
   egressSizeGbColIndex,
   isMobileView,
 }) => {
+  const theme = useTheme()
   const entityId = rowValues[entityIdColIndex]
   const egressSize = rowValues[egressSizeGbColIndex]
   const { data: entityHeader } = useGetEntityHeader(entityId!, undefined, {
@@ -47,7 +49,7 @@ export const SynapseTrendingProjectItem: React.FunctionComponent<
   const friendlyUserCount = userCount
     ? formatter.format(parseInt(userCount))
     : ''
-  let backgroundColor = '#223549'
+  let backgroundColor = (theme.palette.primary as ColorPartial)[700]
   let borderRadius
   switch (rank) {
     case 1:
@@ -89,7 +91,7 @@ export const SynapseTrendingProjectItem: React.FunctionComponent<
     >
       <Box
         sx={{
-          color: '#D7DEE4',
+          color: 'primary.100',
           backgroundColor,
           borderRadius,
           '&:hover': {
