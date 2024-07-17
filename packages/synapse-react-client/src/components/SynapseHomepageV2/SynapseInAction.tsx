@@ -6,6 +6,7 @@ import { SynapseInActionItem } from './SynapseInActionItem'
 import { useTheme } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { useInView } from 'react-intersection-observer'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 
 export type SynapseInActionProps = {
   tableId: string
@@ -93,7 +94,9 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             const primaryColor = row.values[primaryColorColIndex]!
             const secondaryColor = row.values[secondaryColorColIndex]!
             const backgroundColor =
-              isMobileView && index % 2 ? 'secondary.100' : undefined
+              isMobileView && index % 2
+                ? (theme.palette.secondary as ColorPartial)[100]
+                : undefined
             return (
               <Box
                 key={row.rowId}

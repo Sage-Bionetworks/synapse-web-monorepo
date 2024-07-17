@@ -16,7 +16,7 @@ export const SynapseFeaturedDatasets: React.FunctionComponent<
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: sourceTable,
     query: {
-      sql: `SELECT * FROM ${sourceTable} where name is not null`,
+      sql: `SELECT * FROM ${sourceTable} where name is not null and isFeatured = 'true'`,
       limit: 6,
       sort: [
         //TODO: sort?
