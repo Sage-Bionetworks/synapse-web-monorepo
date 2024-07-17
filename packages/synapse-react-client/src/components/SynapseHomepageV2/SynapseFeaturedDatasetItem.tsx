@@ -58,8 +58,8 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
                   key={tag}
                   sx={{
                     mr: '5px',
-                    color: '#38756A',
-                    backgroundColor: '#DAE9E7',
+                    color: 'secondary.600',
+                    backgroundColor: 'secondary.100',
                   }}
                   label={tag}
                 />

@@ -93,7 +93,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             const primaryColor = row.values[primaryColorColIndex]!
             const secondaryColor = row.values[secondaryColorColIndex]!
             const backgroundColor =
-              isMobileView && index % 2 ? '#DAE9E7' : undefined
+              isMobileView && index % 2 ? 'secondary.100' : undefined
             return (
               <Box
                 key={row.rowId}

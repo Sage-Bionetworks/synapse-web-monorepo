@@ -187,7 +187,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
               // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image
               sx={{
                 color: '#2A5850',
-                backgroundColor: '#DAE9E7',
+                backgroundColor: 'secondary.100',
                 '&:hover': { backgroundColor: '#f5f5f3 !important' },
               }}
             />
@@ -198,7 +198,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
         sx={{
           display: { xs: 'relative', lg: 'grid' },
           gridTemplateColumns: '50% 50%',
-          backgroundColor: '#DAE9E7',
+          backgroundColor: 'secondary.100',
           mt: '150px',
           height: { lg: '608px' }, //force container to the same height as the image
         }}

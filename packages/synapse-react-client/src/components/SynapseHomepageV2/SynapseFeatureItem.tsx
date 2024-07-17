@@ -72,7 +72,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
       </Typography>
       <Button
         variant="contained"
-        color="light"
+        color="lightPrimary"
         href={link}
         target="_blank"
         fullWidth
