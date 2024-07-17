@@ -1,13 +1,19 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseHomepageV2 } from './SynapseHomepageV2'
+import {
+  featuredDatasetsTable,
+  generalStatsMetricsTable,
+  past30DaysDownloadMetricsTable,
+  searchAutocompleteTable,
+  SynapseHomepageV2,
+  synapseInActionTable,
+} from './SynapseHomepageV2'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import {
+  mockHomepageFeaturedDatasetsQueryResultBundle,
   mockHomepageGeneralStatsQueryResultBundle,
-  mockHomepageGeneralStatsTableId,
-  mockHomepageSynapseInActionTableId,
+  mockHomepageSearchAutocompleteQueryResultBundle,
   mockHomepageSynapseInActionQueryResultBundle,
   mockHomepageTrendingQueryResultBundle,
-  mockHomepageTrendingTableId,
 } from '../../mocks/query/mockHomepageQueryResultData'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
@@ -40,17 +46,27 @@ export const DemoVersion2: Story = {
         ...getHandlersForTableQuery(
           mockHomepageTrendingQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageTrendingTableId,
+          past30DaysDownloadMetricsTable,
         ),
         ...getHandlersForTableQuery(
           mockHomepageGeneralStatsQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageGeneralStatsTableId,
+          generalStatsMetricsTable,
         ),
         ...getHandlersForTableQuery(
           mockHomepageSynapseInActionQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageSynapseInActionTableId,
+          synapseInActionTable,
+        ),
+        ...getHandlersForTableQuery(
+          mockHomepageFeaturedDatasetsQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+          featuredDatasetsTable,
+        ),
+        ...getHandlersForTableQuery(
+          mockHomepageSearchAutocompleteQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+          searchAutocompleteTable,
         ),
       ],
     },

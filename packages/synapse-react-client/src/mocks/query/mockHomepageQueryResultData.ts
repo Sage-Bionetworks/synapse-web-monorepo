@@ -1,13 +1,12 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 
-export const mockHomepageTrendingTableId = 'syn61597084'
 export const mockHomepageTrendingQueryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
       concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-      tableId: mockHomepageTrendingTableId,
+      tableId: 'syn61597084',
       etag: 'DEFAULT',
       headers: [
         {
@@ -152,14 +151,13 @@ export const mockHomepageTrendingQueryResultBundle: QueryResultBundle = {
   },
 }
 
-export const mockHomepageGeneralStatsTableId = 'syn61588163'
 export const mockHomepageGeneralStatsQueryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
       concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-      tableId: mockHomepageGeneralStatsTableId,
+      tableId: 'syn61588163',
       etag: 'DEFAULT',
       headers: [
         {
@@ -194,7 +192,6 @@ export const mockHomepageGeneralStatsQueryResultBundle: QueryResultBundle = {
   },
 }
 
-export const mockHomepageSynapseInActionTableId = 'syn61670075'
 export const mockHomepageSynapseInActionQueryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
@@ -276,3 +273,249 @@ export const mockHomepageSynapseInActionQueryResultBundle: QueryResultBundle = {
     },
   },
 }
+
+// id syn61609402
+export const mockHomepageFeaturedDatasetsQueryResultBundle: QueryResultBundle =
+  {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+    queryResult: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+      queryResults: {
+        concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+        tableId: 'syn61609402',
+        etag: 'e8d57a89-5545-433e-9a29-0d70cf79b458',
+        headers: [
+          {
+            name: 'id',
+            columnType: 'ENTITYID',
+            id: '81721',
+          },
+          {
+            name: 'isFeatured',
+            columnType: 'BOOLEAN',
+            id: '121541',
+          },
+          {
+            name: 'community',
+            columnType: 'STRING',
+            id: '216210',
+          },
+          {
+            name: 'name',
+            columnType: 'STRING',
+            id: '85359',
+          },
+          {
+            name: 'description',
+            columnType: 'MEDIUMTEXT',
+            id: '194033',
+          },
+          {
+            name: 'contributors',
+            columnType: 'STRING',
+            id: '216211',
+          },
+          {
+            name: 'keywords',
+            columnType: 'STRING_LIST',
+            id: '116273',
+          },
+          {
+            name: 'individuals',
+            columnType: 'STRING',
+            id: '216212',
+          },
+          {
+            name: 'image',
+            columnType: 'FILEHANDLEID',
+            id: '127219',
+          },
+          {
+            name: 'size',
+            columnType: 'DOUBLE',
+            id: '111683',
+          },
+          {
+            name: 'sizeUnit',
+            columnType: 'STRING',
+            id: '216213',
+          },
+          {
+            name: 'dimensions',
+            columnType: 'STRING',
+            id: '216214',
+          },
+        ],
+        rows: [
+          {
+            rowId: 3,
+            versionNumber: 24,
+            values: [
+              'syn52623570',
+              'true',
+              'Arthritis and Autoimmune and Related Diseases',
+              'AMP RA/SLE Phase II Single Cell CyTOF PBMC Profiling Data',
+              'This dataset includes single cell CyTOF data from the AMP RA/SLE Phase II study, profiling PBMCs across five panels (B cell, T cell, Myeloid, NK cell, and Granulocyte) from individuals with autoimmune conditions and controls. ',
+              'Accelerating Medicines Partnership',
+              '["Rheumatoid Arthritis", "Systemic Lupus Erythematosus"]',
+              '331',
+              null,
+              '353',
+              'GB',
+              null,
+            ],
+          },
+          {
+            rowId: 4,
+            versionNumber: 24,
+            values: [
+              'syn53132831',
+              'true',
+              'Neurofibromatosis',
+              'Whole exome sequencing of Johns Hopkins NF1 Biospecimen Repository cohort',
+              'Whole exome sequencing of 68 patients, with seven labeled primary tumor types and control samples.',
+              'Johns Hopkins Medical Institute',
+              '["preclinical therapeutics", "rare disease"]',
+              '68',
+              null,
+              '1.16',
+              'TB',
+              null,
+            ],
+          },
+          {
+            rowId: 6,
+            versionNumber: 24,
+            values: [
+              'syn55234548',
+              'true',
+              'GENIE',
+              'GENIE Release 15.1-public',
+              'Latest release of the data within GENIE shared with the global research community. The database currently contains CLIA-/ISO-certified genomic data obtained during the course of routine practice at multiple international institutions',
+              'AACR Project GENIE',
+              '["real-world data", "clinical-grade"]',
+              '171957',
+              null,
+              '1.8',
+              'GB',
+              null,
+            ],
+          },
+          {
+            rowId: 13,
+            versionNumber: 25,
+            values: [
+              'syn51732482',
+              'true',
+              "Alzheimer's Disease",
+              "The Accelerating Medicines Partnership Alzheimer's Disease Diverse Cohorts Study",
+              'This study provides post-mortem whole genome sequencing and brain bulk RNA sequencing data from over 850 individuals, including 288 Black or African American individuals and 330 Hispanic individuals representing the spectrum of Alzheimer’s Disease phenotypes.',
+              'AMP-AD Consortium',
+              '["Alzheimer’s Disease", "genomics", "diversity"]',
+              null,
+              null,
+              null,
+              null,
+              null,
+            ],
+          },
+          {
+            rowId: 14,
+            versionNumber: 26,
+            values: [
+              'syn4993293',
+              'true',
+              'Digital Health',
+              'mPower Mobile Parkinson Disease Study',
+              'mPower is a large, longitudinal study which piloted new approaches to monitoring key indicators of Parkinson disease progression and diagnosis incorporating traditional behavioral symptom measurements along with novel metrics gleaned from sensor-rich mobile devices.',
+              'Sage Bionetworks',
+              '["neurology", "Parkinson\'s"]',
+              '8320',
+              null,
+              null,
+              null,
+              null,
+            ],
+          },
+        ],
+      },
+    },
+  }
+
+//id syn61670515
+export const mockHomepageSearchAutocompleteQueryResultBundle: QueryResultBundle =
+  {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+    queryResult: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+      queryResults: {
+        concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+        tableId: 'syn61670515',
+        etag: 'DEFAULT',
+        headers: [
+          {
+            name: 'last_updated',
+            columnType: 'DATE',
+            id: '215940',
+          },
+          {
+            name: 'top_searched',
+            columnType: 'STRING',
+            id: '216105',
+          },
+        ],
+        rows: [
+          {
+            rowId: 1,
+            versionNumber: 0,
+            values: ['1720470893000', 'rosmap'],
+          },
+          {
+            rowId: 2,
+            versionNumber: 0,
+            values: ['1720470893000', 'brats'],
+          },
+          {
+            rowId: 3,
+            versionNumber: 0,
+            values: ['1720470893000', 'genie'],
+          },
+          {
+            rowId: 4,
+            versionNumber: 0,
+            values: ['1720470893000', 'htan'],
+          },
+          {
+            rowId: 5,
+            versionNumber: 0,
+            values: ['1720470893000', 'alzheimer'],
+          },
+          {
+            rowId: 6,
+            versionNumber: 0,
+            values: ['1720470893000', 'ukb'],
+          },
+          {
+            rowId: 7,
+            versionNumber: 0,
+            values: ['1720470893000', 'amp-ad'],
+          },
+          {
+            rowId: 8,
+            versionNumber: 0,
+            values: ['1720470893000', 'msbb'],
+          },
+          {
+            rowId: 9,
+            versionNumber: 0,
+            values: ['1720470893000', 'mpower'],
+          },
+          {
+            rowId: 10,
+            versionNumber: 0,
+            values: ['1720470893000', 'parkinson'],
+          },
+        ],
+      },
+    },
+  }

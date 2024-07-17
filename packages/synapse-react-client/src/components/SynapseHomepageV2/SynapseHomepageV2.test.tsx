@@ -1,20 +1,26 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { server } from '../../mocks/msw/server'
-import { SynapseHomepageV2 } from './SynapseHomepageV2'
+import {
+  featuredDatasetsTable,
+  generalStatsMetricsTable,
+  past30DaysDownloadMetricsTable,
+  searchAutocompleteTable,
+  SynapseHomepageV2,
+  synapseInActionTable,
+} from './SynapseHomepageV2'
+import { SynapseTestContext } from '../../mocks/MockSynapseContext'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import {
+  mockHomepageFeaturedDatasetsQueryResultBundle,
   mockHomepageGeneralStatsQueryResultBundle,
-  mockHomepageGeneralStatsTableId,
-  mockHomepageSynapseInActionTableId,
+  mockHomepageSearchAutocompleteQueryResultBundle,
   mockHomepageSynapseInActionQueryResultBundle,
   mockHomepageTrendingQueryResultBundle,
-  mockHomepageTrendingTableId,
 } from '../../mocks/query/mockHomepageQueryResultData'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 describe('SynapseHomepageV2 Snapshot test', () => {
   beforeAll(() => server.listen())
@@ -26,17 +32,27 @@ describe('SynapseHomepageV2 Snapshot test', () => {
         ...getHandlersForTableQuery(
           mockHomepageTrendingQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageTrendingTableId,
+          past30DaysDownloadMetricsTable,
         ),
         ...getHandlersForTableQuery(
           mockHomepageGeneralStatsQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageGeneralStatsTableId,
+          generalStatsMetricsTable,
         ),
         ...getHandlersForTableQuery(
           mockHomepageSynapseInActionQueryResultBundle,
           MOCK_REPO_ORIGIN,
-          mockHomepageSynapseInActionTableId,
+          synapseInActionTable,
+        ),
+        ...getHandlersForTableQuery(
+          mockHomepageFeaturedDatasetsQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+          featuredDatasetsTable,
+        ),
+        ...getHandlersForTableQuery(
+          mockHomepageSearchAutocompleteQueryResultBundle,
+          MOCK_REPO_ORIGIN,
+          searchAutocompleteTable,
         ),
       ],
     )
