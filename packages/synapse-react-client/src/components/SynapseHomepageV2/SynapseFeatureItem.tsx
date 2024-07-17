@@ -136,7 +136,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
         <Button
           variant="contained"
           size="large"
-          color="light"
+          color="lightPrimary"
           href={link}
           target="_blank"
         >

@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { useOneSageURL } from '../../utils/hooks'
 import { useSynapseContext } from '../../utils'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 
 const LOGIN_LINK = '/LoginPlace:0'
 const MY_DASHBOARD_LINK = '/Profile:v'
@@ -62,7 +63,9 @@ export const SynapseHomepageNavBar: React.FunctionComponent = () => {
       }}
     >
       {/* Logo */}
-      <SynapseFullLogo textColor="#0B1218" />
+      <SynapseFullLogo
+        textColor={(theme.palette.primary as ColorPartial)[900]!}
+      />
       {/* Menu Items */}
       {/* Desktop nav bar, and a mobile hamburger dropdown menu nav bar that contain the same options */}
       {!isSmallView && (

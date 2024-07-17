@@ -24,7 +24,9 @@ type Story = StoryObj<typeof meta>
 
 export const DemoVersion2: Story = {
   args: {
-    projectViewId: 'syn23593547.3',
+    gotoPlace: (href: string) => {
+      window.alert(`SynapseHomepageV2 calling back to change route to ${href}`)
+    },
   },
   parameters: {
     stack: 'mock',

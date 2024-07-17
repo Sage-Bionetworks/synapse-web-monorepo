@@ -13,12 +13,9 @@ import { Popper } from '@mui/material'
 import { styled } from '@mui/material'
 import { Box } from '@mui/material'
 
-export const onSearch = (value: string) => {
-  window.location.assign(`/Search:${encodeURIComponent(value)}`)
-}
-
 export type SynapseHomepageSearchProps = {
   sourceTable: string
+  gotoPlace: (href: string) => void
 }
 
 const boxShadow =
@@ -44,7 +41,7 @@ const PopperAlwaysPlacedBelow = (props: PopperProps) => {
 
 export const SynapseHomepageSearch: React.FunctionComponent<
   SynapseHomepageSearchProps
-> = ({ sourceTable }) => {
+> = ({ sourceTable, gotoPlace }) => {
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
   const request: QueryBundleRequest = {
@@ -69,13 +66,17 @@ export const SynapseHomepageSearch: React.FunctionComponent<
       <Autocomplete
         freeSolo
         disableClearable
+        // disable filtering
+        filterOptions={options => options}
         options={
           rowSet && !isLoading
             ? rowSet.rows.map(row => row.values[topSearchedColIndex] ?? '')
             : ['...']
         }
         onChange={(_event, newValue: string | null) => {
-          onSearch(newValue ?? '')
+          if (newValue) {
+            gotoPlace(`/Search:${encodeURIComponent(newValue)}`)
+          }
         }}
         onOpen={() => setIsPopperOpen(true)}
         onClose={() => setIsPopperOpen(false)}

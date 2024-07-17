@@ -21,7 +21,10 @@ import { SynapsePlans } from './SynapsePlans'
 import { useInView } from 'react-intersection-observer'
 import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
-import { onSearch, SynapseHomepageSearch } from './SynapseHomepageSearch'
+import {
+  SynapseHomepageSearch,
+  SynapseHomepageSearchProps,
+} from './SynapseHomepageSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 
 const synapseInActionTable = 'syn61670075'
@@ -86,7 +89,13 @@ const sidePadding: SxProps = {
   },
 }
 
-export const SynapseHomepageV2: React.FunctionComponent = () => {
+export type SynapseHomepageV2Props = Pick<
+  SynapseHomepageSearchProps,
+  'gotoPlace'
+>
+export const SynapseHomepageV2: React.FunctionComponent<
+  SynapseHomepageV2Props
+> = ({ gotoPlace }) => {
   const theme = useTheme()
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
 
@@ -162,7 +171,10 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
           m: 'auto',
         }}
       >
-        <SynapseHomepageSearch sourceTable={searchAutocompleteTable} />
+        <SynapseHomepageSearch
+          sourceTable={searchAutocompleteTable}
+          gotoPlace={gotoPlace}
+        />
       </Box>
       <Box
         sx={{
@@ -182,7 +194,7 @@ export const SynapseHomepageV2: React.FunctionComponent = () => {
             <Chip
               key={value}
               label={value}
-              onClick={() => onSearch(value)}
+              onClick={() => gotoPlace(`/Search:${encodeURIComponent(value)}`)}
               variant="outlined"
               // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image
               sx={{
