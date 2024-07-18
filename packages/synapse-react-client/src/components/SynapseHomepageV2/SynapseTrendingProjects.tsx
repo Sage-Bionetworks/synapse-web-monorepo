@@ -30,7 +30,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     })
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
   const rowSet = past30DaysDownloadData?.responseBody?.queryResult?.queryResults
   const headers = rowSet?.headers

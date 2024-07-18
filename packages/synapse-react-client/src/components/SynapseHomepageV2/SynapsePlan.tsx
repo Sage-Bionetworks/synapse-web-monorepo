@@ -18,7 +18,13 @@ export const SynapsePlan: React.FunctionComponent<
       sx={{
         borderRadius: '10px',
         p: '40px',
-        maxWidth: '373px',
+        maxWidth: {
+          md: '373px',
+        },
+        width: {
+          xs: '100%',
+          md: 'auto',
+        },
         backgroundColor,
         boxShadow: '0px 4px 10px 0px rgba(0, 0, 0, 0.10)',
       }}
