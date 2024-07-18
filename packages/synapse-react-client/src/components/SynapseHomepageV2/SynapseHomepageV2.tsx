@@ -26,6 +26,7 @@ import {
   SynapseHomepageSearchProps,
 } from './SynapseHomepageSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
+import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -319,13 +320,13 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   ...h2Sx,
                   textAlign: 'center',
                   mt: '100px',
-                  mb: '70px',
+                  mb: '10px',
                   color: 'white',
                 }}
               >
                 Synapse by the numbers
               </Typography>
-              {/* <Typography
+              <Typography
                 variant="body1"
                 sx={{
                   ...homepageBodyText,
@@ -334,8 +335,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   color: 'white',
                 }}
               >
-                <BlinkingLiveIcon sx={{pt: '7px'}}/> Live
-              </Typography> */}
+                <BlinkingLiveIcon sx={{ pt: '7px' }} /> Live
+              </Typography>
               <SynapseByTheNumbers metricsTable={generalStatsMetricsTable} />
               <Typography
                 variant="headline2"
@@ -349,7 +350,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   color: 'white',
                 }}
               >
-                Projects trending this week
+                Projects trending this month
               </Typography>
               <SynapseTrendingProjects
                 past30DaysDownloadMetricsTable={past30DaysDownloadMetricsTable}
