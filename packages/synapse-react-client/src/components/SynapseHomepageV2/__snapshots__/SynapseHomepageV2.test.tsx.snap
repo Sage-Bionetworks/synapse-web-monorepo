@@ -481,14 +481,35 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiBox-root css-1gv9epy"
         >
           <p
-            class="MuiTypography-root MuiTypography-headline1 css-1fcqwk6-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-headline1 css-gkk169-MuiTypography-root"
           >
             Synapse by the numbers
           </p>
           <p
+            class="MuiTypography-root MuiTypography-body1 css-19y1nnc-MuiTypography-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="css-1ecgyss-MuiSvgIcon-root"
+              fill="none"
+              focusable="false"
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+              />
+            </svg>
+             Live
+          </p>
+          <p
             class="MuiTypography-root MuiTypography-headline2 css-ixjxgh-MuiTypography-root"
           >
-            Projects trending this week
+            Projects trending (
+            October 1985
+            )
           </p>
         </div>
         <div

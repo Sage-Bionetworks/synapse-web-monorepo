@@ -27,6 +27,7 @@ import {
 } from './SynapseHomepageSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
+import dayjs from 'dayjs'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -93,15 +94,17 @@ const sidePadding: SxProps = {
 export type SynapseHomepageV2Props = Pick<
   SynapseHomepageSearchProps,
   'gotoPlace'
->
+> & {
+  todaysDate?: Date //used for snapshot testing only
+}
 export const SynapseHomepageV2: React.FunctionComponent<
   SynapseHomepageV2Props
-> = ({ gotoPlace }) => {
+> = ({ gotoPlace, todaysDate = new Date() }) => {
   const theme = useTheme()
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
-
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
+  const previousMonthDate = dayjs(todaysDate).subtract(1, 'month')
   return (
     <Box>
       <SynapseHomepageNavBar />
@@ -350,7 +353,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   color: 'white',
                 }}
               >
-                Projects trending this month
+                {/* On release, this data is being updated monthly.  So always show the previous month name and year */}
+                Projects trending ({previousMonthDate.format('MMMM YYYY')})
               </Typography>
               <SynapseTrendingProjects
                 past30DaysDownloadMetricsTable={past30DaysDownloadMetricsTable}
