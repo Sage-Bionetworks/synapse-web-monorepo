@@ -531,7 +531,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
-                  Synapse provides you with APIs to access or query your data from your web browser, or programmatically  via R, Python, and the command line.
+                  Synapse provides you with APIs to access or query data from your web browser, or programmatically via R, Python, and the command line.
                 </p>
                 <div
                   class="MuiBox-root css-16ks28l"
@@ -612,7 +612,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <p
                   class="MuiTypography-root MuiTypography-headline3 css-a9h2lq-MuiTypography-root"
                 >
-                  Safeguard your data
+                  Safeguard data
                 </p>
                 <p
                   class="MuiTypography-root MuiTypography-headline3 css-t4glcm-MuiTypography-root"
@@ -622,7 +622,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
-                  Ethical openness is our top priority. Your sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient.
+                  Ethical openness is our top priority. Sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient.
                 </p>
                 <div
                   class="MuiBox-root css-16ks28l"
