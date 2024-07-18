@@ -62,7 +62,8 @@ export const SynapseTrendingProjects: React.FunctionComponent<
         </Typography>
         <Typography variant="body1">Project</Typography>
         <Typography variant="body1">Data Downloaded</Typography>
-        <Typography variant="body1">Unique Users</Typography>
+        {/* This is really Unique Users - Sage LT requested this be changed to Unique Teams on 7/18/2024 */}
+        <Typography variant="body1">Unique Teams</Typography>
         <Box></Box>
       </Box>
       {rowSet.rows.map((row, index) => (

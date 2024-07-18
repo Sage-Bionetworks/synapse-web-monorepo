@@ -325,6 +325,17 @@ export const SynapseHomepageV2: React.FunctionComponent<
               >
                 Synapse by the numbers
               </Typography>
+              {/* <Typography
+                variant="body1"
+                sx={{
+                  ...homepageBodyText,
+                  textAlign: 'center',
+                  mb: '70px',
+                  color: 'white',
+                }}
+              >
+                <BlinkingLiveIcon sx={{pt: '7px'}}/> Live
+              </Typography> */}
               <SynapseByTheNumbers metricsTable={generalStatsMetricsTable} />
               <Typography
                 variant="headline2"
