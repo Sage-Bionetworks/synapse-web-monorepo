@@ -19,7 +19,7 @@ export const SynapseFeatures: React.FunctionComponent = () => {
         title="Access or query data"
         image={<SeamlessIntegration />}
         subtitle="Seamless Integrations"
-        description="Synapse provides you with APIs to access or query your data from your web browser, or programmatically  via R, Python, and the command line."
+        description="Synapse provides you with APIs to access or query data from your web browser, or programmatically via R, Python, and the command line."
         icons={[<Python key="pythonIcon" />, <R key="rIcon" />]}
         featureName="integrations"
         link="https://help.synapse.org/docs/API-Clients-and-Documentation.1985446128.html"
@@ -33,10 +33,10 @@ export const SynapseFeatures: React.FunctionComponent = () => {
         link="https://help.synapse.org/docs/Provenance.1972470373.html"
       />
       <SynapseFeatureItem
-        title="Safeguard your data"
+        title="Safeguard data"
         image={<PrecisionGovernance key="precisionGovernanceIcon" />}
         subtitle="Precision Governance"
-        description="Ethical openness is our top priority. Your sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient."
+        description="Ethical openness is our top priority. Sensitive data is protected through a comprehensive system of access controls, regular audits, and privacy-enhancing technologies. Protect the data, protect the patient."
         icons={[<Fisma key="fismaIcon" />, <Hipaa key="hipaaIcon" />]}
         featureName="governance"
         link="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"

@@ -157,6 +157,10 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                     text: 'Report Violations',
                     props: { onClick: reportViolationCallback },
                   },
+                  {
+                    text: 'Privacy & Terms of Service',
+                    props: { href: 'https://sagebionetworks.org/trust-center' },
+                  },
                 ]}
               />
             </Box>
