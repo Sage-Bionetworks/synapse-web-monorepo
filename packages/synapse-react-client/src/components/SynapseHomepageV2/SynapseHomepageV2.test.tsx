@@ -62,10 +62,7 @@ describe('SynapseHomepageV2 Snapshot test', () => {
   it('Basic home page', () => {
     const { container } = render(
       <SynapseTestContext>
-        <SynapseHomepageV2
-          gotoPlace={() => {}}
-          todaysDate={new Date(1985, 10, 26)}
-        />
+        <SynapseHomepageV2 gotoPlace={() => {}} />
       </SynapseTestContext>,
     )
     mockAllIsIntersecting(true)
