@@ -209,7 +209,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               variant="outlined"
               // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image
               sx={{
-                color: '#2A5850',
+                color: 'secondary.600',
                 backgroundColor: 'secondary.100',
                 '&:hover': { backgroundColor: '#f5f5f3 !important' },
               }}
