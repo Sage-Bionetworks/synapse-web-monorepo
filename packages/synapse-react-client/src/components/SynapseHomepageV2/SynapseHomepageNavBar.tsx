@@ -1,6 +1,6 @@
 import React from 'react'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
-import { LoginTwoTone, MenuOutlined } from '@mui/icons-material'
+import { Close, MenuOutlined } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -10,15 +10,13 @@ import {
   Menu,
   MenuItem,
   Divider,
-  ListItemIcon,
   IconButton,
+  styled,
 } from '@mui/material'
 import { useOneSageURL } from '../../utils/hooks'
-import { useSynapseContext } from '../../utils'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 
 const LOGIN_LINK = '/LoginPlace:0'
-const MY_DASHBOARD_LINK = '/Profile:v'
 
 const navTextButtonSx: SxProps = {
   fontSize: '18px',
@@ -33,6 +31,14 @@ const navButtonSx: SxProps = {
   },
 }
 
+const StyledMenuItem = styled(MenuItem)(() => ({
+  fontSize: '36px',
+  fontWeight: 200,
+  lineHeight: '32px',
+  height: '80px',
+  paddingLeft: '30px',
+}))
+
 export type SynapseHomepageNavBarProps = {
   gotoPlace: (href: string) => void
 }
@@ -40,8 +46,6 @@ export type SynapseHomepageNavBarProps = {
 export const SynapseHomepageNavBar: React.FunctionComponent<
   SynapseHomepageNavBarProps
 > = ({ gotoPlace }) => {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
   const resourcesLink = useOneSageURL('/sageresources')
   const theme = useTheme()
@@ -97,43 +101,26 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
           >
             Sage Bionetworks
           </Button>
-          {isSignedIn && (
-            <Button
-              size="large"
-              variant="contained"
-              color="secondary"
-              sx={navButtonSx}
-              onClick={() => {
-                gotoPlace(MY_DASHBOARD_LINK)
-              }}
-            >
-              View My Dashboard
-            </Button>
-          )}
-          {!isSignedIn && (
-            <Button
-              size="large"
-              variant="outlined"
-              color="secondary"
-              sx={navButtonSx}
-              onClick={() => {
-                gotoPlace(LOGIN_LINK)
-              }}
-            >
-              Login
-            </Button>
-          )}
-          {!isSignedIn && (
-            <Button
-              size="large"
-              variant="contained"
-              color="secondary"
-              sx={navButtonSx}
-              href={registrationLink.toString()}
-            >
-              Register Now
-            </Button>
-          )}
+          <Button
+            size="large"
+            variant="outlined"
+            color="secondary"
+            sx={navButtonSx}
+            onClick={() => {
+              gotoPlace(LOGIN_LINK)
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            size="large"
+            variant="contained"
+            color="secondary"
+            sx={navButtonSx}
+            href={registrationLink.toString()}
+          >
+            Register Now
+          </Button>
         </Box>
       )}
       {isSmallView && (
@@ -144,16 +131,6 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             columnGap: '10px',
           }}
         >
-          {!isSignedIn && (
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ ...navButtonSx, textWrap: 'nowrap' }}
-              href={registrationLink.toString()}
-            >
-              Register Now
-            </Button>
-          )}
           <IconButton
             color="secondary"
             sx={{ borderWidth: 1, borderStyle: 'solid', borderRadius: '0' }}
@@ -175,46 +152,58 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            {!isSignedIn && (
-              <MenuItem
-                onClick={() => {
-                  handleClose()
-                  gotoPlace(LOGIN_LINK)
-                }}
-              >
-                <ListItemIcon>
-                  <LoginTwoTone fontSize="small" />
-                </ListItemIcon>
-                Login
-              </MenuItem>
-            )}
-            {isSignedIn && (
-              <MenuItem
-                onClick={() => {
-                  handleClose()
-                  gotoPlace(MY_DASHBOARD_LINK)
-                }}
-              >
-                View My Dashboard
-              </MenuItem>
-            )}
-            <Divider />
-            <MenuItem
+            <IconButton
+              onClick={handleClose}
+              sx={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                zIndex: 1,
+                color: 'secondary.main',
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderRadius: '0',
+              }}
+            >
+              <Close />
+            </IconButton>
+            <StyledMenuItem
+              sx={{ mt: '70px' }}
               onClick={() => {
                 window.open(resourcesLink.toString(), '_blank')
                 handleClose()
               }}
             >
               Portals
-            </MenuItem>
-            <MenuItem
+            </StyledMenuItem>
+            <StyledMenuItem
               onClick={() => {
                 window.open('https://sagebionetworks.org/', '_blank')
                 handleClose()
               }}
             >
               Sage Bionetworks
-            </MenuItem>
+            </StyledMenuItem>
+
+            <Divider sx={{ pt: '100px' }} />
+            <StyledMenuItem
+              sx={{ mt: '30px', color: 'secondary.main' }}
+              onClick={() => {
+                window.open(registrationLink.toString(), '_blank')
+                handleClose()
+              }}
+            >
+              Register Now
+            </StyledMenuItem>
+            <StyledMenuItem
+              sx={{ mb: '40px' }}
+              onClick={() => {
+                handleClose()
+                gotoPlace(LOGIN_LINK)
+              }}
+            >
+              Log In
+            </StyledMenuItem>
           </Menu>
         </Box>
       )}
