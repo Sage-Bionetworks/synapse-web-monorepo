@@ -62,6 +62,8 @@ import {
   RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
+  SESSION_ACCESS_TOKEN,
+  SESSION_ACCESS_TOKEN_ALL,
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -1935,7 +1937,27 @@ export const getPrincipalAliasRequest = (
   return doPost(url, request, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
+export function deleteSessionAccessToken(accessToken: string) {
+  return doDelete(
+    SESSION_ACCESS_TOKEN,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function deleteAllSessionAccessTokens(accessToken: string) {
+  return doDelete(
+    SESSION_ACCESS_TOKEN_ALL,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const signOut = async () => {
+  const accessToken = await getAccessTokenFromCookie()
+  if (accessToken) {
+    await deleteSessionAccessToken(accessToken)
+  }
   await setAccessTokenCookie(undefined)
 }
 
