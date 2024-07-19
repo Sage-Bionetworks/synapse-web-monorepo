@@ -25,6 +25,11 @@ export function compareResourceAccessAndUserGroupHeader(
   a: ResourceAccessAndUserGroupHeader,
   b: ResourceAccessAndUserGroupHeader,
 ): number {
+  enum CompareResult {
+    A_FIRST = -1,
+    B_FIRST = 1,
+  }
+
   const hasChangePermissionA = a.resourceAccess.accessType.includes(
     ACCESS_TYPE.CHANGE_PERMISSIONS,
   )
@@ -32,8 +37,10 @@ export function compareResourceAccessAndUserGroupHeader(
     ACCESS_TYPE.CHANGE_PERMISSIONS,
   )
 
-  if (hasChangePermissionA && !hasChangePermissionB) return -1
-  if (!hasChangePermissionA && hasChangePermissionB) return 1
+  if (hasChangePermissionA && !hasChangePermissionB)
+    return CompareResult.A_FIRST
+  if (!hasChangePermissionA && hasChangePermissionB)
+    return CompareResult.B_FIRST
 
   // Both have CHANGE_PERMISSIONS or neither have it, proceed with other checks
 
@@ -43,25 +50,25 @@ export function compareResourceAccessAndUserGroupHeader(
       SynapseConstants.AUTHENTICATED_PRINCIPAL_ID &&
     b.resourceAccess.principalId !== SynapseConstants.AUTHENTICATED_PRINCIPAL_ID
   )
-    return -1
+    return CompareResult.A_FIRST
   if (
     a.resourceAccess.principalId !==
       SynapseConstants.AUTHENTICATED_PRINCIPAL_ID &&
     b.resourceAccess.principalId === SynapseConstants.AUTHENTICATED_PRINCIPAL_ID
   )
-    return 1
+    return CompareResult.B_FIRST
 
   // PUBLIC group always appears before other users / teams
   if (
     a.resourceAccess.principalId === SynapseConstants.PUBLIC_PRINCIPAL_ID &&
     b.resourceAccess.principalId !== SynapseConstants.PUBLIC_PRINCIPAL_ID
   )
-    return -1
+    return CompareResult.A_FIRST
   if (
     a.resourceAccess.principalId !== SynapseConstants.PUBLIC_PRINCIPAL_ID &&
     b.resourceAccess.principalId === SynapseConstants.PUBLIC_PRINCIPAL_ID
   )
-    return 1
+    return CompareResult.B_FIRST
 
   // If none of the other cases apply, sort alphabetically by userName
   return a.userGroupHeader.userName.localeCompare(b.userGroupHeader.userName)
