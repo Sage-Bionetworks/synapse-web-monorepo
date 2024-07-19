@@ -101,12 +101,19 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           Sage Bionetworks
         </a>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-11ydz1j-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary css-16cn9en-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
-          View My Dashboard
+          Login
         </button>
+        <a
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-11ydz1j-MuiButtonBase-root-MuiButton-root"
+          href="https://accounts.synapse.org/register1"
+          tabindex="0"
+        >
+          Register Now
+        </a>
       </div>
     </div>
     <div
@@ -323,7 +330,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       class="MuiBox-root css-1wtadm6"
     >
       <div
-        class="MuiBox-root css-2txv22"
+        class="MuiBox-root css-xaa37"
       >
         <svg
           fill="none"
@@ -372,7 +379,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           </defs>
         </svg>
         <p
-          class="MuiTypography-root MuiTypography-headline2 css-p226kn-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-headline2 css-iobtgw-MuiTypography-root"
         >
           Created by 
           <strong>
@@ -381,7 +388,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           , Synapse empowers biomedical researchers with tools for open science and collaboration, forging a path to optimal human health.
         </p>
         <a
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-181bpre-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-1pu9iaa-MuiButtonBase-root-MuiButton-root"
           href="https://www.sagebionetworks.org"
           tabindex="0"
           target="_blank"
@@ -815,7 +822,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                     Free
                   </p>
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-12jlnu3-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >
                     Our basic plan
                   </p>
@@ -906,7 +913,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   </p>
                 </div>
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-k9lk9p-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-34fra2-MuiButtonBase-root-MuiButton-root"
                   href="https://accounts.synapse.org/register1"
                   tabindex="0"
                 >
@@ -929,7 +936,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                     Managed
                   </p>
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-12jlnu3-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >
                     Our upgraded plan
                   </p>
@@ -1025,7 +1032,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   </div>
                 </div>
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-k9lk9p-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-34fra2-MuiButtonBase-root-MuiButton-root"
                   href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
                   tabindex="0"
                 >
@@ -1048,7 +1055,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                     Data Coordination
                   </p>
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-12jlnu3-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >
                     Our customized plan
                   </p>
@@ -1139,7 +1146,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   </div>
                 </div>
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-k9lk9p-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-34fra2-MuiButtonBase-root-MuiButton-root"
                   href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
                   tabindex="0"
                 >
