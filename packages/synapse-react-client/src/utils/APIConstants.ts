@@ -218,3 +218,7 @@ export const WIKI_PAGE_ID = (
 ) => {
   return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId}`
 }
+
+export const SESSION_ACCESS_TOKEN = `${AUTH}/sessionAccessToken`
+export const ALL_USER_SESSION_TOKENS = (targetUserId: string | number) =>
+  `${AUTH}/user/${targetUserId}/sessionAccessToken/all`

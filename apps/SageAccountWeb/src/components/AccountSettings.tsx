@@ -22,6 +22,7 @@ import {
   TwoFactorAuthSettingsPanel,
   useSynapseContext,
   CookiePreferencesDialog,
+  useApplicationSessionContext,
 } from 'synapse-react-client'
 import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { Form } from 'react-bootstrap'
@@ -85,9 +86,12 @@ export const AccountSettings = () => {
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
   const oauthClientManagementRef = useRef<HTMLDivElement>(null)
   const cookieManagementRef = useRef<HTMLDivElement>(null)
+  const signOutSectionRef = useRef<HTMLDivElement>(null)
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
     useState(false)
+
+  const { clearSession } = useApplicationSessionContext()
 
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
@@ -234,6 +238,9 @@ export const AccountSettings = () => {
               </ListItemButton>
               <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
                 Privacy Preferences
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(signOutSectionRef)}>
+                Sign Out
               </ListItemButton>
             </Paper>
 
@@ -722,6 +729,44 @@ export const AccountSettings = () => {
                     setIsCookiePrefsDialogVisible(false)
                   }}
                 />
+              </Paper>
+              <Paper
+                ref={signOutSectionRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>Sign Out</Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  You can sign out of all other sessions where your Synapse
+                  account is currently active. This will not impact sessions
+                  where you are using a personal access token, or where you have
+                  granted permissions to a third party to access your Synapse
+                  resources.
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  Signing out of all sessions will also sign you out of the
+                  current session.
+                </Typography>
+                <div className="primary-button-container">
+                  <Button
+                    variant="outlined"
+                    sx={credentialButtonSX}
+                    onClick={() => clearSession()}
+                  >
+                    Sign out
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color={'error'}
+                    sx={credentialButtonSX}
+                    onClick={() => {
+                      SynapseClient.deleteAllSessionAccessTokens(
+                        accessToken!,
+                      ).then(() => clearSession())
+                    }}
+                  >
+                    Sign out of all sessions
+                  </Button>
+                </div>
               </Paper>
             </div>
           </Box>
