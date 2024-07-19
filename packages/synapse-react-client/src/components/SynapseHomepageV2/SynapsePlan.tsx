@@ -64,7 +64,7 @@ export const SynapsePlan: React.FunctionComponent<
         <Button
           variant="contained"
           color="secondary"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', mt: '30px' }}
           href={ctaLink}
         >
           {ctaText}
