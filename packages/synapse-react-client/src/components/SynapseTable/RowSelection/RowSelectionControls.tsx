@@ -48,8 +48,10 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
     }
   }
   const fileColumnId = getFileColumnModelId(data?.columnModels)
-  const showAddToDownloadCart =
-    fileColumnId ?? canTableQueryBeAddedToDownloadList(entity)
+  const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(
+    entity,
+    fileColumnId,
+  )
 
   return (
     <RowSelectionUI

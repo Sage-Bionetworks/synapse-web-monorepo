@@ -62,6 +62,8 @@ import {
   RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
+  SESSION_ACCESS_TOKEN,
+  ALL_USER_SESSION_TOKENS,
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -1935,7 +1937,33 @@ export const getPrincipalAliasRequest = (
   return doPost(url, request, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
+export function deleteSessionAccessToken(accessToken: string) {
+  return doDelete(
+    SESSION_ACCESS_TOKEN,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function deleteAllSessionAccessTokens(accessToken: string) {
+  const userProfile = await getUserProfile(accessToken)
+  return doDelete(
+    ALL_USER_SESSION_TOKENS(userProfile.ownerId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const signOut = async () => {
+  const accessToken = await getAccessTokenFromCookie()
+  if (accessToken) {
+    try {
+      // This call may fail if the token was already revoked, so just log any encountered errors
+      await deleteSessionAccessToken(accessToken)
+    } catch (e) {
+      console.warn('Could not delete session token', e)
+    }
+  }
   await setAccessTokenCookie(undefined)
 }
 
@@ -3160,6 +3188,11 @@ export const createAccessRequirement = <T extends AccessRequirement>(
   accessToken: string | undefined,
   accessRequirement: Partial<T>,
 ): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
   return doPost<T>(
     ACCESS_REQUIREMENT,
     accessRequirement,
@@ -3182,6 +3215,11 @@ export const updateAccessRequirement = <T extends AccessRequirement>(
   accessToken: string | undefined,
   accessRequirement: T,
 ): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
   return doPut<T>(
     `${ACCESS_REQUIREMENT}/${accessRequirement.id}`,
     accessRequirement,

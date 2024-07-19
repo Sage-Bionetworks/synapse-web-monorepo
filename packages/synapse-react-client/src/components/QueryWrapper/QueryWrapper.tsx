@@ -17,7 +17,6 @@ import {
 import {
   CombineRangeFacetConfig,
   InfiniteQueryContextType,
-  LockedColumn,
   PaginatedQueryContextType,
   QueryContextProvider,
 } from '../QueryContext/QueryContext'
@@ -34,6 +33,7 @@ import useQueryWrapperData from './useQueryWrapperData'
 import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
 import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
 import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
+import { LockedColumn } from '../../utils'
 
 export type QueryWrapperProps = React.PropsWithChildren<{
   initQueryRequest: QueryBundleRequest

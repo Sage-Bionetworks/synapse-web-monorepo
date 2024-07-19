@@ -77,6 +77,13 @@ export const handlers = [
       )
     },
   ),
+
+  rest.delete(
+    'https://repo-prod.prod.sagebase.org/auth/v1/sessionAccessToken',
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(''))
+    },
+  ),
 ]
 
 export function getOAuth2DescriptionWithUnverifiedClientHandler() {
