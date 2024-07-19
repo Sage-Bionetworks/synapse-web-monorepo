@@ -220,4 +220,5 @@ export const WIKI_PAGE_ID = (
 }
 
 export const SESSION_ACCESS_TOKEN = `${AUTH}/sessionAccessToken`
-export const SESSION_ACCESS_TOKEN_ALL = `${SESSION_ACCESS_TOKEN}/all`
+export const ALL_USER_SESSION_TOKENS = (targetUserId: string | number) =>
+  `${AUTH}/user/${targetUserId}/sessionAccessToken/all`
