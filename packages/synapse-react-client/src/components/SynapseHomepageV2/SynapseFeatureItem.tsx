@@ -30,8 +30,8 @@ export const SynapseFeatureItem: React.FunctionComponent<
         variant="headline3"
         sx={{
           color: 'primary.100',
-          fontSize: '30px',
-          lineHeight: '24px',
+          fontSize: '36px',
+          lineHeight: '36px',
           fontWeight: 400,
           textAlign: 'center',
         }}
@@ -42,8 +42,9 @@ export const SynapseFeatureItem: React.FunctionComponent<
         variant="headline3"
         sx={{
           color: 'primary.100',
-          fontSize: '18px',
+          fontSize: '24px',
           fontWeight: 700,
+          lineHeight: '28px',
           textAlign: 'center',
         }}
       >

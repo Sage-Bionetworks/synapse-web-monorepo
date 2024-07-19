@@ -6,7 +6,6 @@ import { SynapseInActionItem } from './SynapseInActionItem'
 import { useTheme } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { useInView } from 'react-intersection-observer'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 
 export type SynapseInActionProps = {
   tableId: string
@@ -95,7 +94,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
             const secondaryColor = row.values[secondaryColorColIndex]!
             const backgroundColor =
               isMobileView && index % 2
-                ? (theme.palette.secondary as ColorPartial)[100]
+                ? '#E9F2F1' // SWC-6984: intentional break out of color palette
                 : undefined
             return (
               <Box

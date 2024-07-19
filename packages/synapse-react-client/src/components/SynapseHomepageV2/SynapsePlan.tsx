@@ -55,6 +55,10 @@ export const SynapsePlan: React.FunctionComponent<
             sx={{
               ...homepageBodyText,
               textAlign: 'center',
+              fontSize: {
+                xs: '16px',
+                sm: '24px',
+              },
             }}
           >
             {description}
@@ -64,7 +68,7 @@ export const SynapsePlan: React.FunctionComponent<
         <Button
           variant="contained"
           color="secondary"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', mt: '30px' }}
           href={ctaLink}
         >
           {ctaText}
