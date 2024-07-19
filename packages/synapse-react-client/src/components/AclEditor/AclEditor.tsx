@@ -14,9 +14,7 @@ export type AclEditorProps = {
   resourceAccessList: ResourceAccess[]
   availablePermissionLevels: PermissionLevel[]
   emptyText: React.ReactNode
-  addResourceAccessItem: ReturnType<
-    typeof useUpdateAcl
-  >['addResourceAccessItem']
+  onAddPrincipalToAcl: (id: string) => void
   updateResourceAccessItem: ReturnType<
     typeof useUpdateAcl
   >['updateResourceAccessItem']
@@ -32,7 +30,7 @@ export function AclEditor(props: AclEditorProps) {
     resourceAccessList,
     availablePermissionLevels,
     emptyText,
-    addResourceAccessItem,
+    onAddPrincipalToAcl,
     updateResourceAccessItem,
     removeResourceAccessItem,
   } = props
@@ -108,7 +106,11 @@ export function AclEditor(props: AclEditorProps) {
               value={null}
               inputId="reviewer-search"
               placeholder="Username, name (first and last) or team name."
-              onChange={id => addResourceAccessItem(id)}
+              onChange={id => {
+                if (id) {
+                  onAddPrincipalToAcl(id)
+                }
+              }}
             />
           </Box>
         </Box>

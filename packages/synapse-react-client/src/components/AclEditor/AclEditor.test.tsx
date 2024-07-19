@@ -60,7 +60,7 @@ const defaultProps: AclEditorProps = {
   isLoading: false,
   emptyText: DEFAULT_EMPTY_TEXT,
   isInEditMode: true,
-  addResourceAccessItem: mockAddResourceAccessItem,
+  onAddPrincipalToAcl: mockAddResourceAccessItem,
   updateResourceAccessItem: mockUpdateResourceAccessItem,
   removeResourceAccessItem: mockRemoveResourceAccessItem,
 }

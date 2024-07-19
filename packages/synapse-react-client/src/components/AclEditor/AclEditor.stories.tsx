@@ -13,7 +13,7 @@ const meta: Meta<AclEditorProps> = {
       'CAN_REVIEW_SUBMISSIONS',
       'IS_EXEMPTION_ELIGIBLE',
     ],
-    addResourceAccessItem: fn(),
+    onAddPrincipalToAcl: fn(),
     updateResourceAccessItem: fn(),
     removeResourceAccessItem: fn(),
     isLoading: false,
