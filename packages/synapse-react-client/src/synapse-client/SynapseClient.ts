@@ -1958,6 +1958,7 @@ export const signOut = async () => {
   const accessToken = await getAccessTokenFromCookie()
   if (accessToken) {
     try {
+      // This call may fail if the token was already revoked, so just log any encountered errors
       await deleteSessionAccessToken(accessToken)
     } catch (e) {
       console.warn('Could not delete session token', e)
