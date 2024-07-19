@@ -70,7 +70,6 @@ export const SynapseInActionItem: React.FunctionComponent<
                     mr: '5px',
                     color: 'secondary.600',
                     backgroundColor: 'secondary.100',
-                    border: '1px solid #6BA89D',
                   }}
                   label={tag}
                 />
