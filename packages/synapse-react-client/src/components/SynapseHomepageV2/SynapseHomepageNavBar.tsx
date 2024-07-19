@@ -33,7 +33,13 @@ const navButtonSx: SxProps = {
   },
 }
 
-export const SynapseHomepageNavBar: React.FunctionComponent = () => {
+export type SynapseHomepageNavBarProps = {
+  gotoPlace: (href: string) => void
+}
+
+export const SynapseHomepageNavBar: React.FunctionComponent<
+  SynapseHomepageNavBarProps
+> = ({ gotoPlace }) => {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
@@ -97,7 +103,9 @@ export const SynapseHomepageNavBar: React.FunctionComponent = () => {
               variant="contained"
               color="secondary"
               sx={navButtonSx}
-              href={MY_DASHBOARD_LINK}
+              onClick={() => {
+                gotoPlace(MY_DASHBOARD_LINK)
+              }}
             >
               View My Dashboard
             </Button>
@@ -108,7 +116,9 @@ export const SynapseHomepageNavBar: React.FunctionComponent = () => {
               variant="outlined"
               color="secondary"
               sx={navButtonSx}
-              href={LOGIN_LINK}
+              onClick={() => {
+                gotoPlace(LOGIN_LINK)
+              }}
             >
               Login
             </Button>
@@ -168,8 +178,8 @@ export const SynapseHomepageNavBar: React.FunctionComponent = () => {
             {!isSignedIn && (
               <MenuItem
                 onClick={() => {
-                  window.open(LOGIN_LINK, '_blank')
                   handleClose()
+                  gotoPlace(LOGIN_LINK)
                 }}
               >
                 <ListItemIcon>
@@ -181,8 +191,8 @@ export const SynapseHomepageNavBar: React.FunctionComponent = () => {
             {isSignedIn && (
               <MenuItem
                 onClick={() => {
-                  window.open(MY_DASHBOARD_LINK, '_blank')
                   handleClose()
+                  gotoPlace(MY_DASHBOARD_LINK)
                 }}
               >
                 View My Dashboard

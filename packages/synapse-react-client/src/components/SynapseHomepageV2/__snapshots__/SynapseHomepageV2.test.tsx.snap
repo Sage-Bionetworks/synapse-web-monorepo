@@ -100,13 +100,13 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         >
           Sage Bionetworks
         </a>
-        <a
+        <button
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-11ydz1j-MuiButtonBase-root-MuiButton-root"
-          href="/Profile:v"
           tabindex="0"
+          type="button"
         >
           View My Dashboard
-        </a>
+        </button>
       </div>
     </div>
     <div

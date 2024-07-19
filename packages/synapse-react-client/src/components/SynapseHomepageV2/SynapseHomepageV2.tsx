@@ -103,7 +103,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
   const { ref, inView } = useInView({ triggerOnce: true })
   return (
     <Box>
-      <SynapseHomepageNavBar />
+      <SynapseHomepageNavBar gotoPlace={gotoPlace} />
       <Box sx={{ position: 'relative', pb: '80px' }}>
         <Box
           sx={{
