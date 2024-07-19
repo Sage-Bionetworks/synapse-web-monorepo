@@ -232,6 +232,12 @@ export const SynapseHomepageV2: React.FunctionComponent<
             svg: {
               maxWidth: '100%',
             },
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: {
+              xs: 'center',
+              md: 'flex-start',
+            },
           }}
           ref={ref} // use this UI to trigger loading the rest of the page content
         >
@@ -253,6 +259,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
               mt: '20px',
               fontWeight: 400,
               mb: '35px',
+              textAlign: {
+                xs: 'center',
+                md: 'left',
+              },
             }}
           >
             Created by <strong>Sage Bionetworks</strong>, Synapse empowers
@@ -265,7 +275,13 @@ export const SynapseHomepageV2: React.FunctionComponent<
             color="secondary"
             href="https://www.sagebionetworks.org"
             target="_blank"
-            sx={{ p: '5px 25px' }}
+            sx={{
+              p: '5px 25px',
+              width: {
+                xs: '100%',
+                md: 'auto',
+              },
+            }}
           >
             About Sage Bionetworks
           </Button>
