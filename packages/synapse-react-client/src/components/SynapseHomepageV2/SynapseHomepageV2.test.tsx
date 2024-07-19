@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import { server } from '../../mocks/msw/server'
 import {
   featuredDatasetsTable,
@@ -65,7 +65,9 @@ describe('SynapseHomepageV2 Snapshot test', () => {
         <SynapseHomepageV2 gotoPlace={() => {}} />
       </SynapseTestContext>,
     )
-    mockAllIsIntersecting(true)
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
     expect(container).toMatchSnapshot()
   })
 })
