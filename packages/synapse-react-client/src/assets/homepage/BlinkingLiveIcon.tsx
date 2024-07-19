@@ -24,7 +24,7 @@ export const BlinkingLiveIcon = styled(LiveIcon)(({ theme }) => ({
       fill: (theme.palette.primary as ColorPartial)[800],
     },
     '50%': {
-      fill: theme.palette.secondary.main,
+      fill: (theme.palette.secondary as ColorPartial)[700],
     },
   },
   width: '16px',
