@@ -214,7 +214,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       class="MuiBox-root css-17hmknl"
     >
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -229,7 +229,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -244,7 +244,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -259,7 +259,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -274,7 +274,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -289,7 +289,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -304,7 +304,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </span>
       </div>
       <div
-        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-3mt37i-MuiButtonBase-root-MuiChip-root"
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-wbupq1-MuiButtonBase-root-MuiChip-root"
         role="button"
         tabindex="0"
       >
@@ -560,7 +560,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
             class="MuiBox-root css-79elbk"
           >
             <div
-              class="MuiBox-root css-qei20s"
+              class="MuiBox-root css-jw4rhz"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -611,7 +611,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-qei20s"
+              class="MuiBox-root css-jw4rhz"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -651,7 +651,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-qei20s"
+              class="MuiBox-root css-jw4rhz"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -702,7 +702,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-qei20s"
+              class="MuiBox-root css-jw4rhz"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
