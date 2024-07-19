@@ -221,7 +221,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
         sx={{
           display: { xs: 'relative', lg: 'grid' },
           gridTemplateColumns: '50% 50%',
-          backgroundColor: 'secondary.100',
+          backgroundColor: '#F5F9F9',
           mt: '150px',
           height: { lg: '608px' }, //force container to the same height as the image
         }}

@@ -16,8 +16,8 @@ export const SynapseFeatureItem: React.FunctionComponent<
   SynapseFeatureItemProps
 > = ({ title, subtitle, description, featureName, link, icons, image }) => {
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-  return isMobileView ? (
+  const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
+  return isSmallView ? (
     <Box
       sx={{
         display: 'flex',
