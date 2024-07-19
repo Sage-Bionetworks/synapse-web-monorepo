@@ -193,7 +193,18 @@ export const SynapseHomepageV2: React.FunctionComponent<
           return (
             <Chip
               key={value}
-              label={value}
+              label={
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: '18px',
+                    fontWeight: 400,
+                    p: '10px',
+                  }}
+                >
+                  {value}
+                </Typography>
+              }
               onClick={() => gotoPlace(`/Search:${encodeURIComponent(value)}`)}
               variant="outlined"
               // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image

@@ -20,9 +20,9 @@ export const SynapsePartners: React.FunctionComponent = () => {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'space-evenly',
+          justifyContent: 'center',
           alignItems: 'center',
-          gap: '20px',
+          gap: '25px',
         }}
       >
         <a href="https://sloan.org/" target="_blank" rel="noreferrer">

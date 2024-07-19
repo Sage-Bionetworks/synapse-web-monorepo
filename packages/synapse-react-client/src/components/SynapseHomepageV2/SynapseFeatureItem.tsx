@@ -85,7 +85,10 @@ export const SynapseFeatureItem: React.FunctionComponent<
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
-        columnGap: '40px',
+        columnGap: {
+          xs: '40px',
+          lg: '120px',
+        },
         pb: '120px',
       }}
     >
