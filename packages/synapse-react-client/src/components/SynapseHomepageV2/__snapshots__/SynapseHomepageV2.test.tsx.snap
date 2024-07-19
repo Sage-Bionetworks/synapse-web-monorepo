@@ -320,7 +320,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-1ha6au4"
+      class="MuiBox-root css-1wtadm6"
     >
       <div
         class="MuiBox-root css-2txv22"
@@ -1026,10 +1026,10 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 </div>
                 <a
                   class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-k9lk9p-MuiButtonBase-root-MuiButton-root"
-                  href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162"
+                  href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
                   tabindex="0"
                 >
-                  Contact us
+                  Find out more
                 </a>
               </div>
             </div>
@@ -1140,10 +1140,10 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 </div>
                 <a
                   class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-k9lk9p-MuiButtonBase-root-MuiButton-root"
-                  href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162"
+                  href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
                   tabindex="0"
                 >
-                  Contact us
+                  Find out more
                 </a>
               </div>
             </div>
