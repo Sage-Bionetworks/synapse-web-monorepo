@@ -1,10 +1,12 @@
 import React from 'react'
-import { Button, IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../../synapse-client/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../../utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
+import Switch from 'react-switch'
+import { useTheme } from '@mui/material'
 
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
@@ -14,7 +16,7 @@ const ExperimentalMode: React.FC = () => {
     useState<boolean>(false)
   const cookies = new UniversalCookies()
   let mounted = true
-
+  const theme = useTheme()
   useEffect(() => {
     if (mounted) {
       if (isInSynapseExperimentalMode()) {
@@ -38,18 +40,8 @@ const ExperimentalMode: React.FC = () => {
   }
 
   return (
-    <span className={'experimental-mode-wrapper'}>
-      <Button
-        className={'experimental-mode'}
-        variant="text"
-        onClick={
-          isExperimentalModeOn
-            ? deleteExperimentalModeCookie
-            : createExperimentalModeCookie
-        }
-      >
-        Experimental mode is {isExperimentalModeOn ? 'on' : 'off'}
-      </Button>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Typography variant="body1">Experimental Mode</Typography>
       <Tooltip title={experimentalModeText} arrow placement="top">
         <IconButton
           aria-label="info"
@@ -59,7 +51,20 @@ const ExperimentalMode: React.FC = () => {
           <InfoOutlined sx={{ verticalAlign: 'middle' }} />
         </IconButton>
       </Tooltip>
-    </span>
+      <Switch
+        width={35}
+        height={20}
+        onColor={theme.palette.secondary.main}
+        checkedIcon={false}
+        uncheckedIcon={false}
+        checked={isExperimentalModeOn}
+        onChange={
+          isExperimentalModeOn
+            ? deleteExperimentalModeCookie
+            : createExperimentalModeCookie
+        }
+      />
+    </Box>
   )
 }
 

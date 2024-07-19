@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button, Paper, Typography } from '@mui/material'
-import { ReactComponent as SageLogo } from '../../assets/logos/sage-logo.svg'
 import SynapseClient from '../../synapse-client'
 import { displayToast } from '../ToastMessage'
+import SageFullLogo from '../../assets/icons/SageFullLogo'
 
 export type RegisterPageLogoutPromptProps = {
   onLogout: () => void
@@ -12,7 +12,7 @@ export type RegisterPageLogoutPromptProps = {
 export default function RegisterPageLogoutPrompt(
   props: RegisterPageLogoutPromptProps,
 ) {
-  const { onLogout, logo = <SageLogo width={'100%'} /> } = props
+  const { onLogout, logo = <SageFullLogo width={'100%'} /> } = props
   return (
     <Paper
       sx={{

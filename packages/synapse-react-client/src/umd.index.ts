@@ -31,6 +31,7 @@ import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstruct
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
 import { SynapseHomepage } from './components/SynapseHomepage'
+import { SynapseHomepageV2 } from './components/SynapseHomepageV2'
 import { SynapseNavDrawer } from './components/SynapseNavDrawer/SynapseNavDrawer'
 import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetItemsEditor'
 import StandaloneQueryWrapper from './components/StandaloneQueryWrapper/StandaloneQueryWrapper'
@@ -80,6 +81,7 @@ import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEdit
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
 import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
+import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
 import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
@@ -113,6 +115,8 @@ const SynapseComponents = {
   PageProgress,
   ProjectViewCarousel,
   SynapseHomepage,
+  SynapseHomepageV2,
+  SynapseFooter,
   EntityFinder,
   ErrorPage,
   EntityBadgeIcons,
