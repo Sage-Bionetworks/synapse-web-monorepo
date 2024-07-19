@@ -6,7 +6,6 @@ import { SynapseInActionItem } from './SynapseInActionItem'
 import { useTheme } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { useInView } from 'react-intersection-observer'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 
 export type SynapseInActionProps = {
   tableId: string
