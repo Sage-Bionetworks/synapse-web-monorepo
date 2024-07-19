@@ -221,7 +221,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          Alzheimer's Disease
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            Alzheimer's Disease
+          </p>
         </span>
       </div>
       <div
@@ -232,7 +236,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          Parkinson
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            Parkinson
+          </p>
         </span>
       </div>
       <div
@@ -243,7 +251,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          Neurofibromatosis
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            Neurofibromatosis
+          </p>
         </span>
       </div>
       <div
@@ -254,7 +266,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          HTAN
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            HTAN
+          </p>
         </span>
       </div>
       <div
@@ -265,7 +281,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          ukb-ppp
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            ukb-ppp
+          </p>
         </span>
       </div>
       <div
@@ -276,7 +296,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          ROSMAP
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            ROSMAP
+          </p>
         </span>
       </div>
       <div
@@ -287,7 +311,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <span
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
-          GENIE
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            GENIE
+          </p>
         </span>
       </div>
     </div>
@@ -532,7 +560,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
             class="MuiBox-root css-79elbk"
           >
             <div
-              class="MuiBox-root css-sa4h3e"
+              class="MuiBox-root css-qei20s"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -583,7 +611,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-sa4h3e"
+              class="MuiBox-root css-qei20s"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -623,7 +651,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-sa4h3e"
+              class="MuiBox-root css-qei20s"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
@@ -674,7 +702,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </div>
             </div>
             <div
-              class="MuiBox-root css-sa4h3e"
+              class="MuiBox-root css-qei20s"
             >
               <div
                 class="MuiBox-root css-1o3pu3x"
