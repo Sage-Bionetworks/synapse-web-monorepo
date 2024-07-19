@@ -13,8 +13,6 @@ export interface ACTAccessRequirement {
   versionNumber: number
   /* The unique immutable ID. Provided by the system, the user may not set this field. */
   id: number
-  /* @deprecated Replaced by name. */
-  description: string
   /* Name of the AR. Limited to 50 characters and must be unique. Required. */
   name: string
   /* Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates. Since the E-Tag changes every time an entity is updated it is used to detect when a client's current representation of an object is out-of-date. */

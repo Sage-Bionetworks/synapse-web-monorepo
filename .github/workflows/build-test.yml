@@ -16,7 +16,7 @@ jobs:
     # We should test all active LTS releases, but not until our test suite is less flaky
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
     steps:
       - uses: actions/checkout@v3.1.0
         with:

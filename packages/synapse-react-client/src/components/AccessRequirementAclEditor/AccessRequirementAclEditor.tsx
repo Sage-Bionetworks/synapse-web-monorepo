@@ -1,9 +1,5 @@
-import { Alert, Box, Skeleton, Stack, Typography } from '@mui/material'
-import {
-  ACCESS_TYPE,
-  AccessControlList,
-  ResourceAccess,
-} from '@sage-bionetworks/synapse-types'
+import { Alert, Box, Stack, Typography } from '@mui/material'
+import { AccessControlList } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useImperativeHandle, useState } from 'react'
 import {
@@ -13,8 +9,9 @@ import {
   useUpdateAccessRequirementACL,
 } from '../../synapse-queries'
 import { SynapseClientError } from '../../utils'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
-import { ResourceAccessItem } from './ResourceAccessItem'
+import useUpdateAcl from '../AclEditor/useUpdateAcl'
+import { AclEditor } from '../AclEditor/AclEditor'
+import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 
 const textSx = {
   variant: 'body1',
@@ -24,8 +21,12 @@ const textSx = {
 
 export const EMPTY_RESOURCE_ACCESS_LIST_TEXT =
   'Only ACT has permissions on this AR.'
-export const REVIEWER_ALREADY_ADDED_ERROR_MESSAGE =
-  'User or team already has permissions on this AR.'
+
+const availablePermissionLevels: PermissionLevel[] = [
+  'CAN_REVIEW_SUBMISSIONS',
+  'IS_EXEMPTION_ELIGIBLE',
+  'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
+]
 
 export type AccessRequirementAclEditorHandle = {
   /* Allow the parent component to trigger saving the ACL, so this may be embedded in an arbitrary modal. */
@@ -45,9 +46,6 @@ export const AccessRequirementAclEditor = React.forwardRef(
   ) {
     const { accessRequirementId, onSaveComplete } = props
     const [error, setError] = useState<string | null>(null)
-    const [resourceAccessList, setResourceAccessList] = useState<
-      ResourceAccess[]
-    >([])
 
     const onMutationSuccess = () => {
       setError(null)
@@ -65,12 +63,23 @@ export const AccessRequirementAclEditor = React.forwardRef(
         staleTime: Infinity,
       })
 
+    const {
+      resourceAccessList,
+      setResourceAccessList,
+      addResourceAccessItem,
+      updateResourceAccessItem,
+      removeResourceAccessItem,
+    } = useUpdateAcl({
+      onChange: () => setError(null),
+      onError: setError,
+    })
+
     // set resourceAccessList when the fetched acl changes
     useEffect(() => {
       if (originalAcl) {
         setResourceAccessList(originalAcl.resourceAccess)
       }
-    }, [originalAcl])
+    }, [originalAcl, setResourceAccessList])
 
     const { mutate: deleteAcl } = useDeleteAccessRequirementACL({
       onSuccess: () => onMutationSuccess(),
@@ -130,51 +139,6 @@ export const AccessRequirementAclEditor = React.forwardRef(
       ],
     )
 
-    const addResourceAccessItem = (newReviewerId: string | null) => {
-      if (newReviewerId) {
-        const alreadyReviewer = resourceAccessList.some(
-          resourceAccess =>
-            resourceAccess.principalId === Number(newReviewerId),
-        )
-        if (alreadyReviewer) {
-          setError(REVIEWER_ALREADY_ADDED_ERROR_MESSAGE)
-        } else {
-          const newResourceAccess: ResourceAccess = {
-            principalId: Number(newReviewerId),
-            accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
-          }
-          const updatedResourceAccessList = [
-            ...resourceAccessList,
-            newResourceAccess,
-          ]
-          setResourceAccessList(updatedResourceAccessList)
-        }
-      } else {
-        setError(null)
-      }
-    }
-
-    const updateResourceAccessItem = (
-      principalId: number,
-      accessType: ACCESS_TYPE[],
-    ) => {
-      const updatedResourceAccessList = resourceAccessList.map(
-        resourceAccess => {
-          return resourceAccess.principalId === principalId
-            ? { ...resourceAccess, accessType }
-            : resourceAccess
-        },
-      )
-      setResourceAccessList(updatedResourceAccessList)
-    }
-
-    const removeResourceAccessItem = (principalId: number) => {
-      const updatedResourceAccessList = resourceAccessList.filter(
-        raListItem => raListItem.principalId !== principalId,
-      )
-      setResourceAccessList(updatedResourceAccessList)
-    }
-
     return (
       <Stack gap="20px" direction="column">
         <Box>
@@ -196,67 +160,16 @@ export const AccessRequirementAclEditor = React.forwardRef(
             Requirements.
           </Typography>
         </Box>
-        <Box>
-          <Box mb="30px">
-            <Typography variant="headline3" mb="10px">
-              Users and Teams with Permissions
-            </Typography>
-            {isLoadingOriginalAcl && (
-              <Skeleton variant="rectangular" width={250} height={24} />
-            )}
-            {!isLoadingOriginalAcl && resourceAccessList.length === 0 ? (
-              <Typography variant="body1Italic">
-                {EMPTY_RESOURCE_ACCESS_LIST_TEXT}
-              </Typography>
-            ) : (
-              <>
-                {resourceAccessList.map(resourceAccess => {
-                  return (
-                    <ResourceAccessItem
-                      key={resourceAccess.principalId}
-                      resourceAccess={resourceAccess}
-                      onChange={accessType =>
-                        updateResourceAccessItem(
-                          resourceAccess.principalId,
-                          accessType,
-                        )
-                      }
-                      onRemove={() =>
-                        removeResourceAccessItem(resourceAccess.principalId)
-                      }
-                    />
-                  )
-                })}
-              </>
-            )}
-          </Box>
-          <Box>
-            <Typography variant="headline3" mb="10px">
-              Add More
-            </Typography>
-            <Typography
-              sx={{ ...textSx, fontStyle: 'italic', color: 'grey.900' }}
-              mb="20px"
-            >
-              Search for a username or team to add. You can search by username,
-              first or last names, or team name
-            </Typography>
-            <Box>
-              <Typography
-                component="label"
-                variant="smallText2"
-                htmlFor="reviewer-search"
-              >
-                Select a reviewer
-              </Typography>
-              <UserSearchBoxV2
-                inputId="reviewer-search"
-                placeholder="Username, name (first and last) or team name."
-                onChange={addResourceAccessItem}
-              />
-            </Box>
-          </Box>
-        </Box>
+        <AclEditor
+          resourceAccessList={resourceAccessList}
+          availablePermissionLevels={availablePermissionLevels}
+          isLoading={isLoadingOriginalAcl}
+          isInEditMode={true}
+          emptyText={EMPTY_RESOURCE_ACCESS_LIST_TEXT}
+          addResourceAccessItem={addResourceAccessItem}
+          updateResourceAccessItem={updateResourceAccessItem}
+          removeResourceAccessItem={removeResourceAccessItem}
+        />
         {error && <Alert severity="error">{error}</Alert>}
       </Stack>
     )

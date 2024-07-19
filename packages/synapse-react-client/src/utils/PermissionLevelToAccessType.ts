@@ -1,11 +1,11 @@
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 
-const permisionLevels = [
+const permissionLevels = [
   'CAN_REVIEW_SUBMISSIONS',
   'IS_EXEMPTION_ELIGIBLE',
   'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
 ] as const
-export type PermissionLevel = (typeof permisionLevels)[number]
+export type PermissionLevel = (typeof permissionLevels)[number]
 
 const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
   CAN_REVIEW_SUBMISSIONS: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
