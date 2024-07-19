@@ -55,6 +55,10 @@ export const SynapsePlan: React.FunctionComponent<
             sx={{
               ...homepageBodyText,
               textAlign: 'center',
+              fontSize: {
+                xs: '16px',
+                sm: '24px',
+              },
             }}
           >
             {description}
