@@ -571,7 +571,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               >
                 Synapse is free and open source for all. We offer different
                 plans to help you if you need extra storage or help with your
-                data management. Find out about managed plans
+                data management.
               </Typography>
               <Link
                 href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
