@@ -67,7 +67,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
         alignItems: 'center',
         columnGap: '5px',
         p: {
-          xs: '10px 0px',
+          xs: '10px 5px',
           sm: '20px 15px',
         },
       }}

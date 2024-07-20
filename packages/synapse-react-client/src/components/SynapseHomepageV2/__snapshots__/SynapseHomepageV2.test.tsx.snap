@@ -6,7 +6,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
     class="MuiBox-root css-0"
   >
     <div
-      class="MuiBox-root css-1e9yfvj"
+      class="MuiBox-root css-klk5r8"
     >
       <svg
         fill="none"
@@ -752,7 +752,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         </div>
       </div>
       <div
-        class="MuiBox-root css-s8vbhp"
+        class="MuiBox-root css-gngfd0"
       >
         <p
           class="MuiTypography-root MuiTypography-headline1 css-p75j6w-MuiTypography-root"
@@ -767,7 +767,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         class="MuiBox-root css-10wbjqc"
       >
         <p
-          class="MuiTypography-root MuiTypography-headline1 css-t1plr3-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-headline1 css-1uehx6t-MuiTypography-root"
         >
           Synapse in action
         </p>
