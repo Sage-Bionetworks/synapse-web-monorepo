@@ -226,7 +226,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               sx={{
                 color: 'secondary.600',
                 backgroundColor: 'secondary.100',
-                '&:hover': { backgroundColor: '#f5f5f3 !important' },
+                '&:hover': { backgroundColor: '#B5D3CE !important' },
               }}
             />
           )
