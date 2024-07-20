@@ -104,12 +104,23 @@ export const SynapseHomepageV2: React.FunctionComponent<
   return (
     <Box>
       <SynapseHomepageNavBar gotoPlace={gotoPlace} />
-      <Box sx={{ position: 'relative', pb: '80px' }}>
+      <Box
+        sx={{
+          position: 'relative',
+          pb: {
+            xs: '30px',
+            md: '80px',
+          },
+        }}
+      >
         <Box
           sx={{
             position: 'absolute',
             background: `url(${backgroundInlineJpeg}) lightgray 50% / cover no-repeat`,
-            minHeight: '600px',
+            minHeight: {
+              xs: '700px',
+              sm: '600px',
+            },
             width: '100%',
             height: '100%',
             content: "''",
@@ -118,7 +129,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
             bottom: 0,
             left: 0,
             zIndex: -1,
-            clipPath: 'polygon(0 0, 100% 0, 100% 65%, 0% 100%)',
+            clipPath: {
+              xs: 'polygon(0 0, 100% 0, 100% 80%, 0% 100%)',
+              md: 'polygon(0 0, 100% 0, 100% 65%, 0% 100%)',
+            },
           }}
         >
           {' '}
@@ -167,6 +181,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
       <Box
         sx={{
           pt: '70px',
+          pr: '15px',
           maxWidth: '600px',
           m: 'auto',
         }}
@@ -211,7 +226,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               sx={{
                 color: 'secondary.600',
                 backgroundColor: 'secondary.100',
-                '&:hover': { backgroundColor: '#f5f5f3 !important' },
+                '&:hover': { backgroundColor: '#B5D3CE !important' },
               }}
             />
           )
@@ -325,7 +340,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
             <SynapsePartners />
             <Box
               sx={{
-                pb: '220px',
+                pb: {
+                  xs: '100px',
+                  md: '220px',
+                },
                 clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0% 100%)',
                 backgroundColor: 'white',
                 zIndex: 100,
@@ -335,8 +353,14 @@ export const SynapseHomepageV2: React.FunctionComponent<
               sx={{
                 ...sidePadding,
                 backgroundColor: '#223549',
-                pt: '200px',
-                mt: '-200px',
+                pt: {
+                  xs: '90px',
+                  md: '200px',
+                },
+                mt: {
+                  xs: '-90px',
+                  md: '-200px',
+                },
                 pb: '5px',
               }}
             >
@@ -385,7 +409,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
             </Box>
             <Box
               sx={{
-                pb: '220px',
+                pb: {
+                  xs: '100px',
+                  md: '220px',
+                },
                 clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 0%)',
                 backgroundColor: '#223549',
                 zIndex: 100,
@@ -394,8 +421,14 @@ export const SynapseHomepageV2: React.FunctionComponent<
           </Box>
           <Box
             sx={{
-              pt: '300px',
-              mt: '-220px',
+              pt: {
+                xs: '100px',
+                md: '300px',
+              },
+              mt: {
+                xs: '-100px',
+                md: '-220px',
+              },
               backgroundColor: '#172430',
             }}
           />
@@ -404,6 +437,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
             sx={{
               ...sidePadding,
               backgroundColor: '#172430',
+              pt: {
+                xs: '50px',
+                md: '20px',
+              },
             }}
           >
             <Box sx={{ m: 'auto', maxWidth: '1500px' }}>
@@ -444,11 +481,17 @@ export const SynapseHomepageV2: React.FunctionComponent<
           </Box>
           <Box
             sx={{
-              pb: '190px',
+              pb: {
+                xs: '100px',
+                md: '220px',
+              },
               clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)',
               backgroundColor: '#f5f9f9',
               zIndex: -100,
-              mt: '-190px',
+              mt: {
+                xs: '-100px',
+                md: '-220px',
+              },
               position: 'relative',
             }}
           />
@@ -528,7 +571,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               >
                 Synapse is free and open source for all. We offer different
                 plans to help you if you need extra storage or help with your
-                data management. Find out about managed plans
+                data management.
               </Typography>
               <Link
                 href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
@@ -548,11 +591,17 @@ export const SynapseHomepageV2: React.FunctionComponent<
           </Box>
           <Box
             sx={{
-              pb: '190px',
+              pb: {
+                xs: '100px',
+                md: '220px',
+              },
               clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)',
               backgroundColor: '#172430',
               zIndex: 101,
-              mt: '-190px',
+              mt: {
+                xs: '-100px',
+                md: '-220px',
+              },
               position: 'relative',
             }}
           />
