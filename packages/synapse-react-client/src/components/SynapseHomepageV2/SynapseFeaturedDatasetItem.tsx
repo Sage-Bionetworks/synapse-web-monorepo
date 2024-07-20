@@ -1,4 +1,4 @@
-import { Box, Chip, Link, Paper, Typography } from '@mui/material'
+import { Box, Chip, Link, Paper, SxProps, Typography } from '@mui/material'
 import React from 'react'
 import { EastTwoTone } from '@mui/icons-material'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
@@ -17,7 +17,14 @@ export type SynapseFeaturedDatasetItemProps = {
   size?: string | null
   sizeUnit?: string | null
 }
-
+const clampedTextSx: SxProps = {
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  '-webkit-box-orient': 'vertical',
+  // height: YOUR HEIGHT,
+  // '-webkit-line-clamp': NUMBER OF LINES,
+}
 export const SynapseFeaturedDatasetItem: React.FunctionComponent<
   SynapseFeaturedDatasetItemProps
 > = ({
@@ -50,7 +57,14 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
           p: '30px 30px 0px 30px',
         }}
       >
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', rowGap: '5px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'nowrap',
+            rowGap: '5px',
+            overflow: 'hidden',
+          }}
+        >
           {tags &&
             tags.map(tag => {
               return (
@@ -72,7 +86,9 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
             fontSize: '24px',
             fontWeight: 600,
             lineHeight: '32px',
-            minHeight: '80px',
+            ...clampedTextSx,
+            height: '70px',
+            '-webkit-line-clamp': '2',
           }}
         >
           {name}
@@ -100,6 +116,9 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
             fontWeight: 400,
             lineHeight: '24px',
             mb: '20px',
+            ...clampedTextSx,
+            height: '120px',
+            '-webkit-line-clamp': '5',
           }}
         >
           {description}
@@ -110,7 +129,15 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         >
           Dimensions
         </Typography>
-        <Typography variant="body1" sx={{ mb: '20px' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            mb: '20px',
+            ...clampedTextSx,
+            height: '24px',
+            '-webkit-line-clamp': '1',
+          }}
+        >
           {individuals} individuals, {size}
           {sizeUnit}
         </Typography>
@@ -120,7 +147,16 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         >
           Contributors
         </Typography>
-        <Typography variant="body1">{contributors}</Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            ...clampedTextSx,
+            height: '48px',
+            '-webkit-line-clamp': '2',
+          }}
+        >
+          {contributors}
+        </Typography>
         <Box sx={{ mt: '32px' }}>
           <Link
             href={`${getEndpoint(
