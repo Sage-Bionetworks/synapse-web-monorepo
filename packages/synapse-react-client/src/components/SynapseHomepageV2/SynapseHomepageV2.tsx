@@ -465,7 +465,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
               <SynapseFeatures />
             </Box>
           </Box>
-          <Box sx={{ ml: '20px' }}>
+          <Box sx={{ ml: { xs: '5px', md: '20px' } }}>
             <Typography
               variant="headline1"
               sx={{
@@ -511,6 +511,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                 zIndex: 100,
                 backgroundColor: 'rgba(245, 249, 249, .8)',
                 borderRadius: '12px',
+                ml: { xs: '5px', md: '20px' },
               }}
             >
               Synapse in action

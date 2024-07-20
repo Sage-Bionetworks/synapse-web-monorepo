@@ -35,7 +35,7 @@ export const DemoVersion2: Story = {
     },
   },
   parameters: {
-    stack: 'mock',
+    stack: 'production',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/design/z2pi8sF6E2he3Q0ncey1S0/Synapse-Homepage-Refresh-(Copy)?node-id=2097-64422&t=lbZKhHAaWWC5JfDB-0',
