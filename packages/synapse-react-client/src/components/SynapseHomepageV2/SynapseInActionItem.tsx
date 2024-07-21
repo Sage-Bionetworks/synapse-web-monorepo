@@ -7,7 +7,7 @@ import {
   useMediaQuery,
   SxProps,
 } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
@@ -33,6 +33,27 @@ const mobileViewSxProps: SxProps = {
   alignItems: 'center',
   textAlign: 'center',
 }
+
+const calculateOpacity = (rect: DOMRect): number => {
+  const viewportHeight = window.innerHeight
+  const elementCenterY = rect.top + rect.height / 2
+  const middleRangeStart = viewportHeight * 0.3
+  const middleRangeEnd = viewportHeight * 0.7
+
+  if (elementCenterY >= middleRangeStart && elementCenterY <= middleRangeEnd) {
+    // center of element is within the viewport bounds that I want to show full opacity
+    return 1
+  } else {
+    //otherwise, subtract the % (of the center of the element to one of the boundaries)
+    const distanceToMiddle = Math.min(
+      Math.abs(elementCenterY - middleRangeStart),
+      Math.abs(elementCenterY - middleRangeEnd),
+    )
+    const maxDistance = viewportHeight / 4
+    return Math.max(0, 1 - distanceToMiddle / maxDistance)
+  }
+}
+
 export const SynapseInActionItem: React.FunctionComponent<
   SynapseInActionItemProps
 > = ({
@@ -48,8 +69,28 @@ export const SynapseInActionItem: React.FunctionComponent<
 }) => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const ref = useRef(null)
+  // opacity of the desktop image
+  const [opacity, setOpacity] = useState(1)
+
+  // listen to the scroll event, and calculate the opacity based on where the ref element is in the current viewport
+  useEffect(() => {
+    const handleScroll = () => {
+      const rect = (ref.current as any).getBoundingClientRect()
+      setOpacity(calculateOpacity(rect))
+    }
+
+    if (ref) {
+      window.addEventListener('scroll', handleScroll)
+      handleScroll()
+    }
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [ref])
+
   return (
     <Box
+      ref={ref}
       sx={{
         p: '15px',
         display: 'grid',
@@ -141,6 +182,7 @@ export const SynapseInActionItem: React.FunctionComponent<
           display: { xs: 'none', md: 'block' },
           justifySelf: 'end',
           mt: '-100px',
+          opacity: opacity,
         }}
       >
         <ImageFromSynapseTable
