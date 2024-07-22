@@ -147,7 +147,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
             lg: '80px 0px 0px 0px',
           },
           minHeight: {
-            xs: '270px',
+            xs: '330px',
+            sm: '270px',
             md: undefined,
           },
         }}
