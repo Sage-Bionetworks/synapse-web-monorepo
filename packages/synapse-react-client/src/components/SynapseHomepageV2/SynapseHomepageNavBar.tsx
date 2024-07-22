@@ -30,6 +30,18 @@ const navButtonSx: SxProps = {
     sm: '7px 30px',
   },
 }
+const StyledMenu = styled(Menu)(() => ({
+  '& .MuiPaper-root': {
+    width: '100vw',
+    height: '100vh',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    margin: 0,
+    top: '0 !important',
+    left: '0 !important',
+    transform: 'none',
+  },
+}))
 
 const StyledMenuItem = styled(MenuItem)(() => ({
   fontSize: '36px',
@@ -133,12 +145,17 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
         >
           <IconButton
             color="secondary"
-            sx={{ borderWidth: 1, borderStyle: 'solid', borderRadius: '0' }}
+            sx={{
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderRadius: '0',
+              ml: '70px',
+            }}
             onClick={handleClick}
           >
             <MenuOutlined />
           </IconButton>
-          <Menu
+          <StyledMenu
             anchorEl={anchorEl}
             anchorOrigin={{
               vertical: 'top',
@@ -151,6 +168,12 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             }}
             open={Boolean(anchorEl)}
             onClose={handleClose}
+            MenuListProps={{
+              style: {
+                width: '100%',
+                height: '100%',
+              },
+            }}
           >
             <IconButton
               onClick={handleClose}
@@ -204,7 +227,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             >
               Log In
             </StyledMenuItem>
-          </Menu>
+          </StyledMenu>
         </Box>
       )}
     </Box>

@@ -58,7 +58,7 @@ export const SynapseInActionItem: React.FunctionComponent<
     <Box
       ref={ref}
       sx={{
-        p: '15px',
+        p: '15px 0px 15px 15px',
         display: 'grid',
         gridTemplateColumns: {
           xs: 'auto 0px',

@@ -63,7 +63,7 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
     return <></>
   }
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ margin: 'auto', maxWidth: '1500px' }}>
       {rowSet.rows.map((row, index) => {
         const title = row.values[titleColIndex]!
         const description = row.values[descriptionColIndex]!

@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from 'react'
 const calculateOpacity = (rect: DOMRect): number => {
   const viewportHeight = window.innerHeight
   const elementCenterY = rect.top + rect.height / 2
-  const middleRangeStart = viewportHeight * 0.3
-  const middleRangeEnd = viewportHeight * 0.7
+  const middleRangeStart = viewportHeight * 0.4
+  const middleRangeEnd = viewportHeight * 0.6
 
   if (elementCenterY >= middleRangeStart && elementCenterY <= middleRangeEnd) {
     // center of element is within the viewport bounds that I want to show full opacity
