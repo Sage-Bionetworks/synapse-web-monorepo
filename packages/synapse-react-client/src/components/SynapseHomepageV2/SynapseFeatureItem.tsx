@@ -60,7 +60,7 @@ export const SynapseFeatureItem: React.FunctionComponent<
       >
         {icons && icons.map((icon, index) => <Box key={index}>{icon}</Box>)}
       </Box>
-      <Box sx={{ svg: { width: '100%' } }}>{image}</Box>
+      <Box sx={{ svg: { width: '100%', height: 'auto' } }}>{image}</Box>
       <Typography
         variant="body1"
         sx={{
