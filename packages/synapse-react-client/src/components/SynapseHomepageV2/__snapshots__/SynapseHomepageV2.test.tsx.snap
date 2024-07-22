@@ -126,7 +126,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-lmxcmw"
+      class="MuiBox-root css-u64sd7"
     >
       <p
         class="MuiTypography-root MuiTypography-headline1 css-m2ix13-MuiTypography-root"
@@ -144,7 +144,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </p>
     </div>
     <div
-      class="MuiBox-root css-lwkeej"
+      class="MuiBox-root css-lcciv2"
     >
       <div
         class="MuiFormControl-root MuiFormControl-fullWidth css-1w4vsez-MuiFormControl-root"
