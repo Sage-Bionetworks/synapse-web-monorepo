@@ -76,14 +76,14 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
         const primaryColor = row.values[primaryColorColIndex]!
         const secondaryColor = row.values[secondaryColorColIndex]!
         const backgroundColor =
-          isMobileView && index % 2
+          index % 2
             ? '#E9F2F1' // SWC-6984: intentional break out of color palette
             : undefined
         return (
           <Box
             key={row.rowId}
             sx={{
-              py: { xs: '30px', sm: '120px' },
+              py: { xs: '30px', sm: '0px' },
               backgroundColor: { backgroundColor },
             }}
           >
