@@ -74,9 +74,9 @@
 <rect y="-1" width="783" height="498" rx="10" fill="url(#paint0_linear_2466_5736)"/>
 </g>
 <defs>
-<linearGradient id="paint0_linear_2466_5736" x1="391" y1="-1" x2="391" y2="239" gradientUnits="userSpaceOnUse">
-<stop offset="0.195" stop-color="#172430"/>
-<stop offset="1" stop-color="#223549" stop-opacity="0"/>
+<linearGradient id="paint0_linear_2466_5736" x1="391.5" y1="-1" x2="391.5" y2="210" gradientUnits="userSpaceOnUse">
+<stop offset="0.19" stop-color="#172430"/>
+<stop offset="1" stop-color="#172430" stop-opacity="0"/>
 </linearGradient>
 <clipPath id="clip0_2466_5736">
 <rect width="783" height="498" fill="white" transform="translate(0 -1)"/>

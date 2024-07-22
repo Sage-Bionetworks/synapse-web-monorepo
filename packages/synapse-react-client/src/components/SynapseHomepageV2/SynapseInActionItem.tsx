@@ -81,6 +81,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             justifyContent: 'center',
             width: '100%',
             mb: '10px',
+            pt: '50px',
             img: { width: '320px', maxWidth: '100%' },
           }}
         >
@@ -135,7 +136,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             alt={`${friendlyName} logo`}
             style={{ height: '40px' }}
           />
-          <Box sx={{ mt: '32px', pb: { md: '50px' } }}>
+          <Box sx={{ mt: '32px', pb: '50px' }}>
             <Link href={link} target="_blank">
               View {friendlyName.endsWith('Portal') ? 'the' : ''} {friendlyName}{' '}
               <EastTwoTone sx={{ mb: '-8px', ml: '6px' }} />
