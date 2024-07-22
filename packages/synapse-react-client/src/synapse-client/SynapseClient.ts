@@ -304,6 +304,7 @@ import {
   WikiPage,
   WikiPageKey,
   FeatureFlags,
+  MessageToUser,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5278,4 +5279,34 @@ export async function getAnnotationColumnModels(
   }
 
   return getAllOfNextPageTokenPaginatedService(fn)
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const cleanedMessageBody = filterXSS(body)
+  const uploadedFileResult = await uploadFile(
+    accessToken,
+    'content',
+    new Blob([cleanedMessageBody], { type: 'text/plain' }),
+  )
+
+  const messageToUser: Partial<MessageToUser> = {
+    recipients,
+    subject,
+    notificationUnsubscribeEndpoint: `${getEndpoint(
+      BackendDestinationEnum.PORTAL_ENDPOINT,
+    )}SignedToken:`,
+    fileHandleId: uploadedFileResult.fileHandleId,
+  }
+
+  return doPost<MessageToUser>(
+    `${REPO}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }

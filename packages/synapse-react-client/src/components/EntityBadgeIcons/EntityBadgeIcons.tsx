@@ -10,35 +10,27 @@ import {
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { useDeleteEntity } from '../../synapse-queries/entity/useEntity'
 import {
+  useDeleteEntity,
+  useGetEntityBundle,
+  useGetFeatureFlag,
   useGetSchemaBinding,
   useGetValidationResults,
-} from '../../synapse-queries/entity/useEntityBoundSchema'
-import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
+} from '../../synapse-queries'
+import { PUBLIC_PRINCIPAL_IDS } from '../../utils/SynapseConstants'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
   EntityType,
+  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { Tooltip } from '@mui/material'
-import { useGetFeatureFlag } from '../../synapse-queries'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {
-    return (
-      ra.principalId === AUTHENTICATED_PRINCIPAL_ID ||
-      ra.principalId === PUBLIC_PRINCIPAL_ID ||
-      ra.principalId === ANONYMOUS_PRINCIPAL_ID
-    )
+    return PUBLIC_PRINCIPAL_IDS.includes(ra.principalId)
   })
 }
 
