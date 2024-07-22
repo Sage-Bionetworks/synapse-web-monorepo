@@ -208,6 +208,48 @@ describe('useLogin tests', () => {
     },
   )
 
+  test('Handles a trailing hash in SWC (SWC-6985)', async () => {
+    history.replaceState(
+      {},
+      '',
+      `/LoginPlace:0?` +
+        `userId=${twoFactorAuthErrorResponse.userId}` +
+        `&twoFaToken=${twoFactorAuthErrorResponse.twoFaToken}` +
+        '#', // Safari adds a trailing hash
+    )
+
+    const timedOneTimePassword = '123456'
+    mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)
+
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
+
+    await waitFor(() => {
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    act(() => {
+      result.current.submitOneTimePassword(timedOneTimePassword, 'TOTP')
+    })
+
+    await waitFor(() => {
+      expect(mockLogInWith2FA).toHaveBeenCalledWith({
+        userId: twoFactorAuthErrorResponse.userId,
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        otpCode: timedOneTimePassword,
+        otpType: 'TOTP',
+      })
+      expect(mockSetAccessTokenCookie).toHaveBeenCalledWith(
+        successfulLoginResponse.accessToken,
+      )
+      expect(
+        localStorage.getItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY),
+      ).toBe(successfulLoginResponse.authenticationReceipt)
+      expect(result.current.step).toBe('LOGGED_IN')
+      expect(onSuccessfulLoginFn).toHaveBeenCalled()
+      expect(mockLogIn).not.toHaveBeenCalled()
+    })
+  })
+
   it('Handles case where twoFaErrorResponse is a passed prop', async () => {
     const timedOneTimePassword = '123456'
     mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)

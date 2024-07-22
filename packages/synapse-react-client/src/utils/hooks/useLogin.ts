@@ -95,8 +95,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
    * This effect will check if the search params are present, and change the step to 'VERIFICATION_CODE' if they are.
    */
   useEffect(() => {
-    // Replace the hash with a slash to handle SWC, which uses a hash in the URL. Otherwise, the searchParams aren't found
-    const fullUrl: URL = new URL(window.location.href.replaceAll('#', '/'))
+    const fullUrl: URL = new URL(window.location.href)
 
     const { searchParams } = fullUrl
     if (searchParams) {
