@@ -1,9 +1,8 @@
 import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box } from '@mui/material'
 import { SynapseInActionItem } from './SynapseInActionItem'
-import { useTheme } from '@mui/material'
 
 export type SynapseInActionProps = {
   tableId: string
@@ -12,9 +11,6 @@ export type SynapseInActionProps = {
 export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
   tableId,
 }) => {
-  const theme = useTheme()
-  // Show the associated image (in desktop mode) if 10% of the div is visible
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: tableId,
     query: {
