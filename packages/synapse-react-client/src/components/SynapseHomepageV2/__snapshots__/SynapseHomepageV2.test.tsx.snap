@@ -3,7 +3,7 @@
 exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
 <div>
   <div
-    class="MuiBox-root css-0"
+    class="MuiBox-root css-i6bazn"
   >
     <div
       class="MuiBox-root css-klk5r8"
@@ -126,7 +126,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-13aglk2"
+      class="MuiBox-root css-lmxcmw"
     >
       <p
         class="MuiTypography-root MuiTypography-headline1 css-m2ix13-MuiTypography-root"
@@ -775,7 +775,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiBox-root css-7la697"
         >
           <p
-            class="MuiTypography-root MuiTypography-headline1 css-1s9l89u-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-headline1 css-hlq40i-MuiTypography-root"
           >
             Explore real-world case studies and success stories showcasing how researchers use Synapse to drive innovative biomedical discoveries and improve health outcomes.
           </p>

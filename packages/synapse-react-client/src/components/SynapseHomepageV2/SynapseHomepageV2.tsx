@@ -102,7 +102,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
   return (
-    <Box>
+    <Box sx={{ overflow: 'hidden' }}>
       <SynapseHomepageNavBar gotoPlace={gotoPlace} />
       <Box
         sx={{
@@ -147,7 +147,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
             lg: '80px 0px 0px 0px',
           },
           minHeight: {
-            xs: '270px',
+            xs: '330px',
+            sm: '270px',
             md: undefined,
           },
         }}
@@ -526,6 +527,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   mb: '100px',
                   position: 'relative',
                   zIndex: 100,
+                  ml: '5px',
+                  mr: '5px',
                   backgroundColor: 'rgba(245, 249, 249, .8)',
                   borderRadius: '12px',
                 }}
