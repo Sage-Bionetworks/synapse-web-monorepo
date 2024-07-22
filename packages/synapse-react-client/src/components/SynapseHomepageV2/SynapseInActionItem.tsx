@@ -11,7 +11,7 @@ import React from 'react'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
-import { useScrollFadeTransition } from 'src/utils/hooks/useScrollFadeTransition'
+import { useScrollFadeTransition } from '../../utils/hooks/useScrollFadeTransition'
 
 export type SynapseInActionItemProps = {
   tableId: string
