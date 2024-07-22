@@ -58,7 +58,7 @@ export const SynapseInActionItem: React.FunctionComponent<
     <Box
       ref={ref}
       sx={{
-        p: '15px 0px 15px 15px',
+        p: { xs: '10px', md: '15px 0px 15px 15px' },
         display: 'grid',
         gridTemplateColumns: {
           xs: 'auto 0px',
@@ -69,7 +69,7 @@ export const SynapseInActionItem: React.FunctionComponent<
       <Box
         sx={{
           ml: {
-            xs: '5px',
+            xs: '0px',
             md: '20px',
           },
         }}
@@ -81,7 +81,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             justifyContent: 'center',
             width: '100%',
             mb: '10px',
-            img: { width: '320px' },
+            img: { width: '320px', maxWidth: '100%' },
           }}
         >
           <ImageFromSynapseTable
