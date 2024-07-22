@@ -112,11 +112,8 @@ export const SynapseTrendingProjectItem: React.FunctionComponent<
         <Box>
           <Typography variant="body1">{entityHeader?.name}</Typography>
           {isMobileView && (
-            <Box
-              sx={{ display: 'flex', columnGap: '10px', alignItems: 'center' }}
-            >
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               {egress}
-              <span>•</span>
               {users}
             </Box>
           )}

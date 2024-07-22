@@ -1,9 +1,8 @@
 import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box } from '@mui/material'
 import { SynapseInActionItem } from './SynapseInActionItem'
-import { useTheme } from '@mui/material'
 
 export type SynapseInActionProps = {
   tableId: string
@@ -12,9 +11,6 @@ export type SynapseInActionProps = {
 export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
   tableId,
 }) => {
-  const theme = useTheme()
-  // Show the associated image (in desktop mode) if 10% of the div is visible
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: tableId,
     query: {
@@ -76,14 +72,14 @@ export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
         const primaryColor = row.values[primaryColorColIndex]!
         const secondaryColor = row.values[secondaryColorColIndex]!
         const backgroundColor =
-          isMobileView && index % 2
+          index % 2
             ? '#E9F2F1' // SWC-6984: intentional break out of color palette
             : undefined
         return (
           <Box
             key={row.rowId}
             sx={{
-              py: { xs: '30px', sm: '120px' },
+              py: { xs: '30px', sm: '0px' },
               backgroundColor: { backgroundColor },
             }}
           >

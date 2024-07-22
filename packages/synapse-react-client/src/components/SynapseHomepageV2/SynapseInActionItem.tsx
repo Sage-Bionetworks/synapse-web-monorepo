@@ -58,7 +58,7 @@ export const SynapseInActionItem: React.FunctionComponent<
     <Box
       ref={ref}
       sx={{
-        p: { xs: '10px', md: '15px 0px 15px 15px' },
+        p: { xs: '10px', md: '15px 0px 0px 15px' },
         display: 'grid',
         gridTemplateColumns: {
           xs: 'auto 0px',
@@ -81,6 +81,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             justifyContent: 'center',
             width: '100%',
             mb: '10px',
+            pt: '50px',
             img: { width: '320px', maxWidth: '100%' },
           }}
         >
@@ -89,7 +90,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             fileHandleId={mobileImageFileHandleId}
           />
         </Box>
-        <Box sx={isMobileView ? mobileViewSxProps : undefined}>
+        <Box sx={isMobileView ? mobileViewSxProps : { pt: '50px' }}>
           <Box>
             {tags &&
               tags.map(tag => {
@@ -100,6 +101,7 @@ export const SynapseInActionItem: React.FunctionComponent<
                       mr: '5px',
                       color: 'secondary.600',
                       backgroundColor: 'secondary.100',
+                      borderWidth: '0px',
                     }}
                     label={tag}
                   />
@@ -134,7 +136,7 @@ export const SynapseInActionItem: React.FunctionComponent<
             alt={`${friendlyName} logo`}
             style={{ height: '40px' }}
           />
-          <Box sx={{ mt: '32px' }}>
+          <Box sx={{ mt: '32px', pb: '50px' }}>
             <Link href={link} target="_blank">
               View {friendlyName.endsWith('Portal') ? 'the' : ''} {friendlyName}{' '}
               <EastTwoTone sx={{ mb: '-8px', ml: '6px' }} />
@@ -147,7 +149,7 @@ export const SynapseInActionItem: React.FunctionComponent<
         sx={{
           display: { xs: 'none', md: 'block' },
           justifySelf: 'end',
-          mt: '-100px',
+          alignSelf: 'end',
           opacity: opacity,
         }}
       >
