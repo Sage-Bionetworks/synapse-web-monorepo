@@ -1,4 +1,7 @@
-import { ResourceAccess } from '@sage-bionetworks/synapse-types'
+import {
+  ResourceAccess,
+  UserGroupHeader,
+} from '@sage-bionetworks/synapse-types'
 import {
   useGetCurrentUserProfile,
   useGetUserGroupHeaders,
@@ -15,17 +18,41 @@ type UseNotifyNewACLUsersOptions = {
   newResourceAccessList: ResourceAccess[]
 }
 
+export function shouldNotifyUserInNewResourceAccess(
+  principalId: number,
+  initialResourceAccessList: ResourceAccess[],
+  userGroupHeader: UserGroupHeader,
+  currentUserId: string,
+): boolean {
+  const isInInitialResourceAccess = initialResourceAccessList.some(
+    initialResourceAccess => principalId === initialResourceAccess.principalId,
+  )
+  const isIndividual = userGroupHeader.isIndividual
+  const isCurrentUser = String(principalId) === currentUserId
+  const isPublic = PUBLIC_PRINCIPAL_IDS.includes(principalId)
+
+  return (
+    !isInInitialResourceAccess && // Is not in the initial list
+    isIndividual && // Is an individual, not a team (SWC-1195)
+    !isCurrentUser && // do not notify the current user (SWC-5576)
+    !isPublic // never try to notify all/public users
+  )
+}
+
 export default function useNotifyNewACLUsers(
   options: UseNotifyNewACLUsersOptions,
 ) {
   const { subject, body, initialResourceAccessList, newResourceAccessList } =
     options
 
-  const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: currentUserProfile, isLoading: isLoadingCurrentUserProfile } =
+    useGetCurrentUserProfile()
   const { data: userGroupHeaders, isLoading: isLoadingUserGroupHeaders } =
     useGetUserGroupHeaders(
       newResourceAccessList.map(ra => String(ra.principalId)),
     )
+  const isLoading = isLoadingCurrentUserProfile || isLoadingUserGroupHeaders
+
   const { mutate: sendMessage, isPending } = useSendMessage({
     onError: error => {
       displayToast(`New users couldn't be notified: ${error.reason}`)
@@ -33,33 +60,23 @@ export default function useNotifyNewACLUsers(
   })
 
   const sendNotification = useCallback(() => {
-    if (isLoadingUserGroupHeaders) {
+    if (isLoading) {
       console.error(
-        'Attempted to send notification before user group headers were loaded. This should never happen.',
+        'Attempted to send notification before user profile or user group headers were loaded. This should never happen.',
       )
       return
     }
     const usersToNotify = newResourceAccessList
       .filter(newResourceAccess => {
-        const isInInitialResourceAccess = initialResourceAccessList.some(
-          initialResourceAccess =>
-            initialResourceAccess.principalId === newResourceAccess.principalId,
-        )
-        const isIndividual = userGroupHeaders!.find(
+        const userGroupHeader = userGroupHeaders!.find(
           ugh => ugh.ownerId === String(newResourceAccess.principalId),
-        )!.isIndividual
-        const isCurrentUser =
-          String(newResourceAccess.principalId) === currentUserProfile?.ownerId
-        const isPublic = PUBLIC_PRINCIPAL_IDS.includes(
+        )!
+        return shouldNotifyUserInNewResourceAccess(
           newResourceAccess.principalId,
+          initialResourceAccessList,
+          userGroupHeader,
+          currentUserProfile!.ownerId,
         )
-
-        return (
-          !isInInitialResourceAccess && // Is not in the initial list
-          isIndividual && // Is an individual, not a team (SWC-1195)
-          !isCurrentUser && // do not notify the current user (SWC-5576)
-          !isPublic
-        ) // never try to notify all/public users
       })
       .map(ra => String(ra.principalId))
 
@@ -72,9 +89,9 @@ export default function useNotifyNewACLUsers(
     }
   }, [
     body,
-    currentUserProfile?.ownerId,
+    currentUserProfile,
     initialResourceAccessList,
-    isLoadingUserGroupHeaders,
+    isLoading,
     newResourceAccessList,
     sendMessage,
     subject,
@@ -84,6 +101,6 @@ export default function useNotifyNewACLUsers(
   return {
     sendNotification,
     isPending,
-    isLoading: isLoadingUserGroupHeaders,
+    isLoading,
   }
 }
