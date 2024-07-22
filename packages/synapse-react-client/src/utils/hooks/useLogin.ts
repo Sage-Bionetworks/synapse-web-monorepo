@@ -101,7 +101,6 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     if (searchParams) {
       const userId = searchParams.get('userId')
       const twoFaToken = searchParams.get('twoFaToken')
-      console.log('twoFaToken search param:', twoFaToken)
       if (userId && twoFaToken) {
         setTwoFaErrorResponse({
           errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
