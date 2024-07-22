@@ -94,6 +94,12 @@ export const educationDetailsCardConfiguration: CardConfiguration = {
   secondaryLabelLimit: 3,
   genericCardSchema: educationDetailsSchema,
   iconOptions,
+  titleLinkConfig: {
+    isMarkdown: false,
+    URLColumnName: 'title',
+    matchColumnName: 'title',
+    baseURL: 'Explore/Educational Resources/DetailsPage',
+  },
   labelLinkConfig: [
     {
       isMarkdown: true,
