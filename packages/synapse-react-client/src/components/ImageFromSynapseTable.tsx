@@ -4,32 +4,25 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { useGetStablePresignedUrl } from '../synapse-queries'
-import { Fade } from '@mui/material'
-import { useFadeTransition } from '../utils/hooks/useFadeTransition'
 
 export type ImageFromSynapseTableProps = {
   tableId: string
   fileHandleId: string | null
   alt?: string
   style?: CSSProperties
-  fadeInTimeoutMs?: number
 }
 
 const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
   props: ImageFromSynapseTableProps,
 ) => {
-  const { tableId, fileHandleId, alt, style, fadeInTimeoutMs = 0 } = props
-  const { delayedState: fileHandleIdInState, visible } = useFadeTransition({
-    state: fileHandleId,
-    fadeInTimeoutMs,
-  })
+  const { tableId, fileHandleId, alt, style } = props
   const fha: FileHandleAssociation = {
     associateObjectId: tableId,
     associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: (fileHandleIdInState as string) ?? '',
+    fileHandleId: fileHandleId ?? '',
   }
   const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
-    enabled: !!fileHandleIdInState,
+    enabled: !!fileHandleId,
   })
 
   const dataUrl = stablePresignedUrl?.dataUrl
@@ -39,13 +32,11 @@ const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
     return <></>
   }
   return (
-    <Fade in={visible} timeout={fadeInTimeoutMs}>
-      <img
-        style={style}
-        alt={alt ? `${alt}` : 'Image from table'}
-        src={dataUrl}
-      />
-    </Fade>
+    <img
+      style={style}
+      alt={alt ? `${alt}` : 'Image from table'}
+      src={dataUrl}
+    />
   )
 }
 
