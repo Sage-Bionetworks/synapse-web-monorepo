@@ -98,6 +98,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
   SynapseHomepageV2Props
 > = ({ gotoPlace }) => {
   const theme = useTheme()
+  const tinyView = useMediaQuery('(max-width:385px)')
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
@@ -146,11 +147,14 @@ export const SynapseHomepageV2: React.FunctionComponent<
             xs: '20px',
             lg: '80px 0px 0px 0px',
           },
-          minHeight: {
-            xs: '330px',
-            sm: '270px',
-            md: undefined,
-          },
+          minHeight: tinyView
+            ? '390px'
+            : {
+                xs: '330px',
+                sm: '215px',
+                md: '300px', //larger font
+                lg: undefined,
+              },
         }}
       >
         <Typography variant="headline1" sx={titleSx}>
@@ -181,7 +185,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
       {/* Search */}
       <Box
         sx={{
-          pt: '70px',
+          pt: { xs: '10px', md: '70px' },
           pr: '15px',
           maxWidth: '600px',
           m: 'auto',
