@@ -344,7 +344,7 @@ const routes: GenericRoute[] = [
   },
 
   {
-    path: 'Contribute',
+    path: 'Contribute Data',
     routes: [
       {
         exact: true,
@@ -353,7 +353,7 @@ const routes: GenericRoute[] = [
         synapseConfigArray: [
           {
             name: 'Markdown',
-            title: 'Contribute',
+            title: 'Contribute Data',
             props: {
               ownerId: 'syn27229419',
               wikiId: '621277',
