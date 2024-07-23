@@ -20,6 +20,7 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
   ALIAS_AVAILABLE,
+  ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   BIND_INVITATION_TO_AUTHENTICATED_USER,
@@ -63,7 +64,6 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
-  ALL_USER_SESSION_TOKENS,
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -186,6 +186,7 @@ import {
   EvaluationSubmission as EvaluationSubmission,
   FavoriteSortBy,
   FavoriteSortDirection,
+  FeatureFlags,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
@@ -214,6 +215,7 @@ import {
   MembershipInvitation,
   MembershipInvtnSignedToken,
   MembershipRequest,
+  MessageToUser,
   MessageURL,
   MultipartUploadRequest,
   MultipartUploadStatus,
@@ -303,7 +305,6 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
-  FeatureFlags,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -314,6 +315,8 @@ import {
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import { SetOptional } from 'type-fest'
 import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
+import xss from 'xss'
+import { xssOptions } from '../utils/functions/SanitizeHtmlUtils'
 
 const cookies = new UniversalCookies()
 
@@ -5283,4 +5286,34 @@ export async function getAnnotationColumnModels(
   }
 
   return getAllOfNextPageTokenPaginatedService(fn)
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const cleanedMessageBody = xss(body, xssOptions)
+  const uploadedFileResult = await uploadFile(
+    accessToken,
+    'content',
+    new Blob([cleanedMessageBody], { type: 'text/plain' }),
+  )
+
+  const messageToUser: Partial<MessageToUser> = {
+    recipients,
+    subject,
+    notificationUnsubscribeEndpoint: `${getEndpoint(
+      BackendDestinationEnum.PORTAL_ENDPOINT,
+    )}SignedToken:`,
+    fileHandleId: uploadedFileResult.fileHandleId,
+  }
+
+  return doPost<MessageToUser>(
+    `${REPO}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
