@@ -46,7 +46,7 @@ const routesConfig: RouteConfig = {
       'Home',
       'Analysis Platforms',
       'Data Access',
-      'Contribute',
+      'Contribute Data',
       'News',
       'Help',
     ],
