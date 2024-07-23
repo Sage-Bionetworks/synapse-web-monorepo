@@ -504,7 +504,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
           <Box
             sx={{
               backgroundColor: '#f5f9f9',
-              pb: '150px',
+              pb: { xs: '10px', md: '100px' },
             }}
           >
             <Typography
