@@ -1,9 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, mergeConfig } from 'vite'
 import viteConfig from 'vite-config'
-import packageJson from './package.json'
-
-const SynapseReactClientVersion = packageJson.version
+import { version } from './package.json'
 
 // The set of dependencies that will NOT be included in our UMD bundle. The dependency will be loaded from the global object matching the dependency key's value in this object.
 const globalExternals = {
@@ -41,9 +39,6 @@ const globalExternals = {
 export default defineConfig(({ mode = 'production' }) =>
   mergeConfig(viteConfig, {
     root: '.',
-    define: {
-      _SRC_VERSION: JSON.stringify(SynapseReactClientVersion),
-    },
     build: {
       emptyOutDir: false,
       outDir: './dist/umd',
@@ -61,6 +56,7 @@ export default defineConfig(({ mode = 'production' }) =>
         external: Object.keys(globalExternals),
         output: {
           globals: globalExternals,
+          banner: `/*! SRC v${version} */`,
           assetFileNames: assetInfo => {
             if (assetInfo.name === 'style.css')
               return mode === 'production'
