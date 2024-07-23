@@ -85,6 +85,7 @@ import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
 import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
+import { version } from '../package.json'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -178,9 +179,7 @@ const SynapseComponents = {
 }
 
 // Include the version in the build
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-// @ts-ignore
-const SynapseReactClientVersion = window._SRC_VERSION
+const SynapseReactClientVersion = version
 
 export {
   HttpClient,
