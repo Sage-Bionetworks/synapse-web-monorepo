@@ -63,8 +63,8 @@ export const SynapsePlans: React.FunctionComponent = () => {
       <SynapsePlan
         title="Data Coordination"
         description="Our customized plan"
-        ctaText="Find out more"
-        ctaLink="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
+        ctaText="Contact Us"
+        ctaLink="https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162"
         backgroundColor="secondary.100"
       >
         <SynapsePlanContent
