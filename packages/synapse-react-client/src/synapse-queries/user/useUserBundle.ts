@@ -1,4 +1,8 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useQuery,
+  UseQueryOptions,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -32,16 +36,33 @@ export function useGetNotificationEmail(
   })
 }
 
+function useGetCurrentUserProfileQueryOptions() {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getCurrentUserProfileQueryKey()
+  return {
+    queryKey: queryKey,
+    queryFn: () => SynapseClient.getUserProfile(accessToken),
+  }
+}
+
 export function useGetCurrentUserProfile(
   options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
-  const queryKey = keyFactory.getCurrentUserProfileQueryKey()
-
+  const queryOptions = useGetCurrentUserProfileQueryOptions()
   return useQuery({
     ...options,
-    queryKey: queryKey,
-    queryFn: () => SynapseClient.getUserProfile(accessToken),
+    ...queryOptions,
+  })
+}
+
+export function useSuspenseGetCurrentUserProfile(
+  options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
+) {
+  const queryOptions = useGetCurrentUserProfileQueryOptions()
+
+  return useSuspenseQuery({
+    ...options,
+    ...queryOptions,
   })
 }
 

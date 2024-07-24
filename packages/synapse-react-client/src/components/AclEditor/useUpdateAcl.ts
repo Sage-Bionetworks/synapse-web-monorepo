@@ -1,5 +1,5 @@
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { noop } from 'lodash-es'
 import useSortResourceAccessList from './useSortResourceAccessList'
 
@@ -11,7 +11,7 @@ type UseUpdateAclOptions = {
   onError?: (e: string) => void
 }
 
-export default function useUpdateAcl(options: UseUpdateAclOptions) {
+export default function useUpdateAcl(options: UseUpdateAclOptions = {}) {
   const { onChange = noop, onError = noop } = options
   const [isDirty, setIsDirty] = useState(false)
   const [resourceAccessList, setResourceAccessList] = useState<
@@ -23,7 +23,12 @@ export default function useUpdateAcl(options: UseUpdateAclOptions) {
   const { sortedResourceAccessList, isLoading: isLoadingSortedList } =
     useSortResourceAccessList(resourceAccessList)
   useEffect(() => {
-    if (!isDirty && !isLoadingSortedList && !hasSorted) {
+    if (
+      !isDirty &&
+      !isLoadingSortedList &&
+      !hasSorted &&
+      sortedResourceAccessList != null
+    ) {
       setResourceAccessList(sortedResourceAccessList)
       // `useSortResourceAccessList` will return a new array every time `resourceAccessList` changes, so we need to
       // track if we've already sorted to prevent an infinite loop
@@ -35,51 +40,57 @@ export default function useUpdateAcl(options: UseUpdateAclOptions) {
     onChange(resourceAccessList)
   }, [resourceAccessList])
 
-  const addResourceAccessItem = (
-    newReviewerId: string | null,
-    accessTypes: ACCESS_TYPE[],
-  ) => {
-    setIsDirty(true)
-    if (newReviewerId) {
-      const alreadyReviewer = resourceAccessList.some(
-        resourceAccess => resourceAccess.principalId === Number(newReviewerId),
-      )
-      if (alreadyReviewer) {
-        onError(PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE)
-      } else {
-        const newResourceAccess: ResourceAccess = {
-          principalId: Number(newReviewerId),
-          accessType: accessTypes,
-        }
-        const updatedResourceAccessList = [
-          ...resourceAccessList,
-          newResourceAccess,
-        ]
-        setResourceAccessList(updatedResourceAccessList)
+  const addResourceAccessItem = useCallback(
+    (newReviewerId: string | null, accessTypes: ACCESS_TYPE[]) => {
+      setIsDirty(true)
+      if (newReviewerId) {
+        setResourceAccessList(resourceAccessList => {
+          const alreadyReviewer = resourceAccessList.some(
+            resourceAccess =>
+              resourceAccess.principalId === Number(newReviewerId),
+          )
+          if (alreadyReviewer) {
+            onError(PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE)
+          } else {
+            const newResourceAccess: ResourceAccess = {
+              principalId: Number(newReviewerId),
+              accessType: accessTypes,
+            }
+            return [...resourceAccessList, newResourceAccess]
+          }
+          return resourceAccessList
+        })
       }
-    }
-  }
+    },
+    [onError],
+  )
 
-  const updateResourceAccessItem = (
-    principalId: number,
-    accessType: ACCESS_TYPE[],
-  ) => {
-    setIsDirty(true)
-    const updatedResourceAccessList = resourceAccessList.map(resourceAccess => {
-      return resourceAccess.principalId === principalId
-        ? { ...resourceAccess, accessType }
-        : resourceAccess
-    })
-    setResourceAccessList(updatedResourceAccessList)
-  }
+  const updateResourceAccessItem = useCallback(
+    (principalId: number, accessType: ACCESS_TYPE[]) => {
+      setIsDirty(true)
+      setResourceAccessList(resourceAccessList =>
+        resourceAccessList.map(resourceAccess => {
+          return resourceAccess.principalId === principalId
+            ? { ...resourceAccess, accessType }
+            : resourceAccess
+        }),
+      )
+    },
+    [],
+  )
 
-  const removeResourceAccessItem = (principalId: number) => {
+  const removeResourceAccessItem = useCallback((principalId: number) => {
     setIsDirty(true)
-    const updatedResourceAccessList = resourceAccessList.filter(
-      raListItem => raListItem.principalId !== principalId,
+    setResourceAccessList(resourceAccessList =>
+      resourceAccessList.filter(
+        raListItem => raListItem.principalId !== principalId,
+      ),
     )
-    setResourceAccessList(updatedResourceAccessList)
-  }
+  }, [])
+
+  const resetDirtyState = useCallback(() => {
+    setIsDirty(false)
+  }, [])
 
   return {
     resourceAccessList: resourceAccessList,
@@ -87,5 +98,6 @@ export default function useUpdateAcl(options: UseUpdateAclOptions) {
     addResourceAccessItem,
     updateResourceAccessItem,
     removeResourceAccessItem,
+    resetDirtyState,
   }
 }

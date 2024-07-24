@@ -92,6 +92,10 @@ describe('useNotifyNewACLUsers', () => {
         principalId: mockUserData2.id,
         accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
       },
+      {
+        principalId: mockUserData3.id,
+        accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
+      },
     ]
     const newResourceAccessList: ResourceAccess[] = [
       CURRENT_USER_RESOURCE_ACCESS,
@@ -100,6 +104,7 @@ describe('useNotifyNewACLUsers', () => {
         principalId: mockUserData2.id,
         accessType: getAccessTypeFromPermissionLevel('CAN_EDIT_DELETE'),
       },
+      // removed user 3
     ]
 
     const { result } = renderHook(
@@ -129,6 +134,7 @@ describe('useNotifyNewACLUsers', () => {
 })
 
 describe('shouldNotifyUserInNewResourceAccess', () => {
+  const CURRENT_USER_ID = String(mockUserData1.id)
   it('is true for new users and false for existing users', () => {
     const initialResourceAccessList: ResourceAccess[] = [
       CURRENT_USER_RESOURCE_ACCESS,
@@ -144,7 +150,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         mockUserData1.id,
         initialResourceAccessList,
         mockUserData2.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
     // User 2 is in the list
@@ -162,7 +168,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         mockUserData3.id,
         initialResourceAccessList,
         mockUserData3.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(true)
   })
@@ -181,7 +187,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockTeamUserGroups.find(team => team.id === MOCK_TEAM_ID)!
           .userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
     // User 1 is not in the list, but is the current user, so they should not be notified
@@ -190,7 +196,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         mockUserData1.id,
         initialResourceAccessList,
         mockUserData1.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
   })
@@ -205,7 +211,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         AUTHENTICATED_PRINCIPAL_ID,
         initialResourceAccessList,
         mockAuthenticatedGroupData.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
     expect(
@@ -213,7 +219,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         PUBLIC_PRINCIPAL_ID,
         initialResourceAccessList,
         mockPublicGroupData.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
     expect(
@@ -221,7 +227,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         ANONYMOUS_PRINCIPAL_ID,
         initialResourceAccessList,
         mockAnonymousUserGroupData.userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
   })
@@ -237,7 +243,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockTeamUserGroups.find(team => team.id === MOCK_TEAM_ID)!
           .userGroupHeader,
-        String(mockUserData1.id),
+        CURRENT_USER_ID,
       ),
     ).toBe(false)
   })

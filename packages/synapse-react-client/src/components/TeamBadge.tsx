@@ -5,6 +5,7 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '../utils/SynapseConstants'
+import { Box, Link } from '@mui/material'
 
 export type TeamBadgeProps = {
   teamId: string | number
@@ -29,11 +30,11 @@ export default function TeamBadge(props: TeamBadgeProps) {
     disableHref = true
   }
 
-  const Tag = disableHref ? 'span' : 'a'
+  const Tag = disableHref ? 'span' : Link
 
   return (
-    <span>
-      <IconSvg icon={icon} />
+    <Box component={'span'} display={'inline-flex'} alignItems={'center'}>
+      <IconSvg icon={icon} fontSize={'small'} />
       <Tag
         style={{ marginLeft: '5px' }}
         href={
@@ -44,6 +45,6 @@ export default function TeamBadge(props: TeamBadgeProps) {
       >
         {teamName}
       </Tag>
-    </span>
+    </Box>
   )
 }

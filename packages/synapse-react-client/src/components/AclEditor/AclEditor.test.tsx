@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { server } from '../../mocks/msw/server'
@@ -20,9 +20,16 @@ import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
 import {
   addUserToAcl,
   confirmItem,
+  queryForAddUserCombobox,
   removeItem,
   updatePermissionLevel,
 } from './AclEditorTestUtils'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_IDS,
+} from '../../utils/SynapseConstants'
 
 const DEFAULT_RESOURCE_ACCESS: ResourceAccess[] = [
   {
@@ -59,10 +66,12 @@ const defaultProps: AclEditorProps = {
   availablePermissionLevels: DEFAULT_AVAILABLE_PERMISSION_LEVELS,
   isLoading: false,
   emptyText: DEFAULT_EMPTY_TEXT,
-  isInEditMode: true,
+  canEdit: true,
   onAddPrincipalToAcl: mockAddResourceAccessItem,
   updateResourceAccessItem: mockUpdateResourceAccessItem,
   removeResourceAccessItem: mockRemoveResourceAccessItem,
+  showNotifyCheckbox: false,
+  showAddRemovePublicButton: false,
 }
 
 function renderComponent(props: AclEditorProps) {
@@ -81,10 +90,16 @@ async function setUp(
   const user = userEvent.setup()
   const { component } = renderComponent(props)
 
+  const numberOfPublicPrincipalsInResourceAccess =
+    props.resourceAccessList.filter(ra =>
+      PUBLIC_PRINCIPAL_IDS.includes(ra.principalId),
+    ).length
+
   // wait for UserOrTeamBadge(s) to finish loading
   await waitFor(() => {
     expect(screen.queryAllByRole('link')).toHaveLength(
-      expectedResourceAccessItems,
+      // public principals do not get a link, so subtract that amount from the expected count
+      expectedResourceAccessItems - numberOfPublicPrincipalsInResourceAccess,
     )
   })
 
@@ -158,8 +173,8 @@ describe('AclEditor', () => {
     expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(MOCK_TEAM_ID)
   })
 
-  it('does not show edit controls when isInEditMode is false', async () => {
-    const { itemRows } = await setUp({ isInEditMode: false })
+  it('does not show edit controls when canEdit is false', async () => {
+    const { itemRows } = await setUp({ canEdit: false })
 
     // Data should still be present
     confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
@@ -173,5 +188,184 @@ describe('AclEditor', () => {
     // No menus or buttons should be shown
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('allows customizing which entries are editable by passing a function to canEdit', async () => {
+    function allowEditingOnlyTeam1(resourceAccess: ResourceAccess) {
+      return resourceAccess.principalId === MOCK_TEAM_ID
+    }
+
+    const { itemRows } = await setUp({
+      canEdit: allowEditingOnlyTeam1,
+      canRemoveEntry: true,
+    })
+
+    // Data should still be present
+    confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
+    confirmItem(
+      itemRows[2],
+      `@${mockUserData1.userProfile?.userName}`,
+      'Can Review & Exempt Eligible',
+    )
+
+    // team 1 is editable and deletable
+    within(itemRows[0]).getByRole('combobox')
+    within(itemRows[0]).getByRole('button')
+    // team2 and user1 are deletable but not editable
+    expect(within(itemRows[1]).queryByRole('combobox')).not.toBeInTheDocument()
+    within(itemRows[1]).getByRole('button')
+    expect(within(itemRows[2]).queryByRole('combobox')).not.toBeInTheDocument()
+    within(itemRows[2]).getByRole('button')
+
+    // Users can still be added
+    expect(queryForAddUserCombobox()).toBeInTheDocument()
+  })
+
+  it('respects the value of canRemoveEntry (boolean)', async () => {
+    const { itemRows } = await setUp({
+      canEdit: true,
+      canRemoveEntry: false,
+    })
+
+    // Data should still be present
+    confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
+    confirmItem(
+      itemRows[2],
+      `@${mockUserData1.userProfile?.userName}`,
+      'Can Review & Exempt Eligible',
+    )
+
+    // all rows are editable but not deletable
+    within(itemRows[0]).getByRole('combobox')
+    expect(within(itemRows[0]).queryByRole('button')).not.toBeInTheDocument()
+    within(itemRows[1]).getByRole('combobox')
+    expect(within(itemRows[1]).queryByRole('button')).not.toBeInTheDocument()
+    within(itemRows[2]).getByRole('combobox')
+    expect(within(itemRows[2]).queryByRole('button')).not.toBeInTheDocument()
+
+    // Users can still be added
+    expect(queryForAddUserCombobox()).toBeInTheDocument()
+  })
+
+  it('respects the value of canRemoveEntry (function)', async () => {
+    function allowRemovingOnlyTeam1(resourceAccess: ResourceAccess) {
+      return resourceAccess.principalId === MOCK_TEAM_ID
+    }
+
+    const { itemRows } = await setUp({
+      canEdit: true,
+      canRemoveEntry: allowRemovingOnlyTeam1,
+    })
+
+    // Data should still be present
+    confirmItem(itemRows[0], mockTeamData.name, 'Can Review')
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
+    confirmItem(
+      itemRows[2],
+      `@${mockUserData1.userProfile?.userName}`,
+      'Can Review & Exempt Eligible',
+    )
+
+    // team 1 is editable and deletable
+    within(itemRows[0]).getByRole('combobox')
+    within(itemRows[0]).getByRole('button')
+    // team2 and user1 are editable but not deletable
+    within(itemRows[1]).getByRole('combobox')
+    expect(within(itemRows[1]).queryByRole('button')).not.toBeInTheDocument()
+    within(itemRows[2]).getByRole('combobox')
+    expect(within(itemRows[2]).queryByRole('button')).not.toBeInTheDocument()
+
+    // Users can still be added
+    expect(queryForAddUserCombobox()).toBeInTheDocument()
+  })
+
+  it('allows overriding a displayed permission value', async () => {
+    const overrideText = 'Can take over the world'
+    function displayedPermissionLevelOverride(resourceAccess: ResourceAccess) {
+      if (resourceAccess.principalId === MOCK_TEAM_ID) {
+        return overrideText
+      }
+      return undefined
+    }
+    const { itemRows } = await setUp({
+      canEdit: false,
+      displayedPermissionLevelOverride,
+    })
+
+    // Team 1 gets the override
+    confirmItem(itemRows[0], mockTeamData.name, overrideText)
+
+    // Remaining teams are unchanged
+    confirmItem(itemRows[1], mockTeamData2.name, 'Exempt Eligible')
+    confirmItem(
+      itemRows[2],
+      `@${mockUserData1.userProfile?.userName}`,
+      'Can Review & Exempt Eligible',
+    )
+  })
+
+  it('shows a checkbox to notify users', async () => {
+    const onCheckboxChange = jest.fn()
+    const { user } = await setUp({
+      showNotifyCheckbox: true,
+      notifyCheckboxValue: true,
+      onNotifyCheckboxChange: onCheckboxChange,
+    })
+
+    const checkbox = screen.getByLabelText('Notify people via email')
+    expect(checkbox).toHaveAttribute('value', 'true')
+
+    await user.click(checkbox)
+
+    expect(onCheckboxChange).toHaveBeenLastCalledWith(false)
+  })
+
+  it('shows a button to add public', async () => {
+    const { user } = await setUp({
+      showAddRemovePublicButton: true,
+    })
+
+    const makePublicButton = screen.getByRole('button', { name: 'Make Public' })
+    await user.click(makePublicButton)
+
+    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
+      String(PUBLIC_PRINCIPAL_ID),
+    )
+    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
+      String(AUTHENTICATED_PRINCIPAL_ID),
+    )
+  })
+
+  it('shows a button to remove public if any public principals are in the ACL', async () => {
+    const { user } = await setUp({
+      resourceAccessList: [
+        {
+          principalId: PUBLIC_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
+        },
+        {
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
+        },
+      ],
+      showAddRemovePublicButton: true,
+    })
+
+    const removePublicAccessButton = screen.getByRole('button', {
+      name: 'Remove Public Access',
+    })
+    await user.click(removePublicAccessButton)
+
+    expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(
+      PUBLIC_PRINCIPAL_ID,
+    )
+    expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(
+      AUTHENTICATED_PRINCIPAL_ID,
+    )
+    expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(
+      ANONYMOUS_PRINCIPAL_ID,
+    )
   })
 })

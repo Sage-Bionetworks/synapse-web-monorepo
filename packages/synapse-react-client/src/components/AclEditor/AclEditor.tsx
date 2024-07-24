@@ -1,18 +1,40 @@
 import React from 'react'
-import { Box, Collapse, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Checkbox,
+  Collapse,
+  FormControlLabel,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { ResourceAccessItem } from './ResourceAccessItem'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import useUpdateAcl from './useUpdateAcl'
 import { TransitionGroup } from 'react-transition-group'
 import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import {
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_IDS,
+} from '../../utils/SynapseConstants'
+import IconSvg from '../IconSvg'
+import { noop } from 'lodash-es'
+import { AclEditorSkeleton } from './AclEditorSkeleton'
 
 export type AclEditorProps = {
-  isInEditMode: boolean
-  isLoading: boolean
   resourceAccessList: ResourceAccess[]
   availablePermissionLevels: PermissionLevel[]
+  /** If true, the user can edit the ACL. If a function, it will be called with the ResourceAccess to determine if the user can edit it. */
+  canEdit: boolean | ((resourceAccess: ResourceAccess) => boolean)
+  /**
+   * If true, the user can remove any entry from the ACL. a function, it will be called with the ResourceAccess to determine if the user can remove it.
+   * If undefined, then the behavior will fall back to the value of `canEdit`
+   */
+  canRemoveEntry?: boolean | ((resourceAccess: ResourceAccess) => boolean)
+  isLoading?: boolean
   emptyText: React.ReactNode
   onAddPrincipalToAcl: (id: string) => void
   updateResourceAccessItem: ReturnType<
@@ -21,26 +43,69 @@ export type AclEditorProps = {
   removeResourceAccessItem: ReturnType<
     typeof useUpdateAcl
   >['removeResourceAccessItem']
+  /** If true, shows a button to add/remove AUTHENTICATED and PUBLIC groups when in edit mode */
+  showAddRemovePublicButton: boolean
+  /** If present, a checkbox to notify those added to the email will be shown. */
+  showNotifyCheckbox: boolean
+  notifyCheckboxValue?: boolean
+  onNotifyCheckboxChange?: (checked: boolean) => void
+  /**
+   * In special cases, can be used to display a permission level that is different from the typical permission levels.
+   * For example, the PUBLIC group "Can download" an entity if they have READ access and the entity is marked as
+   * "open data" (open data status is not captured in the ResourceAccess)
+   */
+  displayedPermissionLevelOverride?: (
+    resourceAccess: ResourceAccess,
+  ) => string | undefined
 }
 
 export function AclEditor(props: AclEditorProps) {
   const {
-    isInEditMode,
-    isLoading,
     resourceAccessList,
     availablePermissionLevels,
+    canEdit,
+    canRemoveEntry = canEdit,
+    isLoading = false,
     emptyText,
     onAddPrincipalToAcl,
     updateResourceAccessItem,
     removeResourceAccessItem,
+    showAddRemovePublicButton,
+    showNotifyCheckbox,
+    notifyCheckboxValue,
+    onNotifyCheckboxChange = noop,
+    displayedPermissionLevelOverride,
   } = props
+
   if (isLoading) {
-    return (
-      <Box display={'flex'} justifyContent={'center'} height={'150px'}>
-        <SynapseSpinner size={50} />
-      </Box>
-    )
+    return <AclEditorSkeleton />
   }
+
+  const resourceAccessListCurrentlyIncludesPublic = Boolean(
+    resourceAccessList.find(resourceAccess =>
+      PUBLIC_PRINCIPAL_IDS.includes(resourceAccess.principalId),
+    ),
+  )
+
+  const addOrRemovePublicButtonProps: ButtonProps =
+    resourceAccessListCurrentlyIncludesPublic
+      ? {
+          startIcon: <IconSvg icon={'close'} wrap={false} />,
+          children: 'Remove Public Access',
+          onClick: () => {
+            PUBLIC_PRINCIPAL_IDS.forEach(publicId => {
+              removeResourceAccessItem(publicId)
+            })
+          },
+        }
+      : {
+          startIcon: <IconSvg icon={'public'} wrap={false} />,
+          children: 'Make Public',
+          onClick: () => {
+            onAddPrincipalToAcl(String(PUBLIC_PRINCIPAL_ID))
+            onAddPrincipalToAcl(String(AUTHENTICATED_PRINCIPAL_ID))
+          },
+        }
 
   return (
     <Box>
@@ -54,13 +119,27 @@ export function AclEditor(props: AclEditorProps) {
         ) : (
           <TransitionGroup>
             {resourceAccessList.map(resourceAccess => {
+              const canChangePermission =
+                typeof canEdit === 'function'
+                  ? canEdit(resourceAccess)
+                  : canEdit
+              const canDelete =
+                typeof canRemoveEntry === 'function'
+                  ? canRemoveEntry(resourceAccess)
+                  : canRemoveEntry
+
+              const permissionLevelOverride = displayedPermissionLevelOverride
+                ? displayedPermissionLevelOverride(resourceAccess)
+                : undefined
               return (
                 <Collapse key={resourceAccess.principalId}>
                   <ResourceAccessItem
                     key={resourceAccess.principalId}
                     resourceAccess={resourceAccess}
                     availablePermissionLevels={availablePermissionLevels}
-                    isInEditMode={isInEditMode}
+                    canChangePermission={canChangePermission}
+                    displayedPermissionLevelOverride={permissionLevelOverride}
+                    showDeleteButton={canDelete}
                     onChange={accessType =>
                       updateResourceAccessItem(
                         resourceAccess.principalId,
@@ -77,7 +156,7 @@ export function AclEditor(props: AclEditorProps) {
           </TransitionGroup>
         )}
       </Box>
-      {isInEditMode && (
+      {canEdit && (
         <Box>
           <Typography variant="headline3" mb="10px">
             Add More
@@ -87,12 +166,12 @@ export function AclEditor(props: AclEditorProps) {
               variant: 'body1',
               lineHeight: '20px',
               fontStyle: 'italic',
-              color: 'grey.900',
+              color: 'text.secondary',
             }}
             mb="20px"
           >
             Search for a username or team to add. You can search by username,
-            first or last names, or team name
+            first or last names, or team name.
           </Typography>
           <Box>
             <Typography
@@ -113,7 +192,47 @@ export function AclEditor(props: AclEditorProps) {
               }}
             />
           </Box>
+          <Box display={'flex'} justifyContent={'space-between'} gap={2}>
+            <Box>
+              {showAddRemovePublicButton && (
+                <Button
+                  size={'small'}
+                  variant={'outlined'}
+                  {...addOrRemovePublicButtonProps}
+                />
+              )}
+            </Box>
+            {showNotifyCheckbox && (
+              <Tooltip
+                title={
+                  'Select to notify newly added people that this item has been shared with them'
+                }
+              >
+                <FormControlLabel
+                  sx={{ mr: 0 }}
+                  control={
+                    <Checkbox
+                      value={notifyCheckboxValue}
+                      onChange={() =>
+                        onNotifyCheckboxChange(!notifyCheckboxValue)
+                      }
+                    />
+                  }
+                  label={
+                    <Typography variant={'smallText1'}>
+                      Notify people via email
+                    </Typography>
+                  }
+                />
+              </Tooltip>
+            )}
+          </Box>
         </Box>
+      )}
+      {!canEdit && (
+        <Typography variant={'body1'}>
+          You do not have sufficient privileges to modify the sharing settings.
+        </Typography>
       )}
     </Box>
   )

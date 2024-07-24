@@ -165,5 +165,20 @@ describe('useUpdateAcl', () => {
         { principalId: MOCK_USER_ID_2, accessType: [ACCESS_TYPE.READ] },
       ]),
     )
+
+    // Verify that if we reset the dirty state, the list is re-sorted
+    act(() => {
+      result.current.resetDirtyState()
+    })
+
+    // Verify that the entries are sorted
+    await waitFor(() =>
+      expect(result.current.resourceAccessList).toEqual([
+        // @AnotherUser
+        { principalId: MOCK_USER_ID_2, accessType: [ACCESS_TYPE.READ] },
+        // @myUserName
+        { principalId: MOCK_USER_ID, accessType: [ACCESS_TYPE.READ] },
+      ]),
+    )
   })
 })

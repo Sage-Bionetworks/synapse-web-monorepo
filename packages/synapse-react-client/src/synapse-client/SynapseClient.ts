@@ -1163,6 +1163,30 @@ export const getEntityHeader = async (
 }
 
 /**
+ * Create a new Access Control List (ACL), overriding inheritance.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/POST/entity/id/acl.html
+ */
+export const createEntityACL = (
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPost<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Update an Entity's ACL
  * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
  * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
@@ -1174,6 +1198,30 @@ export const updateEntityACL = (
   return doPut<AccessControlList>(
     ENTITY_ACL(acl.id),
     acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Delete the Access Control List (ACL) for a given Entity.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor. The ACL
+ * for a Project cannot be deleted.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const deleteEntityACL = (
+  id: string,
+  accessToken: string | undefined = undefined,
+): Promise<void> => {
+  return doDelete(
+    ENTITY_ACL(id),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

@@ -10,6 +10,7 @@ import {
   ENTITY_SCHEMA_BINDING,
 } from '../../../utils/APIConstants'
 import {
+  AccessControlList,
   Entity,
   EntityBundle,
   EntityHeader,
@@ -23,12 +24,11 @@ import {
   VersionableEntity,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import mockEntities from '../../entity'
+import mockEntities, { mockProjectsEntityData } from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
 import { uniqueId } from 'lodash-es'
-import { mockProjectsEntityData } from '../../entity/mockProject'
 import { mockUploadDestinations } from '../../mock_upload_destination'
 import { normalizeSynPrefix } from '../../../utils/functions/EntityTypeUtils'
 import { MockEntityData } from '../../entity/MockEntityData'
@@ -324,4 +324,85 @@ export const getEntityHandlers = (backendOrigin: string) => [
     }
     return res(ctx.status(200), ctx.json(response))
   }),
+
+  rest.post(
+    `${backendOrigin}${ENTITY_ID(':entityId')}/acl`,
+    async (req, res, ctx) => {
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
+      let status: number
+      let response: SynapseApiResponse<AccessControlList>
+      if (!entityData) {
+        status = 404
+        response = {
+          reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        }
+      } else if (entityData.bundle?.accessControlList) {
+        status = 403
+        response = {
+          reason: 'Resource already has an ACL.',
+        }
+      } else {
+        response = await req.json()
+        status = 201
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.put(
+    `${backendOrigin}${ENTITY_ID(':entityId')}/acl`,
+    async (req, res, ctx) => {
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
+
+      let status: number
+      let response: SynapseApiResponse<AccessControlList>
+
+      if (!entityData) {
+        status = 404
+        response = {
+          reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        }
+      } else if (!entityData?.bundle?.accessControlList) {
+        response = {
+          reason:
+            'Cannot update ACL for a resource which inherits its permissions.',
+        }
+        status = 403
+      } else {
+        response = await req.json()
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.delete(
+    `${backendOrigin}${ENTITY_ID(':entityId')}/acl`,
+    async (req, res, ctx) => {
+      const entityData = getMatchingMockEntity(req.params.entityId as string)
+
+      let status: number
+      let response: SynapseApiResponse<''>
+
+      if (!entityData) {
+        status = 404
+        response = {
+          reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        }
+      } else if (!entityData?.bundle?.accessControlList) {
+        response = {
+          reason:
+            'Cannot delete ACL for a resource which inherits its permissions.',
+        }
+        status = 403
+      } else {
+        response = ''
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
 ]
