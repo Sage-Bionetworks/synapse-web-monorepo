@@ -29,7 +29,7 @@ import {
 import { Alert, Stack } from '@mui/material'
 import { InheritanceMessage } from './InheritanceMessage'
 import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
-import isEqualTreatArraysAsSets from '../../utils/functions/isEqualTreatArraysAsSets'
+import resourceAccessListIsEqual from '../../utils/functions/AccessControlListUtils'
 import useNotifyNewACLUsers from './useNotifyNewACLUsers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { getDisplayNameFromProfile } from '../../utils/functions/DisplayUtils'
@@ -223,7 +223,7 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   const hasAclChanged = useMemo(() => {
     return (
       originalIsInherited != updatedIsInherited ||
-      !isEqualTreatArraysAsSets(
+      !resourceAccessListIsEqual(
         originalResourceAccess,
         updatedResourceAccessList,
       )
