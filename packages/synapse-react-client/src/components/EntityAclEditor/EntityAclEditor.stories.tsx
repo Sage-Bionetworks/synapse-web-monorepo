@@ -4,7 +4,13 @@ import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import EntityAclEditorModal, {
   EntityAclEditorModalProps,
 } from './EntityAclEditorModal'
-import { mockFileEntityCurrentUserCannotEdit } from '../../mocks/entity/mockFileEntityACLVariants'
+import {
+  mockFileEntityCurrentUserCannotEdit,
+  mockFileEntityWithLocalSharingSettingsData,
+  mockFileOpenDataWithNoPublicRead,
+  mockFileOpenDataWithPublicRead,
+  mockFilePublicReadNoOpenData,
+} from '../../mocks/entity/mockFileEntityACLVariants'
 
 const meta: Meta<EntityAclEditorModalProps> = {
   title: 'Synapse/Entity ACL Editor',
@@ -43,23 +49,39 @@ export const InheritedFile: Story = {
   },
 }
 
-export const ProdCustomACL: Story = {
+export const LocalSharingSettings: Story = {
   args: {
-    entityId: 'syn61833062',
+    entityId: mockFileEntityWithLocalSharingSettingsData.id,
   },
 
   parameters: {
-    stack: 'production',
+    stack: 'mock',
   },
 }
 
-export const TestUserCannotReadParent: Story = {
+export const OpenDataPublicCanRead: Story = {
   args: {
-    open: true,
-    entityId: 'syn61843528',
+    entityId: mockFileOpenDataWithPublicRead.id,
   },
-
   parameters: {
-    stack: 'production',
+    stack: 'mock',
+  },
+}
+
+export const OpenDataNoPublicRead: Story = {
+  args: {
+    entityId: mockFileOpenDataWithNoPublicRead.id,
+  },
+  parameters: {
+    stack: 'mock',
+  },
+}
+
+export const NoOpenDataWithPublicRead: Story = {
+  args: {
+    entityId: mockFilePublicReadNoOpenData.id,
+  },
+  parameters: {
+    stack: 'mock',
   },
 }

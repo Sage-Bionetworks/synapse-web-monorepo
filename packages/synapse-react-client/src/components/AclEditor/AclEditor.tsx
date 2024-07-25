@@ -24,6 +24,10 @@ import IconSvg from '../IconSvg'
 import { noop } from 'lodash-es'
 import { AclEditorSkeleton } from './AclEditorSkeleton'
 
+export const ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL = 'Add a user or team'
+export const ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT = 'Make Public'
+export const REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT = 'Remove Public Access'
+
 export type AclEditorProps = {
   resourceAccessList: ResourceAccess[]
   availablePermissionLevels: PermissionLevel[]
@@ -36,7 +40,7 @@ export type AclEditorProps = {
   canRemoveEntry?: boolean | ((resourceAccess: ResourceAccess) => boolean)
   isLoading?: boolean
   emptyText: React.ReactNode
-  onAddPrincipalToAcl: (id: string) => void
+  onAddPrincipalToAcl: (id: number) => void
   updateResourceAccessItem: ReturnType<
     typeof useUpdateAcl
   >['updateResourceAccessItem']
@@ -58,6 +62,8 @@ export type AclEditorProps = {
     resourceAccess: ResourceAccess,
   ) => string | undefined
 }
+
+export const NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL = 'Notify people via email'
 
 export function AclEditor(props: AclEditorProps) {
   const {
@@ -91,7 +97,7 @@ export function AclEditor(props: AclEditorProps) {
     resourceAccessListCurrentlyIncludesPublic
       ? {
           startIcon: <IconSvg icon={'close'} wrap={false} />,
-          children: 'Remove Public Access',
+          children: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
           onClick: () => {
             PUBLIC_PRINCIPAL_IDS.forEach(publicId => {
               removeResourceAccessItem(publicId)
@@ -100,10 +106,10 @@ export function AclEditor(props: AclEditorProps) {
         }
       : {
           startIcon: <IconSvg icon={'public'} wrap={false} />,
-          children: 'Make Public',
+          children: ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
           onClick: () => {
-            onAddPrincipalToAcl(String(PUBLIC_PRINCIPAL_ID))
-            onAddPrincipalToAcl(String(AUTHENTICATED_PRINCIPAL_ID))
+            onAddPrincipalToAcl(PUBLIC_PRINCIPAL_ID)
+            onAddPrincipalToAcl(AUTHENTICATED_PRINCIPAL_ID)
           },
         }
 
@@ -179,15 +185,16 @@ export function AclEditor(props: AclEditorProps) {
               variant="smallText2"
               htmlFor="reviewer-search"
             >
-              Add a user or team
+              {ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL}
             </Typography>
             <UserSearchBoxV2
               value={null}
               inputId="reviewer-search"
               placeholder="Username, name (first and last) or team name."
               onChange={id => {
-                if (id) {
-                  onAddPrincipalToAcl(id)
+                const parsedId = parseInt(id || '')
+                if (parsedId) {
+                  onAddPrincipalToAcl(parsedId)
                 }
               }}
             />
@@ -220,7 +227,7 @@ export function AclEditor(props: AclEditorProps) {
                   }
                   label={
                     <Typography variant={'smallText1'}>
-                      Notify people via email
+                      {NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL}
                     </Typography>
                   }
                 />

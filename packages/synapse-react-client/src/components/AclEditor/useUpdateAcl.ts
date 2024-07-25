@@ -1,5 +1,11 @@
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { noop } from 'lodash-es'
 import useSortResourceAccessList from './useSortResourceAccessList'
 
@@ -11,7 +17,30 @@ type UseUpdateAclOptions = {
   onError?: (e: string) => void
 }
 
-export default function useUpdateAcl(options: UseUpdateAclOptions = {}) {
+type UseUpdateAclReturn = {
+  /** The ResourceAccess list that is being updated. It will automatically be sorted unless the `add`, `update` or `remove` functions are called. */
+  resourceAccessList: ResourceAccess[]
+  /** Set the ResourceAccess list. Does not prevent re-sorting */
+  setResourceAccessList: Dispatch<SetStateAction<ResourceAccess[]>>
+  /** Adds a principal to the list with the provided accessTypes */
+  addResourceAccessItem: (
+    principalId: number,
+    accessTypes: ACCESS_TYPE[],
+  ) => void
+  /** Updates the principal in the list with the provided accessTypes */
+  updateResourceAccessItem: (
+    principalId: number,
+    accessType: ACCESS_TYPE[],
+  ) => void
+  /** Removes the principal from the list */
+  removeResourceAccessItem: (principalId: number) => void
+  /** Resets the dirty state of the form, which will immediately trigger sorting the resourceAccessList */
+  resetDirtyState: () => void
+}
+
+export default function useUpdateAcl(
+  options: UseUpdateAclOptions = {},
+): UseUpdateAclReturn {
   const { onChange = noop, onError = noop } = options
   const [isDirty, setIsDirty] = useState(false)
   const [resourceAccessList, setResourceAccessList] = useState<
@@ -41,19 +70,18 @@ export default function useUpdateAcl(options: UseUpdateAclOptions = {}) {
   }, [resourceAccessList])
 
   const addResourceAccessItem = useCallback(
-    (newReviewerId: string | null, accessTypes: ACCESS_TYPE[]) => {
+    (principalId: number, accessTypes: ACCESS_TYPE[]) => {
       setIsDirty(true)
-      if (newReviewerId) {
+      if (principalId) {
         setResourceAccessList(resourceAccessList => {
           const alreadyReviewer = resourceAccessList.some(
-            resourceAccess =>
-              resourceAccess.principalId === Number(newReviewerId),
+            resourceAccess => resourceAccess.principalId === principalId,
           )
           if (alreadyReviewer) {
             onError(PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE)
           } else {
             const newResourceAccess: ResourceAccess = {
-              principalId: Number(newReviewerId),
+              principalId: principalId,
               accessType: accessTypes,
             }
             return [...resourceAccessList, newResourceAccess]
@@ -93,7 +121,7 @@ export default function useUpdateAcl(options: UseUpdateAclOptions = {}) {
   }, [])
 
   return {
-    resourceAccessList: resourceAccessList,
+    resourceAccessList,
     setResourceAccessList,
     addResourceAccessItem,
     updateResourceAccessItem,

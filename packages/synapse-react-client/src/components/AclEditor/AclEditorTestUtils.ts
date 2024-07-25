@@ -1,6 +1,14 @@
 import userEvent from '@testing-library/user-event'
 import { screen, waitFor, within } from '@testing-library/react'
 import { REMOVE_BUTTON_LABEL } from './ResourceAccessItem'
+import {
+  AUTHENTICATED_GROUP_DISPLAY_TEXT,
+  PUBLIC_GROUP_DISPLAY_TEXT,
+} from '../TeamBadge'
+import {
+  ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL,
+  ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+} from './AclEditor'
 
 /**
  * Find a row in the ACL editor that contains the specified principal name.
@@ -18,7 +26,7 @@ export function queryForRowWithPrincipalName(
 
 /**
  * Verify that a row in the ACL editor contains the expected principal name and access type.
- * @param row
+ * @param rows
  * @param principalName
  * @param accessTypeLabel
  */
@@ -35,7 +43,7 @@ export async function confirmItemViaQuery(
     })
   } catch (e) {
     screen.debug()
-    throw new Error(`Principal ${principalName} not found in ACL`, e)
+    throw new Error(`Principal ${principalName} not found in ACL`, { cause: e })
   }
 
   const editorCombobox = within(row!).queryByRole('combobox')
@@ -118,7 +126,7 @@ export async function updatePermissionLevel(
 
 export function queryForAddUserCombobox() {
   return screen.queryByRole('combobox', {
-    name: 'Add a user or team',
+    name: ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL,
   })
 }
 
@@ -150,7 +158,9 @@ export async function addUserToAcl(
 export async function addPublicToAcl(
   user: ReturnType<(typeof userEvent)['setup']>,
 ) {
-  const makePublicButton = screen.getByRole('button', { name: 'Make Public' })
+  const makePublicButton = screen.getByRole('button', {
+    name: ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+  })
   await user.click(makePublicButton)
 
   let rows: HTMLElement[] = []
@@ -158,10 +168,10 @@ export async function addPublicToAcl(
   let authenticatedUsersRow: HTMLElement | undefined = undefined
   await waitFor(() => {
     rows = screen.getAllByRole('row')
-    publicRow = queryForRowWithPrincipalName(rows, 'Anyone on the web')
+    publicRow = queryForRowWithPrincipalName(rows, PUBLIC_GROUP_DISPLAY_TEXT)
     authenticatedUsersRow = queryForRowWithPrincipalName(
       rows,
-      'All registered Synapse users',
+      AUTHENTICATED_GROUP_DISPLAY_TEXT,
     )
     expect(publicRow).toBeInTheDocument()
     expect(authenticatedUsersRow).toBeInTheDocument()

@@ -305,7 +305,7 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
         emptyText={/* This should never happen */ ''}
         displayedPermissionLevelOverride={getDisplayedPermissionLevelOverride}
         onAddPrincipalToAcl={id => {
-          if (id === String(PUBLIC_PRINCIPAL_ID)) {
+          if (id === PUBLIC_PRINCIPAL_ID) {
             addResourceAccessItem(
               id,
               getAccessTypeFromPermissionLevel('CAN_VIEW'),

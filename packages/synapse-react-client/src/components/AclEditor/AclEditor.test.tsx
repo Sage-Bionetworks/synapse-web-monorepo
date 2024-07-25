@@ -3,7 +3,13 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { server } from '../../mocks/msw/server'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { AclEditor, AclEditorProps } from './AclEditor'
+import {
+  AclEditor,
+  AclEditorProps,
+  ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+  NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL,
+  REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+} from './AclEditor'
 import {
   MOCK_TEAM_ID,
   MOCK_TEAM_ID_2,
@@ -314,7 +320,7 @@ describe('AclEditor', () => {
       onNotifyCheckboxChange: onCheckboxChange,
     })
 
-    const checkbox = screen.getByLabelText('Notify people via email')
+    const checkbox = screen.getByLabelText(NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL)
     expect(checkbox).toHaveAttribute('value', 'true')
 
     await user.click(checkbox)
@@ -327,7 +333,9 @@ describe('AclEditor', () => {
       showAddRemovePublicButton: true,
     })
 
-    const makePublicButton = screen.getByRole('button', { name: 'Make Public' })
+    const makePublicButton = screen.getByRole('button', {
+      name: ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+    })
     await user.click(makePublicButton)
 
     expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
@@ -354,7 +362,7 @@ describe('AclEditor', () => {
     })
 
     const removePublicAccessButton = screen.getByRole('button', {
-      name: 'Remove Public Access',
+      name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
     })
     await user.click(removePublicAccessButton)
 

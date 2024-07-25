@@ -7,6 +7,9 @@ import {
 } from '../utils/SynapseConstants'
 import { Box, Link } from '@mui/material'
 
+export const AUTHENTICATED_GROUP_DISPLAY_TEXT = 'All registered Synapse users'
+export const PUBLIC_GROUP_DISPLAY_TEXT = 'Anyone on the web'
+
 export type TeamBadgeProps = {
   teamId: string | number
   teamName: string
@@ -21,12 +24,12 @@ export default function TeamBadge(props: TeamBadgeProps) {
 
   if (teamId == AUTHENTICATED_PRINCIPAL_ID) {
     icon = 'public'
-    teamName = 'All registered Synapse users'
+    teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
   }
   if (teamId == PUBLIC_PRINCIPAL_ID) {
     icon = 'public'
-    teamName = 'Anyone on the web'
+    teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true
   }
 

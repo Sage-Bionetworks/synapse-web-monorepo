@@ -42,6 +42,15 @@ import {
   CREATE_LOCAL_SHARING_SETTINGS,
   DELETE_LOCAL_SHARING_SETTINGS,
 } from './CreateOrDeleteLocalSharingSettingsButton'
+import {
+  AUTHENTICATED_GROUP_DISPLAY_TEXT,
+  PUBLIC_GROUP_DISPLAY_TEXT,
+} from '../TeamBadge'
+import {
+  ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+  NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL,
+  REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+} from '../AclEditor/AclEditor'
 
 const onUpdateSuccess = jest.fn()
 const onCanSaveChange = jest.fn()
@@ -75,7 +84,9 @@ async function setUp(
 }
 
 async function checkNotifyUsers(user: ReturnType<(typeof userEvent)['setup']>) {
-  const notifyCheckbox = screen.getByLabelText('Notify people via email')
+  const notifyCheckbox = screen.getByLabelText(
+    NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL,
+  )
   await user.click(notifyCheckbox)
 }
 
@@ -418,10 +429,14 @@ describe('EntityAclEditor', () => {
     )
 
     // Verify that the public and authenticated are displayed as 'Can download'
-    await confirmItemViaQuery(itemRows, 'Anyone on the web', 'Can download')
     await confirmItemViaQuery(
       itemRows,
-      'All registered Synapse users',
+      PUBLIC_GROUP_DISPLAY_TEXT,
+      'Can download',
+    )
+    await confirmItemViaQuery(
+      itemRows,
+      AUTHENTICATED_GROUP_DISPLAY_TEXT,
       'Can download',
     )
   })
@@ -477,10 +492,10 @@ describe('EntityAclEditor', () => {
     const { publicRow, authenticatedUsersRow } = await addPublicToAcl(user)
 
     // Verify the initial permissions
-    confirmItem(publicRow, 'Anyone on the web', 'Can view')
+    confirmItem(publicRow, PUBLIC_GROUP_DISPLAY_TEXT, 'Can view')
     confirmItem(
       authenticatedUsersRow,
-      'All registered Synapse users',
+      AUTHENTICATED_GROUP_DISPLAY_TEXT,
       'Can download',
     )
 
@@ -594,15 +609,17 @@ describe('EntityAclEditor', () => {
     // No controls to add to the ACL
     expect(queryForAddUserCombobox()).not.toBeInTheDocument()
     expect(
-      screen.queryByLabelText('Notify people via email'),
+      screen.queryByLabelText(NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL),
     ).not.toBeInTheDocument()
 
     // No controls to toggle public access
     expect(
-      screen.queryByRole('button', { name: 'Remove Public Access' }),
+      screen.queryByRole('button', {
+        name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+      }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: 'Make Public' }),
+      screen.queryByRole('button', { name: ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT }),
     ).not.toBeInTheDocument()
 
     screen.getByText(
