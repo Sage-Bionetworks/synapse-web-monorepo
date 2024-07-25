@@ -1,0 +1,10 @@
+import{j as r}from"./jsx-runtime-Du8NFWEI.js";import{T as a}from"./Tooltip-BZeYxe44.js";import{w as m,u as l}from"./index-DE9blkHK.js";import{I as c}from"./InfoTwoTone-CxHU0jl8.js";import{L as d}from"./Link-DhsldE67.js";import"./index-Dl6G-zuu.js";import"./createTheme-Dtzk88yv.js";import"./index-GEGPABih.js";import"./index-Cvyar9fI.js";import"./styled-BEXTB4Ho.js";import"./utils-C59yjAo_.js";import"./TransitionGroupContext-B611AcNu.js";import"./useForkRef-CEBgoE3Z.js";import"./index-B6qzg4VC.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-CspkvTld.js";import"./mergeSlotProps-Dv5GaMzt.js";import"./isHostComponent-DVu5iVWx.js";import"./useIsFocusVisible-Cwvw9TRl.js";import"./index-bJQ9dxLr.js";import"./index-Cek1a_Jj.js";import"./lz-string-BoOPuQ6n.js";import"./index-DrFu-skq.js";import"./createSvgIcon-eMxRw33w.js";import"./Typography-qpntpuFp.js";const e=o=>r.jsx(a,{...o});try{e.displayName="Tooltip",e.__docgenInfo={description:"",displayName:"Tooltip",props:{ref:{defaultValue:null,description:"",name:"ref",required:!1,type:{name:"Ref<unknown>"}}}}}catch{}const C={title:"UI/MUI/Tooltip",component:e,parameters:{design:{type:"figma",url:"https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Sage-Style-%26-Component-Library?node-id=187%3A6615"}},play:async({canvasElement:o})=>{const s=m(o).getByTestId("tooltipAnchor");await l.hover(s)}},t={name:"Tooltip",args:{children:r.jsx(c,{"data-testid":"tooltipAnchor"}),title:r.jsxs("p",{children:["This is some text, and"," ",r.jsx(d,{href:"https://synapse.org/",children:"here is a link"}),"."]})}};var i,p,n;t.parameters={...t.parameters,docs:{...(i=t.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  name: 'Tooltip',
+  args: {
+    children: <InfoTwoTone data-testid={'tooltipAnchor'} />,
+    title: <p>
+        This is some text, and{' '}
+        <Link href={'https://synapse.org/'}>here is a link</Link>.
+      </p>
+  }
+}`,...(n=(p=t.parameters)==null?void 0:p.docs)==null?void 0:n.source}}};const F=["Demo"];export{t as Demo,F as __namedExportsOrder,C as default};
