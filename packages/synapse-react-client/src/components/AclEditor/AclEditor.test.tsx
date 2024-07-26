@@ -158,9 +158,7 @@ describe('AclEditor', () => {
 
     await addUserToAcl(user, mockUserData2.userProfile!.userName)
 
-    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
-      String(mockUserData2.id),
-    )
+    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(mockUserData2.id)
   })
 
   it('Handles updating the permissions of a user or team', async () => {
