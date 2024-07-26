@@ -4,15 +4,17 @@ import EntityAclEditor, { EntityAclEditorHandle } from './EntityAclEditor'
 import { displayToast } from '../ToastMessage'
 import { useGetEntityBundle } from '../../synapse-queries'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
+import { noop } from 'lodash-es'
 
 export type EntityAclEditorModalProps = {
   entityId: string
   open: boolean
+  onUpdateSuccess?: () => void
   onClose: () => void
 }
 
 export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
-  const { entityId, open, onClose } = props
+  const { entityId, open, onUpdateSuccess = noop, onClose } = props
   const [isDirty, setIsDirty] = useState(false)
   const entityAclEditorRef = useRef<EntityAclEditorHandle>(null)
 
@@ -35,11 +37,12 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
           entityId={entityId}
           onCanSaveChange={isDirty => setIsDirty(isDirty)}
           onUpdateSuccess={() => {
-            onClose()
             displayToast(
               'Permissions were successfully saved to Synapse',
               'info',
             )
+            onUpdateSuccess()
+            onClose()
           }}
         />
       }

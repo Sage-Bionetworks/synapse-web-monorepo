@@ -149,7 +149,8 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   const canEdit = entityBundle.permissions.canChangePermissions
   const isOpenData = entityBundle.permissions.isEntityOpenData
   const originalIsInherited = !(entityBundle.benefactorAcl.id == entityId)
-  const [updatedIsInherited, setUpdatedIsInherited] = useState(false)
+  const [updatedIsInherited, setUpdatedIsInherited] =
+    useState(originalIsInherited)
   const [notifyNewAdditions, setNotifyNewAdditions] = useState(false)
   const [error, setError] = useState<Error>()
 

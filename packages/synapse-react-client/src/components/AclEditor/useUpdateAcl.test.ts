@@ -37,9 +37,7 @@ describe('useUpdateAcl', () => {
     expect(result.current.resourceAccessList).toHaveLength(0)
 
     act(() => {
-      result.current.addResourceAccessItem(String(MOCK_USER_ID), [
-        ACCESS_TYPE.READ,
-      ])
+      result.current.addResourceAccessItem(MOCK_USER_ID, [ACCESS_TYPE.READ])
     })
 
     await waitFor(() =>
@@ -151,9 +149,7 @@ describe('useUpdateAcl', () => {
 
     // Individually adding @AnotherUser should NOT trigger a sort, since the editor is 'dirty'.
     act(() => {
-      result.current.addResourceAccessItem(String(MOCK_USER_ID_2), [
-        ACCESS_TYPE.READ,
-      ])
+      result.current.addResourceAccessItem(MOCK_USER_ID_2, [ACCESS_TYPE.READ])
     })
 
     // Verify that the entries are not sorted
