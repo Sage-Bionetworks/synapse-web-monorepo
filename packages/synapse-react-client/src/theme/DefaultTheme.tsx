@@ -15,6 +15,7 @@ import {
   HighlightOffTwoTone,
   InfoTwoTone,
 } from '@mui/icons-material'
+import muiInputBaseThemeOptions from './input/InputBaseThemeOptions'
 
 const DIALOG_INNER_PADDING = '2px'
 
@@ -103,12 +104,32 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           },
         }),
         outlined: ({ theme, ownerState }) => ({
+          color:
+            ownerState.color === 'inherit'
+              ? undefined
+              : theme.palette.mode === 'light'
+              ? theme.palette[ownerState.color || 'primary'].main
+              : theme.palette[ownerState.color || 'primary'][200],
+          borderColor:
+            ownerState.color === 'inherit'
+              ? undefined
+              : theme.palette.mode === 'light'
+              ? theme.palette[ownerState.color || 'primary'].main
+              : theme.palette[ownerState.color || 'primary'][200],
           '&:hover, &:visited': {
             // Overrides a base style in Bootstrap 3 and in SWC
             color:
               ownerState.color === 'inherit'
                 ? ownerState.color
-                : theme.palette[ownerState.color || 'primary'].dark,
+                : theme.palette.mode === 'light'
+                ? theme.palette[ownerState.color || 'primary'].dark
+                : theme.palette[ownerState.color || 'primary'][100],
+            borderColor:
+              ownerState.color === 'inherit'
+                ? ownerState.color
+                : theme.palette.mode === 'light'
+                ? theme.palette[ownerState.color || 'primary'].dark
+                : theme.palette[ownerState.color || 'primary'][100],
           },
         }),
         text: ({ theme, ownerState }) => ({
@@ -214,53 +235,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         }),
       },
     },
-    MuiInputBase: {
-      styleOverrides: {
-        root: ({ theme, ownerState }) => {
-          const hasOutline = ownerState.error || ownerState.focused
-          let outline = 'none'
-          if (hasOutline) {
-            if (ownerState.error) {
-              outline = `1px solid ${theme.palette.error.main}`
-            } else if (ownerState.color) {
-              outline = `1px solid ${theme.palette[ownerState.color].main}`
-            }
-          }
-          const formHelperTextColor =
-            ownerState.color === 'warning'
-              ? theme.palette[ownerState.color].main
-              : undefined
-          return {
-            borderRadius: '3px',
-            fontSize: '14px',
-            position: 'relative',
-            backgroundColor: theme.palette.grey[200],
-            outline: outline,
-            '&+.MuiFormHelperText-root': {
-              color: formHelperTextColor,
-            },
-            '&.Mui-disabled': {
-              backgroundColor: theme.palette.grey[100],
-            },
-            '&.Mui-focused': {
-              boxShadow: `${alpha(
-                theme.palette.primary.main,
-                0.25,
-              )} 0 0 0 0.1rem`,
-            },
-            '& fieldset': {
-              border: 'none',
-            },
-          }
-        },
-        input: ({ theme }) => ({
-          padding: '14px 12px',
-        }),
-        multiline: {
-          padding: '0px',
-        },
-      },
-    },
+    MuiInputBase: muiInputBaseThemeOptions,
     MuiInputLabel: {
       defaultProps: {
         shrink: true,
