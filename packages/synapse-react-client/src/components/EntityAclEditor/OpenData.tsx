@@ -2,20 +2,13 @@ import React from 'react'
 import IconSvg from '../IconSvg'
 import { Box, BoxProps, styled, Typography } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
-import tinycolor from 'tinycolor2'
 
 const OpenDataContainer: StyledComponent<BoxProps> = styled(Box, {
   label: 'OpenDataContainer',
 })(({ theme }) => ({
-  background:
-    theme.palette.mode === 'light'
-      ? theme.palette.grey[100]
-      : tinycolor(theme.palette.background.paper).desaturate(1).toString(),
+  background: theme.palette.grey[100],
   padding: `${theme.spacing(2.5)} ${theme.spacing(4)}`,
-  border:
-    theme.palette.mode === 'light'
-      ? `1px solid ${theme.palette.grey[300]}`
-      : 'none',
+  border: `1px solid ${theme.palette.grey[300]}`,
   borderRadius: '3px',
   marginBottom: theme.spacing(2),
 }))
