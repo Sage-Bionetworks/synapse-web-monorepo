@@ -16,6 +16,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
+  useSuspenseQuery,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
@@ -508,7 +509,7 @@ function useGetEntityBenefactorACLQueryOptions(
  * @param entityId
  * @param options
  */
-export function useGetEntityBenefactorACL(
+export function useSuspenseGetEntityBenefactorACL(
   entityId: string,
   options?: Partial<
     UseQueryOptions<
@@ -519,7 +520,7 @@ export function useGetEntityBenefactorACL(
   >,
 ) {
   const queryOptions = useGetEntityBenefactorACLQueryOptions(entityId)
-  return useQuery({
+  return useSuspenseQuery({
     ...options,
     ...queryOptions,
   })

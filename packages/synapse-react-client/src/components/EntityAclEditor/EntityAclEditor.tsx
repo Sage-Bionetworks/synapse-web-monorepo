@@ -1,6 +1,6 @@
 import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import OpenData from './OpenData'
-import { AclEditor } from '../AclEditor/AclEditor'
+import { AclEditor, AclEditorProps } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import {
   getAccessTypeFromPermissionLevel,
@@ -21,7 +21,7 @@ import {
 import {
   useCreateEntityACL,
   useDeleteEntityACL,
-  useGetEntityBenefactorACL,
+  useSuspenseGetEntityBenefactorACL,
   useSuspenseGetCurrentUserProfile,
   useSuspenseGetEntityBundle,
   useUpdateEntityACL,
@@ -29,11 +29,12 @@ import {
 import { Alert, Stack } from '@mui/material'
 import { InheritanceMessage } from './InheritanceMessage'
 import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
-import resourceAccessListIsEqual from '../../utils/functions/AccessControlListUtils'
+import { resourceAccessListIsEqual } from '../../utils/functions/AccessControlListUtils'
 import useNotifyNewACLUsers from './useNotifyNewACLUsers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { getDisplayNameFromProfile } from '../../utils/functions/DisplayUtils'
 import { AclEditorSkeleton } from '../AclEditor/AclEditorSkeleton'
+import { SynapseErrorBoundary } from '../error'
 
 const availablePermissionLevels: PermissionLevel[] = [
   'CAN_VIEW',
@@ -65,6 +66,58 @@ function getBody(profile: UserProfile, entityId: string) {
   )}Synapse:${entityId}`
 }
 
+function getCanEditResourceAccess(
+  canEdit: boolean,
+  isInherited: boolean,
+  ownProfile: UserProfile,
+): AclEditorProps['canEdit'] {
+  if (!canEdit || isInherited) {
+    return false
+  }
+  return (resourceAccess: ResourceAccess): boolean => {
+    // Users cannot change their own permissions
+    const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
+    // Users cannot change permission level for the public group, only add/remove it.
+    // To give the public group DOWNLOAD access, ACT must mark it as anonymous access.
+    const isPublicGroup = resourceAccess.principalId === PUBLIC_PRINCIPAL_ID
+    if (isSelf || isPublicGroup) {
+      return false
+    }
+    return true
+  }
+}
+
+function getCanDeleteResourceAccess(
+  canEdit: boolean,
+  isInherited: boolean,
+  ownProfile: UserProfile,
+): AclEditorProps['canRemoveEntry'] {
+  if (!canEdit || isInherited) {
+    return false
+  }
+  return (resourceAccess: ResourceAccess): boolean => {
+    // Users cannot delete their own permissions
+    const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
+    if (isSelf) {
+      return false
+    }
+    return canEdit
+  }
+}
+
+function getDisplayedPermissionLevelOverride(
+  isOpenData: boolean,
+): AclEditorProps['displayedPermissionLevelOverride'] {
+  return (resourceAccess: ResourceAccess) => {
+    if (resourceAccess.principalId === PUBLIC_PRINCIPAL_ID) {
+      return isOpenData
+        ? permissionLevelToLabel['CAN_DOWNLOAD']
+        : permissionLevelToLabel['CAN_VIEW']
+    }
+    return undefined
+  }
+}
+
 const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   props: EntityAclEditorProps,
   ref: React.ForwardedRef<EntityAclEditorHandle>,
@@ -80,11 +133,13 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   )
   const isProject = EntityType.PROJECT == entityBundle.entityType
 
-  const parentId = entityBundle.entity.parentId
-  const { data: parentAcl } = useGetEntityBenefactorACL(parentId!, {
-    enabled: parentId != null && !isProject,
-    staleTime: Infinity,
-  })
+  // The parent's benefactor ACL will be shown if the user removes the ACL on the current entity
+  const { data: parentAcl } = useSuspenseGetEntityBenefactorACL(
+    entityBundle.entity.parentId!,
+    {
+      staleTime: Infinity,
+    },
+  )
 
   const originalResourceAccess = entityBundle.benefactorAcl.resourceAccess
   const parentResourceAccess = useMemo(
@@ -149,40 +204,6 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
       ANONYMOUS_PRINCIPAL_ID,
     ].includes(ra.principalId),
   )
-
-  const canEditResourceAccess = canEdit
-    ? (resourceAccess: ResourceAccess): boolean => {
-        // Users cannot change their own permissions
-        const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
-        // Users cannot change permission level for the public group, only add/remove it.
-        // To give the public group DOWNLOAD access, ACT must mark it as anonymous access.
-        const isPublicGroup = resourceAccess.principalId === PUBLIC_PRINCIPAL_ID
-        if (isSelf || isPublicGroup) {
-          return false
-        }
-        return true
-      }
-    : false
-
-  function canDeleteResourceAccess(resourceAccess: ResourceAccess): boolean {
-    // Users cannot delete their own permissions
-    const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
-    if (isSelf) {
-      return false
-    }
-    return canEdit
-  }
-
-  function getDisplayedPermissionLevelOverride(
-    resourceAccess: ResourceAccess,
-  ): string | undefined {
-    if (resourceAccess.principalId === PUBLIC_PRINCIPAL_ID) {
-      return isOpenData
-        ? permissionLevelToLabel['CAN_DOWNLOAD']
-        : permissionLevelToLabel['CAN_VIEW']
-    }
-    return undefined
-  }
 
   const {
     sendNotification,
@@ -298,12 +319,22 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
         benefactorId={updatedIsInherited ? parentAcl?.id : entityId}
       />
       <AclEditor
-        canEdit={updatedIsInherited ? false : canEditResourceAccess}
-        canRemoveEntry={updatedIsInherited ? false : canDeleteResourceAccess}
+        canEdit={getCanEditResourceAccess(
+          canEdit,
+          updatedIsInherited,
+          ownProfile,
+        )}
+        canRemoveEntry={getCanDeleteResourceAccess(
+          canEdit,
+          updatedIsInherited,
+          ownProfile,
+        )}
         resourceAccessList={updatedResourceAccessList}
         availablePermissionLevels={availablePermissionLevels}
         emptyText={/* This should never happen */ ''}
-        displayedPermissionLevelOverride={getDisplayedPermissionLevelOverride}
+        displayedPermissionLevelOverride={getDisplayedPermissionLevelOverride(
+          isOpenData,
+        )}
         onAddPrincipalToAcl={id => {
           if (id === PUBLIC_PRINCIPAL_ID) {
             addResourceAccessItem(
@@ -342,9 +373,11 @@ const EntityAclEditorWithSuspense = React.forwardRef(
     ref: React.ForwardedRef<EntityAclEditorHandle>,
   ) {
     return (
-      <React.Suspense fallback={<AclEditorSkeleton />}>
-        <EntityAclEditor {...props} ref={ref} />
-      </React.Suspense>
+      <SynapseErrorBoundary>
+        <React.Suspense fallback={<AclEditorSkeleton />}>
+          <EntityAclEditor {...props} ref={ref} />
+        </React.Suspense>
+      </SynapseErrorBoundary>
     )
   },
 )

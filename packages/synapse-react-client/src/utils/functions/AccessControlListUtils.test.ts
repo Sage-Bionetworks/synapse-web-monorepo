@@ -1,4 +1,4 @@
-import resourceAccessListIsEqual from './AccessControlListUtils'
+import { resourceAccessListIsEqual } from './AccessControlListUtils'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 
 describe('AccessControlListUtils', () => {

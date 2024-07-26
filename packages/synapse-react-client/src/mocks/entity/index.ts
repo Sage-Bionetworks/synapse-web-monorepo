@@ -9,8 +9,10 @@ import { FileEntity, Project } from '@sage-bionetworks/synapse-types'
 import { mockGeneratedEntityData } from './mockGeneratedEntityData'
 import mockProjectEntityData from './mockProject'
 import mockFileEntityData from './mockFileEntity'
+import mockRootEntityData from './mockRootEntity'
 
 const mockEntities: MockEntityData[] = [
+  mockRootEntityData,
   mockFileEntityData,
   mockProjectEntityData,
   mockDatasetData,

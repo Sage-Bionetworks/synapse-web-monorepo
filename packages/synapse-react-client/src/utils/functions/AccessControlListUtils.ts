@@ -17,7 +17,7 @@ function sortResourceAccessList(
  * @param a
  * @param b
  */
-export default function resourceAccessListIsEqual(
+export function resourceAccessListIsEqual(
   a: ResourceAccess[],
   b: ResourceAccess[],
 ) {

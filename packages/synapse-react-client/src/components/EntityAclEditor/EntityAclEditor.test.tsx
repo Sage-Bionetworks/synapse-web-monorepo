@@ -76,7 +76,7 @@ async function setUp(
 
   let itemRows: HTMLElement[] = []
   await waitFor(() => {
-    itemRows = screen.queryAllByRole('row')
+    itemRows = screen.getAllByRole('row')
     expect(itemRows).toHaveLength(expectedResourceAccessItems)
   })
 
