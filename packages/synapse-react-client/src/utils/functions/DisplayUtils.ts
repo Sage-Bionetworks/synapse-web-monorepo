@@ -13,17 +13,17 @@ function getUserName(userName: string, inParens: boolean): string {
 }
 
 export function getDisplayName(
-  firstName: string,
-  lastName: string,
+  firstName: string | null,
+  lastName: string | null,
   userName: string,
 ): string {
   let displayName = ''
   let hasDisplayName = false
-  if (firstName != null && firstName.length > 0) {
+  if (firstName) {
     displayName += firstName.trim()
     hasDisplayName = true
   }
-  if (lastName != null && lastName.length > 0) {
+  if (lastName) {
     displayName += ' ' + lastName.trim()
     hasDisplayName = true
   }
