@@ -35,7 +35,7 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
         showCloseButton={showCloseButton}
         maxWidth="350px"
       >
-        <HelpOutlineTwoTone className={`HelpButton ${className}`} />
+        <HelpOutlineTwoTonepn className={`HelpButton ${className}`} />
       </MarkdownPopover>
     </>
   )
