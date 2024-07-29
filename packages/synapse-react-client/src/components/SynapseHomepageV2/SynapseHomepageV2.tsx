@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -8,6 +8,9 @@ import {
   useTheme,
   useMediaQuery,
   Link,
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
 } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
@@ -21,12 +24,10 @@ import { SynapsePlans } from './SynapsePlans'
 import { useInView } from 'react-intersection-observer'
 import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
-import {
-  SynapseHomepageSearch,
-  SynapseHomepageSearchProps,
-} from './SynapseHomepageSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
+import { Search } from '../../assets/themed_icons'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -90,10 +91,10 @@ const sidePadding: SxProps = {
   },
 }
 
-export type SynapseHomepageV2Props = Pick<
-  SynapseHomepageSearchProps,
-  'gotoPlace'
->
+export type SynapseHomepageV2Props = {
+  gotoPlace: (href: string) => void
+}
+
 export const SynapseHomepageV2: React.FunctionComponent<
   SynapseHomepageV2Props
 > = ({ gotoPlace }) => {
@@ -102,6 +103,10 @@ export const SynapseHomepageV2: React.FunctionComponent<
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
+  const [searchValue, setSearchValue] = useState('')
+  const onSearch = (value: string) => {
+    gotoPlace(`/Search:${encodeURIComponent(value)}`)
+  }
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <SynapseHomepageNavBar gotoPlace={gotoPlace} />
@@ -191,11 +196,31 @@ export const SynapseHomepageV2: React.FunctionComponent<
           maxWidth: '600px',
           m: 'auto',
         }}
+        component="form"
+        onSubmit={event => {
+          event.preventDefault()
+          onSearch(searchValue)
+        }}
       >
-        <SynapseHomepageSearch
+        {/* <SynapseHomepageSearch
           sourceTable={searchAutocompleteTable}
           gotoPlace={gotoPlace}
-        />
+        /> */}
+        <FormControl fullWidth sx={{ m: 1 }}>
+          <OutlinedInput
+            startAdornment={
+              <InputAdornment position="start" sx={{ ml: '7px', mr: '13px' }}>
+                <Search
+                  size={32}
+                  fill={(theme.palette.secondary as ColorPartial)[600]}
+                />
+              </InputAdornment>
+            }
+            placeholder="Search Synapse"
+            sx={{ fontSize: '24px', borderRadius: 96.6 }}
+            onChange={event => setSearchValue(event.target.value)}
+          />
+        </FormControl>
       </Box>
       <Box
         sx={{
