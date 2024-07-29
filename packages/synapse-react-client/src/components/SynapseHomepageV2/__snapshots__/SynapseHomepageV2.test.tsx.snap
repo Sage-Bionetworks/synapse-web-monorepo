@@ -120,7 +120,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       class="MuiBox-root css-m5tgxm"
     >
       <div
-        class="MuiBox-root css-1evv805"
+        class="MuiBox-root css-1wnqlvu"
       >
          
       </div>
@@ -327,7 +327,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-1wtadm6"
+      class="MuiBox-root css-lpwswk"
     >
       <div
         class="MuiBox-root css-xaa37"
@@ -764,7 +764,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         class="MuiBox-root css-pd3cje"
       />
       <div
-        class="MuiBox-root css-10wbjqc"
+        class="MuiBox-root css-1y9aki2"
       >
         <p
           class="MuiTypography-root MuiTypography-headline1 css-1uehx6t-MuiTypography-root"

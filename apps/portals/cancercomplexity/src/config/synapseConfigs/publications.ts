@@ -41,6 +41,10 @@ export const publicationsCardConfiguration: CardConfiguration = {
       matchColumnName: 'pubMedLink',
     },
     {
+      isMarkdown: true,
+      matchColumnName: 'doi',
+    },
+    {
       isMarkdown: false,
       baseURL: 'Explore/Grants/DetailsPage',
       matchColumnName: 'grantName',

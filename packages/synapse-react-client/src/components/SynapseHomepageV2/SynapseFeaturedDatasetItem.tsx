@@ -60,8 +60,9 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
         <Box
           sx={{
             display: 'flex',
-            flexWrap: 'nowrap',
+            flexWrap: 'wrap',
             rowGap: '5px',
+            minHeight: '70px',
             overflow: 'hidden',
           }}
         >

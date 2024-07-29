@@ -119,8 +119,9 @@ export const SynapseHomepageV2: React.FunctionComponent<
             position: 'absolute',
             background: `url(${backgroundInlineJpeg}) lightgray 50% / cover no-repeat`,
             minHeight: {
-              xs: '700px',
-              sm: '600px',
+              xs: '550px',
+              sm: '400px',
+              md: '600px',
             },
             width: '100%',
             height: '100%',
@@ -243,7 +244,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
           display: { xs: 'relative', lg: 'grid' },
           gridTemplateColumns: '50% 50%',
           backgroundColor: '#F5F9F9',
-          mt: '150px',
+          mt: { xs: '50px', md: '100px' },
           height: { lg: '608px' }, //force container to the same height as the image
         }}
       >
@@ -504,7 +505,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
           <Box
             sx={{
               backgroundColor: '#f5f9f9',
-              pb: '150px',
+              pb: { xs: '10px', md: '0px' },
             }}
           >
             <Typography

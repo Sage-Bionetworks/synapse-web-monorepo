@@ -20,7 +20,6 @@ import ForumSearch from './components/ForumSearch/ForumSearch'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
 import { HasAccessV2 as HasAccess } from './components/HasAccess/HasAccessV2'
 import { HelpPopover } from './components/HelpPopover/HelpPopover'
-import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
 import LoginPage from './components/Authentication/LoginPage'
@@ -30,7 +29,6 @@ import PlotlyWrapper from './components/PlotlyWrapper'
 import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
-import { SynapseHomepage } from './components/SynapseHomepage'
 import { SynapseHomepageV2 } from './components/SynapseHomepageV2'
 import { SynapseNavDrawer } from './components/SynapseNavDrawer/SynapseNavDrawer'
 import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetItemsEditor'
@@ -86,6 +84,7 @@ import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
 import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
+import { version } from '../package.json'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -114,8 +113,6 @@ const SynapseComponents = {
   AccountLevelBadges,
   TermsAndConditions,
   PageProgress,
-  ProjectViewCarousel,
-  SynapseHomepage,
   SynapseHomepageV2,
   SynapseFooter,
   EntityFinder,
@@ -180,9 +177,7 @@ const SynapseComponents = {
 }
 
 // Include the version in the build
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-// @ts-ignore
-const SynapseReactClientVersion = window._SRC_VERSION
+const SynapseReactClientVersion = version
 
 export {
   HttpClient,
