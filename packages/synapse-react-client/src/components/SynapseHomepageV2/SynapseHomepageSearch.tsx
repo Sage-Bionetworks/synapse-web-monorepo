@@ -39,6 +39,11 @@ const PopperAlwaysPlacedBelow = (props: PopperProps) => {
   )
 }
 
+/**
+ * Synapse Homepage Search component with a dropdown "autocomplete" menu of options.
+ * SWC-7005: Not used in the current implementation of the Home Page, but there are plans to utilize it later.
+ * @returns
+ */
 export const SynapseHomepageSearch: React.FunctionComponent<
   SynapseHomepageSearchProps
 > = ({ sourceTable, gotoPlace }) => {
