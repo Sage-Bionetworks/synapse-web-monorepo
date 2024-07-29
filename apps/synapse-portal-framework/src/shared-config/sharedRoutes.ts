@@ -41,7 +41,6 @@ const routes: NestedRoute = {
       synapseConfigArray: [
         {
           name: 'DownloadCartPage',
-          props: {},
           isOutsideContainer: true,
         },
       ],
