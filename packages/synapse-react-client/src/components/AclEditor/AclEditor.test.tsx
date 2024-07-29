@@ -336,11 +336,9 @@ describe('AclEditor', () => {
     })
     await user.click(makePublicButton)
 
+    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(PUBLIC_PRINCIPAL_ID)
     expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
-      String(PUBLIC_PRINCIPAL_ID),
-    )
-    expect(mockAddResourceAccessItem).toHaveBeenCalledWith(
-      String(AUTHENTICATED_PRINCIPAL_ID),
+      AUTHENTICATED_PRINCIPAL_ID,
     )
   })
 
