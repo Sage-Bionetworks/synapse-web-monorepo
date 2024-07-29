@@ -114,7 +114,7 @@ const mockProjectEntityBundle: EntityBundle = {
     canPublicRead: true,
     canModerate: true,
     canMove: true,
-    isEntityOpenData: true,
+    isEntityOpenData: false,
     isCertificationRequired: true,
   },
   path: {
