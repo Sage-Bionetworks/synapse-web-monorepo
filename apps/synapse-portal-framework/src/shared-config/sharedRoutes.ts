@@ -41,14 +41,7 @@ const routes: NestedRoute = {
       synapseConfigArray: [
         {
           name: 'DownloadCartPage',
-          props: {
-            onViewSharingSettingsClicked: benefactorEntityId => {
-              window.open(
-                `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-                '_blank',
-              )
-            },
-          },
+          props: {},
           isOutsideContainer: true,
         },
       ],

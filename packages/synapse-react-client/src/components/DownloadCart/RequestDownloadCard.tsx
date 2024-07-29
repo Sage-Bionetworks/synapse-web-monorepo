@@ -1,31 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useGetEntityBundle } from '../../synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
+import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
 
 export type RequestDownloadCardProps = {
   entityId: string
   count?: number
-  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
-
-const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED: RequestDownloadCardProps['onViewSharingSettingsClicked'] =
-  benefactorEntityId =>
-    window.open(
-      `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-      '_blank',
-    )
 
 export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'
 export const RequestDownloadCard: React.FunctionComponent<
   RequestDownloadCardProps
-> = ({
-  entityId,
-  count,
-  onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
-}: RequestDownloadCardProps) => {
+> = ({ entityId, count }: RequestDownloadCardProps) => {
   const {
     data: entityBundle,
     isLoading,
@@ -35,6 +23,8 @@ export const RequestDownloadCard: React.FunctionComponent<
     includeEntity: true,
     includePermissions: true,
   })
+
+  const [showSharingSettings, setShowSharingSettings] = useState(false)
 
   const hasDownloadPermission = Boolean(entityBundle?.permissions.canDownload)
 
@@ -59,10 +49,15 @@ export const RequestDownloadCard: React.FunctionComponent<
           <Typography variant="smallText1" sx={{ mb: 1, color: 'grey.700' }}>
             Contact an administrator to request download permission
           </Typography>
+          <EntityAclEditorModal
+            entityId={entityId}
+            open={showSharingSettings}
+            onClose={() => setShowSharingSettings(false)}
+          />
           <Button
             variant="outlined"
             onClick={() => {
-              onViewSharingSettingsClicked(entityId)
+              setShowSharingSettings(true)
             }}
             disabled={hasDownloadPermission}
           >
