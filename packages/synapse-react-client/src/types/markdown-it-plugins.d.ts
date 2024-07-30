@@ -35,11 +35,6 @@ declare module '@sage-bionetworks/markdown-it-container' {
   const plugin = MarkdownIt.PluginSimple
   export = plugin
 }
-declare module 'markdown-it-emphasis-alt' {
-  import type MarkdownIt from 'markdown-it'
-  const plugin = MarkdownIt.PluginSimple
-  export = plugin
-}
 declare module 'markdown-it-inline-comments' {
   import type MarkdownIt from 'markdown-it'
   const plugin = MarkdownIt.PluginSimple

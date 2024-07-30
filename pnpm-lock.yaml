@@ -1485,9 +1485,6 @@ importers:
       markdown-it-center-text:
         specifier: ^1.0.4
         version: 1.0.4
-      markdown-it-emphasis-alt:
-        specifier: ^1.0.8
-        version: 1.0.8
       markdown-it-inline-comments:
         specifier: ^1.0.1
         version: 1.0.1
@@ -8548,9 +8545,6 @@ packages:
   markdown-it-center-text@1.0.4:
     resolution: {integrity: sha512-7AA0gek4FYJ6gWB2kdGNx06k3GrlO97nEMY7uovQ70/6MtfqPznrgnKoWO3V4p36m3RT5GeQIFXqBH9Wr4iL/g==}
 
-  markdown-it-emphasis-alt@1.0.8:
-    resolution: {integrity: sha512-5oGI4i8YM3S7Nyn0u7n2I6XJaZIbjFmYrvhwo7En2yFXZW8UzBAJG/vkSJ985GRymuW0tgQgqcIdwPjuH74kzQ==}
-
   markdown-it-inline-comments@1.0.1:
     resolution: {integrity: sha512-gObNM3NumcpsU66pO2LmV8MGBfdfFp7TcYME9iuUGs82+JYJWMmBQtAj6/qho4OhKqpR0UX2JTkuuA2HPgHUtQ==}
 
@@ -14918,7 +14912,7 @@ snapshots:
       '@jest/globals': 29.7.0
       '@types/jest': 29.5.12
       jest: 29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)
-      vitest: 1.6.0(@types/node@20.14.10)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
+      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
 
   '@testing-library/jest-dom@6.4.6(@jest/globals@29.7.0)(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0))(vitest@1.6.0(@types/node@20.14.10)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))':
     dependencies:
@@ -14934,7 +14928,7 @@ snapshots:
       '@jest/globals': 29.7.0
       '@types/jest': 29.5.12
       jest: 29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)
-      vitest: 1.6.0(@types/node@20.14.10)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
+      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
 
   '@testing-library/jest-dom@6.4.6(@jest/globals@29.7.0)(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.14.10))(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))':
     dependencies:
@@ -19754,8 +19748,6 @@ snapshots:
 
   markdown-it-center-text@1.0.4: {}
 
-  markdown-it-emphasis-alt@1.0.8: {}
-
   markdown-it-inline-comments@1.0.1: {}
 
   markdown-it-strikethrough-alt@1.0.0: {}
@@ -22678,41 +22670,6 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-
-  vitest@1.6.0(@types/node@20.14.10)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.3
-      chai: 4.4.1
-      debug: 4.3.5
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.10
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.8.0
-      tinypool: 0.8.4
-      vite: 5.3.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-      vite-node: 1.6.0(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-      why-is-node-running: 2.2.2
-    optionalDependencies:
-      '@types/node': 20.14.10
-      jsdom: 21.1.2
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-    optional: true
 
   vm-browserify@1.1.2: {}
 

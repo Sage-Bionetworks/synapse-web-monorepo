@@ -25,7 +25,6 @@ const globalExternals = {
   markdownitSynapseTable: 'markdownitSynapseTable',
   markdownitStrikethroughAlt: 'markdownitStrikethroughAlt',
   markdownitContainer: 'markdownitContainer',
-  markdownitEmphasisAlt: 'markdownitEmphasisAlt',
   markdownitInlineComments: 'markdownitInlineComments',
   markdownitBr: 'markdownitBr',
   markdownitMath: 'markdownitMath',
