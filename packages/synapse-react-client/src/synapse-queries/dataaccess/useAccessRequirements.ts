@@ -1,5 +1,6 @@
 import {
   InfiniteData,
+  QueryClient,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -40,6 +41,10 @@ import {
 import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
 import { KeyFactory } from '../KeyFactory'
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
+import { batchQueries } from '../QueryBatchUtils'
+
+// The maximum number of items allowed in a single request for restriction information
+const MAX_RESTRICTION_INFORMATION_BATCH_SIZE = 50
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
@@ -288,17 +293,13 @@ export function useGetRestrictionInformation(
   })
 }
 
-export function useGetRestrictionInformationBatch(
+function getRestrictionInformationBatchQueryOptions(
   request: RestrictionInformationBatchRequest,
-  options?: Partial<
-    UseQueryOptions<RestrictionInformationBatchResponse, SynapseClientError>
-  >,
-) {
-  const { accessToken, keyFactory } = useSynapseContext()
-  const queryClient = useQueryClient()
-
-  return useQuery({
-    ...options,
+  keyFactory: KeyFactory,
+  queryClient: QueryClient,
+  accessToken?: string,
+): UseQueryOptions<RestrictionInformationBatchResponse, SynapseClientError> {
+  return {
     queryKey:
       keyFactory.getAccessRequirementRestrictionInformationBatchQueryKey(
         request,
@@ -321,7 +322,45 @@ export function useGetRestrictionInformationBatch(
 
       return results
     },
-  })
+  }
+}
+
+export function useGetRestrictionInformationBatch(
+  request: RestrictionInformationBatchRequest,
+  options?: Partial<
+    UseQueryOptions<RestrictionInformationBatchResponse, SynapseClientError>
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  function mapObjectIdsToQueryOptions(
+    objectIdsChunk: string[],
+  ): UseQueryOptions<RestrictionInformationBatchResponse, SynapseClientError> {
+    const chunkedRequest: RestrictionInformationBatchRequest = {
+      ...request,
+      objectIds: objectIdsChunk,
+    }
+    return {
+      ...options,
+      ...getRestrictionInformationBatchQueryOptions(
+        chunkedRequest,
+        keyFactory,
+        queryClient,
+        accessToken,
+      ),
+    }
+  }
+
+  // The maximum batch size for this call is 50, so split the query options into chunks based on objectId
+  const queries = batchQueries(
+    request.objectIds,
+    MAX_RESTRICTION_INFORMATION_BATCH_SIZE,
+    mapObjectIdsToQueryOptions,
+  )
+
+  // Return the queries
+  return useQueries({ queries })
 }
 
 export function useCreateLockAccessRequirement(

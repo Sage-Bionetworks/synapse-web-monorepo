@@ -18,6 +18,7 @@ import {
   tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
 import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
+import { useMemo } from 'react'
 
 function usePrefetchFileHandleData() {
   const entity = useAtomValue(tableQueryEntityAtom)
@@ -204,9 +205,15 @@ function usePrefetchUserGroupHeaderData() {
 }
 
 function usePrefetchEntityRestrictionData(entitiesToPrefetch: ReferenceList) {
+  // This information only varies by targetId, so we can dedupe the list in case there are multiple versions of the same file
+  const uniqueEntities = useMemo(
+    () => Array.from(new Set([...entitiesToPrefetch.map(e => e.targetId)])),
+    [entitiesToPrefetch],
+  )
+
   return useGetRestrictionInformationBatch(
     {
-      objectIds: entitiesToPrefetch.map(reference => reference.targetId),
+      objectIds: Array.from(uniqueEntities),
       restrictableObjectType: RestrictableObjectType.ENTITY,
     },
     {
@@ -225,8 +232,10 @@ export function usePrefetchTableData(): { dataHasBeenPrefetched: boolean } {
   const entitiesToPrefetch = useGetEntitiesInTable()
   const { isLoading: isLoadingEntityData } =
     usePrefetchEntityData(entitiesToPrefetch)
-  const { isLoading: isLoadingEntityRestrictionData } =
+  const prefetchEntityRestrictionDataQueries =
     usePrefetchEntityRestrictionData(entitiesToPrefetch)
+  const isLoadingEntityRestrictionData =
+    prefetchEntityRestrictionDataQueries.some(q => q.isLoading)
   const { isLoading: isLoadingFileHandleData } = usePrefetchFileHandleData()
   const { isLoading: isLoadingUserGroupData } = usePrefetchUserGroupHeaderData()
 
