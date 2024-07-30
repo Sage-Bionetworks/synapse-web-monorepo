@@ -31,6 +31,8 @@ import {
   Renewal,
   Request,
   ResearchProject,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   WikiPageKey,
@@ -283,6 +285,42 @@ export function useGetRestrictionInformation(
       keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
     queryFn: () =>
       SynapseClient.getRestrictionInformation(request, accessToken),
+  })
+}
+
+export function useGetRestrictionInformationBatch(
+  request: RestrictionInformationBatchRequest,
+  options?: Partial<
+    UseQueryOptions<RestrictionInformationBatchResponse, SynapseClientError>
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getAccessRequirementRestrictionInformationBatchQueryKey(
+        request,
+      ),
+    queryFn: async () => {
+      const results = await SynapseClient.getRestrictionInformationBatch(
+        request,
+        accessToken,
+      )
+
+      results.restrictionInformation.forEach(restrictionInformation => {
+        queryClient.setQueryData(
+          keyFactory.getAccessRequirementRestrictionInformationQueryKey({
+            objectId: String(restrictionInformation.objectId),
+            restrictableObjectType: request.restrictableObjectType,
+          }),
+          restrictionInformation,
+        )
+      })
+
+      return results
+    },
   })
 }
 
