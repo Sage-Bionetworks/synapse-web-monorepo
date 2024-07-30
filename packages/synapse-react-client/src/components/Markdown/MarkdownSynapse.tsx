@@ -28,7 +28,6 @@ import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
 import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
-import markdownitEmphasisAlt from 'markdown-it-emphasis-alt'
 import markdownitInlineComments from 'markdown-it-inline-comments'
 import markdownitBr from 'markdown-it-br'
 import markdownitMath from 'markdown-it-synapse-math'
@@ -86,7 +85,6 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       markdownitSynapseTable,
       markdownitStrikethroughAlt,
       markdownitContainer,
-      markdownitEmphasisAlt,
       markdownitInlineComments,
       markdownitBr,
     )
