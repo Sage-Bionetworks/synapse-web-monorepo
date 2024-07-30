@@ -318,7 +318,6 @@ function init_markdown_it(
   markdownitSynapseTable?: MarkdownIt.PluginSimple,
   markdownitStrikethroughAlt?: MarkdownIt.PluginSimple,
   markdownitContainer?: MarkdownIt.PluginSimple,
-  markdownitEmphasisAlt?: MarkdownIt.PluginSimple,
   markdownitInlineComments?: MarkdownIt.PluginSimple,
   markdownitBr?: MarkdownIt.PluginSimple,
 ) {
@@ -698,9 +697,6 @@ function init_markdown_it(
     }
     if (markdownitStrikethroughAlt) {
       md.use(markdownitStrikethroughAlt)
-    }
-    if (markdownitEmphasisAlt) {
-      md.use(markdownitEmphasisAlt)
     }
     if (markdownitInlineComments) {
       md.use(markdownitInlineComments)
