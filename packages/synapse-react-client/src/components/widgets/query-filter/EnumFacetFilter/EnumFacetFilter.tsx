@@ -130,7 +130,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
           }
         },
       ),
-      fv => fv.displayText.toLowerCase(),
+      fv => -1 * fv.count!,
     )
   }, [
     currentSelectedFacet?.facetValues,
