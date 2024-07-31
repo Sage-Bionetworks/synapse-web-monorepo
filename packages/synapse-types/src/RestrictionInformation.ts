@@ -1,3 +1,5 @@
+import { UserEntityPermissions } from './UserEntityPermissions'
+
 // see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/RestrictableObjectType.html
 export enum RestrictableObjectType {
   ENTITY = 'ENTITY',
@@ -43,7 +45,7 @@ export type RestrictionInformationResponse = {
   objectId: number
   restrictionLevel: RestrictionLevel
   hasUnmetAccessRequirement: boolean
-  isUserDataContributor: boolean
+  userEntityPermissions?: UserEntityPermissions
   /* The list of restriction fulfillment information for each access requirement that applies to the restrictable object. */
   restrictionDetails: RestrictionFulfillment[]
 }
