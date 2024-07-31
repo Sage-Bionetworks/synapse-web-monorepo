@@ -158,9 +158,9 @@ describe('EnumFacetFilter', () => {
       // "All" is not checked
       expect(checkboxes[0].checked).toBe(false)
 
-      // Only the 2nd facet selection should be checked
-      expect(checkboxes[1].checked).toBe(false)
-      expect(checkboxes[2].checked).toBe(true)
+      // Only the "Chevy" facet selection should be checked
+      expect(checkboxes[1].checked).toBe(true)
+      expect(checkboxes[2].checked).toBe(false)
       expect(checkboxes[3].checked).toBe(false)
     })
 
@@ -182,11 +182,11 @@ describe('EnumFacetFilter', () => {
         expect(labels[0].textContent).toBe('All')
 
         await waitFor(() => {
-          expect(labels[1].textContent).toBe(`${stringFacetValues[0].value}`)
-          expect(counts[0].textContent).toBe(`${stringFacetValues[0].count}`)
+          expect(labels[1].textContent).toBe(`${stringFacetValues[1].value}`)
+          expect(counts[0].textContent).toBe(`${stringFacetValues[1].count}`)
 
-          expect(labels[2].textContent).toBe(`${stringFacetValues[1].value}`)
-          expect(counts[1].textContent).toBe(`${stringFacetValues[1].count}`)
+          expect(labels[2].textContent).toBe(`${stringFacetValues[0].value}`)
+          expect(counts[1].textContent).toBe(`${stringFacetValues[0].count}`)
 
           expect(labels[3].textContent).toBe(`Not Assigned`)
           expect(counts[2].textContent).toBe(`${stringFacetValues[2].count}`)
@@ -225,19 +225,21 @@ describe('EnumFacetFilter', () => {
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
-        expect(labels.item(1).textContent).toBe(`Not Assigned`)
-        expect(counts.item(0).textContent).toBe(`${entityFacetValues[0].count}`)
-
         // Wait for the entity info to populate and replace the ID
         await waitFor(() =>
-          expect(labels.item(2).textContent).toBe(mockFileEntityData.name),
+          expect(labels.item(1).textContent).toBe(mockFileEntityData.name),
         )
-        expect(counts.item(1).textContent).toBe(`${entityFacetValues[1].count}`)
+        expect(counts.item(0).textContent).toBe(`${entityFacetValues[1].count}`)
 
         await waitFor(() =>
-          expect(labels.item(3).textContent).toBe(mockTableEntity.name),
+          expect(labels.item(2).textContent).toBe(mockTableEntity.name),
         )
-        expect(counts.item(2).textContent).toBe(`${entityFacetValues[2].count}`)
+        expect(counts.item(1).textContent).toBe(`${entityFacetValues[2].count}`)
+
+        await waitFor(() =>
+          expect(labels.item(3).textContent).toBe(`Not Assigned`),
+        )
+        expect(counts.item(2).textContent).toBe(`${entityFacetValues[0].count}`)
       })
 
       it('should set labels correctly for USERID type', async () => {
@@ -275,21 +277,23 @@ describe('EnumFacetFilter', () => {
         expect(labels).toHaveLength(4)
         // First item (0) is select all
 
-        expect(labels.item(1).textContent).toBe(`Not Assigned`)
-        expect(counts.item(0).textContent).toBe(`${userFacetValues[0].count}`)
-
         // Wait for the user info to populate and replace the ID
+        await waitFor(() =>
+          expect(labels.item(1).textContent).toBe(
+            mockUserProfileData2.userName,
+          ),
+        )
+        expect(counts.item(0).textContent).toBe(`${userFacetValues[2].count}`)
+
         await waitFor(() =>
           expect(labels.item(2).textContent).toBe(mockUserProfileData.userName),
         )
         expect(counts.item(1).textContent).toBe(`${userFacetValues[1].count}`)
 
         await waitFor(() =>
-          expect(labels.item(3).textContent).toBe(
-            mockUserProfileData2.userName,
-          ),
+          expect(labels.item(3).textContent).toBe(`Not Assigned`),
         )
-        expect(counts.item(2).textContent).toBe(`${userFacetValues[2].count}`)
+        expect(counts.item(2).textContent).toBe(`${userFacetValues[0].count}`)
       })
     })
   })
@@ -303,8 +307,8 @@ describe('EnumFacetFilter', () => {
       const individualFacetCheckboxes = screen.getAllByRole('checkbox').slice(1)
 
       // Ensure the checkboxes are in the correct state before interacting with them
-      expect(individualFacetCheckboxes[0]).not.toBeChecked()
-      expect(individualFacetCheckboxes[1]).toBeChecked()
+      expect(individualFacetCheckboxes[1]).not.toBeChecked()
+      expect(individualFacetCheckboxes[0]).toBeChecked()
 
       await userEvent.click(individualFacetCheckboxes[0])
       await userEvent.click(individualFacetCheckboxes[1])
