@@ -238,7 +238,7 @@
     "start-js": "vite",
     "start": "storybook dev -p 6060",
     "start-deprecated-demo": "start-js",
-    "test": "jest -i ./synapse-react-client/src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilter.integration.test.tsx",
+    "test": "jest",
     "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
