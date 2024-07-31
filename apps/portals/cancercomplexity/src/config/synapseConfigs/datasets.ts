@@ -62,6 +62,7 @@ export const datasets: SynapseConfig = {
     name: 'Datasets',
     sql: datasetsSql,
     columnAliases,
+    hideDownload: true,
     searchConfiguration: {
       searchable: [
         'datasetName',
