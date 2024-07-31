@@ -144,7 +144,7 @@ const routes: GenericRoute[] = [
               wikiId: '601489',
             },
             {
-              title: 'Data Common Nodes',
+              title: 'Data Commons',
               ownerId: 'syn21498902',
               wikiId: '601490',
             },
