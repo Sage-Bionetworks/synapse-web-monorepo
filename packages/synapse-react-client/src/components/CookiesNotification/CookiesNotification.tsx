@@ -20,10 +20,10 @@ export const alertConfig = {
     <Typography variant="body1">
       We use necessary cookies and store your data to ensure our websites
       function properly. With your consent, we would also like to use cookies to
-      remember your preferences and improve our websites. Review our{' '}
+      remember your preferences and enhance our websites. Please review our{' '}
       <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link>. By clicking
-      “Accept All” you consent to our use of cookies. You can change your cookie
-      preference at any time from the Settings page.
+      “Accept All,” you consent to our use of cookies. You can adjust your
+      cookie preferences anytime on the Settings page.
     </Typography>
   ),
   primaryButtonText: 'ALLOW ALL',
