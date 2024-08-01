@@ -19,7 +19,7 @@ export const SynapsePlans: React.FunctionComponent = () => {
           category="Explore Data"
           items={[
             '<100 GB of content',
-            'Sage managed shared storage',
+            'Sage Managed Individual Storage',
             '4TB/year of data egress',
           ]}
         />

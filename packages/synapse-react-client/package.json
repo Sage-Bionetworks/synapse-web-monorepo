@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.2",
+    "@brainhubeu/react-carousel": "1.19.26",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.13",
@@ -157,6 +158,7 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/brainhubeu__react-carousel": "1.15.0",
     "@types/dagre": "^0.7.52",
     "@types/google.maps": "^3.55.4",
     "@types/history": "^4.7.11",

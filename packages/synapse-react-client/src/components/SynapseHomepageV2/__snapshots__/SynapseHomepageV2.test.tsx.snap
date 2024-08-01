@@ -829,7 +829,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                     <p
                       class="MuiTypography-root MuiTypography-body1 css-nf38lt-MuiTypography-root"
                     >
-                      Sage managed shared storage
+                      Sage Managed Individual Storage
                     </p>
                   </div>
                   <div
