@@ -137,6 +137,7 @@ function _QueryWrapper(props: QueryWrapperProps) {
     currentQueryRequest,
     addValueToSelectedFacet,
     setRangeFacetValue,
+    resetDebounceTimer,
   } = immutableTableQueryResult
 
   const lastQueryRequest = useMemo(() => {
@@ -270,6 +271,7 @@ function _QueryWrapper(props: QueryWrapperProps) {
       addValueToSelectedFacet,
       combineRangeFacetConfig,
       setRangeFacetValue,
+      resetDebounceTimer,
       ...paginationControls,
     })
 
