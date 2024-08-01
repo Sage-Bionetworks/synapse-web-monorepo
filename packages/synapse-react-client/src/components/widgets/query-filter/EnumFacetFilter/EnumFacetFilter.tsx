@@ -12,8 +12,8 @@ import {
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../../../QueryContext'
-import { isFacetColumnValuesRequest } from '../../../../utils'
-import { cloneDeep, pick, sortBy } from 'lodash-es'
+import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
+import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
 import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../../../QueryWrapper/QueryWrapper'
@@ -111,27 +111,35 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
   })
 
   const displayedFacetValues: RenderedFacetValue[] = useMemo(() => {
-    return sortBy(
-      facet.facetValues.map(
-        (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
-          return {
-            ...facetValue,
-            // Selected status should be based on the 'nextQuery', not the result data
-            // This ensures the checkboxes respond instantly to user interaction, like while waiting for multiple changes to debounce
-            isSelected:
-              currentSelectedFacet?.facetValues.includes(facetValue.value) ??
-              false,
-            displayText: valueToLabel(
-              facetValue,
-              userGroupHeaders,
-              entityHeaders,
-              evaluations,
-            ),
-          }
-        },
-      ),
-      fv => fv.displayText.toLowerCase(),
+    const renderedFacetValues = facet.facetValues.map(
+      (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
+        return {
+          ...facetValue,
+          // Selected status should be based on the 'nextQuery', not the result data
+          // This ensures the checkboxes respond instantly to user interaction, like while waiting for multiple changes to debounce
+          isSelected:
+            currentSelectedFacet?.facetValues.includes(facetValue.value) ??
+            false,
+          displayText: valueToLabel(
+            facetValue,
+            userGroupHeaders,
+            entityHeaders,
+            evaluations,
+          ),
+        }
+      },
     )
+    //Abby V's suggestion, always show the VALUE_NOT_SET facet value on the bottom of this sorted list
+    const partitions = partition(
+      renderedFacetValues,
+      facet => facet.value === SynapseConstants.VALUE_NOT_SET,
+    )
+    const valueNotSetFacetArray = partitions[0]
+    const restOfFacetValuesArray = partitions[1]
+    return [
+      ...sortBy(restOfFacetValuesArray, fv => fv.displayText.toLowerCase()),
+      ...valueNotSetFacetArray,
+    ]
   }, [
     currentSelectedFacet?.facetValues,
     entityHeaders,
