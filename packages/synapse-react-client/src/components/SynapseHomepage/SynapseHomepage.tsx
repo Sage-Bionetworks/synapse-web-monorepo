@@ -555,58 +555,6 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </div>
         </div>
       </div>
-      <div className="SynapseHomepage__Section PrimaryBackground">
-        <div className="SynapseHomepage__Section__Centered SynapseHomepage__FlexColumn">
-          <h2 className="WhiteText">Sign up for Synapse today</h2>
-          <div className="SignUpButtonContainer SynapseHomepage__MarginAutoDesktop">
-            {accessToken ? (
-              <>
-                <Button
-                  href={DASHBOARD_LINK}
-                  variant="contained"
-                  color="lightPrimary"
-                  sx={buttonSx}
-                >
-                  View Your Dashboard
-                </Button>
-                <Button
-                  onClick={() =>
-                    window.open(
-                      'https://help.synapse.org/docs/Getting-Started.2055471150.html',
-                      '_blank',
-                      'noopener',
-                    )
-                  }
-                  variant="contained"
-                  color="darkPrimary"
-                  sx={buttonSx}
-                >
-                  Get Help With Synapse
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  href={LOGIN_LINK}
-                  variant="contained"
-                  color="lightPrimary"
-                  sx={buttonSx}
-                >
-                  Log in to Synapse
-                </Button>
-                <Button
-                  href={registrationLink.toString()}
-                  variant="contained"
-                  color="darkPrimary"
-                  sx={buttonSx}
-                >
-                  Register Now
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
