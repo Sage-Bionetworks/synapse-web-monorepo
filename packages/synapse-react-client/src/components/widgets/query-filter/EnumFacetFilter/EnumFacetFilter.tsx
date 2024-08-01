@@ -43,7 +43,6 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     addValueToSelectedFacet,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
-    executeQueryRequest,
     resetDebounceTimer,
   } = useQueryContext()
 
