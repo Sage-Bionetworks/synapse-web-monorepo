@@ -39,7 +39,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
-    [data],
+    [data?.pages],
   )
 
   const warningHeader = 'Are you absolutely sure?'

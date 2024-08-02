@@ -271,6 +271,7 @@ export function SynapseTable(props: SynapseTableProps) {
           }}
           table={table}
           cellRenderer={TableCellRenderer}
+          fullWidth={false}
         />
         <Box sx={{ mt: 2, textAlign: 'right' }}>
           <TablePagination />

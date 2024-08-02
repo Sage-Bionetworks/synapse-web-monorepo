@@ -31,8 +31,6 @@ function TableBody<T = unknown>(props: TableBodyProps<T>) {
   )
 }
 
-TableBody
-
 // special memoized wrapper for our table body that we will use during column resizing
 // see https://tanstack.com/table/v8/docs/guide/column-sizing#advanced-column-resizing-performance
 export default React.memo(

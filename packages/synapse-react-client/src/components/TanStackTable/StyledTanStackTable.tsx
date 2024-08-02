@@ -13,13 +13,19 @@ import {
 type StyledTanStackTableProps<T = unknown> = {
   table: Table<T>
   styledTableContainerProps?: StyledTableContainerProps
+  fullWidth?: boolean
   cellRenderer?: (cell: Cell<T, unknown>) => React.ReactNode
 }
 
 export default function StyledTanStackTable<T = unknown>(
   props: StyledTanStackTableProps<T>,
 ) {
-  const { table, styledTableContainerProps, cellRenderer } = props
+  const {
+    table,
+    styledTableContainerProps,
+    cellRenderer,
+    fullWidth = true,
+  } = props
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -42,11 +48,7 @@ export default function StyledTanStackTable<T = unknown>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table.getState().columnSizingInfo, table.getState().columnSizing])
 
-  // If any columns are resizable, then set the width to be the sum of all column sizes.
-  // If no columns are resizable, the table will take up the full width of the container.
-  const tableWidth = table.getAllColumns().some(c => c.getCanResize())
-    ? table.getTotalSize()
-    : '100%'
+  const tableWidth = fullWidth ? '100%' : table.getTotalSize()
 
   return (
     <StyledTableContainer {...styledTableContainerProps}>
