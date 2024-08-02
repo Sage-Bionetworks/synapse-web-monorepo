@@ -6,16 +6,7 @@ import { ActionRequiredListItem } from './ActionRequiredListItem'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 import { times } from 'lodash-es'
 
-export type DownloadListActionsRequiredProps = {
-  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
-}
-
-export function DownloadListActionsRequired(
-  props: DownloadListActionsRequiredProps,
-) {
-  const { onViewSharingSettingsClicked } = props
-
+export function DownloadListActionsRequired() {
   // This component will track all completed actions, based on which actions are omitted from the ActionsRequiredResponse as the user performs required tasks
   // For accurate tracking, we must make sure we have all data. So we will fetch all pages instead of one page at a time.
   const { data: currentActionsRequired, isLoading } =
@@ -38,7 +29,6 @@ export function DownloadListActionsRequired(
                 key={index}
                 action={item.action}
                 count={item.count}
-                onViewSharingSettingsClicked={onViewSharingSettingsClicked}
               />
             )
           } else return false

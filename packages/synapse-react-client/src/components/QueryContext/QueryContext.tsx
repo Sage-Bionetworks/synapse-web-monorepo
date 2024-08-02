@@ -53,8 +53,6 @@ export type QueryContextType<
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
   getColumnModel: (columnName: string) => ColumnModel | null
-  // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 }

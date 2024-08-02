@@ -12,7 +12,7 @@ import {
   SxProps,
 } from '@mui/material'
 import React from 'react'
-import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
+import { HelpPopover, HelpPopoverProps } from './HelpPopover'
 
 const EMPTY_OBJECT = {}
 
@@ -53,7 +53,9 @@ export function DialogBaseTitle(props: DialogBaseTitleProps) {
     <DialogTitle>
       <Stack direction="row" alignItems={'center'} gap={'5px'}>
         {title}
-        {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
+        <Box component={'span'} fontSize={'14px'}>
+          {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
+        </Box>
         <Box sx={{ flexGrow: 1 }} />
         {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
       </Stack>

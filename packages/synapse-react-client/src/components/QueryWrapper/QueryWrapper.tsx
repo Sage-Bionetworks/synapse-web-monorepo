@@ -42,7 +42,6 @@ export type QueryWrapperProps = React.PropsWithChildren<{
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   isRowSelectionVisible?: boolean
   /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
    * Note that Synapse tables have no internal concept of a primary key.
@@ -100,7 +99,6 @@ function _QueryWrapper(props: QueryWrapperProps) {
     lockedColumn,
     componentIndex,
     shouldDeepLink,
-    onViewSharingSettingsClicked,
     isRowSelectionVisible: isRowSelectionVisibleFromProps = false,
     isRowSelectionUIFloating: isRowSelectionUIFloatingFromProps = true,
     rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
@@ -267,7 +265,6 @@ function _QueryWrapper(props: QueryWrapperProps) {
       removeQueryFilter,
       removeValueFromQueryFilter,
       getColumnModel,
-      onViewSharingSettingsClicked,
       addValueToSelectedFacet,
       combineRangeFacetConfig,
       setRangeFacetValue,

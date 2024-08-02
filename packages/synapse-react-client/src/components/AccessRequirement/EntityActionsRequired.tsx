@@ -6,13 +6,12 @@ import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListI
 
 export type EntityActionsRequiredProps = {
   entityId: string
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export const EntityActionsRequired: React.FunctionComponent<
   EntityActionsRequiredProps
 > = props => {
-  const { entityId, onViewSharingSettingsClicked } = props
+  const { entityId } = props
   const { data: actionRequiredList } = useGetEntityActionsRequired(entityId)
   const actions = actionRequiredList?.actions
 
@@ -26,13 +25,7 @@ export const EntityActionsRequired: React.FunctionComponent<
         <div className="EntityActionsRequired">
           {allCompleteAndIncompleteActions.map((action: Action, index) => {
             if (action) {
-              return (
-                <ActionRequiredListItem
-                  key={index}
-                  action={action}
-                  onViewSharingSettingsClicked={onViewSharingSettingsClicked}
-                />
-              )
+              return <ActionRequiredListItem key={index} action={action} />
             } else return false
           })}
         </div>

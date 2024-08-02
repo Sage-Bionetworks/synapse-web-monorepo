@@ -42,11 +42,7 @@ export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
   const { cavaticaConnectAccountURL } = props
-  const {
-    getCurrentQueryRequest,
-    onViewSharingSettingsClicked,
-    hasResettableFilters,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, hasResettableFilters } = useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
@@ -261,9 +257,6 @@ export default function SendToCavaticaConfirmationDialog(
                               key={index}
                               action={item.action}
                               count={item.count}
-                              onViewSharingSettingsClicked={
-                                onViewSharingSettingsClicked
-                              }
                             />
                           )
                         } else return false
