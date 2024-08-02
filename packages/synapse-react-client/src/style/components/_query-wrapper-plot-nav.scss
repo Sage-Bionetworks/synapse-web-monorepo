@@ -4,6 +4,7 @@
 .QueryWrapperPlotNav {
   display: grid;
   position: relative;
+  grid-template-columns: 100%;
 
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
     grid-template-columns: 23% 75%;

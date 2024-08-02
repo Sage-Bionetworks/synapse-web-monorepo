@@ -1,22 +1,56 @@
-import React from 'react'
-import { flexRender, Table } from '@tanstack/react-table'
+import React, { useMemo } from 'react'
+import { Cell, flexRender, Table } from '@tanstack/react-table'
 import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '../styled/StyledTableContainer'
+import TableBody from './TableBody'
+import {
+  getColumnSizeCssVariable,
+  getHeaderSizeCssVariable,
+} from './TanStackTableUtils'
 
 type StyledTanStackTableProps<T = unknown> = {
   table: Table<T>
   styledTableContainerProps?: StyledTableContainerProps
+  cellRenderer?: (cell: Cell<T, unknown>) => React.ReactNode
 }
 
 export default function StyledTanStackTable<T = unknown>(
   props: StyledTanStackTableProps<T>,
 ) {
-  const { table, styledTableContainerProps } = props
+  const { table, styledTableContainerProps, cellRenderer } = props
+
+  /**
+   * Instead of calling `column.getSize()` on every render for every header
+   * and especially every data cell (very expensive),
+   * we will calculate all column sizes at once at the root table level in a useMemo
+   * and pass the column sizes down as CSS variables to the <table> element.
+   *
+   * See https://tanstack.com/table/v8/docs/guide/column-sizing#advanced-column-resizing-performance
+   */
+  const columnSizeVars = useMemo(() => {
+    const headers = table.getFlatHeaders()
+    const colSizes: { [key: string]: number } = {}
+    for (let i = 0; i < headers.length; i++) {
+      const header = headers[i]!
+      colSizes[getHeaderSizeCssVariable(header.id)] = header.getSize()
+      colSizes[getColumnSizeCssVariable(header.column.id)] =
+        header.column.getSize()
+    }
+    return colSizes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table.getState().columnSizingInfo, table.getState().columnSizing])
+
+  // If any columns are resizable, then set the width to be the sum of all column sizes.
+  // If no columns are resizable, the table will take up the full width of the container.
+  const tableWidth = table.getAllColumns().some(c => c.getCanResize())
+    ? table.getTotalSize()
+    : '100%'
+
   return (
     <StyledTableContainer {...styledTableContainerProps}>
-      <table style={{ width: '100%' }}>
+      <table style={{ ...columnSizeVars, width: tableWidth }}>
         <thead>
           {table.getHeaderGroups().map(headerGroup => {
             return (
@@ -25,7 +59,11 @@ export default function StyledTanStackTable<T = unknown>(
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ width: header.getSize() }}
+                    style={{
+                      width: `calc(var(${getHeaderSizeCssVariable(
+                        header.id,
+                      )}) * 1px)`,
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -48,24 +86,7 @@ export default function StyledTanStackTable<T = unknown>(
             )
           })}
         </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => {
-                return (
-                  <td
-                    key={cell.id}
-                    style={{
-                      width: cell.column.getSize(),
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                )
-              })}
-            </tr>
-          ))}
-        </tbody>
+        <TableBody table={table} cellRenderer={cellRenderer} />
       </table>
     </StyledTableContainer>
   )
