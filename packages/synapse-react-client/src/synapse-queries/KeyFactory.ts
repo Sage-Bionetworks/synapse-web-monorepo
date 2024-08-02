@@ -14,9 +14,6 @@ import {
   FileHandleAssociation,
   GetEvaluationParameters,
   GetProjectsParameters,
-  ObjectType,
-  OIDCAuthorizationRequest,
-  PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
   RestrictionInformationRequest,
@@ -42,6 +39,7 @@ import {
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '../utils/SynapseConstants'
+import { PrincipalAliasRequest } from 'synapse-client'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */

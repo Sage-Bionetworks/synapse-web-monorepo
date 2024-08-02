@@ -1,0 +1,7 @@
+{
+  "generatorName": "typescript-fetch",
+  "outputDirectory": "src/generated",
+  "legacyDiscriminatorBehavior": false,
+  "modelPropertyNaming": "original",
+  "enumPropertyNaming": "original"
+}
