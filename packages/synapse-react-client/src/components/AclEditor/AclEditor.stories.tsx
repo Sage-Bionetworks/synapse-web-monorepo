@@ -17,8 +17,10 @@ const meta: Meta<AclEditorProps> = {
     updateResourceAccessItem: fn(),
     removeResourceAccessItem: fn(),
     isLoading: false,
-    isInEditMode: true,
+    canEdit: true,
     emptyText: 'No permissions have been granted.',
+    showAddRemovePublicButton: true,
+    showNotifyCheckbox: true,
   },
 }
 export default meta

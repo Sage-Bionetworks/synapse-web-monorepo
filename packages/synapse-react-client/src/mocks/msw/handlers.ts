@@ -28,6 +28,7 @@ import getAllChallengeHandlers from './handlers/challengeHandlers'
 import getAllTeamHandlers from './handlers/teamHandlers'
 import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
 import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHandlers'
+import { getMessageHandlers } from './handlers/messageHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -64,6 +65,7 @@ const getHandlers = (backendOrigin: string) => [
   ...getAllTeamHandlers(backendOrigin),
   ...getAllChallengeHandlers(backendOrigin),
   ...getResetTwoFactorAuthHandlers(backendOrigin),
+  ...getMessageHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

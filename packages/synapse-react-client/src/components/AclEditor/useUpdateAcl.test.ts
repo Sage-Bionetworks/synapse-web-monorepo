@@ -37,9 +37,7 @@ describe('useUpdateAcl', () => {
     expect(result.current.resourceAccessList).toHaveLength(0)
 
     act(() => {
-      result.current.addResourceAccessItem(String(MOCK_USER_ID), [
-        ACCESS_TYPE.READ,
-      ])
+      result.current.addResourceAccessItem(MOCK_USER_ID, [ACCESS_TYPE.READ])
     })
 
     await waitFor(() =>
@@ -151,9 +149,7 @@ describe('useUpdateAcl', () => {
 
     // Individually adding @AnotherUser should NOT trigger a sort, since the editor is 'dirty'.
     act(() => {
-      result.current.addResourceAccessItem(String(MOCK_USER_ID_2), [
-        ACCESS_TYPE.READ,
-      ])
+      result.current.addResourceAccessItem(MOCK_USER_ID_2, [ACCESS_TYPE.READ])
     })
 
     // Verify that the entries are not sorted
@@ -163,6 +159,21 @@ describe('useUpdateAcl', () => {
         { principalId: MOCK_USER_ID, accessType: [ACCESS_TYPE.READ] },
         // @AnotherUser
         { principalId: MOCK_USER_ID_2, accessType: [ACCESS_TYPE.READ] },
+      ]),
+    )
+
+    // Verify that if we reset the dirty state, the list is re-sorted
+    act(() => {
+      result.current.resetDirtyState()
+    })
+
+    // Verify that the entries are sorted
+    await waitFor(() =>
+      expect(result.current.resourceAccessList).toEqual([
+        // @AnotherUser
+        { principalId: MOCK_USER_ID_2, accessType: [ACCESS_TYPE.READ] },
+        // @myUserName
+        { principalId: MOCK_USER_ID, accessType: [ACCESS_TYPE.READ] },
       ]),
     )
   })
