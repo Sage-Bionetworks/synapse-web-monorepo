@@ -7,9 +7,14 @@ const linkTheme: Components<Theme>['MuiLink'] = {
   styleOverrides: {
     root: ({ theme }) => ({
       fontWeight: 700,
+      color:
+        theme.palette.mode === 'light' ? undefined : theme.palette.primary[200],
       '&:hover': {
         // overrides base style in bootstrap 3
-        color: theme.palette.primary.main,
+        color:
+          theme.palette.mode === 'light'
+            ? theme.palette.primary.main
+            : theme.palette.primary[100],
       },
     }),
     underlineAlways: ({ theme }) => ({
@@ -18,7 +23,10 @@ const linkTheme: Components<Theme>['MuiLink'] = {
       textDecorationThickness: '1px',
       textDecorationColor: theme.palette.grey[600],
       '&:hover': {
-        textDecorationColor: theme.palette.primary.main,
+        textDecorationColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.primary.main
+            : theme.palette.primary[100],
         textDecorationThickness: '2px',
       },
     }),

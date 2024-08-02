@@ -11,13 +11,13 @@ import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import mockFileEntityData, {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
-  mockFileEntities,
 } from '../../mocks/entity/mockFileEntity'
 import mockDatasetData, {
   MOCK_DATASET_ENTITY_ID,
   MOCK_DATASET_NAME,
 } from '../../mocks/entity/mockDataset'
 import userEvent from '@testing-library/user-event'
+import { mockFileEntities } from '../../mocks/entity'
 
 function renderTable(props: EntityHeaderTableProps) {
   return render(<EntityHeaderTable {...props} />, {

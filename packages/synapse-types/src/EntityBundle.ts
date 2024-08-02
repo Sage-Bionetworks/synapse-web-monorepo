@@ -21,12 +21,12 @@ type _EntityBundle = {
   permissions: UserEntityPermissions
   path: EntityPath
   hasChildren: boolean
-  accessControlList: AccessControlList
   fileHandles: FileHandle[]
   benefactorAcl: AccessControlList
   threadCount: number
   restrictionInformation: RestrictionInformationResponse
   // The following fields may be undefined even if they are requested
+  accessControlList?: AccessControlList
   tableBundle?: TableBundle
   rootWikiId?: string
   doiAssociation?: DoiAssociation
