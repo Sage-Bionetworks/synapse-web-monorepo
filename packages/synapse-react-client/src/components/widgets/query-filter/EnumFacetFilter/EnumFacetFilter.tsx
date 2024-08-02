@@ -43,7 +43,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     addValueToSelectedFacet,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
-    executeQueryRequest,
+    resetDebounceTimer,
   } = useQueryContext()
 
   const data = useAtomValue(tableQueryDataAtom)
@@ -162,12 +162,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
       hideCollapsible={hideCollapsible}
       onHoverOverValue={() => {
         // SWC-6698: delay the query execution (via the debounce) when an item is hovered over
-        executeQueryRequest(
-          request => {
-            return cloneDeep(request)
-          },
-          { debounce: true },
-        )
+        resetDebounceTimer()
       }}
       onAddValueToSelection={value => {
         addValueToSelectedFacet(

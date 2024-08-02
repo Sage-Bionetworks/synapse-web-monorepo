@@ -35,6 +35,7 @@ export type QueryContextType<
   executeQueryRequest: ImmutableTableQueryResult['setQuery']
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
+  resetDebounceTimer: ImmutableTableQueryResult['resetDebounceTimer']
   addValueToSelectedFacet: ImmutableTableQueryResult['addValueToSelectedFacet']
   setRangeFacetValue: ImmutableTableQueryResult['setRangeFacetValue']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']

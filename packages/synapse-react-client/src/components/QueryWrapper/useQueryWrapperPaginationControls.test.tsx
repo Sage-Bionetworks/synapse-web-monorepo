@@ -32,6 +32,7 @@ describe('useQueryWrapperPaginationControls tests', () => {
     resetQuery: jest.fn(),
     setPageSize: jest.fn(),
     setQuery: jest.fn(),
+    resetDebounceTimer: jest.fn(),
   }
 
   beforeEach(() => {
