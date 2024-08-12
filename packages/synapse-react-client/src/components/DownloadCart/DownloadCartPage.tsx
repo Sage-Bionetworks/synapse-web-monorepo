@@ -1,20 +1,16 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
-import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
-import {
-  DownloadListActionsRequired,
-  DownloadListActionsRequiredProps,
-} from './DownloadListActionsRequired'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useGetDownloadListStatistics } from '../../synapse-queries'
+import { DownloadListActionsRequired } from './DownloadListActionsRequired'
+import { useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import IconSvg from '../IconSvg/IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { ErrorBanner } from '../error/ErrorBanner'
+import { ErrorBanner } from '../error'
 import { Button, Tooltip, Typography } from '@mui/material'
-import { HelpPopover } from '../HelpPopover/HelpPopover'
+import { HelpPopover } from '../HelpPopover'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
@@ -27,9 +23,7 @@ const cliDownloadCode = `synapse get-download-list`
 /**
  * Show the Download Cart page.
  */
-export const DownloadCartPage: React.FunctionComponent<
-  DownloadListActionsRequiredProps
-> = props => {
+export function DownloadCartPage() {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
@@ -151,7 +145,7 @@ export const DownloadCartPage: React.FunctionComponent<
             // In the typical case where the download cart is cleared, unmounting the component ensures that the actions are cleared out.
             <div>
               <div className="actionsRequiredContainer container">
-                <DownloadListActionsRequired {...props} />
+                <DownloadListActionsRequired />
               </div>
             </div>
           )}
