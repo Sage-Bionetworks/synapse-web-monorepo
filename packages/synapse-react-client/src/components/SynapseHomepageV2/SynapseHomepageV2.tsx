@@ -266,79 +266,87 @@ export const SynapseHomepageV2: React.FunctionComponent<
       </Box>
       <Box
         sx={{
-          display: { xs: 'relative', lg: 'grid' },
-          gridTemplateColumns: '50% 50%',
           backgroundColor: '#F5F9F9',
           mt: { xs: '50px', md: '100px' },
-          height: { lg: '608px' }, //force container to the same height as the image
         }}
       >
         <Box
           sx={{
-            p: { xs: '25px', lg: '70px 0px 25px 60px' },
-            svg: {
-              maxWidth: '100%',
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: {
-              xs: 'center',
-              md: 'flex-start',
-            },
+            display: { xs: 'relative', lg: 'grid' },
+            maxWidth: '1500px',
+            gridTemplateColumns: '50% 50%',
+            margin: 'auto',
+            height: { lg: '608px' }, //force container to the same height as the image
           }}
-          ref={ref} // use this UI to trigger loading the rest of the page content
         >
-          <SageFullLogo width={350} />
-          <Typography
-            variant="headline2"
+          <Box
             sx={{
-              ...defaultHomepageText,
-              fontSize: {
-                xs: '24px',
-                md: '40px',
+              p: { xs: '25px', lg: '70px 0px 25px 60px' },
+              svg: {
+                maxWidth: '100%',
               },
-              lineHeight: {
-                xs: '140%',
-                md: '60px',
-              },
-              maxWidth: '600px',
-              color: 'secondary.600',
-              mt: '20px',
-              fontWeight: 400,
-              mb: '35px',
-              textAlign: {
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: {
                 xs: 'center',
-                md: 'left',
+                md: 'flex-start',
               },
             }}
+            ref={ref} // use this UI to trigger loading the rest of the page content
           >
-            Created by <strong>Sage Bionetworks</strong>, Synapse empowers
-            biomedical researchers with tools for open science and
-            collaboration, forging a path to optimal human health.
-          </Typography>
-          <Button
-            size="large"
-            variant="contained"
-            color="secondary"
-            href="https://www.sagebionetworks.org"
-            target="_blank"
-            sx={{
-              p: '5px 25px',
-              width: {
-                xs: '100%',
-                md: 'auto',
-              },
-            }}
-          >
-            About Sage Bionetworks
-          </Button>
-        </Box>
-        {isDesktopView && (
-          <Box sx={{ height: '100%', justifySelf: 'end' }}>
-            <Image1 />
+            <SageFullLogo width={350} />
+            <Typography
+              variant="headline2"
+              sx={{
+                ...defaultHomepageText,
+                fontSize: {
+                  xs: '24px',
+                  md: '40px',
+                },
+                lineHeight: {
+                  xs: '140%',
+                  md: '60px',
+                },
+                maxWidth: '600px',
+                color: 'secondary.600',
+                mt: '20px',
+                fontWeight: 400,
+                mb: '35px',
+                textAlign: {
+                  xs: 'center',
+                  md: 'left',
+                },
+              }}
+            >
+              Created by <strong>Sage Bionetworks</strong>, Synapse empowers
+              biomedical researchers with tools for open science and
+              collaboration, forging a path to optimal human health.
+            </Typography>
+            <Button
+              size="large"
+              variant="contained"
+              color="secondary"
+              href="https://www.sagebionetworks.org"
+              target="_blank"
+              sx={{
+                p: '5px 25px',
+                width: {
+                  xs: '100%',
+                  md: 'auto',
+                },
+              }}
+            >
+              About Sage Bionetworks
+            </Button>
           </Box>
-        )}
+          {isDesktopView && (
+            <Box sx={{ height: '100%', justifySelf: 'end' }}>
+              <Image1 />
+            </Box>
+          )}
+        </Box>
       </Box>
+
       {/* Below the fold content... */}
       {inView && (
         <Box>
@@ -396,48 +404,57 @@ export const SynapseHomepageV2: React.FunctionComponent<
                 pb: '5px',
               }}
             >
-              <Typography
-                variant="headline1"
+              <Box
                 sx={{
-                  ...h2Sx,
-                  textAlign: 'center',
-                  mt: '100px',
-                  mb: '10px',
-                  color: 'white',
+                  margin: 'auto',
+                  maxWidth: '1500px',
                 }}
               >
-                Synapse by the numbers
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  ...homepageBodyText,
-                  textAlign: 'center',
-                  mb: '70px',
-                  color: 'white',
-                }}
-              >
-                <BlinkingLiveIcon sx={{ pt: '7px' }} /> Live
-              </Typography>
-              <SynapseByTheNumbers metricsTable={generalStatsMetricsTable} />
-              <Typography
-                variant="headline2"
-                sx={{
-                  ...defaultHomepageText,
-                  textAlign: 'center',
-                  fontSize: '36px',
-                  lineHeight: '40px',
-                  mt: '60px',
-                  mb: '25px',
-                  color: 'white',
-                  fontWeight: 400,
-                }}
-              >
-                Projects trending this month
-              </Typography>
-              <SynapseTrendingProjects
-                past30DaysDownloadMetricsTable={past30DaysDownloadMetricsTable}
-              />
+                <Typography
+                  variant="headline1"
+                  sx={{
+                    ...h2Sx,
+                    textAlign: 'center',
+                    mt: '100px',
+                    mb: '10px',
+                    color: 'white',
+                  }}
+                >
+                  Synapse by the numbers
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    ...homepageBodyText,
+                    textAlign: 'center',
+                    mb: '70px',
+                    color: 'white',
+                  }}
+                >
+                  <BlinkingLiveIcon sx={{ pt: '7px' }} /> Live
+                </Typography>
+                <SynapseByTheNumbers metricsTable={generalStatsMetricsTable} />
+                <Typography
+                  variant="headline2"
+                  sx={{
+                    ...defaultHomepageText,
+                    textAlign: 'center',
+                    fontSize: '36px',
+                    lineHeight: '40px',
+                    mt: '60px',
+                    mb: '25px',
+                    color: 'white',
+                    fontWeight: 400,
+                  }}
+                >
+                  Projects trending this month
+                </Typography>
+                <SynapseTrendingProjects
+                  past30DaysDownloadMetricsTable={
+                    past30DaysDownloadMetricsTable
+                  }
+                />
+              </Box>
             </Box>
             <Box
               sx={{
