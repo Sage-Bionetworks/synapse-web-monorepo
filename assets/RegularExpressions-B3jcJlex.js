@@ -1,1 +1,0 @@
-import{n as r}from"./EntityTypeUtils-D1CcfD2e.js";const a=/^10.\d{4,9}\/[-._;()/:a-z0-9]+$/i,t=/^(syn\d+)(?:\.(\d+))?$/i;function o(n){const e=t.exec(n);return e&&{targetId:r(e[1]),targetVersionNumber:e[2]?parseInt(e[2]):void 0}}export{a as D,t as S,o as p};
