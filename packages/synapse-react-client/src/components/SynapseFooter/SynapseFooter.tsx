@@ -18,7 +18,6 @@ export type SynapseFooterProps = {
   srcVersion: string
   repoVersion: string
   gotoPlace: (href: string) => void
-  reportViolationCallback: () => void
 }
 
 const currentYear = new Date().getFullYear()
@@ -27,7 +26,6 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
   srcVersion,
   repoVersion,
   gotoPlace,
-  reportViolationCallback,
 }) => {
   const { accessToken } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
@@ -155,10 +153,12 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                   },
                   {
                     text: 'Report Violations',
-                    props: { onClick: reportViolationCallback },
+                    props: {
+                      href: 'https://sagebionetworks.jira.com/servicedesk/customer/portal/20',
+                    },
                   },
                   {
-                    text: 'Privacy & Terms of Service',
+                    text: 'Trust Center',
                     props: { href: 'https://sagebionetworks.org/trust-center' },
                   },
                 ]}

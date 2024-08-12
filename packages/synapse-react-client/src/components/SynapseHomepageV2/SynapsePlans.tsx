@@ -17,11 +17,7 @@ export const SynapsePlans: React.FunctionComponent = () => {
       >
         <SynapsePlanContent
           category="Explore Data"
-          items={[
-            '<100 GB of content',
-            'Sage Managed Individual Storage',
-            '4TB/year of data egress',
-          ]}
+          items={['<100 GB of content', 'Sage Managed Individual Storage']}
         />
         <SynapsePlanContent
           category="Free Synapse Features"
@@ -43,11 +39,7 @@ export const SynapsePlans: React.FunctionComponent = () => {
       >
         <SynapsePlanContent
           category="Explore More Data"
-          items={[
-            '<500 GB of content',
-            'Secure cloud storage',
-            '<20 TB/year of data egress',
-          ]}
+          items={['<500 GB of content', 'Secure cloud storage']}
         />
         <SynapsePlanContent
           category="More Synapse Features"
