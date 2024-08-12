@@ -1,8 +1,10 @@
-import React from 'react'
-import { useGetEntityBundle } from '../../synapse-queries'
+import React, { useState } from 'react'
+import { useGetEntityBundle, useGetFeatureFlag } from '../../synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
 
 export type RequestDownloadCardProps = {
   entityId: string
@@ -36,7 +38,13 @@ export const RequestDownloadCard: React.FunctionComponent<
     includePermissions: true,
   })
 
+  const [showSharingSettings, setShowSharingSettings] = useState(false)
+
   const hasDownloadPermission = Boolean(entityBundle?.permissions.canDownload)
+
+  const useReactACLEditor = useGetFeatureFlag(
+    FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR,
+  )
 
   if (isError) {
     return <Alert severity={'error'}>{error.reason}</Alert>
@@ -59,10 +67,17 @@ export const RequestDownloadCard: React.FunctionComponent<
           <Typography variant="smallText1" sx={{ mb: 1, color: 'grey.700' }}>
             Contact an administrator to request download permission
           </Typography>
+          <EntityAclEditorModal
+            entityId={entityId}
+            open={showSharingSettings}
+            onClose={() => setShowSharingSettings(false)}
+          />
           <Button
             variant="outlined"
             onClick={() => {
-              onViewSharingSettingsClicked(entityId)
+              useReactACLEditor
+                ? setShowSharingSettings(true)
+                : onViewSharingSettingsClicked(entityId)
             }}
             disabled={hasDownloadPermission}
           >

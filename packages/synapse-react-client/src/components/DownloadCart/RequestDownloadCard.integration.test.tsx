@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils'
@@ -11,8 +11,16 @@ import {
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
 import userEvent from '@testing-library/user-event'
-import { EntityBundle, ErrorResponse } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_TYPE,
+  EntityBundle,
+  ErrorResponse,
+  FeatureFlagEnum,
+} from '@sage-bionetworks/synapse-types'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
+import { MOCK_USER_ID_2 } from '../../mocks/user/mock_user_profile'
+import { AUTHENTICATED_PRINCIPAL_ID } from '../../utils/SynapseConstants'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 
 const ENTITY_ID = 'syn29218'
 const onViewSharingSettingsClicked = jest.fn()
@@ -27,6 +35,19 @@ const setupEntityBundleResponse = (canDownload: boolean) => {
     entity: {
       ...mockFileEntity.entity,
       id: ENTITY_ID,
+    },
+    benefactorAcl: {
+      id: ENTITY_ID,
+      resourceAccess: [
+        {
+          principalId: MOCK_USER_ID_2,
+          accessType: [ACCESS_TYPE.CHANGE_PERMISSIONS],
+        },
+        {
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ],
     },
     permissions: {
       canDownload: canDownload,
@@ -81,6 +102,35 @@ describe('RequestDownloadCard tests', () => {
     })
     await userEvent.click(viewSharingSettingsButton)
     expect(onViewSharingSettingsClicked).toHaveBeenLastCalledWith(ENTITY_ID)
+  })
+
+  it('Shows the sharing settings dialog when the feature is enabled', async () => {
+    server.use(
+      getFeatureFlagsOverride({
+        portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+        overrides: { [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]: true },
+      }),
+    )
+    setupEntityBundleResponse(false)
+    renderComponent()
+    await screen.findByText(REQUEST_DOWNLOAD_TITLE)
+
+    const viewSharingSettingsButton = await screen.findByRole('button', {
+      name: 'View Sharing Settings',
+    })
+    await userEvent.click(viewSharingSettingsButton)
+
+    const dialog = await screen.findByRole('dialog')
+    within(dialog).getByText('Sharing Settings', { exact: false })
+
+    const closeSharingSettingsButton = within(dialog).getByRole('button', {
+      name: 'close',
+    })
+    await userEvent.click(closeSharingSettingsButton)
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
   })
 
   it('Indicates the action is complete if the user can download the entity', async () => {
