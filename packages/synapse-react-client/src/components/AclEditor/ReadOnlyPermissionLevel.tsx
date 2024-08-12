@@ -11,5 +11,8 @@ export type ReadOnlyPermissionLevelProps = {
 export function ReadOnlyPermissionLevel(props: ReadOnlyPermissionLevelProps) {
   const { accessType } = props
 
-  return permissionLevelToLabel[getPermissionLevelFromAccessType(accessType)]
+  return (
+    permissionLevelToLabel[getPermissionLevelFromAccessType(accessType)] ||
+    'Custom'
+  )
 }

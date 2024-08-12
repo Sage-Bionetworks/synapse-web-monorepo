@@ -85,6 +85,7 @@ import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
 import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
+import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
 import { version } from '../package.json'
 
 // Also include scss in the bundle
@@ -176,6 +177,7 @@ const SynapseComponents = {
   GoogleAnalytics,
   CookiesNotification,
   getCurrentCookiePreferences,
+  EntityAclEditorModal,
 }
 
 // Include the version in the build

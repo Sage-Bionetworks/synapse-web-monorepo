@@ -22,7 +22,9 @@ export default function useSortResourceAccessList(
     data: userGroupHeadersOnResourceAccessList,
     isLoading,
     error,
-  } = useGetUserGroupHeaders(principalIdsOnResourceAccessList.map(String))
+  } = useGetUserGroupHeaders(principalIdsOnResourceAccessList.map(String), {
+    enabled: principalIdsOnResourceAccessList.length > 0,
+  })
 
   useEffect(() => {
     if (error) {
@@ -32,7 +34,7 @@ export default function useSortResourceAccessList(
 
   const sortedResourceAccessList = useMemo(() => {
     if (!userGroupHeadersOnResourceAccessList) {
-      return resourceAccessList
+      return null
     }
 
     const joinedWithUserGroupHeaders = resourceAccessList.map(
@@ -53,7 +55,7 @@ export default function useSortResourceAccessList(
         'Some ACL entries do not have a corresponding UserGroupHeader. The ResourceAccess list will not be sorted. Missing entries: ',
         joinedWithUserGroupHeaders.filter(obj => !obj.userGroupHeader),
       )
-      return resourceAccessList
+      return null
     }
 
     return joinedWithUserGroupHeaders
