@@ -840,16 +840,6 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                       Sage Managed Individual Storage
                     </p>
                   </div>
-                  <div
-                    class="MuiBox-root css-iw5qi8"
-                  >
-                    <svg />
-                    <p
-                      class="MuiTypography-root MuiTypography-body1 css-nf38lt-MuiTypography-root"
-                    >
-                      4TB/year of data egress
-                    </p>
-                  </div>
                   <p
                     class="MuiTypography-root MuiTypography-body1 css-1xfp551-MuiTypography-root"
                   >
@@ -952,16 +942,6 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                       class="MuiTypography-root MuiTypography-body1 css-nf38lt-MuiTypography-root"
                     >
                       Secure cloud storage
-                    </p>
-                  </div>
-                  <div
-                    class="MuiBox-root css-iw5qi8"
-                  >
-                    <svg />
-                    <p
-                      class="MuiTypography-root MuiTypography-body1 css-nf38lt-MuiTypography-root"
-                    >
-                      &lt;20 TB/year of data egress
                     </p>
                   </div>
                   <p
