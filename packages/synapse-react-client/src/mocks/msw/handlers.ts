@@ -29,11 +29,12 @@ import getAllTeamHandlers from './handlers/teamHandlers'
 import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
 import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHandlers'
 import { getMessageHandlers } from './handlers/messageHandlers'
+import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
 
-const getHandlers = (backendOrigin: string) => [
+const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   rest.options('*', async (req, res, ctx) => {
     return res(ctx.status(200))
   }),
@@ -66,8 +67,12 @@ const getHandlers = (backendOrigin: string) => [
   ...getAllChallengeHandlers(backendOrigin),
   ...getResetTwoFactorAuthHandlers(backendOrigin),
   ...getMessageHandlers(backendOrigin),
+  getFeatureFlagsOverride({ portalOrigin }),
 ]
 
-const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))
+const handlers = getHandlers(
+  getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+)
 
 export { handlers, getHandlers }
