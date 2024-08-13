@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { server } from '../server'
 import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
 
@@ -29,10 +28,4 @@ export function getFeatureFlagsOverride(
       ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
     )
   })
-}
-
-export function useGetFeatureFlagsOverride(
-  options?: FeatureFlagHandlerOptions,
-) {
-  server.use(getFeatureFlagsOverride(options))
 }

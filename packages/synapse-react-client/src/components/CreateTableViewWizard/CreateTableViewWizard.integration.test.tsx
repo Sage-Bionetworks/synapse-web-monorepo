@@ -32,7 +32,7 @@ import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { omit } from 'lodash-es'
-import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -89,7 +89,7 @@ describe('CreateTableWizard integration tests', () => {
   })
 
   beforeEach(() => {
-    useGetFeatureFlagsOverride()
+    server.use(getFeatureFlagsOverride())
   })
 
   afterEach(() => {
