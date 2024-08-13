@@ -140,7 +140,6 @@ export function AclEditor(props: AclEditorProps) {
               return (
                 <Collapse key={resourceAccess.principalId}>
                   <ResourceAccessItem
-                    key={resourceAccess.principalId}
                     resourceAccess={resourceAccess}
                     availablePermissionLevels={availablePermissionLevels}
                     canChangePermission={canChangePermission}
