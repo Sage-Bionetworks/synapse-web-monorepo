@@ -11,7 +11,12 @@ import { useTheme } from '@mui/material'
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
-const ExperimentalMode: React.FC = () => {
+export type ExperimentalModeProps = {
+  onExperimentalModeToggle?: (newValue: boolean) => void
+}
+const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
+  onExperimentalModeToggle,
+}) => {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()
@@ -31,14 +36,18 @@ const ExperimentalMode: React.FC = () => {
   const createExperimentalModeCookie = () => {
     cookies.set(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     setIsExperimentalModeOn(true)
-    window.location.reload()
+    if (onExperimentalModeToggle) {
+      onExperimentalModeToggle(true)
+    }
   }
 
   const deleteExperimentalModeCookie = () => {
     // cookie.remove requires to re-calculate date obj each time, this is more straightforward
     document.cookie = `${EXPERIMENTAL_MODE_COOKIE}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`
     setIsExperimentalModeOn(false)
-    window.location.reload()
+    if (onExperimentalModeToggle) {
+      onExperimentalModeToggle(false)
+    }
   }
 
   return (
