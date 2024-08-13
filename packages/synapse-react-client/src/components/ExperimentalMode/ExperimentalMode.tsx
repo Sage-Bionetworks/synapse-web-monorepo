@@ -31,12 +31,14 @@ const ExperimentalMode: React.FC = () => {
   const createExperimentalModeCookie = () => {
     cookies.set(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     setIsExperimentalModeOn(true)
+    window.location.reload()
   }
 
   const deleteExperimentalModeCookie = () => {
     // cookie.remove requires to re-calculate date obj each time, this is more straightforward
     document.cookie = `${EXPERIMENTAL_MODE_COOKIE}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`
     setIsExperimentalModeOn(false)
+    window.location.reload()
   }
 
   return (
