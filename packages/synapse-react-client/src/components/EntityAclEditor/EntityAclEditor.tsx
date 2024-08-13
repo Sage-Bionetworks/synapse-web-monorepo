@@ -167,7 +167,7 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   useEffect(() => {
     if (originalResourceAccess) {
       resetDirtyState()
-      setResourceAccessList(originalResourceAccess)
+      setResourceAccessList([...originalResourceAccess])
     }
   }, [originalResourceAccess, resetDirtyState, setResourceAccessList])
 
