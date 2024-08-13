@@ -13,6 +13,7 @@ export const PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE =
   'User or team already has permissions.'
 
 type UseUpdateAclOptions = {
+  initialResourceAccessList?: ResourceAccess[]
   onChange?: (resourceAccessList: ResourceAccess[]) => void
   onError?: (e: string) => void
 }
@@ -38,14 +39,20 @@ type UseUpdateAclReturn = {
   resetDirtyState: () => void
 }
 
+const EMPTY_ARRAY: ResourceAccess[] = []
+
 export default function useUpdateAcl(
   options: UseUpdateAclOptions = {},
 ): UseUpdateAclReturn {
-  const { onChange = noop, onError = noop } = options
+  const {
+    initialResourceAccessList = EMPTY_ARRAY,
+    onChange = noop,
+    onError = noop,
+  } = options
   const [isDirty, setIsDirty] = useState(false)
   const [resourceAccessList, setResourceAccessList] = useState<
     ResourceAccess[]
-  >([])
+  >(initialResourceAccessList)
   const [hasSorted, setHasSorted] = useState(false)
 
   // While the form has not been edited, sort the resourceAccessList
@@ -67,7 +74,7 @@ export default function useUpdateAcl(
 
   useEffect(() => {
     onChange(resourceAccessList)
-  }, [resourceAccessList])
+  }, [onChange, resourceAccessList])
 
   const addResourceAccessItem = useCallback(
     (principalId: number, accessTypes: ACCESS_TYPE[]) => {
