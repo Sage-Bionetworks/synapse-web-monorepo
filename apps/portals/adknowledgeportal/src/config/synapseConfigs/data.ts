@@ -28,6 +28,7 @@ const data: SynapseConfig = {
     sql: dataSql,
     searchConfiguration: {
       searchable: [
+        'id',
         'study',
         'dataType',
         'assay',
