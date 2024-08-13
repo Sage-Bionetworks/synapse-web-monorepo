@@ -18,6 +18,7 @@ export type SynapseFooterProps = {
   srcVersion: string
   repoVersion: string
   gotoPlace: (href: string) => void
+  onExperimentalModeToggle: (newValue: boolean) => void
 }
 
 const currentYear = new Date().getFullYear()
@@ -26,6 +27,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
   srcVersion,
   repoVersion,
   gotoPlace,
+  onExperimentalModeToggle,
 }) => {
   const { accessToken } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
@@ -298,7 +300,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
             repo: {repoVersion}
           </Typography>
         </Box>
-        <ExperimentalMode />
+        <ExperimentalMode onExperimentalModeToggle={onExperimentalModeToggle} />
       </Box>
     </Box>
   )
