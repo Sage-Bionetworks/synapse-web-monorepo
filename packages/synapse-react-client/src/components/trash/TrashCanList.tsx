@@ -131,7 +131,7 @@ export function TrashCanList() {
     })
   const items = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
-    [data?.pages],
+    [data],
   )
 
   const columns = useMemo<ColumnDef<TrashedEntity, any>[]>(

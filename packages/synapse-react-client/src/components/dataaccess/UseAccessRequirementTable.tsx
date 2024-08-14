@@ -296,7 +296,7 @@ export function useAccessRequirementTable(
 
   const accessRequirements = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
-    [data?.pages],
+    [data],
   )
 
   const table: Table<AccessRequirementSearchResult> =

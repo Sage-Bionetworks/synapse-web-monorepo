@@ -130,7 +130,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
 
   const threads = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
-    [data?.pages],
+    [data],
   )
 
   const columns = useMemo(() => getColumns(onClickLink), [onClickLink])
