@@ -1,7 +1,7 @@
 import {
   CardContainerLogicProps,
   ChallengeDataDownloadProps,
-  DownloadCartPageProps,
+  DatasetJsonLdScriptProps,
   ExternalFileHandleLinkProps,
   FeaturedDataTabsProps,
   GoalsProps,
@@ -21,7 +21,6 @@ import {
   TableFeedCardsProps,
   ThemesPlotProps,
   TimelinePlotProps,
-  DatasetJsonLdScriptProps,
   UpsetPlotProps,
   UserCardListGroupsProps,
   UserCardListRotateProps,
@@ -132,7 +131,7 @@ type HomePageCardContainer = {
 
 type DownloadCartPage = {
   name: 'DownloadCartPage'
-  props: DownloadCartPageProps
+  props?: undefined
 }
 
 type Ecosystem = {

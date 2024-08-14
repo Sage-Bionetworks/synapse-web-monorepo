@@ -6,7 +6,6 @@ const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = {
   [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
   [FeatureFlagEnum.VIRTUALTABLE_SUPPORT]: false,
   [FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS]: false,
-  [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]: false,
 }
 
 type FeatureFlagHandlerOptions = {

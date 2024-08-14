@@ -26,7 +26,7 @@ import {
 } from '../QueryWrapper/TableRowSelectionState'
 
 import { useLocalStorageValue } from '@react-hookz/web'
-import { Link, Typography, Box, Stack } from '@mui/material'
+import { Box, Link, Stack, Typography } from '@mui/material'
 import { Checkbox } from '../widgets/Checkbox'
 import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
@@ -42,11 +42,7 @@ export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
   const { cavaticaConnectAccountURL } = props
-  const {
-    getCurrentQueryRequest,
-    onViewSharingSettingsClicked,
-    hasResettableFilters,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, hasResettableFilters } = useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
@@ -261,9 +257,6 @@ export default function SendToCavaticaConfirmationDialog(
                               key={index}
                               action={item.action}
                               count={item.count}
-                              onViewSharingSettingsClicked={
-                                onViewSharingSettingsClicked
-                              }
                             />
                           )
                         } else return false

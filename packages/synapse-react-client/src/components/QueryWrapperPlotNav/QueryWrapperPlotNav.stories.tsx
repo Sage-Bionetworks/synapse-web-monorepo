@@ -331,19 +331,6 @@ export const TableWithNoDownloadAccess: Story = {
     name: 'No Table Download Access',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    // onViewSharingSettingsClicked: undefined
-    onViewSharingSettingsClicked: benefactorEntityId => {
-      displayToast(
-        `Open the ${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.`,
-        'info',
-        {
-          primaryButtonConfig: {
-            text: 'Open Entity Page',
-            href: `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-          },
-        },
-      )
-    },
   },
 }
 

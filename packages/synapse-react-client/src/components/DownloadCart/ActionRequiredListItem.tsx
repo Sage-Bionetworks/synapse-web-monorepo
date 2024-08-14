@@ -7,12 +7,10 @@ import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
 export type ActionRequiredListItemProps = {
   action: Action
   count?: number
-  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export function ActionRequiredListItem(props: ActionRequiredListItemProps) {
-  const { action, count, onViewSharingSettingsClicked } = props
+  const { action, count } = props
   switch (action.concreteType) {
     case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
       return (
@@ -29,7 +27,6 @@ export function ActionRequiredListItem(props: ActionRequiredListItemProps) {
           key={action.benefactorId}
           entityId={`syn${action.benefactorId}`}
           count={count}
-          onViewSharingSettingsClicked={onViewSharingSettingsClicked}
         />
       )
     }
