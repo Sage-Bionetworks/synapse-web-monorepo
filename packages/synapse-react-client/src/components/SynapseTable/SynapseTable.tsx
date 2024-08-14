@@ -194,7 +194,7 @@ export function SynapseTable(props: SynapseTableProps) {
       // make the rowEntityIDColumnIndex available to all cell renderers
       rowEntityIDColumnIndex,
       rowEntityVersionColumnIndex,
-      renderPlaceholder: renderTableDataPlaceholder,
+      renderPlaceholderData: renderTableDataPlaceholder,
       getWrapInExpandableTd: (cell: Cell<Row, unknown>) => {
         const selectColumn = selectColumns.find(
           cm => cm.name === cell.column.id,

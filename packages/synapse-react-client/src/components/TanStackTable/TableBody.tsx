@@ -13,8 +13,8 @@ function CellRenderer<T = unknown>(cell: Cell<T, unknown>) {
     ? ExpandableTableDataCell
     : 'td'
 
-  const renderPlaceholder =
-    cell.getContext().table.options.meta?.renderPlaceholder
+  const renderPlaceholderData =
+    cell.getContext().table.options.meta?.renderPlaceholderData
 
   return (
     <TableDataCellElement
@@ -24,7 +24,7 @@ function CellRenderer<T = unknown>(cell: Cell<T, unknown>) {
         textAlign: cell.column.columnDef.meta?.textAlign,
       }}
     >
-      {renderPlaceholder ? (
+      {renderPlaceholderData ? (
         <p>
           <Skeleton width={'80%'} height={'20px'} />
         </p>

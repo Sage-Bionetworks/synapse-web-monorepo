@@ -13,7 +13,7 @@ declare module '@tanstack/react-table' {
     rowEntityIDColumnIndex?: number
     rowEntityVersionColumnIndex?: number
     getWrapInExpandableTd?: (cell: Cell<TData>) => boolean
-    renderPlaceholder?: boolean
+    renderPlaceholderData?: boolean
   }
 
   interface ColumnMeta<TData extends RowData, TValue> {
