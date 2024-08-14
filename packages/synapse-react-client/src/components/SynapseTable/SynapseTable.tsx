@@ -16,11 +16,10 @@ import {
   isSortableColumn,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
-import ExpandableTableDataCell from './ExpandableTableDataCell'
-import { Box, Skeleton } from '@mui/material'
+import { Box } from '@mui/material'
 import {
+  Cell,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
   VisibilityState,
@@ -45,6 +44,7 @@ import {
   tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
 import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 export type SynapseTableProps = {
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
@@ -165,14 +165,17 @@ export function SynapseTable(props: SynapseTableProps) {
   // Transform our `columnsToShowInTable` to @tanstack/react-table's `VisibilityState`
   const columnVisibility: VisibilityState = useMemo(
     () =>
-      (data?.selectColumns ?? []).reduce((prev: VisibilityState, curr) => {
+      selectColumns.reduce((prev: VisibilityState, curr) => {
         return {
           ...prev,
           [curr.name]: columnsToShowInTable.includes(curr.name),
         }
       }, prependColumnVisibility),
-    [columnsToShowInTable, data?.selectColumns, prependColumnVisibility],
+    [columnsToShowInTable, selectColumns, prependColumnVisibility],
   )
+
+  const { dataHasBeenPrefetched } = usePrefetchTableData()
+  const renderTableDataPlaceholder = !dataHasBeenPrefetched
 
   const table = useReactTable({
     data: data?.queryResult?.queryResults.rows ?? [],
@@ -191,10 +194,19 @@ export function SynapseTable(props: SynapseTableProps) {
       // make the rowEntityIDColumnIndex available to all cell renderers
       rowEntityIDColumnIndex,
       rowEntityVersionColumnIndex,
+      renderPlaceholderData: renderTableDataPlaceholder,
+      getWrapInExpandableTd: (cell: Cell<Row, unknown>) => {
+        const selectColumn = selectColumns.find(
+          cm => cm.name === cell.column.id,
+        )
+        return Boolean(
+          selectColumn &&
+            /* JSON handles its own overflow*/
+            selectColumn.columnType !== ColumnTypeEnum.JSON,
+        )
+      },
     },
   })
-
-  const { dataHasBeenPrefetched } = usePrefetchTableData()
 
   /**
    * Display the view
@@ -224,86 +236,15 @@ export function SynapseTable(props: SynapseTableProps) {
             queryBundleRequest={queryRequest}
           />
         )}
-        <div
-          className="SynapseTable SRC-overflowAuto"
-          data-testid="SynapseTable"
-        >
-          <table style={{ width: table.getTotalSize() }}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => {
-                return (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{ width: header.getSize() }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                        {header.column.getCanResize() && (
-                          <div
-                            className={`resizer ${
-                              header.column.getIsResizing() ? 'isResizing' : ''
-                            }`}
-                            onMouseDown={header.getResizeHandler()}
-                            onTouchStart={header.getResizeHandler()}
-                          />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                )
-              })}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => {
-                    const selectColumn = selectColumns.find(
-                      cm => cm.name === cell.column.id,
-                    )
-
-                    const shouldWrapInExpandable =
-                      selectColumn &&
-                      selectColumn.columnType !==
-                        ColumnTypeEnum.JSON /* JSON handles its own overflow*/
-                    const TableDataCellElement = shouldWrapInExpandable
-                      ? ExpandableTableDataCell
-                      : 'td'
-
-                    const renderPlaceholder = !dataHasBeenPrefetched
-
-                    return (
-                      <TableDataCellElement
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize(),
-                          textAlign: cell.column.columnDef.meta?.textAlign,
-                        }}
-                      >
-                        {renderPlaceholder ? (
-                          <p>
-                            <Skeleton width={'80%'} height={'20px'} />
-                          </p>
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        )}
-                      </TableDataCellElement>
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <StyledTanStackTable
+          styledTableContainerProps={{
+            className: 'SynapseTable',
+            ['data-testid']: 'SynapseTable',
+            density: 'default',
+          }}
+          table={table}
+          fullWidth={false}
+        />
         <Box sx={{ mt: 2, textAlign: 'right' }}>
           <TablePagination />
         </Box>
