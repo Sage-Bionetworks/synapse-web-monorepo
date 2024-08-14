@@ -232,10 +232,7 @@ export function SynapseTable(props: SynapseTableProps) {
         </TableDataCellElement>
       )
     },
-    // This renderer must also update when our `columnVisibility` state changes.
-    // There is some issue with how this updated function component triggers rerendering the React.memoized TableBody component
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderTableDataPlaceholder, selectColumns, columnVisibility],
+    [renderTableDataPlaceholder, selectColumns],
   )
 
   /**

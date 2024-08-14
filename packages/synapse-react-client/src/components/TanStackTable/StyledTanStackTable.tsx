@@ -4,7 +4,7 @@ import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '../styled/StyledTableContainer'
-import TableBody from './TableBody'
+import { TableBody, MemoizedTableBody } from './TableBody'
 import {
   getColumnSizeCssVariable,
   getHeaderSizeCssVariable,
@@ -50,6 +50,11 @@ export default function StyledTanStackTable<T = unknown>(
 
   const tableWidth = fullWidth ? '100%' : table.getTotalSize()
 
+  /* When resizing any column we will render this special memoized version of our table body */
+  const TableBodyElement = table.getState().columnSizingInfo.isResizingColumn
+    ? MemoizedTableBody
+    : TableBody
+
   return (
     <StyledTableContainer {...styledTableContainerProps}>
       <table style={{ ...columnSizeVars, width: tableWidth }}>
@@ -88,7 +93,7 @@ export default function StyledTanStackTable<T = unknown>(
             )
           })}
         </thead>
-        <TableBody table={table} cellRenderer={cellRenderer} />
+        <TableBodyElement table={table} cellRenderer={cellRenderer} />
       </table>
     </StyledTableContainer>
   )

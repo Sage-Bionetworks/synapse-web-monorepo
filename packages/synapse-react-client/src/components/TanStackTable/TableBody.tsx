@@ -21,7 +21,7 @@ type TableBodyProps<T = unknown> = {
   cellRenderer?: (cell: Cell<T, unknown>) => React.ReactNode
 }
 
-function TableBody<T = unknown>(props: TableBodyProps<T>) {
+export function TableBody<T = unknown>(props: TableBodyProps<T>) {
   const { table, cellRenderer = DefaultCellRenderer } = props
   return (
     <tbody>
@@ -34,9 +34,6 @@ function TableBody<T = unknown>(props: TableBodyProps<T>) {
 
 // special memoized wrapper for our table body that we will use during column resizing
 // see https://tanstack.com/table/v8/docs/guide/column-sizing#advanced-column-resizing-performance
-export default React.memo(TableBody, (prev, next) => {
-  return (
-    prev.table.options.data === next.table.options.data &&
-    prev.cellRenderer === next.cellRenderer
-  )
+export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
+  return prev.table.options.data === next.table.options.data
 }) as typeof TableBody
