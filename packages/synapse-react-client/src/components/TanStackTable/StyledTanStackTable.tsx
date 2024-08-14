@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
-import { Cell, flexRender, Table } from '@tanstack/react-table'
+import { flexRender, Table } from '@tanstack/react-table'
 import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '../styled/StyledTableContainer'
-import { TableBody, MemoizedTableBody } from './TableBody'
+import { MemoizedTableBody, TableBody } from './TableBody'
 import {
   getColumnSizeCssVariable,
   getHeaderSizeCssVariable,
@@ -14,18 +14,12 @@ type StyledTanStackTableProps<T = unknown> = {
   table: Table<T>
   styledTableContainerProps?: StyledTableContainerProps
   fullWidth?: boolean
-  cellRenderer?: (cell: Cell<T, unknown>) => React.ReactNode
 }
 
 export default function StyledTanStackTable<T = unknown>(
   props: StyledTanStackTableProps<T>,
 ) {
-  const {
-    table,
-    styledTableContainerProps,
-    cellRenderer,
-    fullWidth = true,
-  } = props
+  const { table, styledTableContainerProps, fullWidth = true } = props
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -93,7 +87,7 @@ export default function StyledTanStackTable<T = unknown>(
             )
           })}
         </thead>
-        <TableBodyElement table={table} cellRenderer={cellRenderer} />
+        <TableBodyElement table={table} />
       </table>
     </StyledTableContainer>
   )

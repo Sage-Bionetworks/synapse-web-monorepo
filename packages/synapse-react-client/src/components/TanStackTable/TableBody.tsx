@@ -1,32 +1,50 @@
 import React from 'react'
 import { Cell, flexRender, Table } from '@tanstack/react-table'
 import { getColumnSizeCssVariable } from './TanStackTableUtils'
+import ExpandableTableDataCell from '../SynapseTable/ExpandableTableDataCell'
+import { Skeleton } from '@mui/material'
 
-function DefaultCellRenderer<T = unknown>(cell: Cell<T, unknown>) {
+function CellRenderer<T = unknown>(cell: Cell<T, unknown>) {
+  const getWrapInExpandableTd =
+    cell.getContext().table.options.meta?.getWrapInExpandableTd
+  const wrapInExpandableTd =
+    getWrapInExpandableTd && getWrapInExpandableTd(cell)
+  const TableDataCellElement = wrapInExpandableTd
+    ? ExpandableTableDataCell
+    : 'td'
+
+  const renderPlaceholder =
+    cell.getContext().table.options.meta?.renderPlaceholder
+
   return (
-    <td
+    <TableDataCellElement
       key={cell.id}
       style={{
         width: `calc(var(${getColumnSizeCssVariable(cell.column.id)}) * 1px)`,
         textAlign: cell.column.columnDef.meta?.textAlign,
       }}
     >
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </td>
+      {renderPlaceholder ? (
+        <p>
+          <Skeleton width={'80%'} height={'20px'} />
+        </p>
+      ) : (
+        flexRender(cell.column.columnDef.cell, cell.getContext())
+      )}
+    </TableDataCellElement>
   )
 }
 
 type TableBodyProps<T = unknown> = {
   table: Table<T>
-  cellRenderer?: (cell: Cell<T, unknown>) => React.ReactNode
 }
 
 export function TableBody<T = unknown>(props: TableBodyProps<T>) {
-  const { table, cellRenderer = DefaultCellRenderer } = props
+  const { table } = props
   return (
     <tbody>
       {table.getRowModel().rows.map(row => (
-        <tr key={row.id}>{row.getVisibleCells().map(cellRenderer)}</tr>
+        <tr key={row.id}>{row.getVisibleCells().map(CellRenderer)}</tr>
       ))}
     </tbody>
   )
