@@ -15,6 +15,7 @@ import { MOCK_USER_ID } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import { times } from 'lodash-es'
 import { MOCK_TEAM_ID } from '../team/mockTeam'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 export const mockProjectIds = times(20).map(i => i + 10001)
 
@@ -116,6 +117,7 @@ const mockProjectEntityBundle: EntityBundle = {
     canMove: true,
     isEntityOpenData: false,
     isCertificationRequired: true,
+    isUserDataContributor: true,
   },
   path: {
     path: [
@@ -139,6 +141,8 @@ const mockProjectEntityBundle: EntityBundle = {
   doiAssociation: mockDoiAssociation,
   threadCount: 2,
   restrictionInformation: {
+    objectId: normalizeNumericId(MOCK_PROJECT_ID),
+    restrictionDetails: [],
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },

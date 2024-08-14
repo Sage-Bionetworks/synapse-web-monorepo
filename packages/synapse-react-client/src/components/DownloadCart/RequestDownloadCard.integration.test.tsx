@@ -68,6 +68,7 @@ const setupEntityBundleResponse = (canDownload: boolean) => {
       canModerate: false,
       isCertificationRequired: false,
       isEntityOpenData: false,
+      isUserDataContributor: false,
     },
   }
   server.use(

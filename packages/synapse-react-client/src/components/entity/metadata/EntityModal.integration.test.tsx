@@ -83,6 +83,7 @@ const PERMISSIONS_CAN_EDIT: UserEntityPermissions = {
   isCertificationRequired: false,
   isCertifiedUser: false,
   isEntityOpenData: false,
+  isUserDataContributor: false,
   ownerPrincipalId: 0,
 }
 

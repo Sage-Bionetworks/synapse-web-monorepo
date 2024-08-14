@@ -15,6 +15,7 @@ import {
   isContainerType,
 } from '../../utils/functions/EntityTypeUtils'
 import mockProjectEntityData from '../entity/mockProject'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 export function generateBaseEntity<T extends Entity = Entity>(
   overrides: {
@@ -52,10 +53,8 @@ export function generateBaseEntity<T extends Entity = Entity>(
     createdOn: entity.createdOn,
     modifiedBy: entity.modifiedBy,
     modifiedOn: entity.modifiedOn,
-    benefactorId: parseInt(
-      (aclOverride ? entity.id : mockProjectEntityData.id).substring(
-        'syn'.length,
-      ),
+    benefactorId: normalizeNumericId(
+      aclOverride ? entity.id : mockProjectEntityData.id,
     ),
     isLatestVersion: true,
     versionLabel:
@@ -104,6 +103,7 @@ export function generateBaseEntity<T extends Entity = Entity>(
         canModerate: true,
         isCertificationRequired: true,
         isEntityOpenData: false,
+        isUserDataContributor: true,
         ...permissionsOverride,
       },
       annotations: {
@@ -135,6 +135,8 @@ export function generateBaseEntity<T extends Entity = Entity>(
       fileHandles: [],
       threadCount: 0,
       restrictionInformation: {
+        objectId: id,
+        restrictionDetails: [],
         restrictionLevel: RestrictionLevel.OPEN,
         hasUnmetAccessRequirement: false,
       },

@@ -1,3 +1,5 @@
+import { parseSynId, SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
+
 /**
  * Truncates a string to be a specified length, then optionally append a suffix.
  */
@@ -34,4 +36,17 @@ export function hashCode(str?: string | null) {
     hash |= 0 // Convert to 32bit integer
   }
   return hash
+}
+
+export function normalizeNumericId(id: string | number): number {
+  if (typeof id === 'number') {
+    return id
+  }
+  if (id.match(SYNAPSE_ENTITY_ID_REGEX)) {
+    // parse the ID to remove a possible version suffix ('syn123.4' -> 'syn123')
+    const entityId = parseSynId(id)!.targetId
+    return parseInt(entityId.substring('syn'.length))
+  } else {
+    return parseInt(id)
+  }
 }

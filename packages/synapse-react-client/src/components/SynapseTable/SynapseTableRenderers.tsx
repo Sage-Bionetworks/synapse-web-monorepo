@@ -183,15 +183,9 @@ const getEntityOrRowVersion = (
 
 function AccessCell(props: CellContext<Row, unknown>) {
   const entityId = getEntityOrRowId(props)!
-  const versionNumber = getEntityOrRowVersion(props)
   return (
     <div data-testid={'AccessCell'}>
-      <HasAccessV2
-        key={entityId}
-        entityId={entityId}
-        entityVersionNumber={versionNumber}
-        showButtonText={false}
-      />
+      <HasAccessV2 key={entityId} entityId={entityId} showButtonText={false} />
     </div>
   )
 }

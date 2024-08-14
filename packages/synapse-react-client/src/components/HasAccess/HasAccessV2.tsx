@@ -1,16 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import {
-  useGetEntityBundle,
-  useGetRestrictionInformation,
-} from '../../synapse-queries'
+import { useGetRestrictionInformation } from '../../synapse-queries'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils'
 import {
   AccessRequirement,
   RestrictableObjectType,
-  RestrictionInformationRequest,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
 import AccessRequirementList, {
@@ -18,71 +14,62 @@ import AccessRequirementList, {
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { Box, Button, Theme, useTheme } from '@mui/material'
-import { isFileEntity } from '../../utils/types/IsType'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
-  entityVersionNumber?: string
   className?: string
   showButtonText?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
-export enum FileHandleDownloadTypeEnum {
+export enum RestrictionUiType {
   Accessible = 'Accessible',
   AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
-  NoFileHandle = 'NoFileHandle',
 }
 
 const iconConfiguration: Record<
-  FileHandleDownloadTypeEnum,
+  RestrictionUiType,
   { icon: IconName; color: (theme: Theme) => string; tooltipText: string }
 > = {
-  [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]: {
+  [RestrictionUiType.AccessBlockedToAnonymous]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
-    tooltipText: 'You must sign in to access this file.',
+    tooltipText: 'You must sign in to access this item.',
   },
-  [FileHandleDownloadTypeEnum.AccessBlockedByRestriction]: {
+  [RestrictionUiType.AccessBlockedByRestriction]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
-    tooltipText: 'You must request access to this restricted file.',
+    tooltipText: 'You must request access to this restricted item.',
   },
-  [FileHandleDownloadTypeEnum.AccessBlockedByACL]: {
+  [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
   },
 
-  [FileHandleDownloadTypeEnum.AccessibleWithTerms]: {
+  [RestrictionUiType.AccessibleWithTerms]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: 'View Terms',
   },
 
-  [FileHandleDownloadTypeEnum.Accessible]: {
-    icon: 'accessOpen',
-    color: theme => theme.palette.success.main,
-    tooltipText: '',
-  },
-
-  [FileHandleDownloadTypeEnum.NoFileHandle]: {
+  [RestrictionUiType.Accessible]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: '',
   },
 }
 
-function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
-  const { downloadType } = props
+function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
+  const { restrictionUiType } = props
   const theme = useTheme()
-  if (downloadType) {
-    const configuration = iconConfiguration[downloadType]
+  if (restrictionUiType) {
+    const configuration = iconConfiguration[restrictionUiType]
     return (
       <IconSvg
         icon={configuration.icon}
@@ -104,64 +91,39 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
  *
  * To make download available, and determine if the file is downloadable via the web, see {@link DirectDownload.tsx}
  * @param entityId
- * @param entityVersionNumber
  * @returns
  */
-export function useGetFileHandleDownloadType(
+export function useGetRestrictionUiType(
   entityId: string,
-  entityVersionNumber?: string,
-): FileHandleDownloadTypeEnum | undefined {
+): RestrictionUiType | undefined {
   const { accessToken } = useSynapseContext()
-  const parsedVersionNumber = parseInt(entityVersionNumber ?? '')
-  const { data: entityBundle } = useGetEntityBundle(
-    entityId,
-    Number.isNaN(parsedVersionNumber) ? undefined : parsedVersionNumber,
-    {
-      includeEntity: true,
-      includePermissions: true,
-    },
-  )
+  const isSignedIn = Boolean(accessToken)
 
-  const restrictionInformationRequest: RestrictionInformationRequest = useMemo(
-    () => ({
-      restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: entityId,
-    }),
-    [entityId],
-  )
+  const { data: restrictionInformation } = useGetRestrictionInformation({
+    restrictableObjectType: RestrictableObjectType.ENTITY,
+    objectId: entityId,
+  })
 
-  const { data: restrictionInformation } = useGetRestrictionInformation(
-    restrictionInformationRequest,
-  )
-
-  const entity = entityBundle?.entity
-  const permissions = entityBundle?.permissions
-
-  return useMemo(() => {
-    if (
-      restrictionInformation &&
-      restrictionInformation.hasUnmetAccessRequirement
-    ) {
-      return FileHandleDownloadTypeEnum.AccessBlockedByRestriction
-    } else if (entity && permissions?.canDownload) {
-      if (isFileEntity(entity) && entity.dataFileHandleId) {
-        if (
-          restrictionInformation?.restrictionLevel !== RestrictionLevel.OPEN
-        ) {
-          return FileHandleDownloadTypeEnum.AccessibleWithTerms
-        } else {
-          return FileHandleDownloadTypeEnum.Accessible
-        }
-      } else {
-        return FileHandleDownloadTypeEnum.NoFileHandle
-      }
-    } else if (permissions && !permissions.canDownload) {
-      return accessToken
-        ? FileHandleDownloadTypeEnum.AccessBlockedByACL
-        : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
-    }
+  if (!restrictionInformation) {
     return undefined
-  }, [accessToken, entity, permissions, restrictionInformation])
+  }
+
+  if (restrictionInformation.hasUnmetAccessRequirement) {
+    return RestrictionUiType.AccessBlockedByRestriction
+  }
+  if (restrictionInformation.userEntityPermissions!.canDownload) {
+    if (restrictionInformation.restrictionLevel !== RestrictionLevel.OPEN) {
+      // Indicate that there are requirements, but they have been met
+      return RestrictionUiType.AccessibleWithTerms
+    } else {
+      return RestrictionUiType.Accessible
+    }
+  }
+
+  if (isSignedIn) {
+    return RestrictionUiType.AccessBlockedByACL
+  }
+  return RestrictionUiType.AccessBlockedToAnonymous
 }
 
 /**
@@ -175,26 +137,16 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, entityVersionNumber, showButtonText = true } = props
+  const { entityId, showButtonText = true } = props
 
-  const fileHandleDownloadType = useGetFileHandleDownloadType(
-    entityId,
-    entityVersionNumber,
-  )
+  const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
 
   const { accessToken } = useSynapseContext()
 
-  const restrictionInformationRequest: RestrictionInformationRequest = useMemo(
-    () => ({
-      restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: entityId,
-    }),
-    [entityId],
-  )
-
-  const { data: restrictionInformation } = useGetRestrictionInformation(
-    restrictionInformationRequest,
-  )
+  const { data: restrictionInformation } = useGetRestrictionInformation({
+    restrictableObjectType: RestrictableObjectType.ENTITY,
+    objectId: entityId,
+  })
 
   const handleGetAccess = useCallback(() => {
     // TODO: The fetch should really happen in the AR List component.
@@ -218,8 +170,8 @@ export function HasAccessV2(props: HasAccessProps) {
 
   // Sign-in wrapped icon or icon alone
   const iconContainer = useMemo(() => {
-    return fileHandleDownloadType ===
-      FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
+    return restrictionUiTypeValue ===
+      RestrictionUiType.AccessBlockedToAnonymous ? (
       <Button
         sx={buttonSx}
         className={SRC_SIGN_IN_CLASS}
@@ -235,7 +187,7 @@ export function HasAccessV2(props: HasAccessProps) {
 
                 Though the svg may get the actual click event, because of event bubbling this button will get its onClick called.
                 Once onClick is called we can manually dispatch an event off of this button. This does pose a problem, we end up in a 
-                infinite loop because this button keeps disptaching click events, so we can use the isTrusted to recognize if onClick was
+                infinite loop because this button keeps dispatching click events, so we can use the isTrusted to recognize if onClick was
                 triggered programmatically or by user click. Lastly, using { bubbles: true } ensures the event bubbles up to the document level.
 
               */
@@ -244,16 +196,16 @@ export function HasAccessV2(props: HasAccessProps) {
           }
         }}
       >
-        <AccessIcon downloadType={fileHandleDownloadType} />
+        <AccessIcon restrictionUiType={restrictionUiTypeValue} />
       </Button>
     ) : (
-      <AccessIcon downloadType={fileHandleDownloadType!} />
+      <AccessIcon restrictionUiType={restrictionUiTypeValue!} />
     )
-  }, [fileHandleDownloadType])
+  }, [restrictionUiTypeValue])
 
   // Access Requirements icon or Icon Container
   const accessRequirementsJsxOrIconContainer = useMemo(() => {
-    if (!restrictionInformation || !fileHandleDownloadType) {
+    if (!restrictionInformation || !restrictionUiTypeValue) {
       // loading
       return <></>
     }
@@ -277,7 +229,7 @@ export function HasAccessV2(props: HasAccessProps) {
           className={props.className}
           onClick={handleGetAccess}
         >
-          <AccessIcon downloadType={fileHandleDownloadType} />
+          <AccessIcon restrictionUiType={restrictionUiTypeValue} />
           {showButtonText && <Box ml="5px">{linkText}</Box>}
         </Button>
         {displayAccessRequirement && (
@@ -300,12 +252,12 @@ export function HasAccessV2(props: HasAccessProps) {
     displayAccessRequirement,
     handleGetAccess,
     props.className,
-    fileHandleDownloadType,
+    restrictionUiTypeValue,
     showButtonText,
     iconContainer,
   ])
 
-  if (!fileHandleDownloadType) {
+  if (!restrictionUiTypeValue) {
     // loading
     return <></>
   }

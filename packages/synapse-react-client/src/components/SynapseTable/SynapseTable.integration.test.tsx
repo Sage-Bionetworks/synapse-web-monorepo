@@ -25,6 +25,7 @@ import {
   QueryResultBundle,
   Reference,
   ReferenceList,
+  RestrictionInformationRequest,
   RestrictionInformationResponse,
   RestrictionLevel,
   Table,
@@ -53,6 +54,7 @@ import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
 import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
 import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 const synapseTableEntityId = 'syn16787123'
 
@@ -204,7 +206,10 @@ describe('SynapseTable tests', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/restrictionInformation`,
         async (req, res, ctx) => {
+          const requestBody = await req.json<RestrictionInformationRequest>()
           const responseBody: RestrictionInformationResponse = {
+            objectId: normalizeNumericId(requestBody.objectId),
+            restrictionDetails: [],
             restrictionLevel: RestrictionLevel.OPEN,
             hasUnmetAccessRequirement: false,
           }

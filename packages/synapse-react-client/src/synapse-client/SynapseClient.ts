@@ -253,6 +253,8 @@ import {
   ResearchProject,
   ResponseMessage,
   RestrictableObjectDescriptor,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   SearchQuery,
@@ -3183,6 +3185,24 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Retrieve restriction information on a batch of restrictable object, limited to a maximum of 50 object ids
+ *
+ * https://repo-prod.prod.sagebase.org/repo/v1/restrictionInformation/batch
+ */
+export const getRestrictionInformationBatch = (
+  request: RestrictionInformationBatchRequest,
+  accessToken: string | undefined,
+): Promise<RestrictionInformationBatchResponse> => {
+  return doPost(
+    `/repo/v1/restrictionInformation/batch`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Returns a paginated result of access requirements associated for an entity
  *

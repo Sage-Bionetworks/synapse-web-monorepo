@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { HasAccessV2, HasAccessProps } from './HasAccessV2'
+import { HasAccessProps, HasAccessV2 } from './HasAccessV2'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
@@ -9,24 +9,24 @@ import {
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import {
-  EntityBundle,
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
-import { mockFolderEntity } from '../../mocks/entity/mockEntity'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '../../mocks/MockSynapseContext'
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
   mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../mocks/mock_has_access_data'
 import { rest, server } from '../../mocks/msw/server'
-import { getEntityBundleHandler } from '../../mocks/msw/handlers/entityHandlers'
+import SynapseClient from '../../synapse-client'
 
 const entityId = mockFileEntityData.id
-const mockFileEntityBundle = mockFileEntityData.bundle
 
 const renderComponent = (
   props: HasAccessProps,
@@ -56,16 +56,10 @@ const expectArButton = async (linkText: string) => {
   expect(button).not.toHaveClass(SRC_SIGN_IN_CLASS)
 }
 
-const onGetRestrictionInformation = jest.fn()
-
-function useMswEntityBundle(entityBundle: EntityBundle) {
-  server.use(
-    getEntityBundleHandler(
-      getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-      entityBundle,
-    ),
-  )
-}
+const getRestrictionInformationSpy = jest.spyOn(
+  SynapseClient,
+  'getRestrictionInformation',
+)
 
 function useMswRestrictionInformation(
   restrictionInformation: RestrictionInformationResponse,
@@ -76,7 +70,6 @@ function useMswRestrictionInformation(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}/repo/v1/restrictionInformation`,
       async (req, res, ctx) => {
-        onGetRestrictionInformation(req.body)
         return res(ctx.status(200), ctx.json(restrictionInformation))
       },
     ),
@@ -93,15 +86,13 @@ describe('HasAccess tests', () => {
   })
 
   it('User has all permissions on a standard FileEntity and any Access Requirements have been met', async () => {
-    const entityBundle: EntityBundle = {
-      ...mockFileEntityBundle,
-      permissions: {
-        ...mockFileEntityBundle.permissions,
+    useMswRestrictionInformation({
+      ...mockOpenRestrictionInformation,
+      userEntityPermissions: {
+        ...mockOpenRestrictionInformation.userEntityPermissions,
         canDownload: true,
       },
-    }
-    useMswEntityBundle(entityBundle)
-    useMswRestrictionInformation(mockOpenRestrictionInformation)
+    })
 
     renderComponent(props)
 
@@ -114,51 +105,21 @@ describe('HasAccess tests', () => {
         objectId: entityId,
       }
 
-    expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+    expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
       expectedRestrictionInformationRequest,
-    )
-  })
-
-  it('The entity is a Folder entity', async () => {
-    const entityBundle: EntityBundle = {
-      ...mockFileEntityBundle,
-      entity: mockFolderEntity,
-      permissions: {
-        ...mockFileEntityBundle.permissions,
-        canDownload: true,
-      },
-    }
-    useMswEntityBundle(entityBundle)
-    useMswRestrictionInformation(mockOpenRestrictionInformation)
-
-    renderComponent(props)
-
-    await expectIcon('accessOpen', '')
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
-
-    const expectedRestrictionInformationRequest: RestrictionInformationRequest =
-      {
-        restrictableObjectType: RestrictableObjectType.ENTITY,
-        objectId: entityId,
-      }
-
-    expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
-      expectedRestrictionInformationRequest,
+      MOCK_ACCESS_TOKEN,
     )
   })
 
   describe('Authorization blocked by ACL', () => {
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is signed in', async () => {
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+      useMswRestrictionInformation({
+        ...mockOpenRestrictionInformation,
+        userEntityPermissions: {
+          ...mockOpenRestrictionInformation.userEntityPermissions,
           canDownload: false,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(mockOpenRestrictionInformation)
+      })
 
       renderComponent(props)
 
@@ -174,28 +135,27 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        MOCK_ACCESS_TOKEN,
       )
     })
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is not signed in', async () => {
       const wrapperProps: Partial<SynapseContextType> = {
         accessToken: undefined,
       }
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+
+      useMswRestrictionInformation({
+        ...mockOpenRestrictionInformation,
+        userEntityPermissions: {
+          ...mockOpenRestrictionInformation.userEntityPermissions,
           canDownload: false,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(mockOpenRestrictionInformation)
+      })
 
       renderComponent(props, wrapperProps)
 
-      await expectIcon('accessClosed', 'You must sign in to access this file.')
+      await expectIcon('accessClosed', 'You must sign in to access this item.')
       await expectSignInButton()
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -204,25 +164,22 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        undefined,
       )
     })
   })
 
   describe('File is controlled by Access Requirements', () => {
     it('User has ACL permissions, has restriction by terms of use, but does not have unmet ARs', async () => {
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
-          canDownload: true,
-        },
-      }
-      useMswEntityBundle(entityBundle)
       useMswRestrictionInformation({
         ...mockUnmetControlledDataRestrictionInformationRestricted,
         hasUnmetAccessRequirement: false,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationRestricted.userEntityPermissions,
+          canDownload: true,
+        },
       })
 
       renderComponent(props)
@@ -236,29 +193,24 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        MOCK_ACCESS_TOKEN,
       )
     })
     it('User has ACL permissions but not AR permissions', async () => {
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationACT,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationACT.userEntityPermissions,
           canDownload: true,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(
-        mockUnmetControlledDataRestrictionInformationACT,
-      )
-
+      })
       renderComponent(props)
 
       await expectIcon(
         'accessClosed',
-        'You must request access to this restricted file.',
+        'You must request access to this restricted item.',
       )
       await expectArButton('Request Access')
 
@@ -268,8 +220,9 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        MOCK_ACCESS_TOKEN,
       )
     })
 
@@ -278,24 +231,20 @@ describe('HasAccess tests', () => {
         ...MOCK_CONTEXT_VALUE,
         accessToken: undefined,
       }
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationACT,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationACT.userEntityPermissions,
           canDownload: true,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(
-        mockUnmetControlledDataRestrictionInformationACT,
-      )
+      })
 
       renderComponent(props, wrapperProps)
 
       await expectIcon(
         'accessClosed',
-        'You must request access to this restricted file.',
+        'You must request access to this restricted item.',
       )
       // User will be prompted to sign in in the AR modal
       await expectArButton('Request Access')
@@ -306,30 +255,26 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        undefined,
       )
     })
 
     it('User does not have ACL permissions and does not have AR permissions', async () => {
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationACT,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationACT.userEntityPermissions,
           canDownload: false,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(
-        mockUnmetControlledDataRestrictionInformationACT,
-      )
+      })
 
       renderComponent(props)
 
       await expectIcon(
         'accessClosed',
-        'You must request access to this restricted file.',
+        'You must request access to this restricted item.',
       )
       await expectArButton('Request Access')
 
@@ -339,29 +284,25 @@ describe('HasAccess tests', () => {
           objectId: entityId,
         }
 
-      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+      expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
+        MOCK_ACCESS_TOKEN,
       )
     })
     it('Can hide button text', async () => {
-      const entityBundle: EntityBundle = {
-        ...mockFileEntityBundle,
-        entity: mockFileEntityBundle.entity,
-        permissions: {
-          ...mockFileEntityBundle.permissions,
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationACT,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationACT.userEntityPermissions,
           canDownload: false,
         },
-      }
-      useMswEntityBundle(entityBundle)
-      useMswRestrictionInformation(
-        mockUnmetControlledDataRestrictionInformationACT,
-      )
+      })
 
       renderComponent({ ...props, showButtonText: false })
 
       await expectIcon(
         'accessClosed',
-        'You must request access to this restricted file.',
+        'You must request access to this restricted item.',
       )
       await expectArButton('')
     })

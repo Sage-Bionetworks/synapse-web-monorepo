@@ -18,6 +18,7 @@ import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProject from './mockProject'
 import mockProjectEntityData from './mockProject'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 const parentId = mockProject.id
 const projectName = mockProject.name
@@ -164,10 +165,13 @@ const mockFileEntityBundle: EntityBundle = {
     canModerate: true,
     isCertificationRequired: true,
     isEntityOpenData: false,
+    isUserDataContributor: true,
   },
   threadCount: 5,
   path: filePath,
   restrictionInformation: {
+    objectId: normalizeNumericId(MOCK_FILE_ENTITY_ID),
+    restrictionDetails: [],
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },

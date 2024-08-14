@@ -19,6 +19,7 @@ import {
   PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
+  RestrictionInformationBatchRequest,
   RestrictionInformationRequest,
   SearchQuery,
   SubmissionInfoPageRequest,
@@ -32,7 +33,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
-import { hashCode } from '../utils/functions/StringUtils'
+import { hashCode, normalizeNumericId } from '../utils/functions/StringUtils'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -450,12 +451,27 @@ export class KeyFactory {
   }
 
   public getAccessRequirementRestrictionInformationQueryKey(
-    request?: RestrictionInformationRequest,
+    request: RestrictionInformationRequest,
   ) {
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'restrictionInformation', {
+      ...request,
+      // The ID may be a number, or a stringified number, or a synID. Transform to just a number to normalize the cache.
+      objectId: normalizeNumericId(request.objectId),
+    })
+  }
+
+  public getAccessRequirementRestrictionInformationBatchQueryKey(
+    request: RestrictionInformationBatchRequest,
+  ) {
+    const normalizedRequest: RestrictionInformationBatchRequest = {
+      ...request,
+      // The IDs may be number, or stringified numbers, or synIDs. Transform to normalize the cache.
+      objectIds: request.objectIds.map(normalizeNumericId).map(String),
+    }
     return this.getKey(
       ACCESS_REQUIREMENT_QUERY_KEY,
-      'restrictionInformation',
-      request,
+      'restrictionInformationBatch',
+      normalizedRequest,
     )
   }
 
