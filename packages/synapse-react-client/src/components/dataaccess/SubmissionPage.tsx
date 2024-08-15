@@ -14,6 +14,7 @@ import {
 } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import {
+  ACCESS_TYPE,
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
   SubmissionState,
@@ -215,14 +216,18 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <Typography variant="smallText1">
           {acl !== undefined ? (
             acl !== null ? (
-              acl.resourceAccess.map(ra => {
-                return (
-                  <UserOrTeamBadge
-                    key={ra.principalId}
-                    principalId={ra.principalId}
-                  />
+              acl.resourceAccess
+                .filter(ra =>
+                  ra.accessType.includes(ACCESS_TYPE.REVIEW_SUBMISSIONS),
                 )
-              })
+                .map(ra => {
+                  return (
+                    <UserOrTeamBadge
+                      key={ra.principalId}
+                      principalId={ra.principalId}
+                    />
+                  )
+                })
             ) : (
               <UserOrTeamBadge principalId={ACT_TEAM_ID} />
             )
