@@ -16,7 +16,7 @@ import {
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Button, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { UserBadge } from '../UserCard/UserBadge'
 
@@ -141,16 +141,18 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
                   </td>
                 )}
                 <td>
-                  {item.accessRequirementReviewerIds.length === 0 ? (
-                    <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                  ) : (
-                    item.accessRequirementReviewerIds.map(reviewerId => (
-                      <UserOrTeamBadge
-                        key={reviewerId}
-                        principalId={reviewerId}
-                      />
-                    ))
-                  )}
+                  <Stack gap={1}>
+                    {item.accessRequirementReviewerIds.length === 0 ? (
+                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+                    ) : (
+                      item.accessRequirementReviewerIds.map(reviewerId => (
+                        <UserOrTeamBadge
+                          key={reviewerId}
+                          principalId={reviewerId}
+                        />
+                      ))
+                    )}
+                  </Stack>
                 </td>
                 <td>{formatDate(dayjs(item.createdOn))}</td>
               </tr>
