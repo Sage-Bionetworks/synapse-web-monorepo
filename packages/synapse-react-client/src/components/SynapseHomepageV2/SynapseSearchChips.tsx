@@ -1,6 +1,11 @@
 import React from 'react'
 import { Chip, Typography } from '@mui/material'
-import { SearchQuery, KeyValue } from '@sage-bionetworks/synapse-types'
+import {
+  SearchQuery,
+  KeyValue,
+  SearchFieldName,
+  SearchFacetSort,
+} from '@sage-bionetworks/synapse-types'
 
 const searchValues = [
   "Alzheimer's Disease",
@@ -48,6 +53,46 @@ export const SynapseSearchChips: React.FunctionComponent<
               const searchQuery: SearchQuery = {
                 queryTerm: [value],
                 booleanQuery: value == 'Cancer' ? [projectKeyValue] : undefined,
+                // match existing facet options in SWC search
+                facetOptions: [
+                  {
+                    name: SearchFieldName.ENTITY_TYPE,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.CONSORTIUM,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.MODIFIED_ON,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.MODIFIED_BY,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.CREATED_ON,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.TISSUE,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                  {
+                    name: SearchFieldName.CREATED_BY,
+                    maxResultCount: 300,
+                    sortType: SearchFacetSort.COUNT,
+                  },
+                ],
+                start: 0,
+                size: 30,
               }
               gotoPlace(`/Search:${JSON.stringify(searchQuery)}`)
             }}
