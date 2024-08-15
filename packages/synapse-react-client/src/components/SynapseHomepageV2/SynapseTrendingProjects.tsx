@@ -41,7 +41,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
     selectColumn => selectColumn.name == 'N_UNIQUE_USERS',
   )!
   const egressSizeColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'TOTAL_DATA_SIZE_GIB',
+    selectColumn => selectColumn.name == 'ESTIMATED_PROJECT_SIZE_IN_GIB',
   )!
 
   if (!rowSet || rowSet.rows.length == 0) {
