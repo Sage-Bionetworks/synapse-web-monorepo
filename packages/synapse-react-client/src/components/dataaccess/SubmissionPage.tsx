@@ -1,5 +1,5 @@
 import { Button, Skeleton, Typography } from '@mui/material'
-import { toLower, upperFirst } from 'lodash-es'
+import { isEmpty, toLower, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
@@ -134,7 +134,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
       { enabled: !!submission },
     )
 
-  const { data: acl } = useGetAccessRequirementACL(
+  const { data: acl, isLoading: isLoadingACL } = useGetAccessRequirementACL(
     submission?.accessRequirementId!,
     { enabled: !!submission, throwOnError: true },
   )
@@ -148,6 +148,10 @@ export default function SubmissionPage(props: SubmissionPageProps) {
       newState: SubmissionState.APPROVED,
     })
   }
+
+  const reviewerIds = acl?.resourceAccess
+    .filter(ra => ra.accessType.includes(ACCESS_TYPE.REVIEW_SUBMISSIONS))
+    .map(ra => ra.principalId)
 
   return (
     <div className="SubmissionPage">
@@ -214,25 +218,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <br />
         <Typography variant="dataFieldKey">Assigned Reviewer</Typography>
         <Typography variant="smallText1">
-          {acl !== undefined ? (
-            acl !== null ? (
-              acl.resourceAccess
-                .filter(ra =>
-                  ra.accessType.includes(ACCESS_TYPE.REVIEW_SUBMISSIONS),
-                )
-                .map(ra => {
-                  return (
-                    <UserOrTeamBadge
-                      key={ra.principalId}
-                      principalId={ra.principalId}
-                    />
-                  )
-                })
-            ) : (
-              <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-            )
-          ) : (
-            <Skeleton width={100} />
+          {isLoadingACL && <Skeleton width={100} />}
+          {!isLoadingACL &&
+            !isEmpty(reviewerIds) &&
+            reviewerIds!.map(id => {
+              return <UserOrTeamBadge key={id} principalId={id} />
+            })}
+          {!isLoadingACL && isEmpty(reviewerIds) && (
+            <UserOrTeamBadge principalId={ACT_TEAM_ID} />
           )}
         </Typography>
         <br />
