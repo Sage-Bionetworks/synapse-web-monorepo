@@ -227,7 +227,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            Parkinson
+            Neurofibromatosis mouse models
           </p>
         </span>
       </div>
@@ -242,7 +242,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            Neurofibromatosis
+            Cancer
           </p>
         </span>
       </div>
@@ -257,7 +257,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            HTAN
+            UK Biobank
           </p>
         </span>
       </div>
@@ -272,7 +272,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            ukb-ppp
+            Single-cell analysis of breast cancer
           </p>
         </span>
       </div>
@@ -287,7 +287,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            ROSMAP
+            ROSMAP Religious Orders Study and Memory and Aging Project
           </p>
         </span>
       </div>
@@ -302,7 +302,22 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
           >
-            GENIE
+            Retinal regeneration studies
+          </p>
+        </span>
+      </div>
+      <div
+        class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1cy8tlm-MuiButtonBase-root-MuiChip-root"
+        role="button"
+        tabindex="0"
+      >
+        <span
+          class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
+        >
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+          >
+            Machine Learning datasets
           </p>
         </span>
       </div>
