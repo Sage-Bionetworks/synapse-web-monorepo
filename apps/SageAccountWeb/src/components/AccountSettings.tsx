@@ -158,11 +158,6 @@ export const AccountSettings = () => {
     }
   }
 
-  const clearSessionAndRefresh = async () => {
-    await clearSession()
-    history.go(0)
-  }
-
   const updateUserProfile = async () => {
     try {
       if (userProfile) {
@@ -755,7 +750,7 @@ export const AccountSettings = () => {
                   <Button
                     variant="outlined"
                     sx={credentialButtonSX}
-                    onClick={clearSessionAndRefresh}
+                    onClick={() => clearSession()}
                   >
                     Sign out
                   </Button>
@@ -766,7 +761,7 @@ export const AccountSettings = () => {
                     onClick={() => {
                       SynapseClient.deleteAllSessionAccessTokens(
                         accessToken!,
-                      ).then(clearSessionAndRefresh)
+                      ).then(() => clearSession())
                     }}
                   >
                     Sign out of all sessions
