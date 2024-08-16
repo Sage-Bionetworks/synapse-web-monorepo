@@ -137,6 +137,8 @@ export function ApplicationSessionManager(
     if (onResetSessionComplete) {
       onResetSessionComplete()
     }
+    //in all cases when the session is cleared we should refresh the page to ensure private data is not being shown
+    history.go(0)
   }, [refreshSession, onResetSessionComplete])
 
   /** Call refreshSession on mount */
