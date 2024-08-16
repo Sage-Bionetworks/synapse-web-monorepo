@@ -53,7 +53,6 @@ fs.readFile(`src/config/${fileName}`, (err, data) => {
       previousNestingSpaceCount = spaceCount
       currentNestedPath[spaceCount] = newPath
       const currentPath = currentNestedPath.filter(value => value !== undefined).join('/')
-      console.log(`newPath: '${newPath}'`)
       if (!newPath.match('^[:]slug.*')) {
         fileContent += `\t<url>\n\t\t<loc>${baseUrl}/${currentPath}</loc>\n\t\t<lastmod>${now}</lastmod>\n\t</url>\n`
       }
