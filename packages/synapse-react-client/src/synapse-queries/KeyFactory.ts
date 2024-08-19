@@ -450,7 +450,7 @@ export class KeyFactory {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id, 'wikiPageKey')
   }
 
-  public getAccessRequirementRestrictionInformationQueryKey(
+  public getRestrictionInformationQueryKey(
     request: RestrictionInformationRequest,
   ) {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'restrictionInformation', {
@@ -460,7 +460,7 @@ export class KeyFactory {
     })
   }
 
-  public getAccessRequirementRestrictionInformationBatchQueryKey(
+  public getRestrictionInformationBatchQueryKey(
     request: RestrictionInformationBatchRequest,
   ) {
     const normalizedRequest: RestrictionInformationBatchRequest = {

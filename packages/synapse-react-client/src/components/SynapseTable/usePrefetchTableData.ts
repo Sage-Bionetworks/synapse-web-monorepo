@@ -232,10 +232,8 @@ export function usePrefetchTableData(): { dataHasBeenPrefetched: boolean } {
   const entitiesToPrefetch = useGetEntitiesInTable()
   const { isLoading: isLoadingEntityData } =
     usePrefetchEntityData(entitiesToPrefetch)
-  const prefetchEntityRestrictionDataQueries =
+  const { isLoading: isLoadingEntityRestrictionData } =
     usePrefetchEntityRestrictionData(entitiesToPrefetch)
-  const isLoadingEntityRestrictionData =
-    prefetchEntityRestrictionDataQueries.some(q => q.isLoading)
   const { isLoading: isLoadingFileHandleData } = usePrefetchFileHandleData()
   const { isLoading: isLoadingUserGroupData } = usePrefetchUserGroupHeaderData()
 
