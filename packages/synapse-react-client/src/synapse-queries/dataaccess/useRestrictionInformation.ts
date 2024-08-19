@@ -1,4 +1,3 @@
-// The maximum number of items allowed in a single request for restriction information
 import {
   RestrictionInformationBatchRequest,
   RestrictionInformationBatchResponse,
@@ -14,6 +13,7 @@ import { SynapseClientError, useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import { chunk } from 'lodash-es'
 
+// The maximum number of items allowed in a single request for restriction information
 const MAX_RESTRICTION_INFORMATION_BATCH_SIZE = 50
 
 export function useGetRestrictionInformation(
