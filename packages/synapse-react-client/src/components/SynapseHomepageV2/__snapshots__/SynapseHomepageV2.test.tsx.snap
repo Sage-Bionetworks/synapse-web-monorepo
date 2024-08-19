@@ -105,15 +105,8 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           tabindex="0"
           type="button"
         >
-          Login
+          View Dashboard
         </button>
-        <a
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-11ydz1j-MuiButtonBase-root-MuiButton-root"
-          href="https://accounts.synapse.org/register1"
-          tabindex="0"
-        >
-          Register Now
-        </a>
       </div>
     </div>
     <div
