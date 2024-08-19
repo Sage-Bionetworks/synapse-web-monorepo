@@ -205,15 +205,16 @@ function usePrefetchUserGroupHeaderData() {
 }
 
 function usePrefetchEntityRestrictionData(entitiesToPrefetch: ReferenceList) {
-  // This information only varies by targetId, so we can dedupe the list in case there are multiple versions of the same file
-  const uniqueEntities = useMemo(
-    () => Array.from(new Set([...entitiesToPrefetch.map(e => e.targetId)])),
-    [entitiesToPrefetch],
-  )
+  // This information only varies by entity ID, not version number. The restriction information is the same for all versions.
+  const uniqueEntityIds = useMemo(() => {
+    const entityIds = entitiesToPrefetch.map(e => e.targetId)
+    // Dedupe the list in case there were duplicates, e.g. there were multiple versions of the same entity
+    return Array.from(new Set(entityIds))
+  }, [entitiesToPrefetch])
 
   return useGetRestrictionInformationBatch(
     {
-      objectIds: Array.from(uniqueEntities),
+      objectIds: uniqueEntityIds,
       restrictableObjectType: RestrictableObjectType.ENTITY,
     },
     {
