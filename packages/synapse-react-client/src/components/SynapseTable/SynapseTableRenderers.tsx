@@ -142,8 +142,7 @@ const getEntityOrRowId = (
   props: CellContext<Row, unknown>,
 ): string | undefined => {
   const { row, table } = props
-  const rowEntityIDColumnIndex: number | undefined = (table.options.meta as any)
-    .rowEntityIDColumnIndex
+  const rowEntityIDColumnIndex = table.options.meta?.rowEntityIDColumnIndex
   const entityId =
     rowEntityIDColumnIndex !== undefined
       ? row.original.values[rowEntityIDColumnIndex]!
@@ -159,7 +158,7 @@ const getEntityOrRowId = (
  */
 const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
   const { table } = props
-  return (table.options.meta as any).rowEntityVersionColumnIndex !== undefined
+  return table.options.meta?.rowEntityVersionColumnIndex !== undefined
 }
 
 /**
@@ -171,9 +170,8 @@ const getEntityOrRowVersion = (
   props: CellContext<Row, unknown>,
 ): string | undefined => {
   const { row, table } = props
-  const rowEntityVersionColumnIndex: number | undefined = (
-    table.options.meta as any
-  ).rowEntityVersionColumnIndex
+  const rowEntityVersionColumnIndex =
+    table.options.meta?.rowEntityVersionColumnIndex
   const versionNumber =
     rowEntityVersionColumnIndex !== undefined
       ? row.original.values[rowEntityVersionColumnIndex]!

@@ -512,11 +512,6 @@ export const getQueryTableAsyncJobResults = async (
     result: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ): Promise<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>> => {
-  console.log(
-    `Querying ${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
-      queryBundleRequest.entityId
-    }`,
-  )
   const asyncJobId = await doPost<AsyncJobId>(
     TABLE_QUERY_ASYNC_START(queryBundleRequest.entityId),
     queryBundleRequest,

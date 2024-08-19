@@ -4,7 +4,6 @@ import {
   Button,
   SxProps,
   Typography,
-  Chip,
   useTheme,
   useMediaQuery,
   Link,
@@ -28,22 +27,13 @@ import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
 import { Search } from '../../assets/themed_icons'
 import { ColorPartial } from '@mui/material/styles/createPalette'
+import { SynapseSearchChips } from './SynapseSearchChips'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
 export const generalStatsMetricsTable = 'syn61588163'
 export const featuredDatasetsTable = 'syn61609402'
 export const searchAutocompleteTable = 'syn61670515'
-
-const popularSearches = [
-  "Alzheimer's Disease",
-  'Parkinson',
-  'Neurofibromatosis',
-  'HTAN',
-  'ukb-ppp',
-  'ROSMAP',
-  'GENIE',
-]
 
 export const darkTextColor = '#22252A'
 export const homepageBodyText: SxProps = {
@@ -235,34 +225,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
         {/* Hard-coded popular searches because these Chips are above the fold and immediately visible. Any delay showing these chips is a problem.
         The hope is that these "popularSearches" will not change much over time, since they represent the types of data in the platform.
         */}
-        {popularSearches.map(value => {
-          return (
-            <Chip
-              key={value}
-              label={
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontSize: '18px',
-                    fontWeight: 400,
-                    p: '10px',
-                  }}
-                >
-                  {value}
-                </Typography>
-              }
-              onClick={() => gotoPlace(`/Search:${encodeURIComponent(value)}`)}
-              variant="outlined"
-              // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image
-              sx={{
-                color: 'secondary.600',
-                backgroundColor: 'secondary.100',
-                borderWidth: '0px',
-                '&:hover': { backgroundColor: '#B5D3CE !important' },
-              }}
-            />
-          )
-        })}
+        <SynapseSearchChips gotoPlace={gotoPlace} />
       </Box>
       <Box
         sx={{

@@ -41,7 +41,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
     selectColumn => selectColumn.name == 'N_UNIQUE_USERS',
   )!
   const egressSizeColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'TOTAL_DATA_SIZE_GIB',
+    selectColumn => selectColumn.name == 'ESTIMATED_PROJECT_SIZE_IN_GIB',
   )!
 
   if (!rowSet || rowSet.rows.length == 0) {
@@ -61,7 +61,7 @@ export const SynapseTrendingProjects: React.FunctionComponent<
           Rank
         </Typography>
         <Typography variant="body1">Project</Typography>
-        <Typography variant="body1">Data Downloaded</Typography>
+        <Typography variant="body1">Project Data</Typography>
         {/* This is really Unique Users - Sage LT requested this be changed to Unique Teams on 7/18/2024 */}
         <Typography variant="body1">Unique Teams</Typography>
         <Box></Box>

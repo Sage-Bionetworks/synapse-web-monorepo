@@ -9,6 +9,13 @@ type ColumnFilterEnumValue<TValue = unknown> = {
 }
 
 declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    rowEntityIDColumnIndex?: number
+    rowEntityVersionColumnIndex?: number
+    getWrapInExpandableTd?: (cell: Cell<TData>) => boolean
+    renderPlaceholderData?: boolean
+  }
+
   interface ColumnMeta<TData extends RowData, TValue> {
     textAlign?: React.CSSProperties['textAlign']
 
