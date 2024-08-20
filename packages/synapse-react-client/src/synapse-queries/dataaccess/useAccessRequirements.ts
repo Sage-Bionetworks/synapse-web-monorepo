@@ -31,8 +31,6 @@ import {
   Renewal,
   Request,
   ResearchProject,
-  RestrictionInformationRequest,
-  RestrictionInformationResponse,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
@@ -266,23 +264,6 @@ export function useSearchAccessRequirementsInfinite<
     },
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
-  })
-}
-
-export function useGetRestrictionInformation(
-  request: RestrictionInformationRequest,
-  options?: Partial<
-    UseQueryOptions<RestrictionInformationResponse, SynapseClientError>
-  >,
-) {
-  const { accessToken, keyFactory } = useSynapseContext()
-
-  return useQuery({
-    ...options,
-    queryKey:
-      keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
-    queryFn: () =>
-      SynapseClient.getRestrictionInformation(request, accessToken),
   })
 }
 

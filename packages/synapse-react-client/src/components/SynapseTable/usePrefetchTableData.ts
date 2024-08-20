@@ -3,11 +3,13 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
   ReferenceList,
+  RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
-import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
 import {
   useGetEntityHeaders,
+  useGetFileBatch,
+  useGetRestrictionInformationBatch,
   useGetUserGroupHeaders,
 } from '../../synapse-queries'
 import { useAtomValue } from 'jotai'
@@ -16,6 +18,7 @@ import {
   tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
 import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
+import { useMemo } from 'react'
 
 function usePrefetchFileHandleData() {
   const entity = useAtomValue(tableQueryEntityAtom)
@@ -78,15 +81,15 @@ function usePrefetchFileHandleData() {
   )
 }
 
-function usePrefetchEntityData() {
+function useGetEntitiesInTable() {
   const entity = useAtomValue(tableQueryEntityAtom)
   const data = useAtomValue(tableQueryDataAtom)
 
-  let entitiesToPrefetch: ReferenceList = []
+  let entitiesInTable: ReferenceList = []
 
   // If this is a file view/dataset, collect all the row IDs; they correspond to entities that we'll end up fetching
   if (entity && isEntityViewOrDataset(entity)) {
-    entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
+    entitiesInTable = (data?.queryResult?.queryResults?.rows ?? []).reduce(
       (prev: ReferenceList, curr) => {
         const { rowId, versionNumber } = curr
         if (rowId) {
@@ -97,7 +100,7 @@ function usePrefetchEntityData() {
         }
         return prev
       },
-      entitiesToPrefetch,
+      entitiesInTable,
     )
   }
 
@@ -112,12 +115,12 @@ function usePrefetchEntityData() {
     )
   }
 
-  let entityIdListColumnIndices = getTypeIndices(
+  const entityIdListColumnIndices = getTypeIndices(
     ColumnTypeEnum.ENTITYID_LIST,
     data,
   )
 
-  entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
+  entitiesInTable = (data?.queryResult?.queryResults?.rows ?? []).reduce(
     (prev: ReferenceList, curr) => {
       // Get all IDs from the entity ID columns
       entityIdColumnIndices.forEach(index => {
@@ -149,9 +152,13 @@ function usePrefetchEntityData() {
 
       return prev
     },
-    entitiesToPrefetch,
+    entitiesInTable,
   )
 
+  return entitiesInTable
+}
+
+function usePrefetchEntityData(entitiesToPrefetch: ReferenceList) {
   return useGetEntityHeaders(entitiesToPrefetch, {
     enabled: entitiesToPrefetch.length > 0,
   })
@@ -197,6 +204,25 @@ function usePrefetchUserGroupHeaderData() {
   })
 }
 
+function usePrefetchEntityRestrictionData(entitiesToPrefetch: ReferenceList) {
+  // This information only varies by entity ID, not version number. The restriction information is the same for all versions.
+  const uniqueEntityIds = useMemo(() => {
+    const entityIds = entitiesToPrefetch.map(e => e.targetId)
+    // Dedupe the list in case there were duplicates, e.g. there were multiple versions of the same entity
+    return Array.from(new Set(entityIds))
+  }, [entitiesToPrefetch])
+
+  return useGetRestrictionInformationBatch(
+    {
+      objectIds: uniqueEntityIds,
+      restrictableObjectType: RestrictableObjectType.ENTITY,
+    },
+    {
+      enabled: entitiesToPrefetch.length > 0,
+    },
+  )
+}
+
 /**
  * Uses react-query to prefetch data rendered by SynapseTable. Each SynapseTableCell instance load data to render rich
  * content (e.g. entity data) for the cell based on its column type. This hook uses react-query hooks that will
@@ -204,13 +230,18 @@ function usePrefetchUserGroupHeaderData() {
  * in the cache. In practice, this avoids Synapse backend throttling and 'waterfall' content rendering.
  */
 export function usePrefetchTableData(): { dataHasBeenPrefetched: boolean } {
-  const { isLoading: isLoadingEntityData } = usePrefetchEntityData()
+  const entitiesToPrefetch = useGetEntitiesInTable()
+  const { isLoading: isLoadingEntityData } =
+    usePrefetchEntityData(entitiesToPrefetch)
+  const { isLoading: isLoadingEntityRestrictionData } =
+    usePrefetchEntityRestrictionData(entitiesToPrefetch)
   const { isLoading: isLoadingFileHandleData } = usePrefetchFileHandleData()
   const { isLoading: isLoadingUserGroupData } = usePrefetchUserGroupHeaderData()
 
   return {
     dataHasBeenPrefetched:
       !isLoadingEntityData &&
+      !isLoadingEntityRestrictionData &&
       !isLoadingFileHandleData &&
       !isLoadingUserGroupData,
   }
