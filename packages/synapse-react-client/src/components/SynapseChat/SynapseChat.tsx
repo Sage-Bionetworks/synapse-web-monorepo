@@ -13,7 +13,7 @@ import {
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { OutlinedInput } from '@mui/material'
-import { ArrowCircleUpTwoTone, ArrowUpward } from '@mui/icons-material'
+import { ArrowUpward } from '@mui/icons-material'
 
 export type SynapseChatProps = {}
 
@@ -24,6 +24,7 @@ export type ChatMessage = {
 
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = () => {
   const theme = useTheme()
+  // TODO:  Hook up to new services and remove init messages
   const initMessages: ChatMessage[] = [
     { text: 'what does the interaction look like?', owner: 'self' },
     {
@@ -57,7 +58,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = () => {
       flexDirection="column"
       justifyContent="space-between"
       height="100vh"
-      maxWidth="600px"
+      maxWidth="700px"
       mx="auto"
       p={2}
     >
