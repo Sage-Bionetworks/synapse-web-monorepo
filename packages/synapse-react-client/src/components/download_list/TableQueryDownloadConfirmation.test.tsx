@@ -17,25 +17,18 @@ import {
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
-import { useAddQueryToDownloadList } from '../../synapse-queries'
-import { getUseMutationMock } from '../../testutils/ReactQueryMockUtils'
 import QueryWrapper from '../QueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { noop } from 'lodash-es'
 import { server } from '../../mocks/msw/server'
-
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
+import { generateAsyncJobHandlers } from '../../mocks/msw/handlers/asyncJobHandlers'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import SynapseClient from '../../synapse-client'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { rest } from 'msw'
 
-jest.mock('../../synapse-queries', () => {
-  const actual = jest.requireActual('../../synapse-queries')
-  return {
-    ...actual,
-    useAddQueryToDownloadList: jest.fn(),
-  }
-})
-
-const mockUseAddQueryToDownloadList = jest.mocked(useAddQueryToDownloadList)
 const ID_COLUMN_ID = 11112
 const CURRENT_VERSION_COLUMN_ID = 11113
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
@@ -58,6 +51,11 @@ const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
+const addToDownloadListSpy = jest.spyOn(
+  SynapseClient,
+  'addFilesToDownloadListV2',
+)
+
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
     'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
@@ -66,14 +64,16 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
 
 let receivedQueryVisualizationContext: QueryVisualizationContextType | undefined
 
-async function waitForExpectedProps(): Promise<DownloadConfirmationUIProps> {
+async function waitForExpectedProps(
+  expectedFileCount: number,
+): Promise<DownloadConfirmationUIProps> {
   let passedProps: DownloadConfirmationUIProps
   await waitFor(() => {
     const props = mockDownloadConfirmationUi.mock.lastCall![0]
     expect(props).toEqual({
       onAddToDownloadCart: expect.any(Function),
       onCancel: expect.any(Function),
-      fileCount: 100,
+      fileCount: expectedFileCount,
       fileSize: 40128868,
       isAddingToDownloadCart: false,
       isLoadingStats: false,
@@ -84,6 +84,7 @@ async function waitForExpectedProps(): Promise<DownloadConfirmationUIProps> {
 }
 
 async function setUp(
+  expectedFileCount: number,
   fileIdColumnName?: string,
   fileVersionColumnName?: string,
 ) {
@@ -120,14 +121,19 @@ async function setUp(
     ),
   )
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
-  const downloadConfirmationUiPassedProps = await waitForExpectedProps()
+  const downloadConfirmationUiPassedProps = await waitForExpectedProps(
+    expectedFileCount,
+  )
 
   return { component, user, downloadConfirmationUiPassedProps }
 }
 
+const expectedFileCountWithSelectFileColumn = 200
+const expectedFileCountWithSelectFileAndVersionColumn = 300
+
 const queryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-  queryCount: 100,
+  queryCount: expectedFileCountWithSelectFileColumn,
   sumFileSizes: {
     sumFileSizesBytes: 40128868,
     greaterThan: false,
@@ -149,64 +155,48 @@ const queryResultBundle: QueryResultBundle = {
 describe('TableQueryDownloadConfirmation', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
+    jest.clearAllMocks()
+
     registerTableQueryResult(mockQueryBundleRequest.query, queryResultBundle)
-    registerTableQueryResult(mockQueryWithSelectFileColumn, queryResultBundle)
-    registerTableQueryResult(
-      mockQueryWithSelectFileAndVersionColumn,
-      queryResultBundle,
+    registerTableQueryResult(mockQueryWithSelectFileColumn, {
+      ...queryResultBundle,
+      queryCount: expectedFileCountWithSelectFileColumn,
+    })
+    registerTableQueryResult(mockQueryWithSelectFileAndVersionColumn, {
+      ...queryResultBundle,
+      queryCount: expectedFileCountWithSelectFileAndVersionColumn,
+    })
+
+    server.use(
+      ...generateAsyncJobHandlers(
+        '/repo/v1/download/list/add/async/start',
+        token => `/repo/v1/download/list/add/async/get/${token}`,
+        addFilesToDownloadListResponse,
+      ),
     )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  let mutationMockReturnValue: ReturnType<
-    typeof getUseMutationMock<
-      AddToDownloadListResponse,
-      SynapseClientError,
-      AddToDownloadListRequest
-    >
-  >
-  beforeEach(() => {
-    jest.clearAllMocks()
-
-    mutationMockReturnValue = getUseMutationMock<
-      AddToDownloadListResponse,
-      SynapseClientError,
-      AddToDownloadListRequest
-    >(addFilesToDownloadListResponse)
-
-    mockUseAddQueryToDownloadList.mockReturnValue(mutationMockReturnValue)
-  })
-
   it('adds files to download list using a table query when invoked', async () => {
-    const { downloadConfirmationUiPassedProps } = await setUp()
+    const { downloadConfirmationUiPassedProps } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
       downloadConfirmationUiPassedProps.onAddToDownloadCart()
     })
 
-    expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
-    expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-      query: mockQueryWithSelectFileColumn,
-      concreteType:
-        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-    })
-
-    act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+    await waitFor(() => {
+      expect(addToDownloadListSpy).toHaveBeenCalledTimes(1)
+      expect(addToDownloadListSpy).toHaveBeenCalledWith(
         {
-          concreteType:
-            'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
-          numberOfFilesAdded: 1,
-        },
-        {
-          //'id' column discovered, so selectFileColumn is set
           query: mockQueryWithSelectFileColumn,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         },
-        undefined,
+        MOCK_ACCESS_TOKEN,
       )
     })
 
@@ -223,56 +213,54 @@ describe('TableQueryDownloadConfirmation', () => {
   })
 
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
-    const { downloadConfirmationUiPassedProps } = await setUp()
+    const { downloadConfirmationUiPassedProps } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
       downloadConfirmationUiPassedProps.onCancel()
     })
 
-    expect(mutationMockReturnValue.mutate).not.toHaveBeenCalled()
+    expect(addToDownloadListSpy).not.toHaveBeenCalled()
     expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
       false,
     )
   })
 
   it('handles case where adding files to the download list results in an error', async () => {
-    const { downloadConfirmationUiPassedProps } = await setUp()
+    server.use(
+      ...generateAsyncJobHandlers(
+        '/repo/v1/download/list/add/async/start',
+        token => `/repo/v1/download/list/add/async/get/${token}`,
+        {
+          reason: 'Failed to add files to download list',
+        },
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        400,
+      ),
+    )
+
+    const { downloadConfirmationUiPassedProps } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
       downloadConfirmationUiPassedProps.onAddToDownloadCart()
     })
 
-    expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
-    expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-      query: mockQueryWithSelectFileColumn,
-      concreteType:
-        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-    })
-
-    act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
-        new SynapseClientError(
-          400,
-          'some error message',
-          expect.getState().currentTestName!,
-        ),
-        {
-          query: mockQueryWithSelectFileColumn,
-          concreteType:
-            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-        },
-        undefined,
+    await waitFor(() => {
+      expect(addToDownloadListSpy).toHaveBeenCalledTimes(1)
+      expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
+      expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
+        false,
       )
     })
-    expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
-    expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
-      false,
-    )
   })
   it('setting the fileIdColumnName and fileVersionColumnName should update the AddToDownloadListRequest query if ColumnModels are available in the result', async () => {
     const { downloadConfirmationUiPassedProps } = await setUp(
+      expectedFileCountWithSelectFileAndVersionColumn,
       'id',
       'currentVersion',
     )
@@ -283,12 +271,15 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     await waitFor(() => {
-      expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
-      expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
-        query: mockQueryWithSelectFileAndVersionColumn,
-        concreteType:
-          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-      })
+      expect(addToDownloadListSpy).toHaveBeenCalledTimes(1)
+      expect(addToDownloadListSpy).toHaveBeenCalledWith(
+        {
+          query: mockQueryWithSelectFileAndVersionColumn,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        MOCK_ACCESS_TOKEN,
+      )
     })
   })
 })

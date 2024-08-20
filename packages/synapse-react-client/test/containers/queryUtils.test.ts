@@ -1,4 +1,3 @@
-import { getNextPageOfData } from '../../src/utils/functions'
 import {
   LockedColumn,
   SynapseConstants,
@@ -18,7 +17,6 @@ import {
   FacetColumnResultValues,
   JsonSubColumnModel,
   Query,
-  QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
@@ -37,58 +35,8 @@ import {
 } from '../../src/utils/functions/queryUtils'
 import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
 import mockDataset from '../../src/mocks/entity/mockDataset'
-import SynapseClient from '../../src/synapse-client'
 import { mockFileViewEntity } from '../../src/mocks/entity/mockFileView'
 import mockDatasetCollection from '../../src/mocks/entity/mockDatasetCollection'
-
-jest.mock('../../src/synapse-client/SynapseClient', () => ({
-  getQueryTableResults: jest.fn(),
-}))
-
-const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
-
-describe('get next page of data', () => {
-  const sql = 'SELECT * FROM syn16787123'
-  const getNextPageOfDataRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    entityId: 'syn16787123',
-    query: {
-      sql,
-      limit: 25,
-      offset: 25,
-    },
-  }
-  const data = syn16787123Json as QueryResultBundle
-  mockGetQueryTableResults.mockResolvedValue(data)
-
-  it('works when there is PAGE_SIZE results coming back', () => {
-    getNextPageOfData(getNextPageOfDataRequest, data, '').then(partialState => {
-      const lengthOfNewData =
-        partialState.data.queryResult?.queryResults.rows.length
-      const lengthOfOldData = data.queryResult?.queryResults.rows.length
-      expect(lengthOfOldData).toBeDefined()
-      expect(partialState.hasMoreData).toEqual(true)
-      expect(lengthOfNewData).toEqual(lengthOfOldData! * 2)
-    })
-  })
-
-  it('works when there is less then PAGE_SIZE results coming back', () => {
-    // setup test to return half the number of rows
-    const emptyData = cloneDeep(syn16787123Json) as QueryResultBundle
-    emptyData.queryResult!.queryResults.rows = []
-    mockGetQueryTableResults.mockResolvedValue(emptyData)
-    mockGetQueryTableResults.mockResolvedValue(emptyData)
-
-    getNextPageOfData(getNextPageOfDataRequest, data, '').then(partialState => {
-      // hasMoreData should be false since there are less than PAGE_SIZE results
-      expect(partialState.hasMoreData).toEqual(false)
-    })
-  })
-})
 
 describe('facet support', () => {
   const facetColumns: FacetColumnResult[] = [

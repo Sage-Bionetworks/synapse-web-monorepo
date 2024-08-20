@@ -1,4 +1,3 @@
-import { getNextPageOfData } from './queryUtils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -12,7 +11,6 @@ import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
 
 export * from './TableColumnSchemaUtils'
 export {
-  getNextPageOfData,
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   getIgnoredQueryFilterSearchParamKey,
