@@ -5,6 +5,7 @@ import {
   resultToJson,
   getIgnoredQueryFilterSearchParamKey,
   QUERY_FILTERS_SESSION_STORAGE_KEY,
+  parseEntityIdAndVersionFromSqlStatement,
 } from './SqlFunctions'
 import { hex2ascii } from './StringUtils'
 import type { SQLOperator } from './SqlFunctions'
@@ -15,6 +16,7 @@ export {
   getNextPageOfData,
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
+  parseEntityIdAndVersionFromSqlStatement,
   getIgnoredQueryFilterSearchParamKey,
   resultToJson,
   hex2ascii,
