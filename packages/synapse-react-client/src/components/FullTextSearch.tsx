@@ -3,6 +3,7 @@ import React, { ChangeEvent, useRef, useState } from 'react'
 import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
+  ColumnTypeEnum,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
@@ -43,7 +44,11 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
         const { additionalFilters = [] } = request.query
         const idColumnModel = getColumnModel('id')
         const isSynapseID = searchText.match(SYNAPSE_ENTITY_ID_REGEX)
-        if (isSynapseID && idColumnModel) {
+        if (
+          isSynapseID &&
+          idColumnModel &&
+          idColumnModel.columnType == ColumnTypeEnum.ENTITYID
+        ) {
           const singleValueQueryFilter: ColumnSingleValueQueryFilter = {
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',

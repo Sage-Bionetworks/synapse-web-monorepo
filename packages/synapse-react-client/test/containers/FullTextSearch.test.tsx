@@ -14,6 +14,7 @@ import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   ColumnModel,
   ColumnSingleValueFilterOperator,
+  ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
 
 const renderComponent = (
@@ -99,7 +100,7 @@ describe('FullTextSearch tests', () => {
   it('adds the appropriate QueryFilter when searching for Synapse ID', async () => {
     const idColModel: ColumnModel = {
       name: 'id',
-      columnType: 'ENTITYID',
+      columnType: ColumnTypeEnum.ENTITYID,
       id: '1',
     }
     mockGetColumnModel.mockReturnValue(idColModel)
