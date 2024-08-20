@@ -28,6 +28,7 @@ import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
 import { Search } from '../../assets/themed_icons'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SynapseSearchChips } from './SynapseSearchChips'
+import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -186,31 +187,8 @@ export const SynapseHomepageV2: React.FunctionComponent<
           maxWidth: '600px',
           m: 'auto',
         }}
-        component="form"
-        onSubmit={event => {
-          event.preventDefault()
-          onSearch(searchValue)
-        }}
       >
-        {/* <SynapseHomepageSearch
-          sourceTable={searchAutocompleteTable}
-          gotoPlace={gotoPlace}
-        /> */}
-        <FormControl fullWidth sx={{ m: 1 }}>
-          <OutlinedInput
-            startAdornment={
-              <InputAdornment position="start" sx={{ ml: '7px', mr: '13px' }}>
-                <Search
-                  size={32}
-                  fill={(theme.palette.secondary as ColorPartial)[600]}
-                />
-              </InputAdornment>
-            }
-            placeholder="Search Synapse"
-            sx={{ fontSize: '24px', borderRadius: 96.6 }}
-            onChange={event => setSearchValue(event.target.value)}
-          />
-        </FormControl>
+        <SynapseHomepageChatSearch gotoPlace={gotoPlace} />
       </Box>
       <Box
         sx={{
