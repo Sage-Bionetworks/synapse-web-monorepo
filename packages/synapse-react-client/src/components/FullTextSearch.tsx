@@ -1,11 +1,16 @@
 import { Collapse, TextField } from '@mui/material'
 import React, { ChangeEvent, useRef, useState } from 'react'
-import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+  TextMatchesQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 import { IconSvgButton } from './IconSvgButton'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -19,7 +24,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) => {
-  const { executeQueryRequest } = useQueryContext()
+  const { executeQueryRequest, getColumnModel } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -36,23 +41,46 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
     } else {
       executeQueryRequest(request => {
         const { additionalFilters = [] } = request.query
-
-        const textMatchesQueryFilter: TextMatchesQueryFilter = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-          searchExpression: searchText,
+        const idColumnModel = getColumnModel('id')
+        const isSynapseID = searchText.match(SYNAPSE_ENTITY_ID_REGEX)
+        if (isSynapseID && idColumnModel) {
+          const singleValueQueryFilter: ColumnSingleValueQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: 'id',
+            operator: ColumnSingleValueFilterOperator.IN,
+            values: [searchText],
+          }
+          const matchingFilter = additionalFilters.find(
+            filter =>
+              filter.concreteType == singleValueQueryFilter.concreteType &&
+              filter.columnName == singleValueQueryFilter.columnName,
+          ) as ColumnSingleValueQueryFilter
+          if (matchingFilter) {
+            if (!matchingFilter.values.includes(searchText)) {
+              matchingFilter.values.push(searchText)
+            }
+            return request
+          }
+          additionalFilters.push(singleValueQueryFilter)
+        } else {
+          const textMatchesQueryFilter: TextMatchesQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+            searchExpression: searchText,
+          }
+          // PORTALS-2093: does this additional filter already exist?
+          const found = additionalFilters.find(
+            filter =>
+              filter.concreteType == textMatchesQueryFilter.concreteType &&
+              filter.searchExpression ==
+                textMatchesQueryFilter.searchExpression,
+          )
+          if (found) {
+            return request
+          }
+          additionalFilters.push(textMatchesQueryFilter)
         }
-        // PORTALS-2093: does this additional filter already exist?
-        const found = additionalFilters.find(
-          filter =>
-            filter.concreteType == textMatchesQueryFilter.concreteType &&
-            filter.searchExpression == textMatchesQueryFilter.searchExpression,
-        )
-        if (found) {
-          return request
-        }
-        additionalFilters.push(textMatchesQueryFilter)
-
         request.query.additionalFilters = additionalFilters
         // reset the search text after adding this filter
         setSearchText('')

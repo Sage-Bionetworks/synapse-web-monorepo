@@ -11,6 +11,10 @@ import {
   QueryContextType,
 } from '../../src/components/QueryContext/QueryContext'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+import {
+  ColumnModel,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
@@ -32,10 +36,12 @@ const renderComponent = (
 
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
+const mockGetColumnModel = jest.fn()
 
 const queryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
   getCurrentQueryRequest: mockGetLastQueryRequest,
+  getColumnModel: mockGetColumnModel,
 }
 
 const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
@@ -83,6 +89,40 @@ describe('FullTextSearch tests', () => {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
               searchExpression: searchQuery,
+            },
+          ],
+        }),
+      }),
+    )
+  })
+
+  it('adds the appropriate QueryFilter when searching for Synapse ID', async () => {
+    const idColModel: ColumnModel = {
+      name: 'id',
+      columnType: 'ENTITYID',
+      id: '1',
+    }
+    mockGetColumnModel.mockReturnValue(idColModel)
+    renderComponent(queryContext, queryVisualizationContext)
+
+    const searchBox = screen.getByRole('textbox')
+
+    const searchQuery = 'syn123'
+    await userEvent.type(searchBox, searchQuery + '{enter}')
+
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
+    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
+    expect(typeof queryTransformFn).toBe('function')
+    expect(queryTransformFn({ query: {} })).toEqual(
+      expect.objectContaining({
+        query: expect.objectContaining({
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+              columnName: 'id',
+              operator: ColumnSingleValueFilterOperator.IN,
+              values: [searchQuery],
             },
           ],
         }),
