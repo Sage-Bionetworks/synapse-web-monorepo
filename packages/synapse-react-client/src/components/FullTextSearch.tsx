@@ -3,7 +3,6 @@ import React, { ChangeEvent, useRef, useState } from 'react'
 import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
-  ColumnTypeEnum,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
@@ -12,6 +11,9 @@ import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 import { IconSvgButton } from './IconSvgButton'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from './QueryWrapper/QueryWrapper'
+import { getFileColumnModelId } from './SynapseTable/SynapseTableUtils'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -25,7 +27,9 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) => {
-  const { executeQueryRequest, getColumnModel } = useQueryContext()
+  const { executeQueryRequest } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const columnModels = data?.columnModels
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -42,17 +46,16 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
     } else {
       executeQueryRequest(request => {
         const { additionalFilters = [] } = request.query
-        const idColumnModel = getColumnModel('id')
+        const synIdColumnModelId = getFileColumnModelId(columnModels)
         const isSynapseID = searchText.match(SYNAPSE_ENTITY_ID_REGEX)
-        if (
-          isSynapseID &&
-          idColumnModel &&
-          idColumnModel.columnType == ColumnTypeEnum.ENTITYID
-        ) {
+        if (isSynapseID && synIdColumnModelId) {
+          const idColumnModel = columnModels?.filter(
+            el => el.id === synIdColumnModelId,
+          )
           const singleValueQueryFilter: ColumnSingleValueQueryFilter = {
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'id',
+            columnName: idColumnModel![0].name,
             operator: ColumnSingleValueFilterOperator.IN,
             values: [searchText],
           }

@@ -16,6 +16,16 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
+import { useSetAtom } from 'jotai'
+import { tableQueryDataAtom } from '../../src/components/QueryWrapper/QueryWrapper'
+import { mockQueryResultBundle } from '../../src/mocks/mockFileViewQuery'
+
+let setQueryData: ReturnType<typeof useSetAtom> | undefined
+
+function ContextReceiver(props: React.PropsWithChildren<any>) {
+  setQueryData = useSetAtom(tableQueryDataAtom)
+  return <>{props.children}</>
+}
 
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
@@ -26,7 +36,9 @@ const renderComponent = (
       <QueryVisualizationContextProvider
         queryVisualizationContext={queryVisualizationContext}
       >
-        <FullTextSearch />
+        <ContextReceiver>
+          <FullTextSearch />
+        </ContextReceiver>
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
@@ -37,12 +49,10 @@ const renderComponent = (
 
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
-const mockGetColumnModel = jest.fn()
 
 const queryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
   getCurrentQueryRequest: mockGetLastQueryRequest,
-  getColumnModel: mockGetColumnModel,
 }
 
 const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
@@ -98,12 +108,7 @@ describe('FullTextSearch tests', () => {
   })
 
   it('adds the appropriate QueryFilter when searching for Synapse ID', async () => {
-    const idColModel: ColumnModel = {
-      name: 'id',
-      columnType: ColumnTypeEnum.ENTITYID,
-      id: '1',
-    }
-    mockGetColumnModel.mockReturnValue(idColModel)
+    setQueryData!(mockQueryResultBundle)
     renderComponent(queryContext, queryVisualizationContext)
 
     const searchBox = screen.getByRole('textbox')
