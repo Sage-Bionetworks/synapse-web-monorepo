@@ -3,14 +3,13 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
-  AddToDownloadListRequest,
   AddToDownloadListResponse,
   Query,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
 import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation'
-import { SynapseClientError } from '../../utils'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationContextType,
@@ -22,12 +21,10 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { noop } from 'lodash-es'
 import { server } from '../../mocks/msw/server'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
-import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
 import { generateAsyncJobHandlers } from '../../mocks/msw/handlers/asyncJobHandlers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import SynapseClient from '../../synapse-client'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest } from 'msw'
 
 const ID_COLUMN_ID = 11112
 const CURRENT_VERSION_COLUMN_ID = 11113
