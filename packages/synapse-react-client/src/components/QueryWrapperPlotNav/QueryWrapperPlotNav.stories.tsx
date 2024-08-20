@@ -187,7 +187,7 @@ export const FileView: Story = {
     rgbIndex: 1,
     name: 'Data',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-    sql: 'SELECT * FROM syn11346063.28',
+    sql: 'SELECT * FROM syn11346063',
     hideSqlEditorControl: false,
   },
 }

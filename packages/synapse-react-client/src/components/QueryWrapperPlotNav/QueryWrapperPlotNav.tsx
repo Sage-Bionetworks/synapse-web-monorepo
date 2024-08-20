@@ -6,7 +6,7 @@ import { useGetEntity } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
 import {
   getAdditionalFilters,
-  parseEntityIdFromSqlStatement,
+  parseEntityIdAndVersionFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
@@ -272,7 +272,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     customPlots,
   } = props
 
-  const entityId = parseEntityIdFromSqlStatement(sql)
+  const entityIdAndVersion = parseEntityIdAndVersionFromSqlStatement(sql)
+  const { entityId, versionNumber } = entityIdAndVersion ?? { entityId: '' }
   const additionalFilters = getAdditionalFilters(
     additionalFiltersSessionStorageKey,
     searchParams,
@@ -292,7 +293,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   const remount = () => {
     setComponentKey(componentKey + 1)
   }
-  const { data: entity } = useGetEntity(entityId)
+  const { data: entity } = useGetEntity(entityId, versionNumber)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
