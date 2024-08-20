@@ -56,6 +56,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
             operator: ColumnSingleValueFilterOperator.IN,
             values: [searchText],
           }
+          // Replace the active filter on the column, if one exists
           const matchingFilter = additionalFilters.find(
             filter =>
               filter.concreteType == singleValueQueryFilter.concreteType &&
