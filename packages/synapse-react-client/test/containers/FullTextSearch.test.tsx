@@ -11,6 +11,21 @@ import {
   QueryContextType,
 } from '../../src/components/QueryContext/QueryContext'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+import {
+  ColumnModel,
+  ColumnSingleValueFilterOperator,
+  ColumnTypeEnum,
+} from '@sage-bionetworks/synapse-types'
+import { useSetAtom } from 'jotai'
+import { tableQueryDataAtom } from '../../src/components/QueryWrapper/QueryWrapper'
+import { mockQueryResultBundle } from '../../src/mocks/mockFileViewQuery'
+
+let setQueryData: ReturnType<typeof useSetAtom> | undefined
+
+function ContextReceiver(props: React.PropsWithChildren<any>) {
+  setQueryData = useSetAtom(tableQueryDataAtom)
+  return <>{props.children}</>
+}
 
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
@@ -21,7 +36,9 @@ const renderComponent = (
       <QueryVisualizationContextProvider
         queryVisualizationContext={queryVisualizationContext}
       >
-        <FullTextSearch />
+        <ContextReceiver>
+          <FullTextSearch />
+        </ContextReceiver>
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
@@ -83,6 +100,35 @@ describe('FullTextSearch tests', () => {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
               searchExpression: searchQuery,
+            },
+          ],
+        }),
+      }),
+    )
+  })
+
+  it('adds the appropriate QueryFilter when searching for Synapse ID', async () => {
+    setQueryData!(mockQueryResultBundle)
+    renderComponent(queryContext, queryVisualizationContext)
+
+    const searchBox = screen.getByRole('textbox')
+
+    const searchQuery = 'syn123'
+    await userEvent.type(searchBox, searchQuery + '{enter}')
+
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
+    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
+    expect(typeof queryTransformFn).toBe('function')
+    expect(queryTransformFn({ query: {} })).toEqual(
+      expect.objectContaining({
+        query: expect.objectContaining({
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+              columnName: 'id',
+              operator: ColumnSingleValueFilterOperator.IN,
+              values: [searchQuery],
             },
           ],
         }),

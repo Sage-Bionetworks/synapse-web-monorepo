@@ -1,11 +1,19 @@
 import { Collapse, TextField } from '@mui/material'
 import React, { ChangeEvent, useRef, useState } from 'react'
-import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+  TextMatchesQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 import { IconSvgButton } from './IconSvgButton'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from './QueryWrapper/QueryWrapper'
+import { getFileColumnModelId } from './SynapseTable/SynapseTableUtils'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -20,6 +28,8 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpUrl,
 }: FullTextSearchProps) => {
   const { executeQueryRequest } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const columnModels = data?.columnModels
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -36,23 +46,50 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
     } else {
       executeQueryRequest(request => {
         const { additionalFilters = [] } = request.query
-
-        const textMatchesQueryFilter: TextMatchesQueryFilter = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-          searchExpression: searchText,
+        const synIdColumnModelId = getFileColumnModelId(columnModels)
+        const isSynapseID = searchText.match(SYNAPSE_ENTITY_ID_REGEX)
+        if (isSynapseID && synIdColumnModelId) {
+          const idColumnModel = columnModels?.filter(
+            el => el.id === synIdColumnModelId,
+          )
+          const singleValueQueryFilter: ColumnSingleValueQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: idColumnModel![0].name,
+            operator: ColumnSingleValueFilterOperator.IN,
+            values: [searchText],
+          }
+          // Replace the active filter on the column, if one exists
+          const matchingFilter = additionalFilters.find(
+            filter =>
+              filter.concreteType == singleValueQueryFilter.concreteType &&
+              filter.columnName == singleValueQueryFilter.columnName,
+          ) as ColumnSingleValueQueryFilter
+          if (matchingFilter) {
+            if (!matchingFilter.values.includes(searchText)) {
+              matchingFilter.values.push(searchText)
+            }
+            return request
+          }
+          additionalFilters.push(singleValueQueryFilter)
+        } else {
+          const textMatchesQueryFilter: TextMatchesQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+            searchExpression: searchText,
+          }
+          // PORTALS-2093: does this additional filter already exist?
+          const found = additionalFilters.find(
+            filter =>
+              filter.concreteType == textMatchesQueryFilter.concreteType &&
+              filter.searchExpression ==
+                textMatchesQueryFilter.searchExpression,
+          )
+          if (found) {
+            return request
+          }
+          additionalFilters.push(textMatchesQueryFilter)
         }
-        // PORTALS-2093: does this additional filter already exist?
-        const found = additionalFilters.find(
-          filter =>
-            filter.concreteType == textMatchesQueryFilter.concreteType &&
-            filter.searchExpression == textMatchesQueryFilter.searchExpression,
-        )
-        if (found) {
-          return request
-        }
-        additionalFilters.push(textMatchesQueryFilter)
-
         request.query.additionalFilters = additionalFilters
         // reset the search text after adding this filter
         setSearchText('')
