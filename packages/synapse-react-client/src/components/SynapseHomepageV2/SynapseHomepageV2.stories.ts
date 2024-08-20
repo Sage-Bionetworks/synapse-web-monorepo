@@ -1,22 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react'
-import {
-  featuredDatasetsTable,
-  generalStatsMetricsTable,
-  past30DaysDownloadMetricsTable,
-  searchAutocompleteTable,
-  SynapseHomepageV2,
-  synapseInActionTable,
-} from './SynapseHomepageV2'
+import { SynapseHomepageV2 } from './SynapseHomepageV2'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import {
-  mockHomepageFeaturedDatasetsQueryResultBundle,
-  mockHomepageGeneralStatsQueryResultBundle,
-  mockHomepageSearchAutocompleteQueryResultBundle,
-  mockHomepageSynapseInActionQueryResultBundle,
-  mockHomepageTrendingQueryResultBundle,
-} from '../../mocks/query/mockHomepageQueryResultData'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
+
+import { registerSynapseHomepageMockQueries } from '../../mocks/homepage/HomepageMocks'
 
 const meta = {
   title: 'Synapse/HomePage',
@@ -34,6 +22,11 @@ export const DemoVersion2: Story = {
       window.alert(`SynapseHomepageV2 calling back to change route to ${href}`)
     },
   },
+  loaders: [
+    () => {
+      registerSynapseHomepageMockQueries()
+    },
+  ],
   parameters: {
     stack: 'production',
     design: {
@@ -43,31 +36,7 @@ export const DemoVersion2: Story = {
     msw: {
       handlers: [
         ...getFileHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(
-          mockHomepageTrendingQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-          past30DaysDownloadMetricsTable,
-        ),
-        ...getHandlersForTableQuery(
-          mockHomepageGeneralStatsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-          generalStatsMetricsTable,
-        ),
-        ...getHandlersForTableQuery(
-          mockHomepageSynapseInActionQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-          synapseInActionTable,
-        ),
-        ...getHandlersForTableQuery(
-          mockHomepageFeaturedDatasetsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-          featuredDatasetsTable,
-        ),
-        ...getHandlersForTableQuery(
-          mockHomepageSearchAutocompleteQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-          searchAutocompleteTable,
-        ),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },

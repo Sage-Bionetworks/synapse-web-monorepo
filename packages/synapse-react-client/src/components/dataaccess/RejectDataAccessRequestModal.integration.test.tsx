@@ -5,7 +5,6 @@ import RejectDataAccessRequestModal, {
   RejectDataAccessRequestModalProps,
 } from './RejectDataAccessRequestModal'
 import { rest, server } from '../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import userEvent from '@testing-library/user-event'
 import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
@@ -16,6 +15,7 @@ import {
 import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../utils/APIConstants'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import failOnConsoleError from 'jest-fail-on-console'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const props: RejectDataAccessRequestModalProps = {
   submissionId: mockSubmittedSubmission.id,
@@ -36,8 +36,11 @@ describe('RejectDataAccessRequestModal', () => {
   failOnConsoleError()
   beforeAll(() => {
     server.listen()
+    registerTableQueryResult(
+      { sql: `SELECT * FROM ${props.tableId}` },
+      mockRejectionReasonsTableQueryResultBundle,
+    )
     server.use(
-      ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
       rest.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,

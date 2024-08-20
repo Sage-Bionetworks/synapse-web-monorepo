@@ -662,12 +662,15 @@ describe('getCorrespondingSelectedFacet', () => {
 
   describe('getHeaderIndex', () => {
     it('gets a match on the column name', () => {
-      const actual = getHeaderIndex('id', syn16787123Json as QueryResultBundle)
+      const actual = getHeaderIndex(
+        'studyId',
+        syn16787123Json as QueryResultBundle,
+      )
       expect(actual).toEqual(1)
     })
     it('verify case insensitive search', () => {
       const actual = getHeaderIndex(
-        'PROJECTNAME',
+        'STUDYNAME',
         syn16787123Json as QueryResultBundle,
       )
       expect(actual).toEqual(0)

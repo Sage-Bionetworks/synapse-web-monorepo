@@ -18,7 +18,6 @@ import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/m
 import * as UseExportToCavaticaModule from '../../synapse-queries/entity/useExportToCavatica'
 import * as UseActionsRequiredForTableQueryModule from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { server } from '../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { useSetAtom } from 'jotai'
 import { selectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
 import {
@@ -27,6 +26,7 @@ import {
 } from '../../testutils/ReactQueryMockUtils'
 import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const onExportToCavatica = jest.fn().mockImplementation(() => Promise.resolve())
 
@@ -104,7 +104,10 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     jest.clearAllMocks()
-    server.use(...getHandlersForTableQuery(mockQueryResultBundle))
+    registerTableQueryResult(
+      mockQueryBundleRequest.query,
+      mockQueryResultBundle,
+    )
     server.use(...getEntityHandlers(MOCK_REPO_ORIGIN))
   })
   afterEach(() => server.restoreHandlers())

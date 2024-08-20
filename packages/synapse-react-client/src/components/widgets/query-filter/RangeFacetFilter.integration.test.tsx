@@ -1,5 +1,5 @@
 import { Collapse as MockCollapse } from '@mui/material'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
@@ -14,15 +14,16 @@ import {
   ColumnTypeEnum,
   FacetColumnResultRange,
   QueryBundleRequest,
+  QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { QueryContextType, QueryWrapper, useQueryContext } from '../../../index'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { cloneDeep } from 'lodash-es'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 let capturedOnApplyClicked: ((values: RangeValues) => void) | undefined
 
@@ -128,7 +129,7 @@ describe('RangeFacetFilter tests', () => {
   beforeEach(() => {
     currentQueryContext = undefined
     capturedOnApplyClicked = undefined
-    server.use(...getHandlersForTableQuery(mockQueryResponseData))
+    registerTableQueryResult(queryRequest.query, mockQueryResponseData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -199,16 +200,15 @@ describe('RangeFacetFilter tests', () => {
 
   describe('displaying correct range control', () => {
     it('should set for integer', async () => {
-      const mockQueryResponseDataWithIntegerColumnModel = cloneDeep(
-        mockQueryResponseData,
-      )
+      const mockQueryResponseDataWithIntegerColumnModel =
+        cloneDeep<QueryResultBundle>(mockQueryResponseData)
       mockQueryResponseDataWithIntegerColumnModel.columnModels = [
         integerColumnModel,
       ]
-      server.use(
-        ...getHandlersForTableQuery(
-          mockQueryResponseDataWithIntegerColumnModel,
-        ),
+
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithIntegerColumnModel,
       )
 
       init({ ...props, facetResult: rangeFacetResult })
@@ -219,12 +219,13 @@ describe('RangeFacetFilter tests', () => {
     })
 
     it('should set for date', async () => {
-      const mockQueryResponseDataWithDateColumnModel = cloneDeep(
-        mockQueryResponseData,
-      )
+      const mockQueryResponseDataWithDateColumnModel =
+        cloneDeep<QueryResultBundle>(mockQueryResponseData)
       mockQueryResponseDataWithDateColumnModel.columnModels = [dateColumnModel]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDateColumnModel),
+
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDateColumnModel,
       )
 
       init({
@@ -241,14 +242,14 @@ describe('RangeFacetFilter tests', () => {
     })
 
     it('should set for double', async () => {
-      const mockQueryResponseDataWithDoubleColumnModel = cloneDeep(
-        mockQueryResponseData,
-      )
+      const mockQueryResponseDataWithDoubleColumnModel =
+        cloneDeep<QueryResultBundle>(mockQueryResponseData)
       mockQueryResponseDataWithDoubleColumnModel.columnModels = [
         doubleColumnModel,
       ]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDoubleColumnModel,
       )
 
       init({
@@ -264,8 +265,30 @@ describe('RangeFacetFilter tests', () => {
     })
   })
 
-  describe('communicating the change corectly', () => {
+  describe('communicating the change correctly', () => {
     it('should update from enum', async () => {
+      registerTableQueryResult(
+        {
+          sql: queryRequest.query.sql,
+        },
+        mockQueryResponseData,
+      )
+      registerTableQueryResult(
+        {
+          ...queryRequest.query,
+          selectedFacets: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+              columnName: 'Year',
+              min: VALUE_NOT_SET,
+              max: VALUE_NOT_SET,
+            },
+          ],
+        },
+        mockQueryResponseData,
+      )
+
       init()
       // "Any" should be checked at the beginning
       const anyOption = await screen.findByLabelText<HTMLInputElement>('Any')
@@ -286,8 +309,10 @@ describe('RangeFacetFilter tests', () => {
       })
 
       //get updated wrapper and clear mocks
-      expect(anyOption.checked).toBe(false)
-      expect(notAssignedOption.checked).toBe(true)
+      await waitFor(() => {
+        expect(anyOption.checked).toBe(false)
+        expect(notAssignedOption.checked).toBe(true)
+      })
 
       // Click "Range"
       const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
@@ -305,22 +330,37 @@ describe('RangeFacetFilter tests', () => {
         expect(
           currentQueryContext?.nextQueryRequest.query.selectedFacets,
         ).toBeUndefined()
+        expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+        expect(anyOption.checked).toBe(true)
+        expect(notAssignedOption.checked).toBe(false)
+        expect(rangeOption.checked).toBe(false)
       })
-      expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
-      expect(anyOption.checked).toBe(true)
-      expect(notAssignedOption.checked).toBe(false)
-      expect(rangeOption.checked).toBe(false)
     })
 
     it('should update from a range control', async () => {
-      const mockQueryResponseDataWithDoubleColumnModel = cloneDeep(
-        mockQueryResponseData,
-      )
+      const mockQueryResponseDataWithDoubleColumnModel =
+        cloneDeep<QueryResultBundle>(mockQueryResponseData)
       mockQueryResponseDataWithDoubleColumnModel.columnModels = [
         doubleColumnModel,
       ]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDoubleColumnModel,
+      )
+      registerTableQueryResult(
+        {
+          ...queryRequest.query,
+          selectedFacets: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+              columnName: 'Year',
+              min: '22',
+              max: '23',
+            },
+          ],
+        },
+        mockQueryResponseDataWithDoubleColumnModel,
       )
 
       init()
@@ -358,7 +398,11 @@ describe('RangeFacetFilter tests', () => {
       init({ facetResult: rangeFacetResult })
       await waitFor(() => expect(mockedRangeSlider).toHaveBeenCalled())
       await waitFor(() => expect(capturedOnApplyClicked).toBeDefined())
-      capturedOnApplyClicked!({ min: '22', max: '23' })
+
+      act(() => {
+        capturedOnApplyClicked!({ min: '22', max: '23' })
+      })
+
       await waitFor(() => {
         expect(
           currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,

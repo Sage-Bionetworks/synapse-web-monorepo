@@ -23,9 +23,9 @@ import QueryWrapper from '../../QueryWrapper'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { cloneDeep } from 'lodash-es'
 import { QueryContextType, useQueryContext } from '../../QueryContext'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 let capturedOnApplyClicked:
   | ((range: { min: string | number; max: string | number }) => void)
@@ -187,7 +187,11 @@ describe('CombinedRangeFacetFilter tests', () => {
     currentQueryContext = undefined
     capturedOnApplyClicked = undefined
     jest.clearAllMocks()
-    server.use(...getHandlersForTableQuery(mockQueryResponseData))
+    registerTableQueryResult(
+      { sql: queryRequest.query.sql },
+      mockQueryResponseData,
+    )
+    registerTableQueryResult(queryRequest.query, mockQueryResponseData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -275,8 +279,9 @@ describe('CombinedRangeFacetFilter tests', () => {
         mockQueryResponseData,
       )
       mockQueryResponseDataWithDateColumnModel.columnModels = [dateColumnModel]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDateColumnModel),
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDateColumnModel,
       )
 
       await init({
@@ -301,8 +306,9 @@ describe('CombinedRangeFacetFilter tests', () => {
       mockQueryResponseDataWithDoubleColumnModel.columnModels = [
         doubleColumnModel,
       ]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDoubleColumnModel,
       )
 
       await init({
@@ -387,8 +393,9 @@ describe('CombinedRangeFacetFilter tests', () => {
       mockQueryResponseDataWithDoubleColumnModel.columnModels = [
         doubleColumnModel,
       ]
-      server.use(
-        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      registerTableQueryResult(
+        queryRequest.query,
+        mockQueryResponseDataWithDoubleColumnModel,
       )
 
       const updatedProps = {

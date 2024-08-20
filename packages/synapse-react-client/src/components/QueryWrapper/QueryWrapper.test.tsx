@@ -14,7 +14,6 @@ import {
   QueryResultBundle,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
@@ -23,6 +22,7 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useAtomValue } from 'jotai'
 import { useSetAtom } from 'jotai'
 import { selectedRowsAtom } from './TableRowSelectionState'
+import mockQueryResponseData from '../../mocks/mockQueryResponseData'
 
 jest.mock('../../synapse-client', () => ({
   getQueryTableAsyncJobResults: jest.fn(),
@@ -94,7 +94,7 @@ describe('QueryWrapper', () => {
         ...mockCompleteAsyncJob,
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',
-        responseBody: syn16787123Json,
+        responseBody: mockQueryResponseData,
       })
     })
   })
@@ -109,7 +109,7 @@ describe('QueryWrapper', () => {
       renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => {
         expect(isLoadingNewBundleValue).toBe(false)
-        expect(currentQueryDataValue).toEqual(syn16787123Json)
+        expect(currentQueryDataValue).toEqual(mockQueryResponseData)
       })
     })
 
@@ -204,7 +204,7 @@ describe('QueryWrapper', () => {
         )
 
         expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
-          expect.stringContaining(JSON.stringify(syn16787123Json)),
+          expect.stringContaining(JSON.stringify(mockQueryResponseData)),
         )
       })
     })
@@ -274,8 +274,8 @@ describe('QueryWrapper', () => {
 
   describe('locked facet', () => {
     const lockedColumn: LockedColumn = {
-      columnName: 'tumorType',
-      value: 'Cutaneous Neurofibroma',
+      columnName: 'Make',
+      value: 'Ford',
     }
     const noLockedColumn: LockedColumn = {}
 
@@ -292,12 +292,12 @@ describe('QueryWrapper', () => {
 
       // One facet should be removed
       expect(currentQueryDataValue!.facets!.length).toEqual(
-        syn16787123Json.facets!.length - 1,
+        mockQueryResponseData.facets!.length - 1,
       )
       // The removed facet should match the locked facet name
       expect(
         currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === 'tumorType',
+          facet => facet.columnName === lockedColumn.columnName,
         ),
       ).not.toBeDefined()
     })
@@ -313,12 +313,12 @@ describe('QueryWrapper', () => {
       })
 
       expect(currentQueryDataValue!.facets!.length).toEqual(
-        syn16787123Json.facets!.length,
+        mockQueryResponseData.facets!.length,
       )
 
       expect(
         currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === 'tumorType',
+          facet => facet.columnName === lockedColumn.columnName,
         ),
       ).toBeDefined()
     })

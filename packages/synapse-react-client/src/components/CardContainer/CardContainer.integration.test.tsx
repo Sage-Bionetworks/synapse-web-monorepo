@@ -17,11 +17,11 @@ import mockUserCardTableQueryResultBundle from '../../mocks/query/mockUserCardTa
 import { server } from '../../mocks/msw/server'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { QueryWrapper } from '../QueryWrapper'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { cloneDeep } from 'lodash-es'
 import { QueryContextConsumer } from '../QueryContext'
 import { InfiniteQueryContextType } from '../QueryContext/QueryContext'
 import SynapseClient from '../../synapse-client'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const tableId = 'syn16787123'
 const sql = `SELECT * FROM ${tableId}`
@@ -45,34 +45,11 @@ const lastQueryRequest: QueryBundleRequest = {
   },
 }
 
-const dataWithOnePage = cloneDeep(syn16787123Json)
-dataWithOnePage.queryCount =
-  dataWithOnePage.queryResult!.queryResults.rows.length
-dataWithOnePage.queryResult!.nextPageToken = undefined
-
-const dataWithMultiplePagesFirstPage = cloneDeep(syn16787123Json)
-dataWithMultiplePagesFirstPage.queryCount =
-  dataWithMultiplePagesFirstPage.queryResult!.queryResults.rows.length * 2 + 1
-dataWithMultiplePagesFirstPage.queryResult!.nextPageToken = {
-  token: 'abcd',
-}
-
-const dataWithMultiplePagesSecondPage = cloneDeep(
-  dataWithMultiplePagesFirstPage,
-)
-dataWithMultiplePagesSecondPage.queryResult!.nextPageToken!.token = 'efgh'
-dataWithMultiplePagesSecondPage.queryResult!.queryResults.rows = [
-  ...dataWithMultiplePagesFirstPage.queryResult!.queryResults.rows.map(row => ({
-    ...row,
-    rowId: row.rowId! + DEFAULT_PAGE_SIZE,
-  })),
-]
-
-const createDataWithOnePageWithQueryCount = (queryCount: number) => {
-  const page = cloneDeep(dataWithOnePage)
+const createDataWithQueryCount = (queryCount: number) => {
+  const page = cloneDeep(syn16787123Json)
   page.queryCount = queryCount
   page.queryResult!.queryResults.rows = cloneDeep(
-    dataWithOnePage.queryResult!.queryResults.rows.slice(0, queryCount),
+    page.queryResult!.queryResults.rows.slice(0, queryCount),
   )
   return page
 }
@@ -119,7 +96,7 @@ describe('CardContainer tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     jest.clearAllMocks()
-    server.use(...getHandlersForTableQuery(dataWithMultiplePagesFirstPage))
+    registerTableQueryResult(lastQueryRequest.query, syn16787123Json)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -162,8 +139,6 @@ describe('CardContainer tests', () => {
       'appendNextPageToResults',
     )
 
-    server.use(...getHandlersForTableQuery(dataWithMultiplePagesSecondPage))
-
     // go through calling handle view more
     const viewMoreButton = await screen.findByRole('button', {
       name: 'View More',
@@ -179,7 +154,11 @@ describe('CardContainer tests', () => {
   })
 
   it('ViewMore does not render when hasNextPage is false and no initialLimit is not set', async () => {
-    server.use(...getHandlersForTableQuery(dataWithOnePage))
+    registerTableQueryResult(
+      lastQueryRequest.query,
+      createDataWithQueryCount(DEFAULT_PAGE_SIZE),
+    )
+
     renderComponent(props)
     await waitForCardCount(STUDY, DEFAULT_PAGE_SIZE)
     expect(
@@ -189,7 +168,7 @@ describe('CardContainer tests', () => {
 
   it('ViewMore button shows rest of first page on first click and full page on next click when initialLimit is set', async () => {
     const initialLimit = 3
-    const queryCount = dataWithMultiplePagesFirstPage.queryCount!
+    const queryCount = syn16787123Json.queryCount!
     expect(initialLimit).toBeLessThan(queryCount)
     expect(DEFAULT_PAGE_SIZE * 2).toBeLessThan(queryCount)
 
@@ -208,7 +187,6 @@ describe('CardContainer tests', () => {
     expect(viewMoreButton).toBeInTheDocument()
     expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalledTimes(1) // initial call to get data
 
-    server.use(...getHandlersForTableQuery(dataWithMultiplePagesSecondPage))
     await user.click(viewMoreButton)
 
     // first showMore click - full first page
@@ -229,10 +207,9 @@ describe('CardContainer tests', () => {
     const queryCount = 3
     expect(initialLimit).toBeGreaterThanOrEqual(queryCount)
 
-    server.use(
-      ...getHandlersForTableQuery(
-        createDataWithOnePageWithQueryCount(queryCount),
-      ),
+    registerTableQueryResult(
+      lastQueryRequest.query,
+      createDataWithQueryCount(queryCount),
     )
 
     setUp({
@@ -254,10 +231,9 @@ describe('CardContainer tests', () => {
     const initialLimit = 3
     const queryCount = 5
     expect(initialLimit).toBeLessThan(queryCount)
-    server.use(
-      ...getHandlersForTableQuery(
-        createDataWithOnePageWithQueryCount(queryCount),
-      ),
+    registerTableQueryResult(
+      lastQueryRequest.query,
+      createDataWithQueryCount(queryCount),
     )
 
     const { user } = setUp({
@@ -283,7 +259,10 @@ describe('CardContainer tests', () => {
   })
 
   it('Does not filter null IDs when rendering user cards (PORTALS-2430)', async () => {
-    server.use(...getHandlersForTableQuery(mockUserCardTableQueryResultBundle))
+    registerTableQueryResult(
+      lastQueryRequest.query,
+      mockUserCardTableQueryResultBundle,
+    )
     renderComponent({
       ...props,
       type: MEDIUM_USER_CARD,
