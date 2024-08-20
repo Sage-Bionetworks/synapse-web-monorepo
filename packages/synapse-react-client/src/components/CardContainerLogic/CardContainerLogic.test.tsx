@@ -25,7 +25,7 @@ const renderComponent = (props: CardContainerLogicProps) => {
 }
 
 const mockCardContainer = jest
-  .spyOn(CardContainerModule, 'default')
+  .spyOn(CardContainerModule, 'CardContainer')
   .mockImplementation(() => {
     return <div data-testid="CardContainer"></div>
   })
@@ -107,7 +107,10 @@ describe('it performs basic functionality', () => {
     )
 
     await waitFor(() =>
-      expect(mockCardContainer).toHaveBeenCalledWith(props, expect.anything()),
+      expect(mockCardContainer).toHaveBeenCalledWith(
+        { ...props, rowSet: truncatedQueryResults },
+        expect.anything(),
+      ),
     )
   })
 })

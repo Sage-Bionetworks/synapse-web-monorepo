@@ -1,14 +1,9 @@
 import { act, render, waitFor } from '@testing-library/react'
 import React from 'react'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 import {
-  PaginatedQueryContextType,
-  usePaginatedQueryContext,
-} from '../QueryContext/QueryContext'
-import {
-  QueryVisualizationContextType,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
-  useQueryVisualizationContext,
 } from './QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -17,6 +12,7 @@ import {
   ColumnTypeEnum,
   Query,
   QueryBundleRequest,
+  SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { server } from '../../mocks/msw/server'
@@ -24,12 +20,16 @@ import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { cloneDeep } from 'lodash-es'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from './QueryVisualizationContext'
 
-const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
+const onQueryContextReceived = jest.fn<void, [QueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
 
 function QueryVizWrapperConsumer(props: { mockFn?: jest.Mock }) {
-  const queryContext = usePaginatedQueryContext()
+  const queryContext = useQueryContext()
   onQueryContextReceived(queryContext)
   const context = useQueryVisualizationContext()
   const fn = props.mockFn ?? onContextReceived
@@ -115,15 +115,24 @@ describe('QueryVisualizationWrapper', () => {
       sql: 'SELECT some, other, sql, query FROM syn123',
     }
 
+    const newSelectColumns: SelectColumn[] = [
+      {
+        id: '123',
+        name: 'someOtherColumns',
+        columnType: ColumnTypeEnum.STRING,
+      },
+    ]
+
     registerTableQueryResult(newQuery, {
       ...queryResponse,
-      selectColumns: [
-        {
-          id: '123',
-          name: 'someOtherColumns',
-          columnType: ColumnTypeEnum.STRING,
+      queryResult: {
+        ...queryResponse.queryResult!,
+        queryResults: {
+          ...queryResponse.queryResult!.queryResults,
+          headers: newSelectColumns,
         },
-      ],
+      },
+      selectColumns: newSelectColumns,
     })
 
     act(() => {

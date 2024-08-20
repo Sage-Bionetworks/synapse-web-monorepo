@@ -2,25 +2,15 @@ import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { QueryContextType, useQueryContext } from '../QueryContext'
-import {
-  isLoadingNewBundleAtom,
-  QueryWrapper,
-  QueryWrapperProps,
-  tableQueryDataAtom,
-} from './QueryWrapper'
-import { LockedColumn, SynapseConstants } from '../../utils'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  Row,
-} from '@sage-bionetworks/synapse-types'
+import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
+import { SynapseConstants } from '../../utils'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { useAtomValue } from 'jotai'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { selectedRowsAtom } from './TableRowSelectionState'
 import mockQueryResponseData from '../../mocks/mockQueryResponseData'
 
@@ -35,16 +25,12 @@ const mockGetQueryTableAsyncJobResults = jest.mocked(
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
-let isLoadingNewBundleValue: boolean | undefined
-let currentQueryDataValue: QueryResultBundle | undefined
 let selectedRows: Row[] | undefined
 let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
 const QueryContextReceiver = () => {
   // An error would be thrown if context was not provided by QueryWrapper
   const context = useQueryContext()
-  isLoadingNewBundleValue = useAtomValue(isLoadingNewBundleAtom)
-  currentQueryDataValue = useAtomValue(tableQueryDataAtom)
   selectedRows = useAtomValue(selectedRowsAtom)
   setSelectedRows = useSetAtom(selectedRowsAtom)
   providedContext = context
@@ -81,8 +67,6 @@ const initialQueryRequest: QueryBundleRequest = {
 
 describe('QueryWrapper', () => {
   beforeEach(() => {
-    isLoadingNewBundleValue = undefined
-    currentQueryDataValue = undefined
     selectedRows = undefined
     setSelectedRows = undefined
     jest.clearAllMocks()
@@ -103,14 +87,6 @@ describe('QueryWrapper', () => {
     it('renders without crashing', async () => {
       renderComponent({ initQueryRequest: initialQueryRequest })
       await screen.findByText(renderedTextConfirmation)
-    })
-
-    it('Data atom is set', async () => {
-      renderComponent({ initQueryRequest: initialQueryRequest })
-      await waitFor(() => {
-        expect(isLoadingNewBundleValue).toBe(false)
-        expect(currentQueryDataValue).toEqual(mockQueryResponseData)
-      })
     })
 
     it('Executing a new query updates the last query request', async () => {
@@ -272,58 +248,6 @@ describe('QueryWrapper', () => {
     })
   })
 
-  describe('locked facet', () => {
-    const lockedColumn: LockedColumn = {
-      columnName: 'Make',
-      value: 'Ford',
-    }
-    const noLockedColumn: LockedColumn = {}
-
-    it('removeLockedColumnData should remove locked facet data', async () => {
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        lockedColumn: lockedColumn,
-      })
-
-      await waitFor(() => {
-        expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
-      })
-
-      // One facet should be removed
-      expect(currentQueryDataValue!.facets!.length).toEqual(
-        mockQueryResponseData.facets!.length - 1,
-      )
-      // The removed facet should match the locked facet name
-      expect(
-        currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === lockedColumn.columnName,
-        ),
-      ).not.toBeDefined()
-    })
-
-    it('removeLockedColumnData should not remove any data if locked facet value is not set', async () => {
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        lockedColumn: noLockedColumn,
-      })
-      await waitFor(() => {
-        expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
-      })
-
-      expect(currentQueryDataValue!.facets!.length).toEqual(
-        mockQueryResponseData.facets!.length,
-      )
-
-      expect(
-        currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === lockedColumn.columnName,
-        ),
-      ).toBeDefined()
-    })
-  })
-
   describe('query change when rows are selected', () => {
     it('requires confirmation to change the query when rows are selected', async () => {
       const mockOnQueryChange = jest.fn()
@@ -339,7 +263,6 @@ describe('QueryWrapper', () => {
       // Select a row
       await waitFor(() => {
         expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
         expect(selectedRows).toBeDefined()
         expect(setSelectedRows).toBeDefined()
       })
@@ -406,7 +329,6 @@ describe('QueryWrapper', () => {
 
       await waitFor(() => {
         expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
         expect(selectedRows).toBeDefined()
         expect(setSelectedRows).toBeDefined()
       })

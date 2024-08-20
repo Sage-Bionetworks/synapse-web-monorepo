@@ -4,7 +4,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import queryResultBundleJson from '../../mocks/query/syn16787123'
-import SynapseTable from './SynapseTable'
+import { SynapseTable } from './SynapseTable'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { SynapseConstants } from '../../utils'
@@ -92,5 +92,8 @@ export const SynapseTableDemo: Story = {
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
+  },
+  args: {
+    rowSet: queryResultBundleJson.queryResult.queryResults,
   },
 }

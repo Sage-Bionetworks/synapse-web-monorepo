@@ -11,9 +11,8 @@ import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 import { IconSvgButton } from './IconSvgButton'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from './QueryWrapper/QueryWrapper'
 import { getFileColumnModelId } from './SynapseTable/SynapseTableUtils'
+import { useQuery } from '@tanstack/react-query'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -27,12 +26,13 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) => {
-  const { executeQueryRequest } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
-  const columnModels = data?.columnModels
+  const { executeQueryRequest, queryMetadataQueryOptions } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const { data } = useQuery(queryMetadataQueryOptions)
+  const columnModels = data?.columnModels
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()

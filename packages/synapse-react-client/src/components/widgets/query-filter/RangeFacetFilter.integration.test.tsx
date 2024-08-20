@@ -1,7 +1,7 @@
 import { Collapse as MockCollapse } from '@mui/material'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
 import { RangeValues } from '../Range'
 import RangeSlider from '../RangeSlider/RangeSlider'
@@ -141,7 +141,9 @@ describe('RangeFacetFilter tests', () => {
       <QueryWrapper initQueryRequest={queryRequest}>
         <QueryVisualizationWrapper>
           <ContextReceiver />
-          <RangeFacetFilter {...props} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <RangeFacetFilter {...props} />
+          </Suspense>
         </QueryVisualizationWrapper>
       </QueryWrapper>,
       { wrapper: createWrapper() },

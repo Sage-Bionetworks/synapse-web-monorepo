@@ -9,7 +9,7 @@ import { IconSvgButton } from '../IconSvgButton'
 
 export type PlotPanelHeaderProps = {
   data?: QueryResultBundle
-  isLoadingNewBundle?: boolean
+  isLoading?: boolean
   title: string
   facetToPlot?: FacetColumnResultValues
   onHide: () => void
@@ -17,11 +17,10 @@ export type PlotPanelHeaderProps = {
 }
 
 export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
-  const { data, isLoadingNewBundle, title, facetToPlot, onHide, setShowModal } =
-    props
+  const { data, isLoading, title, facetToPlot, onHide, setShowModal } = props
   return (
     <div className="FacetNavPanel__title">
-      {!data && isLoadingNewBundle ? (
+      {!data && isLoading ? (
         <SkeletonInlineBlock width={100} />
       ) : (
         <span className="FacetNavPanel__title__name">{title}</span>

@@ -13,7 +13,7 @@ import { isTable } from '../../utils/functions/EntityTypeUtils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { CardConfiguration } from '../CardContainerLogic'
 import { TableQueryDownloadConfirmation } from '../download_list'
-import { SynapseErrorBoundary } from '../error/ErrorBanner'
+import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
@@ -24,11 +24,10 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
-import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
-import { hasSelectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
-import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
-import { SynapseTableProps } from '../SynapseTable'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
+import { SynapseTableConfiguration } from '../SynapseTable'
+import { NoContentPlaceholderType } from '../SynapseTable'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
 import TopLevelControls, {
@@ -41,8 +40,9 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import FilterAndView from './FilterAndView'
+import { RowSetView } from './RowSetView'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
+import { useQuery } from '@tanstack/react-query'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -50,6 +50,8 @@ export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 export const HAS_SELECTED_ROWS_CSS: string = 'hasSelectedRows'
 
 type QueryWrapperPlotNavOwnProps = {
+  /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
+  isInfinite?: boolean
   sql: string
   limit?: number
   shouldDeepLink?: boolean
@@ -59,7 +61,7 @@ type QueryWrapperPlotNavOwnProps = {
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   /** If initQueryJson is set, it will be the Query used in the initial QueryBundleRequest */
   initQueryJson?: string
-  tableConfiguration?: SynapseTableProps
+  tableConfiguration?: SynapseTableConfiguration
   cardConfiguration?: CardConfiguration
   searchConfiguration?: Omit<
     SearchV2Props,
@@ -72,6 +74,7 @@ type QueryWrapperPlotNavOwnProps = {
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
   onViewSharingSettingsClicked?: (benefactorId: string) => void
+  initialLimit?: number
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<
@@ -129,6 +132,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileIdColumnName'
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
+  | 'initialLimit'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -151,14 +155,17 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     remount,
     isFullTextSearchEnabled,
     customPlots,
+    initialLimit,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
+  const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
+    queryContext
+  const { isLoading: isLoadingQueryMetadata } = useQuery(
+    queryMetadataQueryOptions,
+  )
 
-  const { isFacetsAvailable: isFaceted } = queryContext
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-
-  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 
   const currentQueryRequest = queryContext.currentQueryRequest
 
@@ -183,71 +190,71 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               queryVisualizationContext.showFacetFilter
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
-            } ${hasSelectedRows ? HAS_SELECTED_ROWS_CSS : ''}`}
+            } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''}`}
             sx={{
               '*': {
-                cursor: isLoadingNewBundle ? 'wait' : undefined,
+                cursor: isLoadingQueryMetadata ? 'wait' : undefined,
               },
             }}
           >
-            <div className={`ErrorBannerWrapper`}>
-              <QueryWrapperErrorBanner />
-            </div>
-            {isFullTextSearchEnabled ? (
-              <FullTextSearch
-                helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+            <QueryWrapperErrorBoundary>
+              {isFullTextSearchEnabled ? (
+                <FullTextSearch
+                  helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+                />
+              ) : (
+                <SearchV2
+                  {...searchConfiguration}
+                  queryContext={queryContext}
+                  queryVisualizationContext={queryVisualizationContext}
+                />
+              )}
+              <SqlEditor />
+              {queryVisualizationContext.showDownloadConfirmation && (
+                <TableQueryDownloadConfirmation />
+              )}
+              <SynapseErrorBoundary>
+                <TopLevelControls
+                  showColumnSelection={tableConfiguration !== undefined}
+                  name={name}
+                  hideDownload={hideDownload}
+                  hideQueryCount={hideQueryCount}
+                  hideFacetFilterControl={!isFaceted}
+                  hideVisualizationsControl={!isFaceted}
+                  hideSqlEditorControl={hideSqlEditorControl}
+                  showExportToCavatica={showExportToCavatica}
+                  cavaticaConnectAccountURL={cavaticaConnectAccountURL}
+                  customControls={customControls}
+                  remount={remount}
+                />
+              </SynapseErrorBoundary>
+              {isFaceted && (
+                <>
+                  <FacetFilterControls availableFacets={availableFacets} />
+                </>
+              )}
+              <TotalQueryResults
+                frontText={''}
+                endText={hasFacetsOrFilters ? 'filtered by' : ''}
+                hideIfUnfiltered={true}
               />
-            ) : (
-              <SearchV2
-                {...searchConfiguration}
-                queryContext={queryContext}
-                queryVisualizationContext={queryVisualizationContext}
+              <PlotsContainer
+                facetsToPlot={facetsToPlot}
+                customPlots={customPlots}
               />
-            )}
-            <SqlEditor />
-            {queryVisualizationContext.showDownloadConfirmation && (
-              <TableQueryDownloadConfirmation />
-            )}
-            <SynapseErrorBoundary>
-              <TopLevelControls
-                showColumnSelection={tableConfiguration !== undefined}
-                name={name}
+              <RowSetView
+                tableConfiguration={tableConfiguration}
                 hideDownload={hideDownload}
-                hideQueryCount={hideQueryCount}
-                hideFacetFilterControl={!isFaceted}
-                hideVisualizationsControl={!isFaceted}
-                hideSqlEditorControl={hideSqlEditorControl}
-                showExportToCavatica={showExportToCavatica}
-                cavaticaConnectAccountURL={cavaticaConnectAccountURL}
-                customControls={customControls}
-                remount={remount}
+                cardConfiguration={cardConfiguration}
+                initialLimit={initialLimit}
               />
-            </SynapseErrorBoundary>
-            {isFaceted && (
-              <>
-                <FacetFilterControls availableFacets={availableFacets} />
-              </>
-            )}
-            <TotalQueryResults
-              frontText={''}
-              endText={hasFacetsOrFilters ? 'filtered by' : ''}
-              hideIfUnfiltered={true}
-            />
-            <PlotsContainer
-              facetsToPlot={facetsToPlot}
-              customPlots={customPlots}
-            />
-            <FilterAndView
-              tableConfiguration={tableConfiguration}
-              hideDownload={hideDownload}
-              cardConfiguration={cardConfiguration}
-            />
-            {showExportMetadata && (
-              <ModalDownload
-                getLastQueryRequest={queryContext?.getCurrentQueryRequest}
-                onClose={() => setShowExportMetadata(false)}
-              />
-            )}
+              {showExportMetadata && (
+                <ModalDownload
+                  getLastQueryRequest={queryContext?.getCurrentQueryRequest}
+                  onClose={() => setShowExportMetadata(false)}
+                />
+              )}
+            </QueryWrapperErrorBoundary>
           </Box>
         )
       }}
@@ -263,6 +270,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     sql,
     sqlOperator,
     tableConfiguration,
+    isInfinite = !tableConfiguration,
     limit = DEFAULT_PAGE_SIZE,
     initQueryJson,
     showLastUpdatedOn,
@@ -316,7 +324,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       {...props}
       initQueryRequest={initQueryRequest}
       key={componentKey}
-      isInfinite={!tableConfiguration}
+      isInfinite={isInfinite}
     >
       <QueryVisualizationWrapper
         unitDescription={unitDescription}

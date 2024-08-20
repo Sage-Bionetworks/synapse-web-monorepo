@@ -1,25 +1,24 @@
-import { ColumnModel, Row } from '@sage-bionetworks/synapse-types'
+import { Row, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import { atom } from 'jotai'
-import { tableQueryDataAtom } from './QueryWrapper'
 
 export function getRowSelectionEqualityComparator(
   row: Row,
-  columnModels?: ColumnModel[],
+  selectColumns?: SelectColumn[],
   rowSelectionPrimaryKey?: string[],
 ): (r1: Row, r2: Row) => boolean {
   // Worst-case scenario, use deep equality to compare rows
   // This will fail from the user's perspective if any data changes in the rows since the last time the selection was updated.
   let comparator: (r1: Row, r2: Row) => boolean = isEqual
-  if (rowSelectionPrimaryKey && columnModels) {
+  if (rowSelectionPrimaryKey && selectColumns) {
     // If the `rowSelectionPrimaryKey` is defined, a row is selected if we have a PK match
     // Even this selection is not guaranteed to persist if data changes, e.g. if column order changes and the PK now has a different column index
     comparator = (r1: Row, r2: Row) => {
       const r1PrimaryKeyValues = rowSelectionPrimaryKey.map(
-        key => r1.values[columnModels.findIndex(cm => cm.name === key)]!,
+        key => r1.values[selectColumns.findIndex(cm => cm.name === key)]!,
       )
       const r2PrimaryKeyValues = rowSelectionPrimaryKey.map(
-        key => r2.values[columnModels.findIndex(cm => cm.name === key)]!,
+        key => r2.values[selectColumns.findIndex(cm => cm.name === key)]!,
       )
       return isEqual(r1PrimaryKeyValues, r2PrimaryKeyValues)
     }
@@ -58,14 +57,18 @@ export const selectedRowsAtom = atom<Row[]>([])
 /**
  * Can be used to determine if a row is selected. If a `rowSelectionPrimaryKey` is defined, then the row is selected if it has a matching PK.
  */
-export const isRowSelectedAtom = atom(get => (row: Row) => {
-  const comparator = getRowSelectionEqualityComparator(
-    row,
-    get(tableQueryDataAtom)?.columnModels ?? [],
-    get(rowSelectionPrimaryKeyAtom),
-  )
-  return get(selectedRowsAtom).some(selectedRow => comparator(selectedRow, row))
-})
+export const isRowSelectedAtom = atom(
+  get => (row: Row, selectColumns: SelectColumn[]) => {
+    const comparator = getRowSelectionEqualityComparator(
+      row,
+      selectColumns,
+      get(rowSelectionPrimaryKeyAtom),
+    )
+    return get(selectedRowsAtom).some(selectedRow =>
+      comparator(selectedRow, row),
+    )
+  },
+)
 
 /**
  * Whether rows are currently selected

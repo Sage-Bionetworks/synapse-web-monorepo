@@ -41,7 +41,7 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
       height: '100%',
       width: '3px',
       padding: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0,0,0,0.25)',
       cursor: 'col-resize',
       userSelect: 'none',
       touchAction: 'none',
@@ -53,9 +53,9 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
     '@media (hover: hover)': {
       '.resizer': {
         opacity: 0,
-        '*:hover > .resizer': {
-          opacity: 1,
-        },
+      },
+      '*:hover > .resizer': {
+        opacity: 0.75,
       },
     },
   }))

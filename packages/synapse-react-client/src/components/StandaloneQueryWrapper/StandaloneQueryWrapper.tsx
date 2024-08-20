@@ -3,7 +3,7 @@ import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions/SqlFunctions'
-import SynapseTable, { SynapseTableProps } from '../SynapseTable/SynapseTable'
+import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
@@ -22,14 +22,13 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
-import LastUpdatedOn from '../QueryWrapperPlotNav/LastUpdatedOn'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import {
   Operator,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
-import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 
 type StandaloneQueryWrapperOwnProps = {
   sql: string
@@ -54,7 +53,7 @@ type StandaloneQueryWrapperOwnProps = {
     'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
   >
 
-export type StandaloneQueryWrapperProps = SynapseTableProps &
+export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
   SearchParams &
   Operator &
   StandaloneQueryWrapperOwnProps
@@ -177,16 +176,13 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
-                      <QueryWrapperLoadingScreen />
-                      <SynapseTable
-                        showAccessColumn={showAccessColumn}
-                        data-testid="SynapseTable"
-                        hideAddToDownloadListColumn={
-                          hideAddToDownloadListColumn
-                        }
-                        {...rest}
+                      <RowSetView
+                        tableConfiguration={{
+                          showAccessColumn: showAccessColumn,
+                          hideAddToDownloadListColumn,
+                          ...rest,
+                        }}
                       />
-                      <LastUpdatedOn />
                     </>
                   )
                 }}

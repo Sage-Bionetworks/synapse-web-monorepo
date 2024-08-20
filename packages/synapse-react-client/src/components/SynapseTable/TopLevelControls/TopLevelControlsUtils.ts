@@ -1,8 +1,8 @@
 import { QueryContextType } from '../../QueryContext'
-import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import { Row } from '@sage-bionetworks/synapse-types'
 
 const TO_DOWNLOAD_CART = 'to Download Cart'
 
@@ -15,14 +15,14 @@ const TO_DOWNLOAD_CART = 'to Download Cart'
  * If the total number of query results is unknown, return undefined.
  * @param hasSelectedRows
  * @param selectedRows
- * @param data
+ * @param totalNumberOfRows
  */
 export function getNumberOfResultsToInvokeAction(
   hasSelectedRows: boolean,
   selectedRows: Row[],
-  data: QueryResultBundle | undefined,
+  totalNumberOfRows?: number,
 ) {
-  return hasSelectedRows ? selectedRows.length : data?.queryCount
+  return hasSelectedRows ? selectedRows.length : totalNumberOfRows
 }
 
 /**
@@ -36,14 +36,14 @@ export function getNumberOfResultsToInvokeAction(
  * @param hasResettableFilters
  * @param hasSelectedRows
  * @param selectedRows
- * @param data
+ * @param totalNumberOfRows
  * @param unitDescription
  */
 export function getNumberOfResultsToInvokeActionCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
   hasSelectedRows: boolean,
   selectedRows: Row[],
-  data: QueryResultBundle | undefined,
+  totalNumberOfRows: number | undefined,
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {
   if (!hasResettableFilters && !hasSelectedRows) {
@@ -53,7 +53,7 @@ export function getNumberOfResultsToInvokeActionCopy(
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
     hasSelectedRows,
     selectedRows,
-    data,
+    totalNumberOfRows,
   )
   if (numberOfResultsToInvokeAction != null) {
     return `${numberOfResultsToInvokeAction.toLocaleString()} ${pluralize(
@@ -71,14 +71,14 @@ export function getNumberOfResultsToInvokeActionCopy(
  * @param hasResettableFilters
  * @param hasSelectedRows
  * @param selectedRows
- * @param data
+ * @param totalNumberOfRows
  * @param unitDescription
  */
 export function getNumberOfResultsToAddToDownloadListCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
   hasSelectedRows: boolean,
   selectedRows: Row[],
-  data: QueryResultBundle | undefined,
+  totalNumberOfRows: number | undefined,
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {
   if (!hasResettableFilters && !hasSelectedRows) {
@@ -90,7 +90,7 @@ export function getNumberOfResultsToAddToDownloadListCopy(
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
     hasSelectedRows,
     selectedRows,
-    data,
+    totalNumberOfRows,
   )
   if (numberOfResultsToInvokeAction != null) {
     return `Add ${numberOfResultsToInvokeAction.toLocaleString()} Selected ${upperFirst(

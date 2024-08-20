@@ -10,11 +10,6 @@ import {
 import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
 import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
 import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation'
-import {
-  QueryVisualizationContextConsumer,
-  QueryVisualizationContextType,
-  QueryVisualizationWrapper,
-} from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
 import QueryWrapper from '../QueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -25,6 +20,10 @@ import { generateAsyncJobHandlers } from '../../mocks/msw/handlers/asyncJobHandl
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import SynapseClient from '../../synapse-client'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../QueryVisualizationWrapper'
 
 const ID_COLUMN_ID = 11112
 const CURRENT_VERSION_COLUMN_ID = 11113
@@ -59,8 +58,6 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
-let receivedQueryVisualizationContext: QueryVisualizationContextType | undefined
-
 async function waitForExpectedProps(
   expectedFileCount: number,
 ): Promise<DownloadConfirmationUIProps> {
@@ -85,6 +82,10 @@ async function setUp(
   fileIdColumnName?: string,
   fileVersionColumnName?: string,
 ) {
+  const mockQueryVisualizationContext: Partial<QueryVisualizationContextType> =
+    {
+      setShowDownloadConfirmation: jest.fn(),
+    }
   const user = userEvent.setup()
   const component = render(
     <QueryWrapper
@@ -92,37 +93,31 @@ async function setUp(
       fileIdColumnName={fileIdColumnName}
       fileVersionColumnName={fileVersionColumnName}
     >
-      <QueryVisualizationWrapper>
-        <QueryVisualizationContextConsumer>
-          {context => {
-            receivedQueryVisualizationContext = context
-            return <TableQueryDownloadConfirmation />
-          }}
-        </QueryVisualizationContextConsumer>
-      </QueryVisualizationWrapper>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={
+          mockQueryVisualizationContext as QueryVisualizationContextType
+        }
+      >
+        <TableQueryDownloadConfirmation />
+      </QueryVisualizationContextProvider>
     </QueryWrapper>,
     {
       wrapper: createWrapper(),
     },
   )
 
-  await waitFor(() => expect(receivedQueryVisualizationContext).toBeDefined())
-
-  act(() => {
-    receivedQueryVisualizationContext!.setShowDownloadConfirmation(true)
-  })
-
-  await waitFor(() =>
-    expect(receivedQueryVisualizationContext!.showDownloadConfirmation).toBe(
-      true,
-    ),
-  )
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
   const downloadConfirmationUiPassedProps = await waitForExpectedProps(
     expectedFileCount,
   )
 
-  return { component, user, downloadConfirmationUiPassedProps }
+  return {
+    component,
+    user,
+    downloadConfirmationUiPassedProps,
+    mockSetShowDownloadConfirmation:
+      mockQueryVisualizationContext.setShowDownloadConfirmation,
+  }
 }
 
 const expectedFileCountWithSelectFileColumn = 200
@@ -176,9 +171,10 @@ describe('TableQueryDownloadConfirmation', () => {
   afterAll(() => server.close())
 
   it('adds files to download list using a table query when invoked', async () => {
-    const { downloadConfirmationUiPassedProps } = await setUp(
-      expectedFileCountWithSelectFileColumn,
-    )
+    const {
+      downloadConfirmationUiPassedProps,
+      mockSetShowDownloadConfirmation,
+    } = await setUp(expectedFileCountWithSelectFileColumn)
 
     // Call under test
     act(() => {
@@ -203,16 +199,15 @@ describe('TableQueryDownloadConfirmation', () => {
         'success',
         expect.any(Object),
       )
-      expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
-        false,
-      )
+      expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
     })
   })
 
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
-    const { downloadConfirmationUiPassedProps } = await setUp(
-      expectedFileCountWithSelectFileColumn,
-    )
+    const {
+      downloadConfirmationUiPassedProps,
+      mockSetShowDownloadConfirmation,
+    } = await setUp(expectedFileCountWithSelectFileColumn)
 
     // Call under test
     act(() => {
@@ -220,9 +215,7 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     expect(addToDownloadListSpy).not.toHaveBeenCalled()
-    expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
-      false,
-    )
+    expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
   })
 
   it('handles case where adding files to the download list results in an error', async () => {
@@ -238,9 +231,10 @@ describe('TableQueryDownloadConfirmation', () => {
       ),
     )
 
-    const { downloadConfirmationUiPassedProps } = await setUp(
-      expectedFileCountWithSelectFileColumn,
-    )
+    const {
+      downloadConfirmationUiPassedProps,
+      mockSetShowDownloadConfirmation,
+    } = await setUp(expectedFileCountWithSelectFileColumn)
 
     // Call under test
     act(() => {
@@ -250,9 +244,7 @@ describe('TableQueryDownloadConfirmation', () => {
     await waitFor(() => {
       expect(addToDownloadListSpy).toHaveBeenCalledTimes(1)
       expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
-      expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
-        false,
-      )
+      expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
     })
   })
   it('setting the fileIdColumnName and fileVersionColumnName should update the AddToDownloadListRequest query if ColumnModels are available in the result', async () => {

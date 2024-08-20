@@ -8,7 +8,7 @@ import {
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
-import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryPerFacetPlotsCardProps = {
@@ -22,7 +22,7 @@ export type QueryPerFacetPlotsCardProps = {
   detailsPagePath: string
 } & Pick<QueryVisualizationContextType, 'unitDescription'>
 
-export function getQueryRequest(
+function getQueryRequest(
   sql: string,
   selectFacetColumnName: string,
   selectFacetColumnValue: string,
@@ -71,13 +71,14 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<
   return (
     <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
       <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
-        <QueryWrapperErrorBanner />
-        <FacetPlotsCard
-          title={title}
-          description={description}
-          facetsToPlot={facetsToPlot}
-          detailsPagePath={detailsPagePath}
-        />
+        <QueryWrapperErrorBoundary>
+          <FacetPlotsCard
+            title={title}
+            description={description}
+            facetsToPlot={facetsToPlot}
+            detailsPagePath={detailsPagePath}
+          />
+        </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )

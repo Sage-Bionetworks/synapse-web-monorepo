@@ -11,26 +11,25 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Checkbox } from '../widgets/Checkbox'
 import { isEqual } from 'lodash-es'
-import React, { useCallback } from 'react'
+import React, { Suspense, useCallback } from 'react'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import SynapseTableCell from './SynapseTableCell'
 import { useSynapseTableContext } from './SynapseTableContext'
 import { useAtom, useAtomValue } from 'jotai'
-import {
-  lockedColumnAtom,
-  tableQueryDataAtom,
-} from '../QueryWrapper/QueryWrapper'
 import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
+import { useQueryContext } from '../QueryContext'
+import { useQuery } from '@tanstack/react-query'
+import { Skeleton } from '@mui/material'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -39,7 +38,9 @@ const columnIdPrefix =
 const columnHelper = createColumnHelper<Row>()
 
 function RowSelectionCell(props: CellContext<Row, unknown>) {
-  const { row } = props
+  const { row, table } = props
+  const rowSet = table.options.meta?.rowSet
+
   const isRowSelected = useAtomValue(isRowSelectedAtom)
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
@@ -48,7 +49,7 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
       <Checkbox
         label={'Select row'}
         hideLabel={true}
-        checked={isRowSelected(row.original)}
+        checked={isRowSelected(row.original, rowSet!.headers)}
         onChange={(checked: boolean) => {
           const cloneSelectedRows = [...selectedRows]
           if (checked) {
@@ -69,10 +70,20 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   )
 }
 
+function RowSelectionCellWithSuspense(props: CellContext<Row, unknown>) {
+  return (
+    <Suspense
+      fallback={<Skeleton variant={'rectangular'} width={20} height={20} />}
+    >
+      <RowSelectionCell {...props} />
+    </Suspense>
+  )
+}
+
 export const rowSelectionColumn = columnHelper.display({
   id: `${columnIdPrefix}.RowSelectionColumn`,
   enableResizing: false,
-  cell: RowSelectionCell,
+  cell: RowSelectionCellWithSuspense,
   maxSize: 36,
   meta: {
     textAlign: 'center',
@@ -202,13 +213,13 @@ export function TableDataColumnHeader(
   props: HeaderContext<Row, string | null>,
 ) {
   const { column } = props
-  const lockedColumn = useAtomValue(lockedColumnAtom)
-  const data = useAtomValue(tableQueryDataAtom)
-  const columnModels = data?.columnModels ?? []
-  const selectColumns = data?.selectColumns ?? []
+  const { queryMetadataQueryOptions, lockedColumn } = useQueryContext()
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const columnModels = queryMetadata?.columnModels ?? []
+  const selectColumns = queryMetadata?.selectColumns ?? []
   const selectColumn = selectColumns.find(sc => sc.name === column.id)
   const columnModel = columnModels.find(cm => cm.name === column.id)
-  const facets = data?.facets ?? []
+  const facets = queryMetadata?.facets ?? []
   const { getColumnDisplayName, getHelpText } = useQueryVisualizationContext()
 
   const displayColumnName = selectColumn
@@ -263,15 +274,16 @@ export function TableDataColumnHeader(
 }
 
 export function TableDataCell(props: CellContext<Row, string | null>) {
-  const { cell } = props
-  const data = useAtomValue(tableQueryDataAtom)
+  const { cell, table } = props
+  const { queryMetadataQueryOptions } = useQueryContext()
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const entityOrRowId = getEntityOrRowId(props)
   const entityOrRowVersion = getEntityOrRowVersion(props)
   const versionNumber =
     entityOrRowVersion !== undefined ? parseInt(entityOrRowVersion) : undefined
-  const selectColumns = data?.selectColumns ?? []
+  const selectColumns = table.options.meta?.rowSet?.headers ?? []
   const selectColumn = selectColumns.find(cm => cm.name === cell.column.id)
-  const columnModels = data?.columnModels ?? []
+  const columnModels = queryMetadata?.columnModels ?? []
   const { columnLinks } = useSynapseTableContext()
   if (selectColumn) {
     const columnLinkConfig = (columnLinks ?? []).find(el => {

@@ -1,21 +1,16 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from '../QueryContext'
 import { NoContentPlaceholderType } from '../SynapseTable'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
 import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
+import { useQuery } from '@tanstack/react-query'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from './QueryVisualizationContext'
 
 type ColumnOrFacetHelpConfig = {
   /** Text that describes the column or facet */
@@ -25,77 +20,6 @@ type ColumnOrFacetHelpConfig = {
   /** The JSON path matching a described JSON Column facet */
   jsonPath?: string
 }
-
-export type QueryVisualizationContextType = {
-  columnsToShowInTable: string[]
-  setColumnsToShowInTable: (newState: string[]) => void
-  rgbIndex?: number
-  unitDescription: string
-  /** Whether to show when the table or view was last updated. */
-  showLastUpdatedOn?: boolean
-  /** Given a column name, return the display name for the column */
-  getColumnDisplayName: (columnName: string, jsonPath?: string) => string
-  /** Given a column name or JSON facet, return the configured help text */
-  getHelpText: (columnName: string, jsonPath?: string) => string | undefined
-  /** Given a cell value and a column type, returns the displayed value for the data */
-  getDisplayValue: (value: string, columnType: ColumnType) => string
-  /** React node to display in place of cards/table when there are no results. */
-  NoContentPlaceholder: () => JSX.Element
-  isShowingExportToCavaticaModal: boolean
-  setIsShowingExportToCavaticaModal: React.Dispatch<
-    React.SetStateAction<boolean>
-  >
-  showFacetFilter: boolean
-  setShowFacetFilter: React.Dispatch<React.SetStateAction<boolean>>
-  showSearchBar: boolean
-  setShowSearchBar: React.Dispatch<React.SetStateAction<boolean>>
-  showDownloadConfirmation: boolean
-  setShowDownloadConfirmation: React.Dispatch<React.SetStateAction<boolean>>
-  showSqlEditor: boolean
-  setShowSqlEditor: React.Dispatch<React.SetStateAction<boolean>>
-  showCopyToClipboard: boolean
-  setShowCopyToClipboard: React.Dispatch<React.SetStateAction<boolean>>
-  showPlots: boolean
-  setShowPlots: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-/**
- * This must be exported to use the context in class components.
- */
-export const QueryVisualizationContext = createContext<
-  QueryVisualizationContextType | undefined
->(undefined)
-
-export type QueryVisualizationContextProviderProps = React.PropsWithChildren<{
-  queryVisualizationContext: QueryVisualizationContextType
-}>
-
-/**
- * Provides fields and functions related to visualizing a Synapse table query. For actual query data, see QueryContextProvider.
- */
-export const QueryVisualizationContextProvider = ({
-  children,
-  queryVisualizationContext,
-}: QueryVisualizationContextProviderProps) => {
-  return (
-    <QueryVisualizationContext.Provider value={queryVisualizationContext}>
-      {children}
-    </QueryVisualizationContext.Provider>
-  )
-}
-
-export function useQueryVisualizationContext(): QueryVisualizationContextType {
-  const context = useContext(QueryVisualizationContext)
-  if (context === undefined) {
-    throw new Error(
-      'useQueryVisualizationContext must be used within a QueryWrapper',
-    )
-  }
-  return context
-}
-
-export const QueryVisualizationContextConsumer =
-  QueryVisualizationContext.Consumer
 
 export type QueryVisualizationWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -137,6 +61,7 @@ export function QueryVisualizationWrapper(
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
+    visibleColumnCount = Infinity,
   } = props
 
   const columnAliases = useMemo(
@@ -144,9 +69,20 @@ export function QueryVisualizationWrapper(
     [props.columnAliases],
   )
 
-  const { getCurrentQueryRequest, isFacetsAvailable, hasResettableFilters } =
-    useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
+  const {
+    getCurrentQueryRequest,
+    hasFacetedSelectColumn,
+    hasResettableFilters,
+    rowDataQueryOptions,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+  const { data: rowData } = useQuery(rowDataQueryOptions)
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  // Get the selectColumns from either query so that creating the context isn't bottlenecked by one or the other
+  // We deep-compare-memoize the selectColumns so we don't reset visible columns if the reference changes, but not the contents (e.g. on page change)
+  const selectColumns = useDeepCompareMemoize(
+    rowData?.headers ?? queryMetadata?.selectColumns ?? [],
+  )
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
@@ -171,17 +107,12 @@ export function QueryVisualizationWrapper(
     [getCurrentQueryRequest],
   )
 
-  // We deep-compare-memoize the selectColumns so we don't reset visible columns when the reference changes, but not the contents (e.g. on page change)
-  const selectColumns = useDeepCompareMemoize(data?.selectColumns)
-
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
     setVisibleColumns(
-      selectColumns
-        ?.slice(0, props.visibleColumnCount ?? Infinity)
-        .map(el => el.name) ?? [],
+      selectColumns.slice(0, visibleColumnCount).map(el => el.name),
     )
-  }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
+  }, [selectColumns, lastQueryRequest.query.sql, visibleColumnCount])
 
   const getColumnDisplayName = useCallback(
     (columnName: string, jsonPath?: string) => {
@@ -196,7 +127,7 @@ export function QueryVisualizationWrapper(
         return columnAliases[columnName]
       }
       if (jsonPath) {
-        const columnModel = data?.columnModels?.find(
+        const columnModel = queryMetadata?.columnModels?.find(
           cm => cm.name === columnName,
         )
         if (columnModel?.jsonSubColumns) {
@@ -210,7 +141,7 @@ export function QueryVisualizationWrapper(
       }
       return unCamelCase(columnName)
     },
-    [columnAliases, data?.columnModels],
+    [columnAliases, queryMetadata?.columnModels],
   )
 
   const getHelpText = useCallback(
@@ -250,7 +181,7 @@ export function QueryVisualizationWrapper(
       NoContentPlaceholder,
       isShowingExportToCavaticaModal,
       setIsShowingExportToCavaticaModal,
-      showFacetFilter: isFacetsAvailable ? showFacetFilter : false,
+      showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
       setShowSearchBar,
@@ -258,7 +189,7 @@ export function QueryVisualizationWrapper(
       setShowDownloadConfirmation,
       showSqlEditor,
       setShowSqlEditor,
-      showPlots: hasCustomPlots || isFacetsAvailable ? showPlots : false,
+      showPlots: hasCustomPlots || hasFacetedSelectColumn ? showPlots : false,
       setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
@@ -267,7 +198,7 @@ export function QueryVisualizationWrapper(
       NoContentPlaceholder,
       getColumnDisplayName,
       getHelpText,
-      isFacetsAvailable,
+      hasFacetedSelectColumn,
       isShowingExportToCavaticaModal,
       props.rgbIndex,
       props.showLastUpdatedOn,

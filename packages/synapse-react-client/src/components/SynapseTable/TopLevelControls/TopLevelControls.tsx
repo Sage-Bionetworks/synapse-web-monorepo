@@ -6,6 +6,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Row,
+  Table,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'
@@ -24,16 +25,13 @@ import {
 import IconSvg from '../../IconSvg'
 import { useAtomValue } from 'jotai'
 import {
-  lockedColumnAtom,
-  tableQueryDataAtom,
-  tableQueryEntityAtom,
-} from '../../QueryWrapper/QueryWrapper'
-import {
   hasSelectedRowsAtom,
   isRowSelectionVisibleAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
 import CustomControlButton from './CustomControlButton'
+import { useQuery } from '@tanstack/react-query'
+import { useGetEntity } from '../../../synapse-queries'
 
 const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaTopLevelControlButton'
 
@@ -88,11 +86,17 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     remount,
   } = props
 
-  const { getInitQueryRequest, hasResettableFilters, getCurrentQueryRequest } =
-    useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
-  const entity = useAtomValue(tableQueryEntityAtom)
-  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const {
+    entityId,
+    versionNumber,
+    getInitQueryRequest,
+    hasResettableFilters,
+    getCurrentQueryRequest,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { lockedColumn } = useQueryContext()
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
@@ -154,14 +158,14 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
     hasSelectedRows,
     selectedRows,
-    data,
+    queryMetadata?.queryCount,
   )
   const numberOfResultsToInvokeActionAsText =
     getNumberOfResultsToInvokeActionCopy(
       hasResettableFilters,
       hasSelectedRows,
       selectedRows,
-      data,
+      queryMetadata?.queryCount,
       unitDescription,
     )
 
@@ -217,7 +221,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     disabled={!numberOfResultsToInvokeAction}
                     control={customControl}
                     callbackData={{
-                      data,
+                      data: queryMetadata,
                       selectedRows,
                       refresh,
                       request: getCurrentQueryRequest(),
@@ -325,7 +329,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           {showColumnSelection && (
             <ColumnSelection
-              headers={data?.selectColumns}
+              headers={queryMetadata?.selectColumns}
               isColumnSelected={columnsToShowInTable}
               toggleColumnSelection={toggleColumnSelection}
               darkTheme={true}

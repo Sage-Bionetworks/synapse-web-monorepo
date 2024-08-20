@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -11,7 +11,6 @@ import {
 import {
   extractPlotDataArray,
   getPlotStyle,
-  GraphData,
 } from '../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../widgets/facet-nav/useFacetPlots'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -35,11 +34,8 @@ import {
 } from './FacetPlotsCardGrid'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 import { times } from 'lodash-es'
-import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-} from '../QueryWrapper/QueryWrapper'
+import { useQueryContext } from '../QueryContext'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -95,36 +91,39 @@ function LoadingCard(props: { numPlots: number }) {
     </Paper>
   )
 }
-const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
-  title,
-  description,
-  facetsToPlot,
-  detailsPagePath,
-}: FacetPlotsCardProps): JSX.Element => {
+
+function FacetPlotsCard(props: FacetPlotsCardProps) {
+  const { title, description, facetsToPlot, detailsPagePath } = props
   const { accessToken } = useSynapseContext()
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const data = useAtomValue(tableQueryDataAtom)
+  const { queryMetadataQueryOptions } = useQueryContext()
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
-  const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
-  const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
-  const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
 
-  useEffect(() => {
-    if (!facetsToPlot || !data) {
-      return
-    } else {
+  const facetDataArray = useMemo(() => {
+    if (!facetsToPlot) {
+      return []
+    }
+
+    return getFacets(queryMetadata, facetsToPlot)
+  }, [facetsToPlot, queryMetadata])
+
+  const { data: facetPlotDataArray } = useSuspenseQuery({
+    queryKey: ['facetPlotDataArray', facetsToPlot, facetDataArray],
+    queryFn: async () => {
+      if (!facetsToPlot) {
+        return []
+      }
+
       const getColumnType = (
         facetToPlot: FacetColumnResult,
       ): ColumnTypeEnum | undefined =>
-        data?.columnModels!.find(
+        queryMetadata.columnModels!.find(
           columnModel => columnModel.name === facetToPlot.columnName,
         )?.columnType as ColumnTypeEnum
 
-      const facetsDataToPlot = getFacets(data, facetsToPlot)
-      setFacetDataArray(facetsDataToPlot)
-      Promise.all(
-        facetsDataToPlot.map(async (item, index) => {
+      return Promise.all(
+        facetDataArray.map(async (item, index) => {
           const plotData = await extractPlotDataArray(
             item as FacetColumnResultValues,
             getColumnType(item),
@@ -134,39 +133,42 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           )
           return plotData
         }),
-      ).then(newPlotData => setFacetPlotDataArray(newPlotData))
-      // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
-      const selectedFacet: FacetColumnResultValueCount | undefined = data
-        ?.facets!.map(item => {
-          const facetValues: FacetColumnResultValueCount[] = (
-            item as FacetColumnResultValues
-          ).facetValues
-          if (facetValues) {
-            const filteredFacetValues: FacetColumnResultValueCount[] =
-              facetValues.filter(facetValue => {
-                return facetValue.isSelected
-              })
-            return filteredFacetValues.length > 0
-              ? filteredFacetValues[0]
-              : undefined
-          } else {
-            return undefined
-          }
-        })
-        .filter(x => x !== undefined)[0]
+      )
+    },
+  })
 
-      if (selectedFacet && selectedFacet.value) {
-        setSelectedFacetValue(selectedFacet?.value)
-      }
+  const selectedFacetValue = useMemo(() => {
+    if (!facetsToPlot) {
+      return ''
     }
-  }, [facetsToPlot, data, accessToken])
 
-  if (
-    isLoadingNewBundle ||
-    !facetPlotDataArray ||
-    !facetDataArray ||
-    facetDataArray.length === 0
-  ) {
+    // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
+    const selectedFacet: FacetColumnResultValueCount | undefined = queryMetadata
+      ?.facets!.map(item => {
+        const facetValues: FacetColumnResultValueCount[] = (
+          item as FacetColumnResultValues
+        ).facetValues
+        if (facetValues) {
+          const filteredFacetValues: FacetColumnResultValueCount[] =
+            facetValues.filter(facetValue => {
+              return facetValue.isSelected
+            })
+          return filteredFacetValues.length > 0
+            ? filteredFacetValues[0]
+            : undefined
+        } else {
+          return undefined
+        }
+      })
+      .filter(x => x !== undefined)[0]
+
+    if (selectedFacet && selectedFacet.value) {
+      return selectedFacet?.value
+    }
+    return ''
+  }, [facetsToPlot, queryMetadata?.facets])
+
+  if (!facetPlotDataArray || !facetDataArray || facetDataArray.length === 0) {
     return <LoadingCard numPlots={(facetsToPlot ?? []).length} />
   } else {
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
@@ -254,4 +256,12 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   }
 }
 
-export default FacetPlotsCard
+export default function FacetPlotsCardWithSuspense(props: FacetPlotsCardProps) {
+  return (
+    <Suspense
+      fallback={<LoadingCard numPlots={(props.facetsToPlot ?? []).length} />}
+    >
+      <FacetPlotsCard {...props} />
+    </Suspense>
+  )
+}

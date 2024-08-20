@@ -72,6 +72,7 @@ export const Cards: Story = {
       },
     ],
     limit: 5,
+    initialLimit: 2,
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
@@ -286,7 +287,7 @@ const handleRowSelectionCustomCommandClick = async (
 // See handleParticipantWorkflowChange in crc-researcher for a more complex example
 export const TableRowSelectionWithCustomCommand: Story = {
   args: {
-    sql: 'SELECT * FROM syn51186974',
+    sql: 'SELECT * FROM syn11346063.57',
     isRowSelectionVisible: true,
     tableConfiguration: {},
     name: 'Row Selection Demo',
@@ -297,7 +298,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
     // while the participant view of the same Virtual Table should have another.
     // The custom commands should add filters that target the other perspective
     // (file command adds filter for participant perspective, participant command adds filter for the file perspective)
-    additionalFiltersSessionStorageKey: 'syn51186974-selectedfiles',
+    additionalFiltersSessionStorageKey: ' syn11346063-selectedfiles',
     customControls: [
       {
         buttonText: 'Row Custom Command',
@@ -415,6 +416,28 @@ export const MaterializedViewOfFiles: Story = {
     },
     name: 'MV with File Commands Demo',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    showExportToCavatica: true,
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'currentVersion',
+  },
+}
+
+export const TableWithClickWrap: Story = {
+  parameters: {
+    stack: 'development',
+  },
+  args: {
+    sql: 'SELECT * FROM syn14227599',
+
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true,
+    },
+
+    name: 'Table with Click Wrap',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
