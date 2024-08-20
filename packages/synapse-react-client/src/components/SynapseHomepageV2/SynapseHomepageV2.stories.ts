@@ -3,8 +3,7 @@ import { SynapseHomepageV2 } from './SynapseHomepageV2'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
-
-import { registerSynapseHomepageMockQueries } from '../../mocks/homepage/HomepageMocks'
+import { registerSynapseHomepageMockQueries } from '../../mocks/query/mockHomepageQueryResultData'
 
 const meta = {
   title: 'Synapse/HomePage',

@@ -6,7 +6,7 @@ import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
-import { registerSynapseHomepageMockQueries } from '../../mocks/homepage/HomepageMocks'
+import { registerSynapseHomepageMockQueries } from '../../mocks/query/mockHomepageQueryResultData'
 
 describe('SynapseHomepageV2 Snapshot test', () => {
   beforeAll(() => server.listen())
