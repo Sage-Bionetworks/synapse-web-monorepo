@@ -26,7 +26,7 @@ function Footer() {
       </a>
     </span>
   ) : (
-    <img alt="footer" src={icon} />
+    <img alt="footer" className="nav-logo" src={icon} />
   )
   const termsOfServiceUrl =
     footerConfig.termsOfService ??
