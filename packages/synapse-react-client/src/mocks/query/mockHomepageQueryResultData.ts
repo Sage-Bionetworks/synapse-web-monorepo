@@ -1,4 +1,12 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { registerTableQueryResult } from '../msw/handlers/tableQueryService'
+import {
+  featuredDatasetsTable,
+  generalStatsMetricsTable,
+  past30DaysDownloadMetricsTable,
+  searchAutocompleteTable,
+  synapseInActionTable,
+} from '../../components/SynapseHomepageV2/SynapseHomepageV2'
 
 export const mockHomepageTrendingQueryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -519,3 +527,64 @@ export const mockHomepageSearchAutocompleteQueryResultBundle: QueryResultBundle 
       },
     },
   }
+
+export function registerSynapseHomepageMockQueries() {
+  registerTableQueryResult(
+    {
+      sql: `SELECT *
+            FROM ${past30DaysDownloadMetricsTable}`,
+      sort: [
+        {
+          column: 'last_updated',
+          direction: 'DESC',
+        },
+        {
+          column: 'N_UNIQUE_USERS',
+          direction: 'DESC',
+        },
+      ],
+    },
+    mockHomepageTrendingQueryResultBundle,
+  )
+  registerTableQueryResult(
+    {
+      sql: `SELECT *
+            FROM ${generalStatsMetricsTable}`,
+      sort: [
+        {
+          column: 'last_updated',
+          direction: 'DESC',
+        },
+      ],
+    },
+    mockHomepageGeneralStatsQueryResultBundle,
+  )
+  registerTableQueryResult(
+    {
+      sql: `SELECT *
+            FROM ${synapseInActionTable}`,
+      sort: [
+        {
+          column: 'order',
+          direction: 'ASC',
+        },
+      ],
+    },
+    mockHomepageSynapseInActionQueryResultBundle,
+  )
+  registerTableQueryResult(
+    {
+      sql: `SELECT *
+            FROM ${featuredDatasetsTable}`,
+      sort: [],
+    },
+    mockHomepageFeaturedDatasetsQueryResultBundle,
+  )
+  registerTableQueryResult(
+    {
+      sql: `SELECT *
+            FROM ${searchAutocompleteTable}`,
+    },
+    mockHomepageSearchAutocompleteQueryResultBundle,
+  )
+}

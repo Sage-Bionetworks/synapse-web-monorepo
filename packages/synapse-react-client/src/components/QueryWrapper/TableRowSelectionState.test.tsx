@@ -197,7 +197,7 @@ describe('TableRowSelectionState tests', () => {
       mockQueryResultBundle,
     )
     mockQueryResultBundleWithRowIdsRemoved.queryResult?.queryResults.rows.forEach(
-      row => {
+      (row: Row) => {
         delete row.rowId
       },
     )

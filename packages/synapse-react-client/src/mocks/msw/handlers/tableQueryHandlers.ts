@@ -1,4 +1,4 @@
-import { cloneDeep, uniqueId } from 'lodash-es'
+import { uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import {
   TABLE_QUERY_ASYNC_GET,
@@ -8,16 +8,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import {
-  BUNDLE_MASK_LAST_UPDATED_ON,
-  BUNDLE_MASK_QUERY_COLUMN_MODELS,
-  BUNDLE_MASK_QUERY_COUNT,
-  BUNDLE_MASK_QUERY_FACETS,
-  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
-  BUNDLE_MASK_QUERY_RESULTS,
-  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
-  BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
-} from '../../../utils/SynapseConstants'
 import {
   ColumnModel,
   QueryBundleRequest,
@@ -30,40 +20,24 @@ import {
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
 import { SynapseError } from '../../../utils/SynapseError'
+import { getTableQueryResult } from './tableQueryService'
 
-const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
-  [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',
-  [BUNDLE_MASK_QUERY_COUNT]: 'queryCount',
-  [BUNDLE_MASK_QUERY_SELECT_COLUMNS]: 'selectColumns',
-  [BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE]: 'maxRowsPerPage',
-  [BUNDLE_MASK_QUERY_COLUMN_MODELS]: 'columnModels',
-  [BUNDLE_MASK_QUERY_FACETS]: 'facets',
-  [BUNDLE_MASK_SUM_FILES_SIZE_BYTES]: 'sumFileSizes',
-  [BUNDLE_MASK_LAST_UPDATED_ON]: 'lastUpdatedOn',
-}
-
-function removeBundleFieldsUsingMask(
-  queryResultBundle: QueryResultBundle,
-  partMask: number,
-): QueryResultBundle {
-  const result = cloneDeep(queryResultBundle)
-  Object.entries(BIT_TO_FIELD_MAP).forEach(([bit, field]) => {
-    if ((partMask & parseInt(bit)) === 0) {
-      delete result[field]
-    }
-  })
-  return result
-}
-
+/**
+ * Creates MSW handlers for basic table query operations.
+ *
+ * To register a specific table query result, see `./tableQueryService#registerTableQueryResult`.
+ * @param backendOrigin
+ * @param entityId
+ */
 export function getHandlersForTableQuery(
-  response: QueryResultBundle,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   entityId = ':id',
 ) {
   return generateAsyncJobHandlers<QueryBundleRequest, QueryResultBundle>(
     TABLE_QUERY_ASYNC_START(entityId),
     tokenParam => TABLE_QUERY_ASYNC_GET(entityId, tokenParam),
-    request => removeBundleFieldsUsingMask(response, request.partMask),
+    // Get the table query result from the service
+    request => getTableQueryResult(request),
     backendOrigin,
   )
 }

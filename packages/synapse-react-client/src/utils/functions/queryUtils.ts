@@ -1,6 +1,5 @@
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
-import SynapseClient from '../../synapse-client'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -8,7 +7,6 @@ import {
   FacetColumnResult,
   JsonSubColumnModel,
   Query,
-  QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
   Table,
@@ -26,11 +24,6 @@ import {
   isEntityView,
   isFileView,
 } from './EntityTypeUtils'
-
-type PartialStateObject = {
-  hasMoreData: boolean
-  data: QueryResultBundle
-}
 
 /**
  * Retrieve the index of a column using the column name
@@ -83,39 +76,6 @@ export function getTypeIndices(
     }
     return prev
   }, [])
-}
-
-/**
- * Grab the next page of data, pulling in 25 more rows.
- *
- * @param {*} queryRequest Query request as specified by
- *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
- */
-export const getNextPageOfData = async (
-  queryRequest: QueryBundleRequest,
-  data: QueryResultBundle,
-  token?: string,
-) => {
-  return await SynapseClient.getQueryTableResults(queryRequest, token)
-    .then((newData: QueryResultBundle) => {
-      const oldData: QueryResultBundle = cloneDeep(data)!
-      // push on the new data retrieved from the API call
-      const hasMoreData =
-        newData.queryResult!.queryResults.rows.length ===
-        (queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE)
-      oldData.queryResult!.queryResults.rows.push(
-        ...newData.queryResult!.queryResults.rows,
-      )
-      const newState: PartialStateObject = {
-        hasMoreData,
-        data: oldData,
-      }
-      return newState
-    })
-    .catch(err => {
-      console.log('Failed to get data ', err)
-      return {} as PartialStateObject
-    })
 }
 
 export const isFacetAvailable = (

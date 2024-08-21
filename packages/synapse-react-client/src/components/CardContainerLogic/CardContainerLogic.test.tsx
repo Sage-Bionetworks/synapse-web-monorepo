@@ -3,19 +3,22 @@ import React from 'react'
 import { SynapseConstants } from '../../utils'
 import CardContainerLogic, { CardContainerLogicProps } from './index'
 import * as QueryVisualizationWrapperModule from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import * as CardContainerModule from '../CardContainer/CardContainer'
-import QueryWrapper from '../QueryWrapper'
+import * as QueryWrapperModule from '../QueryWrapper/QueryWrapper'
+import { QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
+import { server } from '../../mocks/msw/server'
+import syn16787123 from '../../mocks/query/syn16787123'
+import { cloneDeep } from 'lodash-es'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
-jest.mock('../../../src/components/QueryWrapper/QueryWrapper', () => ({
-  QueryWrapper: jest.fn(props => {
-    return <div data-testid="QueryWrapper">{props.children}</div>
-  }),
-}))
-
-const mockQueryWrapper = jest.mocked(QueryWrapper)
+const queryWrapperSpy = jest.spyOn(QueryWrapperModule, 'QueryWrapper')
+const queryVisualizationWrapperSpy = jest.spyOn(
+  QueryVisualizationWrapperModule,
+  'QueryVisualizationWrapper',
+)
 
 const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
@@ -23,17 +26,18 @@ const renderComponent = (props: CardContainerLogicProps) => {
 
 const mockCardContainer = jest
   .spyOn(CardContainerModule, 'default')
-  .mockImplementation(props => {
+  .mockImplementation(() => {
     return <div data-testid="CardContainer"></div>
   })
 
-jest
-  .spyOn(QueryVisualizationWrapperModule, 'QueryVisualizationWrapper')
-  .mockImplementation(props => {
-    return <div data-testid="QueryVisualizationWrapper">{props.children}</div>
-  })
-
 describe('it performs basic functionality', () => {
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    registerTableQueryResult({ sql }, syn16787123)
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   const sql = 'SELECT * FROM syn16787123'
 
   const props: CardContainerLogicProps = {
@@ -48,19 +52,18 @@ describe('it performs basic functionality', () => {
   it('renders without crashing', async () => {
     const { container } = renderComponent(props)
     expect(container).toBeDefined()
+
     await screen.findByTestId('CardContainer')
-    await screen.findByTestId('QueryVisualizationWrapper')
-    await screen.findByTestId('QueryWrapper')
   })
 
   it('passes down props correctly', async () => {
     renderComponent(props)
 
     await waitFor(() =>
-      expect(mockQueryWrapper).toHaveBeenCalledWith(
-        expect.objectContaining({
+      expect(queryWrapperSpy).toHaveBeenCalledWith(
+        expect.objectContaining<QueryWrapperProps>({
           isInfinite: true,
-          initQueryRequest: expect.objectContaining({
+          initQueryRequest: expect.objectContaining<QueryBundleRequest>({
             concreteType:
               'org.sagebionetworks.repo.model.table.QueryBundleRequest',
             entityId: 'syn16787123',
@@ -84,7 +87,7 @@ describe('it performs basic functionality', () => {
     )
 
     await waitFor(() =>
-      expect(QueryVisualizationWrapper).toHaveBeenCalledWith(
+      expect(queryVisualizationWrapperSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           rgbIndex: props.rgbIndex,
           unitDescription: props.unitDescription,
@@ -93,6 +96,14 @@ describe('it performs basic functionality', () => {
         }),
         expect.anything(),
       ),
+    )
+
+    const truncatedQueryResults = cloneDeep(
+      syn16787123.queryResult.queryResults,
+    )
+    truncatedQueryResults.rows = truncatedQueryResults.rows.slice(
+      0,
+      props.limit,
     )
 
     await waitFor(() =>
