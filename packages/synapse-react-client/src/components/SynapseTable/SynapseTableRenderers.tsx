@@ -11,7 +11,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Checkbox } from '../widgets/Checkbox'
 import { isEqual } from 'lodash-es'
-import React, { Suspense, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
@@ -29,7 +29,6 @@ import {
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { useQueryContext } from '../QueryContext'
 import { useQuery } from '@tanstack/react-query'
-import { Skeleton } from '@mui/material'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -70,20 +69,10 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   )
 }
 
-function RowSelectionCellWithSuspense(props: CellContext<Row, unknown>) {
-  return (
-    <Suspense
-      fallback={<Skeleton variant={'rectangular'} width={20} height={20} />}
-    >
-      <RowSelectionCell {...props} />
-    </Suspense>
-  )
-}
-
 export const rowSelectionColumn = columnHelper.display({
   id: `${columnIdPrefix}.RowSelectionColumn`,
   enableResizing: false,
-  cell: RowSelectionCellWithSuspense,
+  cell: RowSelectionCell,
   maxSize: 36,
   meta: {
     textAlign: 'center',
