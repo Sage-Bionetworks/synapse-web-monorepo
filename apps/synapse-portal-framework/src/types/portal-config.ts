@@ -37,7 +37,7 @@ import { SurveysCompletedPlotsProps } from '../components/crc-researcher/Surveys
 import { ImageProps } from '../components/Image'
 import { RedirectProps } from 'react-router-dom'
 import { ToggleSynapseObjectsProps } from '../components/ToggleSynapseObjects'
-import { CSSProperties } from 'react'
+import { CSSProperties, ReactElement } from 'react'
 import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
 import { ChallengeSubmissionWrapperProps } from '../components/challengeportal/ChallengeSubmissionWrapper'
 import { RedirectToURLProps } from '../components/RedirectToURL'
@@ -414,6 +414,7 @@ export type FooterConfig = {
   termsOfService?: string
   forum?: string
   about?: string
+  additionalLogos?: string[] //svg
 }
 // Footer end
 
