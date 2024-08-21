@@ -414,6 +414,7 @@ export type FooterConfig = {
   termsOfService?: string
   forum?: string
   about?: string
+  additionalLogos?: string[] //svg
 }
 // Footer end
 
