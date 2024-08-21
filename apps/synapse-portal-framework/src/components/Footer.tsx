@@ -86,7 +86,7 @@ function Footer() {
           )}
           {footerConfig.additionalLogos &&
             footerConfig.additionalLogos.map(additionalLogoSvg => {
-              return <img src={additionalLogoSvg} />
+              return <img key={additionalLogoSvg} src={additionalLogoSvg} />
             })}
         </Box>
       </Box>
