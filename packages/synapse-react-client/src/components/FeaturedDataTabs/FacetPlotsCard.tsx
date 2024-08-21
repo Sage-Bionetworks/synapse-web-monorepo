@@ -168,92 +168,88 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
     return ''
   }, [facetsToPlot, queryMetadata?.facets])
 
-  if (!facetPlotDataArray || !facetDataArray || facetDataArray.length === 0) {
-    return <LoadingCard numPlots={(facetsToPlot ?? []).length} />
-  } else {
-    const isShowingMultiplePlots = facetPlotDataArray.length > 1
-    const cardTitle =
-      title ??
-      (isShowingMultiplePlots
-        ? selectedFacetValue
-        : getColumnDisplayName(facetDataArray[0].columnName))
-    return (
-      <Paper className={FACET_PLOTS_CARD_CLASSNAME} sx={{ overflow: 'hidden' }}>
-        <FacetPlotsCardTitleContainer
-          className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
-        >
-          <Typography variant={'headline1'}>{cardTitle}</Typography>
-          {description && (
-            <Typography variant={'body1'} sx={{ color: 'grey.700', my: 2 }}>
-              <ShowMore summary={description} maxCharacterCount={200} />
-            </Typography>
-          )}
+  const isShowingMultiplePlots = facetPlotDataArray.length > 1
+  const cardTitle =
+    title ??
+    (isShowingMultiplePlots
+      ? selectedFacetValue
+      : getColumnDisplayName(facetDataArray[0].columnName))
+  return (
+    <Paper className={FACET_PLOTS_CARD_CLASSNAME} sx={{ overflow: 'hidden' }}>
+      <FacetPlotsCardTitleContainer
+        className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
+      >
+        <Typography variant={'headline1'}>{cardTitle}</Typography>
+        {description && (
+          <Typography variant={'body1'} sx={{ color: 'grey.700', my: 2 }}>
+            <ShowMore summary={description} maxCharacterCount={200} />
+          </Typography>
+        )}
 
-          {detailsPagePath && selectedFacetValue && (
-            <Box sx={{ my: 2 }}>
-              <Button
-                variant={'contained'}
-                href={detailsPagePath}
-                color={'secondary'}
-              >
-                Explore {selectedFacetValue}
-              </Button>
-            </Box>
-          )}
-        </FacetPlotsCardTitleContainer>
+        {detailsPagePath && selectedFacetValue && (
+          <Box sx={{ my: 2 }}>
+            <Button
+              variant={'contained'}
+              href={detailsPagePath}
+              color={'secondary'}
+            >
+              Explore {selectedFacetValue}
+            </Button>
+          </Box>
+        )}
+      </FacetPlotsCardTitleContainer>
 
-        {/* create a plot for every facet to be plotted */}
-        {facetPlotDataArray.map((plotData, index) => {
-          return (
-            <React.Fragment key={index}>
-              <FacetPlotsCardPlotContainer
-                className={FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}
-                sx={{
-                  pt: index === 0 ? 5 : 0,
-                  gridRow: `plot${index}`,
-                }}
-                key={index}
-              >
-                {index != 0 && <Divider sx={{ mt: 2, mb: 4 }} />}
-                <Box sx={{ minHeight: '130px' }}>
-                  <SizeMe monitorHeight noPlaceholder>
-                    {({ size }) => (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Plot
-                          key={`${facetsToPlot![index]}-${size.width!}`}
-                          layout={layout}
-                          data={plotData?.data ?? []}
-                          style={getPlotStyle(size.width, 'PIE', 150)}
-                          config={{ displayModeBar: false }}
-                        />
-                      </Box>
+      {/* create a plot for every facet to be plotted */}
+      {facetPlotDataArray.map((plotData, index) => {
+        return (
+          <React.Fragment key={index}>
+            <FacetPlotsCardPlotContainer
+              className={FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}
+              sx={{
+                pt: index === 0 ? 5 : 0,
+                gridRow: `plot${index}`,
+              }}
+              key={index}
+            >
+              {index != 0 && <Divider sx={{ mt: 2, mb: 4 }} />}
+              <Box sx={{ minHeight: '130px' }}>
+                <SizeMe monitorHeight noPlaceholder>
+                  {({ size }) => (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Plot
+                        key={`${facetsToPlot![index]}-${size.width!}`}
+                        layout={layout}
+                        data={plotData?.data ?? []}
+                        style={getPlotStyle(size.width, 'PIE', 150)}
+                        config={{ displayModeBar: false }}
+                      />
+                    </Box>
+                  )}
+                </SizeMe>
+                <Box sx={{ mt: 4, width: '100%' }}>
+                  <FacetPlotLegendTable
+                    facetName={getColumnDisplayName(
+                      facetDataArray[index].columnName,
                     )}
-                  </SizeMe>
-                  <Box sx={{ mt: 4, width: '100%' }}>
-                    <FacetPlotLegendTable
-                      facetName={getColumnDisplayName(
-                        facetDataArray[index].columnName,
-                      )}
-                      labels={plotData?.labels}
-                      colors={plotData?.colors}
-                      isExpanded={false}
-                      linkToFullQuery={detailsPagePath}
-                    />
-                  </Box>
+                    labels={plotData?.labels}
+                    colors={plotData?.colors}
+                    isExpanded={false}
+                    linkToFullQuery={detailsPagePath}
+                  />
                 </Box>
-              </FacetPlotsCardPlotContainer>
-            </React.Fragment>
-          )
-        })}
-      </Paper>
-    )
-  }
+              </Box>
+            </FacetPlotsCardPlotContainer>
+          </React.Fragment>
+        )
+      })}
+    </Paper>
+  )
 }
 
 export default function FacetPlotsCardWithSuspense(props: FacetPlotsCardProps) {

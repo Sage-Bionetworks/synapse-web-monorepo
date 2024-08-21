@@ -76,12 +76,23 @@ export function QueryVisualizationWrapper(
     rowDataQueryOptions,
     queryMetadataQueryOptions,
   } = useQueryContext()
-  const { data: rowData } = useQuery(rowDataQueryOptions)
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+
   // Get the selectColumns from either query so that creating the context isn't bottlenecked by one or the other
+  // Use the previous result as placeholder data so we don't reset the selectColumns unless they have actually changed.
+  const { data: selectColumnsFromRowData } = useQuery({
+    ...rowDataQueryOptions,
+    select: data => data.responseBody?.queryResult?.queryResults.headers,
+    placeholderData: prevData => prevData,
+  })
+  const { data: selectColumnsFromMetadata } = useQuery({
+    ...queryMetadataQueryOptions,
+    select: data => data.responseBody?.selectColumns,
+    placeholderData: prevData => prevData,
+  })
   // We deep-compare-memoize the selectColumns so we don't reset visible columns if the reference changes, but not the contents (e.g. on page change)
   const selectColumns = useDeepCompareMemoize(
-    rowData?.headers ?? queryMetadata?.selectColumns ?? [],
+    selectColumnsFromRowData ?? selectColumnsFromMetadata ?? [],
   )
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
