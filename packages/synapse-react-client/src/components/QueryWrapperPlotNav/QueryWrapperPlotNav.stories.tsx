@@ -261,7 +261,9 @@ const handleRowSelectionCustomCommandClick = async (
   )
   console.log('Rows selected:')
   console.log(event.selectedRows)
-  const idColIndex = event.data?.columnModels?.findIndex(cm => cm.name === 'id')
+  const idColIndex = event.queryMetadata?.columnModels?.findIndex(
+    cm => cm.name === 'id',
+  )
 
   const ids = isSelection
     ? event.selectedRows!.map(row => row.values[idColIndex!]!)

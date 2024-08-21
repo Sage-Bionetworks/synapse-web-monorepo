@@ -2,14 +2,7 @@ import {
   PartialRow,
   TableUpdateTransactionRequest,
 } from '@sage-bionetworks/synapse-types'
-import { Row, QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { SynapseClient } from 'synapse-react-client'
-
-type CustomControlCallbackData = {
-  data: QueryResultBundle | undefined
-  selectedRows: Row[] | undefined
-  refresh: () => void
-}
+import { CustomControlCallbackData, SynapseClient } from 'synapse-react-client'
 
 const handleParticipantWorkflowChange = async (
   event: CustomControlCallbackData,
@@ -17,9 +10,9 @@ const handleParticipantWorkflowChange = async (
 ) => {
   // Demo custom control updates all values in a particular column for the selected rows (CRC)
   // test Updating a Synapse Table for the first time from SRC, by updating the WorkflowState column value
-  const entityId: string = event.data?.queryResult!.queryResults.tableId!
+  const entityId: string = event.tableId
   // find target column
-  const targetColumn = event.data?.columnModels!.find(
+  const targetColumn = event.queryMetadata?.columnModels!.find(
     (cm: any) => cm.name === 'WorkflowState',
   )
   // collect all selected rows (create PartialRow objects)

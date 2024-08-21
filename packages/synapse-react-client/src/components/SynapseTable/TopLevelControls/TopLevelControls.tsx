@@ -56,7 +56,8 @@ export type Control = {
 }
 
 export type CustomControlCallbackData = {
-  data: QueryResultBundle | undefined
+  tableId: string
+  queryMetadata: Omit<QueryResultBundle, 'queryResult'> | undefined
   selectedRows: Row[] | undefined
   refresh: () => void
   request?: QueryBundleRequest
@@ -221,7 +222,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     disabled={!numberOfResultsToInvokeAction}
                     control={customControl}
                     callbackData={{
-                      data: queryMetadata,
+                      tableId: entityId,
+                      queryMetadata: queryMetadata,
                       selectedRows,
                       refresh,
                       request: getCurrentQueryRequest(),
