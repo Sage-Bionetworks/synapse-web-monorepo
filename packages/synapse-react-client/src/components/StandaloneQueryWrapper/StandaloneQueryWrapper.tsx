@@ -11,7 +11,7 @@ import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import TopLevelControls, {
   TopLevelControlsProps,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import FullTextSearch from '../FullTextSearch'
+import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
