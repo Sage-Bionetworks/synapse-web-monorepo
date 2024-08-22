@@ -152,7 +152,11 @@ export const UserCardListRotate: React.FunctionComponent<
         <p className="font-italic">No one was found.</p>
       )}
       {!isLoading && userIds.length > 0 && (
-        <UserCardList list={userIds} size={size} data={queryData} />
+        <UserCardList
+          list={userIds}
+          size={size}
+          rowSet={queryData?.queryResult?.queryResults}
+        />
       )}
       {summaryLink && summaryLinkText && (
         <div className="UserCardListRotate__summary">

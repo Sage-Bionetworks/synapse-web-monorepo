@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import {
   QueryClient,
   QueryClientConfig,
@@ -41,7 +41,7 @@ export function FullContextProvider(props: FullContextProviderProps) {
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          {children}
+          <Suspense fallback={null}>{children}</Suspense>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>

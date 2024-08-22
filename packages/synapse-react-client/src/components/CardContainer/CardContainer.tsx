@@ -114,18 +114,7 @@ function _CardContainer(props: CardContainerProps) {
     }
     const listIds = dataRows.map(el => el.values[userIdColumnIndex])
     cards = (
-      <UserCardList
-        data={{
-          // TODO: UserCardList should be refactored to not require passing the full QueryResultBundle. Until then, we must reconstruct it here.
-          ...queryMetadata,
-          queryResult: {
-            queryResults: rowSet!,
-            concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-          },
-        }}
-        list={listIds}
-        size={MEDIUM_USER_CARD}
-      />
+      <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
     )
   } else {
     // render the cards
