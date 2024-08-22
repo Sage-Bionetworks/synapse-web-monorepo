@@ -149,10 +149,7 @@ function _QueryWrapper(props: QueryWrapperProps) {
 
   // Track changes to the query row data and propagate to callback
   useOnQueryDataChange({
-    useQueryOptions: {
-      ...rowDataQueryOptions,
-      select: data => data.responseBody,
-    },
+    queryBundleRequest: getCurrentQueryRequest(),
     onChange: data => onQueryResultBundleChange(JSON.stringify(data)),
   })
 

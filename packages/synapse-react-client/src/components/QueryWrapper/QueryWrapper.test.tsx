@@ -3,24 +3,24 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { QueryContextType, useQueryContext } from '../QueryContext'
 import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
-import { SynapseConstants } from '../../utils'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import {
+  ALL_QUERY_BUNDLE_PARTS,
+  DEFAULT_PAGE_SIZE,
+} from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
-import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { selectedRowsAtom } from './TableRowSelectionState'
 import mockQueryResponseData from '../../mocks/mockQueryResponseData'
+import { server } from '../../mocks/msw/server'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import Mock = jest.Mock
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableAsyncJobResults: jest.fn(),
-  getEntity: jest.fn(),
-}))
-
-const mockGetQueryTableAsyncJobResults = jest.mocked(
-  SynapseClient.getQueryTableAsyncJobResults,
+const getQueryTableAsyncJobResultsSpy = jest.spyOn(
+  SynapseClient,
+  'getQueryTableAsyncJobResults',
 )
 
 let providedContext: QueryContextType | undefined
@@ -39,25 +39,28 @@ const QueryContextReceiver = () => {
 
 // utility function
 function renderComponent(props: QueryWrapperProps) {
-  let renderResult
-  act(() => {
-    renderResult = render(
-      <QueryWrapper {...props}>
-        <QueryContextReceiver />
-      </QueryWrapper>,
-      { wrapper: createWrapper() },
-    )
-  })
+  const mockOnQueryChange: Mock<QueryWrapperProps['onQueryChange']> = jest.fn()
+  const mockOnQueryResultBundleChange: Mock<
+    QueryWrapperProps['onQueryChange']
+  > = jest.fn()
 
-  return renderResult
+  const component = render(
+    <QueryWrapper
+      onQueryChange={mockOnQueryChange}
+      onQueryResultBundleChange={mockOnQueryResultBundleChange}
+      {...props}
+    >
+      <QueryContextReceiver />
+    </QueryWrapper>,
+    { wrapper: createWrapper() },
+  )
+
+  return { component, mockOnQueryChange, mockOnQueryResultBundleChange }
 }
 
 const initialQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  partMask:
-    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  partMask: ALL_QUERY_BUNDLE_PARTS,
   entityId: 'syn16787123',
   query: {
     sql: 'SELECT * FROM syn16787123',
@@ -66,6 +69,7 @@ const initialQueryRequest: QueryBundleRequest = {
 }
 
 describe('QueryWrapper', () => {
+  beforeAll(() => server.listen())
   beforeEach(() => {
     selectedRows = undefined
     setSelectedRows = undefined
@@ -73,15 +77,11 @@ describe('QueryWrapper', () => {
     window.history.pushState({}, 'Page Title', '/')
 
     providedContext = undefined
-    mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
-      return Promise.resolve({
-        ...mockCompleteAsyncJob,
-        requestBody: queryBundleRequest,
-        jobState: 'COMPLETE',
-        responseBody: mockQueryResponseData,
-      })
-    })
+
+    registerTableQueryResult(initialQueryRequest.query, mockQueryResponseData)
   })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
   describe('basic functionality', () => {
     it('renders without crashing', async () => {
@@ -90,6 +90,12 @@ describe('QueryWrapper', () => {
     })
 
     it('Executing a new query updates the last query request', async () => {
+      const newSql = 'SELECT new_columns FROM syn16787123'
+      registerTableQueryResult(
+        { ...initialQueryRequest.query, sql: newSql },
+        mockQueryResponseData,
+      )
+
       renderComponent({ initQueryRequest: initialQueryRequest })
 
       // Wait for the children to render to ensure context is created
@@ -130,8 +136,14 @@ describe('QueryWrapper', () => {
 
       const newSql = initialQueryRequest.query.sql + ' WHERE x = 1'
 
+      registerTableQueryResult(
+        { ...initialQueryRequest.query, sql: newSql },
+        mockQueryResponseData,
+      )
+
       await waitFor(() => expect(providedContext).toBeDefined())
 
+      // Call under test -- update the query
       act(() => {
         providedContext!.executeQueryRequest({
           ...initialQueryRequest,
@@ -148,21 +160,28 @@ describe('QueryWrapper', () => {
           new URLSearchParams(location.search).get('QueryWrapper0')!,
         )
         expect(query.sql).toEqual(newSql)
-        expect(mockGetQueryTableAsyncJobResults).toHaveBeenCalled()
+        expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalled()
       })
     })
 
     it('test onQueryChange and onQueryResultBundleChange', async () => {
-      const mockOnQueryChange = jest.fn()
-      const mockOnQueryResultBundleChange = jest.fn()
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        shouldDeepLink: true,
-        onQueryChange: mockOnQueryChange,
-        onQueryResultBundleChange: mockOnQueryResultBundleChange,
-      })
+      const { mockOnQueryChange, mockOnQueryResultBundleChange } =
+        renderComponent({
+          initQueryRequest: initialQueryRequest,
+          shouldDeepLink: true,
+        })
 
-      await waitFor(() => expect(providedContext).toBeDefined())
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+
+        // Note: onQueryResultBundleChange should include the entire (merged) QueryResultBundle
+        expect(mockOnQueryResultBundleChange).toHaveBeenCalled()
+        const lastCallPassedQueryResultBundle =
+          mockOnQueryResultBundleChange.mock.lastCall![0]
+        expect(JSON.parse(lastCallPassedQueryResultBundle)).toEqual(
+          mockQueryResponseData,
+        )
+      })
 
       act(() => {
         providedContext!.executeQueryRequest({
@@ -179,8 +198,17 @@ describe('QueryWrapper', () => {
           expect.stringContaining(initialQueryRequest.query.sql),
         )
 
-        expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
-          expect.stringContaining(JSON.stringify(mockQueryResponseData)),
+        // Because there is now an offset, the bundle passed to the callback should not include the first 10 rows
+        const expectedBundle = cloneDeep(mockQueryResponseData)
+        expectedBundle.queryResult.queryResults.rows =
+          expectedBundle.queryResult.queryResults.rows.slice(10)
+
+        // Note: onQueryResultBundleChange should include the entire (merged) QueryResultBundle
+        expect(mockOnQueryResultBundleChange).toHaveBeenCalled()
+        const lastCallPassedQueryResultBundle =
+          mockOnQueryResultBundleChange.mock.lastCall![0]
+        expect(JSON.parse(lastCallPassedQueryResultBundle)).toEqual(
+          expectedBundle,
         )
       })
     })
@@ -214,6 +242,9 @@ describe('QueryWrapper', () => {
     it('when there is a single param in the url', async () => {
       const lqr = cloneDeep(initialQueryRequest)
       lqr.query.sql = 'SELECT * FROM syn12345'
+
+      registerTableQueryResult(lqr.query, mockQueryResponseData)
+
       window.history.pushState(
         {},
         'Page Title',
@@ -232,6 +263,9 @@ describe('QueryWrapper', () => {
     it('when there are multiple params in the url', async () => {
       const lqr = cloneDeep(initialQueryRequest)
       lqr.query.sql = 'SELECT * FROM syn12345'
+
+      registerTableQueryResult(lqr.query, mockQueryResponseData)
+
       window.history.pushState(
         {},
         'Page Title',
@@ -253,6 +287,8 @@ describe('QueryWrapper', () => {
       const mockOnQueryChange = jest.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
+
+      registerTableQueryResult({ sql: newQuery }, mockQueryResponseData)
 
       renderComponent({
         initQueryRequest: initialQueryRequest,
@@ -320,6 +356,8 @@ describe('QueryWrapper', () => {
       const mockOnQueryChange = jest.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
+
+      registerTableQueryResult({ sql: newQuery }, mockQueryResponseData)
 
       renderComponent({
         initQueryRequest: initialQueryRequest,
