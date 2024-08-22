@@ -8,6 +8,7 @@ import { InfoOutlined } from '@mui/icons-material'
 import Switch from 'react-switch'
 import { useTheme } from '@mui/material'
 
+const EXPERIMENTAL_MODE_SWITCH_ID = 'experimental-mode'
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
@@ -52,7 +53,13 @@ const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Typography variant="body1">Experimental Mode</Typography>
+      <Typography
+        component={'label'}
+        variant="body1"
+        htmlFor={EXPERIMENTAL_MODE_SWITCH_ID}
+      >
+        Experimental Mode
+      </Typography>
       <Tooltip title={experimentalModeText} arrow placement="top">
         <IconButton
           aria-label="info"
@@ -63,6 +70,7 @@ const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
         </IconButton>
       </Tooltip>
       <Switch
+        id={EXPERIMENTAL_MODE_SWITCH_ID}
         width={35}
         height={20}
         onColor={theme.palette.secondary.main}
