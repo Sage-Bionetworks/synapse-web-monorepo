@@ -8,11 +8,17 @@
   &:hover {
     background-color: map.get(SRC.$secondary-color-palette, 100);
   }
+  &:active {
+    background-color: map.get(SRC.$secondary-color-palette, 200);
+  }
 }
 .Checked {
   color: #ffffff;
   background-color: SRC.$secondary-action-color;
   &:hover {
     background-color: map.get(SRC.$secondary-color-palette, 700);
+  }
+  &:active {
+    background-color: map.get(SRC.$secondary-color-palette, 600);
   }
 }

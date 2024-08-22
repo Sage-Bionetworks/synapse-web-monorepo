@@ -1,15 +1,17 @@
 import dayjs from 'dayjs'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQueryContext } from '../QueryContext'
 
-export default function LastUpdatedOn() {
-  const data = useAtomValue(tableQueryDataAtom)
+function LastUpdatedOn() {
+  const { queryMetadataQueryOptions } = useQueryContext()
   const { showLastUpdatedOn } = useQueryVisualizationContext()
-  return showLastUpdatedOn && data && data.lastUpdatedOn ? (
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+
+  return showLastUpdatedOn && queryMetadata && queryMetadata.lastUpdatedOn ? (
     <div
       style={{
         display: 'flex',
@@ -18,10 +20,22 @@ export default function LastUpdatedOn() {
       }}
     >
       <Typography variant="body1Italic">
-        Last updated on {formatDate(dayjs(data.lastUpdatedOn))}
+        Last updated on {formatDate(dayjs(queryMetadata.lastUpdatedOn))}
       </Typography>
     </div>
   ) : (
     <></>
+  )
+}
+
+export default function LastUpdatedOnWithSuspense() {
+  const { showLastUpdatedOn } = useQueryVisualizationContext()
+  if (!showLastUpdatedOn) {
+    return <></>
+  }
+  return (
+    <React.Suspense fallback={<Skeleton width={100}></Skeleton>}>
+      <LastUpdatedOn />
+    </React.Suspense>
   )
 }

@@ -3,26 +3,28 @@ import { useMemo } from 'react'
 import {
   InfiniteData,
   QueryKey,
-  useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils'
 import {
+  BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,
   DEFAULT_PAGE_SIZE,
 } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { partitionQueryBundleRequestIntoRowsAndMetadata } from '../../utils/functions/queryUtils'
+import { KeyFactory } from '../KeyFactory'
 
-const sharedQueryDefaults = {
+export const tableQueryUseQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes
 }
 
@@ -41,7 +43,7 @@ export default function useGetQueryResultBundle(
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery({
-    ...sharedQueryDefaults,
+    ...tableQueryUseQueryDefaults,
     ...options,
     queryKey: keyFactory.getEntityTableQueryResultQueryKey(
       queryBundleRequest,
@@ -70,7 +72,7 @@ function _useGetQueryResultBundleWithAsyncStatus<
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery({
-    ...sharedQueryDefaults,
+    ...tableQueryUseQueryDefaults,
     ...options,
     queryKey: keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
       queryBundleRequest,
@@ -86,7 +88,7 @@ function _useGetQueryResultBundleWithAsyncStatus<
   })
 }
 
-function useGetQueryRows<
+export function useGetQueryRows<
   TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
 >(
   queryBundleRequest: QueryBundleRequest,
@@ -101,18 +103,13 @@ function useGetQueryRows<
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  // Get the request for just the rows
-  const queryRowsBundleRequestMask =
-    queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS
-  const rowsOnlyQueryBundleRequest: QueryBundleRequest = {
-    ...queryBundleRequest,
-    partMask: queryRowsBundleRequestMask,
-  }
+  const { rowDataRequest } =
+    partitionQueryBundleRequestIntoRowsAndMetadata(queryBundleRequest)
 
-  const enableQuery = queryRowsBundleRequestMask > 0 ? options?.enabled : false
+  const enableQuery = rowDataRequest.partMask > 0 ? options?.enabled : false
 
   return _useGetQueryResultBundleWithAsyncStatus<TData>(
-    rowsOnlyQueryBundleRequest,
+    rowDataRequest,
     {
       ...options,
       enabled: enableQuery,
@@ -121,7 +118,7 @@ function useGetQueryRows<
   )
 }
 
-function useGetQueryStats<
+export function useGetQueryStats<
   TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
 >(
   queryBundleRequest: QueryBundleRequest,
@@ -136,25 +133,14 @@ function useGetQueryStats<
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  // Bitwise remove the query result flag from the mask
-  const queryStatsMask =
-    queryBundleRequest.partMask & ~BUNDLE_MASK_QUERY_RESULTS
-  const queryStatsRequest: QueryBundleRequest = {
-    ...queryBundleRequest,
-    query: {
-      ...queryBundleRequest.query,
-      // Remove query fields that don't affect the results.
-      offset: undefined,
-      limit: undefined,
-      sort: undefined,
-    },
-    partMask: queryStatsMask,
-  }
+  const { queryMetadataRequest } =
+    partitionQueryBundleRequestIntoRowsAndMetadata(queryBundleRequest)
 
-  const enableQuery = queryStatsMask > 0 ? options?.enabled : false
+  const enableQuery =
+    queryMetadataRequest.partMask > 0 ? options?.enabled : false
 
   return _useGetQueryResultBundleWithAsyncStatus<TData>(
-    queryStatsRequest,
+    queryMetadataRequest,
     {
       ...options,
       enabled: enableQuery,
@@ -281,39 +267,24 @@ export function useGetQueryResultBundleWithAsyncStatus<
 
   return mergedBundle
 }
-export function useInfiniteQueryResultBundle<
-  TData = InfiniteData<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
-  >,
->(
+
+export function getInfiniteQueryResultBundleOptions(
   queryBundleRequest: QueryBundleRequest,
-  options?: Omit<
-    Partial<
-      UseInfiniteQueryOptions<
-        AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-        SynapseClientError,
-        TData,
-        AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-        QueryKey,
-        string | number | undefined
-      >
-    >,
-    'select'
-  >,
+  keyFactory: KeyFactory,
+  accessToken: string | undefined,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
-) {
-  const { accessToken, keyFactory } = useSynapseContext()
-  return useInfiniteQuery<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError,
-    TData,
-    QueryKey,
-    string | number | undefined
-  >({
-    ...sharedQueryDefaults,
-    ...options,
+): UseInfiniteQueryOptions<
+  AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  SynapseClientError,
+  InfiniteData<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>>,
+  AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  QueryKey,
+  string | number | undefined
+> {
+  return {
+    ...tableQueryUseQueryDefaults,
     queryKey: keyFactory.getEntityTableQueryResultQueryKey(
       queryBundleRequest,
       true,
@@ -335,11 +306,13 @@ export function useInfiniteQueryResultBundle<
            * Otherwise, just ask for the queryResults (if they're in the original partMask), as it's the only part that changes between pages.
            *
            * We'll merge the "aggregation" parts and the pages of queryResults in the `select` function.
+           *
+           * We need the queryCount to know when to stop fetching data, so retrieve that in the first bundle.
            */
           partMask:
             offset !== 0
               ? queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS
-              : queryBundleRequest.partMask,
+              : queryBundleRequest.partMask | BUNDLE_MASK_QUERY_COUNT,
         },
         accessToken,
         setCurrentAsyncStatus,
@@ -363,7 +336,7 @@ export function useInfiniteQueryResultBundle<
           }
         }
       }
-      return data as TData
+      return data
     },
     getPreviousPageParam: firstPage => {
       if (firstPage.jobState !== 'COMPLETE') {
@@ -396,7 +369,7 @@ export function useInfiniteQueryResultBundle<
         ? (request.query.offset ?? 0) + pageSize
         : undefined
     },
-  })
+  }
 }
 
 /**
@@ -409,7 +382,7 @@ export function useGetFullTableQueryResults(
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery({
-    ...sharedQueryDefaults,
+    ...tableQueryUseQueryDefaults,
     ...options,
     queryKey: keyFactory.getFullTableQueryResultQueryKey(
       queryBundleRequest,

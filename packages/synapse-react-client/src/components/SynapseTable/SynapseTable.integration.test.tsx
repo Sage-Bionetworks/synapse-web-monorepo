@@ -9,7 +9,7 @@ import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import SynapseTable, { SynapseTableProps } from './SynapseTable'
+import { SynapseTable, SynapseTableProps } from './SynapseTable'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
 import {
@@ -129,7 +129,11 @@ function renderTable(
             return <></>
           }}
         </QueryContextConsumer>
-        <SynapseTable {...propOverrides} />
+        <SynapseTable
+          rowSet={queryResultBundle.queryResult!.queryResults}
+          isLoadingNewPage={false}
+          {...propOverrides}
+        />
       </QueryVisualizationWrapper>
     </QueryWrapper>,
     {

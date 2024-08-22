@@ -4,7 +4,6 @@ import React from 'react'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import FacetFilterControls, {
   FacetFilterControlsProps,
-  getDefaultShownFacetFilters,
 } from './FacetFilterControls'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
@@ -14,6 +13,7 @@ import QueryWrapper from '../../QueryWrapper'
 import { server } from '../../../mocks/msw/server'
 import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import { getDefaultShownFacetFilters } from './FacetFilterUtils'
 
 const MockFacetFilter = (props: { testid: string }) => {
   return <div data-testid={props.testid}></div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import {
   defaultQueryClientConfig,
@@ -115,17 +115,19 @@ export function StorybookComponentWrapper(props: {
   )
 
   return (
-    <QueryClientProvider client={storybookQueryClient}>
-      <SynapseContextProvider synapseContext={synapseContext}>
-        {storybookContext.globals.showReactQueryDevtools && (
-          <ReactQueryDevtools />
-        )}
-        <MemoryRouter>
-          <SynapseToastContainer />
-          <main>{props.children}</main>
-        </MemoryRouter>
-      </SynapseContextProvider>
-    </QueryClientProvider>
+    <Suspense fallback={'global suspense loading...'}>
+      <QueryClientProvider client={storybookQueryClient}>
+        <SynapseContextProvider synapseContext={synapseContext}>
+          {storybookContext.globals.showReactQueryDevtools && (
+            <ReactQueryDevtools />
+          )}
+          <MemoryRouter>
+            <SynapseToastContainer />
+            <main>{props.children}</main>
+          </MemoryRouter>
+        </SynapseContextProvider>
+      </QueryClientProvider>
+    </Suspense>
   )
 }
 

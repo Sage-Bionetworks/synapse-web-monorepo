@@ -1,5 +1,6 @@
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
+import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -7,6 +8,7 @@ import {
   FacetColumnResult,
   JsonSubColumnModel,
   Query,
+  QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
   Table,
@@ -64,13 +66,13 @@ export const getHeaderIndex = (
 /**
  * Returns the indices of the selectColumns with the specified type
  * @param columnType
- * @param data
+ * @param selectColumns
  */
 export function getTypeIndices(
   columnType: ColumnTypeEnum,
-  data?: QueryResultBundle,
+  selectColumns: SelectColumn[] = [],
 ): number[] {
-  return (data?.selectColumns ?? []).reduce((prev: number[], curr, index) => {
+  return selectColumns.reduce((prev: number[], curr, index) => {
     if (curr.columnType === columnType) {
       return [...prev, index]
     }
@@ -78,7 +80,7 @@ export function getTypeIndices(
   }, [])
 }
 
-export const isFacetAvailable = (
+export const hasFacetedSelectColumn = (
   facets?: FacetColumnResult[],
   selectColumns?: SelectColumn[],
 ): boolean => {
@@ -295,4 +297,35 @@ export function facetObjectMatchesDefinition(
     },
     { columnName: facetObject.columnName, jsonPath: facetObject.jsonPath },
   )
+}
+
+export function partitionQueryBundleRequestIntoRowsAndMetadata(
+  queryBundleRequest: QueryBundleRequest,
+): {
+  rowDataRequest: QueryBundleRequest
+  queryMetadataRequest: QueryBundleRequest
+} {
+  const rowDataRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    // Get just the rows (if they were originally requested)
+    partMask: queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS,
+  }
+
+  const queryMetadataRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    query: {
+      ...queryBundleRequest.query,
+      // Remove query fields that don't affect the results.
+      offset: undefined,
+      limit: undefined,
+      sort: undefined,
+    },
+    // Bitwise remove the query result flag from the mask
+    partMask: queryBundleRequest.partMask & ~BUNDLE_MASK_QUERY_RESULTS,
+  }
+
+  return {
+    rowDataRequest,
+    queryMetadataRequest,
+  }
 }

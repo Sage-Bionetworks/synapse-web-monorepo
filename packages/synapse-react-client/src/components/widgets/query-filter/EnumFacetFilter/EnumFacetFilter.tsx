@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
@@ -15,14 +15,14 @@ import { useQueryContext } from '../../../QueryContext'
 import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
 import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../../../QueryWrapper/QueryWrapper'
 import {
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
 } from '../../../../utils/functions/queryUtils'
 import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 
 export type EnumFacetFilterProps = {
   facet: FacetColumnResultValues
@@ -31,7 +31,7 @@ export type EnumFacetFilterProps = {
   hideCollapsible?: boolean
 }
 
-export function EnumFacetFilter(props: EnumFacetFilterProps) {
+function _EnumFacetFilter(props: EnumFacetFilterProps) {
   const {
     facet,
     containerAs = 'Collapsible',
@@ -43,10 +43,11 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     addValueToSelectedFacet,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
+    queryMetadataQueryOptions,
     resetDebounceTimer,
   } = useQueryContext()
 
-  const data = useAtomValue(tableQueryDataAtom)
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const currentSelectedFacet: FacetColumnValuesRequest | undefined =
@@ -77,8 +78,8 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     facet,
   )
 
-  const columnModel = data?.columnModels
-    ? getCorrespondingColumnForFacet(facet, data.columnModels)
+  const columnModel = queryMetadata.columnModels
+    ? getCorrespondingColumnForFacet(facet, queryMetadata.columnModels)
     : undefined
 
   const userIds =
@@ -183,5 +184,21 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
       }
       canMultiSelect={true}
     />
+  )
+}
+
+export function EnumFacetFilter(props: EnumFacetFilterProps) {
+  const { containerAs = 'Collapsible', dropdownType = 'Icon' } = props
+  return (
+    <Suspense
+      fallback={
+        <EnumFacetFilterSkeleton
+          containerAs={containerAs}
+          dropdownType={dropdownType}
+        />
+      }
+    >
+      <_EnumFacetFilter {...props} />
+    </Suspense>
   )
 }

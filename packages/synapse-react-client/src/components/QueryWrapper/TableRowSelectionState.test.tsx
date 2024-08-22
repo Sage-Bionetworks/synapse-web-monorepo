@@ -10,7 +10,6 @@ import {
   selectedRowsAtom,
 } from './TableRowSelectionState'
 import { Provider, useAtomValue, useSetAtom } from 'jotai'
-import { tableQueryDataAtom } from './QueryWrapper'
 
 function useTableRowSelectionState() {
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
@@ -21,11 +20,7 @@ function useTableRowSelectionState() {
   const setSelectedRows = useSetAtom(selectedRowsAtom)
   const isRowSelected = useAtomValue(isRowSelectedAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
-  const tableData = useAtomValue(tableQueryDataAtom)
-  const setTableData = useSetAtom(tableQueryDataAtom)
   return {
-    tableData,
-    setTableData,
     isRowSelectionVisible,
     setIsRowSelectionVisible,
     rowSelectionPrimaryKey,
@@ -65,17 +60,18 @@ describe('TableRowSelectionState tests', () => {
     // Select a row
     act(() => {
       result.current.setSelectedRows([
-        mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+        mockQueryResultBundle.queryResult.queryResults.rows[0],
       ])
     })
 
     expect(result.current.selectedRows).toEqual([
-      mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+      mockQueryResultBundle.queryResult.queryResults.rows[0],
     ])
     expect(result.current.hasSelectedRows).toBe(true)
     expect(
       result.current.isRowSelected(
-        mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+        mockQueryResultBundle.queryResult.queryResults.rows[0],
+        mockQueryResultBundle.selectColumns,
       ),
     ).toBe(true)
     // Unselect the row / reset the selection
@@ -87,7 +83,8 @@ describe('TableRowSelectionState tests', () => {
     expect(result.current.hasSelectedRows).toBe(false)
     expect(
       result.current.isRowSelected(
-        mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+        mockQueryResultBundle.queryResult.queryResults.rows[0],
+        mockQueryResultBundle.selectColumns,
       ),
     ).toBe(false)
   })
@@ -97,15 +94,13 @@ describe('TableRowSelectionState tests', () => {
     // Make sure the mock data has the primary key columns
     primaryKey.forEach(k => {
       expect(
-        mockQueryResultBundle.columnModels!.find(cm => cm.name === k),
+        mockQueryResultBundle.selectColumns.find(cm => cm.name === k),
       ).toBeDefined()
     })
     const { result } = renderTableRowSelectionStateHook()
     act(() => {
       result.current.setIsRowSelectionVisible(true)
       result.current.setRowSelectionPrimaryKey(primaryKey)
-      // The table data (specifically column models) must also be present.
-      result.current.setTableData(mockQueryResultBundle)
     })
 
     expect(result.current.isRowSelectionVisible).toBe(true)
@@ -115,35 +110,50 @@ describe('TableRowSelectionState tests', () => {
     // Select a row
     act(() => {
       result.current.setSelectedRows([
-        mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+        mockQueryResultBundle.queryResult.queryResults.rows[0],
       ])
     })
 
     expect(result.current.selectedRows).toEqual([
-      mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+      mockQueryResultBundle.queryResult.queryResults.rows[0],
     ])
     expect(result.current.hasSelectedRows).toBe(true)
 
-    const numColumns = mockQueryResultBundle.columnModels!.length
+    const numColumns = mockQueryResultBundle.selectColumns.length
     const rowToCompare: Row = { values: new Array(numColumns) }
     // None of the data matches, so this row is not selected
-    expect(result.current.isRowSelected(rowToCompare)).toBe(false)
+    expect(
+      result.current.isRowSelected(
+        rowToCompare,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(false)
 
     // Set the 'id' cell to match. This is only a partial key match, so the row should not be selected
-    const idColumnIndex = mockQueryResultBundle.columnModels!.findIndex(
+    const idColumnIndex = mockQueryResultBundle.selectColumns.findIndex(
       col => col.name === 'id',
     )
     rowToCompare.values[idColumnIndex] =
       result.current.selectedRows[0].values[idColumnIndex]
-    expect(result.current.isRowSelected(rowToCompare)).toBe(false)
+    expect(
+      result.current.isRowSelected(
+        rowToCompare,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(false)
 
     // Set the name. Since the full primary key matches, isRowSelected should be true
-    const nameColumnIndex = mockQueryResultBundle.columnModels!.findIndex(
+    const nameColumnIndex = mockQueryResultBundle.selectColumns.findIndex(
       col => col.name === 'name',
     )
     rowToCompare.values[nameColumnIndex] =
       result.current.selectedRows[0].values[nameColumnIndex]
-    expect(result.current.isRowSelected(rowToCompare)).toBe(true)
+    expect(
+      result.current.isRowSelected(
+        rowToCompare,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(true)
 
     // Clear the selection
     act(() => {
@@ -151,18 +161,22 @@ describe('TableRowSelectionState tests', () => {
     })
 
     expect(result.current.selectedRows).toEqual([])
-    expect(result.current.isRowSelected(rowToCompare)).toBe(false)
+    expect(
+      result.current.isRowSelected(
+        rowToCompare,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(false)
   })
 
   it('uses rowId comparison if no primary key is specified', () => {
     // Make sure the mock data has row IDs
     expect(
-      mockQueryResultBundle.queryResult?.queryResults.rows[0].rowId,
+      mockQueryResultBundle.queryResult.queryResults.rows[0].rowId,
     ).toBeDefined()
     const { result } = renderTableRowSelectionStateHook()
     act(() => {
       result.current.setIsRowSelectionVisible(true)
-      result.current.setTableData(mockQueryResultBundle)
     })
     expect(result.current.isRowSelectionVisible).toBe(true)
     expect(result.current.selectedRows).toEqual([])
@@ -171,16 +185,21 @@ describe('TableRowSelectionState tests', () => {
     // Select a row
     act(() => {
       result.current.setSelectedRows([
-        mockQueryResultBundle.queryResult?.queryResults.rows[0]!,
+        mockQueryResultBundle.queryResult.queryResults.rows[0],
       ])
     })
 
-    const numColumns = mockQueryResultBundle.columnModels!.length
+    const numColumns = mockQueryResultBundle.selectColumns.length
     const rowWithMatchingRowId: Row = {
-      rowId: mockQueryResultBundle.queryResult?.queryResults.rows[0].rowId,
+      rowId: mockQueryResultBundle.queryResult.queryResults.rows[0].rowId,
       values: new Array(numColumns),
     }
-    expect(result.current.isRowSelected(rowWithMatchingRowId)).toBe(true)
+    expect(
+      result.current.isRowSelected(
+        rowWithMatchingRowId,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(true)
 
     // Clear the selection
     act(() => {
@@ -188,7 +207,12 @@ describe('TableRowSelectionState tests', () => {
     })
 
     expect(result.current.selectedRows).toEqual([])
-    expect(result.current.isRowSelected(rowWithMatchingRowId)).toBe(false)
+    expect(
+      result.current.isRowSelected(
+        rowWithMatchingRowId,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(false)
   })
 
   it('uses deep equality comparison if no primary key is specified and no rowId exists', () => {
@@ -196,7 +220,7 @@ describe('TableRowSelectionState tests', () => {
     const mockQueryResultBundleWithRowIdsRemoved = cloneDeep(
       mockQueryResultBundle,
     )
-    mockQueryResultBundleWithRowIdsRemoved.queryResult?.queryResults.rows.forEach(
+    mockQueryResultBundleWithRowIdsRemoved.queryResult.queryResults.rows.forEach(
       (row: Row) => {
         delete row.rowId
       },
@@ -205,7 +229,6 @@ describe('TableRowSelectionState tests', () => {
     const { result } = renderTableRowSelectionStateHook()
     act(() => {
       result.current.setIsRowSelectionVisible(true)
-      result.current.setTableData(mockQueryResultBundleWithRowIdsRemoved)
     })
     expect(result.current.isRowSelectionVisible).toBe(true)
     expect(result.current.selectedRows).toEqual([])
@@ -214,20 +237,22 @@ describe('TableRowSelectionState tests', () => {
     // Select a row
     act(() => {
       result.current.setSelectedRows([
-        mockQueryResultBundleWithRowIdsRemoved.queryResult?.queryResults
-          .rows[0]!,
+        mockQueryResultBundleWithRowIdsRemoved.queryResult.queryResults.rows[0],
       ])
     })
 
     const numColumns =
-      mockQueryResultBundleWithRowIdsRemoved.columnModels!.length
+      mockQueryResultBundleWithRowIdsRemoved.columnModels.length
     // Since we're using deep equality, changing one value will cause the row to not be considered 'selected`
     const rowWithAllButOneValueMatching = cloneDeep(
-      mockQueryResultBundleWithRowIdsRemoved.queryResult!.queryResults.rows[0],
+      mockQueryResultBundleWithRowIdsRemoved.queryResult.queryResults.rows[0],
     )
     rowWithAllButOneValueMatching.values[numColumns - 1] = 'different value'
-    expect(result.current.isRowSelected(rowWithAllButOneValueMatching)).toBe(
-      false,
-    )
+    expect(
+      result.current.isRowSelected(
+        rowWithAllButOneValueMatching,
+        mockQueryResultBundle.selectColumns,
+      ),
+    ).toBe(false)
   })
 })
