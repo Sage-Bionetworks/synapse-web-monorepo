@@ -53,7 +53,7 @@ export const toolsSchema: GenericCardSchema = {
     'tumorType',
     'specimenFormat',
     'specimenType',
-    'dateModified',
+    'latestPublicationDate',
     'species',
   ],
 }
