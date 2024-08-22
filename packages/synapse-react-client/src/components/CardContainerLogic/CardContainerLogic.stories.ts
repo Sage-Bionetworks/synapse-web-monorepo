@@ -23,6 +23,7 @@ import {
   ReleaseMetadataConfig,
   SelectedFacetConfig,
 } from '../ReleaseCard/ReleaseCardTypes'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -221,6 +222,13 @@ export const ReleaseCardLargeMock: Story = {
       },
     },
   },
+  loaders: [
+    () =>
+      registerTableQueryResult(
+        { sql: currentReleaseCardSql },
+        mockCurrentReleaseCardsQueryResultBundle,
+      ),
+  ],
   parameters: {
     stack: 'mock',
     design: {
@@ -231,10 +239,7 @@ export const ReleaseCardLargeMock: Story = {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(
-          mockCurrentReleaseCardsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-        ),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },
@@ -252,6 +257,16 @@ export const ReleaseCardMediumMock: Story = {
       statsConfig: statsConfig,
     },
   },
+  loaders: [
+    () => {
+      registerTableQueryResult(
+        {
+          sql: `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false`,
+        },
+        mockPreviousReleaseCardsQueryResultBundle,
+      )
+    },
+  ],
   parameters: {
     stack: 'mock',
     design: {
@@ -262,10 +277,7 @@ export const ReleaseCardMediumMock: Story = {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(
-          mockPreviousReleaseCardsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-        ),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },

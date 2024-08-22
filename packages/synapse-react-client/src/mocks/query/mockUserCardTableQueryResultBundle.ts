@@ -1,7 +1,7 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 
-const queryResultBundle: QueryResultBundle = {
+const queryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -62,6 +62,6 @@ const queryResultBundle: QueryResultBundle = {
       ],
     },
   },
-}
+} satisfies QueryResultBundle
 
 export default queryResultBundle

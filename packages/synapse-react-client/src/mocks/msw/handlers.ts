@@ -20,6 +20,7 @@ import {
   getAnnotationColumnHandlers,
   getCreateColumnModelBatchHandler,
   getDefaultColumnHandlers,
+  getHandlersForTableQuery,
 } from './handlers/tableQueryHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
@@ -68,6 +69,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getResetTwoFactorAuthHandlers(backendOrigin),
   ...getMessageHandlers(backendOrigin),
   getFeatureFlagsOverride({ portalOrigin }),
+  ...getHandlersForTableQuery(backendOrigin),
 ]
 
 const handlers = getHandlers(

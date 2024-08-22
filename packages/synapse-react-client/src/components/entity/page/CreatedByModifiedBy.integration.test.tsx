@@ -14,8 +14,8 @@ import {
   mockUserProfileData2,
 } from '../../../mocks/user/mock_user_profile'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockDatasetEntity } from '../../../mocks/entity/mockDataset'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 function renderComponent(props: CreatedByModifiedByProps) {
   return render(<CreatedByModifiedBy {...props} />, {
@@ -69,11 +69,12 @@ describe('CreatedByModifiedBy tests', () => {
   })
   it('Shows created on/by, modified on/by, last updated for a table', async () => {
     const lastUpdatedOn = '2023-01-01T00:00:00.000Z'
-    server.use(
-      ...getHandlersForTableQuery({
+    registerTableQueryResult(
+      { sql: `SELECT * FROM ${mockTableEntity.id} LIMIT 0` },
+      {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         lastUpdatedOn: lastUpdatedOn,
-      }),
+      },
     )
 
     renderComponent({ entityId: mockTableEntity.id })
@@ -119,13 +120,14 @@ describe('CreatedByModifiedBy tests', () => {
   })
   it('Shows additional created by help for a dataset', async () => {
     const lastUpdatedOn = '2023-01-01T00:00:00.000Z'
-    server.use(
-      ...getHandlersForTableQuery({
+
+    registerTableQueryResult(
+      { sql: `SELECT * FROM ${mockDatasetEntity.id} LIMIT 0` },
+      {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         lastUpdatedOn: lastUpdatedOn,
-      }),
+      },
     )
-
     renderComponent({ entityId: mockDatasetEntity.id! })
 
     // Created by

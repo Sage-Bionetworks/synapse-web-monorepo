@@ -6,6 +6,7 @@ import {
   mockQueryPerCardResult,
   mockSingleQueryResult,
 } from '../../mocks/query/mockFeaturedDataTabsQueryData'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const meta = {
   title: 'Home Page/FeaturedDataTabs',
@@ -23,11 +24,19 @@ export const SingleQuery: Story = {
   parameters: {
     chromatic: { viewports: [600, 1200] },
     msw: {
-      handlers: [
-        ...getHandlersForTableQuery(mockSingleQueryResult, MOCK_REPO_ORIGIN),
-      ],
+      handlers: [...getHandlersForTableQuery(MOCK_REPO_ORIGIN)],
     },
   },
+  loaders: [
+    () => {
+      registerTableQueryResult(
+        {
+          sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Validation Study\' OR "collectionType" = \'Interventional Study\' OR "collectionType" = \'Observational Study\' ) )',
+        },
+        mockSingleQueryResult,
+      )
+    },
+  ],
   args: {
     rgbIndex: 1,
     sql: 'SELECT * FROM syn21994974',
@@ -61,13 +70,102 @@ export const QueryPerCard: Story = {
   parameters: {
     chromatic: { viewports: [600, 1200] },
     msw: {
-      handlers: [
-        // In reality, we actually make multiple table queries that return different data
-        // It will suffice if all queries return the same data for this example
-        ...getHandlersForTableQuery(mockQueryPerCardResult, MOCK_REPO_ORIGIN),
-      ],
+      handlers: [...getHandlersForTableQuery(MOCK_REPO_ORIGIN)],
     },
   },
+  loaders: [
+    () => {
+      // In reality, we actually make multiple table queries that return different data
+      // It will suffice if all queries return the same data for this example
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['ROSMAP'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['MSBB'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['rnaSeqReprocessing'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['UCI_5XFAD'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['Jax.IU.Pitt_PrimaryScreen'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+      registerTableQueryResult(
+        {
+          sql: 'select * from syn11346063',
+          selectedFacets: [
+            {
+              columnName: 'study',
+              facetValues: ['Jax.IU.Pitt_5XFAD'],
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            },
+          ],
+        },
+        mockQueryPerCardResult,
+      )
+    },
+  ],
   args: {
     rgbIndex: 1,
     sql: 'select * from syn11346063',

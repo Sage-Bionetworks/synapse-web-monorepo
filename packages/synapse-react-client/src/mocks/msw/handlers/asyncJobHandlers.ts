@@ -3,7 +3,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import { uniqueId } from 'lodash-es'
 import {
   AsynchJobState,
   AsynchronousJobStatus,
@@ -11,17 +10,21 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ASYNCHRONOUS_JOB_TOKEN } from '../../../utils/APIConstants'
 import { SynapseError } from '../../../utils/SynapseError'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-/**
- * Global mapping between async job token and request/response. This sort of acts as an in-memory database for asynchronous jobs.
- */
-const mapOfAsyncJobs = new Map<
-  string,
-  {
-    request: unknown
-    response: unknown
-  }
->()
+type AsyncJobDetails<TRequestBody, TResponseBody> = {
+  id: string
+  request: TRequestBody
+  response: TResponseBody
+}
+
+const mockAsynchronousJobService = new BasicMockedCrudService<
+  AsyncJobDetails<unknown, unknown>,
+  'id'
+>({
+  idField: 'id',
+  autoGenerateId: true,
+})
 
 /**
  * Generates MSW handlers for asynchronous jobs.
@@ -49,15 +52,15 @@ export function generateAsyncJobHandlers<
   return [
     // Handler for the asynchronous job request endpoint.
     rest.post(`${backendOrigin}${requestPath}`, async (req, res, ctx) => {
-      const asyncJobId = uniqueId()
-      mapOfAsyncJobs.set(asyncJobId, {
+      const createdJob = mockAsynchronousJobService.create({
         request: await req.json(),
         response: responseBody,
       })
+
       return res(
         ctx.status(201),
         ctx.json<AsyncJobId>({
-          token: asyncJobId,
+          token: createdJob.id,
         }),
       )
     }),
@@ -67,7 +70,7 @@ export function generateAsyncJobHandlers<
       `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`,
       async (req, res, ctx) => {
         const id = req.params.id as string
-        const asyncJobDetails = mapOfAsyncJobs.get(id)
+        const asyncJobDetails = mockAsynchronousJobService.getOneById(id)
         if (!id || !asyncJobDetails) {
           return res(
             ctx.status(404),
@@ -114,7 +117,8 @@ export function generateAsyncJobHandlers<
       `${backendOrigin}${responsePath(':asyncJobToken')}`,
       async (req, res, ctx) => {
         const asyncJobToken = req.params.asyncJobToken as string
-        const asyncJobDetails = mapOfAsyncJobs.get(asyncJobToken)
+        const asyncJobDetails =
+          mockAsynchronousJobService.getOneById(asyncJobToken)
         if (!asyncJobToken || !asyncJobDetails) {
           return res(
             ctx.status(404),

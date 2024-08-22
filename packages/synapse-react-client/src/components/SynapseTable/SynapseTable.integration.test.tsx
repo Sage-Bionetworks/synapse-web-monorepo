@@ -42,7 +42,6 @@ import {
   QueryWrapper,
   QueryWrapperProps,
 } from '../../index'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import {
   MOCK_TABLE_ENTITY_ID,
   mockTableEntity,
@@ -55,18 +54,19 @@ import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
 import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
 import { normalizeNumericId } from '../../utils/functions/StringUtils'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import mockQueryResponseData from '../../mocks/mockQueryResponseData'
 
 const synapseTableEntityId = 'syn16787123'
 
 const mixedEntityView = cloneDeep(mockFileViewEntity)
 mixedEntityView.viewTypeMask = 0x1 | 0x2 | 0x4 | 0x8 | 0x10 | 0x20
 
-const totalColumns = 13
-
 let queryContext: QueryContextType | undefined
 
 function renderTable(
-  props?: SynapseTableProps,
+  queryResultBundle: QueryResultBundle,
+  propOverrides?: Partial<SynapseTableProps>,
   queryWrapperPropOverrides?: Partial<QueryWrapperProps>,
   mockEntity: Table = mockTableEntity,
   queryVisualizationWrapperProps?: Partial<QueryVisualizationWrapperProps>,
@@ -113,7 +113,10 @@ function renderTable(
     },
   }
 
-  return render(
+  // Set up the mock server handlers for the table query
+  registerTableQueryResult(initQueryRequest.query, queryResultBundle)
+
+  const component = render(
     <QueryWrapper
       initQueryRequest={initQueryRequest}
       {...queryWrapperPropOverrides}
@@ -126,13 +129,15 @@ function renderTable(
             return <></>
           }}
         </QueryContextConsumer>
-        <SynapseTable {...props} />
+        <SynapseTable {...propOverrides} />
       </QueryVisualizationWrapper>
     </QueryWrapper>,
     {
       wrapper: createWrapper(),
     },
   )
+
+  return { component, initQueryRequest }
 }
 
 jest.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
@@ -156,8 +161,6 @@ describe('SynapseTable tests', () => {
   })
   beforeEach(() => {
     server.use(
-      ...getHandlersForTableQuery(queryResultBundle),
-
       rest.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
         async (req, res, ctx) => {
@@ -290,11 +293,9 @@ describe('SynapseTable tests', () => {
   describe.each(entityTypeCases)(
     'Properly renders supplemental UI columns for %p',
     (name, entity, queryResultBundle, expected) => {
-      beforeEach(() => {
-        server.use(...getHandlersForTableQuery(queryResultBundle))
-      })
       it(`Renders the supplemental columns correctly for ${name}`, async () => {
         renderTable(
+          queryResultBundle,
           {
             showAccessColumn: true,
             showDirectDownloadColumn: true,
@@ -335,6 +336,7 @@ describe('SynapseTable tests', () => {
 
       it('With row selection', async () => {
         renderTable(
+          queryResultBundle,
           {
             showAccessColumn: true,
             showDirectDownloadColumn: true,
@@ -357,6 +359,7 @@ describe('SynapseTable tests', () => {
 
       it('Hides columns correctly', () => {
         renderTable(
+          queryResultBundle,
           {
             showAccessColumn: false,
             showDirectDownloadColumn: false,
@@ -381,22 +384,27 @@ describe('SynapseTable tests', () => {
   )
 
   it('renders facet controls in the column headers', async () => {
-    renderTable()
+    renderTable(mockQueryResponseData)
+    const numberOfEnumeratedFacets = mockQueryResponseData.facets.filter(
+      f =>
+        f.concreteType ===
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    ).length
 
-    // there are a total of 13 columns in view, so we expect
-    // 13 headers
+    // There should be a column for each column in the query result
     await waitFor(() => {
-      expect(screen.getAllByRole('columnheader')).toHaveLength(totalColumns)
+      expect(screen.getAllByRole('columnheader')).toHaveLength(
+        mockQueryResponseData.selectColumns.length,
+      )
     })
 
-    // there are five facets for the dataset so there should be 5
-    // faceted columns
+    // There should be one filter button for each enumerated facet
     await waitFor(() => {
       expect(
         screen.getAllByRole('button', {
           name: /Filter by .*/,
         }),
-      ).toHaveLength(5)
+      ).toHaveLength(numberOfEnumeratedFacets)
     })
   })
 
@@ -409,16 +417,42 @@ describe('SynapseTable tests', () => {
                   - descending
                   - ascending
             */
-    renderTable()
+    const { initQueryRequest } = renderTable(queryResultBundle)
+    // Register results for each query with a sort option -- no need to actually update the data
+    registerTableQueryResult(
+      {
+        ...initQueryRequest.query,
+        sort: [
+          {
+            column: 'studyName',
+            direction: 'ASC',
+          },
+        ],
+      },
+      queryResultBundle,
+    )
+    registerTableQueryResult(
+      {
+        ...initQueryRequest.query,
+        sort: [
+          {
+            column: 'studyName',
+            direction: 'DESC',
+          },
+        ],
+      },
+      queryResultBundle,
+    )
+
     await waitFor(() => {
       expect(queryContext).toBeDefined()
     })
 
-    // simulate having clicked the sort button on the first column, projectName
-    const sortedColumn = 'projectName'
+    // simulate having clicked the sort button on the first column, studyName
+    const sortedColumn = 'studyName'
 
     const sortButton = await screen.findByRole('button', {
-      name: 'Sort by Project Name',
+      name: 'Sort by Study Name',
     })
     await userEvent.click(sortButton)
 
@@ -467,7 +501,8 @@ describe('SynapseTable tests', () => {
   it('Hides download columns when rows of an entity-containing view have no IDs', () => {
     // e.g. when the view has a GROUP BY or DISTINCT clause, the rows no longer represent individual entities, so they can't be downloaded
     // this is indicated by the rows of the result query not having rowIds, rather than the rowId matching the synID of the corresponding entity
-    const queryResultBundleWithoutRowIds = cloneDeep(queryResultBundle)
+    const queryResultBundleWithoutRowIds: QueryResultBundle =
+      cloneDeep(queryResultBundle)
     queryResultBundleWithoutRowIds.queryResult!.queryResults.rows =
       queryResultBundleWithoutRowIds.queryResult!.queryResults.rows.map(
         row => ({
@@ -486,10 +521,11 @@ describe('SynapseTable tests', () => {
           return res(ctx.status(200), ctx.json(mockFileViewEntity))
         },
       ),
-      ...getHandlersForTableQuery(queryResultBundleWithoutRowIds),
     )
 
-    renderTable({ showDirectDownloadColumn: true })
+    renderTable(queryResultBundleWithoutRowIds, {
+      showDirectDownloadColumn: true,
+    })
     mockAllIsIntersecting(true)
 
     expect(
@@ -529,10 +565,11 @@ describe('SynapseTable tests', () => {
           return res(ctx.status(200), ctx.json(mockFileViewEntity))
         },
       ),
-      ...getHandlersForTableQuery(queryResultBundleWithRenamedColumn),
     )
 
-    renderTable({ showDirectDownloadColumn: true })
+    renderTable(queryResultBundleWithRenamedColumn, {
+      showDirectDownloadColumn: true,
+    })
     mockAllIsIntersecting(true)
 
     const column = await screen.findByRole('columnheader')
@@ -583,11 +620,9 @@ describe('SynapseTable tests', () => {
       },
     }
 
-    server.use(
-      ...getHandlersForTableQuery(queryResultBundleWithFacetedJsonSubcolumn),
-    )
-
-    renderTable({ showDirectDownloadColumn: true })
+    renderTable(queryResultBundleWithFacetedJsonSubcolumn, {
+      showDirectDownloadColumn: true,
+    })
     mockAllIsIntersecting(true)
 
     // The study column should be visible
@@ -604,7 +639,7 @@ describe('SynapseTable tests', () => {
 
   it('shows help text when provided by QueryVisualizationWrapper', async () => {
     const helpText = 'Some description for the column'
-    renderTable(undefined, undefined, undefined, {
+    renderTable(queryResultBundle, undefined, undefined, undefined, {
       helpConfiguration: [
         {
           columnName: 'id',
@@ -642,9 +677,8 @@ describe('SynapseTable tests', () => {
         },
       },
     }
-    server.use(...getHandlersForTableQuery(queryResultBundleWithNoRows))
 
-    renderTable()
+    renderTable(queryResultBundleWithNoRows)
 
     await screen.findByTestId('NoContentPlaceholder')
   })

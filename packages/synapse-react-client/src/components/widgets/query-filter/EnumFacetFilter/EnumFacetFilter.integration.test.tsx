@@ -13,7 +13,6 @@ import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
 import { QueryContextType, useQueryContext } from '../../../../index'
 import userEvent from '@testing-library/user-event'
 import { server } from '../../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'
 import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import QueryWrapper from '../../../QueryWrapper'
@@ -26,6 +25,7 @@ import {
   mockUserProfileData,
   mockUserProfileData2,
 } from '../../../../mocks/user/mock_user_profile'
+import { registerTableQueryResult } from '../../../../mocks/msw/handlers/tableQueryService'
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
@@ -137,12 +137,10 @@ describe('EnumFacetFilter', () => {
   beforeEach(() => {
     currentQueryContext = undefined
     jest.clearAllMocks()
-    server.use(
-      ...getHandlersForTableQuery({
-        ...mockQueryResponseData,
-        columnModels: [columnModel],
-      }),
-    )
+    registerTableQueryResult(nextQueryRequest.query, {
+      ...mockQueryResponseData,
+      columnModels: [columnModel],
+    })
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -200,12 +198,10 @@ describe('EnumFacetFilter', () => {
           name: 'File',
         }
 
-        server.use(
-          ...getHandlersForTableQuery({
-            ...mockQueryResponseData,
-            columnModels: [entityColumnModel],
-          }),
-        )
+        registerTableQueryResult(nextQueryRequest.query, {
+          ...mockQueryResponseData,
+          columnModels: [entityColumnModel],
+        })
 
         const updatedProps: EnumFacetFilterProps = {
           facet: {
@@ -249,12 +245,10 @@ describe('EnumFacetFilter', () => {
           name: 'Users',
         }
 
-        server.use(
-          ...getHandlersForTableQuery({
-            ...mockQueryResponseData,
-            columnModels: [userColumnModel],
-          }),
-        )
+        registerTableQueryResult(nextQueryRequest.query, {
+          ...mockQueryResponseData,
+          columnModels: [userColumnModel],
+        })
 
         const updatedProps: EnumFacetFilterProps = {
           facet: {
@@ -300,6 +294,24 @@ describe('EnumFacetFilter', () => {
 
   describe('interactions', () => {
     it('should call addValueToSelectedFacet with debounce option', async () => {
+      registerTableQueryResult(
+        {
+          ...nextQueryRequest.query,
+          selectedFacets: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+              columnName: 'Make',
+              facetValues: ['Honda'],
+            },
+          ],
+        },
+        {
+          ...mockQueryResponseData,
+          columnModels: [columnModel],
+        },
+      )
+
       await init()
       await waitFor(() => {
         expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
@@ -328,6 +340,15 @@ describe('EnumFacetFilter', () => {
       )
     })
     it('should trigger callback on clear', async () => {
+      registerTableQueryResult(
+        {
+          sql: nextQueryRequest.query.sql,
+        },
+        {
+          ...mockQueryResponseData,
+          columnModels: [columnModel],
+        },
+      )
       await init()
       const selectAllCheckbox = await screen.findByLabelText('All')
       await userEvent.click(selectAllCheckbox)
