@@ -5,11 +5,13 @@ import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/
 import { Box, Link, Typography } from '@mui/material'
 import { useSynapseContext } from 'src/utils'
 import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
+import EntityDOIInfo from './EntityDOIInfo'
 
 export type ErrorPageProps = {
   type: SynapseErrorType
   message?: string // custom message to report
   entityId?: string
+  entityVersion?: number
   gotoPlace: (href: string) => void
 }
 
@@ -51,7 +53,7 @@ type ErrorPageAction = {
 }
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
-  const { type, entityId, message, gotoPlace } = props
+  const { type, entityId = '', entityVersion, message, gotoPlace } = props
   const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
     useState<boolean>(false)
   const { accessToken } = useSynapseContext()
@@ -156,6 +158,9 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
               </Box>
             )
           })}
+          {entityId && (
+            <EntityDOIInfo entityId={entityId} version={entityVersion} />
+          )}
         </Box>
       </Box>
       {entityId && (

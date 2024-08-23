@@ -28,6 +28,7 @@ import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  DOI,
   DOI_ASSOCIATION,
   ENTITY,
   ENTITY_ACCESS,
@@ -156,6 +157,7 @@ import {
   DiscussionThreadBundle,
   DiscussionThreadOrder,
   DockerCommit,
+  Doi,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -5156,12 +5158,39 @@ export function getDOIAssociation(
   params.set('type', objectType)
   params.set('id', objectId)
   if (objectVersion) {
-    params.set('type', objectVersion.toString())
+    params.set('version', objectVersion.toString())
   }
 
   return allowNotFoundError(() =>
     doGet<DoiAssociation>(
       `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
+  )
+}
+
+/**
+ *Retrieves the DOI for the object and its associated DOI metadata. Note: this call calls an external API, which may impact performance To just retrieve the DOI association, see: GET /doi/association
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi.html
+ */
+export function getDOI(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<Doi | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('version', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<Doi>(
+      `${DOI}?${params.toString()}`,
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),

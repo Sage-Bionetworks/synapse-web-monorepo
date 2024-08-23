@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@mui/material'
 import { DialogBaseTitle } from '../DialogBase'
-import { SynapseErrorBoundary } from './ErrorBanner'
 import {
   useGetCurrentUserProfile,
   useSendMessageToEntityOwner,
@@ -59,54 +58,43 @@ export default function SendMessageToEntityOwnerDialog(
     })
   }, [message, currentUserProfile, sendMessage])
   return (
-    <SynapseErrorBoundary>
-      <Dialog
-        maxWidth="md"
-        open={isOpen}
-        onClose={onHide}
-        sx={{ zIndex: 1500 }}
-      >
-        <DialogBaseTitle title="Contact the Administrator" onCancel={onHide} />
-        <DialogContent sx={{ paddingRight: '20px' }}>
-          <Typography variant={'body1'}>
-            Please explain in your message why you believe you should be given
-            VIEW access to the requested resource.
-          </Typography>
-          <Typography variant={'body1'}>
-            Your message will be sent to the administrator. Your real email
-            address, and the real email address of the administrator, will be
-            hidden.
-          </Typography>
-          <Typography variant={'body1'}>
-            Granting access to this resource is at the discretion of the
-            resource administrator. The operators of this website (Sage
-            Bionetworks) cannot grant access on their behalf.
-          </Typography>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Text of your message"
-            id="messageText"
-            name="messageText"
-            multiline
-            rows={5}
-            onChange={e => setMessage(e.target.value)}
-            value={message}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={onHide}>
-            Cancel
-          </Button>
-          <Button
-            disabled={!message}
-            variant="contained"
-            onClick={onSendMessage}
-          >
-            Send
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </SynapseErrorBoundary>
+    <Dialog maxWidth="md" open={isOpen} onClose={onHide} sx={{ zIndex: 1500 }}>
+      <DialogBaseTitle title="Contact the Administrator" onCancel={onHide} />
+      <DialogContent sx={{ paddingRight: '20px' }}>
+        <Typography variant={'body1'}>
+          Please explain in your message why you believe you should be given
+          VIEW access to the requested resource.
+        </Typography>
+        <Typography variant={'body1'}>
+          Your message will be sent to the administrator. Your real email
+          address, and the real email address of the administrator, will be
+          hidden.
+        </Typography>
+        <Typography variant={'body1'}>
+          Granting access to this resource is at the discretion of the resource
+          administrator. The operators of this website (Sage Bionetworks) cannot
+          grant access on their behalf.
+        </Typography>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Text of your message"
+          id="messageText"
+          name="messageText"
+          multiline
+          rows={5}
+          onChange={e => setMessage(e.target.value)}
+          value={message}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={onHide}>
+          Cancel
+        </Button>
+        <Button disabled={!message} variant="contained" onClick={onSendMessage}>
+          Send
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
