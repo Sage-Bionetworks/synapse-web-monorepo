@@ -27,3 +27,36 @@ export function useSendMessage(
       ),
   })
 }
+
+type SendMessageToEntityOwnerRequest = {
+  entityId: string
+  subject: string
+  body: string
+}
+
+export function useSendMessageToEntityOwner(
+  options?: Partial<
+    UseMutationOptions<
+      MessageToUser,
+      SynapseClientError,
+      SendMessageToEntityOwnerRequest
+    >
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<
+    MessageToUser,
+    SynapseClientError,
+    SendMessageToEntityOwnerRequest
+  >({
+    ...options,
+    mutationFn: (request: SendMessageToEntityOwnerRequest) =>
+      SynapseClient.sendMessageToEntityOwner(
+        request.entityId,
+        request.subject,
+        request.body,
+        accessToken!,
+      ),
+  })
+}

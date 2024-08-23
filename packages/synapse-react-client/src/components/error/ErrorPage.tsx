@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/maintenance.svg'
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
 import { Box, Link, Typography } from '@mui/material'
 import { useSynapseContext } from 'src/utils'
+import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
 
 export type ErrorPageProps = {
   type: SynapseErrorType
@@ -51,14 +52,13 @@ type ErrorPageAction = {
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
   const { type, entityId, message, gotoPlace } = props
+  const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
+    useState<boolean>(false)
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
   const image = getImage(type)
   const title = getTitle(type)
   const messages: string[] = []
-  if (message) {
-    messages.push(message)
-  }
   const actions: ErrorPageAction[] = []
 
   switch (type) {
@@ -87,7 +87,7 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
           actions.push({
             linkText: 'Contact the Administrator',
             onClick: () => {
-              //TODO: pop up a dialog to get the message, and send to the entity id admin
+              setSendMessageToAdminDialogOpen(true)
             },
             description:
               'Write a message to the owner of the resource asking for permission to view.',
@@ -100,59 +100,72 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
         'The link you followed may be broken, or the page may have been removed.',
       )
   }
-
+  if (message) {
+    messages.push(message)
+  }
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        columnGap: '80px',
-        gridTemplateColumns: '40% 60%',
-        height: '100vh',
-      }}
-    >
+    <>
       <Box
         sx={{
-          justifySelf: 'end',
-          alignSelf: 'center',
-          '& svg': {
-            height: '360px',
-            maxWidth: '300px',
-          },
+          display: 'grid',
+          columnGap: '80px',
+          gridTemplateColumns: '40% 60%',
+          height: '100vh',
         }}
       >
-        {image}
+        <Box
+          sx={{
+            justifySelf: 'end',
+            alignSelf: 'center',
+            '& svg': {
+              height: '360px',
+              maxWidth: '300px',
+            },
+          }}
+        >
+          {image}
+        </Box>
+        <Box
+          sx={{
+            justifySelf: 'start',
+            alignSelf: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            mr: '100px',
+          }}
+        >
+          <Typography sx={{ fontSize: '30px', fontWeight: 700 }}>
+            {title}
+          </Typography>
+          {messages.map(message => {
+            return (
+              <Typography variant="body1" key={message}>
+                {message}
+              </Typography>
+            )
+          })}
+          {actions.map(action => {
+            const { onClick, linkText, description } = action
+            return (
+              <Box key={linkText}>
+                <Link sx={{ fontSize: '16px' }} onClick={onClick}>
+                  {linkText}
+                </Link>
+                <Typography variant="body1">{description}</Typography>
+              </Box>
+            )
+          })}
+        </Box>
       </Box>
-      <Box
-        sx={{
-          justifySelf: 'start',
-          alignSelf: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          mr: '100px',
-        }}
-      >
-        <Typography sx={{ fontSize: '30px', fontWeight: 700 }}>
-          {title}
-        </Typography>
-        {messages.map(message => {
-          return (
-            <Typography variant="body1" key={message}>
-              {message}
-            </Typography>
-          )
-        })}
-        {actions.map(action => {
-          const { onClick, linkText, description } = action
-          return (
-            <Box key={linkText}>
-              <Link onClick={onClick}>{linkText}</Link>
-              <Typography variant="body1">{description}</Typography>
-            </Box>
-          )
-        })}
-      </Box>
-    </Box>
+      {entityId && (
+        <SendMessageToEntityOwnerDialog
+          isOpen={isSendMessageToAdminDialogOpen}
+          onHide={() => setSendMessageToAdminDialogOpen(false)}
+          entityId={entityId}
+        />
+      )}
+    </>
   )
 }
 

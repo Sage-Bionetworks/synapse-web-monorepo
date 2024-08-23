@@ -5351,12 +5351,12 @@ export async function getAnnotationColumnModels(
   return getAllOfNextPageTokenPaginatedService(fn)
 }
 
-export async function sendMessage(
+const getMessageToUser = async (
   recipients: string[],
   subject: string,
   body: string,
   accessToken: string,
-): Promise<MessageToUser> {
+) => {
   const cleanedMessageBody = xss(body, xssOptions)
   const uploadedFileResult = await uploadFile(
     accessToken,
@@ -5372,9 +5372,40 @@ export async function sendMessage(
     )}SignedToken:`,
     fileHandleId: uploadedFileResult.fileHandleId,
   }
+  return messageToUser
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser(
+    recipients,
+    subject,
+    body,
+    accessToken,
+  )
 
   return doPost<MessageToUser>(
     `${REPO}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function sendMessageToEntityOwner(
+  entityId: string,
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser([], subject, body, accessToken)
+
+  return doPost<MessageToUser>(
+    `${REPO}/entity/${entityId}/message`,
     messageToUser,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
