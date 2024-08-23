@@ -2,57 +2,157 @@ import React from 'react'
 import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/maintenance.svg'
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { Box, Link, Typography } from '@mui/material'
+import { useSynapseContext } from 'src/utils'
 
 export type ErrorPageProps = {
-  image: string
-  title: string
-  message: string
+  type: SynapseErrorType
+  message?: string // custom message to report
+  entityId?: string
+  gotoPlace: (href: string) => void
 }
 
-const getImage = (image: string) => {
-  switch (image) {
-    case 'maintenance':
-      return <MaintenanceSvg role="img" title={image} />
-    case 'noAccess':
-      return <NoAccessSvg role="img" title={image} />
-    case 'unavailable':
-      return <UnavailableSvg role="img" title={image} />
+export enum SynapseErrorType {
+  DOWN = 'DOWN',
+  ACCESS_DENIED = 'ACCESS_DENIED',
+  NOT_FOUND = 'NOT_FOUND',
+}
+
+const getImage = (type: SynapseErrorType) => {
+  switch (type) {
+    case SynapseErrorType.DOWN:
+      return <MaintenanceSvg role="img" title={SynapseErrorType.DOWN} />
+    case SynapseErrorType.ACCESS_DENIED:
+      return <NoAccessSvg role="img" title={SynapseErrorType.ACCESS_DENIED} />
+    case SynapseErrorType.NOT_FOUND:
+      return <UnavailableSvg role="img" title={SynapseErrorType.NOT_FOUND} />
     default:
       return <></>
   }
 }
+const getTitle = (type: SynapseErrorType) => {
+  switch (type) {
+    case SynapseErrorType.DOWN:
+      return 'Synapse is down for maintenance.'
+    case SynapseErrorType.ACCESS_DENIED:
+      return 'You don’t have permission to view this.'
+    case SynapseErrorType.NOT_FOUND:
+      return 'This page isn’t available.'
+    default:
+      return ''
+  }
+}
+
+type ErrorPageAction = {
+  linkText: string
+  onClick: () => void
+  description: string
+}
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
-  const { image, title, message } = props
+  const { type, entityId, message, gotoPlace } = props
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = !!accessToken
+  const image = getImage(type)
+  const title = getTitle(type)
+  const messages: string[] = []
+  if (message) {
+    messages.push(message)
+  }
+  const actions: ErrorPageAction[] = []
+
+  switch (type) {
+    case SynapseErrorType.ACCESS_DENIED:
+      if (!isLoggedIn) {
+        messages.push(
+          'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
+        )
+        actions.push({
+          linkText: 'Log in to Synapse',
+          onClick: () => gotoPlace('/LoginPlace:0'),
+          description:
+            'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
+        })
+      } else {
+        messages.push(
+          'This account has not been granted access to view this resource. ',
+        )
+        if (!!entityId) {
+          actions.push({
+            linkText: 'Leave a message in the Help Forum',
+            onClick: () => gotoPlace('/SynapseForum:default'),
+            description:
+              'Please remember that all messages left in the forum are public.',
+          })
+          actions.push({
+            linkText: 'Contact the Administrator',
+            onClick: () => {
+              //TODO: pop up a dialog to get the message, and send to the entity id admin
+            },
+            description:
+              'Write a message to the owner of the resource asking for permission to view.',
+          })
+        }
+      }
+      break
+    case SynapseErrorType.NOT_FOUND:
+      messages.push(
+        'The link you followed may be broken, or the page may have been removed.',
+      )
+  }
 
   return (
-    <div className={'error-page-wrapper'}>
-      <div className={'error-page-content'}>
-        <div className={'error-page-image'}>{getImage(image)}</div>
-        <div className={'error-page-message'}>
-          <h2>{title}</h2>
-          <p>{message}</p>
-          <ul>
-            <li>
-              <a href={PRODUCTION_ENDPOINT_CONFIG.PORTAL}>Synapse Home</a>
-            </li>
-            <li>
-              <a
-                href={
-                  'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
-                }
-              >
-                Contact Us
-              </a>
-            </li>
-            <li>
-              <a href={'http://status.synapse.org/'}>Status</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <Box
+      sx={{
+        display: 'grid',
+        columnGap: '80px',
+        gridTemplateColumns: '40% 60%',
+        height: '100vh',
+      }}
+    >
+      <Box
+        sx={{
+          justifySelf: 'end',
+          alignSelf: 'center',
+          '& svg': {
+            height: '360px',
+            maxWidth: '300px',
+          },
+        }}
+      >
+        {image}
+      </Box>
+      <Box
+        sx={{
+          justifySelf: 'start',
+          alignSelf: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          mr: '100px',
+        }}
+      >
+        <Typography sx={{ fontSize: '30px', fontWeight: 700 }}>
+          {title}
+        </Typography>
+        {messages.map(message => {
+          return (
+            <Typography variant="body1" key={message}>
+              {message}
+            </Typography>
+          )
+        })}
+        {actions.map(action => {
+          const { onClick, linkText, description } = action
+          return (
+            <Box key={linkText}>
+              <Link onClick={onClick}>{linkText}</Link>
+              <Typography variant="body1">{description}</Typography>
+            </Box>
+          )
+        })}
+      </Box>
+    </Box>
   )
 }
 
