@@ -10,6 +10,7 @@ import dts from 'vite-plugin-dts'
 export default mergeConfig(viteConfig, {
   root: '.',
   build: {
+    sourcemap: true,
     emptyOutDir: false,
     outDir: './dist',
     lib: {
