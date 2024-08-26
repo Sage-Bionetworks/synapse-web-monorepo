@@ -5,6 +5,7 @@ import { scrollToWithOffset } from '../utils'
 import { SynapseComponent } from './SynapseComponent'
 import Layout from './Layout'
 import { SynapseComponents } from 'synapse-react-client'
+import { Box } from '@mui/material'
 
 const ignoreSearchParamsSet: Set<string> = new Set([
   'utm_source',
@@ -55,10 +56,9 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
     <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
       {title}
       {helpText && (
-        <>
-          {' '}
+        <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
           <SynapseComponents.HelpPopover markdownText={helpText} />
-        </>
+        </Box>
       )}
     </h2>
   )
