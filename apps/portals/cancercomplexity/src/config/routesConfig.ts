@@ -7,10 +7,7 @@ import RouteControlWrapperProps from './routeControlWrapperProps'
 import { toolsConfiguration } from './synapseConfigs/tools'
 import DatasetSvg from './style/Dataset.svg?url'
 import { publicationsCardConfiguration } from './synapseConfigs/publications'
-import {
-  grantsCardConfiguration,
-  grantsDetailPageConfig,
-} from './synapseConfigs/grants'
+import { grantsCardConfiguration } from './synapseConfigs/grants'
 import { peopleCardConfiguration } from './synapseConfigs/people'
 import { educationDetailsCardConfiguration } from './synapseConfigs/education'
 import personGraySvg from './style/PersonGray.svg?url'
