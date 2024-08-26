@@ -1,13 +1,19 @@
 import { GenericRoute } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { projectCardConfiguration } from './synapseConfigs/projects'
-import { datasetCardConfiguration } from './synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  datasetDetailsPageConfig,
+} from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { toolsConfiguration } from './synapseConfigs/tools'
 import DatasetSvg from './style/Dataset.svg?url'
 import { publicationsCardConfiguration } from './synapseConfigs/publications'
-import { grantsCardConfiguration } from './synapseConfigs/grants'
+import {
+  grantsCardConfiguration,
+  grantsDetailPageConfig,
+} from './synapseConfigs/grants'
 import { peopleCardConfiguration } from './synapseConfigs/people'
 import { educationDetailsCardConfiguration } from './synapseConfigs/education'
+import personGraySvg from './style/PersonGray.svg?url'
 import {
   onPointClick,
   onIndividualThemeBarPlotPointClick,
@@ -27,8 +33,8 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import personGraySvg from './style/PersonGray.svg?url'
 import { mc2SupplementTable } from './synapseConfigs/mc2supplement'
+import { projectCardConfiguration } from './synapseConfigs/projects'
 
 const routes: GenericRoute[] = [
   {
@@ -229,6 +235,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Projects',
+                      helpText:
+                        'Subprojects and cores supported by this grant, as listed on NIH RePORTER',
                       tableSqlKeys: ['grant'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.LIKE,
@@ -240,6 +248,7 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related People',
+                      helpText: 'Contributors associated with this grant',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -252,6 +261,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Publications',
+                      helpText:
+                        'Novel papers published with support from this grant',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -264,6 +275,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Datasets',
+                      helpText:
+                        'Novel datasets collected and shared with support from this grant',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -276,6 +289,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Tools',
+                      helpText:
+                        'Novel computational tools developed and shared with support from this grant',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -288,6 +303,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Educational Resources',
+                      helpText:
+                        'Novel educational resources developed and shared with support from this grant',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -336,6 +353,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Grants',
+                      helpText:
+                        'MC2 Center member grant(s) that supported research performed by this person',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -348,6 +367,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'publicationId',
                       title: 'Related Publications',
+                      helpText:
+                        'Publication(s) to which this person contributed',
                       tableSqlKeys: ['pubMedId'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -360,6 +381,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'datasetId',
                       title: 'Related Datasets',
+                      helpText:
+                        'Dataset(s) developed and shared with contribution from this person',
                       tableSqlKeys: ['datasetAlias'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -372,6 +395,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'toolId',
                       title: 'Related Tools',
+                      helpText:
+                        'Tool(s) developed and shared with contribution from this person',
                       tableSqlKeys: ['toolName'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -416,6 +441,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'grantNumber',
                       title: 'Related Grants',
+                      helpText:
+                        'MC2 Center member grant(s) that supported development of the resource',
                       tableSqlKeys: ['grantNumber'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -428,6 +455,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'pubMedId',
                       title: 'Related People',
+                      helpText:
+                        'Individual(s) that contributed to the development of the resource',
                       tableSqlKeys: ['publicationId'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.LIKE,
@@ -440,6 +469,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'pubMedId',
                       title: 'Related Datasets',
+                      helpText:
+                        'Novel dataset(s) collected and shared as part of this study',
                       tableSqlKeys: ['pubMedId'],
                       props: {
                         sqlOperator: ColumnMultiValueFunction.HAS,
@@ -452,6 +483,8 @@ const routes: GenericRoute[] = [
                       name: 'CardContainerLogic',
                       columnName: 'pubMedId',
                       title: 'Related Tools',
+                      helpText:
+                        'Novel computational tool(s) developed and shared as part of this study',
                       tableSqlKeys: ['pubMedId'],
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -474,68 +507,7 @@ const routes: GenericRoute[] = [
           {
             path: 'DetailsPage',
             exact: false,
-            synapseConfigArray: [
-              {
-                name: 'CardContainerLogic',
-                isOutsideContainer: true,
-                props: {
-                  isHeader: true,
-                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                  ...datasetCardConfiguration,
-                  secondaryLabelLimit: Infinity,
-                  sql: datasetsSql,
-                  iconOptions: {
-                    dataset: DatasetSvg,
-                  },
-                  columnAliases,
-                },
-              },
-              {
-                name: 'DetailsPage',
-                props: {
-                  sql: datasetsSql,
-                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                  synapseConfigArray: [
-                    {
-                      name: 'CardContainerLogic',
-                      columnName: 'grantNumber',
-                      title: 'Related Grants',
-                      tableSqlKeys: ['grantNumber'],
-                      props: {
-                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                        sql: grantsSql,
-                        ...grantsCardConfiguration,
-                        columnAliases,
-                      },
-                    },
-                    {
-                      name: 'CardContainerLogic',
-                      columnName: 'pubMedId',
-                      title: 'Related People',
-                      tableSqlKeys: ['publicationId'],
-                      props: {
-                        sqlOperator: ColumnSingleValueFilterOperator.LIKE,
-                        sql: peopleSql,
-                        ...peopleCardConfiguration,
-                        columnAliases,
-                      },
-                    },
-                    {
-                      name: 'CardContainerLogic',
-                      columnName: 'pubMedId',
-                      title: 'Related Publications',
-                      tableSqlKeys: ['pubMedId'],
-                      props: {
-                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                        sql: publicationSql,
-                        ...publicationsCardConfiguration,
-                        columnAliases,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
+            synapseConfigArray: datasetDetailsPageConfig,
           },
         ],
       },
