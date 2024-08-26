@@ -2008,7 +2008,12 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
 }
 
 export const signOut = async () => {
-  const accessToken = await getAccessTokenFromCookie()
+  let accessToken = undefined
+  try {
+    accessToken = await getAccessTokenFromCookie()
+  } catch (e) {
+    console.warn('Could not get the access token from the cookie', e)
+  }
   if (accessToken) {
     try {
       // This call may fail if the token was already revoked, so just log any encountered errors
