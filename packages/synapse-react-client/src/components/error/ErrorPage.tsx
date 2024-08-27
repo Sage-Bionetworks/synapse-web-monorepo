@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/maintenance.svg'
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
@@ -58,53 +58,68 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     useState<boolean>(false)
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
-  const image = getImage(type)
-  const title = getTitle(type)
-  const messages: string[] = []
-  const actions: ErrorPageAction[] = []
+  const image = useMemo(() => getImage(type), [type])
+  const title = useMemo(() => getTitle(type), [type])
 
-  switch (type) {
-    case SynapseErrorType.ACCESS_DENIED:
-      if (!isLoggedIn) {
-        messages.push(
-          'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
+  const messages = useMemo(() => {
+    const msgs: string[] = []
+    switch (type) {
+      case SynapseErrorType.ACCESS_DENIED:
+        if (!isLoggedIn) {
+          msgs.push(
+            'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
+          )
+        } else {
+          msgs.push(
+            'This account has not been granted access to view this resource.',
+          )
+        }
+        break
+      case SynapseErrorType.NOT_FOUND:
+        msgs.push(
+          'The link you followed may be broken, or the page may have been removed.',
         )
-        actions.push({
+        break
+    }
+    if (message) {
+      msgs.push(message)
+    }
+    return msgs
+  }, [type, isLoggedIn, message])
+
+  const actions = useMemo(() => {
+    const acts: ErrorPageAction[] = []
+    if (type === SynapseErrorType.ACCESS_DENIED) {
+      if (!isLoggedIn) {
+        acts.push({
           linkText: 'Log in to Synapse',
           onClick: () => gotoPlace('/LoginPlace:0'),
           description:
             'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
         })
-      } else {
-        messages.push(
-          'This account has not been granted access to view this resource. ',
-        )
-        if (!!entityId) {
-          actions.push({
-            linkText: 'Leave a message in the Help Forum',
-            onClick: () => gotoPlace('/SynapseForum:default'),
-            description:
-              'Please remember that all messages left in the forum are public.',
-          })
-          actions.push({
-            linkText: 'Contact the Administrator',
-            onClick: () => {
-              setSendMessageToAdminDialogOpen(true)
-            },
-            description:
-              'Write a message to the owner of the resource asking for permission to view.',
-          })
-        }
+      } else if (entityId) {
+        acts.push({
+          linkText: 'Leave a message in the Help Forum',
+          onClick: () => gotoPlace('/SynapseForum:default'),
+          description:
+            'Please remember that all messages left in the forum are public.',
+        })
+        acts.push({
+          linkText: 'Contact the Administrator',
+          onClick: () => setSendMessageToAdminDialogOpen(true),
+          description:
+            'Write a message to the owner of the resource asking for permission to view.',
+        })
       }
-      break
-    case SynapseErrorType.NOT_FOUND:
-      messages.push(
-        'The link you followed may be broken, or the page may have been removed.',
-      )
-  }
-  if (message) {
-    messages.push(message)
-  }
+    }
+    return acts
+  }, [type, isLoggedIn, entityId, gotoPlace])
+
+  const handleCloseDialog = useCallback(
+    () => setSendMessageToAdminDialogOpen(false),
+    [],
+  )
+
   return (
     <>
       <Box
@@ -166,7 +181,7 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
       {entityId && (
         <SendMessageToEntityOwnerDialog
           isOpen={isSendMessageToAdminDialogOpen}
-          onHide={() => setSendMessageToAdminDialogOpen(false)}
+          onHide={handleCloseDialog}
           entityId={entityId}
         />
       )}
