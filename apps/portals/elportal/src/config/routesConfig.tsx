@@ -135,6 +135,42 @@ const routes: GenericRoute[] = [
       //     ],
       //   },
       // },
+
+      // TODO: PORTALS-3208: Surface Our Partners (similar to NF)
+      // {
+      //   name: 'CardContainerLogic',
+      //   title: 'Our Partners',
+      //   outsideContainerClassName: 'home-spacer',
+      //   centerTitle: true,
+      //   props: {
+      //     sql: fundersSql,
+      //     type: SynapseConstants.GENERIC_CARD,
+      //     titleLinkConfig: organizationDetailsPageLinkConfig,
+      //     genericCardSchema: {
+      //       ...organizationCardSchema,
+      //       imageFileHandleColumnName: 'cardLogo',
+      //     },
+      //     descriptionConfig: {
+      //       showFullDescriptionByDefault: true,
+      //     },
+      //     ctaLinkConfig: {
+      //       text: 'Visit Website',
+      //       link: 'website',
+      //     },
+      //   },
+      // },
+      // PORTALS-3208: for now, include a wiki
+      {
+        title: 'Our Partners',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        name: 'Markdown',
+        props: {
+          ownerId: 'syn27229419',
+          wikiId: '629422',
+          loadingSkeletonRowCount: 10,
+        },
+      },
       {
         name: 'Ecosystem',
         title: 'Related Resources',
@@ -147,11 +183,6 @@ const routes: GenericRoute[] = [
               title: 'Data Repositories',
               ownerId: 'syn27229419',
               wikiId: '621470',
-            },
-            {
-              title: 'Project Websites',
-              ownerId: 'syn27229419',
-              wikiId: '621471',
             },
             {
               title: 'Cross-Species Research Resources',
