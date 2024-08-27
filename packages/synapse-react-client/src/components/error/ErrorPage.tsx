@@ -15,6 +15,9 @@ export type ErrorPageProps = {
   gotoPlace: (href: string) => void
 }
 
+export const LOG_IN_LINK_TEXT = 'Log in to Synapse'
+export const HELP_FORUM_LINK_TEXT = 'Leave a message in the Help Forum'
+export const CONTACT_ADMIN_LINK_TEXT = 'Contact the Administrator'
 export const ACCESS_DENIED_ANONYMOUS_MESSAGE =
   'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.'
 export const ACCESS_DENIED_MESSAGE =
@@ -22,7 +25,7 @@ export const ACCESS_DENIED_MESSAGE =
 export const NOT_FOUND_MESSAGE =
   'The link you followed may be broken, or the page may have been removed.'
 export const ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION =
-  'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.'
+  'A free account grants lets you view public resources.'
 export const ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION =
   'Please remember that all messages left in the forum are public.'
 export const ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION =
@@ -117,18 +120,18 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     if (type === SynapseErrorType.ACCESS_DENIED) {
       if (!isLoggedIn) {
         acts.push({
-          linkText: 'Log in to Synapse',
+          linkText: LOG_IN_LINK_TEXT,
           onClick: () => gotoPlace('/LoginPlace:0'),
           description: ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
         })
       } else if (entityId) {
         acts.push({
-          linkText: 'Leave a message in the Help Forum',
+          linkText: HELP_FORUM_LINK_TEXT,
           onClick: () => gotoPlace('/SynapseForum:default'),
           description: ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
         })
         acts.push({
-          linkText: 'Contact the Administrator',
+          linkText: CONTACT_ADMIN_LINK_TEXT,
           onClick: () => setSendMessageToAdminDialogOpen(true),
           description: ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
         })

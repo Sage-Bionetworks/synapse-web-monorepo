@@ -1,10 +1,16 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import ErrorPage, {
+  ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
+  ACCESS_DENIED_ANONYMOUS_MESSAGE,
   ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
   ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
+  CONTACT_ADMIN_LINK_TEXT,
   ErrorPageProps,
+  HELP_FORUM_LINK_TEXT,
+  LOG_IN_LINK_TEXT,
+  NOT_FOUND_MESSAGE,
   SynapseErrorType,
 } from './ErrorPage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -12,18 +18,23 @@ import userEvent from '@testing-library/user-event'
 import { server } from '../../mocks/msw/server'
 import { MOCK_DOI } from '../../mocks/doi/MockDoi'
 
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { CONTACT_ADMIN_DIALOG_TITLE } from './SendMessageToEntityOwnerDialog'
+
 const mockGotoPlace = jest.fn()
 
-function renderComponent(props: ErrorPageProps) {
+function renderComponent(props: ErrorPageProps, isLoggedIn: boolean) {
   const component = render(<ErrorPage {...props} />, {
-    wrapper: createWrapper(),
+    wrapper: createWrapper({
+      accessToken: isLoggedIn ? MOCK_ACCESS_TOKEN : undefined,
+    }),
   })
   return { component }
 }
 
-async function setUp(props: ErrorPageProps) {
+async function setUp(props: ErrorPageProps, isLoggedIn: boolean) {
   const user = userEvent.setup()
-  const { component } = renderComponent(props)
+  const { component } = renderComponent(props, isLoggedIn)
 
   let imageElement: HTMLElement | undefined
   await waitFor(() => {
@@ -39,13 +50,13 @@ describe('ErrorPage: basic functionality', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
-  it('Access denied to an entity', async () => {
+  it('403 error on an entity', async () => {
     const props: ErrorPageProps = {
       type: SynapseErrorType.ACCESS_DENIED,
       entityId: 'syn123',
       gotoPlace: mockGotoPlace,
     }
-    await setUp(props)
+    const { user } = await setUp(props, true)
     expect(screen.getByRole('img').getAttribute('title')).toBe(
       props.type.toString(),
     )
@@ -56,5 +67,47 @@ describe('ErrorPage: basic functionality', () => {
     // searching for the text (using a regular expression because the element contains other text in addition to the search string)
     await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
     await screen.findByText(new RegExp(MOCK_DOI.titles[0].title))
+
+    const helpForumLink = screen.getByText(HELP_FORUM_LINK_TEXT)
+    await user.click(helpForumLink)
+    await waitFor(() =>
+      expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
+    )
+
+    // verify link pops up the SendMessageToEntityOwnerDialog
+    const contactAdminLink = screen.getByText(CONTACT_ADMIN_LINK_TEXT)
+    await user.click(contactAdminLink)
+    expect(
+      screen.queryByRole('dialog', {
+        name: new RegExp(CONTACT_ADMIN_DIALOG_TITLE),
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('403 error on an entity - anonymous test', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.ACCESS_DENIED,
+      entityId: 'syn123',
+      gotoPlace: mockGotoPlace,
+    }
+    const { user } = await setUp(props, false)
+
+    await screen.findByText(ACCESS_DENIED_ANONYMOUS_MESSAGE)
+    await screen.findByText(ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION)
+
+    const logInLink = screen.getByText(LOG_IN_LINK_TEXT)
+    await user.click(logInLink)
+    await waitFor(() =>
+      expect(mockGotoPlace).toHaveBeenLastCalledWith('/LoginPlace:0'),
+    )
+  })
+  it('404 error on an entity', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.NOT_FOUND,
+      entityId: 'syn123',
+      gotoPlace: mockGotoPlace,
+    }
+    await setUp(props, false)
+    await screen.findByText(NOT_FOUND_MESSAGE)
   })
 })

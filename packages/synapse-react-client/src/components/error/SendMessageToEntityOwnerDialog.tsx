@@ -14,6 +14,8 @@ import {
 } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 
+export const CONTACT_ADMIN_DIALOG_TITLE = 'Contact the Administrator'
+
 export type SendMessageToEntityOwnerDialogProps = {
   isOpen: boolean
   entityId: string
@@ -59,7 +61,7 @@ export default function SendMessageToEntityOwnerDialog(
   }, [message, currentUserProfile, sendMessage])
   return (
     <Dialog maxWidth="md" open={isOpen} onClose={onHide} sx={{ zIndex: 1500 }}>
-      <DialogBaseTitle title="Contact the Administrator" onCancel={onHide} />
+      <DialogBaseTitle title={CONTACT_ADMIN_DIALOG_TITLE} onCancel={onHide} />
       <DialogContent sx={{ paddingRight: '20px' }}>
         <Typography variant={'body1'}>
           Please explain in your message why you believe you should be given
