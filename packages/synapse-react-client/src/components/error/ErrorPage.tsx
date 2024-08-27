@@ -3,7 +3,7 @@ import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
 import { Box, Link, Typography } from '@mui/material'
-import { useSynapseContext } from 'src/utils'
+import { useSynapseContext } from '../../utils'
 import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
 import EntityDOIInfo from './EntityDOIInfo'
 
@@ -15,6 +15,19 @@ export type ErrorPageProps = {
   gotoPlace: (href: string) => void
 }
 
+export const ACCESS_DENIED_ANONYMOUS_MESSAGE =
+  'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.'
+export const ACCESS_DENIED_MESSAGE =
+  'This account has not been granted access to view this resource.'
+export const NOT_FOUND_MESSAGE =
+  'The link you followed may be broken, or the page may have been removed.'
+export const ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION =
+  'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.'
+export const ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION =
+  'Please remember that all messages left in the forum are public.'
+export const ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION =
+  'Write a message to the owner of the resource asking for permission to view.'
+
 export enum SynapseErrorType {
   DOWN = 'DOWN',
   ACCESS_DENIED = 'ACCESS_DENIED',
@@ -24,11 +37,29 @@ export enum SynapseErrorType {
 const getImage = (type: SynapseErrorType) => {
   switch (type) {
     case SynapseErrorType.DOWN:
-      return <MaintenanceSvg role="img" title={SynapseErrorType.DOWN} />
+      return (
+        <MaintenanceSvg
+          role="img"
+          aria-label="Synapse is Down image"
+          title={SynapseErrorType.DOWN}
+        />
+      )
     case SynapseErrorType.ACCESS_DENIED:
-      return <NoAccessSvg role="img" title={SynapseErrorType.ACCESS_DENIED} />
+      return (
+        <NoAccessSvg
+          role="img"
+          aria-label="Access denied image"
+          title={SynapseErrorType.ACCESS_DENIED}
+        />
+      )
     case SynapseErrorType.NOT_FOUND:
-      return <UnavailableSvg role="img" title={SynapseErrorType.NOT_FOUND} />
+      return (
+        <UnavailableSvg
+          role="img"
+          aria-label="Resource not found image"
+          title={SynapseErrorType.NOT_FOUND}
+        />
+      )
     default:
       return <></>
   }
@@ -66,19 +97,13 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     switch (type) {
       case SynapseErrorType.ACCESS_DENIED:
         if (!isLoggedIn) {
-          msgs.push(
-            'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
-          )
+          msgs.push(ACCESS_DENIED_ANONYMOUS_MESSAGE)
         } else {
-          msgs.push(
-            'This account has not been granted access to view this resource.',
-          )
+          msgs.push(ACCESS_DENIED_MESSAGE)
         }
         break
       case SynapseErrorType.NOT_FOUND:
-        msgs.push(
-          'The link you followed may be broken, or the page may have been removed.',
-        )
+        msgs.push(NOT_FOUND_MESSAGE)
         break
     }
     if (message) {
@@ -94,21 +119,18 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
         acts.push({
           linkText: 'Log in to Synapse',
           onClick: () => gotoPlace('/LoginPlace:0'),
-          description:
-            'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.',
+          description: ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
         })
       } else if (entityId) {
         acts.push({
           linkText: 'Leave a message in the Help Forum',
           onClick: () => gotoPlace('/SynapseForum:default'),
-          description:
-            'Please remember that all messages left in the forum are public.',
+          description: ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
         })
         acts.push({
           linkText: 'Contact the Administrator',
           onClick: () => setSendMessageToAdminDialogOpen(true),
-          description:
-            'Write a message to the owner of the resource asking for permission to view.',
+          description: ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
         })
       }
     }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import { useGetDOI } from 'src/synapse-queries/doi/useDOI'
+import { useGetDOI } from '../../synapse-queries/doi/useDOI'
 
 export type EntityDOIInfoProps = {
   entityId: string

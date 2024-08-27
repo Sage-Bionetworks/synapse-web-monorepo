@@ -11,7 +11,7 @@ import { DialogBaseTitle } from '../DialogBase'
 import {
   useGetCurrentUserProfile,
   useSendMessageToEntityOwner,
-} from 'src/synapse-queries'
+} from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 
 export type SendMessageToEntityOwnerDialogProps = {
