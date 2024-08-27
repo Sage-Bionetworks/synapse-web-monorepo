@@ -15,6 +15,9 @@ export type ErrorPageProps = {
   gotoPlace: (href: string) => void
 }
 
+export const SYNAPSE_DOWN_TITLE = 'Synapse is down for maintenance.'
+export const ACCESS_DENIED_TITLE = 'You don’t have permission to view this.'
+export const NOT_FOUND_TITLE = 'This page isn’t available.'
 export const LOG_IN_LINK_TEXT = 'Log in to Synapse'
 export const HELP_FORUM_LINK_TEXT = 'Leave a message in the Help Forum'
 export const CONTACT_ADMIN_LINK_TEXT = 'Contact the Administrator'
@@ -70,11 +73,11 @@ const getImage = (type: SynapseErrorType) => {
 const getTitle = (type: SynapseErrorType) => {
   switch (type) {
     case SynapseErrorType.DOWN:
-      return 'Synapse is down for maintenance.'
+      return SYNAPSE_DOWN_TITLE
     case SynapseErrorType.ACCESS_DENIED:
-      return 'You don’t have permission to view this.'
+      return ACCESS_DENIED_TITLE
     case SynapseErrorType.NOT_FOUND:
-      return 'This page isn’t available.'
+      return NOT_FOUND_TITLE
     default:
       return ''
   }

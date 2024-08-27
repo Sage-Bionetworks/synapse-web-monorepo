@@ -6,11 +6,14 @@ import ErrorPage, {
   ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
   ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
+  ACCESS_DENIED_TITLE,
   CONTACT_ADMIN_LINK_TEXT,
   ErrorPageProps,
   HELP_FORUM_LINK_TEXT,
   LOG_IN_LINK_TEXT,
   NOT_FOUND_MESSAGE,
+  NOT_FOUND_TITLE,
+  SYNAPSE_DOWN_TITLE,
   SynapseErrorType,
 } from './ErrorPage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -60,6 +63,7 @@ describe('ErrorPage: basic functionality', () => {
     expect(screen.getByRole('img').getAttribute('title')).toBe(
       props.type.toString(),
     )
+    await screen.findByText(ACCESS_DENIED_TITLE)
     await screen.findByText(ACCESS_DENIED_MESSAGE)
     await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
     await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
@@ -101,13 +105,21 @@ describe('ErrorPage: basic functionality', () => {
       expect(mockGotoPlace).toHaveBeenLastCalledWith('/LoginPlace:0'),
     )
   })
-  it('404 error on an entity', async () => {
+  it('404 error page', async () => {
     const props: ErrorPageProps = {
       type: SynapseErrorType.NOT_FOUND,
-      entityId: 'syn123',
       gotoPlace: mockGotoPlace,
     }
     await setUp(props, false)
+    await screen.findByText(NOT_FOUND_TITLE)
     await screen.findByText(NOT_FOUND_MESSAGE)
+  })
+  it('Synapse Down error page', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.DOWN,
+      gotoPlace: mockGotoPlace,
+    }
+    await setUp(props, false)
+    await screen.findByText(SYNAPSE_DOWN_TITLE)
   })
 })
