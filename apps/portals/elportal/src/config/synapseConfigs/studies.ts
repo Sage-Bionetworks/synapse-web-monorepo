@@ -12,6 +12,7 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
+
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
@@ -44,6 +45,7 @@ export const studyCardConfiguration: CardConfiguration = {
     description: 'studyAbstract',
     secondaryLabels: [
       'dataTypeAll',
+      'dataStatus',
       'studyFocus',
       'species',
       'specimenType',
