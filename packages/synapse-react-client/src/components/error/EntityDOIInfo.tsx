@@ -27,23 +27,15 @@ export default function EntityDOIInfo(props: EntityDOIInfoProps) {
       }}
     >
       <Typography variant="body1" sx={{ fontWeight: 700 }}>
-        Requested resource (DOI information)
+        Requested resource
       </Typography>
       <Box>
-        <Typography variant="body1" sx={{ fontWeight: 700 }}>
-          Title(s)
+        <Typography variant="body1">
+          {doi.creators.map(doiCreator => doiCreator.creatorName).join(', & ')}{' '}
+          ({doi.publicationYear}).{' '}
+          {doi.titles.map(doiTitle => `${doiTitle.title}.`)} Synapse.
+          https://doi.org/{doi.doiUri}
         </Typography>
-        {doi.titles.map(doiTitle => (
-          <Typography key={doiTitle.title} variant="body1">
-            {doiTitle.title}
-          </Typography>
-        ))}
-      </Box>
-      <Box>
-        <Typography variant="body1" sx={{ fontWeight: 700 }}>
-          Publication Year
-        </Typography>
-        <Typography variant="body1">{doi.publicationYear}</Typography>
       </Box>
     </Box>
   )
