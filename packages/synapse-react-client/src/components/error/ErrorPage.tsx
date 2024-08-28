@@ -152,9 +152,10 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     <>
       <Box
         sx={{
-          display: 'grid',
+          display: { xs: 'flex', lg: 'grid' },
           columnGap: '80px',
-          gridTemplateColumns: '40% 60%',
+          flexDirection: { xs: 'column', lg: undefined },
+          gridTemplateColumns: { lg: '40% 60%' },
           height: '100vh',
         }}
       >
@@ -166,6 +167,8 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
               height: '360px',
               maxWidth: '300px',
             },
+            pt: '50px',
+            pb: '50px',
           }}
         >
           {image}
@@ -177,10 +180,13 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
-            mr: '100px',
+            m: { xs: '15px', lg: undefined },
+            mr: { lg: '100px' },
           }}
         >
-          <Typography sx={{ fontSize: '30px', fontWeight: 700 }}>
+          <Typography
+            sx={{ fontSize: '30px', fontWeight: 700, lineHeight: '36px' }}
+          >
             {title}
           </Typography>
           {messages.map(message => {
