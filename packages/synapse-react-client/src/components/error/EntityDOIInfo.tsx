@@ -18,7 +18,7 @@ export default function EntityDOIInfo(props: EntityDOIInfoProps) {
   return (
     <Box
       sx={{
-        backgroundColor: '#FBF4E0',
+        backgroundColor: 'tertiary.100',
         borderRadius: '3px',
         p: '20px',
         display: 'flex',
