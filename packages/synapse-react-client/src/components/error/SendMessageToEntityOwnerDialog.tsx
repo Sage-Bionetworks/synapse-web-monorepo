@@ -55,7 +55,7 @@ export default function SendMessageToEntityOwnerDialog(
     const { firstName, lastName, userName } = currentUserProfile
     sendMessage({
       entityId,
-      subject: `${firstName} ${lastName} ${userName} Requested Access to ${entityId}`,
+      subject: `${firstName} ${lastName} (@${userName}) Requested Access to ${entityId}`,
       body: `Requesting access to https://www.synapse.org/Synapse:${entityId}\n\n${message}`,
     })
   }, [message, currentUserProfile, sendMessage])
