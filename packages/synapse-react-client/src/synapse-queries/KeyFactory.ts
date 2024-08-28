@@ -665,6 +665,14 @@ export class KeyFactory {
     ])
   }
 
+  public getDOIQueryKey(
+    objectType: string,
+    objectId: string,
+    versionNumber?: number,
+  ) {
+    return this.getKey(['doi', objectType, objectId, versionNumber])
+  }
+
   public getAllSubscribersQueryKey() {
     return this.getKey('subscribers')
   }

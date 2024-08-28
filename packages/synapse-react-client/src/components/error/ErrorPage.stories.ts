@@ -1,8 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ErrorPage from './ErrorPage'
+import ErrorPage, { SynapseErrorType } from './ErrorPage'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/ErrorPage',
+  args: {
+    gotoPlace: fn(),
+  },
   component: ErrorPage,
 } satisfies Meta
 export default meta
@@ -10,25 +14,20 @@ type Story = StoryObj<typeof meta>
 
 export const Maintenance: Story = {
   args: {
-    image: 'maintenance',
-    title: 'Sorry, Synapse is down for maintenance.',
+    type: SynapseErrorType.DOWN,
     message: "We're busy updating Synapse for you and will be back soon.",
   },
 }
 
 export const NoAccess: Story = {
   args: {
-    image: 'noAccess',
-    title: 'Sorry, Synapse is down for maintenance.',
-    message: "We're busy updating Synapse for you and will be back soon.",
+    type: SynapseErrorType.ACCESS_DENIED,
+    entityId: 'syn12345',
   },
 }
 
 export const Unavailable: Story = {
   args: {
-    image: 'unavailable',
-    title: 'The service is currently unavailable.',
-    message:
-      'Something went wrong and the service is not available. Try again later',
+    type: SynapseErrorType.NOT_FOUND,
   },
 }
