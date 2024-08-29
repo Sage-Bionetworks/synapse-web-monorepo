@@ -43,7 +43,10 @@ export const ResourceAccessItem: React.FunctionComponent<
         role="row"
       >
         <Typography fontSize="16px" lineHeight="20px">
-          <UserOrTeamBadge principalId={resourceAccess.principalId} />
+          <UserOrTeamBadge
+            principalId={resourceAccess.principalId}
+            openLinkInNewTab={true}
+          />
         </Typography>
         <Stack
           direction="row"
