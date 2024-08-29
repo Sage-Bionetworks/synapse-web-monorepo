@@ -14,10 +14,11 @@ export type TeamBadgeProps = {
   teamId: string | number
   teamName: string
   disableHref?: boolean
+  openLinkInNewTab?: boolean
 }
 
 export default function TeamBadge(props: TeamBadgeProps) {
-  const { teamId } = props
+  const { teamId, openLinkInNewTab } = props
   let { teamName, disableHref } = props
 
   let icon: IconName = 'team'
@@ -45,6 +46,7 @@ export default function TeamBadge(props: TeamBadgeProps) {
             ? undefined
             : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Team:${teamId}`
         }
+        target={openLinkInNewTab ? '_blank' : ''}
       >
         {teamName}
       </Tag>
