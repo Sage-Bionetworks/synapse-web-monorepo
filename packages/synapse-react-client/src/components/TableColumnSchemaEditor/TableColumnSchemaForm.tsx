@@ -30,13 +30,15 @@ import { groupBy, isEqual, noop, omit, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
-import { AddCircleTwoTone, North, South } from '@mui/icons-material'
+import { AddCircleTwoTone, Healing, North, South } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
 import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '../../utils/functions/EntityTypeUtils'
 import {
+  doesAllFormDataSatisfyAnnotationMinimums,
+  findMatchingColumnModel,
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
 } from './TableColumnSchemaEditorUtils'
@@ -48,10 +50,7 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
-import {
-  ColumnModelFormData,
-  validateColumnModelFormData,
-} from './Validators/ColumnModelValidator'
+import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
 import pluralize from 'pluralize'
 
@@ -152,10 +151,7 @@ function TableColumnSchemaFormInternal(
       },
     )
 
-  const {
-    data: annotationColumnModels,
-    isLoading: isLoadingAnnotationColumns,
-  } = useGetAnnotationColumnModels(
+  const annotationColumnModelsQuery = useGetAnnotationColumnModels(
     {
       viewScope: viewScope!,
       includeDerivedAnnotations: true,
@@ -166,6 +162,11 @@ function TableColumnSchemaFormInternal(
       enabled: hasAnnotationColumnModels,
     },
   )
+
+  const {
+    data: annotationColumnModels,
+    isLoading: isLoadingAnnotationColumns,
+  } = annotationColumnModelsQuery
 
   /**
    * Set the initialData in the form state atom on mount, if it exists and we have no data.
@@ -298,7 +299,10 @@ function TableColumnSchemaFormInternal(
         py: 2.5,
       }}
     >
-      <TableColumnSchemaFormActions disabled={isSubmitting} />
+      <TableColumnSchemaFormActions
+        disabled={isSubmitting}
+        annotationColumnModelsQuery={annotationColumnModelsQuery}
+      />
       <Box
         display={'grid'}
         sx={{
@@ -400,12 +404,13 @@ function TableColumnSchemaFormInternal(
 
 type TableColumnSchemaFormActionsProps = {
   disabled?: boolean
+  annotationColumnModelsQuery: ReturnType<typeof useGetAnnotationColumnModels>
 }
 
 function TableColumnSchemaFormActions(
   props: TableColumnSchemaFormActionsProps,
 ) {
-  const { disabled = false } = props
+  const { disabled = false, annotationColumnModelsQuery } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
 
   const columnModels = useAtomValue(tableColumnSchemaFormDataAtom)
@@ -468,31 +473,29 @@ function TableColumnSchemaFormActions(
       >
         <IconSvg fontSize={'small'} icon={'delete'} wrap={false} />
       </Button>
+      {annotationColumnModelsQuery.data ? (
+        <Button
+          variant={'outlined'}
+          startIcon={<Healing />}
+          onClick={() => {
+            dispatch({
+              type: 'updateColumnSizesToRecommendedValues',
+              annotationColumnModels: annotationColumnModelsQuery.data,
+            })
+          }}
+          disabled={doesAllFormDataSatisfyAnnotationMinimums(
+            columnModels,
+            annotationColumnModelsQuery.data,
+          )}
+        >
+          Use Recommended Sizes
+        </Button>
+      ) : annotationColumnModelsQuery.isLoading ? (
+        // TODO: make better
+        <SynapseSpinner />
+      ) : null}
     </Box>
   )
-}
-
-const findMatchingColumnModel = (
-  columnModels: ColumnModel[],
-  target: ColumnModelFormData,
-): ColumnModel | undefined => {
-  let closestMatch: ColumnModel | undefined
-
-  for (const model of columnModels) {
-    if (columnModelMatchesFormData(model, target)) {
-      closestMatch = model
-      break
-    }
-  }
-
-  return closestMatch
-}
-
-const columnModelMatchesFormData = (
-  model: ColumnModel,
-  target: ColumnModelFormData,
-): boolean => {
-  return model.name === target.name && model.columnType === target.columnType
 }
 
 type TableColumnSchemaFormRowProps = {

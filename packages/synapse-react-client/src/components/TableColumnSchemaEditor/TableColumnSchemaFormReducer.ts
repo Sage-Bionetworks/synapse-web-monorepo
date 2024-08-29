@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { atomWithReducer } from 'jotai/utils'
 import { cloneDeep } from 'lodash-es'
 import {
@@ -6,6 +6,9 @@ import {
   canHaveSize,
   configureFacetsForType,
   DEFAULT_STRING_SIZE,
+  doesAllFormDataSatisfyAnnotationMinimums,
+  doesFormDataValueSatisfyAnnotationMinimum,
+  findMatchingColumnModel,
 } from './TableColumnSchemaEditorUtils'
 import {
   ColumnModelFormData,
@@ -171,6 +174,55 @@ type TableColumnSchemaFormReducerAction =
   | {
       type: 'delete'
     }
+  | {
+      type: 'updateColumnSizesToRecommendedValues'
+      annotationColumnModels: ColumnModel[]
+    }
+
+function updateColumnSizesToRecommendedValues(
+  action: {
+    type: 'updateColumnSizesToRecommendedValues'
+    annotationColumnModels: ColumnModel[]
+  },
+  prevState: ColumnModelFormData[],
+): ColumnModelFormData[] {
+  const { annotationColumnModels } = action
+  return prevState.map(cm => {
+    // Note: no need to check JSON subcolumns, because Views cannot have JSON data!
+
+    // Find the closest match between passed column model and current column model with name and type
+    const defaultAnnotationModel = annotationColumnModels
+      ? findMatchingColumnModel(annotationColumnModels, cm)
+      : undefined
+
+    if (defaultAnnotationModel == null) {
+      // No matching annotation column, so do not change it
+      return cm
+    }
+
+    if (
+      !doesFormDataValueSatisfyAnnotationMinimum(
+        cm.maximumSize,
+        defaultAnnotationModel.maximumSize,
+      )
+    ) {
+      cm = { ...cm, maximumSize: defaultAnnotationModel.maximumSize }
+    }
+
+    if (
+      !doesFormDataValueSatisfyAnnotationMinimum(
+        cm.maximumListLength,
+        defaultAnnotationModel.maximumListLength,
+      )
+    ) {
+      cm = {
+        ...cm,
+        maximumListLength: defaultAnnotationModel.maximumListLength,
+      }
+    }
+    return cm
+  })
+}
 
 function changeColumnModelType(
   action: {
@@ -191,7 +243,7 @@ function changeColumnModelType(
       jsonSubColumnModelIndex !== undefined
     ) {
       newColumnModelValue = cloneDeep(
-        prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex],
+        prevState[columnModelIndex].jsonSubColumns[jsonSubColumnModelIndex],
       )
     } else {
       newColumnModelValue = cloneDeep(prevState[columnModelIndex])
@@ -247,7 +299,7 @@ function changeColumnModelType(
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined
     ) {
-      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
+      prevState[columnModelIndex].jsonSubColumns[jsonSubColumnModelIndex] =
         newColumnModelValue as JsonSubColumnModelFormData
     } else {
       prevState[columnModelIndex] = newColumnModelValue as ColumnModelFormData
@@ -293,7 +345,7 @@ function setColumnModelValue(
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined
     ) {
-      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
+      prevState[columnModelIndex].jsonSubColumns[jsonSubColumnModelIndex] =
         value as JsonSubColumnModelFormData
     } else {
       prevState[columnModelIndex] = value as ColumnModelFormData
@@ -316,8 +368,8 @@ function toggleSelect(
       jsonSubColumnModelIndex !== undefined
     ) {
       const cm =
-        prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex]
-      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] = {
+        prevState[columnModelIndex].jsonSubColumns[jsonSubColumnModelIndex]
+      prevState[columnModelIndex].jsonSubColumns[jsonSubColumnModelIndex] = {
         ...cm,
         isSelected: !cm.isSelected,
       }
@@ -482,6 +534,9 @@ export function reducer(
           )
         }
       })
+      break
+    case 'updateColumnSizesToRecommendedValues':
+      prevState = updateColumnSizesToRecommendedValues(action, prevState)
       break
     default:
       throw new Error(`Unexpected action`, action)
