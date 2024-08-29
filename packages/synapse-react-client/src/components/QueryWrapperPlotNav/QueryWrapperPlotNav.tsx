@@ -97,6 +97,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'unitDescription'
     | 'additionalFiltersSessionStorageKey'
     | 'helpConfiguration'
+    | 'hideCopyToClipboard'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -333,6 +334,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         helpConfiguration={helpConfiguration}
         visibleColumnCount={props.visibleColumnCount}
         defaultShowPlots={props.defaultShowPlots}
+        hideCopyToClipboard={props.hideCopyToClipboard}
         defaultShowSearchBar={
           props.defaultShowSearchBox || isFullTextSearchEnabled
         }
