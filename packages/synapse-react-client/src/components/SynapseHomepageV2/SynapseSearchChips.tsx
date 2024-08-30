@@ -44,6 +44,8 @@ export const SynapseSearchChips: React.FunctionComponent<
                   fontSize: '18px',
                   fontWeight: 400,
                   p: '10px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {value}
