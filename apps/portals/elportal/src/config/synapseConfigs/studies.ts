@@ -113,9 +113,6 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           columnName: 'methods',
           title: 'Methods',
           props: {},
-          resolveSynId: {
-            title: true,
-          },
         },
         {
           name: 'CardContainerLogic',
