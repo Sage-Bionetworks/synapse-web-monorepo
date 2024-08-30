@@ -71,6 +71,7 @@ export const individualsView: SynapseConfig = {
     visibleColumnCount: 10,
     facetsToPlot: ['Sex', 'dataTypes', 'Assays', 'Diagnosis', 'fileFormat'],
     isRowSelectionVisible: true,
+    hideCopyToClipboard: true, //PORTALS-3212
     rowSelectionPrimaryKey: ['individualID'],
     helpConfiguration: [
       {
@@ -126,6 +127,7 @@ export const filesView: SynapseConfig = {
     cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
+    hideCopyToClipboard: true, //PORTALS-3212
     rowSelectionPrimaryKey: ['id'],
     additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
     tableConfiguration: {

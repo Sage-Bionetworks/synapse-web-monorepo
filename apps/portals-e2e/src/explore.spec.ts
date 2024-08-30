@@ -91,10 +91,11 @@ const expectTopLevelControls = async (
       const buttonNames = [
         'Hide filters',
         'Show / Hide Search Bar',
-        'Copy this search to the clipboard',
         'Show / Hide Visualizations',
         // 'Download Options', - hidden in some portal tabs
       ]
+      if (getPortal() !== 'elportal')
+        buttonNames.push('Copy this search to the clipboard')
       if (isTableTab) buttonNames.push('Show/Hide Columns')
       await expectButtons(header, buttonNames)
     })

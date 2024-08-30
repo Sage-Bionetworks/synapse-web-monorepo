@@ -31,6 +31,7 @@ export type QueryVisualizationWrapperProps = {
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowPlots?: boolean
+  hideCopyToClipboard?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -58,6 +59,7 @@ export function QueryVisualizationWrapper(
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
     defaultShowSearchBar = false,
     defaultShowPlots = true,
+    hideCopyToClipboard = false,
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
@@ -97,7 +99,9 @@ export function QueryVisualizationWrapper(
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
-  const [showCopyToClipboard, setShowCopyToClipboard] = useState(true)
+  const [showCopyToClipboard, setShowCopyToClipboard] = useState(
+    !hideCopyToClipboard,
+  )
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
   // The search bar and download confirmation should not be shown at the same time.
