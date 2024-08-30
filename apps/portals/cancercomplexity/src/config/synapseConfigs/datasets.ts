@@ -113,6 +113,8 @@ export const datasetDetailsPageConfig: SynapseConfig[] = [
           columnName: 'grantNumber',
           title: 'Related Grants',
           tableSqlKeys: ['grantNumber'],
+          helpText:
+            'MC2 Center member grant(s) that supported development of the resource',
           props: {
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             sql: grantsSql,
@@ -125,6 +127,8 @@ export const datasetDetailsPageConfig: SynapseConfig[] = [
           columnName: 'pubMedId',
           title: 'Related People',
           tableSqlKeys: ['publicationId'],
+          helpText:
+            'Individual(s) that contributed to the development of the resource',
           props: {
             sqlOperator: ColumnSingleValueFilterOperator.LIKE,
             sql: peopleSql,
