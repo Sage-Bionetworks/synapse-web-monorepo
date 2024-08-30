@@ -542,6 +542,8 @@ const routes: GenericRoute[] = [
                       columnName: 'grantNumber',
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
+                      helpText:
+                        'MC2 Center member grant(s) that supported development of the resource',
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
@@ -554,6 +556,8 @@ const routes: GenericRoute[] = [
                       columnName: 'toolName',
                       title: 'Related People',
                       tableSqlKeys: ['toolId'],
+                      helpText:
+                        'Individual(s) that contributed to the development of the resource',
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                         sql: peopleSql,
@@ -566,6 +570,8 @@ const routes: GenericRoute[] = [
                       columnName: 'pubMedId',
                       title: 'Related Publications',
                       tableSqlKeys: ['pubMedId'],
+                      helpText:
+                        'The publication in which the resource was first reported',
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: publicationSql,
@@ -611,6 +617,8 @@ const routes: GenericRoute[] = [
                       columnName: 'grantNumber',
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
+                      helpText:
+                        'MC2 Center member grant(s) that supported development of the resource',
                       props: {
                         sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
