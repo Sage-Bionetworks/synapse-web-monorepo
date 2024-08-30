@@ -192,7 +192,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       </div>
     </form>
     <div
-      class="MuiBox-root css-17hmknl"
+      class="MuiBox-root css-ifdaiw"
     >
       <div
         class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-1cy8tlm-MuiButtonBase-root-MuiChip-root"
@@ -203,7 +203,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Alzheimer's Disease
           </p>
@@ -218,7 +218,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Neurofibromatosis mouse models
           </p>
@@ -233,7 +233,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Cancer
           </p>
@@ -248,7 +248,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             UK Biobank
           </p>
@@ -263,7 +263,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Single-cell analysis of breast cancer
           </p>
@@ -278,7 +278,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             ROSMAP Religious Orders Study and Memory and Aging Project
           </p>
@@ -293,7 +293,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Retinal regeneration studies
           </p>
@@ -308,7 +308,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="MuiChip-label MuiChip-labelMedium css-1jzq0dw-MuiChip-label"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1158qy8-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-hpnre0-MuiTypography-root"
           >
             Machine Learning datasets
           </p>
