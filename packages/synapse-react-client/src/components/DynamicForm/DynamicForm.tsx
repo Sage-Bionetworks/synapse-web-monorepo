@@ -70,10 +70,11 @@ function DynamicForm(props: DynamicFormProps) {
       if (response.ok) {
         displayToast('Form submitted successfully!', 'success')
       } else {
-        displayToast(`Form submission failed: ${response.statusText}`, 'danger')
+        const responseText = await response.text()
+        displayToast(`Form submission failed: ${responseText}`, 'danger')
       }
     } catch (error) {
-      displayToast(`Form submission failed: ${error}`, 'danger')
+      displayToast(`Form submission failed: ${JSON.stringify(error)}`, 'danger')
     } finally {
       setIsSubmitting(false)
     }
