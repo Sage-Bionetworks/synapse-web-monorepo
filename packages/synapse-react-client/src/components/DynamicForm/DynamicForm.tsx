@@ -95,7 +95,7 @@ function DynamicForm(props: DynamicFormProps) {
       formData={formData}
       validator={validator}
       onChange={({ formData }) => setFormData(formData)}
-      onSubmit={({ formData }) => handleSubmit(formData)}
+      onSubmit={async ({ formData }) => await handleSubmit(formData)}
       disabled={isSubmitting}
     >
       <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
