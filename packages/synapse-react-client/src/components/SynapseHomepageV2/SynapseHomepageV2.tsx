@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Box,
   Button,
@@ -7,9 +7,6 @@ import {
   useTheme,
   useMediaQuery,
   Link,
-  FormControl,
-  OutlinedInput,
-  InputAdornment,
 } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
@@ -25,8 +22,6 @@ import SageFullLogo from '../../assets/icons/SageFullLogo'
 import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
-import { Search } from '../../assets/themed_icons'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SynapseSearchChips } from './SynapseSearchChips'
 import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
 
@@ -94,10 +89,6 @@ export const SynapseHomepageV2: React.FunctionComponent<
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
-  const [searchValue, setSearchValue] = useState('')
-  const onSearch = (value: string) => {
-    gotoPlace(`/Search:${encodeURIComponent(value)}`)
-  }
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <SynapseHomepageNavBar gotoPlace={gotoPlace} />
