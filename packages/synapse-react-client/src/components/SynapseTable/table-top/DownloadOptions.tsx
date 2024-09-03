@@ -13,13 +13,12 @@ import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/que
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import {
-  tableQueryDataAtom,
-  tableQueryEntityAtom,
-} from '../../QueryWrapper/QueryWrapper'
-import {
   hasSelectedRowsAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useQuery } from '@tanstack/react-query'
+import { useGetEntity } from '../../../synapse-queries'
+import { Table } from '@sage-bionetworks/synapse-types'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
@@ -30,9 +29,15 @@ export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
   const { accessToken } = useSynapseContext()
-  const { getCurrentQueryRequest, hasResettableFilters } = useQueryContext()
-  const queryResultBundle = useAtomValue(tableQueryDataAtom)
-  const entity = useAtomValue(tableQueryEntityAtom)
+  const {
+    entityId,
+    versionNumber,
+    getCurrentQueryRequest,
+    hasResettableFilters,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
 
   const selectedRows = useAtomValue(selectedRowsAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
@@ -48,7 +53,7 @@ export const DownloadOptions: React.FunctionComponent<
     React.useState(false)
   const { onDownloadFiles, darkTheme = true } = props
 
-  const fileColumnId = getFileColumnModelId(queryResultBundle?.columnModels)
+  const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
 
   const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(
     entity,
@@ -96,7 +101,7 @@ export const DownloadOptions: React.FunctionComponent<
                   hasResettableFilters,
                   hasSelectedRows,
                   selectedRows,
-                  queryResultBundle,
+                  queryMetadata?.queryCount,
                   'file',
                 )}
               </Dropdown.Item>
@@ -146,7 +151,7 @@ export const DownloadOptions: React.FunctionComponent<
           />
         )
       }
-      {showProgrammaticOptions && queryResultBundle && (
+      {showProgrammaticOptions && queryMetadata && (
         <ProgrammaticTableDownload
           onHide={() => setShowProgrammaticOptions(false)}
           queryBundleRequest={queryBundleRequest}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -12,11 +12,12 @@ import {
   ColumnTypeEnum,
   EntityHeader,
   Row,
+  RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { useInfiniteQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { Dataset, Funder } from '../row_renderers'
 import { ReleaseCard } from '../ReleaseCard'
@@ -26,10 +27,8 @@ import {
 } from '../row_renderers/ObservationCard'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
-import WideButton from '../styled/WideButton'
 import { Box } from '@mui/material'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 const defaultListSx = { display: 'block' }
 const releaseCardMediumListSx = {
@@ -42,6 +41,7 @@ const releaseCardMediumListSx = {
 }
 
 export type CardContainerProps = {
+  rowSet: RowSet
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
@@ -67,83 +67,44 @@ function Card(props: { propsToPass: any; type: string }) {
   }
 }
 
-export function CardContainer(props: CardContainerProps) {
+function _CardContainer(props: CardContainerProps) {
   const {
     isHeader = false,
     unitDescription,
     type,
-    isLoading,
     secondaryLabelLimit = 3,
     title,
-    initialLimit,
+    rowSet,
     ...rest
   } = props
-  const infiniteQueryContext = useInfiniteQueryContext()
   const { NoContentPlaceholder } = useQueryVisualizationContext()
-  const { appendNextPageToResults, hasNextPage } = infiniteQueryContext
-  const data = useAtomValue(tableQueryDataAtom)
+  const queryContext = useQueryContext()
+  const { queryMetadataQueryOptions } = queryContext
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const queryVisualizationContext = useQueryVisualizationContext()
-  const [hasAppliedInitialLimit, setHasAppliedInitialLimit] =
-    React.useState<boolean>(false)
 
-  const queryCount = data?.queryCount
-  const applyInitialLimit =
-    initialLimit !== undefined &&
-    queryCount !== undefined &&
-    initialLimit < queryCount &&
-    !hasAppliedInitialLimit
+  const dataRows: Row[] = rowSet.rows
 
-  let dataRows: Row[] = (data && data.queryResult?.queryResults.rows) || []
-  if (applyInitialLimit) {
-    dataRows = dataRows.slice(0, initialLimit)
-  }
-
-  const ids = data?.queryResult!.queryResults.tableId
-    ? [data?.queryResult.queryResults.tableId]
-    : []
+  const ids = [rowSet.tableId]
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
   })
   // the cards only show the loading screen on initial load, this occurs when data is undefined
-  if (!data) {
-    return (
-      <div>
-        {isLoading && type === OBSERVATION_CARD && <LoadingObservationCard />}
-        {isLoading && type !== OBSERVATION_CARD && loadingScreen}
-      </div>
-    )
-  } else if (dataRows.length === 0) {
+  if (dataRows.length === 0) {
     // Show "no results" UI (see PORTALS-1497)
     return <NoContentPlaceholder />
   }
   const schema: Record<string, number> = {}
-  data.queryResult!.queryResults.headers.forEach((element, index) => {
+  rowSet.headers.forEach((element, index) => {
     schema[element.name] = index
   })
-  const showViewMoreButton = (applyInitialLimit || hasNextPage) && (
-    <Box display="flex" justifyContent="flex-start">
-      <WideButton
-        variant="contained"
-        color="secondary"
-        size="large"
-        onClick={() => {
-          if (applyInitialLimit && !hasAppliedInitialLimit) {
-            setHasAppliedInitialLimit(true)
-          } else {
-            appendNextPageToResults()
-          }
-        }}
-      >
-        View More
-      </WideButton>
-    </Box>
-  )
+
   let cards
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
-    const userIdColumnIndex = data.queryResult!.queryResults.headers.findIndex(
+    const userIdColumnIndex = rowSet.headers.findIndex(
       el => el.columnType === ColumnTypeEnum.USERID,
     )
     if (userIdColumnIndex === -1) {
@@ -152,7 +113,9 @@ export function CardContainer(props: CardContainerProps) {
       )
     }
     const listIds = dataRows.map(el => el.values[userIdColumnIndex])
-    cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
+    cards = (
+      <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
+    )
   } else {
     // render the cards
     cards = dataRows.length ? (
@@ -166,12 +129,12 @@ export function CardContainer(props: CardContainerProps) {
           secondaryLabelLimit,
           rowId: rowData.rowId,
           data: rowData.values,
-          selectColumns: data.selectColumns,
-          columnModels: data.columnModels,
+          selectColumns: rowSet.headers,
+          columnModels: queryMetadata.columnModels,
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-          tableId: data?.queryResult!.queryResults.tableId,
-          queryContext: infiniteQueryContext,
+          tableId: rowSet.tableId,
+          queryContext: queryContext,
           queryVisualizationContext,
           ...rest,
         }
@@ -204,9 +167,20 @@ export function CardContainer(props: CardContainerProps) {
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
       </Box>
-      {showViewMoreButton}
     </>
   )
 }
 
-export default CardContainer
+export function CardContainer(props: CardContainerProps) {
+  const fallback = (
+    <div>
+      {props.type === OBSERVATION_CARD && <LoadingObservationCard />}
+      {props.type !== OBSERVATION_CARD && loadingScreen}
+    </div>
+  )
+  return (
+    <Suspense fallback={fallback}>
+      <_CardContainer {...props} />
+    </Suspense>
+  )
+}

@@ -12,12 +12,6 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import {
-  fileIdColumnNameAtom,
-  fileNameColumnNameAtom,
-  fileVersionColumnNameAtom,
-  tableQueryDataAtom,
-} from '../QueryWrapper/QueryWrapper'
 import { useAtomValue } from 'jotai'
 import {
   hasSelectedRowsAtom,
@@ -26,10 +20,11 @@ import {
 } from '../QueryWrapper/TableRowSelectionState'
 
 import { useLocalStorageValue } from '@react-hookz/web'
-import { Link, Typography, Box, Stack } from '@mui/material'
+import { Box, Link, Stack, Typography } from '@mui/material'
 import { Checkbox } from '../widgets/Checkbox'
 import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { useQuery } from '@tanstack/react-query'
 
 const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
   'SendToCavaticaButtonFromConfirmationDialog'
@@ -46,15 +41,16 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
+    queryMetadataQueryOptions,
+    fileIdColumnName,
+    fileVersionColumnName,
+    fileNameColumnName,
   } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
+
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
-
-  const fileIdColumnName = useAtomValue(fileIdColumnNameAtom)
-  const fileVersionColumnName = useAtomValue(fileVersionColumnNameAtom)
-  const fileNameColumnName = useAtomValue(fileNameColumnNameAtom)
 
   const {
     isShowingExportToCavaticaModal,
@@ -74,13 +70,17 @@ export default function SendToCavaticaConfirmationDialog(
 
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
-    if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
+    if (
+      hasSelectedRows &&
+      rowSelectionPrimaryKey &&
+      queryMetadata?.selectColumns
+    ) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
         getPrimaryKeyINFilter(
           rowSelectionPrimaryKey,
           selectedRows,
-          data.selectColumns,
+          queryMetadata.selectColumns,
         ),
       ]
     }
@@ -89,13 +89,13 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
-    data?.selectColumns,
+    queryMetadata?.selectColumns,
     selectedRows,
   ])
 
   const exportToCavatica = useExportToCavatica(
     cavaticaQueryRequest,
-    data?.queryResult?.queryResults.headers,
+    queryMetadata?.selectColumns,
     fileIdColumnName,
     fileNameColumnName,
     fileVersionColumnName,
@@ -103,10 +103,10 @@ export default function SendToCavaticaConfirmationDialog(
 
   const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(
     cavaticaQueryRequest,
-    data?.columnModels as ColumnModel[],
+    queryMetadata?.columnModels as ColumnModel[],
     {
       throwOnError: true,
-      enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
+      enabled: !!queryMetadata?.columnModels && isShowingExportToCavaticaModal,
     },
   )
 
@@ -116,7 +116,7 @@ export default function SendToCavaticaConfirmationDialog(
     hasResettableFilters,
     hasSelectedRows,
     selectedRows,
-    data,
+    queryMetadata?.queryCount,
     unitDescription,
   )} to CAVATICA`
 

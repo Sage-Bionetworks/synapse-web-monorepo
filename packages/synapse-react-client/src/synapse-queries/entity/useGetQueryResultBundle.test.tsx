@@ -4,7 +4,7 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {
   useGetQueryResultBundleWithAsyncStatus,
 } from './useGetQueryResultBundle'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils'
 import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,

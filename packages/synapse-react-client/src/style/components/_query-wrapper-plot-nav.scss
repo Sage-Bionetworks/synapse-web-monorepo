@@ -30,7 +30,7 @@
       .QueryWrapperFullTextSearchInput,
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
-      .FilterAndView,
+      .RowSetView,
       .SynapsePlots {
         grid-column: 2 / span 1;
       }
@@ -46,7 +46,7 @@
     }
   }
 
-  &.hasSelectedRows {
+  .hasSelectedRows {
     margin-bottom: 100px;
   }
 
@@ -84,7 +84,7 @@
   .PlotsContainer {
     grid-row: 8 / span 1;
   }
-  .FilterAndView {
+  .RowSetView {
     grid-row: 9 / span 1;
   }
 
@@ -95,7 +95,7 @@
         display: none;
       }
     }
-    .FilterAndView {
+    .RowSetView {
       margin-top: 10px;
     }
   }

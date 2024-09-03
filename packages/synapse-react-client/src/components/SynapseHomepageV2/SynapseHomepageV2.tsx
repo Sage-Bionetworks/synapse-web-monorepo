@@ -193,11 +193,14 @@ export const SynapseHomepageV2: React.FunctionComponent<
       <Box
         sx={{
           display: 'flex',
+          maxWidth: '1500px',
           gap: '10px',
           alignItems: 'center',
           justifyContent: 'center',
           mt: '30px',
           flexWrap: 'wrap',
+          ml: { xs: '5px', md: 'auto' },
+          mr: { xs: '5px', md: 'auto' },
         }}
       >
         {/* Hard-coded popular searches because these Chips are above the fold and immediately visible. Any delay showing these chips is a problem.

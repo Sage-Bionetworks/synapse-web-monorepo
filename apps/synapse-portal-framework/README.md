@@ -11,7 +11,7 @@ The synapse-portal-framework project contains shared code for all Synapse portal
 ### Building a portal
 
 - The [../portals/](../portals) directory contains each portal configuration
-- [../portals/template](../portals/template) is a portal template that can be copied and filled out where the TODOs and placeholders are written.
+- To create a new portal, copy an existing portal configuration (found in [../portals/](../portals/)) that most closely matches the target configuration, and update it to match the new portal design requirements.
 
 ### Running a portal locally
 

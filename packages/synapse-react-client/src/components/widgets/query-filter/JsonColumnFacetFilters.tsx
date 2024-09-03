@@ -3,11 +3,11 @@ import React, { useState } from 'react'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../../QueryWrapper/QueryWrapper'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { RangeFacetFilter } from './RangeFacetFilter'
+import { useQueryContext } from '../../QueryContext'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 export type JsonColumnFacetFiltersProps = {
   /* The parent ColumnModel that contains the JSON Subcolumns to show in this panel */
@@ -25,11 +25,14 @@ export default function JsonColumnFacetFilters(
   props: JsonColumnFacetFiltersProps,
 ) {
   const { columnModel, facets } = props
-  const data = useAtomValue(tableQueryDataAtom)
+  const { queryMetadataQueryOptions } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
+
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
-  if (data?.columnModels == undefined) {
+  if (queryMetadata.columnModels == undefined) {
     return <></>
   }
   if (!columnModel.jsonSubColumns) {
@@ -48,7 +51,7 @@ export default function JsonColumnFacetFilters(
           {facets.map(jsonSubcolumnFacet => {
             const jsonSubColumnModel = getCorrespondingColumnForFacet(
               jsonSubcolumnFacet,
-              data.columnModels!,
+              queryMetadata.columnModels!,
             )
             return (
               <Box

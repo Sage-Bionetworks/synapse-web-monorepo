@@ -15,8 +15,8 @@ import failOnConsole from 'jest-fail-on-console'
 import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
 import { QueryWrapper } from '../../QueryWrapper'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -68,7 +68,7 @@ describe('facets display hide/show', () => {
   failOnConsole()
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(testData))
+    registerTableQueryResult(lastQueryRequest.query, testData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -105,7 +105,8 @@ describe('facets display hide/show', () => {
   it('if there are only 2 facets, show more button should not exist', async () => {
     const data = cloneDeep(testData)
     data.facets = [data.facets![0], data.facets![2]]
-    server.use(...getHandlersForTableQuery(data))
+    registerTableQueryResult(lastQueryRequest.query, data)
+
     init()
     expect(await screen.findAllByRole('figure')).toHaveLength(2)
 

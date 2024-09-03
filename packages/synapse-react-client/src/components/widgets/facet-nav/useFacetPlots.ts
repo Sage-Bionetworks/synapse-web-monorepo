@@ -6,12 +6,11 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
-import { tableQueryDataAtom } from '../../QueryWrapper/QueryWrapper'
-import { useAtomValue } from 'jotai'
 import { useMemo, useCallback } from 'react'
 import { FacetNavPanelProps } from './FacetNavPanel'
 import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 // Custom hook for generating properties for FacetNavPanel components with filter controls based on the given facets
 export default function useFacetPlots(
@@ -20,16 +19,21 @@ export default function useFacetPlots(
   FacetNavPanelProps,
   'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
 >[] {
-  const data = useAtomValue(tableQueryDataAtom)
-  const { getCurrentQueryRequest, executeQueryRequest } = useQueryContext()
+  const {
+    getCurrentQueryRequest,
+    executeQueryRequest,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
 
   const lastQueryRequest = useMemo(
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
   const facets = useMemo(
-    () => getFacets(data, facetsToPlot),
-    [data, facetsToPlot],
+    () => getFacets(queryMetadata, facetsToPlot),
+    [queryMetadata, facetsToPlot],
   )
 
   const applyChangesFromQueryFilter = useCallback(

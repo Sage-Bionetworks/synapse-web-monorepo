@@ -7,7 +7,7 @@ import {
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
-import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import FacetPlotsCard from './FacetPlotsCard'
 import { chunk } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
@@ -20,7 +20,7 @@ export type SingleQueryFacetPlotsCardsProps = {
   sql?: string
 } & Pick<QueryVisualizationContextType, 'unitDescription'>
 
-export function getQueryRequest(sql: string): QueryBundleRequest {
+function getQueryRequest(sql: string): QueryBundleRequest {
   const entityId = parseEntityIdFromSqlStatement(sql)
   return {
     entityId,
@@ -48,24 +48,28 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<
         columnAliases={columnAliases}
         unitDescription={unitDescription}
       >
-        <QueryWrapperErrorBanner />
-        {chunk(facetsToPlot, CARDS_PER_ROW).map((facets, rowIndex) => {
-          return (
-            <FacetPlotsCardGridContainer
-              key={rowIndex}
-              className={`FeaturedDataPlots__queryPerCard`}
-              sx={{
-                my: 4,
-              }}
-            >
-              {facets?.map(facetName => {
-                return (
-                  <FacetPlotsCard key={facetName} facetsToPlot={[facetName]} />
-                )
-              })}
-            </FacetPlotsCardGridContainer>
-          )
-        })}
+        <QueryWrapperErrorBoundary>
+          {chunk(facetsToPlot, CARDS_PER_ROW).map((facets, rowIndex) => {
+            return (
+              <FacetPlotsCardGridContainer
+                key={rowIndex}
+                className={`FeaturedDataPlots__queryPerCard`}
+                sx={{
+                  my: 4,
+                }}
+              >
+                {facets?.map(facetName => {
+                  return (
+                    <FacetPlotsCard
+                      key={facetName}
+                      facetsToPlot={[facetName]}
+                    />
+                  )
+                })}
+              </FacetPlotsCardGridContainer>
+            )
+          })}
+        </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )

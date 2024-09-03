@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { Suspense, useCallback, useMemo } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
   facetObjectMatchesDefinition,
@@ -16,17 +16,14 @@ import { useQueryContext } from '../../QueryContext'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
-import { Box, Skeleton, Stack } from '@mui/material'
 import { groupBy, noop, sortBy } from 'lodash-es'
 import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
-import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-} from '../../QueryWrapper/QueryWrapper'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import JsonColumnFacetFilters from './JsonColumnFacetFilters'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { getDefaultShownFacetFilters } from './FacetFilterUtils'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { FacetFilterControlsSkeleton } from './FacetFilterSkeleton'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
@@ -100,66 +97,21 @@ export function applyChangesToValuesColumn(
   onChangeFn(result)
 }
 
-/**
- * Determines which facet filters should be shown after loading a new bundle. The shown facets will be the first
- * three available facets, plus any other facets that have a filter applied.
- * @param facetColumns
- * @param selectedFacets
- * @returns the columnNames of the facets that should be shown.
- */
-export function getDefaultShownFacetFilters(
-  facetColumns: string[],
-  selectedFacets?: FacetColumnRequest[],
-): Set<string> {
-  const columnsWithExistingFilters = (selectedFacets ?? []).map(
-    fcr => fcr.columnName,
-  )
-  return new Set([...facetColumns.slice(0, 3), ...columnsWithExistingFilters])
-}
-
-function FacetFilterSkeleton() {
-  const facetFilterFormRow = (
-    <Stack direction={'row'} gap={'10px'} sx={{ my: 1 }}>
-      <Skeleton width={'15px'} />
-      <Skeleton width={'40%'} />
-    </Stack>
-  )
-  return (
-    <Box className={'FacetFilterControls__facet'}>
-      <Box className={'FacetFilterHeader'}>
-        <Skeleton width={'100%'} />
-      </Box>
-      <Box>
-        {facetFilterFormRow}
-        {facetFilterFormRow}
-        {facetFilterFormRow}
-      </Box>
-    </Box>
-  )
-}
-
-function FacetFilterControlsSkeleton() {
-  return (
-    <div className={`FacetFilterControls`}>
-      <FacetFilterSkeleton />
-      <FacetFilterSkeleton />
-      <FacetFilterSkeleton />
-      <FacetFilterSkeleton />
-    </div>
-  )
-}
-
 function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
-  const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
+  const {
+    getCurrentQueryRequest,
+    combineRangeFacetConfig,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const lastRequest = useMemo(
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
-  const data = useAtomValue(tableQueryDataAtom)
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
 
-  const facets = data!
+  const facets = queryMetadata
     .facets!.filter(
       facet =>
         // If availableFacets is configured, remove those that don't match.
@@ -181,7 +133,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     )
 
   const combinedRangeFacets = combineRangeFacetConfig
-    ? data!.facets!.filter(
+    ? queryMetadata.facets!.filter(
         facet =>
           combineRangeFacetConfig.maxFacetColumn === facet.columnName ||
           combineRangeFacetConfig.minFacetColumn === facet.columnName,
@@ -190,7 +142,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   // Group JSON facets by column name, so they can be grouped in the UI under their parent column name
   const jsonFacetsGroupedByColumn = groupBy(
-    data!.facets!.filter(f => !!f.jsonPath),
+    queryMetadata.facets!.filter(f => !!f.jsonPath),
     'columnName',
   )
 
@@ -229,7 +181,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     )
   }, [facets])
 
-  const columnModels = data!.columnModels
+  const columnModels = queryMetadata!.columnModels
 
   const toggleShowFacetFilter = useCallback(
     (facetColumnName: string) => {
@@ -286,7 +238,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
         )
       })}
       {shownJsonFacetGroups.map(([columnName, facets]) => {
-        const columnModel = data?.columnModels?.find(
+        const columnModel = queryMetadata?.columnModels?.find(
           cm => cm.name === columnName,
         )
         return (
@@ -322,16 +274,12 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   )
 }
 
-export default function FacetFilterControlsOrLoader(
+export default function FacetFilterControlsWithSuspense(
   props: FacetFilterControlsProps,
 ) {
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const data = useAtomValue(tableQueryDataAtom)
-
-  if (isLoadingNewBundle) {
-    return <FacetFilterControlsSkeleton />
-  } else if (data == null || data.facets == null) {
-    return <></>
-  }
-  return <FacetFilterControls {...props} />
+  return (
+    <Suspense fallback={<FacetFilterControlsSkeleton />}>
+      <FacetFilterControls {...props} />
+    </Suspense>
+  )
 }

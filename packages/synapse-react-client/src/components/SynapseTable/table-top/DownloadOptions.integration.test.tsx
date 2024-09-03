@@ -10,7 +10,6 @@ import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
 import QueryWrapper from '../../QueryWrapper'
 import { rest, server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
 import {
   ColumnTypeEnum,
@@ -22,6 +21,7 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import { mockProjectViewEntity } from '../../../mocks/entity/mockProjectView'
 import { cloneDeep } from 'lodash-es'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
 
@@ -90,16 +90,15 @@ mockQueryResponseDataWithoutEntityIdColumn.columnModels =
 
 describe('Download Options tests', () => {
   beforeAll(() => server.listen())
-  beforeEach(() => {
-    server.use(...getHandlersForTableQuery(mockQueryResponseData))
-  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
   it('Shows correct options for a TableEntity with no ENTITY_ID column', async () => {
-    server.use(
-      ...getHandlersForTableQuery(mockQueryResponseDataWithoutEntityIdColumn),
+    registerTableQueryResult(
+      tableEntityQueryRequest.query,
+      mockQueryResponseDataWithoutEntityIdColumn,
     )
+
     renderComponent(props, tableEntityQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
@@ -126,6 +125,8 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a File View', async () => {
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+
     renderComponent(props, fileViewQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
@@ -150,6 +151,11 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a Project View', async () => {
+    registerTableQueryResult(
+      projectViewQueryRequest.query,
+      mockQueryResponseData,
+    )
+
     renderComponent(props, projectViewQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
@@ -177,6 +183,8 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a stable version of a dataset', async () => {
+    registerTableQueryResult(datasetQueryRequest.query, mockQueryResponseData)
+
     const isStableVersion = true
     server.use(
       rest.get(
@@ -219,6 +227,8 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a draft Dataset', async () => {
+    registerTableQueryResult(datasetQueryRequest.query, mockQueryResponseData)
+
     const isStableVersion = false
     server.use(
       rest.get(

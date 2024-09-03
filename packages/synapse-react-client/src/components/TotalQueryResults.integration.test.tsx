@@ -11,9 +11,9 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { server } from '../mocks/msw/server'
-import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
 import QueryWrapper from './QueryWrapper'
 import { mockTableEntity } from '../mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '../mocks/msw/handlers/tableQueryService'
 
 const mockQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -97,7 +97,7 @@ function renderComponent(props: TotalQueryResultsProps) {
 describe('TotalQueryResults test', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(mockQueryReturn))
+    registerTableQueryResult(mockQueryRequest.query, mockQueryReturn)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

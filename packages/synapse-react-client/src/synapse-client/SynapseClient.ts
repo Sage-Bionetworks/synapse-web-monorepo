@@ -28,6 +28,7 @@ import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  DOI,
   DOI_ASSOCIATION,
   ENTITY,
   ENTITY_ACCESS,
@@ -156,6 +157,7 @@ import {
   DiscussionThreadBundle,
   DiscussionThreadOrder,
   DockerCommit,
+  Doi,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -2008,7 +2010,12 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
 }
 
 export const signOut = async () => {
-  const accessToken = await getAccessTokenFromCookie()
+  let accessToken = undefined
+  try {
+    accessToken = await getAccessTokenFromCookie()
+  } catch (e) {
+    console.warn('Could not get the access token from the cookie', e)
+  }
   if (accessToken) {
     try {
       // This call may fail if the token was already revoked, so just log any encountered errors
@@ -5156,12 +5163,39 @@ export function getDOIAssociation(
   params.set('type', objectType)
   params.set('id', objectId)
   if (objectVersion) {
-    params.set('type', objectVersion.toString())
+    params.set('version', objectVersion.toString())
   }
 
   return allowNotFoundError(() =>
     doGet<DoiAssociation>(
       `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
+  )
+}
+
+/**
+ *Retrieves the DOI for the object and its associated DOI metadata. Note: this call calls an external API, which may impact performance To just retrieve the DOI association, see: GET /doi/association
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi.html
+ */
+export function getDOI(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<Doi | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('version', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<Doi>(
+      `${DOI}?${params.toString()}`,
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
@@ -5351,12 +5385,12 @@ export async function getAnnotationColumnModels(
   return getAllOfNextPageTokenPaginatedService(fn)
 }
 
-export async function sendMessage(
+const getMessageToUser = async (
   recipients: string[],
   subject: string,
   body: string,
   accessToken: string,
-): Promise<MessageToUser> {
+) => {
   const cleanedMessageBody = xss(body, xssOptions)
   const uploadedFileResult = await uploadFile(
     accessToken,
@@ -5372,9 +5406,40 @@ export async function sendMessage(
     )}SignedToken:`,
     fileHandleId: uploadedFileResult.fileHandleId,
   }
+  return messageToUser
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser(
+    recipients,
+    subject,
+    body,
+    accessToken,
+  )
 
   return doPost<MessageToUser>(
     `${REPO}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function sendMessageToEntityOwner(
+  entityId: string,
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser([], subject, body, accessToken)
+
+  return doPost<MessageToUser>(
+    `${REPO}/entity/${entityId}/message`,
     messageToUser,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,

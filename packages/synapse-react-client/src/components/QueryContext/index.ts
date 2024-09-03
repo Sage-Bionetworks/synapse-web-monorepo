@@ -6,8 +6,6 @@ import {
   QueryContext,
   QueryContextConsumer,
   QueryContextProvider,
-  useInfiniteQueryContext,
-  usePaginatedQueryContext,
   useQueryContext,
 } from './QueryContext'
 
@@ -16,8 +14,6 @@ export {
   QueryContextProvider,
   QueryContextConsumer,
   useQueryContext,
-  useInfiniteQueryContext,
-  usePaginatedQueryContext,
   QueryContextProviderProps,
   QueryContextType,
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import IconPlus from '../../../assets/icons/IconPlus'
 import IconMinus from '../../../assets/icons/IconMinus'
+import { IconButton } from '@mui/material'
 
 export type FacetFilterHeaderProps = {
   label: string
@@ -15,7 +16,8 @@ export function FacetFilterHeader(props: FacetFilterHeaderProps) {
     <div className="FacetFilterHeader">
       <label className="FacetFilterHeader__label">{label}</label>
       {!hideCollapsible && (
-        <button
+        <IconButton
+          size={'small'}
           className="FacetFilterHeader__collapseToggleBtn"
           onClick={() => onClick(!isCollapsed)}
         >
@@ -24,7 +26,7 @@ export function FacetFilterHeader(props: FacetFilterHeaderProps) {
           ) : (
             <IconMinus className="icon-minus" title="Collapse Menu" />
           )}
-        </button>
+        </IconButton>
       )}
     </div>
   )

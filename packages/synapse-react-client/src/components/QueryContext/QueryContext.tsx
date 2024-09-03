@@ -1,30 +1,14 @@
 import React, { createContext, useContext } from 'react'
-import { SynapseClientError } from '../../utils'
-import {
-  AsynchronousJobStatus,
-  ColumnModel,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ReadonlyDeep } from 'type-fest'
+import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
+import { LockedColumn } from '../../utils'
 
-type OptionalQueryBundleRequestFields = keyof Pick<
-  QueryResultBundle,
-  | 'queryResult'
-  | 'queryCount'
-  | 'selectColumns'
-  | 'maxRowsPerPage'
-  | 'columnModels'
-  | 'facets'
-  | 'sumFileSizes'
-  | 'combinedSql'
->
-
-export type QueryContextType<
-  TIncludedFields extends OptionalQueryBundleRequestFields = never,
-  ExcludeOtherFields extends true | false = false,
-> = {
+export type QueryContextType = {
+  isInfinite: boolean
+  entityId: string
+  versionNumber: number | undefined
   currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
   nextQueryRequest: ReadonlyDeep<QueryBundleRequest>
   /** Returns a deep clone of the current query bundle request */
@@ -44,52 +28,52 @@ export type QueryContextType<
   removeQueryFilter: ImmutableTableQueryResult['removeQueryFilter']
   /** Removes a value from a QueryFilter. If no more values remain in the filter, the filter is also removed */
   removeValueFromQueryFilter: ImmutableTableQueryResult['removeValueFromQueryFilter']
-  /** The error returned by the query request, if one is encountered */
-  error: SynapseClientError | null
-  /** The status of the asynchronous job. */
-  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   /** Whether facets are available to be filtered upon based on the current data */
-  isFacetsAvailable: boolean
+  hasFacetedSelectColumn: boolean
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
-  getColumnModel: (columnName: string) => ColumnModel | null
   // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
   onViewSharingSettingsClicked?: (benefactorId: string) => void
   /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
-}
 
-export type PaginatedQueryContextType<
-  TIncludedFields extends OptionalQueryBundleRequestFields = never,
-  ExcludeOtherFields extends true | false = false,
-> = QueryContextType<TIncludedFields, ExcludeOtherFields> & {
-  /** Navigates to a particular page, where the first page has value 1 */
+  /** react-query UseQueryOptions to fetch the current page of table data */
+  rowDataQueryOptions: TableQueryUseQueryOptions['rowDataQueryOptions']
+  /** react-query UseInfiniteQueryOptions to fetch infinite rows of table data */
+  rowDataInfiniteQueryOptions: TableQueryUseQueryOptions['rowDataInfiniteQueryOptions']
+  /** react-query UseQueryOptions to fetch the current query metadata (e.g. column models, facet statistics, total number of rows) */
+  queryMetadataQueryOptions: TableQueryUseQueryOptions['queryMetadataQueryOptions']
+
+  /** Navigates to a particular page. The first page has value 1. Note that this has no effect if `isInfinite` is true */
   goToPage: (pageNum: number) => void
-  /** The current page number, where page 1 is the first page. */
+  /** The current page number, where page 1 is the first page. Note that this has no effect if `isInfinite` is true. */
   currentPage: number
   /** Updates the page size */
   setPageSize: (pageSize: number) => void
   /** The current page size. */
   pageSize: number
+
+  /**
+   * A column name may be "locked" so that it is both (1) not shown to the user that the filter is active, and (2) not modifiable by the user.
+   * For example, we may show only the data matching a particular facet value on a Details Page without implying that the shown data is part of a larger table.
+   * The presence of a locked filter will result in a client-side modification of the active query and result bundle data.
+   */
+  lockedColumn: LockedColumn | undefined
+
+  /**
+   * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row entity ID
+   */
+  fileIdColumnName: string | undefined
+  /**
+   * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row (entity) version
+   */
+  fileVersionColumnName: string | undefined
+  /**
+   * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row (entity) name
+   */
+  fileNameColumnName: string | undefined
 }
 
-export type InfiniteQueryContextType<
-  TIncludedFields extends OptionalQueryBundleRequestFields = never,
-  ExcludeOtherFields extends true | false = false,
-> = QueryContextType<TIncludedFields, ExcludeOtherFields> & {
-  /** Returns true when loading a new page of query results */
-  isLoadingNewPage: boolean
-  /** Whether the query result bundle has a next page */
-  hasNextPage?: boolean
-  /** Invoke this method to fetch and append the next page of rows to the data  */
-  appendNextPageToResults: () => Promise<void>
-  /** Invoke to fetch and update the data with the next page of query results */
-  goToNextPage: () => Promise<void>
-  /** Whether the query result bundle has a previous page */
-  hasPreviousPage: boolean
-  /** Invoke to fetch and update the data with the previous page of query results */
-  goToPreviousPage: () => Promise<void>
-}
 /**
  * This must be exported to use the context in class components.
  */
@@ -123,40 +107,12 @@ export const QueryContextProvider = ({
  * @template ExcludeOtherFields - If set to true, will remove optional fields besides those specified in TIncludedFields,
  * default false
  */
-export function useQueryContext<
-  TIncludedFields extends OptionalQueryBundleRequestFields = never,
-  ExcludeOtherFields extends true | false = false,
->(): QueryContextType<TIncludedFields, ExcludeOtherFields> {
-  const context = useContext(QueryContext) as QueryContextType<
-    TIncludedFields,
-    ExcludeOtherFields
-  >
+export function useQueryContext(): QueryContextType {
+  const context = useContext(QueryContext)
   if (context === undefined) {
     throw new Error('useQueryContext must be used within a QueryWrapper')
   }
   return context
-}
-
-export function usePaginatedQueryContext(): PaginatedQueryContextType {
-  const context = useContext(QueryContext)
-  if (context === undefined) {
-    throw new Error(
-      'usePaginatedQueryContext must be used within a QueryWrapper',
-    )
-  }
-  // TODO: Identify more type-safe alternative to casting
-  return context as PaginatedQueryContextType
-}
-
-export function useInfiniteQueryContext(): InfiniteQueryContextType {
-  const context = useContext(QueryContext)
-  if (context === undefined) {
-    throw new Error(
-      'useInfiniteQueryContext must be used within a QueryWrapper',
-    )
-  }
-  // TODO: Identify more type-safe alternative to casting
-  return context as InfiniteQueryContextType
 }
 
 export type CombineRangeFacetConfig = {

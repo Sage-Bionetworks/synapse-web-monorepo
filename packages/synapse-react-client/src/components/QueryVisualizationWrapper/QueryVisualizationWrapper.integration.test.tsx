@@ -1,34 +1,35 @@
 import { act, render, waitFor } from '@testing-library/react'
 import React from 'react'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 import {
-  PaginatedQueryContextType,
-  usePaginatedQueryContext,
-} from '../QueryContext/QueryContext'
-import {
-  QueryVisualizationContextType,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
-  useQueryVisualizationContext,
 } from './QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../utils'
 import {
   ColumnTypeEnum,
+  Query,
   QueryBundleRequest,
+  SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../mocks/msw/server'
 import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { cloneDeep } from 'lodash-es'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from './QueryVisualizationContext'
 
-const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
+const onQueryContextReceived = jest.fn<void, [QueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
 
 function QueryVizWrapperConsumer(props: { mockFn?: jest.Mock }) {
-  const queryContext = usePaginatedQueryContext()
+  const queryContext = useQueryContext()
   onQueryContextReceived(queryContext)
   const context = useQueryVisualizationContext()
   const fn = props.mockFn ?? onContextReceived
@@ -70,7 +71,9 @@ const initialQueryRequest: QueryBundleRequest = {
 
 describe('QueryVisualizationWrapper', () => {
   beforeAll(() => server.listen())
-  beforeEach(() => server.use(...getHandlersForTableQuery(queryResponse)))
+  beforeEach(() => {
+    registerTableQueryResult(initialQueryRequest.query, queryResponse)
+  })
   afterEach(() => {
     server.restoreHandlers()
     jest.resetAllMocks()
@@ -107,26 +110,35 @@ describe('QueryVisualizationWrapper', () => {
         onContextReceived.mock.lastCall![0].columnsToShowInTable
     })
 
-    server.use(
-      ...getHandlersForTableQuery({
-        ...queryResponse,
-        selectColumns: [
-          {
-            id: '123',
-            name: 'someOtherColumns',
-            columnType: ColumnTypeEnum.STRING,
-          },
-        ],
-      }),
-    )
+    const newQuery: Query = {
+      ...initialQueryRequest.query,
+      sql: 'SELECT some, other, sql, query FROM syn123',
+    }
+
+    const newSelectColumns: SelectColumn[] = [
+      {
+        id: '123',
+        name: 'someOtherColumns',
+        columnType: ColumnTypeEnum.STRING,
+      },
+    ]
+
+    registerTableQueryResult(newQuery, {
+      ...queryResponse,
+      queryResult: {
+        ...queryResponse.queryResult!,
+        queryResults: {
+          ...queryResponse.queryResult!.queryResults,
+          headers: newSelectColumns,
+        },
+      },
+      selectColumns: newSelectColumns,
+    })
 
     act(() => {
       onQueryContextReceived.mock.calls[0][0].executeQueryRequest({
         ...initialQueryRequest,
-        query: {
-          ...initialQueryRequest.query,
-          sql: 'SELECT some, other, sql, query FROM syn123',
-        },
+        query: newQuery,
       })
     })
 
@@ -162,38 +174,36 @@ describe('QueryVisualizationWrapper', () => {
     })
 
     // The results are different (e.g. on another page of data), but the selectColumns do not change
-    server.use(
-      ...getHandlersForTableQuery({
-        ...queryResponse,
-        queryResult: {
-          ...queryResponse.queryResult!,
-          queryResults: {
-            ...queryResponse.queryResult!.queryResults,
-            rows: [
-              {
-                rowId: 5,
-                values: [
-                  '2018',
-                  'Honda',
-                  'CR-V',
-                  'windows, doors, gps, car play',
-                  '8799',
-                  null,
-                  '1575305363000',
-                  '273978',
-                  null,
-                ],
-                versionNumber: 1,
-              },
-            ],
-          },
+    registerTableQueryResult(initialQueryRequest.query, {
+      ...queryResponse,
+      queryResult: {
+        ...queryResponse.queryResult!,
+        queryResults: {
+          ...queryResponse.queryResult!.queryResults,
+          rows: [
+            {
+              rowId: 5,
+              values: [
+                '2018',
+                'Honda',
+                'CR-V',
+                'windows, doors, gps, car play',
+                '8799',
+                null,
+                '1575305363000',
+                '273978',
+                null,
+              ],
+              versionNumber: 1,
+            },
+          ],
         },
-      }),
-    )
+      },
+    })
 
     // e.g. navigate to the next page of data:
     act(() => {
-      onQueryContextReceived.mock.lastCall![0].goToPage(2)
+      onQueryContextReceived.mock.lastCall![0].goToPage(1)
     })
 
     let secondSetOfVisibleColumns
@@ -268,7 +278,11 @@ describe('QueryVisualizationWrapper', () => {
           ],
         },
       ]
-      server.use(...getHandlersForTableQuery(queryResponseWithJsonSubColumn))
+
+      registerTableQueryResult(
+        initialQueryRequest.query,
+        queryResponseWithJsonSubColumn,
+      )
 
       render(<TestComponent />, { wrapper: createWrapper() })
 
@@ -300,7 +314,11 @@ describe('QueryVisualizationWrapper', () => {
           ],
         },
       ]
-      server.use(...getHandlersForTableQuery(queryResponseWithJsonSubColumn))
+
+      registerTableQueryResult(
+        initialQueryRequest.query,
+        queryResponseWithJsonSubColumn,
+      )
 
       render(<TestComponent />, { wrapper: createWrapper() })
 

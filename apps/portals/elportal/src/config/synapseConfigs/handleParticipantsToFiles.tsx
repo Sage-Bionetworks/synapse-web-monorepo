@@ -41,7 +41,7 @@ export const handleSelectedParticipantsToFiles = async (
   event: CustomControlCallbackData,
 ) => {
   // add filter for files perspective, to show files associated to the selected participants only.
-  const idColIndex = event.data?.columnModels?.findIndex(
+  const idColIndex = event.queryMetadata?.columnModels?.findIndex(
     cm => cm.name === 'individualID',
   )
   // if selected rows were defined, then get the ids from the event selected rows.  Otherwise, get ALL ids (across all pages)

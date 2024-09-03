@@ -14,7 +14,7 @@ export const mockQueryBundleRequest: QueryBundleRequest = {
   },
 }
 
-export const mockQueryResultBundle: QueryResultBundle = {
+export const mockQueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryCount: 182905,
   queryResult: {
@@ -2580,7 +2580,7 @@ export const mockQueryResultBundle: QueryResultBundle = {
   ],
   sumFileSizes: { sumFileSizesBytes: 40649548915, greaterThan: true },
   lastUpdatedOn: '2023-06-27T05:49:31.831Z',
-}
+} satisfies QueryResultBundle
 
 export const mockCompleteAsyncJob: AsynchronousJobStatus<
   QueryBundleRequest,

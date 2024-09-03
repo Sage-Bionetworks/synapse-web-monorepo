@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 
 export type HeaderCardProps = {
-  rgbIndex?: number
   type: string
   title: string
   subTitle?: string
@@ -29,7 +28,6 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   descriptionConfig,
   href,
   target,
-  rgbIndex,
   icon,
 }) => {
   // store old document title and description so that we can restore when this component is removed

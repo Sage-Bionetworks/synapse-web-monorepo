@@ -3,7 +3,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 
-export const mockQueryResult: QueryResultBundle = {
+export const mockQueryResult = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -199,4 +199,4 @@ export const mockQueryResult: QueryResultBundle = {
       id: '127279',
     },
   ],
-}
+} satisfies QueryResultBundle

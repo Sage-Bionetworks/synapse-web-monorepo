@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.3.8",
+  "version": "3.3.10",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -246,8 +246,7 @@
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
     "build:js": "vite build",
-    "build:umd:dev": "vite build -c vite.config.umd.ts --mode development",
-    "build:umd:prod": "vite build -c vite.config.umd.ts --mode production",
+    "build:umd": "vite build -c vite.config.umd.ts",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --noEmit",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",

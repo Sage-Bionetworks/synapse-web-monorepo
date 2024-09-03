@@ -39,12 +39,12 @@ import {
 import { IconOptions } from '../Icon'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { SynapseCardLabel } from './SynapseCardLabel'
-import { useAtomValue } from 'jotai'
-import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
 import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
+import { useGetEntity } from '../../synapse-queries'
+import { useQueryContext } from '../QueryContext'
 
 export type KeyToAlias = {
   key: string
@@ -350,7 +350,6 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
       ctaLinkConfig,
       labelLinkConfig,
       descriptionConfig,
-      rgbIndex,
       columnIconOptions,
       table,
       queryVisualizationContext: { getColumnDisplayName },
@@ -502,7 +501,6 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
           target={target}
           isAlignToLeftNav={true}
           secondaryLabelLimit={secondaryLabelLimit}
-          rgbIndex={rgbIndex}
         />
       )
     }
@@ -620,8 +618,11 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
 }
 
 export default function GenericCard(props: GenericCardProps) {
-  const table = useAtomValue(tableQueryEntityAtom)
+  const { entityId, versionNumber } = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
+
+  const { data: table } = useGetEntity<Table>(entityId, versionNumber)
+
   return (
     <_GenericCard
       {...props}

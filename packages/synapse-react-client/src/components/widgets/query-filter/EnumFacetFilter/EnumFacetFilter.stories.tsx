@@ -11,6 +11,7 @@ import EnumFacetFilterUI, {
 } from './EnumFacetFilterUI'
 import { fn } from '@storybook/test'
 import { Paper } from '@mui/material'
+import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 
 const meta: Meta<EnumFacetFilterUIProps> = {
   title: 'Explore/Components/Facets/EnumFacetFilter',
@@ -120,5 +121,13 @@ export const SingleSelectRadioButtons: Story = {
     containerAs: 'Collapsible',
     dropdownType: 'Icon',
     canMultiSelect: false,
+  },
+}
+
+export const Skeleton: Story = {
+  render: args => <EnumFacetFilterSkeleton {...args} />,
+  args: {
+    containerAs: 'Collapsible',
+    dropdownType: 'Icon',
   },
 }

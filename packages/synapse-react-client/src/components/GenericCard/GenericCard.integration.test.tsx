@@ -32,9 +32,9 @@ import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '../../mocks/mockFileViewQuery'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { cloneDeep } from 'lodash-es'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const renderComponent = (
   props: GenericCardProps,
@@ -158,10 +158,24 @@ const propsForHeaderMode: GenericCardProps = {
 describe('GenericCard tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(mockQueryResultBundle))
+    registerTableQueryResult(
+      {
+        ...mockQueryBundleRequest.query,
+        sql: `SELECT * FROM ${mockTableEntity.id}`,
+      },
+      mockQueryResultBundle,
+    )
+    registerTableQueryResult(
+      {
+        ...mockQueryBundleRequest.query,
+        sql: `SELECT * FROM ${mockFileViewEntity.id}`,
+      },
+      mockQueryResultBundle,
+    )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
+
   test('renders the correct UI in non header mode', () => {
     const { container } = renderComponent(propsForNonHeaderMode, 'TableEntity')
     screen.getByRole('img')
