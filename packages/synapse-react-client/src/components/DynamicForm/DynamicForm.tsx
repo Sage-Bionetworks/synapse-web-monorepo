@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { displayToast } from '../ToastMessage'
-import { Box, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 
 export type DynamicFormProps = {
@@ -10,10 +10,17 @@ export type DynamicFormProps = {
   uiSchemaUrl: string
   postUrl: string
   mutateFormDataBeforePost?: (formData: any) => any // allow caller to embed formdata into custom request body object
+  onCancel?: () => void
 }
 
 function DynamicForm(props: DynamicFormProps) {
-  const { schemaUrl, uiSchemaUrl, postUrl, mutateFormDataBeforePost } = props
+  const {
+    schemaUrl,
+    uiSchemaUrl,
+    postUrl,
+    mutateFormDataBeforePost,
+    onCancel,
+  } = props
   const [schema, setSchema] = useState(null)
   const [uiSchema, setUiSchema] = useState(null)
   const [formData, setFormData] = useState({})
@@ -90,7 +97,23 @@ function DynamicForm(props: DynamicFormProps) {
       onChange={({ formData }) => setFormData(formData)}
       onSubmit={({ formData }) => handleSubmit(formData)}
       disabled={isSubmitting}
-    />
+    >
+      <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+        {onCancel && (
+          <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        )}
+        <Button type="submit" variant="contained" color="primary" size="large">
+          Submit
+        </Button>
+      </Box>
+    </Form>
   )
 }
 

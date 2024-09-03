@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import DynamicForm, { DynamicFormProps } from './DynamicForm'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'UI/DynamicForm',
@@ -10,11 +11,11 @@ type Story = StoryObj<typeof meta>
 
 export const NFDataSubmissionForm: Story = {
   args: {
-    schemaUrl: '',
-    uiSchemaUrl: '',
-    postUrl:
-      'https://invalidpost-address.fdsjklafjsdkljdklsaf.org/fdsklajfdklsa',
-    //'https://api.github.com/repos/nf-osi/tap/dispatches'
+    schemaUrl:
+      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationSchema.json',
+    uiSchemaUrl:
+      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationUiSchema.json',
+    postUrl: 'https://api.github.com/repos/nf-osi/tap/dispatches',
     mutateFormDataBeforePost: formData => {
       return {
         event_type: 'submission',
@@ -23,5 +24,6 @@ export const NFDataSubmissionForm: Story = {
         },
       }
     },
+    onCancel: fn(),
   },
 }
