@@ -1,6 +1,7 @@
 import {
   AccessApprovalSearchRequest,
   AccessRequirementSearchRequest,
+  AgentChatRequest,
   AvailableFilesRequest,
   BatchFileRequest,
   DiscussionFilter,
@@ -896,5 +897,13 @@ export class KeyFactory {
   }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
     return this.getKey('evaluation', 'paginated', request)
+  }
+
+  public getAgentSessionQueryKey(sessionId: string) {
+    return this.getKey('agentSession', sessionId)
+  }
+
+  public getAgentChatWithAsyncStatusQueryKey(request: AgentChatRequest) {
+    return this.getKey('agentChat', request.chatText, request.sessionId)
   }
 }

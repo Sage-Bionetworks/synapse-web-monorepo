@@ -1,5 +1,10 @@
 import { rest } from 'msw'
-import { AGENT_SESSION, LIST_AGENT_SESSIONS } from '../../../utils/APIConstants'
+import {
+  AGENT_SESSION,
+  GET_CHAT_ASYNC,
+  LIST_AGENT_SESSIONS,
+  START_CHAT_ASYNC,
+} from '../../../utils/APIConstants'
 import {
   AgentChatRequest,
   AgentChatResponse,
@@ -8,6 +13,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 import {
+  mockAgentChatResponse,
   mockAgentSession,
   mockListAgentSessionsResponse,
 } from 'src/mocks/chat/mockChat'
@@ -20,11 +26,9 @@ const agentService = new BasicMockedCrudService<AgentSession, 'sessionId'>({
   autoGenerateId: true,
 })
 
-export function getChatbotHandlers(
-  response: AgentChatResponse,
+export const getChatbotHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-) {
-  //create a new agent session
+) => [
   rest.post(`${backendOrigin}${AGENT_SESSION}`, async (req, res, ctx) => {
     const request: CreateAgentSessionRequest = await req.json()
     const newAgentSession = agentService.create({
@@ -33,20 +37,19 @@ export function getChatbotHandlers(
       agentId: request.agentId,
       sessionId: 'newSessionId',
     })
-
     return res(ctx.status(201), ctx.json(newAgentSession))
-  })
+  }),
 
   //list chat sessions
   rest.post(`${backendOrigin}${LIST_AGENT_SESSIONS}`, async (req, res, ctx) => {
     // const request: ListAgentSessionsRequest = await req.json()
     return res(ctx.status(201), ctx.json(mockListAgentSessionsResponse))
-  })
+  }),
   //Async job to send chat message to the agent
-  return generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
-    '/repo/v1/agent/chat/async/start',
-    tokenParam => `/repo/v1/agent/chat/async/get/${tokenParam}`,
-    response,
+  generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
+    START_CHAT_ASYNC,
+    tokenParam => GET_CHAT_ASYNC(tokenParam),
+    mockAgentChatResponse,
     backendOrigin,
-  )
-}
+  ),
+]
