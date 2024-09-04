@@ -5,13 +5,13 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   FormGroup,
   LinearProgress,
-  Typography,
 } from '@mui/material'
 import { GetEvaluationParameters } from '@sage-bionetworks/synapse-types'
-import { Checkbox } from '../widgets/Checkbox'
 
 export type EvaluationFinderProps = Pick<
   GetEvaluationParameters,
@@ -59,10 +59,13 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
       <FormControl>
         <FormGroup sx={{ gap: 1 }}>
           {data.pages[currentPage]?.results.map(evaluation => (
-            <Checkbox
+            <FormControlLabel
+              control={
+                <Checkbox inputProps={{ 'aria-label': evaluation.name! }} />
+              }
               key={evaluation.id}
               label={
-                <Typography variant={'smallText1'} component={'span'}>
+                <>
                   {evaluation.name}{' '}
                   {evaluation.submissionInstructionsMessage &&
                     evaluation.submissionInstructionsMessage.length > 0 && (
@@ -71,9 +74,8 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
                         placement={'right'}
                       />
                     )}
-                </Typography>
+                </>
               }
-              aria-label={evaluation.name!}
               checked={selectedIds.includes(evaluation.id!)}
               onChange={() => {
                 if (selectedIds.includes(evaluation.id!)) {

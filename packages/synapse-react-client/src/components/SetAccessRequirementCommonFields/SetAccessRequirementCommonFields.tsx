@@ -1,12 +1,16 @@
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,
+  Radio,
+  FormControlLabel,
+  RadioGroup,
   Skeleton,
   Stack,
   TextField,
   Tooltip,
   Typography,
   TypographyProps,
+  Checkbox,
 } from '@mui/material'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
@@ -27,8 +31,6 @@ import {
 import { SynapseClientError } from '../../utils'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
 import TeamSubjectsSelector from '../TeamSubjectsSelector'
-import { RadioGroup } from '../widgets/RadioGroup'
-import { Checkbox } from '../widgets/Checkbox'
 import { SynapseErrorBoundary } from '../error'
 
 export const EMPTY_SUBJECT_LIST_ERROR_MESSAGE =
@@ -290,27 +292,26 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
       <>
         <Typography {...headerProps}>Resources</Typography>
         {subjectsType !== RestrictableObjectType.TEAM && (
-          <>
-            <Checkbox
-              label="Associated entities should be defined by annotations (DUO)"
-              checked={subjectsDefinedByAnnotations}
-              onChange={() => {
-                setSubjectsError(null)
-                // if we are switching from DUO to manually defining the subjects (and the AR has been retrieved), then
-                // reset to the AR subject IDs or the original subject ID.  Otherwise, clear out the subjects.
-                let newSubjectIds: RestrictableObjectDescriptor[] = []
-                if (subjectsDefinedByAnnotations) {
-                  if (accessRequirement) {
-                    newSubjectIds = accessRequirement.subjectIds
-                  } else if (subject) {
-                    newSubjectIds = [subject]
-                  }
+          <FormControlLabel
+            control={<Checkbox />}
+            label="Associated entities should be defined by annotations (DUO)"
+            checked={subjectsDefinedByAnnotations}
+            onChange={() => {
+              setSubjectsError(null)
+              // if we are switching from DUO to manually defining the subjects (and the AR has been retrieved), then
+              // reset to the AR subject IDs or the original subject ID.  Otherwise, clear out the subjects.
+              let newSubjectIds: RestrictableObjectDescriptor[] = []
+              if (subjectsDefinedByAnnotations) {
+                if (accessRequirement) {
+                  newSubjectIds = accessRequirement.subjectIds
+                } else if (subject) {
+                  newSubjectIds = [subject]
                 }
-                setSubjects(newSubjectIds)
-                setSubjectsDefinedByAnnotations(!subjectsDefinedByAnnotations)
-              }}
-            />
-          </>
+              }
+              setSubjects(newSubjectIds)
+              setSubjectsDefinedByAnnotations(!subjectsDefinedByAnnotations)
+            }}
+          />
         )}
         <SynapseErrorBoundary>{selectorContent}</SynapseErrorBoundary>
         {subjectsError && <Alert severity="error">{subjectsError}</Alert>}
@@ -337,20 +338,21 @@ export const SetAccessRequirementCommonFields = React.forwardRef(
             </Typography>
             <RadioGroup
               value={arType}
-              options={[
-                {
-                  label: 'Controlled - requests are in Synapse',
-                  value: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-                },
-                {
-                  label: 'Click wrap',
-                  value: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-                },
-              ]}
-              onChange={(value: string) =>
+              onChange={(_event, value) =>
                 setArType(value as ACCESS_REQUIREMENT_CONCRETE_TYPE)
               }
-            />
+            >
+              <FormControlLabel
+                value={MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE}
+                control={<Radio />}
+                label="Controlled - requests are in Synapse"
+              />
+              <FormControlLabel
+                value={SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE}
+                control={<Radio />}
+                label="Click wrap"
+              />
+            </RadioGroup>
           </>
         )}
         {clientError && (

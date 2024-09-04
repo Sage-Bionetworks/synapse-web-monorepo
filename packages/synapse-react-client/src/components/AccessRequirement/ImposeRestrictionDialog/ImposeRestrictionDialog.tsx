@@ -7,12 +7,14 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
   IconButton,
+  Radio,
+  RadioGroup,
   Stack,
   Typography,
 } from '@mui/material'
-import { RadioGroup } from '../../widgets/RadioGroup'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import IconSvg from '../../IconSvg/IconSvg'
 import { useCreateLockAccessRequirement } from '../../../synapse-queries'
@@ -41,8 +43,8 @@ export default function ImposeRestrictionDialog(
 
   const { entityId, open, onClose } = props
   const [isSensitiveHumanData, setIsSensitiveHumanData] = React.useState<
-    boolean | undefined
-  >(undefined)
+    boolean | null
+  >(null)
 
   const {
     mutate: createLockedAccessRequirement,
@@ -73,8 +75,8 @@ export default function ImposeRestrictionDialog(
     }
   }
 
-  function radioOnChangeHandler(newValue: boolean) {
-    setIsSensitiveHumanData(newValue)
+  function radioOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+    setIsSensitiveHumanData((event.target as HTMLInputElement).value === 'true')
   }
 
   return (
@@ -101,20 +103,13 @@ export default function ImposeRestrictionDialog(
           <FormLabel id="demo-radio-buttons-group-label">
             Is this sensitive human data that must be protected?
           </FormLabel>
-          <RadioGroup<boolean>
+          <RadioGroup
             value={isSensitiveHumanData}
-            options={[
-              {
-                label: 'Yes',
-                value: true,
-              },
-              {
-                label: 'No',
-                value: false,
-              },
-            ]}
             onChange={radioOnChangeHandler}
-          ></RadioGroup>
+          >
+            <FormControlLabel control={<Radio />} label={'Yes'} value={true} />
+            <FormControlLabel control={<Radio />} label={'No'} value={false} />
+          </RadioGroup>
           {isSensitiveHumanData === false && (
             <FullWidthAlert
               variant={'warning'}

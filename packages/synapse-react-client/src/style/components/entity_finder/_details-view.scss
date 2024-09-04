@@ -19,7 +19,6 @@ $row-hovered-background-color: unset;
   .DetailsViewTable__header {
     box-shadow: 3px 3px 7px -1px rgba(0, 0, 30, 0.2);
   }
-  @include Form.customCheckbox($checkbox-top-offset: 3px);
 }
 
 .EntityFinderDetailsView {

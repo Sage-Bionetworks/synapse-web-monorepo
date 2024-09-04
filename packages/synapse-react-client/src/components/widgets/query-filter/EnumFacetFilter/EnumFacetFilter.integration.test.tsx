@@ -165,30 +165,32 @@ describe('EnumFacetFilter', () => {
     describe('label initialization', () => {
       it('should set labels correctly for STRING type', async () => {
         const { container } = await init()
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-        })
-        const labels = container.querySelectorAll<HTMLSpanElement>(
-          'input[type="checkbox"] ~ label',
+
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
         )
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
-        expect(labels).toHaveLength(4)
+
+        expect(checkboxes).toHaveLength(4)
         expect(counts).toHaveLength(3)
 
-        expect(labels[0].textContent).toBe('All')
+        expect(checkboxes[0]).toHaveAccessibleName('All')
 
-        await waitFor(() => {
-          expect(labels[1].textContent).toBe(`${stringFacetValues[1].value}`)
-          expect(counts[0].textContent).toBe(`${stringFacetValues[1].count}`)
+        // Note: Facet values are resorted to alphabetical order! [1] will appear before [0]
+        expect(checkboxes[1]).toHaveAccessibleName(
+          `${stringFacetValues[1].value}`,
+        )
+        expect(counts[0]).toHaveTextContent(`${stringFacetValues[1].count}`)
 
-          expect(labels[2].textContent).toBe(`${stringFacetValues[0].value}`)
-          expect(counts[1].textContent).toBe(`${stringFacetValues[0].count}`)
+        expect(checkboxes[2]).toHaveAccessibleName(
+          `${stringFacetValues[0].value}`,
+        )
+        expect(counts[1]).toHaveTextContent(`${stringFacetValues[0].count}`)
 
-          expect(labels[3].textContent).toBe(`Not Assigned`)
-          expect(counts[2].textContent).toBe(`${stringFacetValues[2].count}`)
-        })
+        expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
+        expect(counts[2]).toHaveTextContent(`${stringFacetValues[2].count}`)
       })
 
       it('should set labels correctly for ENTITYID type', async () => {
@@ -212,30 +214,35 @@ describe('EnumFacetFilter', () => {
         }
 
         const { container } = await init(updatedProps)
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-        })
-        const labels = container.querySelectorAll<HTMLInputElement>(
-          'input[type="checkbox"] ~ label',
+
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
         )
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
+
         // Wait for the entity info to populate and replace the ID
         await waitFor(() =>
-          expect(labels.item(1).textContent).toBe(mockFileEntityData.name),
+          expect(checkboxes[1]).toHaveAccessibleName(mockFileEntityData.name),
         )
-        expect(counts.item(0).textContent).toBe(`${entityFacetValues[1].count}`)
+        expect(counts.item(0)).toHaveTextContent(
+          `${entityFacetValues[1].count}`,
+        )
 
         await waitFor(() =>
-          expect(labels.item(2).textContent).toBe(mockTableEntity.name),
+          expect(checkboxes[2]).toHaveAccessibleName(mockTableEntity.name),
         )
-        expect(counts.item(1).textContent).toBe(`${entityFacetValues[2].count}`)
+        expect(counts.item(1)).toHaveTextContent(
+          `${entityFacetValues[2].count}`,
+        )
 
         await waitFor(() =>
-          expect(labels.item(3).textContent).toBe(`Not Assigned`),
+          expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`),
         )
-        expect(counts.item(2).textContent).toBe(`${entityFacetValues[0].count}`)
+        expect(counts.item(2)).toHaveTextContent(
+          `${entityFacetValues[0].count}`,
+        )
       })
 
       it('should set labels correctly for USERID type', async () => {
@@ -259,35 +266,42 @@ describe('EnumFacetFilter', () => {
         }
         const { container } = await init(updatedProps)
 
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-        })
-        const labels = container.querySelectorAll<HTMLSpanElement>(
-          'input[type="checkbox"] ~ label',
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
         )
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
-        expect(labels).toHaveLength(4)
-        // First item (0) is select all
+        expect(checkboxes).toHaveLength(4)
+        expect(counts).toHaveLength(3)
 
+        // First item (0) is select all
+        expect(checkboxes[0]).toHaveAccessibleName('All')
         // Wait for the user info to populate and replace the ID
         await waitFor(() =>
-          expect(labels.item(1).textContent).toBe(
+          expect(checkboxes[1]).toHaveAccessibleName(
             mockUserProfileData2.userName,
           ),
         )
-        expect(counts.item(0).textContent).toBe(`${userFacetValues[2].count}`)
+        expect(counts.item(0)).toHaveTextContent(
+          userFacetValues[2].count.toLocaleString(),
+        )
 
         await waitFor(() =>
-          expect(labels.item(2).textContent).toBe(mockUserProfileData.userName),
+          expect(checkboxes[2]).toHaveAccessibleName(
+            mockUserProfileData.userName,
+          ),
         )
-        expect(counts.item(1).textContent).toBe(`${userFacetValues[1].count}`)
+        expect(counts.item(1)).toHaveTextContent(
+          userFacetValues[1].count.toLocaleString(),
+        )
 
         await waitFor(() =>
-          expect(labels.item(3).textContent).toBe(`Not Assigned`),
+          expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`),
         )
-        expect(counts.item(2).textContent).toBe(`${userFacetValues[0].count}`)
+        expect(counts.item(2)).toHaveTextContent(
+          userFacetValues[0].count.toLocaleString(),
+        )
       })
     })
   })

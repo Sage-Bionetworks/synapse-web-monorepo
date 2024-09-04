@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack, Typography } from '@mui/material'
+import { FormControlLabel, Checkbox, Stack, Typography } from '@mui/material'
 import {
   AccessTokenGenerationRequest,
   scopeDescriptions,
@@ -7,7 +7,6 @@ import {
 import { CopyToClipboardInput } from '../CopyToClipboardInput/CopyToClipboardInput'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { Checkbox } from '../widgets/Checkbox'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import TextField from '../TextField/TextField'
 import { useCreatePersonalAccessToken } from '../../synapse-queries/user/usePersonalAccessToken'
@@ -98,34 +97,40 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
       />
       <Typography variant="label">Token Permissions</Typography>
       <Stack gap={2} my={1}>
-        <Checkbox
-          label={scopeDescriptions.view.displayName}
-          checked={viewAccess}
-          onChange={() => setViewAccess(!viewAccess)}
-        >
+        <div>
+          <FormControlLabel
+            control={<Checkbox />}
+            label={scopeDescriptions.view.displayName}
+            checked={viewAccess}
+            onChange={() => setViewAccess(!viewAccess)}
+          />
           <Typography variant={'smallText1'} color={'grey.700'}>
             {scopeDescriptions.view.description}. Required to use Synapse
             programmatic clients.
           </Typography>
-        </Checkbox>
-        <Checkbox
-          label={scopeDescriptions.download.displayName}
-          checked={downloadAccess}
-          onChange={() => setDownloadAccess(!downloadAccess)}
-        >
+        </div>
+        <div>
+          <FormControlLabel
+            control={<Checkbox />}
+            label={scopeDescriptions.download.displayName}
+            checked={downloadAccess}
+            onChange={() => setDownloadAccess(!downloadAccess)}
+          />
           <Typography variant={'smallText1'} color={'grey.700'}>
             {scopeDescriptions.download.description}
           </Typography>
-        </Checkbox>
-        <Checkbox
-          label={scopeDescriptions.modify.displayName}
-          checked={modifyAccess}
-          onChange={() => setModifyAccess(!modifyAccess)}
-        >
+        </div>
+        <div>
+          <FormControlLabel
+            control={<Checkbox />}
+            label={scopeDescriptions.modify.displayName}
+            checked={modifyAccess}
+            onChange={() => setModifyAccess(!modifyAccess)}
+          />
           <Typography variant={'smallText1'} color={'grey.700'}>
             {scopeDescriptions.modify.description}
           </Typography>
-        </Checkbox>
+        </div>
       </Stack>
       {validationError && <ErrorBanner error={validationError} />}
       {mutationError && <ErrorBanner error={mutationError.reason} />}

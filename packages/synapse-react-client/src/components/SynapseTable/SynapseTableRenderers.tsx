@@ -1,34 +1,34 @@
-import {
-  CellContext,
-  createColumnHelper,
-  HeaderContext,
-} from '@tanstack/react-table'
+import { Checkbox } from '@mui/material'
 import {
   ColumnTypeEnum,
   FacetColumnResult,
   FacetColumnResultValues,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { Checkbox } from '../widgets/Checkbox'
+import { useQuery } from '@tanstack/react-query'
+import {
+  CellContext,
+  createColumnHelper,
+  HeaderContext,
+} from '@tanstack/react-table'
+import { useAtom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
 import React, { useCallback } from 'react'
-import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
+import AddToDownloadListV2 from '../AddToDownloadListV2'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
-import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
-import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
+import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import SynapseTableCell from './SynapseTableCell'
-import { useSynapseTableContext } from './SynapseTableContext'
-import { useAtom, useAtomValue } from 'jotai'
 import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
-import { useQueryContext } from '../QueryContext'
-import { useQuery } from '@tanstack/react-query'
+import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
+import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
+import SynapseTableCell from './SynapseTableCell'
+import { useSynapseTableContext } from './SynapseTableContext'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -46,10 +46,9 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   return (
     <div>
       <Checkbox
-        label={'Select row'}
-        hideLabel={true}
+        inputProps={{ 'aria-label': 'Select row' }}
         checked={isRowSelected(row.original, rowSet!.headers)}
-        onChange={(checked: boolean) => {
+        onChange={(_event, checked) => {
           const cloneSelectedRows = [...selectedRows]
           if (checked) {
             cloneSelectedRows.push(row.original)

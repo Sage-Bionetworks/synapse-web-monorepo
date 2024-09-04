@@ -1,6 +1,13 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
-import { Button, Stack, Typography } from '@mui/material'
+import {
+  Button,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   AccessorChange,
   AccessType,
@@ -8,7 +15,6 @@ import {
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { RadioGroup } from '../../widgets/RadioGroup'
 import { useGetCurrentUserProfile } from '../../../synapse-queries'
 import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
 import { UserBadge } from '../../UserCard/UserBadge'
@@ -135,23 +141,24 @@ export default function DataAccessRequestAccessorsEditor(
                       <>
                         <RadioGroup
                           value={ac.type}
-                          options={[
-                            {
-                              label: 'Renew',
-                              value: AccessType.RENEW_ACCESS,
-                            },
-                            {
-                              label: 'Revoke',
-                              value: AccessType.REVOKE_ACCESS,
-                            },
-                          ]}
-                          onChange={(value: string) =>
+                          onChange={(_event, value) =>
                             onAccessorAccessTypeChange(
                               value as AccessType,
                               ac.userId,
                             )
                           }
-                        ></RadioGroup>
+                        >
+                          <FormControlLabel
+                            control={<Radio />}
+                            label={'Renew'}
+                            value={AccessType.RENEW_ACCESS}
+                          />
+                          <FormControlLabel
+                            control={<Radio />}
+                            label={'Revoke'}
+                            value={AccessType.REVOKE_ACCESS}
+                          />
+                        </RadioGroup>
                       </>
                     )
                 }

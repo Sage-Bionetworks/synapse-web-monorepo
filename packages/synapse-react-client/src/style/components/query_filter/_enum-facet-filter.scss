@@ -65,29 +65,12 @@
     right: $input-icon-margin;
   }
 
-  @include Form.customCheckbox($checkbox-top-offset: 3px);
-
-  &__checkbox {
-    > label {
-      display: flex;
-      flex-wrap: nowrap;
-      &::before {
-        flex: none;
-        align-self: start;
-      }
-
-      > span {
-        margin-left: 2px;
-        color: SRC.$gray-regular;
-      }
-    }
-    input ~ span {
-      display: flex;
-      &::before {
-        flex: none;
-        align-self: center;
-      }
-    }
+  label {
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 5px;
   }
 
   &__showMoreFacetsLabel {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Radio, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
   DockerCommit,
@@ -58,11 +57,10 @@ function SubmissionCommitList({
       disableColumnMenu: true,
       renderCell: params => {
         return (
-          <RadioOption
+          <Radio
             value={params.id as string}
             checked={params.id === selectedCommit?.digest}
-            onChange={commitChangeHandler}
-            label=""
+            onChange={event => commitChangeHandler(event.target.value)}
           />
         )
       },

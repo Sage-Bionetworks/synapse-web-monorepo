@@ -1,7 +1,13 @@
 import React from 'react'
-import { Button, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { displayToast } from '../../../src/components/ToastMessage/ToastMessage'
-import { RadioGroup } from '../../../src/components/widgets/RadioGroup'
 
 export const ToastDemo = () => {
   const [variant, setVariant] = React.useState<
@@ -41,26 +47,37 @@ export const ToastDemo = () => {
   }
   return (
     <div>
-      {/* 
-        theme will be provided by StorybookComponentWrapper when this component appears in a Story, 
-        which is the only place where this component is used, 
+      {/*
+        theme will be provided by StorybookComponentWrapper when this component appears in a Story,
+        which is the only place where this component is used,
         so ignore that "smallText2" is not a default MUI Typography variant
-      @ts-ignore */}
+      @ts-expect-error */}
       <Typography component="label" variant="smallText2">
         Alert Variant
       </Typography>
       <RadioGroup
-        options={[
-          { label: 'Info', value: 'info' },
-          { label: 'Success', value: 'success' },
-          { label: 'Warning', value: 'warning' },
-          { label: 'Danger', value: 'danger' },
-        ]}
         value={variant}
-        onChange={value =>
+        onChange={(_event, value) =>
           setVariant(value as 'info' | 'success' | 'warning' | 'danger')
         }
-      />
+      >
+        <FormControlLabel control={<Radio />} label={'Info'} value={'info'} />
+        <FormControlLabel
+          control={<Radio />}
+          label={'Success'}
+          value={'success'}
+        />
+        <FormControlLabel
+          control={<Radio />}
+          label={'Warning'}
+          value={'warning'}
+        />
+        <FormControlLabel
+          control={<Radio />}
+          label={'Danger'}
+          value={'danger'}
+        />
+      </RadioGroup>
       <TextField
         fullWidth
         margin="dense"

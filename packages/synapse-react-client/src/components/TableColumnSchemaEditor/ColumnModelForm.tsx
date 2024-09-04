@@ -1,5 +1,6 @@
 import {
   Box,
+  Checkbox,
   FormControl,
   Link,
   MenuItem,
@@ -32,7 +33,6 @@ import {
   getFacetTypeFriendlyName,
   getMaxSizeForType,
 } from './TableColumnSchemaEditorUtils'
-import { Checkbox } from '../widgets/Checkbox'
 import { HIERARCHY_VERTICAL_LINE_COMPONENT } from './TableColumnSchemaForm'
 import { InfoTwoTone } from '@mui/icons-material'
 import DefaultValueField from './ColumnModelFormFields/DefaultValueField'
@@ -204,9 +204,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         }}
       >
         <Checkbox
-          label={'Select'}
-          hideLabel
           checked={columnModel.isSelected}
+          inputProps={{ 'aria-label': 'Select' }}
           disabled={disabled}
           onChange={() => {
             dispatch({

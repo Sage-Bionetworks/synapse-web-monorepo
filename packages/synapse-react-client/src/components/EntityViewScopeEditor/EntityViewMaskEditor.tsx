@@ -1,12 +1,17 @@
 import React from 'react'
-import { Alert, FormGroup, Typography } from '@mui/material'
+import {
+  Alert,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Typography,
+} from '@mui/material'
 import {
   ENTITY_VIEW_TYPE_MASK_DATASET,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_TABLE,
 } from '@sage-bionetworks/synapse-types'
-import { Checkbox } from '../widgets/Checkbox'
 
 export type EntityViewMaskEditorProps = {
   value: number
@@ -44,7 +49,8 @@ export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
       </Typography>
       <FormGroup sx={{ gap: 1 }}>
         {maskLabelPairs.map(([label, mask]) => (
-          <Checkbox
+          <FormControlLabel
+            control={<Checkbox />}
             key={label}
             label={label}
             checked={
