@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { displayToast } from '../ToastMessage'
@@ -21,44 +22,50 @@ function DynamicForm(props: DynamicFormProps) {
     mutateFormDataBeforePost,
     onCancel,
   } = props
-  const [schema, setSchema] = useState(null)
-  const [uiSchema, setUiSchema] = useState(null)
   const [formData, setFormData] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    // Fetch the form schema
-    const fetchSchema = async () => {
-      try {
-        const schemaResponse = await fetch(schemaUrl)
-        const schemaData = await schemaResponse.json()
-        setSchema(schemaData)
-      } catch (error) {
-        displayToast(`Error fetching Schema: ${error}`, 'danger')
+  // Fetch the form schema
+  const {
+    data: schema,
+    isLoading: _isSchemaLoading,
+    isError: isSchemaError,
+    error: schemaError,
+  } = useQuery({
+    queryKey: ['DynamicForm', 'schema', schemaUrl],
+    queryFn: async () => {
+      const response = await fetch(schemaUrl)
+      if (!response.ok) {
+        throw new Error('Error fetching schema')
       }
-    }
+      return response.json()
+    },
+    enabled: !!schemaUrl,
+  })
 
-    // Fetch the UI schema
-    const fetchUiSchema = async () => {
-      try {
-        const uiSchemaResponse = await fetch(uiSchemaUrl)
-        const uiSchemaData = await uiSchemaResponse.json()
-        setUiSchema(uiSchemaData)
-      } catch (error) {
-        displayToast(`Error fetching UI Schema: ${error}`, 'danger')
+  // Fetch the UI schema
+  const {
+    data: uiSchema,
+    isLoading: _isUiSchemaLoading,
+    isError: isUiSchemaError,
+    error: uiSchemaError,
+  } = useQuery({
+    queryKey: ['DynamicForm', 'uiSchema', uiSchemaUrl],
+    queryFn: async () => {
+      const response = await fetch(uiSchemaUrl)
+      if (!response.ok) {
+        throw new Error('Error fetching UI schema')
       }
-    }
+      return response.json()
+    },
+    enabled: !!uiSchemaUrl,
+  })
 
-    fetchSchema()
-    fetchUiSchema()
-  }, [schemaUrl, uiSchemaUrl])
-
-  const handleSubmit = async (formData: any) => {
-    setIsSubmitting(true)
-    const formDataToSubmit = mutateFormDataBeforePost
-      ? mutateFormDataBeforePost(formData)
-      : formData
-    try {
+  // Form submission mutation
+  const { mutate: submitFormData, isPending } = useMutation({
+    mutationFn: async (formData: any) => {
+      const formDataToSubmit = mutateFormDataBeforePost
+        ? mutateFormDataBeforePost(formData)
+        : formData
       const response = await fetch(postUrl, {
         method: 'POST',
         headers: {
@@ -68,17 +75,22 @@ function DynamicForm(props: DynamicFormProps) {
         body: JSON.stringify(formDataToSubmit),
       })
 
-      if (response.ok) {
-        displayToast('Form submitted successfully!', 'success')
-      } else {
+      if (!response.ok) {
         const responseText = await response.text()
-        displayToast(`Form submission failed: ${responseText}`, 'danger')
+        throw new Error(responseText)
       }
-    } catch (error) {
-      displayToast(`Form submission failed: ${JSON.stringify(error)}`, 'danger')
-    } finally {
-      setIsSubmitting(false)
-    }
+      return response.json()
+    },
+    onSuccess: () => {
+      displayToast('Form submitted successfully!', 'success')
+    },
+    onError: error => {
+      displayToast(`Error submitting form: ${error.message}`, 'danger')
+    },
+  })
+
+  const handleSubmit = (formData: any) => {
+    submitFormData(formData)
   }
 
   if (!schema || !uiSchema) {
@@ -90,6 +102,14 @@ function DynamicForm(props: DynamicFormProps) {
     )
   }
 
+  if (isSchemaError) {
+    displayToast(`Error fetching Schema: ${schemaError.message}`, 'danger')
+  }
+
+  if (isUiSchemaError) {
+    displayToast(`Error fetching UI Schema: ${uiSchemaError.message}`, 'danger')
+  }
+
   return (
     <Form
       schema={schema}
@@ -97,10 +117,8 @@ function DynamicForm(props: DynamicFormProps) {
       formData={formData}
       validator={validator}
       onChange={({ formData }) => setFormData(formData)}
-      onSubmit={({ formData }) => {
-        void (async () => await handleSubmit(formData))()
-      }}
-      disabled={isSubmitting}
+      onSubmit={({ formData }) => handleSubmit(formData)}
+      disabled={isPending}
     >
       <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
         {onCancel && (
@@ -113,7 +131,13 @@ function DynamicForm(props: DynamicFormProps) {
             Cancel
           </Button>
         )}
-        <Button type="submit" variant="contained" color="primary" size="large">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="large"
+          disabled={isPending}
+        >
           Submit
         </Button>
       </Box>
