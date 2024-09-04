@@ -6,7 +6,6 @@ import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,
 } from './SynapseFormSubmissionGrid'
 import { SynapseContextConsumer } from '../../utils'
-import FullContextProvider from '../../utils/context/FullContextProvider'
 import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
@@ -18,34 +17,15 @@ const meta: Meta<
   SynapseFormSubmissionGridProps & { isAuthenticated?: boolean }
 > = {
   title: 'Portals/SynapseFormSubmissionsGrid',
+  parameters: { stack: 'mock' },
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
-  parameters: { stack: 'mock' },
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => {
-          const token = args.isAuthenticated
-            ? context.accessToken ?? 'fake token'
-            : undefined
-          return (
-            <FullContextProvider
-              synapseContext={{
-                ...context,
-                accessToken: token,
-              }}
-            >
-              <Story />
-            </FullContextProvider>
-          )
-        }}
-      </SynapseContextConsumer>
-    ),
-  ],
+  args: {
+    isAuthenticated: true,
+  },
   render: args => {
     const { isAuthenticated, ...rest } = args
     return (

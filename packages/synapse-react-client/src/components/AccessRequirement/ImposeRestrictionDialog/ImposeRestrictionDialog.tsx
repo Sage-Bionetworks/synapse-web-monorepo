@@ -43,7 +43,7 @@ export default function ImposeRestrictionDialog(
   } = useCreateLockAccessRequirement({
     onSuccess: () => {
       displayToast('Successfully imposed restriction', 'success')
-      // PORTALS-2664: Send the user to the the ACT Service Desk
+      // PORTALS-2664: Send the user to the ACT Service Desk
       // so they can tell ACT more information about what kind of
       // Conditions For Use (or Data Access Restriction) should be
       // added.

@@ -29,6 +29,7 @@ import { MOCK_TEAM_ID } from '../team/mockTeam'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 
 export const MOCK_NEWLY_CREATED_AR_ID = 1000
+export const MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID = 1234567
 export const MOCK_AR_ETAG = 'mock-ar-etag'
 const MOCK_PROJECT_ID = mockProjectData.id
 
@@ -167,6 +168,12 @@ export const mockSelfSignAnnotationBasedSubjectsAccessRequirement: SelfSignAcces
     subjectIds: [],
   }
 
+export const mockManagedAccessRequirementWithNoACL: ManagedACTAccessRequirement =
+  {
+    ...mockManagedACTAccessRequirement,
+    id: MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
+  }
+
 export const mockSearchResultsPageOne: AccessRequirementSearchResponse = {
   results: [
     {
@@ -238,6 +245,7 @@ export const mockAccessRequirements: AccessRequirement[] = [
   mockACTAccessRequirementWithWiki,
   mockTeamSelfSignAccessRequirement,
   mockSelfSignAnnotationBasedSubjectsAccessRequirement,
+  mockManagedAccessRequirementWithNoACL,
 ]
 
 export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [
