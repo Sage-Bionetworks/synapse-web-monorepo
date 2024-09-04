@@ -15,7 +15,7 @@ export const NFDataSubmissionForm: Story = {
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationSchema.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationUiSchema.json',
-    postUrl: 'https://api.github.com/repos/nf-osi/tap/dispatches',
+    postUrl: 'https://submit-form.com/KwZ46H4T',
     mutateFormDataBeforePost: formData => {
       return {
         event_type: 'submission',
