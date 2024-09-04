@@ -18,12 +18,13 @@ import {
   crcResearcherPortalPalette,
   digitalHealthPortalPalette,
   elPortalPalette,
+  geniePalette,
+  getPalette,
   mtbPalette,
   nfPortalPalette,
   psychEncodePortalPalette,
   sageBionetworksPalette,
   stopAdPortalPalette,
-  geniePalette,
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
@@ -53,6 +54,16 @@ if (process.env.NODE_ENV === 'development') {
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
+  backgrounds: {
+    default: 'dark',
+    values: [
+      {
+        name: 'light',
+        value: 'white',
+      },
+      { name: 'dark', value: '#172430' },
+    ],
+  },
   controls: {
     expanded: true,
     matchers: {
@@ -135,6 +146,10 @@ export const decorators = [
     Provider: ThemeProvider,
     themes: {
       ['Synapse']: createTheme(defaultMuiThemeOptions),
+      ['Synapse (Dark)']: createTheme({
+        ...defaultMuiThemeOptions,
+        palette: getPalette('dark'),
+      }),
       ['Sage Bionetworks']: createTheme(defaultMuiThemeOptions, {
         palette: sageBionetworksPalette,
       }),
@@ -174,7 +189,7 @@ export const decorators = [
         palette: geniePalette,
       }),
     },
-    defaultTheme: 'Synapse',
+    defaultTheme: 'Synapse (Dark)',
   }),
 ]
 
