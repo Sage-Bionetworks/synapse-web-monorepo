@@ -9,35 +9,31 @@ import {
   FormControl,
   InputAdornment,
   IconButton,
+  Skeleton,
 } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { OutlinedInput } from '@mui/material'
 import { ArrowUpward } from '@mui/icons-material'
+import SynapseChatInteraction from './SynapseChatInteraction'
+import { SkeletonParagraph } from '../Skeleton'
 
-export type SynapseChatProps = {}
-
-export type ChatMessage = {
-  text: string
-  owner: string
+export type SynapseChatProps = {
+  initialMessage: string
 }
 
-export const SynapseChat: React.FunctionComponent<SynapseChatProps> = () => {
+export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
+  initialMessage,
+}) => {
+  // TODO: Create a new Agent Session on mount, add ability to initialize this component with a starting message from the user.
   const theme = useTheme()
-  // TODO:  Hook up to new services and remove init messages
-  const initMessages: ChatMessage[] = [
-    { text: 'what does the interaction look like?', owner: 'self' },
-    {
-      text: 'Here is an example fake response, what do you think?!',
-      owner: 'synapse',
-    },
-  ]
-  const [messages, setMessages] = useState(initMessages)
+  const [messages, setMessages] = useState([initialMessage])
   const [currentMessage, setCurrentMessage] = useState('')
+  const [agentSessionId, setAgentSessionId] = useState('')
 
   const handleSendMessage = () => {
     if (currentMessage.trim()) {
-      setMessages([...messages, { text: currentMessage, owner: 'self' }])
+      setMessages([...messages, currentMessage])
       setCurrentMessage('')
     }
   }
@@ -52,6 +48,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = () => {
   }
   const isMessage = !!currentMessage
   const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
+  if (!agentSessionId) {
+    return <SkeletonParagraph numRows={6} />
+  }
+
   return (
     <Box
       display="flex"
@@ -68,25 +68,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = () => {
         </Typography>
         <List>
           {messages.map((message, index) => {
-            const isUserMessage = message.owner == 'self'
             return (
-              <ListItem
+              <SynapseChatInteraction
                 key={index}
-                sx={{ justifyContent: isUserMessage ? 'flex-end' : undefined }}
-              >
-                <ListItemText
-                  primary={message.text}
-                  // secondary={message.owner}
-                  sx={{
-                    backgroundColor: isUserMessage
-                      ? (theme.palette.secondary as ColorPartial)[100]
-                      : undefined,
-                    borderRadius: '10px',
-                    padding: '10px',
-                    maxWidth: isUserMessage ? '75%' : '100%',
-                  }}
-                />
-              </ListItem>
+                sessionId={agentSessionId}
+                userMessage={message}
+              />
             )
           })}
         </List>
