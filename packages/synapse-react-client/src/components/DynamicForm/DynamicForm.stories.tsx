@@ -16,14 +16,15 @@ export const NFDataSubmissionForm: Story = {
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationUiSchema.json',
     postUrl: 'https://submit-form.com/KwZ46H4T',
-    mutateFormDataBeforePost: formData => {
-      return {
-        event_type: 'submission',
-        client_payload: {
-          formData: formData,
-        },
-      }
-    },
+    // Set mutateFormDataBeforePost if service expects the form data wrapped in some other data.  For example:
+    // mutateFormDataBeforePost: formData => {
+    //   return {
+    //     event_type: 'submission',
+    //     client_payload: {
+    //       formData: formData,
+    //     },
+    //   }
+    // },
     onCancel: fn(),
   },
 }
