@@ -1,4 +1,4 @@
-import { Collapse } from '@mui/material'
+import { Collapse, FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
@@ -8,7 +8,6 @@ import {
   ColumnType,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
-import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import RangeSlider from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
@@ -100,11 +99,19 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
       <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
-          options={options}
-          onChange={(radioValue: string) =>
-            handleRadioGroupChange(radioValue as RadioValuesEnum)
+          onChange={(_event, value) =>
+            handleRadioGroupChange(value as RadioValuesEnum)
           }
-        />
+        >
+          {options.map(({ value, label }) => (
+            <FormControlLabel
+              key={value}
+              control={<Radio />}
+              label={label}
+              value={value}
+            />
+          ))}
+        </RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
           (columnMin === columnMax ? (
             <label>{columnMax}</label>

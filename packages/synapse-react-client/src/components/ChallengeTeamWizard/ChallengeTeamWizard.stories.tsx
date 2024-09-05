@@ -9,10 +9,10 @@ const meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
   args: {
+    isAuthenticated: true,
     onClose: fn(),
   },
 } satisfies Meta

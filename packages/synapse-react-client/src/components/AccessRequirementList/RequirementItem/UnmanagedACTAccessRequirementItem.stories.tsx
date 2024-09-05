@@ -1,9 +1,4 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import {
-  SynapseContextConsumer,
-  SynapseContextProvider,
-} from '../../../utils/context/SynapseContext'
 import {
   mockACTAccessRequirement,
   mockACTAccessRequirementWithWiki,
@@ -34,27 +29,11 @@ const meta: Meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: args.isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <Story />
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    ),
-  ],
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 
 export default meta

@@ -1,30 +1,18 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ErrorChip, { ErrorChipProps } from './ErrorChip'
-import { SynapseClientError, SynapseContextConsumer } from '../../utils'
-import FullContextProvider from '../../utils/context/FullContextProvider'
+import { SynapseClientError } from '../../utils'
 
 const meta: Meta<ErrorChipProps & { isAuthenticated: boolean }> = {
   title: 'Components/ErrorChip',
   component: ErrorChip,
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => (
-          <FullContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: args.isAuthenticated
-                ? context.accessToken || 'fake token'
-                : undefined,
-            }}
-          >
-            <Story />
-          </FullContextProvider>
-        )}
-      </SynapseContextConsumer>
-    ),
-  ],
+  argTypes: {
+    isAuthenticated: {
+      control: { type: 'boolean' },
+    },
+  },
+  args: {
+    isAuthenticated: true,
+  },
 }
 export default meta
 type Story = StoryObj<typeof meta>

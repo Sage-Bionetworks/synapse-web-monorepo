@@ -1,23 +1,16 @@
 import React from 'react'
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
-  IconButton,
-  Stack,
+  Radio,
+  RadioGroup,
   Typography,
 } from '@mui/material'
-import { RadioGroup } from '../../widgets/RadioGroup'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
-import IconSvg from '../../IconSvg/IconSvg'
 import { useCreateLockAccessRequirement } from '../../../synapse-queries'
 import { displayToast } from '../../ToastMessage/ToastMessage'
-import { HelpPopover } from '../../HelpPopover/HelpPopover'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
 
 export type ImposeRestrictionFormProps = {
   /* The ID of the entity that the user may choose to restrict */
@@ -41,8 +34,8 @@ export default function ImposeRestrictionDialog(
 
   const { entityId, open, onClose } = props
   const [isSensitiveHumanData, setIsSensitiveHumanData] = React.useState<
-    boolean | undefined
-  >(undefined)
+    boolean | null
+  >(null)
 
   const {
     mutate: createLockedAccessRequirement,
@@ -50,7 +43,7 @@ export default function ImposeRestrictionDialog(
   } = useCreateLockAccessRequirement({
     onSuccess: () => {
       displayToast('Successfully imposed restriction', 'success')
-      // PORTALS-2664: Send the user to the the ACT Service Desk
+      // PORTALS-2664: Send the user to the ACT Service Desk
       // so they can tell ACT more information about what kind of
       // Conditions For Use (or Data Access Restriction) should be
       // added.
@@ -73,48 +66,40 @@ export default function ImposeRestrictionDialog(
     }
   }
 
-  function radioOnChangeHandler(newValue: boolean) {
-    setIsSensitiveHumanData(newValue)
+  function radioOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+    setIsSensitiveHumanData((event.target as HTMLInputElement).value === 'true')
   }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth={'sm'} fullWidth>
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          Conditions for Use
-          <HelpPopover
-            markdownText={
-              'Conditions for use describes data use requirements that must be fulfilled before downloading.'
-            }
-            helpUrl={
-              'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html#SharingSettings,Permissions,andConditionsforUse-ConditionsforUse'
-            }
-          />
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onClose}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-      <DialogContent>
+    <ConfirmationDialog
+      title={'Conditions for Use'}
+      onConfirm={() => okClickedHandler()}
+      titleHelpPopoverProps={{
+        markdownText:
+          'Conditions for use describes data use requirements that must be fulfilled before downloading.',
+        helpUrl:
+          'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html#SharingSettings,Permissions,andConditionsforUse-ConditionsforUse',
+      }}
+      confirmButtonProps={{
+        disabled: isSensitiveHumanData == null || createLockedARIsPending,
+      }}
+      cancelButtonProps={{
+        disabled: createLockedARIsPending,
+      }}
+      onCancel={() => onClose()}
+      open={open}
+      content={
         <FormControl sx={{ width: '100%' }}>
           <FormLabel id="demo-radio-buttons-group-label">
             Is this sensitive human data that must be protected?
           </FormLabel>
-          <RadioGroup<boolean>
+          <RadioGroup
             value={isSensitiveHumanData}
-            options={[
-              {
-                label: 'Yes',
-                value: true,
-              },
-              {
-                label: 'No',
-                value: false,
-              },
-            ]}
             onChange={radioOnChangeHandler}
-          ></RadioGroup>
+          >
+            <FormControlLabel control={<Radio />} label={'Yes'} value={true} />
+            <FormControlLabel control={<Radio />} label={'No'} value={false} />
+          </RadioGroup>
           {isSensitiveHumanData === false && (
             <FullWidthAlert
               variant={'warning'}
@@ -123,23 +108,7 @@ export default function ImposeRestrictionDialog(
             />
           )}
         </FormControl>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          variant="outlined"
-          disabled={createLockedARIsPending}
-          onClick={onClose}
-        >
-          Cancel
-        </Button>
-        <Button
-          disabled={isSensitiveHumanData == null || createLockedARIsPending}
-          variant="contained"
-          onClick={okClickedHandler}
-        >
-          OK
-        </Button>
-      </DialogActions>
-    </Dialog>
+      }
+    />
   )
 }

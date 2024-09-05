@@ -1,8 +1,14 @@
-import { Collapse, IconButton, TextField, Tooltip } from '@mui/material'
+import {
+  Checkbox,
+  Collapse,
+  FormControlLabel,
+  IconButton,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { FacetColumnResultValueCount } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { Checkbox } from '../../Checkbox'
 import { FacetFilterHeader } from '../FacetFilterHeader'
 import { EnumFacetFilterOption } from './EnumFacetFilterOption'
 import EnumFacetFilterDropdown from './EnumFacetFilterDropdown'
@@ -160,7 +166,8 @@ export default function EnumFacetFilterUI<TValue = string>(
         />
         {!showSearch && (
           <div className="EnumFacetFilter__checkAll">
-            <Checkbox
+            <FormControlLabel
+              control={<Checkbox />}
               className="EnumFacetFilter__checkbox"
               onChange={() => {
                 if (filterIsActive) {
@@ -170,7 +177,6 @@ export default function EnumFacetFilterUI<TValue = string>(
               key="select_all"
               checked={!filterIsActive}
               label="All"
-              isSelectAll={true}
             />
             <Tooltip title={'Search'}>
               <IconButton

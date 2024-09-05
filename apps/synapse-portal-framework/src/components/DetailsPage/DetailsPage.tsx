@@ -445,7 +445,7 @@ export const DetailsPageSynapseConfigArray: React.FC<{
               )}
               {showTitleSeperator && el.title && <hr />}
               {el.subtitle && (
-                <div className="bootstrap-4-backport">
+                <div>
                   <Typography variant="subsectionHeader" role="heading">
                     {el.subtitle}
                   </Typography>

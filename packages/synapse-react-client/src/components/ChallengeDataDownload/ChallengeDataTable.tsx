@@ -19,7 +19,6 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { NO_VERSION_NUMBER } from '../EntityFinder/EntityFinder'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { Checkbox } from '../widgets/Checkbox'
 import {
   CellRendererProps,
   CustomSortIndicator,
@@ -37,6 +36,7 @@ import {
   DetailsViewProps,
   EntityFinderTableViewRowData,
 } from '../EntityFinder/details/view/DetailsView'
+import { Checkbox } from '@mui/material'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -284,9 +284,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
           }}
         >
           <Checkbox
-            label="Select All"
-            hideLabel={true}
-            className="SRC-pointer-events-none"
+            inputProps={{ 'aria-label': 'Select All' }}
             checked={selectAllIsChecked}
             disabled={!isEnabled}
             onChange={() => {
@@ -333,7 +331,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
   }
 
   return (
-    <div className="EntityFinderDetailsView bootstrap-4-backport">
+    <div className="EntityFinderDetailsView">
       <BlockingLoader
         show={showLoadingScreen}
         currentProgress={entities.length}

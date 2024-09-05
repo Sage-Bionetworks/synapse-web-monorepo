@@ -142,7 +142,7 @@
     "@juggle/resize-observer": "^3.4.0",
     "@open-draft/deferred-promise": "^2.2.0",
     "@storybook/addon-actions": "^8.2.4",
-    "@storybook/addon-designs": "^8.0.0",
+    "@storybook/addon-designs": "^8.0.3",
     "@storybook/addon-essentials": "^8.2.4",
     "@storybook/addon-interactions": "^8.2.4",
     "@storybook/addon-links": "^8.2.4",
