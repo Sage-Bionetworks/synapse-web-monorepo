@@ -119,37 +119,39 @@ function DynamicForm(props: DynamicFormProps) {
   }
 
   return (
-    <Form
-      schema={schema}
-      uiSchema={uiSchema}
-      formData={formData}
-      validator={validator}
-      onChange={({ formData }) => setFormData(formData)}
-      onSubmit={({ formData }) => handleSubmit(formData)}
-      disabled={isPending}
-    >
-      <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-        {onCancel && (
+    <Box sx={{ p: '30px 10px' }}>
+      <Form
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={formData}
+        validator={validator}
+        onChange={({ formData }) => setFormData(formData)}
+        onSubmit={({ formData }) => handleSubmit(formData)}
+        disabled={isPending}
+      >
+        <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+          {onCancel && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
           <Button
-            variant="outlined"
+            type="submit"
+            variant="contained"
             color="primary"
             size="large"
-            onClick={onCancel}
+            disabled={isPending}
           >
-            Cancel
+            Submit
           </Button>
-        )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          disabled={isPending}
-        >
-          Submit
-        </Button>
-      </Box>
-    </Form>
+        </Box>
+      </Form>
+    </Box>
   )
 }
 
