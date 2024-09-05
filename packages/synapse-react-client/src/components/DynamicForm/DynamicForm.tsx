@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
-import {
-  useQuery,
-  useMutation,
-  UndefinedInitialDataOptions,
-} from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { displayToast } from '../ToastMessage'
@@ -28,34 +24,36 @@ function DynamicForm(props: DynamicFormProps) {
   } = props
   const [formData, setFormData] = useState({})
 
-  const queryFnQueryOption = {
-    queryFn: async () => {
-      const response = await fetch(schemaUrl)
-      if (!response.ok) {
-        throw new Error('Error fetching schema')
-      }
-      return response.json()
-    },
+  const queryOptions = (endpoint: string) => {
+    return {
+      queryFn: async () => {
+        const response = await fetch(endpoint)
+        if (!response.ok) {
+          throw new Error('Error fetching schema')
+        }
+        return response.json()
+      },
+    }
   }
   // Fetch the form schema
   const {
     data: schema,
-    isLoading: isSchemaLoading,
+    status: schemaStatus,
     isError: isSchemaError,
     error: schemaError,
   } = useQuery({
-    ...queryFnQueryOption,
+    ...queryOptions(schemaUrl),
     queryKey: ['DynamicForm', 'schema', schemaUrl],
   })
 
   // Fetch the UI schema
   const {
     data: uiSchema,
-    isLoading: isUiSchemaLoading,
+    status: uiSchemaStatus,
     isError: isUiSchemaError,
     error: uiSchemaError,
   } = useQuery({
-    ...queryFnQueryOption,
+    ...queryOptions(uiSchemaUrl),
     queryKey: ['DynamicForm', 'uiSchema', uiSchemaUrl],
   })
 
@@ -92,7 +90,7 @@ function DynamicForm(props: DynamicFormProps) {
     submitFormData(formData)
   }
 
-  if (isSchemaLoading || isUiSchemaLoading) {
+  if (schemaStatus == 'pending' || uiSchemaStatus == 'pending') {
     return (
       <Box>
         <Typography variant="body1">Loading form...</Typography>
@@ -103,11 +101,11 @@ function DynamicForm(props: DynamicFormProps) {
 
   const errorMessages = []
   if (isSchemaError) {
-    errorMessages.push(schemaError.message)
+    errorMessages.push(`Unable to retrieve schema: ${schemaError.message}`)
   }
 
   if (isUiSchemaError) {
-    errorMessages.push(uiSchemaError.message)
+    errorMessages.push(`Unable to retrieve UI schema: ${uiSchemaError.message}`)
   }
   if (errorMessages.length > 0) {
     return (
