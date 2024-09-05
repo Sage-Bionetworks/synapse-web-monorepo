@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  UndefinedInitialDataOptions,
+} from '@tanstack/react-query'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { displayToast } from '../ToastMessage'
-import { Box, Button, Typography } from '@mui/material'
+import { Alert, Box, Button, Typography } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 
 export type DynamicFormProps = {
@@ -24,14 +28,7 @@ function DynamicForm(props: DynamicFormProps) {
   } = props
   const [formData, setFormData] = useState({})
 
-  // Fetch the form schema
-  const {
-    data: schema,
-    isLoading: _isSchemaLoading,
-    isError: isSchemaError,
-    error: schemaError,
-  } = useQuery({
-    queryKey: ['DynamicForm', 'schema', schemaUrl],
+  const queryFnQueryOption = {
     queryFn: async () => {
       const response = await fetch(schemaUrl)
       if (!response.ok) {
@@ -39,25 +36,27 @@ function DynamicForm(props: DynamicFormProps) {
       }
       return response.json()
     },
-    enabled: !!schemaUrl,
+  }
+  // Fetch the form schema
+  const {
+    data: schema,
+    isLoading: isSchemaLoading,
+    isError: isSchemaError,
+    error: schemaError,
+  } = useQuery({
+    ...queryFnQueryOption,
+    queryKey: ['DynamicForm', 'schema', schemaUrl],
   })
 
   // Fetch the UI schema
   const {
     data: uiSchema,
-    isLoading: _isUiSchemaLoading,
+    isLoading: isUiSchemaLoading,
     isError: isUiSchemaError,
     error: uiSchemaError,
   } = useQuery({
+    ...queryFnQueryOption,
     queryKey: ['DynamicForm', 'uiSchema', uiSchemaUrl],
-    queryFn: async () => {
-      const response = await fetch(uiSchemaUrl)
-      if (!response.ok) {
-        throw new Error('Error fetching UI schema')
-      }
-      return response.json()
-    },
-    enabled: !!uiSchemaUrl,
   })
 
   // Form submission mutation
@@ -93,7 +92,7 @@ function DynamicForm(props: DynamicFormProps) {
     submitFormData(formData)
   }
 
-  if (!schema || !uiSchema) {
+  if (isSchemaLoading || isUiSchemaLoading) {
     return (
       <Box>
         <Typography variant="body1">Loading form...</Typography>
@@ -102,12 +101,23 @@ function DynamicForm(props: DynamicFormProps) {
     )
   }
 
+  const errorMessages = []
   if (isSchemaError) {
-    displayToast(`Error fetching Schema: ${schemaError.message}`, 'danger')
+    errorMessages.push(schemaError.message)
   }
 
   if (isUiSchemaError) {
-    displayToast(`Error fetching UI Schema: ${uiSchemaError.message}`, 'danger')
+    errorMessages.push(uiSchemaError.message)
+  }
+  if (errorMessages.length > 0) {
+    return (
+      <Alert severity="error">
+        Unable to retrieve schema(s):{' '}
+        {errorMessages.map(message => (
+          <Box key={message}>{message}</Box>
+        ))}
+      </Alert>
+    )
   }
 
   return (
