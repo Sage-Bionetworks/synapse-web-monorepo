@@ -1,7 +1,4 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseContextConsumer } from '../../../utils/context/SynapseContext'
-import FullContextProvider from '../../../utils/context/FullContextProvider'
 import AuthenticatedRequirement from './AuthenticatedRequirement'
 
 const meta: Meta = {
@@ -11,25 +8,11 @@ const meta: Meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
-  render: args => (
-    <SynapseContextConsumer>
-      {context => (
-        <FullContextProvider
-          synapseContext={{
-            ...context,
-            accessToken: args.isAuthenticated
-              ? context.accessToken ?? 'fake token'
-              : undefined,
-          }}
-        >
-          <AuthenticatedRequirement />
-        </FullContextProvider>
-      )}
-    </SynapseContextConsumer>
-  ),
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 
 export default meta

@@ -1,30 +1,35 @@
-import React, { useMemo, useState } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog'
-import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material'
+import { useLocalStorageValue } from '@react-hookz/web'
 import {
   ActionRequiredCount,
   ColumnModel,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../QueryContext'
-import { SkeletonParagraph } from '../Skeleton'
-import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
-import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
-import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
+import React, { useMemo, useState } from 'react'
+import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
+import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
+import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
+import { useQueryContext } from '../QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   hasSelectedRowsAtom,
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
-
-import { useLocalStorageValue } from '@react-hookz/web'
-import { Box, Link, Stack, Typography } from '@mui/material'
-import { Checkbox } from '../widgets/Checkbox'
-import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
-import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
-import { useQuery } from '@tanstack/react-query'
+import { SkeletonParagraph } from '../Skeleton'
+import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
 const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
   'SendToCavaticaButtonFromConfirmationDialog'
@@ -156,10 +161,13 @@ export default function SendToCavaticaConfirmationDialog(
                 sourced. Users must personally ensure that all data access terms
                 and conditions are met.
               </Typography>
-              <Checkbox
+              <FormControlLabel
+                control={<Checkbox />}
                 label="I acknowledge and accept these terms"
                 checked={disclaimerAcknowledged}
-                onChange={setDisclaimerAcknowledged}
+                onChange={(_event, checked) =>
+                  setDisclaimerAcknowledged(checked)
+                }
               />
             </Box>
           </>

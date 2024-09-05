@@ -1,31 +1,22 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import TwoFactorAuthEnabledRequirement from './TwoFactorAuthEnabledRequirement'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
-import { SynapseContextConsumer } from '../../../utils/context/SynapseContext'
-import FullContextProvider from '../../../utils/context/FullContextProvider'
 
 const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Requirements/TwoFactorAuthEnabledRequirement',
   component: TwoFactorAuthEnabledRequirement,
   parameters: { stack: 'mock' },
-  render: args => (
-    <SynapseContextConsumer>
-      {context => (
-        <FullContextProvider
-          synapseContext={{
-            ...context,
-            accessToken: 'fake token',
-          }}
-        >
-          <TwoFactorAuthEnabledRequirement {...args} />
-        </FullContextProvider>
-      )}
-    </SynapseContextConsumer>
-  ),
+  argTypes: {
+    isAuthenticated: {
+      control: { type: 'boolean' },
+    },
+  },
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 
 export default meta

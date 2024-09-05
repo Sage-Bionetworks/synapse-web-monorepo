@@ -3,8 +3,6 @@ import { mockManagedACTAccessRequirement } from './mockAccessRequirements'
 import { MOCK_TEAM_ID, MOCK_TEAM_ID_2 } from '../team/mockTeam'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 
-export const MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID = '1234567'
-
 export const MOCK_MANAGED_ACCESS_REQUIREMENT_ACL: AccessControlList = {
   id: mockManagedACTAccessRequirement.id.toString(),
   resourceAccess: [

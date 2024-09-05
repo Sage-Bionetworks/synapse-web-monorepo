@@ -118,7 +118,7 @@ async function addItemsViaEntityFinder() {
 
 async function selectIndividualItem(id: string) {
   // Click the checkbox for the corresponding item
-  const checkbox = await screen.findByTestId(`dataset-editor-checkbox-${id}`)
+  const checkbox = await screen.findByRole('checkbox', { name: `Select ${id}` })
   await userEvent.click(checkbox)
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,7 +10,6 @@ import {
 } from '@mui/material'
 import { DialogBaseTitle } from '../DialogBase'
 import { Box } from '@mui/material'
-import { Checkbox } from '../widgets/Checkbox'
 import {
   CookiePreference,
   useCookiePreferences,
@@ -50,6 +50,7 @@ function CookiePreferenceItem(props: CookiePreferenceItemProps) {
           display: 'flex',
           justifyContent: 'space-between',
           marginTop: '17px',
+          alignItems: 'center',
         }}
       >
         <Typography
@@ -69,12 +70,7 @@ function CookiePreferenceItem(props: CookiePreferenceItemProps) {
         {isCheckbox && (
           <Checkbox
             // We handle toggling the value in the parent div onClick handler.
-            // But we need to specify the Checkbox onChange handler, otherwise the Checkbox will toggle the value back!
-            onChange={() => {
-              props.onChange(props.checked)
-            }}
             checked={props.checked}
-            label=""
           />
         )}
       </Box>

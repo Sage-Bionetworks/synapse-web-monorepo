@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
 import Form from '@rjsf/core'
+import { Widgets } from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { UiSchema, ErrorListProps, RJSFValidationError } from '@rjsf/utils'
 import {
@@ -937,6 +938,11 @@ export default class SynapseForm extends React.Component<
                     disabled={
                       this.state.currentStep.excluded || this.state.isSubmitted
                     }
+                    widgets={{
+                      CheckboxWidget: Widgets.CheckboxWidget,
+                      CheckboxesWidget: Widgets.CheckboxesWidget,
+                      RadioWidget: Widgets.RadioWidget,
+                    }}
                   >
                     <div style={{ display: 'none' }}>
                       <button type="submit" ref={this.submitButtonRef}></button>

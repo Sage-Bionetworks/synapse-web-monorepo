@@ -135,25 +135,29 @@ describe('EnumFacetFilterUI (unit tests)', () => {
       await waitFor(() => {
         expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
       })
-      const labels = container.querySelectorAll<HTMLSpanElement>(
-        'input[type="checkbox"] ~ label',
-      )
+      const labels = screen.getAllByRole('checkbox')
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
       )
       expect(labels).toHaveLength(4)
       expect(counts).toHaveLength(3)
 
-      expect(labels[0].textContent).toBe('All')
+      screen.getByLabelText('All')
 
-      expect(labels[1].textContent).toBe(`${facetValues[0].value}`)
-      expect(counts[0].textContent).toBe(`${facetValues[0].count}`)
+      screen.getByLabelText(facetValues[0].value)
+      expect(counts[0]).toHaveTextContent(
+        facetValues[0].count!.toLocaleString(),
+      )
 
-      expect(labels[2].textContent).toBe(`${facetValues[1].value}`)
-      expect(counts[1].textContent).toBe(`${facetValues[1].count}`)
+      screen.getByLabelText(facetValues[1].value)
+      expect(counts[1]).toHaveTextContent(
+        facetValues[1].count!.toLocaleString(),
+      )
 
-      expect(labels[3].textContent).toBe(`Not Assigned`)
-      expect(counts[2].textContent).toBe(`${facetValues[2].count}`)
+      screen.getByLabelText('Not Assigned')
+      expect(counts[2]).toHaveTextContent(
+        facetValues[2].count!.toLocaleString(),
+      )
     })
 
     it('should hide > 5 items if items with index >=5 not selected', async () => {
@@ -176,17 +180,12 @@ describe('EnumFacetFilterUI (unit tests)', () => {
       const facetValues = generateManyFacetValues()
       facetValues[5].isSelected = true
 
-      const { container } = renderComponent({
+      renderComponent({
         facetValues,
       })
 
-      await waitFor(() => {
-        expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-      })
-      const labels = container.querySelectorAll(
-        'input[type="checkbox"] ~ label',
-      )
-      expect(labels).toHaveLength(facetValues.length + 1)
+      const checkboxes = await screen.findAllByRole('checkbox')
+      expect(checkboxes.length).toEqual(facetValues.length + 1)
     })
   })
 

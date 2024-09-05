@@ -7,10 +7,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import {
-  MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
-  MOCK_MANAGED_ACCESS_REQUIREMENT_ACL,
-} from '../../mocks/accessRequirement/mockAccessRequirementAcls'
+import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '../../mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
 import { rest, server } from '../../mocks/msw/server'
 import { mockTeamData, mockTeamData2 } from '../../mocks/team/mockTeam'
 import {
@@ -274,7 +272,7 @@ describe('AccessRequirementAclEditor', () => {
 
   describe('AR without existing ACL', () => {
     const noExistingAclProps: AccessRequirementAclEditorProps = {
-      accessRequirementId: MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
+      accessRequirementId: String(MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID),
       onSaveComplete,
     }
 
@@ -291,7 +289,7 @@ describe('AccessRequirementAclEditor', () => {
         accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
       }
       const newAcl: AccessControlList = {
-        id: MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
+        id: String(MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID),
         resourceAccess: [newResourceAccess],
       }
 

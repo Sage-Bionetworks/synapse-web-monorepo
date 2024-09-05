@@ -1,19 +1,18 @@
-import React, { useMemo, useState } from 'react'
+import { EmailTwoTone } from '@mui/icons-material'
+import { Box, Link, Radio, Tooltip } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
-import { RadioOption } from '../widgets/RadioGroup'
-import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 import { Team } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import React, { useMemo, useState } from 'react'
 import {
   useGetAllOpenMembershipInvitations,
   useGetChallengeTeamList,
   useGetCurrentUserProfile,
   useGetTeamList,
 } from '../../synapse-queries'
-import { Box, Tooltip, Link } from '@mui/material'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { EmailTwoTone } from '@mui/icons-material'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 
 export type ChallengeTeamTableProps = {
   challengeId: string
@@ -97,14 +96,13 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         disableColumnMenu: true,
         renderCell: ({ row }) => {
           return (
-            <RadioOption
+            <Radio
               value={row.id}
               checked={String(row.id) === selectedTeamId}
-              onChange={(teamId: string) => {
-                onSelectTeam(teamId)
+              onClick={() => {
+                onSelectTeam(String(row.id))
               }}
-              label=""
-              aria-label={`Select ${row.name}`}
+              inputProps={{ 'aria-label': `Select ${row.name}` }}
             />
           )
         },

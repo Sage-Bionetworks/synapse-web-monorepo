@@ -1,9 +1,10 @@
-import { AccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  AccessRequirement,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { Checkbox } from '../widgets/Checkbox'
 import { hasAccessorRequirement } from './GovernanceUtils'
-import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
-import { Box, Typography } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
 
 type AccessorRequirementsProps = {
   accessRequirement: AccessRequirement
@@ -23,20 +24,22 @@ export const AccessorRequirements: React.FunctionComponent<
             <Typography variant="body1" fontWeight={700}>
               Accessor requirements
             </Typography>
-            <Checkbox
+            <FormControlLabel
+              control={<Checkbox />}
               label="Accessors must be certified."
               checked={accessRequirement.isCertifiedUserRequired}
-              onChange={(checked: boolean) =>
+              onChange={(_event, checked: boolean) =>
                 onChange({
                   ...accessRequirement,
                   isCertifiedUserRequired: checked,
                 })
               }
             />
-            <Checkbox
+            <FormControlLabel
+              control={<Checkbox />}
               label="Accessors must have a validated profile."
               checked={accessRequirement.isValidatedProfileRequired}
-              onChange={(checked: boolean) =>
+              onChange={(_event, checked: boolean) =>
                 onChange({
                   ...accessRequirement,
                   isValidatedProfileRequired: checked,
@@ -45,10 +48,11 @@ export const AccessorRequirements: React.FunctionComponent<
             />
             {accessRequirement.concreteType ===
               MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
-              <Checkbox
+              <FormControlLabel
+                control={<Checkbox />}
                 label="Accessors must use two-factor authentication (2FA)."
                 checked={accessRequirement.isTwoFaRequired}
-                onChange={(checked: boolean) =>
+                onChange={(_event, checked: boolean) =>
                   onChange({
                     ...accessRequirement,
                     isTwoFaRequired: checked,
