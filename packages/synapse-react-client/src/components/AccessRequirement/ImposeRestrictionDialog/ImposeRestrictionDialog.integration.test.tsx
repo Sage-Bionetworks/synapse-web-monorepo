@@ -9,7 +9,7 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import userEvent from '@testing-library/user-event'
-import { mockLockAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import { mockLockAccessRequirement } from '../../../mocks/accessRequirement/mockAccessRequirements'
 
 const mockOnClose = jest.fn()
 

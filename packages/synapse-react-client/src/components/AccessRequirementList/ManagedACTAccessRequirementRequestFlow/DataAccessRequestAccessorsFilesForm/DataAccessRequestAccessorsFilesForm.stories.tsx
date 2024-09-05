@@ -1,22 +1,19 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
 } from './DataAccessRequestAccessorsFilesForm'
-import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
+import {
+  mockManagedAccessRequirementWithNoACL,
+  mockManagedACTAccessRequirement,
+} from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_FOLDER_ID } from '../../../../mocks/entity/mockEntity'
 import { MOCK_RESEARCH_PROJECT_ID } from '../../../../mocks/dataaccess/MockResearchProject'
-import { MOCK_DATA_ACCESS_REQUEST } from '../../../../mocks/dataaccess/MockDataAccessRequest'
 import { MOCK_REPO_ORIGIN } from '../../../../utils/functions/getEndpoint'
 import { getDataAccessRequestHandlers } from '../../../../mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '../../../../mocks/msw/handlers/userProfileHandlers'
 import { getFileHandlers } from '../../../../mocks/msw/handlers/fileHandlers'
 import { getWikiHandlers } from '../../../../mocks/msw/handlers/wikiHandlers'
 import { getAccessRequirementHandlers } from '../../../../mocks/msw/handlers/accessRequirementHandlers'
-import {
-  SynapseContextConsumer,
-  SynapseContextProvider,
-} from '../../../../index'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 
 const meta: Meta<
@@ -34,37 +31,18 @@ const meta: Meta<
         ...getFileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getDataAccessRequestHandlers(
-          MOCK_REPO_ORIGIN,
-          MOCK_DATA_ACCESS_REQUEST,
-        ),
+        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
       ],
     },
   },
   argTypes: {
     isAuthenticated: {
-      control: { type: 'boolean' },
-      defaultValue: true,
+      type: 'boolean',
     },
   },
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: args.isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <Story />
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    ),
-  ],
+  args: {
+    isAuthenticated: true,
+  },
 }
 
 export default meta
@@ -73,7 +51,6 @@ type Story = StoryObj<typeof meta>
 
 export const Request: Story = {
   args: {
-    isAuthenticated: true,
     subjectId: MOCK_FOLDER_ID,
     subjectType: RestrictableObjectType.ENTITY,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
@@ -82,10 +59,9 @@ export const Request: Story = {
 }
 export const Renewal: Story = {
   args: {
-    isAuthenticated: true,
     subjectId: MOCK_FOLDER_ID,
     subjectType: RestrictableObjectType.ENTITY,
-    managedACTAccessRequirement: mockManagedACTAccessRequirement,
+    managedACTAccessRequirement: mockManagedAccessRequirementWithNoACL,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },
 }

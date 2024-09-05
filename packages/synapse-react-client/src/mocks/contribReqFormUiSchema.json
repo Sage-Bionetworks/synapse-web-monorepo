@@ -48,7 +48,7 @@
       "*"
     ],
     "release_allowed_under_AMP-AD_KP": {
-      "ui:help": "Find more info here <a href='https://www.synapse.org/#!Synapse:syn9890650'\"#\" target=\"_blank\">AMP-AD Knowledge Portal Data Use Certificate </a>",
+      "ui:help": "Find more info here <a href='https://www.synapse.org/Synapse:syn9890650'\"#\" target=\"_blank\">AMP-AD Knowledge Portal Data Use Certificate </a>",
       "ui:widget": "radio"
     },
     "release_not_allowed_explanation": {},

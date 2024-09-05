@@ -3,8 +3,7 @@ import MarkdownIt from 'markdown-it'
 import xss from 'xss'
 import SynapseClient from '../../synapse-client'
 import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { SynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, SynapseContext } from '../../utils'
 import {
   FileHandleResults,
   ObjectType,
@@ -17,24 +16,23 @@ import {
   SynapseWikiContextType,
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { SkeletonTable } from '../Skeleton'
 import { Link, Typography } from '@mui/material'
+import katex from 'katex'
+import * as markdownitSynapse from 'markdown-it-synapse'
+import markdownitSynapsePlugin from 'markdown-it-synapse'
+import markdownitSub from 'markdown-it-sub-alt'
+import markdownitSup from 'markdown-it-sup-alt'
+import markdownitCentertext from 'markdown-it-center-text'
+import markdownitSynapseHeading from 'markdown-it-synapse-heading'
+import markdownitSynapseTable from 'markdown-it-synapse-table'
+import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
+import markdownitContainer from '@sage-bionetworks/markdown-it-container'
+import markdownitInlineComments from 'markdown-it-inline-comments'
+import markdownitBr from 'markdown-it-br'
+import markdownitMath from 'markdown-it-synapse-math'
 
-declare const katex: any
-declare const markdownitSynapse: any
-declare const markdownitSub: any
-declare const markdownitSup: any
-declare const markdownitCentertext: any
-declare const markdownitSynapseHeading: any
-declare const markdownitSynapseTable: any
-declare const markdownitStrikethroughAlt: any
-declare const markdownitContainer: any
-declare const markdownitEmphasisAlt: any
-declare const markdownitInlineComments: any
-declare const markdownitBr: any
-declare const markdownitMath: any
-
-declare const markdownit: typeof MarkdownIt
+export const NO_WIKI_CONTENT = 'There is no content.'
 
 export type MarkdownSynapseProps = {
   ownerId?: string
@@ -44,8 +42,11 @@ export type MarkdownSynapseProps = {
   objectType?: ObjectType
   loadingSkeletonRowCount?: number
   onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
+  showPlaceholderIfNoWikiContent?: boolean
 }
-const md = markdownit({ html: true })
+type MarkdownSynapseComponent = React.ComponentType<MarkdownSynapseProps>
+
+const md = MarkdownIt({ html: true })
 
 type MarkdownSynapseState = {
   md: MarkdownIt
@@ -60,7 +61,7 @@ type MarkdownSynapseState = {
  * @class Markdown
  * @extends {React.Component}
  */
-class MarkdownSynapse extends React.Component<
+const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends React.Component<
   MarkdownSynapseProps,
   MarkdownSynapseState
 > {
@@ -84,18 +85,17 @@ class MarkdownSynapse extends React.Component<
       markdownitSynapseTable,
       markdownitStrikethroughAlt,
       markdownitContainer,
-      markdownitEmphasisAlt,
       markdownitInlineComments,
       markdownitBr,
     )
 
     const mathSuffix = ''
     // Update the internal markdownit object with the wrapped synapse object
-    md.use(markdownitSynapse, mathSuffix, 'https://synapse.org').use(
+    md.use(markdownitSynapsePlugin, mathSuffix, 'https://synapse.org').use(
       markdownitMath,
       mathSuffix,
     )
-    const data: any = {}
+    const data: { markdown?: string } = {}
     if (this.props.markdown) {
       data.markdown = this.props.markdown
     }
@@ -123,9 +123,8 @@ class MarkdownSynapse extends React.Component<
   }
 
   public componentWillUnmount() {
-    // @ts-ignore TODO: find better documentation on typescript/react event params
     this.markupRef.current &&
-      // @ts-ignore TODO: find better documentation on typescript/react event params
+      // @ts-expect-error TODO: find better documentation on typescript/react event params
       this.markupRef.current.removeEventListener('click', this.handleLinkClicks)
   }
 
@@ -208,7 +207,7 @@ class MarkdownSynapse extends React.Component<
         element.setAttribute('processed', 'true')
         const textContent = element.textContent.replace(regEx, '')
         return katex.render(textContent, element, {
-          // @ts-ignore
+          // @ts-expect-error
           output: 'html',
           throwOnError: false,
         })
@@ -245,6 +244,10 @@ class MarkdownSynapse extends React.Component<
       return
     }
     try {
+      /* TODO: when wikiId is undefined, get the root WikiPageKey (SynapseClient.getRootWikiPageKey),
+      then use the key to get the specific WikiPage (SynapseClient.getWikiPage). 
+      See https://sagebionetworks.jira.com/browse/SWC-6791.
+      */
       const wikiPage = await SynapseClient.getEntityWiki(
         this.context.accessToken,
         ownerId,
@@ -348,6 +351,22 @@ class MarkdownSynapse extends React.Component<
       const document = domParser.parseFromString(markup, 'text/html')
       return <>{this.recursiveRender(document.body, markup)}</>
     }
+
+    // If we're still fetching data, then don't show the placeholder yet
+    const isFetchingData =
+      this.props.objectType && this.props.ownerId && this.state.isLoading
+    if (
+      !isFetchingData &&
+      this.props.showPlaceholderIfNoWikiContent &&
+      markup === ''
+    ) {
+      return (
+        <Typography variant="body1Italic" mb={1}>
+          {NO_WIKI_CONTENT}
+        </Typography>
+      )
+    }
+
     return
   }
 
@@ -564,9 +583,8 @@ class MarkdownSynapse extends React.Component<
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
-    // @ts-ignore
     this.markupRef.current &&
-      // @ts-ignore
+      // @ts-expect-error
       this.markupRef.current.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
     // get wiki attachments
@@ -619,17 +637,23 @@ class MarkdownSynapse extends React.Component<
     )
     if (renderInline) {
       return (
-        <span className="markdown markdown-inline" ref={this.markupRef}>
+        <span
+          data-testid="markdown"
+          className="markdown markdown-inline"
+          ref={this.markupRef}
+        >
           {content}
         </span>
       )
     }
     return (
-      <div className="markdown" ref={this.markupRef}>
+      <div data-testid="markdown" className="markdown" ref={this.markupRef}>
         {content}
       </div>
     )
   }
 }
 
-export default MarkdownSynapse as React.ComponentType<MarkdownSynapseProps>
+export { MarkdownSynapse, MarkdownSynapse as Markdown }
+
+export default MarkdownSynapse

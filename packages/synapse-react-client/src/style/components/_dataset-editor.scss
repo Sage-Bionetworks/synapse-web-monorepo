@@ -25,7 +25,7 @@
   .DatasetEditorTableContainer {
     width: 100%;
     overflow-x: auto;
-    @include Form.customCheckbox($checkbox-top-offset: 5px);
+
     .DatasetEditorTable {
       p {
         margin-bottom: unset;

@@ -4,6 +4,7 @@ import {
   MultichoiceQuestion,
 } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
+import { Box } from '@mui/material'
 
 export type CertificationAnswerProps = {
   question: MultichoiceQuestion
@@ -16,7 +17,7 @@ export type CertificationAnswerProps = {
 export default function CertificationAnswer(props: CertificationAnswerProps) {
   const { question, answer, onClick, checked, disabled } = props
   return (
-    <div>
+    <Box sx={{ marginBottom: '5px' }}>
       <input
         id={`${question.questionIndex}-${answer.answerIndex}`}
         name={`${question.questionIndex}`}
@@ -27,13 +28,13 @@ export default function CertificationAnswer(props: CertificationAnswerProps) {
         disabled={disabled}
       />
       <Typography
-        variant={'label'}
+        variant={'body1'}
         component={'label'}
-        sx={{ fontWeight: 400 }}
+        sx={{ lineHeight: '18px' }}
         htmlFor={`${question.questionIndex}-${answer.answerIndex}`}
       >
         {answer.prompt}
       </Typography>
-    </div>
+    </Box>
   )
 }

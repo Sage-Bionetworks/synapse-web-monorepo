@@ -39,6 +39,8 @@ import {
 } from './CreateTableViewWizardUtils'
 import SubmissionViewScopeEditor from '../SubmissionViewScopeEditor/SubmissionViewScopeEditor'
 import { isUndefined, omitBy } from 'lodash-es'
+import { useValidateDefiningSql } from '../../synapse-queries/table/useDefiningSql'
+import { ValidateDefiningSqlResponse } from '@sage-bionetworks/synapse-types'
 
 export type CreateTableViewWizardProps = {
   open: boolean
@@ -124,6 +126,28 @@ export default function CreateTableViewWizard(
       },
     })
 
+  const {
+    mutate: validateSql,
+    data: isSqlValid,
+    error: definingSqlValidationError,
+  } = useValidateDefiningSql({
+    onSuccess: (isSqlValid: ValidateDefiningSqlResponse) => {
+      if (isSqlValid && isSqlValid.isValid) {
+        setStep('TABLE_NAME')
+      }
+    },
+  })
+
+  const sqlValidationError: string | null = useMemo(() => {
+    if (definingSqlValidationError) {
+      return definingSqlValidationError.reason
+    } else if (isSqlValid && isSqlValid.invalidReason) {
+      return isSqlValid.invalidReason
+    } else {
+      return null
+    }
+  }, [definingSqlValidationError, isSqlValid])
+
   const { mutateAsync: createColumnModels, error: createColumnModelsError } =
     useCreateColumnModels()
 
@@ -206,6 +230,7 @@ export default function CreateTableViewWizard(
     sql,
     viewTypeMask,
   ])
+
   const onColumnSchemaSubmit = useCallback(
     (columnModels: SetOptional<ColumnModel, 'id'>[]) => {
       setColumnModels(columnModels)
@@ -237,6 +262,8 @@ export default function CreateTableViewWizard(
   const onNextButtonClicked = useCallback(() => {
     if (isLastStep(step)) {
       void onFinish()
+    } else if (step === 'TABLE_SQL' && entityType) {
+      validateSql({ sql, entityType })
     } else if (step === 'TABLE_COLUMNS') {
       onColumnSchemaNextClicked()
     } else if (
@@ -258,6 +285,9 @@ export default function CreateTableViewWizard(
     onColumnSchemaNextClicked,
     columnModels.length,
     defaultColumnModels,
+    validateSql,
+    entityType,
+    sql,
   ])
 
   const isNextButtonDisabled = useMemo(() => {
@@ -298,9 +328,14 @@ export default function CreateTableViewWizard(
             {createColumnModelsError.message}
           </Alert>
         )}
+        {sqlValidationError && (
+          <Alert sx={{ my: 2 }} severity="error">
+            {sqlValidationError}
+          </Alert>
+        )}
       </>
     )
-  }, [createColumnModelsError, createEntityError])
+  }, [createColumnModelsError, createEntityError, sqlValidationError])
 
   const stepContent = useMemo(() => {
     switch (step) {
@@ -341,13 +376,6 @@ export default function CreateTableViewWizard(
       case 'TABLE_SQL':
         return (
           <>
-            <TableNameForm
-              name={name}
-              setName={setName}
-              description={description}
-              setDescription={setDescription}
-            />
-            {/* TODO: Move SqlDefinedTableEditor to its own step, see https://sagebionetworks.jira.com/browse/PLFM-8209 */}
             <Box mt={1.25}>
               <SqlDefinedTableEditor
                 value={sql}

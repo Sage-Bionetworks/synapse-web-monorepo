@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Radio, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
-import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
   Entity,
@@ -78,7 +77,7 @@ function SubmissionDirectoryList({
   const HEADERS_PER_PAGE = 50
   const PROJECT_URL = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}#!Synapse:${challengeProjectId}`
+  )}Synapse:${challengeProjectId}`
 
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
@@ -178,13 +177,12 @@ function SubmissionDirectoryList({
       disableColumnMenu: true,
       renderCell: params => {
         return (
-          <RadioOption
+          <Radio
             value={params.id}
             checked={params.id === selectedItem?.id}
-            onChange={selectedItemId => {
-              entityChangeHandler(selectedItemId as string)
+            onChange={event => {
+              entityChangeHandler(event.target.value)
             }}
-            label=""
           />
         )
       },
@@ -204,7 +202,7 @@ function SubmissionDirectoryList({
           to={{
             pathname: `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!Synapse:${params.row.id}`,
+            )}Synapse:${params.row.id}`,
           }}
           target="_blank"
         >

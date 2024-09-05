@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/synapse-types",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -26,8 +26,8 @@
     "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },
   "devDependencies": {
-    "rimraf": "^5.0.1",
+    "rimraf": "^5.0.5",
     "tsup": "^8.0.2",
-    "typescript": "5.4.2"
+    "typescript": "5.5.2"
   }
 }

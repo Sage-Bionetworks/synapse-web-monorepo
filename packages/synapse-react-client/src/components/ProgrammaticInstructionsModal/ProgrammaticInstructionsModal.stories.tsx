@@ -1,6 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ProgrammaticInstructionsModal from './ProgrammaticInstructionsModal'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Download/ProgrammaticInstructionsModal',
@@ -22,5 +23,6 @@ export const Demo: Story = {
     helpUrl: 'https://help.synapse.org',
     helpMarkdown:
       'Option to show a _HelpPopover_ in the title bar with a link to the docs site',
+    onClose: fn(),
   },
 }

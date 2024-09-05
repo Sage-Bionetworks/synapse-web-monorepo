@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
@@ -8,12 +7,8 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import {
-  SynapseContextConsumer,
-  SynapseContextProvider,
-} from '../../utils/context/SynapseContext'
 import {
   AccessApproval,
   ApprovalState,
@@ -36,31 +31,15 @@ import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchPro
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',
   component: AccessRequirementList,
+  parameters: { stack: 'mock' },
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
-  parameters: { stack: 'mock' },
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: args.isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <Story />
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    ),
-  ],
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 
 export default meta

@@ -96,6 +96,9 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
   )
 
   const meetsAccessRequirement = Boolean(arStatus?.isApproved)
+  const hasSubjectId = ar?.subjectIds && ar?.subjectIds.length > 0
+  const subjectId = hasSubjectId ? ar?.subjectIds[0].id : undefined
+  const subjectType = hasSubjectId ? ar?.subjectIds[0].type : undefined
 
   return (
     <>
@@ -117,8 +120,8 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
       />
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList
-          subjectId={ar.subjectIds[0].id}
-          subjectType={ar.subjectIds[0].type}
+          subjectId={subjectId}
+          subjectType={subjectType}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}
           numberOfFilesAffected={count}

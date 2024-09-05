@@ -12,34 +12,67 @@ import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmati
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 import {
   hasSelectedRowsAtom,
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function TableQueryDownloadConfirmation() {
-  const { getCurrentQueryRequest } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
+  const {
+    getCurrentQueryRequest,
+    queryMetadataQueryOptions,
+    fileIdColumnName,
+    fileVersionColumnName,
+  } = useQueryContext()
+  const { data: originalQueryMetadata } = useSuspenseQuery(
+    queryMetadataQueryOptions,
+  )
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
-  const queryBundleRequest = useMemo(() => {
+
+  const downloadStatsQueryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-    const fileColumnId = getFileColumnModelId(data?.columnModels)
-    if (fileColumnId) {
-      requestCopy.query.selectFileColumn = Number(fileColumnId)
+    // set the query.selectFileColumn
+    if (fileIdColumnName && fileVersionColumnName) {
+      // find the column model ID and set the parameters
+      const fileIdColumnModel = originalQueryMetadata.columnModels?.find(
+        col => col.name == fileIdColumnName,
+      )
+      const fileVersionColumnModel = originalQueryMetadata.columnModels?.find(
+        col => col.name == fileVersionColumnName,
+      )
+
+      requestCopy.query.selectFileColumn = fileIdColumnModel
+        ? Number(fileIdColumnModel.id)
+        : undefined
+      requestCopy.query.selectFileVersionColumn = fileVersionColumnModel
+        ? Number(fileVersionColumnModel.id)
+        : undefined
+    } else {
+      const fileColumnId = getFileColumnModelId(
+        originalQueryMetadata.columnModels,
+      )
+      if (fileColumnId) {
+        requestCopy.query.selectFileColumn = Number(fileColumnId)
+      }
     }
-    if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
+
+    if (
+      hasSelectedRows &&
+      rowSelectionPrimaryKey &&
+      originalQueryMetadata.selectColumns
+    ) {
       const primaryKeyINFilter = getPrimaryKeyINFilter(
         rowSelectionPrimaryKey,
         selectedRows,
-        data.selectColumns,
+        originalQueryMetadata.selectColumns,
       )
       requestCopy.query.additionalFilters = [
         ...(requestCopy.query.additionalFilters || []),
@@ -48,12 +81,16 @@ export function TableQueryDownloadConfirmation() {
     }
     return requestCopy
   }, [
-    data?.columnModels,
+    originalQueryMetadata.columnModels,
+    originalQueryMetadata.selectColumns,
     getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
     selectedRows,
+    fileIdColumnName,
+    fileVersionColumnName,
   ])
+
   const { downloadCartPageUrl } = useSynapseContext()
 
   function onClose() {
@@ -72,28 +109,24 @@ export function TableQueryDownloadConfirmation() {
       },
     })
 
-  const { data: queryResultResponse, isLoading: isLoadingStats } =
-    useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
+  const { data: downloadStatsQueryData, isLoading: isLoadingStats } =
+    useGetQueryResultBundleWithAsyncStatus(downloadStatsQueryBundleRequest)
 
-  const fileCount = queryResultResponse?.responseBody?.queryCount ?? 0
-  const fileSizeTotal = queryResultResponse?.responseBody?.sumFileSizes
+  const fileCount = downloadStatsQueryData?.responseBody?.queryCount ?? 0
+  const fileSizeTotal = downloadStatsQueryData?.responseBody?.sumFileSizes
     ?.greaterThan
     ? undefined
-    : queryResultResponse?.responseBody?.sumFileSizes?.sumFileSizesBytes
+    : downloadStatsQueryData?.responseBody?.sumFileSizes?.sumFileSizesBytes
 
-  // PORTALS-2954: We can only rely on the row version number if the rowID is meaningful.
-  // If rowSelectionPrimaryKey is undefined, then try to use the row version number
-  const useVersionNumber = rowSelectionPrimaryKey == undefined
   return (
     <DownloadConfirmationUI
-      onAddToDownloadCart={() =>
+      onAddToDownloadCart={() => {
         addToDownloadList({
-          query: queryBundleRequest?.query,
+          query: downloadStatsQueryBundleRequest?.query,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-          useVersionNumber: useVersionNumber,
         })
-      }
+      }}
       fileCount={fileCount}
       fileSize={fileSizeTotal}
       isAddingToDownloadCart={isAddingToDownloadCart}

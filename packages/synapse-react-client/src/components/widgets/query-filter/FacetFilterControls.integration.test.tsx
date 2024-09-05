@@ -4,7 +4,6 @@ import React from 'react'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import FacetFilterControls, {
   FacetFilterControlsProps,
-  getDefaultShownFacetFilters,
 } from './FacetFilterControls'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
@@ -12,8 +11,9 @@ import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import QueryWrapper from '../../QueryWrapper'
 import { server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import { getDefaultShownFacetFilters } from './FacetFilterUtils'
 
 const MockFacetFilter = (props: { testid: string }) => {
   return <div data-testid={props.testid}></div>
@@ -80,7 +80,7 @@ describe('FacetFilterControls tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     jest.clearAllMocks()
-    server.use(...getHandlersForTableQuery(mockQueryResponseData))
+    registerTableQueryResult(queryRequest.query, mockQueryResponseData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

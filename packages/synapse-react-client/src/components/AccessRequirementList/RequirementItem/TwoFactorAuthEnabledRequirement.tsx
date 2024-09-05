@@ -13,7 +13,7 @@ import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 const TWO_FACTOR_ENROLLMENT_LINK = `${getEndpoint(
   BackendDestinationEnum.PORTAL_ENDPOINT,
-)}#!TwoFactorAuth:Enroll`
+)}TwoFactorAuth:Enroll`
 
 function getState(
   isSignedIn: boolean,

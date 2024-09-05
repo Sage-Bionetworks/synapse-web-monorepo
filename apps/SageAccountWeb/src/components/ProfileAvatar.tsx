@@ -103,7 +103,12 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   }
 
   const onCrop = async () => {
-    const file: File = await getCroppedImg(image!, croppedArea!)
+    const file: File = await getCroppedImg(
+      image!,
+      croppedArea!,
+      cropperSize,
+      cropperSize,
+    )
     try {
       setImageLoading(true)
       const resp: FileUploadComplete = await SynapseClient.uploadFile(
@@ -111,7 +116,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
         file.name,
         file,
       )
-      updateUserProfile(resp.fileHandleId)
+      await updateUserProfile(resp.fileHandleId)
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
@@ -126,8 +131,8 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     setZoom(1)
     setOpenCropModal(false)
   }
-
-  const cropperSize = '400px'
+  const cropperSize = 400
+  const cropperSizePx = `${cropperSize}px`
 
   return (
     <div className="profile-avatar">
@@ -160,8 +165,8 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
         content={
           <>
             <Box
-              width={cropperSize}
-              height={cropperSize}
+              width={cropperSizePx}
+              height={cropperSizePx}
               margin="20px auto"
               position="relative"
             >
@@ -183,12 +188,16 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
                 step={0.1}
                 value={zoom}
                 onChange={(e, zoom) => setZoom(zoom as number)}
-                sx={{ width: cropperSize }}
+                sx={{ width: cropperSizePx }}
               />
             </Box>
           </>
         }
-        onConfirm={!imageLoading ? onCrop : () => ''}
+        onConfirm={() => {
+          if (!imageLoading) {
+            onCrop()
+          }
+        }}
         confirmButtonProps={{
           children: imageLoading ? 'Loading...' : 'Save',
           disabled: imageLoading,

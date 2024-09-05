@@ -4,6 +4,7 @@ import React from 'react'
 import {
   generatedEvaulations,
   mockEvaluationQueue,
+  sevenGeneratedEvaulations,
 } from '../../mocks/entity/mockEvaluationQueue'
 import AvailableEvaluationQueueList from './AvailableEvaluationQueueList'
 
@@ -33,6 +34,12 @@ export const OneAvailable: Story = {
     evaluations: [
       { ...mockEvaluationQueue, submissionInstructionsMessage: markdownText },
     ],
+  },
+}
+
+export const SevenAvailable: Story = {
+  args: {
+    evaluations: sevenGeneratedEvaulations,
   },
 }
 

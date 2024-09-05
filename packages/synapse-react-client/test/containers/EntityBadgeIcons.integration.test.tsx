@@ -33,6 +33,7 @@ import {
 } from '../../src/mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { getEntityBundleHandler } from '../../src/mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '../../src/mocks/msw/handlers/featureFlagHandlers'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle
@@ -56,6 +57,9 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
 
 describe('EntityBadgeIcons tests', () => {
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(getFeatureFlagsOverride())
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 

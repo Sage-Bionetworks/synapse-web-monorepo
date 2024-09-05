@@ -2,12 +2,13 @@ import React from 'react'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,
+  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
 import { Link } from '@mui/material'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'
-import { useSynapseContext } from '../../utils'
+import { useGetFeatureFlag } from '../../synapse-queries'
 
 const FILE_VIEW_DESCRIPTION = (
   <>
@@ -106,7 +107,9 @@ export type ViewTypeSelectionProps = {
 export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
   const { onTypeSelected } = props
 
-  const { isInExperimentalMode } = useSynapseContext()
+  const isFeatureEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.VIRTUALTABLE_SUPPORT,
+  )
 
   return (
     <WizardChoiceButtonGroup>
@@ -138,7 +141,7 @@ export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
           onTypeSelected(EntityType.MATERIALIZED_VIEW)
         }}
       />
-      {isInExperimentalMode && (
+      {isFeatureEnabled && (
         <WizardChoiceButton
           title={'Virtual Table'}
           description={VIRTUAL_TABLE_DESCRIPTION}

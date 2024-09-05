@@ -76,24 +76,15 @@ export function getFlatData(
         isArray(object[key]) &&
         !isString(object[key])
       ) {
-        for (const i in object[key]) {
-          if (
-            isArray(object[key][i]) ||
-            (isObject(object[key]) && !isString(object[key][i]))
-          ) {
-            flatten(
-              object[key][i],
-              flattenedObject,
-              `${prefix}${key}[${i}]${separator}`,
-            )
+        object[key].forEach((item: any, i: number) => {
+          if (isArray(item) || (isObject(object[key]) && !isString(item))) {
+            flatten(item, flattenedObject, `${prefix}${key}[${i}]${separator}`)
           } else {
             let prevVal = flattenedObject[`${prefix}${key}`]
             prevVal = prevVal ? `${prevVal}, ` : ''
-            // TODO: Fix this eslint error
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            flattenedObject[`${prefix}${key}`] = prevVal + object[key][i]
+            flattenedObject[`${prefix}${key}`] = prevVal + item
           }
-        }
+        })
       } else if (isObject(object[key]) && !isDate(object[key])) {
         flatten(object[key], flattenedObject, `${prefix}${key}${separator}`)
       } else {

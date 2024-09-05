@@ -1,0 +1,32 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use 'synapse-react-client/dist/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+#footer {
+  background-image: none;
+}
+
+#header {
+  display: none;
+}
+
+#footer {
+  background: #26881f;
+}
+.ReleaseCard {
+  background: white;
+}
+
+.Goals {
+  &__Card {
+    &__header {
+      &__title,
+      p {
+        color: map.get(SrcVariables.$colors, 'gray-800');
+      }
+      &__count {
+        border: 1px solid map.get(SrcVariables.$colors, 'gray-800');
+      }
+    }
+  }
+}

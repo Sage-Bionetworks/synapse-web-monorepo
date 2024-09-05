@@ -13,7 +13,7 @@ import {
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
-import { MarkdownSynapse } from '../Markdown'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import LightTooltip from '../styled/LightTooltip'
 
 type TextWithHelpIconProps = {
@@ -52,37 +52,60 @@ type AvailableEvaluationQueueStaticListProps = Pick<
   AvailableEvaluationQueueListProps,
   'evaluations'
 >
-
 function AvailableEvaluationQueueStaticList(
   props: AvailableEvaluationQueueStaticListProps,
 ) {
   const { evaluations } = props
+  return (
+    <>
+      <Typography variant="body1">Available Evaluation Queues:</Typography>
+      <List dense={true}>
+        {evaluations.map(evaluation => (
+          <ListItem key={evaluation.id}>
+            <TextWithHelpIcon
+              text={evaluation.name!}
+              tooltipMarkdownText={evaluation.submissionInstructionsMessage}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </>
+  )
+}
+
+type AvailableEvaluationQueueCollapsableListProps = Pick<
+  AvailableEvaluationQueueListProps,
+  'evaluations' | 'isSelectable'
+>
+
+function AvailableEvaluationQueueCollapsableList(
+  props: AvailableEvaluationQueueCollapsableListProps,
+) {
+  const { evaluations, isSelectable } = props
   const [showList, setShowList] = useState<boolean>(false)
+  const nEvaluationsCollapseLimit = isSelectable ? 2 : 8
+  const shouldCollapse = evaluations.length >= nEvaluationsCollapseLimit
 
   return (
     <Box mt={2}>
-      <Button
-        variant="contained"
-        sx={{ mb: 1 }}
-        onClick={() => setShowList(!showList)}
-      >
-        {`${showList ? 'Hide' : 'Show'} All Available Evaluation Queues`}
-      </Button>
-      <Collapse in={showList}>
-        <Typography variant="body1">Available Evaluation Queues:</Typography>
-        <List dense={true}>
-          {evaluations.map(evaluation => {
-            return (
-              <ListItem key={evaluation.id}>
-                <TextWithHelpIcon
-                  text={evaluation.name!}
-                  tooltipMarkdownText={evaluation.submissionInstructionsMessage}
-                />
-              </ListItem>
-            )
-          })}
-        </List>
-      </Collapse>
+      {shouldCollapse ? (
+        <>
+          <Button
+            variant="contained"
+            sx={{ mb: 1 }}
+            onClick={() => setShowList(!showList)}
+          >
+            {`${showList ? 'Hide' : 'Show'} All Available Evaluation Queues`}
+          </Button>
+          <Collapse in={showList}>
+            <AvailableEvaluationQueueStaticList {...props} />
+          </Collapse>
+        </>
+      ) : (
+        <>
+          <AvailableEvaluationQueueStaticList {...props} />
+        </>
+      )}
     </Box>
   )
 }
@@ -172,7 +195,7 @@ function AvailableEvaluationQueueList(
       className="AvailableEvaluationQueueList"
     >
       {isSelectable && <AvailableEvaluationQueueAutocompleteList {...props} />}
-      <AvailableEvaluationQueueStaticList {...props} />
+      <AvailableEvaluationQueueCollapsableList {...props} />
     </Box>
   )
 }

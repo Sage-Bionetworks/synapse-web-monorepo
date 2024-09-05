@@ -1,10 +1,12 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import TwoFactorAuthSettingsPanel from './TwoFactorAuthSettingsPanel'
+import { displayToast } from '../ToastMessage'
+import TwoFactorAuthSettingsPanel, {
+  TwoFactorAuthSettingsPanelProps,
+} from './TwoFactorAuthSettingsPanel'
 import { Paper } from '@mui/material'
 
-const meta = {
+const meta: Meta<TwoFactorAuthSettingsPanelProps> = {
   title: 'Authentication/TwoFactorSettingsPanel',
   component: TwoFactorAuthSettingsPanel,
   decorators: [
@@ -14,7 +16,7 @@ const meta = {
       </Paper>
     ),
   ],
-} satisfies Meta
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

@@ -1,0 +1,37 @@
+{
+  "name": "digitalhealth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
+    "@sage-bionetworks/synapse-types": "workspace:*",
+    "katex": "^0.16.10",
+    "pluralize": "^8.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.4",
+    "synapse-react-client": "workspace:*",
+    "vite": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.64",
+    "@types/react-dom": "18.0.6",
+    "sass": "^1.72.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.5.2",
+    "vite-config": "workspace:*",
+    "vite-plugin-html": "^3.2.2",
+    "vitest": "^1.6.0"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap digitalhealth",
+    "preview": "vite preview",
+    "type-check": "tsc",
+    "lint": "eslint src",
+    "_generate-sitemap": "node ../../synapse-portal-framework/sitemap/generate-sitemap.cjs \\\"$VITE_PORTAL_KEY\\\"",
+    "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
+    "save-build-date": "mkdir -p public && date > public/build-date.txt"
+  }
+}

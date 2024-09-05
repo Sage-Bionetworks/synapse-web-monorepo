@@ -1,10 +1,7 @@
 import React from 'react'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../../QueryContext'
-import {
+  ColumnModel,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
   FacetColumnRangeRequest,
@@ -25,15 +22,15 @@ import {
   isFacetColumnRangeRequest,
   isFacetColumnValuesRequest,
   isTextMatchesQueryFilter,
-} from '../../../utils/types/IsType'
+  LockedColumn,
+} from '../../../utils'
 import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
-import { useAtomValue } from 'jotai'
-import { lockedColumnAtom } from '../../QueryWrapper/QueryWrapper'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
+import { useQuery } from '@tanstack/react-query'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -42,10 +39,10 @@ function getPillPropsFromColumnQueryFilter(
     | ColumnSingleValueQueryFilter
     | ColumnMultiValueFunctionQueryFilter,
   queryContext: QueryContextType,
+  columnModel: ColumnModel | undefined,
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
   const { getColumnDisplayName } = queryVisualizationContext
-  const columnModel = queryContext.getColumnModel(queryFilter.columnName)
   // ColumnSingleValueQueryFilter and ColumnMultiValueQueryFilter both allow for a list of values
   // If there are more than _n_ values, consolidate to one pill
   if (
@@ -111,6 +108,7 @@ function getPillPropsFromTextMatchesQueryFilter(
 function getPillPropsFromQueryFilters(
   queryFilters: ReadonlyDeep<QueryFilter[]>,
   queryContext: QueryContextType,
+  columnModels: ColumnModel[],
   queryVisualizationContext: QueryVisualizationContextType,
   lockedColumn?: LockedColumn,
 ): SelectionCriteriaPillProps[] {
@@ -119,6 +117,9 @@ function getPillPropsFromQueryFilters(
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
     ) {
+      const columnModel = columnModels.find(
+        cm => cm.name === queryFilter.columnName,
+      )
       if (
         queryFilter.columnName.toLowerCase() ===
         lockedColumn?.columnName?.toLowerCase()
@@ -128,6 +129,7 @@ function getPillPropsFromQueryFilters(
       return getPillPropsFromColumnQueryFilter(
         queryFilter,
         queryContext,
+        columnModel,
         queryVisualizationContext,
       )
     } else if (isTextMatchesQueryFilter(queryFilter)) {
@@ -156,6 +158,7 @@ function getRangeFacetInnerText(min?: string, max?: string) {
 function getPillPropsFromFacetFilters(
   selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   queryContext: QueryContextType,
+  columnModels: ColumnModel[],
   queryVisualizationContext: QueryVisualizationContextType,
   lockedColumn?: LockedColumn,
 ): SelectionCriteriaPillProps[] {
@@ -166,7 +169,9 @@ function getPillPropsFromFacetFilters(
     ) {
       return []
     }
-    const columnModel = queryContext.getColumnModel(selectedFacet.columnName)
+    const columnModel = columnModels.find(
+      cm => cm.name === selectedFacet.columnName,
+    )
     const { getColumnDisplayName, getDisplayValue } = queryVisualizationContext
     if (isFacetColumnValuesRequest(selectedFacet)) {
       // If there are more than _n_ values, consolidate to one pill
@@ -272,13 +277,15 @@ function getPillPropsFromFacetFilters(
 
 function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
-  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const lockedColumn = queryContext.lockedColumn
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { currentQueryRequest } = queryContext
+  const { currentQueryRequest, queryMetadataQueryOptions } = queryContext
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
 
   const queryFilterPillProps = getPillPropsFromQueryFilters(
     currentQueryRequest.query?.additionalFilters ?? [],
     queryContext,
+    queryMetadata?.columnModels || [],
     queryVisualizationContext,
     lockedColumn,
   )
@@ -286,6 +293,7 @@ function SelectionCriteriaPills() {
   const facetPillProps = getPillPropsFromFacetFilters(
     currentQueryRequest.query.selectedFacets ?? [],
     queryContext,
+    queryMetadata?.columnModels || [],
     queryVisualizationContext,
     lockedColumn,
   )

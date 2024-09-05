@@ -11,7 +11,8 @@ import {
   generateDiscussionThreadBundle,
   generateForum,
 } from '../faker/generateDiscussion'
-import mockProject, { mockProjects } from '../entity/mockProject'
+import mockProject from '../entity/mockProject'
+import { mockProjects } from '../entity'
 
 export const MOCK_FORUM_ID = '984321189'
 

@@ -1,4 +1,4 @@
-import { IFilterXSSOptions } from 'xss'
+import { escapeAttrValue, IFilterXSSOptions, safeAttrValue } from 'xss'
 
 // PORTALS-1450: including 'style' in the allow-list will cause string values to come through, which crashes the app when used (because it uses jsx).
 export const xssOptions: IFilterXSSOptions = {
@@ -93,18 +93,20 @@ export const xssOptions: IFilterXSSOptions = {
     }
     return undefined
   },
-  safeAttrValue: function (tag, name, value) {
+  safeAttrValue: function (tag, name, value, cssFilter) {
+    // Apply default safeAttrValue filtering:
+    value = safeAttrValue(tag, name, value, cssFilter)
     if (tag === 'img' && name === 'src') {
       if (
-        value &&
-        (value.startsWith('data:image/') || value.startsWith('http'))
+        !(
+          value &&
+          (value.startsWith('data:image/') || value.startsWith('http'))
+        )
       ) {
-        return value
-      } else {
         return ''
       }
-    } else {
-      return value
     }
+    value = escapeAttrValue(value)
+    return value
   },
 }

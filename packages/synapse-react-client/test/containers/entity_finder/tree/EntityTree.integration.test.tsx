@@ -13,7 +13,6 @@ import {
   EntityPath,
   EntityType,
   PaginatedResults,
-  Project,
   ProjectHeader,
   ProjectHeaderList,
 } from '@sage-bionetworks/synapse-types'
@@ -30,10 +29,7 @@ import {
   getEndpoint,
 } from '../../../../src/utils/functions/getEndpoint'
 import {
-  ENTITY,
-  ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
-  ENTITY_ID,
   ENTITY_PATH,
   FAVORITES,
   PROJECTS,
@@ -42,10 +38,9 @@ import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
 import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
 import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
-import mockProject, {
-  mockProjects,
-} from '../../../../src/mocks/entity/mockProject'
+import mockProject from '../../../../src/mocks/entity/mockProject'
 import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
+import { mockProjects } from '../../../../src/mocks/entity'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -297,9 +292,13 @@ describe('EntityTree tests', () => {
         projectId: undefined,
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'All Projects',
+        }),
+      )
       await waitFor(() =>
-        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+        expect(screen.getAllByRole('menu').length).toBeGreaterThan(0),
       )
 
       expect(screen.queryByLabelText('Current Project')).not.toBeInTheDocument()
@@ -311,9 +310,13 @@ describe('EntityTree tests', () => {
         projectId: mockProject.id,
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'All Projects',
+        }),
+      )
       await waitFor(() =>
-        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+        expect(screen.getAllByRole('menu').length).toBeGreaterThan(0),
       )
 
       expect(screen.getAllByText('Current Project').length).toBe(1)
@@ -338,7 +341,11 @@ describe('EntityTree tests', () => {
         )
       })
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'All Projects',
+        }),
+      )
       await userEvent.click(screen.getByText('My Favorites'))
 
       await waitFor(() => {

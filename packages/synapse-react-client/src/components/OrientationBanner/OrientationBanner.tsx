@@ -5,6 +5,7 @@ import FullWidthAlert, {
   FullWidthAlertProps,
 } from '../FullWidthAlert/FullWidthAlert'
 import Illustrations from '../../assets/illustrations'
+import { useCookiePreferences } from '../../utils/hooks/useCookiePreferences'
 
 const OrientationBannerNameStrings = [
   'Challenges',
@@ -21,6 +22,7 @@ const OrientationBannerNameStrings = [
   'Teams',
   'TrashCan',
   'Wikis',
+  'Donate',
 ] as const
 export type OrientationBannerName =
   (typeof OrientationBannerNameStrings)[number]
@@ -45,6 +47,7 @@ export interface OrientationBannerProps {
 function OrientationBanner(props: OrientationBannerProps) {
   const { name, title, text, primaryButtonConfig, secondaryButtonConfig, sx } =
     props
+  const [cookiePreferences] = useCookiePreferences()
 
   const storageBannerId = getOrientationBannerKey(name)
   const [showBanner, setShowBanner] = React.useState(
@@ -74,7 +77,9 @@ function OrientationBanner(props: OrientationBannerProps) {
       secondaryButtonConfig={secondaryButtonConfig}
       icon={<BannerIllustration />}
       onClose={() => {
-        localStorage.setItem(storageBannerId, 'true')
+        if (cookiePreferences.functionalAllowed) {
+          localStorage.setItem(storageBannerId, 'true')
+        }
         setShowBanner(false)
       }}
       sx={{ ...defaultSx, ...sx }}

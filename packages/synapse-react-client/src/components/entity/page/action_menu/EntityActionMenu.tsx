@@ -1,8 +1,9 @@
 import React from 'react'
 import { SxProps } from '@mui/material'
-import { ComplexMenu, IconButtonConfiguration } from '../../../menu/ComplexMenu'
+import { ComplexMenu } from '../../../menu/ComplexMenu'
 import IconSvg, { IconName } from '../../../IconSvg/IconSvg'
 import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
+import { IconSvgButtonProps } from '../../../IconSvgButton'
 
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
@@ -166,35 +167,33 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
   }
 
   // Map button actions to an IconButtonConfiguration and omit non-visible actions
-  const iconButtonConfigs: IconButtonConfiguration[] =
-    layout.buttonActions.reduce(
-      (acc: IconButtonConfiguration[], buttonViewProps: ActionViewProps) => {
-        const configForAction = actionConfiguration[buttonViewProps.action]
-        if (configForAction && configForAction.visible) {
-          let onClick = configForAction.onClick
-          if (onClick == null) {
+  const iconButtonConfigs: IconSvgButtonProps[] = layout.buttonActions.reduce(
+    (acc: IconSvgButtonProps[], buttonViewProps: ActionViewProps) => {
+      const configForAction = actionConfiguration[buttonViewProps.action]
+      if (configForAction && configForAction.visible) {
+        let onClick = configForAction.onClick
+        if (onClick == null && !configForAction.href) {
+          console.warn(`No handler registered for ${buttonViewProps.action}`)
+          onClick = () => {
             console.warn(`No handler registered for ${buttonViewProps.action}`)
-            onClick = () => {
-              console.warn(
-                `No handler registered for ${buttonViewProps.action}`,
-              )
-            }
           }
-          acc.push({
-            icon: buttonViewProps.icon as IconName,
-            onClick: onClick,
-            tooltipText: configForAction.text,
-            disabled: configForAction.disabled,
-          })
         }
-        return acc
-      },
-      [],
-    )
+        acc.push({
+          icon: buttonViewProps.icon as IconName,
+          onClick: onClick,
+          tooltipText: configForAction.text,
+          disabled: configForAction.disabled,
+          href: configForAction.href,
+        })
+      }
+      return acc
+    },
+    [],
+  )
 
   const downloadMenuConfig: DropdownMenuProps = {
     dropdownButtonText: 'Download Options',
-    convertSingleItemToButton: false,
+    convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {

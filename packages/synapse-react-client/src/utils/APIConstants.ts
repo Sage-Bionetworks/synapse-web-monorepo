@@ -2,6 +2,7 @@
  * Separating API endpoints into their own constants file
  */
 
+import { ObjectType } from '@sage-bionetworks/synapse-types'
 import { getEndpoint, BackendDestinationEnum } from './functions/getEndpoint'
 
 export const BACKEND_ENDPOINT = `${getEndpoint(
@@ -95,12 +96,14 @@ export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
 export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
+export const CHANGE_PASSWORD = `${AUTH}/user/changePassword`
 
-export const ACCESS_REQUIREMENT_SEARCH = `${REPO}/accessRequirement/search`
+export const ACCESS_REQUIREMENT = `${REPO}/accessRequirement`
+export const ACCESS_REQUIREMENT_SEARCH = `${ACCESS_REQUIREMENT}/search`
 export const ACCESS_REQUEST_SUBMISSION_SEARCH = `${REPO}/dataAccessSubmission/search`
 
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
-  `${REPO}/accessRequirement/${id}`
+  `${ACCESS_REQUIREMENT}/${id}`
 
 export const ACCESS_REQUIREMENT_ACL = (id: string | number) =>
   ACCESS_REQUIREMENT_BY_ID(id) + '/acl'
@@ -111,13 +114,6 @@ export const ACCESS_REQUIREMENT_STATUS = (id: string | number) =>
 export const ACCESS_REQUIREMENT_WIKI_PAGE_KEY = (id: string | number) =>
   // Note that this is `access_requirement` not `accessRequirement`!
   `${REPO}/access_requirement/${id}/wikikey`
-
-export const ACCESS_REQUIREMENT_WIKI_PAGE = (
-  accessRequirementId: string | number,
-  wikiId: string | number,
-) =>
-  // Note that this is `access_requirement` not `accessRequirement`!
-  `${REPO}/access_requirement/${accessRequirementId}/wiki/${wikiId}`
 
 export const FAVORITES = `${REPO}/favorite`
 
@@ -154,8 +150,8 @@ export const TEAM_ID_MEMBER_ID = (
 export const TEAM_MEMBERS = (teamId: string | number) =>
   `${REPO}/teamMembers/${teamId}`
 
-const notificationUnsubscribeEndpoint = 'https://www.synapse.org/#!SignedToken:'
-const teamEndpoint = 'https://www.synapse.org/#!Team:'
+const notificationUnsubscribeEndpoint = 'https://www.synapse.org/SignedToken:'
+const teamEndpoint = 'https://www.synapse.org/Team:'
 
 export const TEAM_MEMBER = `${REPO}/teamMember/?teamEndpoint=${teamEndpoint}&notificationUnsubscribeEndpoint=${notificationUnsubscribeEndpoint}`
 export const TEAM_ID_MEMBER_ID_WITH_NOTIFICATION = (
@@ -204,3 +200,25 @@ export const FILE_HANDLE_BATCH = `${FILE_HANDLE}/batch`
 export const PROJECTS = `${REPO}/projects`
 export const ENTITY_ACTIONS_REQUIRED = (entityId: string) =>
   `${REPO}/entity/${entityId}/actions/download`
+
+export const WIKI_OBJECT_TYPE = (objectType: ObjectType) => {
+  return `${REPO}/${ObjectType[objectType].toLowerCase()}`
+}
+
+export const WIKI_PAGE = (
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+) => {
+  return `${WIKI_OBJECT_TYPE(ownerObjectType)}/${ownerObjectId}/wiki`
+}
+export const WIKI_PAGE_ID = (
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+  wikiPageId: string,
+) => {
+  return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId}`
+}
+
+export const SESSION_ACCESS_TOKEN = `${AUTH}/sessionAccessToken`
+export const ALL_USER_SESSION_TOKENS = (targetUserId: string | number) =>
+  `${AUTH}/user/${targetUserId}/sessionAccessToken/all`

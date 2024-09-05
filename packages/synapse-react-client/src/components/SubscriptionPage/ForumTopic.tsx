@@ -30,7 +30,7 @@ export default function ForumTopic(props: SubscriptionItemProps) {
 
   let href: string | undefined
   if (forum) {
-    href = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!Synapse:${
+    href = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
       forum.projectId
     }/discussion`
   }

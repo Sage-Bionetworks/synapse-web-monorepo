@@ -1,8 +1,8 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProvenanceGraph from './ProvenanceGraph'
+import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 
-const meta = {
+const meta: Meta<ProvenanceProps> = {
   title: 'Synapse/ProvenanceGraph',
   component: ProvenanceGraph,
   decorators: [
@@ -12,7 +12,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

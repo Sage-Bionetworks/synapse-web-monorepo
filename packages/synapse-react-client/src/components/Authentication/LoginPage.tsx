@@ -15,6 +15,8 @@ import useLogin from '../../utils/hooks/useLogin'
 import LoginForm from './LoginForm'
 import { StyledComponent } from '@emotion/styled'
 import SystemUseNotification from '../SystemUseNotification/SystemUseNotification'
+import { TOTP_GUIDANCE_TEXT } from './Constants'
+import { OAuth2State } from '../../utils'
 
 const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
   'Lost access to my Synapse account',
@@ -27,6 +29,9 @@ const LOST_ACCOUNT_ACCESS_CONTACT_URL = `https://sagebionetworks.jira.com/servic
 export type LoginPageProps = {
   ssoRedirectUrl?: string
   sessionCallback: () => void // Callback is invoked after login
+  ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
 }
 
 const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
@@ -61,7 +66,8 @@ function BackupCodeInstructions(props: TypographyProps) {
 }
 
 export default function LoginPage(props: LoginPageProps) {
-  const { ssoRedirectUrl, sessionCallback } = props
+  const { ssoRedirectUrl, sessionCallback, ssoState, twoFactorAuthResetUri } =
+    props
   const showDesktop = useShowDesktop(910)
   const theme = useTheme()
 
@@ -71,8 +77,11 @@ export default function LoginPage(props: LoginPageProps) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
-  } = useLogin(sessionCallback)
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
+  } = useLogin({ sessionCallback })
 
   const loginForm = (
     <Stack
@@ -106,8 +115,7 @@ export default function LoginPage(props: LoginPageProps) {
       </Box>
       {!showDesktop && step === 'VERIFICATION_CODE' && (
         <Typography variant={'body1'} align={'center'} sx={{ my: 1 }}>
-          Enter the 6-digit, time-based verification code provided by your
-          authenticator app.
+          {TOTP_GUIDANCE_TEXT}
         </Typography>
       )}
       {!showDesktop && step === 'RECOVERY_CODE' && (
@@ -124,7 +132,12 @@ export default function LoginPage(props: LoginPageProps) {
         submitUsernameAndPassword={submitUsernameAndPassword}
         submitOneTimePassword={submitOneTimePassword}
         errorMessage={errorMessage}
-        isLoading={isLoading}
+        loginIsPending={loginIsPending}
+        beginTwoFactorAuthReset={beginTwoFactorAuthReset}
+        twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+        twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
+        ssoState={ssoState}
+        twoFactorAuthResetUri={twoFactorAuthResetUri}
       />
     </Stack>
   )
@@ -169,8 +182,7 @@ export default function LoginPage(props: LoginPageProps) {
                     Enter your verification code
                   </Typography>
                   <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
-                    Enter the 6-digit, time-based verification code provided by
-                    your authenticator app.
+                    {TOTP_GUIDANCE_TEXT}
                   </Typography>
                 </>
               )}

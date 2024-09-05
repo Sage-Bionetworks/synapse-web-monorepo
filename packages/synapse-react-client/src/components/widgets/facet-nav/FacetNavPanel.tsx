@@ -22,13 +22,9 @@ import { useQuery } from '@tanstack/react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
-import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-} from '../../QueryWrapper/QueryWrapper'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
+import { useQueryContext } from '../../QueryContext'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -267,8 +263,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const data = useAtomValue(tableQueryDataAtom)
+  const { queryMetadataQueryOptions } = useQueryContext()
+  const { data: queryMetadata, isLoading: isLoadingQueryMetadata } = useQuery(
+    queryMetadataQueryOptions,
+  )
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
@@ -280,8 +278,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   )
 
   const columnModel = useMemo(
-    () => getCorrespondingColumnForFacet(facetToPlot, data?.columnModels ?? []),
-    [data?.columnModels, facetToPlot],
+    () =>
+      getCorrespondingColumnForFacet(
+        facetToPlot,
+        queryMetadata?.columnModels ?? [],
+      ),
+    [queryMetadata?.columnModels, facetToPlot],
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
@@ -332,7 +334,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
+  if (
+    (!queryMetadata && isLoadingQueryMetadata) ||
+    !facetToPlot ||
+    !columnModel
+  ) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -356,8 +362,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         >
           {!isModalView && (
             <PlotPanelHeader
-              data={data}
-              isLoadingNewBundle={isLoadingNewBundle}
+              data={queryMetadata}
+              isLoading={isLoadingQueryMetadata}
               title={plotTitle}
               facetToPlot={facetToPlot}
               onHide={onHide}
@@ -386,6 +392,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
+              alignItems: 'center',
             }}
             role="graphics-object"
             className="FacetNavPanel__body"

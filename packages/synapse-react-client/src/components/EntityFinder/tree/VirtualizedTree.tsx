@@ -2,7 +2,7 @@ import { Skeleton, Tooltip, Typography } from '@mui/material'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {
@@ -13,20 +13,24 @@ import {
   VariableSizeTree,
 } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
-import SynapseClient from '../../../synapse-client'
+import { getEntityChildren } from '../../../synapse-client'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { useSynapseContext } from '../../../utils'
+import {
+  EntityChildrenRequest,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
 import { Writable } from '../../../utils/types/Writable'
-import { EntityBadgeIcons } from '../../EntityBadgeIcons/EntityBadgeIcons'
+import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { UserBadge } from '../../UserCard/UserBadge'
+import { useQueryClient } from '@tanstack/react-query'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */
@@ -42,7 +46,7 @@ type NodeChildren = Readonly<{
   childrenNextPageToken?: string | null
 }>
 
-type EntityHeaderNode = (
+export type EntityHeaderNode = (
   | EntityFinderHeader
   // Only will have a subset of fields if the node is fetched via the entity path:
   | Pick<EntityFinderHeader, 'id' | 'name' | 'type'>
@@ -77,7 +81,7 @@ function isRootNodeConfiguration(
 
 function hasMoreChildren(node: TreeNode) {
   if (isPaginationNode(node)) {
-    return true
+    return false
   } else if (isRootNodeConfiguration(node)) {
     return node.hasNextPage
   }
@@ -97,6 +101,18 @@ function isLeafNode(node: TreeNode) {
       // OR Children have been fetched (nonnull) and there are 0 children
       (node.children != null && node.children.length === 0)
     )
+  }
+}
+
+function maybeHasChildren(
+  node: TreeNode,
+): node is RootNodeConfiguration | EntityHeaderNode {
+  if (isPaginationNode(node)) {
+    return false
+  } else if (isRootNodeConfiguration(node)) {
+    return node.children.length > 0 || node.hasNextPage
+  } else {
+    return !isLeafNode(node)
   }
 }
 
@@ -402,33 +418,29 @@ export function getTreeWalkerFunction(
       // Yielding `undefined` indicates to react-vtree that we've finished iterating children from the last time we were in the loop.
       const parentMeta = yield
 
-      if (
-        !isPaginationNode(parentMeta.node) &&
-        (parentMeta.node.children || hasMoreChildren(parentMeta.node))
-      ) {
-        for (let i = 0; i < (parentMeta.node.children ?? []).length; i++) {
-          // Step [3]: Yielding all the children of the parent
-          const childNode = parentMeta.node.children![i]
+      if (maybeHasChildren(parentMeta.node)) {
+        // Step [3]: Yielding all the known children of the parent
+        if (parentMeta.node.children) {
+          for (let i = 0; i < parentMeta.node.children.length; i++) {
+            const childNode = parentMeta.node.children[i]
 
-          yield getNodeData({
-            node: childNode,
-            nestingLevel: parentMeta.nestingLevel + 1,
-            getNextPageOfChildren: () => fetchNextPageOfChildren(childNode),
-            setSelectedId,
-            treeNodeType,
-            selected,
-            selectableTypes,
-            autoExpand,
-            defaultHeight: itemSize(),
-            currentContainer,
-          })
+            yield getNodeData({
+              node: childNode,
+              nestingLevel: parentMeta.nestingLevel + 1,
+              getNextPageOfChildren: () => fetchNextPageOfChildren(childNode),
+              setSelectedId,
+              treeNodeType,
+              selected,
+              selectableTypes,
+              autoExpand,
+              defaultHeight: itemSize(),
+              currentContainer,
+            })
+          }
         }
 
         // Step [4] - If the parent node has more children, render a "pagination node" that will fetch more children when it comes into view (via intersection observer)
-        if (
-          parentMeta.node.children != null &&
-          hasMoreChildren(parentMeta.node)
-        ) {
+        if (hasMoreChildren(parentMeta.node)) {
           const paginationNode: PaginationNode = {
             __paginationNode: true,
           }
@@ -487,11 +499,14 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
     autoExpand,
   } = props
 
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
 
   const [rootNode, setRootNode] = useState<RootNodeConfiguration>(
     rootNodeConfiguration,
   )
+
+  const treeInstance = useRef<VariableSizeTree<TreeData>>(null)
 
   useEffect(() => {
     setRootNode(rootNodeConfiguration)
@@ -523,27 +538,44 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
     // Because we update the root node with a copy at the end of this function, we can write to the node under update.
     async (node: Writable<EntityHeaderNode>) => {
       // Fetch the children of the node
-      const children = await SynapseClient.getEntityChildren(
-        {
-          parentId: node.id,
-          nextPageToken: node.childrenNextPageToken,
-          includeTypes: visibleTypes,
-        },
-        accessToken,
-      )
-
+      const entityChildrenRequest: EntityChildrenRequest = {
+        parentId: node.id,
+        nextPageToken: node.childrenNextPageToken,
+        includeTypes: visibleTypes,
+      }
+      const children = await queryClient.fetchQuery({
+        queryKey: keyFactory.getEntityChildrenQueryKey(
+          entityChildrenRequest,
+          false,
+        ),
+        queryFn: () => getEntityChildren(entityChildrenRequest, accessToken),
+      })
       // Update the node data -- add the children and store the nextPageToken
       if (node.children) {
-        node.children.push(...children.page)
+        for (const newChild of children.page) {
+          // SWC-6751 - Prevent adding duplicate entries in case this function is called twice
+          if (!node.children.find(child => child.id == newChild.id)) {
+            node.children.push(newChild)
+          }
+        }
       } else {
         node.children = children.page
       }
       node.childrenNextPageToken = children.nextPageToken
 
+      // Ensure the node for which we fetched children is expanded/open
+      if (treeInstance.current) {
+        await treeInstance.current.recomputeTree({
+          [node.id]: {
+            open: true,
+          },
+        })
+      }
+
       // cloneDeep is required to re-render the tree with the new children
       setRootNode(cloneDeep(rootNode))
     },
-    [rootNode, accessToken, visibleTypes],
+    [visibleTypes, queryClient, keyFactory, rootNode, accessToken],
   )
 
   /**
@@ -579,6 +611,7 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
     <AutoSizer disableWidth>
       {({ height }: { height: number }) => (
         <VariableSizeTree
+          ref={treeInstance}
           treeWalker={memoizedTreeWalker}
           itemSize={itemSize}
           height={height}

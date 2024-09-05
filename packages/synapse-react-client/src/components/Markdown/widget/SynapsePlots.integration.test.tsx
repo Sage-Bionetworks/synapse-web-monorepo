@@ -3,8 +3,8 @@ import React from 'react'
 import MarkdownSynapse from '../MarkdownSynapse'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -38,7 +38,10 @@ const tableQueryResult: QueryResultBundle = {
 describe('SynapsePlot', () => {
   beforeAll(() => {
     server.listen()
-    server.use(...getHandlersForTableQuery(tableQueryResult))
+    registerTableQueryResult(
+      { sql: 'select "x", "y" from syn123' },
+      tableQueryResult,
+    )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

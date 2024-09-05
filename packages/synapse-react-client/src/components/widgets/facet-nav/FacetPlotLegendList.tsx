@@ -27,7 +27,7 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: '20px auto 30px',
+                gridTemplateColumns: '20px auto 60px',
                 alignItems: 'center',
                 gap: '10px',
               }}
@@ -50,12 +50,16 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
+                  fontSize: '14px',
                 }}
               >
                 {facetValue.label}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'grey.600' }}>
-                {facetValue.count}
+              <Typography
+                variant="body2"
+                sx={{ color: 'grey.600', fontSize: '14px' }}
+              >
+                {facetValue.count.toLocaleString()}
               </Typography>
             </Box>
           </ElementWithTooltip>

@@ -7,14 +7,13 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
-import { useAtom, useAtomValue } from 'jotai'
-import {
-  tableQueryDataAtom,
-  tableQueryEntityAtom,
-} from '../../QueryWrapper/QueryWrapper'
+import { useAtom } from 'jotai'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
+import { useQuery } from '@tanstack/react-query'
+import { useGetEntity } from '../../../synapse-queries'
+import { Table } from '@sage-bionetworks/synapse-types'
 
 const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
 
@@ -32,9 +31,14 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const { getCurrentQueryRequest } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
-  const entity = useAtomValue(tableQueryEntityAtom)
+  const {
+    entityId,
+    versionNumber,
+    getCurrentQueryRequest,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
@@ -47,9 +51,11 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
       remount()
     }
   }
-  const fileColumnId = getFileColumnModelId(data?.columnModels)
-  const showAddToDownloadCart =
-    fileColumnId ?? canTableQueryBeAddedToDownloadList(entity)
+  const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
+  const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(
+    entity,
+    fileColumnId,
+  )
 
   return (
     <RowSelectionUI
@@ -64,7 +70,8 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 key={customControl.buttonText}
                 variant="contained"
                 callbackData={{
-                  data,
+                  tableId: entityId,
+                  queryMetadata: queryMetadata,
                   selectedRows,
                   refresh,
                   request: getCurrentQueryRequest(),

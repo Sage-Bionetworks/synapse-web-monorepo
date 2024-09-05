@@ -632,52 +632,9 @@ hr ~ .QueryWrapperPlotNav {
 
 .SynapseTable {
   min-height: 400px;
-  th {
-    position: relative;
-    background: map.get(SRC.$colors, 'gray-100') padding-box;
-    border-right: 1px solid map.get(SRC.$colors, 'gray-400');
-  }
-  td,
-  th {
-    & > * {
-      padding: 8px 10px;
-    }
-  }
-
-  tr:nth-of-type(2n) {
-    background-color: #fbfbfc;
-  }
 
   tbody > tr > td {
     vertical-align: top;
-  }
-
-  .resizer {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    padding: 0px;
-    background: rgba(0, 0, 0, 0.5);
-    cursor: col-resize;
-    user-select: none;
-    touch-action: none;
-  }
-
-  .resizer.isResizing {
-    background: SRC.$primary-action-color;
-    opacity: 1;
-  }
-
-  @media (hover: hover) {
-    .resizer {
-      opacity: 0;
-    }
-
-    *:hover > .resizer {
-      opacity: 1;
-    }
   }
 }
 
@@ -687,10 +644,6 @@ hr ~ .QueryWrapperPlotNav {
 
 .SignInButton {
   padding: 0px;
-}
-
-.SRC-pointer-events-none {
-  pointer-events: none;
 }
 
 .SRC-labeled-dropdown {

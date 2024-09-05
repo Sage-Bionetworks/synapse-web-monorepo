@@ -35,6 +35,12 @@ import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { BackButton } from '../BackButton'
 import { useSourceApp } from '../useSourceApp'
 
+const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
+  'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+
+const NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK =
+  'https://help.synapse.org/__attachments/2007072795/notarized_letter.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+
 const STEP_CONTENT = [
   {
     title: 'Identity verification',
@@ -88,7 +94,8 @@ const STEP_CONTENT = [
       <>
         <Typography variant="body1" paragraph>
           This document must be current within the past month. Acceptable forms
-          of documentation, in English, are any one of the following:{' '}
+          of documentation, <strong>in English</strong>, are any one of the
+          following:{' '}
         </Typography>
 
         <ul
@@ -103,7 +110,7 @@ const STEP_CONTENT = [
               identity (
               <Link
                 color="primary"
-                href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                href={IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK}
                 rel="nofollow"
               >
                 {' '}
@@ -127,7 +134,7 @@ const STEP_CONTENT = [
               A notarized letter attesting to your identity (
               <Link
                 color="primary"
-                href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                href={NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK}
                 rel="nofollow"
               >
                 template here
@@ -408,32 +415,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
         break
     }
   }
-
-  // Useful for verification state logic, in account settings
-  // if (verificationSubmission) {
-  //   //is there an existing verification submission?
-  //   if (verificationSubmission.stateHistory && verificationSubmission.stateHistory.length > 0) {
-  //     //what is the state of the submission?
-  //     const  currentVerificationState:VerificationState = verificationSubmission.stateHistory[verificationSubmission.stateHistory.length-1]
-
-  //     switch(currentVerificationState.state) {
-  //       case VerificationStateEnum.APPROVED:
-  //       case VerificationStateEnum.REJECTED:
-  //         // can resubmit
-  //         break
-  //       case VerificationStateEnum.SUBMITTED:
-  //         // can  cancel
-  //         break
-  //       case VerificationStateEnum.SUSPENDED:
-  //         // show suspended "reason"
-  //         break
-  //     }
-  //   } else {
-  //     } else {
-  //       // give user a chance to create a submission
-  //     }
-  //   }
-  // }
 
   return (
     <StyledOuterContainer>

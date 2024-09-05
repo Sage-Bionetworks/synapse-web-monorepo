@@ -1,107 +1,158 @@
 import React, { useEffect, useState } from 'react'
-import { Button, TextField } from '@mui/material'
-import { ChangePasswordWithCurrentPassword } from '@sage-bionetworks/synapse-types'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { Alert, Button, Link, TextField } from '@mui/material'
+import { Redirect, Link as RouterLink } from 'react-router-dom'
+import { useGetCurrentUserProfile } from '../../synapse-queries'
+import { displayToast } from '../ToastMessage'
+import useChangePasswordFormState from './useChangePasswordFormState'
+import { useSynapseContext } from '../../utils'
 
-export const ChangePassword: React.FunctionComponent = () => {
-  const { accessToken } = useSynapseContext()
+export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
+  'Your password was successfully changed.'
+
+export type ChangePasswordProps = {
+  redirectToRoute?: string //optional target to send user after successfully changing the password
+  hideReset2FA?: boolean
+}
+
+export default function ChangePassword(props: ChangePasswordProps) {
+  const { redirectToRoute, hideReset2FA = false } = props
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
-  const [currentUserProfile, setUserProfile] = useState<UserProfile>()
+  const [userName, setUserName] = useState<string>('')
+  const { accessToken } = useSynapseContext()
+  const isSignedIn = !!accessToken
+
+  const { data: userProfile, isLoading: isLoadingUserProfile } =
+    useGetCurrentUserProfile({
+      enabled: isSignedIn,
+    })
 
   useEffect(() => {
-    async function getUserProfile() {
-      const userProfile = await SynapseClient.getUserProfile(accessToken)
-      setUserProfile(userProfile)
+    if (userProfile && userName == '') {
+      setUserName(userProfile.userName)
     }
-    if (accessToken) {
-      getUserProfile()
-    } else {
-      setUserProfile(undefined)
-    }
-  }, [accessToken])
+  }, [userName, userProfile, userProfile?.userName])
 
-  const handleChangePassword = async (
-    clickEvent: React.FormEvent<HTMLElement>,
-  ) => {
+  const {
+    promptForTwoFactorAuth,
+    TwoFactorAuthPrompt,
+    successfullyChangedPassword,
+    isPending: changePasswordIsPending,
+    handleChangePasswordWithCurrentPassword,
+    error,
+  } = useChangePasswordFormState({
+    hideReset2FA,
+  })
+
+  const handleChangePassword = (clickEvent: React.FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
-    try {
-      if (newPassword !== confirmPassword) {
-        displayToast(
-          'New password and confirm password does not match.',
-          'danger',
-        )
-      } else if (accessToken) {
-        const changeRequest: ChangePasswordWithCurrentPassword = {
-          newPassword,
-          concreteType:
-            'org.sagebionetworks.repo.model.auth.ChangePasswordWithCurrentPassword',
-          username: currentUserProfile?.userName!,
-          currentPassword: oldPassword,
-        }
-        await SynapseClient.changePasswordWithCurrentPassword(
-          changeRequest,
-          accessToken,
-        )
-          .then(() => displayToast('Successfully changed', 'success'))
-          .catch((err: any) => displayToast(err.reason as string, 'danger'))
-      }
-    } catch (err) {
-      displayToast(err.reason as string, 'danger')
+    if (newPassword !== confirmPassword) {
+      displayToast('Passwords do not match.', 'danger')
+    } else {
+      handleChangePasswordWithCurrentPassword(
+        userName,
+        oldPassword,
+        newPassword,
+      )
+    }
+  }
+
+  if (successfullyChangedPassword) {
+    if (redirectToRoute) {
+      displayToast(PASSWORD_CHANGED_SUCCESS_MESSAGE, 'success')
+      return <Redirect to={redirectToRoute} />
+    } else {
+      return (
+        <Alert severity={'success'}>{PASSWORD_CHANGED_SUCCESS_MESSAGE}</Alert>
+      )
     }
   }
 
   return (
-    <div className="changePassword">
-      <form
-        onSubmit={e => {
-          handleChangePassword(e)
-        }}
-      >
-        <TextField
-          id="oldPassword"
-          label="Current Password"
-          type="password"
-          onChange={e => setOldPassword(e.target.value)}
-          value={oldPassword}
-          fullWidth
-        />
-        <TextField
-          id="newPassword"
-          label="New Password"
-          type="password"
-          onChange={e => setNewPassword(e.target.value)}
-          value={newPassword}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          id="confirmPassword"
-          label="Confirm Password"
-          type="password"
-          onChange={e => setConfirmPassword(e.target.value)}
-          value={confirmPassword}
-          fullWidth
-          margin="normal"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
+    <div>
+      {promptForTwoFactorAuth ? (
+        <TwoFactorAuthPrompt />
+      ) : (
+        <form
           onSubmit={e => {
             handleChangePassword(e)
           }}
-          sx={{ mt: 2 }}
         >
-          Change Password
-        </Button>
-      </form>
+          {!isSignedIn && (
+            <TextField
+              required
+              fullWidth
+              autoFocus
+              autoComplete="username"
+              label="Username or Email Address"
+              id="username"
+              type="text"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
+            />
+          )}
+          <TextField
+            fullWidth
+            required
+            margin={'normal'}
+            type="password"
+            id="currentPassword"
+            label={'Current password'}
+            onChange={e => setOldPassword(e.target.value)}
+            value={oldPassword}
+          />
+          <TextField
+            fullWidth
+            required
+            margin={'normal'}
+            type="password"
+            id="newPassword"
+            label={'New password'}
+            onChange={e => setNewPassword(e.target.value)}
+            value={newPassword}
+          />
+          <TextField
+            fullWidth
+            required
+            margin={'normal'}
+            type="password"
+            id="confirmPassword"
+            label={'Confirm password'}
+            onChange={e => setConfirmPassword(e.target.value)}
+            value={confirmPassword}
+          />
+          <div style={{ marginTop: '30px' }}>
+            <Button
+              sx={{ marginRight: '26px' }}
+              disabled={
+                !oldPassword ||
+                !newPassword ||
+                !confirmPassword ||
+                !userName ||
+                isLoadingUserProfile ||
+                changePasswordIsPending
+              }
+              variant="contained"
+              type="submit"
+            >
+              Change Password
+            </Button>
+            <Link
+              component={RouterLink}
+              to="/resetPassword"
+              sx={{ display: 'block', marginTop: '1em', marginLeft: '5px' }}
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </form>
+      )}
+      {error && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {error.reason}
+        </Alert>
+      )}
     </div>
   )
 }
-
-export default ChangePassword

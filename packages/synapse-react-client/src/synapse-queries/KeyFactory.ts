@@ -14,9 +14,12 @@ import {
   FileHandleAssociation,
   GetEvaluationParameters,
   GetProjectsParameters,
+  ObjectType,
+  OIDCAuthorizationRequest,
   PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
+  RestrictionInformationBatchRequest,
   RestrictionInformationRequest,
   SearchQuery,
   SubmissionInfoPageRequest,
@@ -26,10 +29,11 @@ import {
   TYPE_FILTER,
   ViewColumnModelRequest,
   ViewEntityType,
+  WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
-import { hashCode } from '../utils/functions/StringUtils'
+import { hashCode, normalizeNumericId } from '../utils/functions/StringUtils'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -129,13 +133,10 @@ const entityQueryKeyObjects = {
     },
   ],
 
-  fullTableQueryResult: (
-    queryBundleRequest: QueryBundleRequest,
-    forceAnonymous: boolean,
-  ) => [
+  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => [
     entityQueryKeyObjects.entity(queryBundleRequest.entityId),
     { type: 'tableQueryResult', allResults: true },
-    { tableQueryBundleRequest: queryBundleRequest, forceAnonymous },
+    { tableQueryBundleRequest: queryBundleRequest },
   ],
 
   boundJSONSchema: (id: string) => [
@@ -183,6 +184,8 @@ const downloadListQueryKeys = {
 }
 
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
+const ROOT_WIKI_PAGE_KEY_QUERY_KEY = 'rootWikiPageKey'
+const WIKI_PAGE_QUERY_KEY = 'wikiPage'
 
 /**
  * Returns a react-query Query Key.
@@ -212,6 +215,14 @@ export class KeyFactory {
         : btoa(String(hashCode(this.accessToken))),
       ...removeTrailingUndefinedElements(args),
     ]
+  }
+
+  private getKeyAnonymous(...args: unknown[]): QueryKey {
+    return ['anonymous', ...removeTrailingUndefinedElements(args)]
+  }
+
+  public getFeatureFlagQueryKey() {
+    return this.getKey('featureflag')
   }
 
   public getAllEntityDataQueryKey() {
@@ -354,16 +365,42 @@ export class KeyFactory {
     )
   }
 
+  public getRootWikiPageKeyQueryKey(
+    ownerObjectType: ObjectType,
+    ownerObjectId: string,
+  ) {
+    return this.getKey(
+      ROOT_WIKI_PAGE_KEY_QUERY_KEY,
+      ownerObjectType,
+      ownerObjectId,
+    )
+  }
+
+  public getWikiPageQueryKey(wikiPageKey: WikiPageKey) {
+    return this.getKey(
+      WIKI_PAGE_QUERY_KEY,
+      wikiPageKey.ownerObjectType,
+      wikiPageKey.ownerObjectId,
+      wikiPageKey.wikiPageId,
+    )
+  }
+  public getWikiPageKey(ownerId: string, wikiPageId: string) {
+    return this.getKey('ownerId', ownerId, 'wikiPageId', wikiPageId)
+  }
+
   public getFullTableQueryResultQueryKey(
     queryBundleRequest: QueryBundleRequest,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
-      ...entityQueryKeyObjects.fullTableQueryResult(
-        queryBundleRequest,
-        forceAnonymous,
-      ),
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      )
+    } else {
+      return this.getKey(
+        ...entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      )
+    }
   }
 
   public getDownloadListBaseQueryKey() {
@@ -413,13 +450,28 @@ export class KeyFactory {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id, 'wikiPageKey')
   }
 
-  public getAccessRequirementRestrictionInformationQueryKey(
-    request?: RestrictionInformationRequest,
+  public getRestrictionInformationQueryKey(
+    request: RestrictionInformationRequest,
   ) {
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'restrictionInformation', {
+      ...request,
+      // The ID may be a number, or a stringified number, or a synID. Transform to just a number to normalize the cache.
+      objectId: normalizeNumericId(request.objectId),
+    })
+  }
+
+  public getRestrictionInformationBatchQueryKey(
+    request: RestrictionInformationBatchRequest,
+  ) {
+    const normalizedRequest: RestrictionInformationBatchRequest = {
+      ...request,
+      // The IDs may be number, or stringified numbers, or synIDs. Transform to normalize the cache.
+      objectIds: request.objectIds.map(normalizeNumericId).map(String),
+    }
     return this.getKey(
       ACCESS_REQUIREMENT_QUERY_KEY,
-      'restrictionInformation',
-      request,
+      'restrictionInformationBatch',
+      normalizedRequest,
     )
   }
 
@@ -489,11 +541,28 @@ export class KeyFactory {
     fileHandleAssociation: FileHandleAssociation,
     forceAnonymous: boolean,
   ) {
-    return this.getKey(
-      'presignedUrlContentFromFHA',
-      fileHandleAssociation,
-      forceAnonymous,
-    )
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'presignedUrlContentFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey('presignedUrlContentFromFHA', fileHandleAssociation)
+    }
+  }
+
+  public getStablePresignedUrlFromFHAQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
+  ) {
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'stablePresignedUrlFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey('stablePresignedUrlFromFHA', fileHandleAssociation)
+    }
   }
 
   public getProfileImageQueryKey(userId: string) {
@@ -572,6 +641,16 @@ export class KeyFactory {
     return this.getKey('oauthClient')
   }
 
+  public getOAuthClientQueryKey(clientId: string) {
+    return this.getKey('oauthClient', clientId)
+  }
+
+  public getHasCurrentUserAuthorizedOAuthClientQueryKey(
+    request: OIDCAuthorizationRequest,
+  ) {
+    return this.getKey('currentUserHasAuthorizedClient', request)
+  }
+
   public getDOIAssociationQueryKey(
     objectType: string,
     objectId: string,
@@ -584,6 +663,14 @@ export class KeyFactory {
       objectId,
       versionNumber,
     ])
+  }
+
+  public getDOIQueryKey(
+    objectType: string,
+    objectId: string,
+    versionNumber?: number,
+  ) {
+    return this.getKey(['doi', objectType, objectId, versionNumber])
   }
 
   public getAllSubscribersQueryKey() {

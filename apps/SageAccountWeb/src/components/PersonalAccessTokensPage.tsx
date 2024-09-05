@@ -19,8 +19,8 @@ export function PersonalAccessTokensPageInternal() {
           },
         }}
       >
-        <BackButton to={'/authenticated/myaccount'} />
-        <Box sx={{ padding: '60px' }}>
+        <Box sx={{ padding: '60px', position: 'relative' }}>
+          <BackButton to={'/authenticated/myaccount'} />
           <SourceAppLogo sx={{ display: 'block' }} />
           <Typography variant="headline3">Personal Access Tokens</Typography>
           <AccessTokenPage

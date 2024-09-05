@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React from 'react'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { OAuth2State, SynapseClientError } from '../../utils'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
@@ -15,6 +15,7 @@ type AuthenticationMethodSelectionProps = {
   /* Invoked before redirecting to Google. Useful in portals where we may want to store the current URL to redirect back here. */
   onBeginOAuthSignIn?: () => void
   onSelectUsernameAndPassword: () => void
+  state?: OAuth2State
 }
 
 /**
@@ -25,8 +26,12 @@ type AuthenticationMethodSelectionProps = {
 export default function AuthenticationMethodSelection(
   props: AuthenticationMethodSelectionProps,
 ) {
-  const { onBeginOAuthSignIn, ssoRedirectUrl, onSelectUsernameAndPassword } =
-    props
+  const {
+    onBeginOAuthSignIn,
+    ssoRedirectUrl,
+    onSelectUsernameAndPassword,
+    state,
+  } = props
 
   function onSSOSignIn(
     event: React.MouseEvent<HTMLButtonElement>,
@@ -40,7 +45,7 @@ export default function AuthenticationMethodSelection(
     const redirectUrl = ssoRedirectUrl
       ? `${ssoRedirectUrl}${provider}`
       : `${SynapseClient.getRootURL()}?provider=${provider}`
-    SynapseClient.oAuthUrlRequest(provider, redirectUrl)
+    SynapseClient.oAuthUrlRequest(provider, redirectUrl, state)
       .then(data => {
         // Send the user to the authorization URL
         window.location = data.authorizationUrl as unknown as Location

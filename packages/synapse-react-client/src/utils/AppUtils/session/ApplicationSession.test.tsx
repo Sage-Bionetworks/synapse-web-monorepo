@@ -186,6 +186,57 @@ describe('ApplicationSessionManager tests', () => {
     })
   })
 
+  it('Invokes the onTwoFactorAuthResetThroughSSO if the user signed in with SSO to disable 2FA', async () => {
+    mockUseDetectSSOCode.mockReturnValue({ isLoading: true })
+    mockGetAccessToken.mockResolvedValue(undefined)
+
+    const mockOnTwoFactorAuthResetThroughSSO = jest.fn()
+
+    const context = render({
+      onTwoFactorAuthResetThroughSSO: mockOnTwoFactorAuthResetThroughSSO,
+    })
+
+    await waitFor(() => {
+      expect(mockUseDetectSSOCode).toHaveBeenCalled()
+      expect(context.result.current).toMatchObject({
+        isLoadingSSO: true,
+      })
+    })
+
+    // At this point, useDetectSSOCode would determine that the user
+    // 1. received a twoFactorAuthError (because they have 2FA enabled)
+    // 2. possesses a twoFaResetToken, so they are attempting to disable 2FA
+    mockUseDetectSSOCode.mockReturnValue({ isLoading: false })
+    const twoFactorAuthError: TwoFactorAuthErrorResponse = {
+      concreteType:
+        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
+      errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
+      userId: MOCK_USER_ID,
+      twoFaToken: 'some-token',
+      reason: 'need 2fa plz',
+    }
+    const twoFactorResetToken = 'abcd'
+    // useDetectSSOCode will then invoke onTwoFactorAuthRequired to pass along the error
+    const options: UseDetectSSOCodeOptions =
+      mockUseDetectSSOCode.mock.calls[0][0]!
+    options.onTwoFactorAuthResetTokenPresent!(
+      twoFactorAuthError,
+      twoFactorResetToken,
+    )
+
+    await waitFor(() => {
+      expect(context.result.current).toMatchObject({
+        ...EXPECTED_ANONYMOUS_STATE,
+        twoFactorAuthSSOErrorResponse: twoFactorAuthError,
+        isLoadingSSO: false,
+      })
+      expect(mockOnTwoFactorAuthResetThroughSSO).toHaveBeenCalledWith(
+        twoFactorAuthError,
+        twoFactorResetToken,
+      )
+    })
+  })
+
   it('Session can be refreshed', async () => {
     // Start out unauthenticated
     mockGetAccessToken.mockResolvedValue(undefined)

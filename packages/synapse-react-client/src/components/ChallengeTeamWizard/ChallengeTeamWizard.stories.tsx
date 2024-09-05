@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import ChallengeTeamWizard from './ChallengeTeamWizard'
 import mockProject from '../../mocks/entity/mockProject'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Challenge/ChallengeTeamWizard',
@@ -8,8 +9,11 @@ const meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
+  },
+  args: {
+    isAuthenticated: true,
+    onClose: fn(),
   },
 } satisfies Meta
 

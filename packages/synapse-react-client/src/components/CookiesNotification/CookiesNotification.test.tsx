@@ -3,13 +3,17 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
-import CookiesNotification, {
-  COOKIES_AGREEMENT_LOCALSTORAGE_KEY,
-  alertConfig,
-} from './CookiesNotification'
+import CookiesNotification, { alertConfig } from './CookiesNotification'
+import UniversalCookies from 'universal-cookie'
+import {
+  COOKIES_AGREEMENT_COOKIE_KEY,
+  CookiePreference,
+} from '../../utils/hooks/useCookiePreferences'
 
+const cookies = new UniversalCookies()
+const mockOnCloseFn = jest.fn()
 function renderComponent(wrapperProps?: SynapseContextType) {
-  const component = render(<CookiesNotification />, {
+  const component = render(<CookiesNotification onClose={mockOnCloseFn} />, {
     wrapper: createWrapper(wrapperProps),
   })
   const alert = screen.queryByRole('alert')
@@ -21,17 +25,15 @@ describe('CookiesNotification', () => {
     jest.clearAllMocks()
   })
   afterEach(() => {
-    localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY) &&
-      localStorage.removeItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY)
+    cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
   })
 
-  it('displays alert and allows user to accept cookies', async () => {
+  it('displays alert and allows user to accept all cookies', async () => {
     const user = userEvent.setup()
     const { alert } = renderComponent()
 
     expect(alert).toBeInTheDocument()
     expect(alert).toHaveTextContent(alertConfig.title)
-    expect(alert).toHaveTextContent(alertConfig.description)
 
     const acceptButton = screen.getByRole('button', {
       name: alertConfig.primaryButtonText,
@@ -39,10 +41,61 @@ describe('CookiesNotification', () => {
     await user.click(acceptButton)
 
     expect(alert).not.toBeInTheDocument()
+    const cookiePreference = cookies.get(
+      COOKIES_AGREEMENT_COOKIE_KEY,
+    ) as CookiePreference
+    expect(cookiePreference).toBeDefined()
+    expect(cookiePreference.analyticsAllowed).toBe(true)
+    expect(cookiePreference.functionalAllowed).toBe(true)
+  })
+
+  it('displays alert and allows user to accept no functional/analytics cookies', async () => {
+    const user = userEvent.setup()
+    const { alert } = renderComponent()
+
+    expect(alert).toBeInTheDocument()
+    expect(alert).toHaveTextContent(alertConfig.title)
+
+    const disableAllButton = screen.getByRole('button', {
+      name: alertConfig.secondaryButtonText,
+    })
+    await user.click(disableAllButton)
+
+    expect(alert).not.toBeInTheDocument()
+    const cookiePreference = cookies.get(
+      COOKIES_AGREEMENT_COOKIE_KEY,
+    ) as CookiePreference
+    expect(cookiePreference).toBeDefined()
+    expect(cookiePreference.analyticsAllowed).toBe(false)
+    expect(cookiePreference.functionalAllowed).toBe(false)
+  })
+
+  it('displays alert and allows user to customize cookie prefs', async () => {
+    const user = userEvent.setup()
+    const { alert } = renderComponent()
+
+    expect(alert).toBeInTheDocument()
+    expect(alert).toHaveTextContent(alertConfig.title)
+
+    const customizeButton = screen.getByRole('button', {
+      name: alertConfig.tertiaryButtonText,
+    })
+    await user.click(customizeButton)
+
+    const privacyPrefsDialogTitle = await screen.findByText(
+      'Privacy Preferences',
+    )
+
+    expect(alert).toBeInTheDocument()
+    expect(privacyPrefsDialogTitle).toBeInTheDocument()
   })
 
   it('does not display the alert when cookies have been accepted', () => {
-    localStorage.setItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY, 'true')
+    const cookiePrefence: CookiePreference = {
+      analyticsAllowed: true,
+      functionalAllowed: true,
+    }
+    cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, cookiePrefence)
     const { alert } = renderComponent()
     expect(alert).not.toBeInTheDocument()
   })

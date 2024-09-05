@@ -5,8 +5,8 @@ import MissingQueryResultsWarning from './MissingQueryResultsWarning'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EntityRef, Table } from '@sage-bionetworks/synapse-types'
 import mockDatasetEntityData from '../../mocks/entity/mockDataset'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../mocks/msw/server'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const mockDatasetEntity = mockDatasetEntityData.entity
 
@@ -29,11 +29,13 @@ describe('MissingQueryResultsWarning tests', () => {
 
   it('shows no warning when total results is equal to total visible results', () => {
     const numberOfVisibleResults = allDatasetItems.length
-    server.use(
-      ...getHandlersForTableQuery({
+
+    registerTableQueryResult(
+      { sql: `SELECT * FROM ${mockDatasetEntity.id}` },
+      {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         queryCount: numberOfVisibleResults,
-      }),
+      },
     )
 
     renderComponent({ ...mockDatasetEntity, items: allDatasetItems })
@@ -43,11 +45,13 @@ describe('MissingQueryResultsWarning tests', () => {
   })
   it('shows warning when total results is greater than total visible results on the current version', async () => {
     const numberOfVisibleResults = allDatasetItems.length - 1
-    server.use(
-      ...getHandlersForTableQuery({
+
+    registerTableQueryResult(
+      { sql: `SELECT * FROM ${mockDatasetEntity.id}` },
+      {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         queryCount: numberOfVisibleResults,
-      }),
+      },
     )
 
     renderComponent({
@@ -66,11 +70,15 @@ describe('MissingQueryResultsWarning tests', () => {
   })
   it('shows warning when total results is greater than total visible results on a snapshot', async () => {
     const numberOfVisibleResults = allDatasetItems.length - 2
-    server.use(
-      ...getHandlersForTableQuery({
+
+    registerTableQueryResult(
+      {
+        sql: `SELECT * FROM ${mockDatasetEntity.id}.${mockDatasetEntity.versionNumber}`,
+      },
+      {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         queryCount: numberOfVisibleResults,
-      }),
+      },
     )
 
     renderComponent({
@@ -87,5 +95,25 @@ describe('MissingQueryResultsWarning tests', () => {
     await screen.findByText(
       'Files may be unavailable because you do not have permission to see them or the Dataset was misconfigured.',
     )
+  })
+
+  it('shows no warning when total results is less than total visible results', () => {
+    // Unlikely edge case -- see PLFM-8326
+    const numberOfVisibleResults = allDatasetItems.length + 1
+
+    registerTableQueryResult(
+      {
+        sql: `SELECT * FROM ${mockDatasetEntity.id}`,
+      },
+      {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+        queryCount: numberOfVisibleResults,
+      },
+    )
+
+    renderComponent({ ...mockDatasetEntity, items: allDatasetItems })
+
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })

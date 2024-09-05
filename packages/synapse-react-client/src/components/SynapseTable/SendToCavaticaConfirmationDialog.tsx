@@ -1,56 +1,58 @@
-import React, { useMemo, useState } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog'
-import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material'
+import { useLocalStorageValue } from '@react-hookz/web'
 import {
   ActionRequiredCount,
   ColumnModel,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../QueryContext'
-import { SkeletonParagraph } from '../Skeleton'
-import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
-import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
-import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
+import React, { useMemo, useState } from 'react'
+import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
+import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
+import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
+import { useQueryContext } from '../QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   hasSelectedRowsAtom,
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
-
-import { useLocalStorageValue } from '@react-hookz/web'
-import { Link, Typography, Box, Stack } from '@mui/material'
-import { Checkbox } from '../widgets/Checkbox'
-import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
-import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { SkeletonParagraph } from '../Skeleton'
+import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
 const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
   'SendToCavaticaButtonFromConfirmationDialog'
 
 export type SendToCavaticaConfirmationDialogProps = {
-  fileIdColumnName?: string
-  fileNameColumnName?: string
-  fileVersionColumnName?: string
   cavaticaConnectAccountURL?: string
 }
 
 export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
-  const {
-    fileIdColumnName,
-    fileNameColumnName,
-    fileVersionColumnName,
-    cavaticaConnectAccountURL,
-  } = props
+  const { cavaticaConnectAccountURL } = props
   const {
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
+    queryMetadataQueryOptions,
+    fileIdColumnName,
+    fileVersionColumnName,
+    fileNameColumnName,
   } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
+
+  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
@@ -73,13 +75,17 @@ export default function SendToCavaticaConfirmationDialog(
 
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
-    if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
+    if (
+      hasSelectedRows &&
+      rowSelectionPrimaryKey &&
+      queryMetadata?.selectColumns
+    ) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
         getPrimaryKeyINFilter(
           rowSelectionPrimaryKey,
           selectedRows,
-          data.selectColumns,
+          queryMetadata.selectColumns,
         ),
       ]
     }
@@ -88,13 +94,13 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
-    data?.selectColumns,
+    queryMetadata?.selectColumns,
     selectedRows,
   ])
 
   const exportToCavatica = useExportToCavatica(
     cavaticaQueryRequest,
-    data?.queryResult?.queryResults.headers,
+    queryMetadata?.selectColumns,
     fileIdColumnName,
     fileNameColumnName,
     fileVersionColumnName,
@@ -102,10 +108,10 @@ export default function SendToCavaticaConfirmationDialog(
 
   const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(
     cavaticaQueryRequest,
-    data?.columnModels as ColumnModel[],
+    queryMetadata?.columnModels as ColumnModel[],
     {
       throwOnError: true,
-      enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
+      enabled: !!queryMetadata?.columnModels && isShowingExportToCavaticaModal,
     },
   )
 
@@ -115,7 +121,7 @@ export default function SendToCavaticaConfirmationDialog(
     hasResettableFilters,
     hasSelectedRows,
     selectedRows,
-    data,
+    queryMetadata?.queryCount,
     unitDescription,
   )} to CAVATICA`
 
@@ -155,10 +161,13 @@ export default function SendToCavaticaConfirmationDialog(
                 sourced. Users must personally ensure that all data access terms
                 and conditions are met.
               </Typography>
-              <Checkbox
+              <FormControlLabel
+                control={<Checkbox />}
                 label="I acknowledge and accept these terms"
                 checked={disclaimerAcknowledged}
-                onChange={setDisclaimerAcknowledged}
+                onChange={(_event, checked) =>
+                  setDisclaimerAcknowledged(checked)
+                }
               />
             </Box>
           </>

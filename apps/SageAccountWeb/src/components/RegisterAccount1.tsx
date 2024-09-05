@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -8,19 +8,22 @@ import {
   useTheme,
 } from '@mui/material'
 import {
+  displayToast,
   IconSvg,
   LastLoginInfo,
+  RegisterPageLogoutPrompt,
   SynapseClient,
   SynapseConstants,
-  displayToast,
+  useApplicationSessionContext,
   useLastLoginInfo,
+  useSynapseContext,
 } from 'synapse-react-client'
 import {
   AliasType,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { SourceAppLogo } from './SourceApp'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
@@ -30,7 +33,7 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './StyledComponents'
-import { useSourceApp } from './useSourceApp'
+import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from './useSourceApp'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -40,15 +43,32 @@ export enum Pages {
 }
 
 export const RegisterAccount1 = () => {
+  const { accessToken } = useSynapseContext()
+  const isSignedIn = !!accessToken
   const appContext = useAppContext()
+  const sessionContext = useApplicationSessionContext()
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
-  const sourceAppName = useSourceApp()?.friendlyName
+  const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
+
+  const { search } = useLocation()
+  const queryParams = useMemo(() => new URLSearchParams(search), [search])
+  const emailFromParams = queryParams.get('email')
+
+  // If we have an email param, initialize the email address with the param
+  useEffect(() => {
+    if (emailFromParams) {
+      setEmail(emailFromParams)
+      setPage(Pages.EMAIL_REGISTRATION)
+    }
+    // Initialize the email address field with the email query parameter, but allow the user to change it or register using OAuth
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // If we have a MembershipInvtnSignedToken, initialize the email address with the membership invitation invitee email.
   useEffect(() => {
@@ -145,7 +165,7 @@ export const RegisterAccount1 = () => {
         SynapseClient.oAuthUrlRequest(
           SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
           redirectUrl,
-          username,
+          { registrationUsername: username },
         )
           .then((data: any) => {
             const authUrl = data.authorizationUrl
@@ -166,6 +186,21 @@ export const RegisterAccount1 = () => {
     display: 'box',
     ...useLastLoginInfo(),
   })
+
+  if (isSignedIn) {
+    return (
+      <StyledOuterContainer className="RegisterAccount1">
+        <Box mx={'auto'} mt={15} width={'fit-content'}>
+          <RegisterPageLogoutPrompt
+            onLogout={() => {
+              sessionContext.refreshSession()
+            }}
+            logo={<SourceAppLogo sx={{ width: '100%' }} />}
+          />
+        </Box>
+      </StyledOuterContainer>
+    )
+  }
 
   return (
     <>
@@ -307,17 +342,25 @@ export const RegisterAccount1 = () => {
                 <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
-                <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                  Your <strong>{sourceAppName}</strong> account is also a{' '}
-                  <strong>Sage account</strong>. You can also use it to access
-                  many other resources from Sage.
-                </Typography>
+                {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
+                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                    Your <strong>{sourceAppName}</strong> account is also a{' '}
+                    <strong>Synapse account</strong>. You can also use it to
+                    access many other resources from Sage Bionetworks.
+                  </Typography>
+                )}
+                {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
+                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                    Your <strong>Synapse</strong> account can also be used to
+                    access many other resources from Sage Bionetworks.
+                  </Typography>
+                )}
                 <Link
                   color="primary"
                   component={RouterLink}
                   to="/sageresources"
                 >
-                  More about Sage accounts
+                  More about Synapse account
                 </Link>
               </Box>
             </>

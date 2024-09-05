@@ -13,6 +13,7 @@ import {
   FileHandleAssociateType,
   Row,
   SelectColumn,
+  Table,
 } from '@sage-bionetworks/synapse-types'
 import {
   CardLink,
@@ -30,10 +31,10 @@ import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
 import { Link, Typography } from '@mui/material'
 import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
-import { useAtomValue } from 'jotai'
-import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
 import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
 import Linkify from '../../GenericCard/Linkify'
+import { useGetEntity } from '../../../synapse-queries'
+import { useQueryContext } from '../../QueryContext'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -63,7 +64,9 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     rowVersionNumber,
     isRowEntityColumn,
   } = props
-  const entity = useAtomValue(tableQueryEntityAtom)
+  const { entityId, versionNumber } = useQueryContext()
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+
   if (!columnValue) {
     return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }

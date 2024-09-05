@@ -3,15 +3,15 @@ import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions/SqlFunctions'
-import SynapseTable, { SynapseTableProps } from '../SynapseTable/SynapseTable'
+import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
-import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import TopLevelControls, {
   TopLevelControlsProps,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import FullTextSearch from '../FullTextSearch'
+import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
@@ -22,14 +22,13 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
-import LastUpdatedOn from '../QueryWrapperPlotNav/LastUpdatedOn'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import {
   Operator,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
-import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 
 type StandaloneQueryWrapperOwnProps = {
   sql: string
@@ -48,9 +47,13 @@ type StandaloneQueryWrapperOwnProps = {
     | 'showLastUpdatedOn'
     | 'visibleColumnCount'
     | 'additionalFiltersSessionStorageKey'
+  > &
+  Pick<
+    QueryWrapperProps,
+    'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
   >
 
-export type StandaloneQueryWrapperProps = SynapseTableProps &
+export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
   SearchParams &
   Operator &
   StandaloneQueryWrapperOwnProps
@@ -173,16 +176,13 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
-                      <QueryWrapperLoadingScreen />
-                      <SynapseTable
-                        showAccessColumn={showAccessColumn}
-                        data-testid="SynapseTable"
-                        hideAddToDownloadListColumn={
-                          hideAddToDownloadListColumn
-                        }
-                        {...rest}
+                      <RowSetView
+                        tableConfiguration={{
+                          showAccessColumn: showAccessColumn,
+                          hideAddToDownloadListColumn,
+                          ...rest,
+                        }}
                       />
-                      <LastUpdatedOn />
                     </>
                   )
                 }}

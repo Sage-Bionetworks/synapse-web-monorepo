@@ -19,26 +19,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const CookieAlert: Story = {
-  args: {
-    variant: 'info',
-    show: true,
-    title: 'Our site uses cookies.',
-    description:
-      'This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy.',
-    primaryButtonConfig: {
-      text: 'Accept and Continue',
-      onClick: () => alert('Accepted'),
-    },
-    secondaryButtonConfig: {
-      text: 'Learn More',
-      tooltipText: 'Opens a PDF',
-      href: 'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf',
-    },
-    isGlobal: true,
-  },
-}
-
 export const DownloadListPackageCreation: Story = {
   args: {
     variant: 'success',
@@ -70,7 +50,12 @@ export const SynapseNavDrawerIsShowing: Story = {
   },
   render: args => (
     <>
-      <SynapseNavDrawer initIsOpen={false} />
+      <SynapseNavDrawer
+        initIsOpen={false}
+        gotoPlace={(href: string) => {
+          window.alert(`Nav bar calling back to change route to ${href}`)
+        }}
+      />
       <FullWidthAlert {...args} />
     </>
   ),

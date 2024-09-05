@@ -1,4 +1,4 @@
-import { Alert, Button, Skeleton, Typography } from '@mui/material'
+import { Alert, Button, Checkbox, Skeleton, Typography } from '@mui/material'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import BaseTable, {
   AutoResizer,
@@ -7,7 +7,7 @@ import BaseTable, {
 import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useMemo, useState } from 'react'
-import { SkeletonTable } from '../../Skeleton/SkeletonTable'
+import { SkeletonTable } from '../../Skeleton'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
@@ -18,15 +18,15 @@ import {
   useGetEntity,
   useGetEntityPath,
   useUpdateEntity,
-} from '../../../synapse-queries/entity/useEntity'
-import { useSet } from '../../../utils/hooks/useSet'
+} from '../../../synapse-queries'
+import { useSet } from '../../../utils/hooks'
 import {
   EntityRef,
   EntityRefCollectionView,
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
-import { RequiredProperties } from '../../../utils/types/RequiredProperties'
+import { RequiredProperties } from '../../../utils'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
@@ -44,8 +44,7 @@ import { FinderScope } from '../../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../../EntityFinder/VersionSelectionType'
 import { BlockingLoader } from '../../LoadingScreen/LoadingScreen'
 import WarningDialog from '../../SynapseForm/WarningDialog'
-import { displayToast } from '../../ToastMessage/ToastMessage'
-import { Checkbox } from '../../widgets/Checkbox'
+import { displayToast } from '../../ToastMessage'
 import WideButton from '../../../components/styled/WideButton'
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
@@ -113,6 +112,72 @@ export function getCopy(entity?: EntityRefCollectionView) {
   }
 }
 
+function getDataSetDifference(
+  oldDataSet: EntityRef[],
+  changedItems: EntityRef[],
+) {
+  const unchangedItems = oldDataSet.filter(
+    oldItem =>
+      !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
+  )
+  const deletedItems = [...unchangedItems]
+  const { updatedItems, newItems } = changedItems.reduce(
+    (results, result) => {
+      const oldItem = oldDataSet.find(old => old.entityId === result.entityId)
+      if (oldItem) {
+        if (result.versionNumber !== oldItem.versionNumber) {
+          results['updatedItems'].push(result)
+        } else {
+          unchangedItems.push(result)
+        }
+      } else {
+        results['newItems'].push(result)
+      }
+      return results
+    },
+    { updatedItems: [], newItems: [] } as {
+      updatedItems: EntityRef[]
+      newItems: EntityRef[]
+    },
+  )
+
+  return { unchangedItems, updatedItems, newItems, deletedItems }
+}
+
+function getDatasetChangedToastMessageTitle(
+  previousDatasetToUpdate?: RequiredProperties<
+    EntityRefCollectionView,
+    'items'
+  >,
+  datasetToUpdate?: RequiredProperties<EntityRefCollectionView, 'items'>,
+) {
+  const { updatedItems, newItems, deletedItems } = getDataSetDifference(
+    previousDatasetToUpdate?.items ?? [],
+    datasetToUpdate?.items!,
+  )
+  let toastTitle = ''
+
+  // "X items(s) deleted"
+  if (deletedItems.length > 0) {
+    toastTitle += `${deletedItems.length} Item${
+      deletedItems.length === 1 ? '' : 's'
+    } removed`
+  } else {
+    // "Y item(s) added"
+    toastTitle += `${newItems.length} Item${
+      newItems.length === 1 ? '' : 's'
+    } added`
+
+    // "and Z item(s) updated", only shown if there are updated items
+    if (updatedItems.length > 0) {
+      toastTitle += ` and ${updatedItems.length} Item${
+        updatedItems.length === 1 ? '' : 's'
+      } updated`
+    }
+  }
+  return toastTitle
+}
+
 export type DatasetItemsEditorProps = {
   /* The synId of the EntityRefCollectionView to modify */
   entityId: string
@@ -140,6 +205,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
   const [previousDatasetToUpdate, setPreviousDatasetToUpdate] =
     useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
+
+  // Stores the `close` function that will be used to hide the last toast that prompted the user to save
+  const [onCloseLastSavePromptToast, setOnCloseLastSavePromptToast] = useState<
+    { close: () => void } | undefined
+  >()
+
   const setDatasetToUpdate = (
     dataset: React.SetStateAction<
       RequiredProperties<EntityRefCollectionView, 'items'> | undefined
@@ -152,7 +223,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { data: fetchedDataset, refetch } = useGetEntity<
     RequiredProperties<EntityRefCollectionView, 'items'>
   >(entityId, undefined, {
-    enabled: !datasetToUpdate,
+    staleTime: Infinity,
   })
 
   const {
@@ -172,8 +243,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   } = useMemo(() => getCopy(fetchedDataset), [fetchedDataset])
 
   useEffect(() => {
-    // Don't update when we already have datasetToUpdate
-    if (!datasetToUpdate && fetchedDataset) {
+    if (fetchedDataset) {
       // SWC-5876: Dataset Items may be undefined. This has the same inherent meaning as the empty list, so we'll just change it to save us some null checks.
       if (fetchedDataset.items == null) {
         fetchedDataset.items = []
@@ -181,7 +251,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       setDatasetToUpdate(fetchedDataset)
       setHasChangedSinceLastSave(false)
     }
-  }, [fetchedDataset, datasetToUpdate])
+  }, [fetchedDataset])
 
   const {
     set: selectedIds,
@@ -189,8 +259,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     remove: removeSelectedId,
     clear: clearSelectedIds,
   } = useSet<string>()
-  const allItemsAreSelected = !!(
-    datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
+  const allItemsAreSelected = Boolean(
+    datasetToUpdate && datasetToUpdate.items.length === selectedIds.size,
   )
 
   useEffect(() => {
@@ -199,30 +269,19 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     }
   }, [hasChangedSinceLastSave, onUnsavedChangesChange])
 
-  useEffect(() => {
-    if (
-      previousDatasetToUpdate &&
-      datasetToUpdate &&
-      !isEqual(previousDatasetToUpdate, datasetToUpdate)
-    ) {
-      const toastMessageTitle = getToastMessageTitle()
-      displayToast(SAVE_TO_CONTINUE, 'info', {
-        title: toastMessageTitle,
-        primaryButtonConfig: {
-          text: SAVE_CHANGES,
-          onClick: () => mutate(datasetToUpdate),
-        },
-      })
-    }
-    setPreviousDatasetToUpdate(datasetToUpdate)
-  }, [datasetToUpdate])
-
   // We get the project ID to show the "Current Project" context in the Entity Finder.
   const { data: path } = useGetEntityPath(entityId)
   const projectId = path?.path[1]?.id
 
   const { mutate, isPending: updateIsPending } =
     useUpdateEntity<EntityRefCollectionView>({
+      onMutate: () => {
+        // Close existing toast that prompted the user to save
+        if (onCloseLastSavePromptToast) {
+          onCloseLastSavePromptToast.close()
+          setOnCloseLastSavePromptToast(undefined)
+        }
+      },
       onSuccess: () => {
         setHasChangedSinceLastSave(false)
         if (onSave) {
@@ -253,6 +312,36 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       },
     })
 
+  useEffect(() => {
+    // When changes are made (but not saved) to the datasetToUpdate, show a notification that summarizes the change and prompts the user to save
+    if (
+      previousDatasetToUpdate &&
+      datasetToUpdate &&
+      !isEqual(previousDatasetToUpdate.items, datasetToUpdate.items) &&
+      !updateIsPending
+    ) {
+      const toastMessageTitle = getDatasetChangedToastMessageTitle(
+        previousDatasetToUpdate,
+        datasetToUpdate,
+      )
+      // Replace existing toast that prompts the user to save before showing the new one
+      if (onCloseLastSavePromptToast) {
+        onCloseLastSavePromptToast.close()
+      }
+      const onCloseToast = displayToast(SAVE_TO_CONTINUE, 'info', {
+        title: toastMessageTitle,
+        primaryButtonConfig: {
+          text: SAVE_CHANGES,
+          onClick: () => mutate(datasetToUpdate),
+        },
+      })
+      setOnCloseLastSavePromptToast({ close: onCloseToast })
+    }
+    setPreviousDatasetToUpdate(datasetToUpdate)
+    // Only run when datasetToUpdate changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetToUpdate])
+
   const tableData = datasetToUpdate?.items.map((item: EntityRef) => {
     return {
       ...item,
@@ -264,66 +353,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       },
     }
   })
-
-  function getDataSetDifference(
-    oldDataSet: EntityRef[],
-    changedItems: EntityRef[],
-  ) {
-    const unchangedItems = oldDataSet.filter(
-      oldItem =>
-        !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
-    )
-    const deletedItems = [...unchangedItems]
-    const { updatedItems, newItems } = changedItems.reduce(
-      (results, result) => {
-        const oldItem = oldDataSet.find(old => old.entityId === result.entityId)
-        if (oldItem) {
-          if (result.versionNumber !== oldItem.versionNumber) {
-            results['updatedItems'].push(result)
-          } else {
-            unchangedItems.push(result)
-          }
-        } else {
-          results['newItems'].push(result)
-        }
-        return results
-      },
-      { updatedItems: [], newItems: [] } as {
-        updatedItems: EntityRef[]
-        newItems: EntityRef[]
-      },
-    )
-
-    return { unchangedItems, updatedItems, newItems, deletedItems }
-  }
-
-  function getToastMessageTitle() {
-    const { updatedItems, newItems, deletedItems } = getDataSetDifference(
-      previousDatasetToUpdate?.items!,
-      datasetToUpdate?.items!,
-    )
-    let toastTitle = ''
-
-    // "X items(s) deleted"
-    if (deletedItems.length > 0) {
-      toastTitle += `${deletedItems.length} Item${
-        deletedItems.length === 1 ? '' : 's'
-      } removed`
-    } else {
-      // "Y item(s) added"
-      toastTitle += `${newItems.length} Item${
-        newItems.length === 1 ? '' : 's'
-      } added`
-
-      // "and Z item(s) updated", only shown if there are updated items
-      if (updatedItems.length > 0) {
-        toastTitle += ` and ${updatedItems.length} Item${
-          updatedItems.length === 1 ? '' : 's'
-        } updated`
-      }
-    }
-    return toastTitle
-  }
 
   function addItemsToDataset(itemsToAdd: Reference[]) {
     setDatasetToUpdate(datasetToUpdate => {
@@ -410,9 +439,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }}
       >
         <Checkbox
-          label="Select All"
-          hideLabel={true}
-          className="SRC-pointer-events-none"
+          inputProps={{ 'aria-label': 'Select All' }}
           checked={isChecked}
           disabled={datasetToUpdate.items.length === 0}
           onChange={() => {

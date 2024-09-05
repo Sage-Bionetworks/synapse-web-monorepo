@@ -6,7 +6,7 @@ import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTe
 import { isEmpty, noop } from 'lodash-es'
 import { parse } from 'papaparse'
 
-type CreateChallengeTeamProps = {
+export type CreateChallengeTeamProps = {
   challengeId: string
   onCanSubmitChange?: (canSubmit: boolean) => void
   onFinished?: (teamId: string) => void

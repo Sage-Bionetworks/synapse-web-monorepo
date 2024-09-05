@@ -154,8 +154,7 @@ describe('CreateTableWizardUtils tests', () => {
     expect(isLastStep('ENTITY_VIEW_SCOPE')).toBe(false)
     expect(isLastStep('SUBMISSION_VIEW_SCOPE')).toBe(false)
     expect(isLastStep('TABLE_COLUMNS')).toBe(false)
-    // TABLE_SQL can be moved to a separate step after PLFM-8209 is done
-    expect(isLastStep('TABLE_SQL')).toBe(true)
+    expect(isLastStep('TABLE_SQL')).toBe(false)
     expect(isLastStep('TABLE_NAME')).toBe(true)
   })
   test('getStepAfterTypeSelection', () => {

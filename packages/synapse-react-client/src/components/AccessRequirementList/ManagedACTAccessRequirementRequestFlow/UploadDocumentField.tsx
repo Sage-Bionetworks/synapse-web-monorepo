@@ -3,7 +3,7 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { useGetFileBatch } from '../../../synapse-queries/file/useFiles'
-import { Box, Button } from '@mui/material'
+import { Box, Button, ButtonProps } from '@mui/material'
 import FileUpload from '../../FileUpload/FileUpload'
 import IconSvg from '../../IconSvg/IconSvg'
 import DirectDownloadButton from '../../DirectDownloadButton'
@@ -18,6 +18,7 @@ type UploadDocumentFieldProps = {
   isMultiFileUpload?: boolean
   onClearAttachment?: (fileHandleId: string) => void
   isLoading?: boolean
+  uploadBtnVariant?: ButtonProps['variant']
 }
 
 export function UploadDocumentField(props: UploadDocumentFieldProps) {
@@ -29,6 +30,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     isMultiFileUpload = false,
     onClearAttachment,
     isLoading = false,
+    uploadBtnVariant = 'outlined',
   } = props
   const [isUploading, setIsUploading] = useState(false)
 
@@ -62,7 +64,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         label={`Upload ${documentName}`}
         buttonProps={{
           disabled: isLoading,
-          variant: 'outlined',
+          variant: uploadBtnVariant,
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}
       />

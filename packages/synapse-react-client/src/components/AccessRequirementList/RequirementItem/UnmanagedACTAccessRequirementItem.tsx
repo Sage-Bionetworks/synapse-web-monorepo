@@ -15,8 +15,8 @@ import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 export type UnmanagedACTAccessRequirementItemProps = {
-  subjectId: string
-  subjectType: RestrictableObjectType
+  subjectId?: string
+  subjectType?: RestrictableObjectType
   accessRequirement: ACTAccessRequirement
   onHide: () => void
 }
@@ -58,8 +58,10 @@ export default function UnmanagedACTAccessRequirementItem(
   }
 
   const gotoSynapseAccessRequirementPage = () => {
+    const subjectTypeFilter = subjectType ? `&TYPE=${subjectType}` : ''
+    const subjectIdFilter = subjectId ? `&ID=${subjectId}` : ''
     window.open(
-      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=${subjectType}&ID=${subjectId}`,
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${accessRequirement.id}${subjectTypeFilter}${subjectIdFilter}`,
     )
   }
   const onAcceptClicked = () => {

@@ -12,6 +12,7 @@ import { ReactComponent as Tables } from './tables_illustration.svg'
 import { ReactComponent as Teams } from './teams_illustration.svg'
 import { ReactComponent as TrashCan } from './trash_can_illustration.svg'
 import { ReactComponent as Wikis } from './wikis_illustration.svg'
+import { ReactComponent as Donate } from './donation_illustration.svg'
 const Illustrations = {
   Challenges,
   CohortBuilder,
@@ -27,5 +28,6 @@ const Illustrations = {
   Teams,
   TrashCan,
   Wikis,
+  Donate,
 }
 export default Illustrations

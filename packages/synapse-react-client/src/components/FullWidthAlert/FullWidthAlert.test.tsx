@@ -22,6 +22,10 @@ const defaultProps: FullWidthAlertProps = {
     text: 'Learn More About Projects',
     href: 'https://help.synapse.org/docs/Setting-Up-a-Project.2055471258.html',
   },
+  tertiaryButtonConfig: {
+    text: 'Learn Even More About Projects',
+    href: 'https://help.synapse.org/docs/ExtraProjectHelp.html',
+  },
 }
 
 function renderComponent(
@@ -53,6 +57,13 @@ function setUp(
       screen.queryByRole('button', {
         name: defaultProps.secondaryButtonConfig.text,
       }),
+    tertiary:
+      defaultProps.tertiaryButtonConfig &&
+      defaultProps.tertiaryButtonConfig.text &&
+      screen.queryByRole('button', {
+        name: defaultProps.tertiaryButtonConfig.text,
+      }),
+
     close: screen.queryByRole('button', { name: /close/i }),
   }
   return { component, user, alert, buttons }
@@ -77,6 +88,7 @@ describe('FullWidthAlert tests', () => {
       ...defaultProps,
       primaryButtonConfig: undefined,
       secondaryButtonConfig: undefined,
+      tertiaryButtonConfig: undefined,
     })
     expect(buttons.primary).not.toBeInTheDocument()
     expect(buttons.secondary).not.toBeInTheDocument()
@@ -104,6 +116,7 @@ describe('FullWidthAlert tests', () => {
     const { buttons } = setUp({
       ...defaultProps,
       secondaryButtonConfig: undefined,
+      tertiaryButtonConfig: undefined,
     })
     expect(buttons.primary).toBeInTheDocument()
     expect(buttons.secondary).not.toBeInTheDocument()

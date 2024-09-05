@@ -6,6 +6,7 @@ import {
 } from '../user/mock_user_profile'
 import { mockTeamUserGroups } from '../team/mockTeam'
 import {
+  ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '../../utils/SynapseConstants'
@@ -30,6 +31,19 @@ export const mockAuthenticatedGroupData: MockUserOrTeamData = {
     isIndividual: false,
   },
 }
+export const mockAnonymousUserGroupData: MockUserOrTeamData = {
+  id: ANONYMOUS_PRINCIPAL_ID,
+  userProfile: null,
+  userBundle: null,
+  userGroupHeader: {
+    ownerId: String(ANONYMOUS_PRINCIPAL_ID),
+    firstName: 'Anonymous',
+    lastName: '',
+    userName: 'anonymous',
+    isIndividual: true,
+  },
+}
+
 export const mockUserGroupData: MockUserOrTeamData[] = [
   mockUserData1,
   mockUserData2,
@@ -37,4 +51,5 @@ export const mockUserGroupData: MockUserOrTeamData[] = [
   ...mockTeamUserGroups,
   mockAuthenticatedGroupData,
   mockPublicGroupData,
+  mockAnonymousUserGroupData,
 ]

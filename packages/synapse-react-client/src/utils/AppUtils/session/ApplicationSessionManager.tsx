@@ -5,7 +5,7 @@ import { redirectAfterSSO } from '../AppUtils'
 import { useHistory } from 'react-router-dom'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
-import { SynapseContextProvider } from '../../context/SynapseContext'
+import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
@@ -17,6 +17,16 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   onNoAccessTokenFound?: () => void
   /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
   forceRelogin?: boolean
+  /*
+   * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
+   * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
+   * This only needs to be implemented if the app implements the workflow to disable 2FA (i.e. only if the app supports account management).
+   */
+  onTwoFactorAuthResetThroughSSO?: (
+    twoFactorAuthSSOError: TwoFactorAuthErrorResponse,
+    twoFaResetToken: string,
+  ) => void
+  appId?: SynapseContextType['appId']
 }>
 
 /**
@@ -43,17 +53,19 @@ export function ApplicationSessionManager(
     maxAge,
     onNoAccessTokenFound,
     forceRelogin,
+    onTwoFactorAuthResetThroughSSO,
+    appId,
   } = props
   const history = useHistory()
 
-  const [token, setToken] = useState<string | undefined>(undefined)
+  const [token, setToken] = useState<string | undefined>()
   const [acceptsTermsOfUse, setAcceptsTermsOfUse] = useState<
     boolean | undefined
-  >(undefined)
+  >()
   const [hasInitializedSession, setHasInitializedSession] = useState(false)
   const [twoFactorAuthSSOError, setTwoFactorAuthSSOError] = useState<
     TwoFactorAuthErrorResponse | undefined
-  >(undefined)
+  >()
   const initAnonymousUserState = useCallback(() => {
     if (onNoAccessTokenFound) {
       onNoAccessTokenFound()
@@ -125,6 +137,8 @@ export function ApplicationSessionManager(
     if (onResetSessionComplete) {
       onResetSessionComplete()
     }
+    //in all cases when the session is cleared we should refresh the page to ensure private data is not being shown
+    history.go(0)
   }, [refreshSession, onResetSessionComplete])
 
   /** Call refreshSession on mount */
@@ -145,6 +159,14 @@ export function ApplicationSessionManager(
     onTwoFactorAuthRequired: twoFactorAuthError => {
       setTwoFactorAuthSSOError(twoFactorAuthError)
     },
+    onTwoFactorAuthResetTokenPresent: (twoFactorAuthError, twoFaResetToken) => {
+      setTwoFactorAuthSSOError(twoFactorAuthError)
+      if (onTwoFactorAuthResetThroughSSO) {
+        onTwoFactorAuthResetThroughSSO(twoFactorAuthError, twoFaResetToken)
+      }
+    },
+    isInitializingSession: !hasInitializedSession,
+    token,
   })
 
   return (
@@ -165,6 +187,7 @@ export function ApplicationSessionManager(
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
+          appId: appId,
         }}
       >
         {children}

@@ -1,0 +1,30 @@
+@use '../../variables' as Portal;
+
+.HomePageLinks {
+  margin-top: -6px;
+
+  .link-container {
+    display: flex;
+    .link-child {
+      h4 {
+        text-transform: none;
+        color: teal;
+      }
+      .icon {
+        margin-right: 4px;
+      }
+      flex: 1;
+      margin-right: 5px;
+      &:last-child {
+        margin-right: 0px;
+      }
+      h4 {
+        display: flex;
+        align-items: center;
+      }
+      .link {
+        color: Portal.$primary-action-color;
+      }
+    }
+  }
+}

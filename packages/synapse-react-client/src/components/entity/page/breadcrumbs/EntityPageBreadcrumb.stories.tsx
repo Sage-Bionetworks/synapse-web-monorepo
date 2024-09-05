@@ -28,17 +28,17 @@ export const Demo: Story = {
       {
         onClick: preventDefaultHandler,
         text: 'Root folder',
-        href: '#!Synapse:syn123',
+        href: 'Synapse:syn123',
       },
       {
         onClick: preventDefaultHandler,
         text: 'A very long subfolder name that gets truncated',
-        href: '#!Synapse:syn456',
+        href: 'Synapse:syn456',
       },
       {
         onClick: preventDefaultHandler,
         text: 'The file you are looking at',
-        href: '#!Synapse:syn789',
+        href: 'Synapse:syn789',
         current: true,
       },
     ],

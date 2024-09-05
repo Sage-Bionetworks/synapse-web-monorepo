@@ -11,5 +11,8 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     initIsOpen: false,
+    gotoPlace: (href: string) => {
+      window.alert(`Nav bar calling back to change route to ${href}`)
+    },
   },
 }

@@ -1,16 +1,14 @@
 import React from 'react'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { UseLoginReturn } from '../../utils/hooks'
+import { UseLoginReturn, useOneSageURL } from '../../utils/hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
-import TOTPForm from './TOTPForm'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
-import RecoveryCodeForm from './RecoveryCodeForm'
+import OneTimePasswordForm from './OneTimePasswordForm'
+import { OAuth2State } from '../../utils'
+import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
+import { noop } from 'lodash-es'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -25,15 +23,28 @@ type Props = {
   submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword']
   submitOneTimePassword: UseLoginReturn['submitOneTimePassword']
   errorMessage: UseLoginReturn['errorMessage']
-  isLoading: UseLoginReturn['isLoading']
+  loginIsPending: UseLoginReturn['loginIsPending']
+  beginTwoFactorAuthReset: UseLoginReturn['beginTwoFactorAuthReset']
+  twoFactorAuthResetIsSuccess: UseLoginReturn['twoFactorAuthResetIsSuccess']
+  twoFactorAuthResetIsPending: UseLoginReturn['twoFactorAuthResetIsPending']
+  hideRegisterButton?: boolean
+  hideForgotPasswordButton?: boolean
+  // Optional state passed to and returned by an identity provider on SSO
+  ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
+  /* Invoked when password login is selected */
+  onPasswordLoginSelected?: () => void
 }
 
 export default function LoginForm(props: Props) {
+  const defaultRegistrationUrl = useOneSageURL('/register1')
+  const defaultTwoFactorAuthResetUrl = useOneSageURL('/reset2FA')
+
   const {
     ssoRedirectUrl,
-    registerAccountUrl = `${getEndpoint(
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )}#!RegisterAccount:0`,
+    ssoState,
+    registerAccountUrl = defaultRegistrationUrl.toString(),
     resetPasswordUrl,
     onBeginOAuthSignIn,
     onStepChange,
@@ -41,60 +52,75 @@ export default function LoginForm(props: Props) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    hideRegisterButton,
+    hideForgotPasswordButton,
+    twoFactorAuthResetIsSuccess,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetUri = appendFinalQueryParamKey(
+      defaultTwoFactorAuthResetUrl,
+      'twoFAResetToken',
+    ),
+    onPasswordLoginSelected = noop,
   } = props
 
   return (
     <>
       {step == 'CHOOSE_AUTH_METHOD' && (
         <AuthenticationMethodSelection
-          onSelectUsernameAndPassword={() => onStepChange('USERNAME_PASSWORD')}
+          onSelectUsernameAndPassword={() => {
+            onPasswordLoginSelected()
+            onStepChange('USERNAME_PASSWORD')
+          }}
           onBeginOAuthSignIn={onBeginOAuthSignIn}
           ssoRedirectUrl={ssoRedirectUrl}
+          state={ssoState}
         />
       )}
       {step === 'USERNAME_PASSWORD' && (
         <UsernamePasswordForm
-          isLoading={isLoading}
+          loginIsPending={loginIsPending}
           resetPasswordUrl={resetPasswordUrl}
           onSubmit={(username, password) => {
             submitUsernameAndPassword(username, password)
           }}
+          hideForgotPasswordButton={hideForgotPasswordButton}
         />
       )}
-      {step === 'VERIFICATION_CODE' && (
-        <>
-          <TOTPForm
-            isLoading={isLoading}
-            onSubmit={totp => {
-              submitOneTimePassword(totp, 'TOTP')
-            }}
-          />
-          <Link
-            align={'center'}
-            color={'grey.700'}
-            sx={{ display: 'block', mx: 'auto' }}
-            onClick={() => onStepChange('RECOVERY_CODE')}
-          >
-            Use a backup code instead
-          </Link>
-        </>
-      )}
-      {step === 'RECOVERY_CODE' && (
-        <RecoveryCodeForm
-          isLoading={isLoading}
-          onSubmit={recoveryCode => {
-            submitOneTimePassword(recoveryCode, 'RECOVERY_CODE')
+      {(step === 'VERIFICATION_CODE' ||
+        step === 'RECOVERY_CODE' ||
+        step === 'DISABLE_2FA_PROMPT') && (
+        <OneTimePasswordForm
+          step={step}
+          loginIsPending={loginIsPending}
+          onSubmit={(totp, otpType) => {
+            submitOneTimePassword(totp, otpType)
           }}
+          onClickUseTOTP={() => {
+            onStepChange('VERIFICATION_CODE')
+          }}
+          onClickUseBackupCode={() => {
+            onStepChange('RECOVERY_CODE')
+          }}
+          onClickPromptReset2FA={() => {
+            onStepChange('DISABLE_2FA_PROMPT')
+          }}
+          onClickReset2FA={() => {
+            beginTwoFactorAuthReset(twoFactorAuthResetUri)
+          }}
+          twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+          twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
         />
       )}
-      {(step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '10px' }}>
-          <Link href={registerAccountUrl} align={'center'}>
-            Don&apos;t have an account? Create one now
-          </Link>
-        </Box>
-      )}
+      {!hideRegisterButton &&
+        (step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: '10px' }}>
+            <Link href={registerAccountUrl} align={'center'}>
+              Don&apos;t have an account? Create one now
+            </Link>
+          </Box>
+        )}
       {errorMessage && (
         <FullWidthAlert
           variant={'warning'}

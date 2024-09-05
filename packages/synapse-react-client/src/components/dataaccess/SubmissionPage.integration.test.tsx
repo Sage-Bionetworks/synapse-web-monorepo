@@ -20,10 +20,10 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import {
-  AccessControlList,
   ACCESS_TYPE,
-  SubmissionState,
+  AccessControlList,
   FileHandleAssociation,
+  SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import {
   mockApprovedSubmission,
@@ -31,12 +31,14 @@ import {
   mockSubmissions,
   mockSubmittedSubmission,
 } from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
+  MOCK_USER_ID_3,
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
+  MOCK_USER_NAME_3,
 } from '../../mocks/user/mock_user_profile'
 import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
 import failOnConsoleError from 'jest-fail-on-console'
@@ -243,18 +245,11 @@ describe('Submission Page tests', () => {
       submissionId: SUBMITTED_SUBMISSION_ID,
     })
 
-    // The modal is rendered but not shown
+    // The modal is not rendered
     expect(
       screen.queryByTestId('RejectDataAccessRequestModal'),
-    ).toBeInTheDocument()
-    expect(mockRejectDataAccessRequestModal).toHaveBeenLastCalledWith(
-      {
-        open: false,
-        submissionId: SUBMITTED_SUBMISSION_ID,
-        onClose: expect.anything(),
-      },
-      expect.anything(),
-    )
+    ).not.toBeInTheDocument()
+    expect(mockRejectDataAccessRequestModal).not.toHaveBeenCalled()
 
     // Click the reject button
     const rejectButton = await screen.findByRole('button', { name: 'Reject' })
@@ -297,8 +292,7 @@ describe('Submission Page tests', () => {
     ).not.toBeInTheDocument()
   })
 
-  // Flaky in TravisCI
-  it.skip('Renders a user card if the AR has an ACL', async () => {
+  it('Renders a user card if the AR has an ACL', async () => {
     // Fetching the AR's ACL will yield a designated reviewer
     server.use(
       rest.get(
@@ -314,6 +308,11 @@ describe('Submission Page tests', () => {
                 principalId: MOCK_USER_ID,
                 accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS],
               },
+              {
+                // User 3 should not be shown
+                principalId: MOCK_USER_ID_3,
+                accessType: [ACCESS_TYPE.EXEMPTION_ELIGIBLE],
+              },
             ],
           }
           return res(ctx.status(200), ctx.json(responseBody))
@@ -325,12 +324,15 @@ describe('Submission Page tests', () => {
       submissionId: SUBMITTED_SUBMISSION_ID,
     })
 
-    // When an ACL exists, don't show the ACT as the reviewer
-    expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
-
     // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
     await waitFor(() =>
       expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(4),
     )
+
+    // User 3 should not appear - they are not a reviewer
+    expect(screen.queryByText('@' + MOCK_USER_NAME_3)).not.toBeInTheDocument()
+
+    // When an ACL exists, don't show the ACT as the reviewer
+    expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
   })
 })

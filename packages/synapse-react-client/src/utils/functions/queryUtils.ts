@@ -1,7 +1,6 @@
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
-import SynapseClient from '../../synapse-client'
-import { LockedColumn } from '../../components/QueryContext/QueryContext'
+import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -14,18 +13,19 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-} from '../types/IsType'
-import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
-import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
-
-type PartialStateObject = {
-  hasMoreData: boolean
-  data: QueryResultBundle
-}
+  LockedColumn,
+  UniqueFacetIdentifier,
+} from '../types'
+import {
+  hasFilesInView,
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isFileView,
+} from './EntityTypeUtils'
 
 /**
  * Retrieve the index of a column using the column name
@@ -66,13 +66,13 @@ export const getHeaderIndex = (
 /**
  * Returns the indices of the selectColumns with the specified type
  * @param columnType
- * @param data
+ * @param selectColumns
  */
 export function getTypeIndices(
   columnType: ColumnTypeEnum,
-  data?: QueryResultBundle,
+  selectColumns: SelectColumn[] = [],
 ): number[] {
-  return (data?.selectColumns ?? []).reduce((prev: number[], curr, index) => {
+  return selectColumns.reduce((prev: number[], curr, index) => {
     if (curr.columnType === columnType) {
       return [...prev, index]
     }
@@ -80,40 +80,7 @@ export function getTypeIndices(
   }, [])
 }
 
-/**
- * Grab the next page of data, pulling in 25 more rows.
- *
- * @param {*} queryRequest Query request as specified by
- *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
- */
-export const getNextPageOfData = async (
-  queryRequest: QueryBundleRequest,
-  data: QueryResultBundle,
-  token?: string,
-) => {
-  return await SynapseClient.getQueryTableResults(queryRequest, token)
-    .then((newData: QueryResultBundle) => {
-      const oldData: QueryResultBundle = cloneDeep(data)!
-      // push on the new data retrieved from the API call
-      const hasMoreData =
-        newData.queryResult!.queryResults.rows.length ===
-          queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE
-      oldData.queryResult!.queryResults.rows.push(
-        ...newData.queryResult!.queryResults.rows,
-      )
-      const newState: PartialStateObject = {
-        hasMoreData,
-        data: oldData,
-      }
-      return newState
-    })
-    .catch(err => {
-      console.log('Failed to get data ', err)
-      return {} as PartialStateObject
-    })
-}
-
-export const isFacetAvailable = (
+export const hasFacetedSelectColumn = (
   facets?: FacetColumnResult[],
   selectColumns?: SelectColumn[],
 ): boolean => {
@@ -197,12 +164,29 @@ export function hasResettableFilters(
   return hasFacetFilters || hasAdditionalFilters
 }
 
+/**
+ * Returns true iff a table query can be added to the download list.
+ * @param entity
+ * @param entityColumnId
+ */
 export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
   entity?: T,
+  entityColumnId?: string,
 ) {
+  const viewCannotIncludeFiles =
+    // EntityViews without the file bit mask cannot contain files
+    (entity && isEntityView(entity) && !hasFilesInView(entity)) ||
+    // DatasetCollections cannot contain files
+    (entity && isDatasetCollection(entity))
+
+  if (viewCannotIncludeFiles) {
+    return false
+  }
+
   return Boolean(
-    entity &&
-      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)),
+    entityColumnId ||
+      (entity &&
+        ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))),
   )
 }
 
@@ -313,4 +297,35 @@ export function facetObjectMatchesDefinition(
     },
     { columnName: facetObject.columnName, jsonPath: facetObject.jsonPath },
   )
+}
+
+export function partitionQueryBundleRequestIntoRowsAndMetadata(
+  queryBundleRequest: QueryBundleRequest,
+): {
+  rowDataRequest: QueryBundleRequest
+  queryMetadataRequest: QueryBundleRequest
+} {
+  const rowDataRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    // Get just the rows (if they were originally requested)
+    partMask: queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS,
+  }
+
+  const queryMetadataRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    query: {
+      ...queryBundleRequest.query,
+      // Remove query fields that don't affect the results.
+      offset: undefined,
+      limit: undefined,
+      sort: undefined,
+    },
+    // Bitwise remove the query result flag from the mask
+    partMask: queryBundleRequest.partMask & ~BUNDLE_MASK_QUERY_RESULTS,
+  }
+
+  return {
+    rowDataRequest,
+    queryMetadataRequest,
+  }
 }

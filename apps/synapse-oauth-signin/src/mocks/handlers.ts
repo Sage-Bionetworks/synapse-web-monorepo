@@ -1,6 +1,14 @@
 import { rest } from 'msw'
 import mockOauthClient from './MockOAuthClient'
 
+let hasConsented = false
+
+export function resetConsentedInMockService(newValue: boolean) {
+  hasConsented = newValue
+}
+
+export const ACCESS_CODE_PROVIDED_BY_SERVER = 'someAccessCode'
+
 export const handlers = [
   rest.get(
     'https://repo-prod.prod.sagebase.org/repo/v1/userProfile',
@@ -47,11 +55,11 @@ export const handlers = [
 
   rest.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck',
-    (req, res, ctx) => {
+    async (req, res, ctx) => {
       return res(
         ctx.status(200),
         ctx.json({
-          granted: false,
+          granted: hasConsented,
         }),
       )
     },
@@ -60,12 +68,57 @@ export const handlers = [
   rest.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
     (req, res, ctx) => {
+      hasConsented = true
       return res(
         ctx.status(200),
         ctx.json({
-          access_code: 'someAccessCode',
+          access_code: ACCESS_CODE_PROVIDED_BY_SERVER,
         }),
       )
     },
   ),
+
+  rest.delete(
+    'https://repo-prod.prod.sagebase.org/auth/v1/sessionAccessToken',
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(''))
+    },
+  ),
 ]
+
+export function getOAuth2DescriptionWithUnverifiedClientHandler() {
+  return rest.post(
+    'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/description',
+    async (req, res, ctx) => {
+      const requestBody = await req.json()
+      const clientId = requestBody.clientId
+      return res(
+        ctx.status(403),
+        ctx.json({
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `The OAuth client (${clientId}) is not verified.`,
+          errorCode: 'OAUTH_CLIENT_NOT_VERIFIED',
+        }),
+      )
+    },
+  )
+}
+
+export function getOAuth2DescriptionWithInvalidRedirectUriHandler() {
+  return rest.post(
+    'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/description',
+    async (req, res, ctx) => {
+      const requestBody = await req.json()
+      const redirectUri = requestBody.redirectUri
+      return res(
+        ctx.status(400),
+        ctx.json({
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `invalid_redirect_uri. Redirect URI ${redirectUri} is not registered for OpenID Certification`,
+          error: 'invalid_redirect_uri',
+          error_description: `Redirect URI ${redirectUri} is not registered for OpenID Certification`,
+        }),
+      )
+    },
+  )
+}

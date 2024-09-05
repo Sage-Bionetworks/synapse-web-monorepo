@@ -31,6 +31,7 @@ import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstruct
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
 import { SynapseHomepage } from './components/SynapseHomepage'
+import { SynapseHomepageV2 } from './components/SynapseHomepageV2'
 import { SynapseNavDrawer } from './components/SynapseNavDrawer/SynapseNavDrawer'
 import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetItemsEditor'
 import StandaloneQueryWrapper from './components/StandaloneQueryWrapper/StandaloneQueryWrapper'
@@ -76,7 +77,16 @@ import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTabl
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
 import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
+import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
 import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
+import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
+import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
+import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
+import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
+import { CookiesNotification } from './components/CookiesNotification'
+import { getCurrentCookiePreferences } from './utils/hooks'
+import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
+import { version } from '../package.json'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -107,6 +117,8 @@ const SynapseComponents = {
   PageProgress,
   ProjectViewCarousel,
   SynapseHomepage,
+  SynapseHomepageV2,
+  SynapseFooter,
   EntityFinder,
   ErrorPage,
   EntityBadgeIcons,
@@ -159,11 +171,17 @@ const SynapseComponents = {
   TableColumnSchemaEditor,
   SqlDefinedTableEditorModal,
   EntityViewScopeEditorModal,
+  SubmissionViewScopeEditorModal,
+  AccessRequirementAclEditor,
+  CreateOrUpdateAccessRequirementWizard,
+  GoogleAnalytics,
+  CookiesNotification,
+  getCurrentCookiePreferences,
+  EntityAclEditorModal,
 }
 
 // Include the version in the build
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-const SynapseReactClientVersion = require('../package.json').version
+const SynapseReactClientVersion = version
 
 export {
   HttpClient,

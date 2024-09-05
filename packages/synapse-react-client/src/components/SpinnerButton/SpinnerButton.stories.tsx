@@ -1,10 +1,5 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import SpinnerButton from './SpinnerButton'
-import {
-  SynapseContextConsumer,
-  SynapseContextProvider,
-} from '../../utils/context'
 
 const meta: Meta = {
   title: 'UI/SpinnerButton',
@@ -12,34 +7,14 @@ const meta: Meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
     showSpinner: {
       control: { type: 'boolean' },
-      defaultValue: false,
     },
   },
-  render: args => {
-    const isAuthenticated = args.isAuthenticated
-    delete args.isAuthenticated
-    return (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <div>
-              <SpinnerButton {...args} />
-            </div>
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    )
+  args: {
+    isAuthenticated: true,
+    showSpinner: false,
   },
 } satisfies Meta
 

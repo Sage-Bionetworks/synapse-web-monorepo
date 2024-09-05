@@ -36,6 +36,7 @@ import {
   mockExternalS3UploadDestination,
 } from '../../../../mocks/mock_upload_destination'
 import { getEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '../../../../mocks/msw/handlers/featureFlagHandlers'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -95,6 +96,9 @@ describe('TitleBarProperties', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     useDoiAssociationOverride(null)
+  })
+  beforeEach(() => {
+    server.use(getFeatureFlagsOverride())
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

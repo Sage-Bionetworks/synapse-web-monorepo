@@ -1,14 +1,12 @@
+import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
+import type { QueryVisualizationWrapperProps } from './QueryVisualizationWrapper'
 import {
-  QueryVisualizationWrapper,
   QueryVisualizationContext,
-  useQueryVisualizationContext,
-  QueryVisualizationContextProvider,
   QueryVisualizationContextConsumer,
-} from './QueryVisualizationWrapper'
-import type {
+  QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-  QueryVisualizationWrapperProps,
-} from './QueryVisualizationWrapper'
+  useQueryVisualizationContext,
+} from './QueryVisualizationContext'
 
 export {
   QueryVisualizationWrapper,
@@ -16,8 +14,7 @@ export {
   useQueryVisualizationContext,
   QueryVisualizationContextProvider,
   QueryVisualizationContextConsumer,
-  QueryVisualizationContextType,
-  QueryVisualizationWrapperProps,
 }
+export type { QueryVisualizationContextType, QueryVisualizationWrapperProps }
 
 export default QueryVisualizationWrapper

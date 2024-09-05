@@ -31,7 +31,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                   <strong>Welcome to {sourceApp?.friendlyName}!</strong>
                 </Typography>
                 <Typography variant="body1" sx={{ paddingBottom: '10px' }}>
-                  You’ve created a Sage Account, which you can use on the{' '}
+                  You’ve created a Synapse account, which you can use on the{' '}
                   {sourceApp?.friendlyName}.
                 </Typography>
                 <Typography variant="body1" sx={{ paddingBottom: '30px' }}>
@@ -47,7 +47,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                     sx={{ padding: '10px', height: '100%' }}
                     onClick={() => {
                       window.location.assign(
-                        `https://www.synapse.org/#!Team:${membershipInvitation.teamId}`,
+                        `https://www.synapse.org/Team:${membershipInvitation.teamId}`,
                       )
                     }}
                   >
@@ -89,14 +89,15 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                   variant="headline3"
                   sx={{ paddingBottom: '10px', fontWeight: 500 }}
                 >
-                  Your <strong>Sage Account</strong> can also be used to access
-                  all these resources.
+                  Your <strong>Synapse account</strong> can also be used to
+                  access all these resources.
                 </Typography>
                 <Typography variant="body1" sx={{ paddingBottom: '10px' }}>
                   <Link
                     color="primary"
                     component={RouterLink}
                     to="/sageresources"
+                    target="_blank"
                   >
                     More about these resources
                   </Link>

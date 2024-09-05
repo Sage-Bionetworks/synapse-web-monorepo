@@ -5,14 +5,10 @@ import { ReleaseCardConfig } from './ReleaseCardTypes'
 
 /**
  * Column index values into the row values given provided in "data"
+ * Used to define release metadata (entity id, name, date)
+ * as well as statistics and button to explore data
  */
-export type ReleaseCardSchema =
-  // columns required in every table that drives a ReleaseCard
-  {
-    releaseEntity: number
-    releaseVersion: number
-    releaseDate: number
-  } & Record<string, number> // columns used to define statistics and button to explore data
+export type ReleaseCardSchema = Record<string, number>
 
 export type ReleaseCardProps = {
   schema: ReleaseCardSchema
@@ -23,7 +19,7 @@ export type ReleaseCardProps = {
 
 /**
  * Specialized Release Card, initially implemented for the GENIE portal.
- * Expects the following columns: releaseEntity, releaseVersion, releaseDate,
+ * Expects columns used to define release metadata (entity id, name, date)
  * as well as statistics columns and columns for defining a button to explore data
  * as defined in the releaseCardConfig
  */

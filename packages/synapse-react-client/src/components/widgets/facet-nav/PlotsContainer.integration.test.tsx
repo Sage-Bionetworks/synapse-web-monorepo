@@ -15,8 +15,8 @@ import failOnConsole from 'jest-fail-on-console'
 import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
 import { QueryWrapper } from '../../QueryWrapper'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -43,7 +43,7 @@ function getButtonOnFacet(
   text: string,
   facetIndex: number = 0,
 ): HTMLElement | undefined {
-  const itemList = screen.getAllByLabelText(text, { exact: false })
+  const itemList = screen.getAllByRole('button', { name: text })
   if (itemList ? [facetIndex] : undefined) {
     return itemList[facetIndex]
   } else {
@@ -68,7 +68,7 @@ describe('facets display hide/show', () => {
   failOnConsole()
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(testData))
+    registerTableQueryResult(lastQueryRequest.query, testData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -105,7 +105,8 @@ describe('facets display hide/show', () => {
   it('if there are only 2 facets, show more button should not exist', async () => {
     const data = cloneDeep(testData)
     data.facets = [data.facets![0], data.facets![2]]
-    server.use(...getHandlersForTableQuery(data))
+    registerTableQueryResult(lastQueryRequest.query, data)
+
     init()
     expect(await screen.findAllByRole('figure')).toHaveLength(2)
 
@@ -131,7 +132,10 @@ describe('facets display hide/show', () => {
     await waitFor(() => {
       expect(screen.getAllByRole('figure')).toHaveLength(2)
     })
-    const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
+    const closeFacetPlotButton = getButtonOnFacet(
+      'Hide graph under Show More',
+      0,
+    )!
     await userEvent.click(closeFacetPlotButton)
     expect(await screen.findAllByRole('figure')).toHaveLength(1)
   })
@@ -143,7 +147,7 @@ describe('facets display hide/show', () => {
     })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
-    const expandButton = getButtonOnFacet('expand', 1)!
+    const expandButton = getButtonOnFacet('Expand to large graph', 1)!
     await userEvent.click(expandButton)
     const dialog = await screen.findByRole('dialog')
     await within(dialog).findByRole('figure')

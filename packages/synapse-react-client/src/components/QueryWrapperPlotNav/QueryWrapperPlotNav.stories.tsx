@@ -6,21 +6,22 @@ import {
   MEDIUM_USER_CARD,
 } from '../../utils/SynapseConstants'
 import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   Query,
 } from '@sage-bionetworks/synapse-types'
-import QueryWrapperPlotNav from './QueryWrapperPlotNav'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import QueryWrapperPlotNav, {
+  QueryWrapperPlotNavProps,
+} from './QueryWrapperPlotNav'
 import { displayToast } from '../ToastMessage'
-import { CustomControlCallbackData } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
+import { CustomControlCallbackData } from '../SynapseTable'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
 import { SynapseClient } from '../../index'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
+import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<QueryWrapperPlotNavProps> = {
   title: 'Explore/QueryWrapperPlotNav',
   component: QueryWrapperPlotNav,
   decorators: [
@@ -33,7 +34,11 @@ const meta = {
       )
     },
   ],
-} satisfies Meta
+  args: {
+    onQueryChange: fn(),
+    onQueryResultBundleChange: fn(),
+  },
+}
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -67,6 +72,7 @@ export const Cards: Story = {
       },
     ],
     limit: 5,
+    initialLimit: 2,
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
@@ -182,7 +188,7 @@ export const FileView: Story = {
     rgbIndex: 1,
     name: 'Data',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-    sql: 'SELECT * FROM syn11346063.28',
+    sql: 'SELECT * FROM syn11346063',
     hideSqlEditorControl: false,
   },
 }
@@ -255,7 +261,9 @@ const handleRowSelectionCustomCommandClick = async (
   )
   console.log('Rows selected:')
   console.log(event.selectedRows)
-  const idColIndex = event.data?.columnModels?.findIndex(cm => cm.name === 'id')
+  const idColIndex = event.queryMetadata?.columnModels?.findIndex(
+    cm => cm.name === 'id',
+  )
 
   const ids = isSelection
     ? event.selectedRows!.map(row => row.values[idColIndex!]!)
@@ -281,7 +289,7 @@ const handleRowSelectionCustomCommandClick = async (
 // See handleParticipantWorkflowChange in crc-researcher for a more complex example
 export const TableRowSelectionWithCustomCommand: Story = {
   args: {
-    sql: 'SELECT * FROM syn51186974',
+    sql: 'SELECT * FROM syn11346063.57',
     isRowSelectionVisible: true,
     tableConfiguration: {},
     name: 'Row Selection Demo',
@@ -292,7 +300,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
     // while the participant view of the same Virtual Table should have another.
     // The custom commands should add filters that target the other perspective
     // (file command adds filter for participant perspective, participant command adds filter for the file perspective)
-    additionalFiltersSessionStorageKey: 'syn51186974-selectedfiles',
+    additionalFiltersSessionStorageKey: ' syn11346063-selectedfiles',
     customControls: [
       {
         buttonText: 'Row Custom Command',
@@ -334,7 +342,7 @@ export const TableWithNoDownloadAccess: Story = {
         {
           primaryButtonConfig: {
             text: 'Open Entity Page',
-            href: `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+            href: `https://www.synapse.org/Synapse:${benefactorEntityId}`,
           },
         },
       )
@@ -407,13 +415,36 @@ export const MaterializedViewOfFiles: Story = {
     tableConfiguration: {
       showAccessColumn: true,
       showDirectDownloadColumn: true,
-      rowEntityIDColumnName: 'id',
-      rowEntityVersionColumnName: 'currentVersion',
     },
     name: 'MV with File Commands Demo',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'currentVersion',
+  },
+}
+
+export const TableWithClickWrap: Story = {
+  parameters: {
+    stack: 'development',
+  },
+  args: {
+    sql: 'SELECT * FROM syn14227599',
+
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true,
+    },
+
+    name: 'Table with Click Wrap',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    showExportToCavatica: true,
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'currentVersion',
   },
 }

@@ -74,7 +74,7 @@ export function ProjectViewCard(props: ProjectCardProps) {
           color="primary"
           onClick={() =>
             window.open(
-              `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synId}`,
+              `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${synId}`,
               '_blank',
               'noopener',
             )

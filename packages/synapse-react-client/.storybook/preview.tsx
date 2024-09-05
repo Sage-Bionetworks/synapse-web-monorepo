@@ -27,6 +27,10 @@ import {
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
+import { Decorator } from '@storybook/react'
+
+// KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
+import 'katex/dist/katex.css'
 
 faker.seed(12345)
 
@@ -119,7 +123,7 @@ if (isChromatic() && document.fonts) {
   loaders.push(fontLoader)
 }
 
-export const decorators = [
+export const decorators: Decorator[] = [
   (Story, context) => {
     return (
       <StorybookComponentWrapper storybookContext={context}>

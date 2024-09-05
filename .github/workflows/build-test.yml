@@ -16,15 +16,12 @@ jobs:
     # We should test all active LTS releases, but not until our test suite is less flaky
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
     steps:
       - uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-        # Portals won't build without a configuration. For now, copy the test configuration.
-        # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
-      - run: pnpm nx run portals:copy-test-configuration
       - run: pnpm nx affected --target=build --base=remotes/origin/main
   test:
     runs-on:
@@ -36,7 +33,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx run portals:copy-test-configuration
       - id: test
         run: pnpm nx affected --target test --base=remotes/origin/main
       - name: Upload test report
@@ -62,6 +58,4 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-      # Portals test configuration must be loaded for a successful type check
-      - run: pnpm nx run portals:copy-test-configuration
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main

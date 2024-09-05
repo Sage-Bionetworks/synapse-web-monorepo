@@ -4,7 +4,6 @@ import LoginPage from '../LoginPage'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { FullContextProvider } from 'synapse-react-client'
-import { describe, it } from 'vitest'
 
 describe('App initialization tests', () => {
   it.skip('renders a branded experience', async () => {

@@ -6,6 +6,7 @@ import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
 import {
   InfiniteData,
+  QueryClient,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -15,6 +16,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
+  useSuspenseQuery,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
@@ -27,6 +29,7 @@ import {
   AccessControlList,
   ColumnModel,
   Entity,
+  EntityBundle,
   EntityHeader,
   EntityId,
   EntityJson,
@@ -40,6 +43,8 @@ import {
 import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
 import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
+import { KeyFactory } from '../KeyFactory'
+import { useGetEntityBundleQueryOptions } from './useEntityBundle'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -105,14 +110,13 @@ export function useCreateEntity(
     mutationFn: (entity: Entity) =>
       SynapseClient.createEntity(entity, accessToken),
     onSuccess: async (newEntity, variables, ctx) => {
+      const entityDataQueryKey = keyFactory.getEntityQueryKey(newEntity.id!)
+      queryClient.setQueryData(entityDataQueryKey, newEntity)
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
         newEntity.id!,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityQueryKey(newEntity.id!),
-        newEntity,
+        entityDataQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -133,14 +137,13 @@ export function useUpdateEntity<T extends Entity>(
     mutationFn: (entity: T) =>
       SynapseClient.updateEntity<T>(entity, accessToken),
     onSuccess: async (updatedEntity, variables, ctx) => {
+      const entityDataQueryKey = keyFactory.getEntityQueryKey(updatedEntity.id!)
+      queryClient.setQueryData(entityDataQueryKey, updatedEntity)
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
         updatedEntity.id!,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityQueryKey(updatedEntity.id!),
-        updatedEntity,
+        entityDataQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -302,12 +305,18 @@ export function useUpdateViaJson(
     },
     onSuccess: async (data, variables, ctx) => {
       const entityId = data.id
-
-      await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
-      queryClient.setQueryData(
-        // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
-        keyFactory.getEntityJsonQueryKey(entityId, undefined, false),
-        data,
+      // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
+      const entityJsonQueryKey = keyFactory.getEntityJsonQueryKey(
+        entityId,
+        undefined,
+        false,
+      )
+      queryClient.setQueryData(entityJsonQueryKey, data)
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        entityId,
+        entityJsonQueryKey,
       )
 
       if (options?.onSuccess) {
@@ -381,6 +390,51 @@ export function useGetEntityPermissions(
   })
 }
 
+const onMutateEntityAclSuccess = async (
+  entityId: string,
+  updatedACL: AccessControlList | null,
+  queryClient: QueryClient,
+  keyFactory: KeyFactory,
+) => {
+  const entityAclQueryKey = keyFactory.getEntityACLQueryKey(entityId)
+  if (updatedACL) {
+    queryClient.setQueryData(entityAclQueryKey, updatedACL)
+  }
+  await invalidateAllQueriesForEntity(
+    queryClient,
+    keyFactory,
+    entityId,
+    entityAclQueryKey,
+  )
+}
+
+export function useCreateEntityACL(
+  options?: Partial<
+    UseMutationOptions<AccessControlList, SynapseClientError, AccessControlList>
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: (acl: AccessControlList) =>
+      SynapseClient.createEntityACL(acl, accessToken),
+    onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+      await onMutateEntityAclSuccess(
+        updatedACL.id,
+        updatedACL,
+        queryClient,
+        keyFactory,
+      )
+
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedACL, variables, ctx)
+      }
+    },
+  })
+}
+
 export function useUpdateEntityACL(
   options?: Partial<
     UseMutationOptions<AccessControlList, SynapseClientError, AccessControlList>
@@ -394,20 +448,81 @@ export function useUpdateEntityACL(
     mutationFn: (acl: AccessControlList) =>
       SynapseClient.updateEntityACL(acl, accessToken),
     onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
-      await invalidateAllQueriesForEntity(
+      await onMutateEntityAclSuccess(
+        updatedACL.id,
+        updatedACL,
         queryClient,
         keyFactory,
-        updatedACL.id,
-      )
-      queryClient.setQueryData(
-        keyFactory.getEntityACLQueryKey(updatedACL.id),
-        updatedACL,
       )
 
       if (options?.onSuccess) {
         await options.onSuccess(updatedACL, variables, ctx)
       }
     },
+  })
+}
+
+export function useDeleteEntityACL(
+  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>({
+    ...options,
+    mutationFn: (entityId: string) =>
+      SynapseClient.deleteEntityACL(entityId, accessToken),
+    onSuccess: async (result: void, entityId, ctx) => {
+      await onMutateEntityAclSuccess(entityId, null, queryClient, keyFactory)
+
+      if (options?.onSuccess) {
+        await options.onSuccess(result, entityId, ctx)
+      }
+    },
+  })
+}
+
+function useGetEntityBenefactorACLQueryOptions(
+  entityId: string,
+): UseQueryOptions<
+  EntityBundle<{ includeBenefactorACL: true }>,
+  SynapseClientError,
+  AccessControlList
+> {
+  const opts = useGetEntityBundleQueryOptions<{ includeBenefactorACL: true }>(
+    entityId,
+    undefined,
+    {
+      includeBenefactorACL: true,
+    },
+  )
+
+  return {
+    ...opts,
+    select: data => data.benefactorAcl,
+  }
+}
+
+/**
+ * Retrieve the ACL of an entity. This call will succeed even for entities where the caller
+ * does not have READ permission.
+ * @param entityId
+ * @param options
+ */
+export function useSuspenseGetEntityBenefactorACL(
+  entityId: string,
+  options?: Partial<
+    UseQueryOptions<
+      EntityBundle<{ includeBenefactorACL: true }>,
+      SynapseClientError,
+      AccessControlList
+    >
+  >,
+) {
+  const queryOptions = useGetEntityBenefactorACLQueryOptions(entityId)
+  return useSuspenseQuery({
+    ...options,
+    ...queryOptions,
   })
 }
 

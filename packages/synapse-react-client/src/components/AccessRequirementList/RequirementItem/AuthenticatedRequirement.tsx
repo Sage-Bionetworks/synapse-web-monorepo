@@ -1,11 +1,10 @@
 import React from 'react'
 import { useGetCurrentUserProfile } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
-import { SynapseConstants } from '../../../utils'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import { SynapseConstants, useSynapseContext } from '../../../utils'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { useOneSageURL } from '../../../utils/hooks/useOneSageURL'
 
 /**
  * Displays a data access request requirement prompts the user to authenticate if not already signed in.
@@ -13,6 +12,8 @@ import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 export default function AuthenticatedRequirement() {
   const { accessToken } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile()
+
+  const registrationUrl = useOneSageURL('/register1')
 
   const isSignedIn = !!accessToken
 
@@ -30,11 +31,7 @@ export default function AuthenticatedRequirement() {
             <Link className={SynapseConstants.SRC_SIGN_IN_CLASS}>Sign in</Link>{' '}
             with a Sage Platform (Synapse) user account. If you do not have a
             Sage account, you can{' '}
-            <Link
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
-            >
-              register for free.
-            </Link>
+            <Link href={registrationUrl.toString()}>register for free.</Link>
           </Typography>
         </>
       )}

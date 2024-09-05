@@ -1,0 +1,218 @@
+// Import the theme css
+@use './variables' as Portal;
+
+.crawler-link {
+  position: absolute;
+  top: -500px;
+  left: 0px;
+}
+
+.nav {
+  .mb-user-extra,
+  .nav-mobile-menu-btn {
+    display: none;
+  }
+}
+
+.mobile-signout-container,
+.signout-button-mb,
+.user-loggedIn-mb {
+  display: none;
+}
+
+@media screen and (max-width: 1280px) {
+  $mb-menu-item-padding: 46px;
+  $mb-menu-divider: 1px solid #b2b3b6;
+
+  .nav.top-nav {
+    background: rgba(255, 255, 255, 1);
+  }
+  .nav {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-areas:
+      'header-logo mobile-topnav-btn'
+      'mobile-topnav mobile-topnav';
+    height: auto;
+
+    .nav-mobile-menu-btn {
+      display: block;
+      cursor: pointer;
+    }
+    .nav-logo-container {
+      grid-area: header-logo;
+    }
+    .mb-open,
+    .mb-close {
+      grid-area: mobile-topnav-btn;
+      text-align: right;
+      padding: 24px 18px;
+      font-size: 16px;
+    }
+    .mb-close {
+      display: none;
+      align-self: center;
+      padding: 28px 18px;
+    }
+    .nav-link-container {
+      grid-area: mobile-topnav;
+      flex-basis: 100%;
+      flex-direction: column-reverse;
+      padding-right: 0;
+      display: flex;
+      height: 0;
+      overflow-y: hidden;
+
+      .nav-button {
+        padding: 18px $mb-menu-item-padding;
+        margin: 0;
+        width: 100%;
+        height: auto;
+        text-align: left;
+        justify-content: left;
+        border-bottom: 0;
+      }
+
+      .show .nav-button {
+        background-color: Portal.$secondary-action-color;
+        color: #fff;
+        border-bottom: 0;
+        border-radius: 0;
+      }
+
+      .nav-button-signin {
+        padding: 20px 22px;
+        border-top: $mb-menu-divider;
+        margin-top: 30px;
+        margin-left: 0px;
+        box-sizing: border-box;
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
+      #signin-button {
+        width: 100%;
+      }
+      .signout-button-mb {
+        display: block;
+      }
+
+      .dropdown-toggle {
+        &:hover {
+          border-bottom: 0;
+        }
+
+        &::after {
+          float: right;
+          content: '+';
+          font-size: 30px;
+          line-height: 16px;
+          font-weight: normal;
+        }
+      }
+
+      .dropdown-menu {
+        position: static !important; // override inline !important injected by js
+        transform: none !important; // override inline !important injected by js
+        z-index: auto;
+        float: none;
+        background-clip: inherit;
+        border: 0;
+        box-shadow: none;
+      }
+      .dropdown-item {
+        width: 100%;
+      }
+      .dropdown-menu > li > a {
+        padding: 3px $mb-menu-item-padding;
+        color: Portal.$dark-gray;
+      }
+
+      .Download-Link {
+        text-align: left;
+        padding: 20px 42px;
+        order: 1;
+        border-bottom: $mb-menu-divider;
+
+        // Download size
+        .position-by-button {
+          position: relative;
+          display: inline-block;
+          top: -14px;
+          right: 16px;
+        }
+      }
+    }
+
+    .user-loggedIn {
+      display: none !important; // to override another important
+    }
+
+    .user-loggedIn-mb {
+      display: block;
+      order: 2;
+      padding: 18px 42px;
+      border-bottom: 1px solid #b2b3b6;
+
+      & > * {
+        vertical-align: middle;
+      }
+
+      &:link,
+      &:hover,
+      &:visited,
+      &:active {
+        color: #404b63; // text color
+      }
+
+      .user-expand {
+        display: none;
+      }
+
+      .user-fullname {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 19px;
+      }
+      .user-account {
+        font-size: 14px;
+        line-height: 21px;
+        text-decoration: Portal.$primary-action-color underline;
+      }
+      .mb-user-extra {
+        display: inline-block;
+        margin-left: 20px;
+      }
+    }
+
+    &.mb-active {
+      .nav-link-container {
+        height: auto;
+        overflow-y: visible;
+
+        .show .dropdown-toggle {
+          &::after {
+            content: '—';
+            font-size: 22px;
+          }
+        }
+        .show #user-menu-button {
+          color: unset;
+        }
+      }
+      .mb-open {
+        display: none;
+      }
+      .mb-close {
+        display: block;
+        line-height: 16px;
+        font-size: 24px;
+      }
+    }
+
+    .mobile-signout-container {
+      display: block;
+    }
+  }
+}

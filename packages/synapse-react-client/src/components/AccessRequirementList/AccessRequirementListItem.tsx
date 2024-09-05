@@ -16,8 +16,8 @@ export type AccessRequirementListItemProps = {
   accessRequirement: AccessRequirement
   onHide: () => void
   onRequestAccess: (accessRequirement: ManagedACTAccessRequirement) => void
-  subjectId: string
-  subjectType: RestrictableObjectType
+  subjectId?: string
+  subjectType?: RestrictableObjectType
 }
 
 /**

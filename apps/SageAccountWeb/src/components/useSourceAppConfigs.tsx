@@ -14,7 +14,7 @@ export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
   appId: '',
   appURL: '',
   description: '',
-  friendlyName: 'Sage Bionetworks',
+  friendlyName: 'Synapse',
   requestAffiliation: false,
   logo: <></>,
   isPublicized: true,
@@ -67,7 +67,10 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
   return rows?.map(row => {
     const rowVals = row.values
     const fileHandleId = rowVals[logoFileHandleColIndex]
-    const logo = <SourceAppImage fileHandleId={fileHandleId} />
+    const friendlyName = rowVals[friendlyNameColIndex] ?? ''
+    const logo = (
+      <SourceAppImage fileHandleId={fileHandleId} friendlyName={friendlyName} />
+    )
     const appPalette: PaletteOptions = {
       ...Palettes.palette,
       primary: Palettes.generatePalette(rowVals[primaryColorColIndex] ?? ''),
@@ -79,7 +82,7 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
       appId: rowVals[appIdColIndex] ?? '',
       appURL: rowVals[appURLColIndex] ?? '',
       description: rowVals[descriptionColIndex] ?? '',
-      friendlyName: rowVals[friendlyNameColIndex] ?? '',
+      friendlyName: friendlyName,
       requestAffiliation:
         rowVals[requestAffiliationColIndex] == 'true' ?? false,
       logo,

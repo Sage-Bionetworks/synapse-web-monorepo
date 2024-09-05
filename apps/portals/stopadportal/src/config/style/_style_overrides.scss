@@ -1,0 +1,29 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+
+#header,
+#footer {
+  background-color: Portal.$primary-action-color;
+}
+
+.SRC-portalCard a {
+  color: Portal.$primary-action-color !important;
+}
+
+.SRC-primary-background-color-border-left {
+  border-left-color: Portal.$primary-action-color !important;
+}
+.SRC-mailchimpSubscribeContainer {
+  button {
+    background-color: Portal.$primary-action-color !important;
+  }
+}
+
+footer {
+  img.nav-logo {
+    width: 250px;
+  }
+}
+
+.stop-ad-home-page {
+  margin-top: 20px;
+}

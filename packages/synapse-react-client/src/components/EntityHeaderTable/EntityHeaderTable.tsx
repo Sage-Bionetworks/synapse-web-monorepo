@@ -50,6 +50,7 @@ import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import { useEntityHeaderTableState } from './useEntityHeaderTableState'
 import { noop, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
+import { StyledTableContainer } from '../styled/StyledTableContainer'
 
 const DEFAULT_FINDER_CONFIG: EntityFinderModalProps['configuration'] = {
   selectMultiple: true,
@@ -362,20 +363,13 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         )}
       </Box>
       {totalRowCount > 0 && (
-        <Box
-          sx={theme => ({
-            overflow: 'auto',
-            maxHeight: '250px',
-            paddingLeft: '2px',
+        <StyledTableContainer
+          sx={{
             th: {
-              height: '38px',
-              backgroundColor: theme.palette.grey[200],
               zIndex: 100,
+              maxHeight: '250px',
             },
-            ['tr:nth-of-type(2n)']: {
-              backgroundColor: theme.palette.grey[100],
-            },
-          })}
+          }}
         >
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
@@ -480,7 +474,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
               })}
             </tbody>
           </table>
-        </Box>
+        </StyledTableContainer>
       )}
       <EntityFinderModal
         configuration={entityFinderConfiguration}

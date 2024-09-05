@@ -22,7 +22,7 @@ export const SourceApp = (props: SourceAppProps) => {
       {isAccountCreationTextVisible && (
         <div>
           <p>
-            A Sage account is required to log into {sourceApp?.friendlyName}.
+            A Synapse account is required to log into {sourceApp?.friendlyName}.
           </p>
           <p>Create an account to get started.</p>
         </div>

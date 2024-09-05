@@ -287,8 +287,10 @@ export class SynapseFormWrapper extends React.Component<
           errorTitle,
         )
       } finally {
-        const error = `Please Provide the ${errorTitle} before saving`
-        this.onError({ message: error })
+        const error = new Error(
+          `Please Provide the ${errorTitle} before saving`,
+        )
+        this.onError(error)
       }
       return
     }
@@ -308,7 +310,7 @@ export class SynapseFormWrapper extends React.Component<
 
       this.finishedProcessing(StatusEnum.SAVE_SUCCESS, 'File Saved')
     } catch (error) {
-      this.onError({ message: error })
+      this.onError(error)
     }
   }
 

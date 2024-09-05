@@ -11,6 +11,6 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     useMemoryRouter: true,
-    routerBaseName: '#!/Other Components/ReviewerDashboard',
+    routerBaseName: '/Other Components/ReviewerDashboard',
   },
 }

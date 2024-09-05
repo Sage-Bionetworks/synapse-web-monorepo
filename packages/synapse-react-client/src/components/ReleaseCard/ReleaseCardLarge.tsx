@@ -1,10 +1,11 @@
 import { CalendarTodayTwoTone } from '@mui/icons-material'
-import { Box, Button, Divider, Link, Stack, Typography } from '@mui/material'
+import { Box, Button, Divider, Stack, Typography } from '@mui/material'
 import React from 'react'
+import { Link as ReactRouterLink } from 'react-router-dom'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardLargeConfig, ReleaseCardStat } from './ReleaseCardTypes'
 import {
-  createButtonToExploreDataPathAndQueryString,
+  formatExplorePagePathAndQueryString,
   formatReleaseCardData,
 } from './ReleaseCardUtils'
 
@@ -41,19 +42,25 @@ export const ReleaseCardLarge: React.FunctionComponent<
   includePortalCardClass = true,
   releaseCardConfig,
 }: ReleaseCardLargeProps) => {
-  const { releaseVersion, releaseDate, stats } = formatReleaseCardData(
+  const { releaseName, releaseDate, stats } = formatReleaseCardData(
     schema,
     data,
+    releaseCardConfig.releaseMetadataConfig,
     releaseCardConfig.statsConfig,
   )
-  const { buttonToExplorePageConfig } = releaseCardConfig
-  const pathAndQuery = createButtonToExploreDataPathAndQueryString(
+  const { primaryBtnConfig, secondaryBtnConfig } = releaseCardConfig
+  const primaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
     schema,
     data,
-    buttonToExplorePageConfig,
+    primaryBtnConfig,
+  )
+  const secondaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
+    schema,
+    data,
+    secondaryBtnConfig,
   )
 
-  if (releaseVersion === null) return <></>
+  if (releaseName === null) return <></>
 
   return (
     <Box
@@ -73,7 +80,7 @@ export const ReleaseCardLarge: React.FunctionComponent<
             <CalendarTodayTwoTone sx={{ color: 'grey.700' }} />
             <Typography variant="headline1">
               {releaseCardConfig.prependRelease && 'Release '}
-              {releaseVersion}
+              {releaseName}
             </Typography>
           </Stack>
           <Stack
@@ -81,15 +88,20 @@ export const ReleaseCardLarge: React.FunctionComponent<
             alignItems={{ xs: 'flex-start', sm: 'center' }}
             gap="20px"
           >
-            {buttonToExplorePageConfig && pathAndQuery && (
-              <Button variant="contained" color="primary" href={pathAndQuery}>
-                {buttonToExplorePageConfig.label}
+            {primaryBtnConfig && primaryBtnPathAndQuery && (
+              <Button
+                component={ReactRouterLink}
+                variant="contained"
+                color="primary"
+                to={primaryBtnPathAndQuery}
+              >
+                {primaryBtnConfig.label}
               </Button>
             )}
-            {releaseCardConfig.dataGuidePath && (
-              <Link href={releaseCardConfig.dataGuidePath}>
-                View Data Guide
-              </Link>
+            {secondaryBtnConfig && secondaryBtnPathAndQuery && (
+              <Button component={ReactRouterLink} to={secondaryBtnPathAndQuery}>
+                {secondaryBtnConfig.label}
+              </Button>
             )}
           </Stack>
         </Stack>

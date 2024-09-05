@@ -35,12 +35,14 @@ jobs:
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
       - name: build
+        run: pnpm nx run ${{ inputs.portal-name }}:build
+      - name: Get package path
+        id: package-path
         run: |
-          cd apps/portals
-          chmod +x ./build.sh
-          ./build.sh ${{ inputs.portal-name }}
+          packagePath=$(pnpm nx show project ${{ inputs.portal-name }} --json | jq -r '.sourceRoot')
+          echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
       - name: setup-outputbucket-staging
         run: |
-          cd apps/portals
-          echo chmod +x ./deploy.sh
-          echo ./deploy.sh push-staging ${{ inputs.portal-name }}
+          cd ${{ steps.package-path.outputs.packagePath }}
+          chmod +x ../../synapse-portal-framework/deploy.sh
+          ../../synapse-portal-framework/deploy.sh push-staging ${{ inputs.portal-name }}

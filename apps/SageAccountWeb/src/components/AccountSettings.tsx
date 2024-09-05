@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  Alert,
   Box,
   Button,
   Container,
-  Grid,
   Link,
   ListItemButton,
   MenuItem,
@@ -13,16 +13,19 @@ import {
 } from '@mui/material'
 import { UserBundle, UserProfile } from '@sage-bionetworks/synapse-types'
 import {
+  ChangePassword,
   displayToast,
   IconSvg,
   SynapseClient,
   SynapseConstants,
+  SynapseHookUtils,
   TwoFactorAuthSettingsPanel,
   useSynapseContext,
+  CookiePreferencesDialog,
+  useApplicationSessionContext,
 } from 'synapse-react-client'
 import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { Form } from 'react-bootstrap'
-import { ChangePassword } from './ChangePassword'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
@@ -30,7 +33,8 @@ import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { useSourceAppConfigs } from './useSourceAppConfigs'
+import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
+import { VerificationState } from '@sage-bionetworks/synapse-types'
 
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
@@ -66,12 +70,13 @@ export const AccountSettings = () => {
   const [changeInForm, setChangeInForm] = useState(false)
   const [orcid, setOrcid] = useState<string>()
   const [verified, setVerified] = useState<boolean>()
+  const [verificationState, setCurrentVerificationState] =
+    useState<VerificationState>()
   const [isCertified, setIsCertified] = useState<boolean>()
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
   const history = useHistory()
-  const sourceAppConfigs = useSourceAppConfigs()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
   const timezoneRef = useRef<HTMLDivElement>(null)
@@ -80,6 +85,14 @@ export const AccountSettings = () => {
   const twoFactorAuthRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
   const oauthClientManagementRef = useRef<HTMLDivElement>(null)
+  const cookieManagementRef = useRef<HTMLDivElement>(null)
+  const signOutSectionRef = useRef<HTMLDivElement>(null)
+  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
+    useState(false)
+
+  const { clearSession } = useApplicationSessionContext()
+
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     SynapseClient.getUseUtcTimeFromCookie().toString(),
@@ -92,9 +105,11 @@ export const AccountSettings = () => {
     const current = new Date()
     const nextYear = new Date()
     nextYear.setFullYear(current.getFullYear() + 1)
+    const hostname = window.location.hostname.toLowerCase()
     cookies.set(SynapseConstants.DATETIME_UTC_COOKIE_KEY, isUTCTime, {
       path: '/',
       expires: nextYear,
+      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
     })
   }, [isUTCTime])
 
@@ -117,6 +132,11 @@ export const AccountSettings = () => {
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
+    const stateHistory = bundle.verificationSubmission?.stateHistory
+    const currentState = stateHistory
+      ? stateHistory[stateHistory.length - 1]
+      : undefined
+    setCurrentVerificationState(currentState)
   }
 
   const getUserData = async () => {
@@ -167,12 +187,17 @@ export const AccountSettings = () => {
   useEffect(() => {
     if (hash === '#trust') {
       handleScroll(trustCredentialRef)
+    } else if (hash === '#ChangePassword') {
+      handleScroll(changePasswordRef)
     }
   }, [hash])
 
   const handleScroll = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
+  const isRequestValidationButtonDisabled =
+    verificationState?.state == VerificationStateEnum.APPROVED ||
+    verificationState?.state == VerificationStateEnum.SUBMITTED
 
   return (
     <div className="account-settings-page">
@@ -211,6 +236,12 @@ export const AccountSettings = () => {
               >
                 OAuth Clients
               </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
+                Privacy Preferences
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(signOutSectionRef)}>
+                Sign Out
+              </ListItemButton>
             </Paper>
 
             <div>
@@ -223,7 +254,14 @@ export const AccountSettings = () => {
                 </Typography>
                 <Typography variant={'body1'}>
                   This information is reused across all{' '}
-                  <RouterLink to="/sageresources">Sage products.</RouterLink>
+                  <Link
+                    color="primary"
+                    component={RouterLink}
+                    to="/sageresources"
+                  >
+                    Synapse resources
+                  </Link>
+                  .
                 </Typography>
                 <ProfileAvatar
                   userProfile={userProfile}
@@ -344,39 +382,6 @@ export const AccountSettings = () => {
                       onChange={e => setCompany(e.target.value)}
                       value={company}
                     />
-                    <Grid
-                      container
-                      spacing={1}
-                      mx={{ paddingTop: '5px', paddingBottom: '20px' }}
-                    >
-                      <Typography
-                        variant="smallText1"
-                        sx={{ paddingLeft: '10px', paddingTop: '8px' }}
-                      >
-                        Used by
-                      </Typography>
-                      {sourceAppConfigs?.map(config => {
-                        if (config.requestAffiliation) {
-                          return (
-                            <Grid
-                              item
-                              key={config.appId}
-                              xs={2}
-                              className="sourceAppItem"
-                            >
-                              <a
-                                style={{ display: 'block' }}
-                                href={config.appURL}
-                              >
-                                {config.logo}
-                              </a>
-                            </Grid>
-                          )
-                        } else {
-                          return <></>
-                        }
-                      })}
-                    </Grid>
                   </StyledFormControl>
                   <TextField
                     fullWidth
@@ -414,7 +419,10 @@ export const AccountSettings = () => {
                 className="account-setting-panel main-panel"
               >
                 <Typography variant={'headline2'}>Change Password</Typography>
-                <ChangePassword />
+                <ChangePassword
+                  // The user is logged in. If they want to disable 2FA, they can do so from this page.
+                  hideReset2FA={true}
+                />
               </Paper>
               <Paper
                 ref={timezoneRef}
@@ -433,6 +441,7 @@ export const AccountSettings = () => {
                     value={isUTCTimeStaged}
                     fullWidth
                     select
+                    disabled={!cookiePreferences.functionalAllowed}
                     onChange={event => {
                       setUTCTimeStaged(event.target.value)
                     }}
@@ -572,8 +581,30 @@ export const AccountSettings = () => {
                 </div>
                 <div className="credential-partition">
                   <h4>Profile Validation</h4>
-                  <CompletionStatus isComplete={verified} />
-                  <p>
+                  {(verificationState === undefined ||
+                    verificationState.state ===
+                      VerificationStateEnum.APPROVED) && (
+                    <CompletionStatus isComplete={verified} />
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.SUBMITTED && (
+                    <Alert severity="info">
+                      Application is currently pending review
+                    </Alert>
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.REJECTED && (
+                    <Alert severity="error">
+                      Application has been rejected: {verificationState?.reason}
+                    </Alert>
+                  )}
+                  {verificationState?.state ==
+                    VerificationStateEnum.SUSPENDED && (
+                    <Alert severity="warning">
+                      Validated profile suspension: {verificationState?.reason}
+                    </Alert>
+                  )}
+                  <p style={{ marginTop: '7px' }}>
                     <i>
                       Users with a validated profile can access more features
                       and data.
@@ -581,14 +612,14 @@ export const AccountSettings = () => {
                   </p>
                   <Typography variant={'body1'} sx={{ my: 1 }}>
                     Profile validation requires you to complete your profile,
-                    link an ORCID profile, sign and date the Synapse pledge, and
-                    upload both the pledge and an identity attestation document,
-                    after which your application will be manually reviewed
-                    (which may take several days).
+                    link an ORCID profile, agree to the Synapse pledge, and
+                    upload an identity attestation document, after which your
+                    application will be manually reviewed (which may take
+                    several days).
                   </Typography>
                   <div className="primary-button-container">
                     <Button
-                      disabled={!!verified}
+                      disabled={isRequestValidationButtonDisabled}
                       variant="outlined"
                       sx={credentialButtonSX}
                       onClick={() => handleChangesFn('validate')}
@@ -667,6 +698,74 @@ export const AccountSettings = () => {
                   >
                     More information
                   </Link>
+                </div>
+              </Paper>
+              <Paper
+                ref={cookieManagementRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>
+                  Privacy Preferences
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  Modify consent settings for how Sage Bionetworks products can
+                  save your data (cookies, browser storage, etc).
+                </Typography>
+                <div className="primary-button-container">
+                  <Button
+                    variant="outlined"
+                    sx={credentialButtonSX}
+                    onClick={() => setIsCookiePrefsDialogVisible(true)}
+                  >
+                    Manage Privacy Preferences
+                  </Button>
+                </div>
+                <CookiePreferencesDialog
+                  isOpen={isCookiePrefsDialogVisible}
+                  onSave={() => {
+                    setIsCookiePrefsDialogVisible(false)
+                  }}
+                  onHide={() => {
+                    setIsCookiePrefsDialogVisible(false)
+                  }}
+                />
+              </Paper>
+              <Paper
+                ref={signOutSectionRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>Sign Out</Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  You can sign out of all other sessions where your Synapse
+                  account is currently active. This will not impact sessions
+                  where you are using a personal access token, or where you have
+                  granted permissions to a third party to access your Synapse
+                  resources.
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  Signing out of all sessions will also sign you out of the
+                  current session.
+                </Typography>
+                <div className="primary-button-container">
+                  <Button
+                    variant="outlined"
+                    sx={credentialButtonSX}
+                    onClick={() => clearSession()}
+                  >
+                    Sign out
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color={'error'}
+                    sx={credentialButtonSX}
+                    onClick={() => {
+                      SynapseClient.deleteAllSessionAccessTokens(
+                        accessToken!,
+                      ).then(() => clearSession())
+                    }}
+                  >
+                    Sign out of all sessions
+                  </Button>
                 </div>
               </Paper>
             </div>

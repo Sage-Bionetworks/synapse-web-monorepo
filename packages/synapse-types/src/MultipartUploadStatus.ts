@@ -7,5 +7,4 @@ export type MultipartUploadStatus = {
   partsState: string
   state: 'UPLOADING' | 'COMPLETED' // The state of this file upload
   resultFileHandleId: string
-  clientSidePartsState?: boolean[]
 }

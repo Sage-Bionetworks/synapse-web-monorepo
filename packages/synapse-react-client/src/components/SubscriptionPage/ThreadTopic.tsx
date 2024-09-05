@@ -26,7 +26,7 @@ export default function SubscriptionItem(props: SubscriptionItemProps) {
 
   let href: string | undefined
   if (threadData) {
-    href = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!Synapse:${
+    href = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
       threadData.projectId
     }/discussion/threadId=${subscription.objectId}`
   }

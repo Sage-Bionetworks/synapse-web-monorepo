@@ -1,4 +1,6 @@
 # Exclude the following commits from the git blame -- see https://stackoverflow.com/a/69118451
 # You may need to run git config blame.ignoreRevsFile .git-blame-ignore-revs
+## 2024-05-14 - Ran on portals before major refactor
+2b52a81296419a9034d66c006b53f532a35dfa91
 ## 2022-05-11 - Ran prettier code-formatter on entire repo after adding pre-commit hook to autoformat
 b47923e23f9acd60eabf16446024f4d35454c040

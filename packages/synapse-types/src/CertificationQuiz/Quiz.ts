@@ -32,4 +32,5 @@ export interface PassingRecord {
   passed: boolean // Whether the user passed the given test
   passedOn: string // Date/time when the user passed the test (omitted if the user has not passed)
   corrections?: ResponseCorrectness[] // For each response, whether it was correct
+  revokedOn?: string // Date/time when the passing record was revoked (omitted if the record was not revoked)
 }

@@ -69,24 +69,21 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
         const assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
           el => el.values[assetColumnIndex],
         ) ?? []) as string[]
-        if (assets.some(asset => asset === null)) {
-          // We cast assets above assuming there are no null values, emit a warning just in case.
-          console.warn('Row has null value(s) when no nulls expected')
-        }
-
-        if (assets.length === 0) {
+        const assetFileHandleIds = assets.filter(
+          v => v != null && v !== undefined,
+        )
+        if (assetFileHandleIds.length === 0) {
           // wait for data to load
           return
         }
-        const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
-          fileId => {
+        const fileHandleAssociationList: FileHandleAssociation[] =
+          assetFileHandleIds.map(fileId => {
             return {
               associateObjectId: entityId,
               associateObjectType: FileHandleAssociateType.TableEntity,
               fileHandleId: fileId,
             }
-          },
-        )
+          })
         const batchFileRequest: BatchFileRequest = {
           includeFileHandles: false,
           includePreSignedURLs: true,

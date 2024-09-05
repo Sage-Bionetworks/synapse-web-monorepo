@@ -11,14 +11,15 @@
   "exports": [
     "./dist/index.js",
     "./dist/vite-config.js",
-    "./dist/vitest-config.js"
+    "./dist/vitest-config.js",
+    "./dist/portals-vite-config.js"
   ],
   "peerDependencies": {
-    "@vitest/coverage-v8": "^0.34.6",
-    "@vitest/ui": "^0.34.6",
-    "@vitest/utils": "^0.34.6",
-    "vite": "^4.4.0",
-    "vitest": "^0.34.6"
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "@vitest/utils": "^1.6.0",
+    "vite": "^5.1.6",
+    "vitest": "^1.6.0"
   },
   "peerDependenciesMeta": {
     "vitest": {
@@ -35,13 +36,14 @@
     }
   },
   "devDependencies": {
-    "@svgr/plugin-jsx": "^8.0.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "svgo": "^3.0.2",
-    "typescript": "5.4.2",
-    "vite": "^5.1.6",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "svgo": "^3.2.0",
+    "typescript": "5.5.2",
+    "vite": "^5.3.1",
+    "vite-plugin-html": "^3.2.2",
     "vite-plugin-node-polyfills": "0.17.0",
     "vite-plugin-svgr": "^4.2.0",
-    "vitest": "^0.34.6"
+    "vitest": "^1.6.0"
   }
 }

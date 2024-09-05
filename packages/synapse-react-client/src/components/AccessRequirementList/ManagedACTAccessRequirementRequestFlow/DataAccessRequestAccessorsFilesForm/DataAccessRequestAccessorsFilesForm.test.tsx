@@ -28,7 +28,7 @@ import {
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../../mocks/mockAccessRequirements'
+} from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { mockSubmittedSubmission } from '../../../../mocks/dataaccess/MockSubmission'
 import {
   AccessorChange,

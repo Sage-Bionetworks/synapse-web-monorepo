@@ -1,11 +1,16 @@
 import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
-import { ACCESS_TOKEN_COOKIE_KEY, SynapseConstants } from '../utils'
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  OAuth2State,
+  SynapseConstants,
+} from '../utils'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
   ACCESS_REQUEST_SUBMISSION_SEARCH,
+  ACCESS_REQUIREMENT,
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
@@ -15,12 +20,15 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
   ALIAS_AVAILABLE,
+  ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   BIND_INVITATION_TO_AUTHENTICATED_USER,
+  CHANGE_PASSWORD,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  DOI,
   DOI_ASSOCIATION,
   ENTITY,
   ENTITY_ACCESS,
@@ -56,6 +64,7 @@ import {
   RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
+  SESSION_ACCESS_TOKEN,
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -76,6 +85,9 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
+  WIKI_OBJECT_TYPE,
+  WIKI_PAGE,
+  WIKI_PAGE_ID,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -126,6 +138,7 @@ import {
   ChallengeTeamPagedResults,
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
+  ChangePasswordWithTwoFactorAuthToken,
   ColumnModel,
   CreateAccessApprovalRequest,
   CreateChallengeTeamRequest,
@@ -144,6 +157,7 @@ import {
   DiscussionThreadBundle,
   DiscussionThreadOrder,
   DockerCommit,
+  Doi,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -166,6 +180,7 @@ import {
   EntityJson,
   EntityLookupRequest,
   EntityPath,
+  EntityType,
   Evaluation,
   EvaluationRound,
   EvaluationRoundListRequest,
@@ -173,6 +188,7 @@ import {
   EvaluationSubmission as EvaluationSubmission,
   FavoriteSortBy,
   FavoriteSortDirection,
+  FeatureFlags,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
@@ -201,6 +217,7 @@ import {
   MembershipInvitation,
   MembershipInvtnSignedToken,
   MembershipRequest,
+  MessageToUser,
   MessageURL,
   MultipartUploadRequest,
   MultipartUploadStatus,
@@ -238,6 +255,8 @@ import {
   ResearchProject,
   ResponseMessage,
   RestrictableObjectDescriptor,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   SearchQuery,
@@ -264,9 +283,11 @@ import {
   TotpSecret,
   TotpSecretActivationRequest,
   TrashedEntity,
+  TwoFactorAuthDisableRequest,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
   TwoFactorAuthRecoveryCodes,
+  TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
   TYPE_FILTER,
   UpdateDiscussionReply,
@@ -279,6 +300,7 @@ import {
   UserGroupHeaderResponse,
   UserGroupHeaderResponsePage,
   UserProfile,
+  ValidateDefiningSqlResponse,
   ValidationResults,
   VerificationSubmission,
   VersionInfo,
@@ -296,11 +318,15 @@ import {
 } from './SynapseClientUtils'
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import { SetOptional } from 'type-fest'
+import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
+import xss from 'xss'
+import { xssOptions } from '../utils/functions/SanitizeHtmlUtils'
 
 const cookies = new UniversalCookies()
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
+const MAX_NUMBER_OF_PARTS = 10000
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
@@ -312,6 +338,20 @@ export const getVersion = (): Promise<SynapseVersion> => {
   return doGet<SynapseVersion>(
     '/repo/v1/version',
     undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/validateDefiningSql.html
+export function validateDefiningSql(
+  definingSql: string,
+  entityType: EntityType,
+  accessToken?: string | undefined,
+) {
+  return doPost<ValidateDefiningSqlResponse>(
+    '/repo/v1/validateDefiningSql',
+    { definingSql, entityType },
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -577,9 +617,9 @@ export async function login(
   password: string,
   authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> {
   return returnIfTwoFactorAuthError(() =>
-    doPost(
+    doPost<LoginResponse>(
       '/auth/v1/login2',
       { username, password, authenticationReceipt },
       undefined,
@@ -611,12 +651,16 @@ export function loginWith2fa(
 export const oAuthUrlRequest = (
   provider: string,
   redirectUrl: string,
-  state?: string,
+  state?: OAuth2State,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
   return doPost<{ authorizationUrl: string }>(
     '/auth/v1/oauth2/authurl',
-    { provider, redirectUrl, state },
+    {
+      provider,
+      redirectUrl,
+      state: state ? encodeURIComponent(JSON.stringify(state)) : undefined,
+    },
     undefined,
     endpoint,
   )
@@ -634,9 +678,9 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> => {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> => {
   return returnIfTwoFactorAuthError(() =>
-    doPost(
+    doPost<LoginResponse>(
       '/auth/v1/oauth2/session2',
       { provider, authenticationCode, redirectUrl },
       undefined,
@@ -711,6 +755,33 @@ export function createRecoveryCodes(accessToken?: string) {
     '/auth/v1/2fa/recoveryCodes',
     null,
     accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Initiates the reset of two-factor authentication, sending a notification to the user with a signed token. The request
+ * can be performed using the twoFaToken received from an authentication request that requires two-factor authentication.
+ */
+export function resetTwoFactorAuth(request: TwoFactorAuthResetRequest) {
+  return doPost<void>(
+    '/auth/v1/2fa/reset',
+    request,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Disables two-factor authentication for the user encoded in the signed token received by email following a call to the
+ * POST /2fa/reset endpoint. The request should include the signed token and a twoFaToken received from an authentication
+ * request that requires two-factor authentication.
+ */
+export function disableTwoFactorAuth(request: TwoFactorAuthDisableRequest) {
+  return doPost<void>(
+    '/auth/v1/2fa/disable',
+    request,
+    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1091,6 +1162,30 @@ export const getEntityHeader = async (
 }
 
 /**
+ * Create a new Access Control List (ACL), overriding inheritance.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/POST/entity/id/acl.html
+ */
+export const createEntityACL = (
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPost<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Update an Entity's ACL
  * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
  * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
@@ -1102,6 +1197,30 @@ export const updateEntityACL = (
   return doPut<AccessControlList>(
     ENTITY_ACL(acl.id),
     acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Delete the Access Control List (ACL) for a given Entity.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor. The ACL
+ * for a Project cannot be deleted.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const deleteEntityACL = (
+  id: string,
+  accessToken: string | undefined = undefined,
+): Promise<void> => {
+  return doDelete(
+    ENTITY_ACL(id),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1148,13 +1267,6 @@ export const getEntityBundleV2 = <T extends EntityBundleRequest>(
 }
 
 /**
- * Get a corresponding string value of ObjectType:
- **/
-function getObjectTypeToString(key: ObjectType) {
-  return ObjectType[key]
-}
-
-/**
  * Get Wiki page contents, call is of the form:
  * https://rest-docs.synapse.org/rest/GET/entity/ownerId/wiki.html
  */
@@ -1164,9 +1276,7 @@ export const getEntityWiki = (
   wikiId: string | undefined = '',
   objectType: ObjectType = ObjectType.ENTITY,
 ) => {
-  const objectTypeString = getObjectTypeToString(objectType)
-
-  const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
+  const url = `${WIKI_OBJECT_TYPE(objectType)}/${ownerId}/wiki/${wikiId}`
   return doGet<WikiPage>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
@@ -1247,9 +1357,23 @@ export const getUserChallenges = (
 export const getPassingRecord = (
   userId: string | number,
   accessToken: string | undefined,
-): Promise<PassingRecord> => {
+): Promise<PassingRecord | null> => {
   const url = `/repo/v1//user/${userId}/certifiedUserPassingRecord`
-  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+  return allowNotFoundError(() =>
+    doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
+}
+
+/**
+ * Revokes the certification for the user. Only an ACT member can perform this operation.
+ * https://rest-docs.synapse.org/rest/PUT/user/id/revokeCertification.html
+ */
+export const revokeCertification = (
+  userId: string,
+  accessToken: string,
+): Promise<PassingRecord> => {
+  const url = `/repo/v1/user/${userId}/revokeCertification`
+  return doPut(url, null, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -1667,14 +1791,37 @@ export const getWikiPageKeyForAccessRequirement = (
   )
 }
 
+/**
+ * Get the root WikiPageKey for the following ObjectTypes:
+ *  - ENTITY: https://rest-docs.synapse.org/rest/GET/entity/ownerId/wikikey.html
+ *  - EVALUATION: https://rest-docs.synapse.org/rest/GET/evaluation/ownerId/wikikey.html
+ *  - ACCESS_REQUIREMENT: https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wikikey.html
+ *
+ * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
+ *
+ * @returns a WikiPageKey if the ownerObject has a root WikiPageKey, or null if the ownerObject does not.
+ */
+export const getRootWikiPageKey = (
+  accessToken: string | undefined,
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+): Promise<WikiPageKey | null> => {
+  const url = `${WIKI_OBJECT_TYPE(ownerObjectType)}/${ownerObjectId}/wikikey`
+  // It's possible for an ownerObject to not have a root WikiPageKey, so pre-emptively handle 404
+  return allowNotFoundError(() =>
+    doGet<WikiPageKey>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
+}
+
 export const getWikiAttachmentsFromEntity = (
   accessToken: string | undefined,
   id: string | number,
   wikiId: string | number,
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<FileHandleResults> => {
-  const objectTypeString = getObjectTypeToString(objectType)
-  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
+  const url = `${WIKI_OBJECT_TYPE(
+    objectType,
+  )}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 export const getWikiAttachmentsFromEvaluation = (
@@ -1693,9 +1840,86 @@ export const getPresignedUrlForWikiAttachment = (
   fileName: string,
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<string> => {
-  const objectTypeString = getObjectTypeToString(objectType)
-  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
+  const url = `${WIKI_OBJECT_TYPE(
+    objectType,
+  )}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Get specific WikiPage for the following ObjectTypes:
+ *  - ENTITY: https://rest-docs.synapse.org/rest/GET/entity/ownerId/wiki/wikiId.html
+ *  - EVALUATION: https://rest-docs.synapse.org/rest/GET/evaluation/ownerId/wiki/wikiId.html
+ *  - ACCESS_REQUIREMENT: https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wiki/wikiId.html
+ *
+ * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
+ */
+export const getWikiPage = (
+  accessToken: string | undefined,
+  wikiPageKey: WikiPageKey,
+): Promise<WikiPage> => {
+  const url = `${WIKI_PAGE_ID(
+    wikiPageKey.ownerObjectType,
+    wikiPageKey.ownerObjectId,
+    wikiPageKey.wikiPageId,
+  )}`
+  return doGet<WikiPage>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Create a WikiPage with the following ObjectTypes as an owner:
+ *   - ENTITY: https://rest-docs.synapse.org/rest/POST/entity/ownerId/wiki.html
+ *   - EVALUATION: https://rest-docs.synapse.org/rest/POST/evaluation/ownerId/wiki.html
+ *   - ACCESS_REQUIREMENT: https://rest-docs.synapse.org/rest/POST/access_requirement/ownerId/wiki.html
+ *
+ * Note: The caller must be granted the ACCESS_TYPE.CREATE permission on the owner.
+ * If the passed WikiPage is a root (parentWikiId = null) and the owner already has a root WikiPage, an error will be returned.
+ */
+export const createWikiPage = (
+  accessToken: string | undefined,
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+  wikiPage: Omit<
+    WikiPage,
+    'id' | 'etag' | 'createdOn' | 'createdBy' | 'modifiedOn' | 'modifiedBy'
+  >,
+): Promise<WikiPage> => {
+  return doPost<WikiPage>(
+    WIKI_PAGE(ownerObjectType, ownerObjectId),
+    wikiPage,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update a specific WikiPage for the following ObjectTypes:
+ *   - ENTITY: https://rest-docs.synapse.org/rest/PUT/entity/ownerId/wiki/wikiId.html
+ *   - EVALUATION: https://rest-docs.synapse.org/rest/PUT/evaluation/ownerId/wiki/wikiId.html
+ *   - ACCESS_REQUIREMENT: https://rest-docs.synapse.org/rest/PUT/access_requirement/ownerId/wiki/wikiId.html
+ *
+ * Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates.
+ * Each time a WikiPage is updated a new etag will be issued to the WikiPage. When an update is request,
+ * Synapse will compare the etag of the passed WikiPage with the current etag of the WikiPage.
+ * If the etags do not match, then the update will be rejected with a PRECONDITION_FAILED (412) response.
+ * When this occurs the caller should get the latest copy of the WikiPage and re-apply any changes to the object,
+ * then re-attempt the update. This ensures the caller has all changes applied by other users before applying their own changes.
+ *
+ * Note: The caller must be granted the ACCESS_TYPE.UPDATE permission on the owner.
+ */
+export const updateWikiPage = (
+  accessToken: string | undefined,
+  ownerObjectType: ObjectType,
+  ownerObjectId: string,
+  wikiPage: WikiPage,
+): Promise<WikiPage> => {
+  const url = `${WIKI_PAGE_ID(ownerObjectType, ownerObjectId, wikiPage.id)}`
+  return doPut<WikiPage>(
+    url,
+    wikiPage,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 export const isInSynapseExperimentalMode = (): boolean => {
@@ -1728,7 +1952,7 @@ export const setAccessTokenCookie = async (
   } else {
     // will set cookie in the http header
     return doPost(
-      'Portal/sessioncookie',
+      '/Portal/sessioncookie',
       { sessionToken: token },
       undefined,
       BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -1749,7 +1973,7 @@ export const getAccessTokenFromCookie = async (): Promise<
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
-    'Portal/sessioncookie?validate=true',
+    '/Portal/sessioncookie?validate=true',
     undefined,
     BackendDestinationEnum.PORTAL_ENDPOINT,
     { credentials: 'include' },
@@ -1768,12 +1992,49 @@ export const getPrincipalAliasRequest = (
   return doPost(url, request, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
+export function deleteSessionAccessToken(accessToken: string) {
+  return doDelete(
+    SESSION_ACCESS_TOKEN,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function deleteAllSessionAccessTokens(accessToken: string) {
+  const userProfile = await getUserProfile(accessToken)
+  return doDelete(
+    ALL_USER_SESSION_TOKENS(userProfile.ownerId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const signOut = async () => {
+  let accessToken = undefined
+  try {
+    accessToken = await getAccessTokenFromCookie()
+  } catch (e) {
+    console.warn('Could not get the access token from the cookie', e)
+  }
+  if (accessToken) {
+    try {
+      // This call may fail if the token was already revoked, so just log any encountered errors
+      await deleteSessionAccessToken(accessToken)
+    } catch (e) {
+      console.warn('Could not delete session token', e)
+    }
+  }
   await setAccessTokenCookie(undefined)
 }
 
+// Progress sent back during upload, will report when a part of a file is finished processing
+export type ProgressCallback = {
+  value: number
+  total: number
+}
+
 /**
- * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
+ * Upload file to Synapse, creating a FileHandle
  * @param accessToken
  * @param file
  * @param endpoint
@@ -1782,16 +2043,23 @@ export const uploadFile = (
   accessToken: string | undefined,
   filename: string,
   file: Blob,
+  storageLocationId: number = SYNAPSE_STORAGE_LOCATION_ID,
+  contentType: string = file.type,
+  progressCallback?: (progress: ProgressCallback) => void,
+  getIsCancelled?: () => boolean,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
-      const partSize: number = Math.max(5242880, file.size / 10000)
+      const partSize: number = Math.max(
+        MAX_JS_FILE_DOWNLOAD_SIZE,
+        file.size / MAX_NUMBER_OF_PARTS,
+      )
       const request: MultipartUploadRequest = {
-        contentType: file.type,
+        contentType,
         fileName: filename,
         fileSizeBytes: file.size,
         partSizeBytes: partSize,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+        storageLocationId,
       }
       calculateMd5(file).then((md5: string) => {
         request.contentMD5Hex = md5
@@ -1802,6 +2070,8 @@ export const uploadFile = (
           request,
           fileUploadResolve,
           fileUploadReject,
+          progressCallback,
+          getIsCancelled,
         )
       })
     },
@@ -1852,15 +2122,19 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
 const processFilePart = (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
+  clientSidePartsState: boolean[],
   accessToken: string | undefined,
   fileName: string,
   file: Blob,
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
+  updateProgress: () => void,
+  getIsCancelled?: () => boolean,
 ) => {
-  if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
+  if (clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
+    updateProgress()
     return
   }
 
@@ -1894,6 +2168,7 @@ const processFilePart = (
       presignedUrl,
       fileSlice,
       presignedUploadUrlRequest.contentType,
+      getIsCancelled,
     )
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
@@ -1906,9 +2181,11 @@ const processFilePart = (
       ).then((addPartResponse: AddPartResponse) => {
         if (addPartResponse.addPartState === 'ADD_SUCCESS') {
           // done with this part!
-          multipartUploadStatus.clientSidePartsState![partNumber - 1] = true
+          clientSidePartsState![partNumber - 1] = true
+          updateProgress()
           checkUploadComplete(
             multipartUploadStatus,
+            clientSidePartsState,
             fileName,
             accessToken,
             fileUploadResolve,
@@ -1920,12 +2197,14 @@ const processFilePart = (
             processFilePart(
               partNumber,
               multipartUploadStatus,
+              clientSidePartsState,
               accessToken,
               fileName,
               file,
               request,
               fileUploadResolve,
               fileUploadReject,
+              updateProgress,
             )
           })
         }
@@ -1935,6 +2214,7 @@ const processFilePart = (
 }
 export const checkUploadComplete = (
   status: MultipartUploadStatus,
+  clientSidePartsState: boolean[],
   fileHandleName: string,
   accessToken: string | undefined,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
@@ -1942,7 +2222,7 @@ export const checkUploadComplete = (
 ) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
   if (
-    status.clientSidePartsState!.every(v => {
+    clientSidePartsState!.every(v => {
       return v
     })
   ) {
@@ -1969,17 +2249,34 @@ const uploadFilePart = async (
   presignedUrl: string,
   file: Blob,
   contentType: string,
+  getIsCancelled?: () => boolean,
 ) => {
-  // TODO: could try using axios to get upload progress, then update the client-side part state (change to numbers from 0-1)
-  // This would give progress for the single file (across all parts).
+  const controller = new AbortController()
+  const signal = controller.signal
+
+  const checkIsCancelled = () => {
+    if (getIsCancelled) {
+      const isCancelled = getIsCancelled()
+      if (isCancelled) {
+        controller.abort()
+      }
+    }
+  }
+  const timer = setInterval(checkIsCancelled, 1000)
+  // Progress is provided for a single file based on what parts have been successfully uploaded.
   // The parent would still need to figure out progress (for the total file set).
-  await fetch(presignedUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': contentType,
-    },
-    body: file,
-  })
+  try {
+    await fetch(presignedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': contentType,
+      },
+      body: file,
+      signal,
+    })
+  } finally {
+    clearInterval(timer)
+  }
 }
 export const startMultipartUpload = (
   accessToken: string | undefined,
@@ -1988,6 +2285,8 @@ export const startMultipartUpload = (
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
+  progressCallback?: (progress: ProgressCallback) => void,
+  getIsCancelled?: () => boolean,
 ) => {
   const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
@@ -2002,25 +2301,40 @@ export const startMultipartUpload = (
       const clientSidePartsState: boolean[] = status.partsState
         .split('')
         .map(bit => bit === '1')
-      status.clientSidePartsState = clientSidePartsState
+      let progress = 0
+      const updateProgress = () => {
+        progress++
+        if (progressCallback) {
+          progressCallback({
+            value: progress,
+            total: clientSidePartsState.length,
+          })
+        }
+      }
       for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
         if (!clientSidePartsState[i]) {
           // upload this part.  note that partNumber is always the index+1
           processFilePart(
             i + 1,
             status,
+            clientSidePartsState,
             accessToken,
             fileName,
             file,
             request,
             fileUploadResolve,
             fileUploadReject,
+            updateProgress,
+            getIsCancelled,
           )
+        } else {
+          updateProgress()
         }
       }
       // in case there is no upload work to do!
       checkUploadComplete(
         status,
+        clientSidePartsState,
         fileName,
         accessToken,
         fileUploadResolve,
@@ -2873,6 +3187,24 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Retrieve restriction information on a batch of restrictable object, limited to a maximum of 50 object ids
+ *
+ * https://repo-prod.prod.sagebase.org/repo/v1/restrictionInformation/batch
+ */
+export const getRestrictionInformationBatch = (
+  request: RestrictionInformationBatchRequest,
+  accessToken: string | undefined,
+): Promise<RestrictionInformationBatchResponse> => {
+  return doPost(
+    `/repo/v1/restrictionInformation/batch`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Returns a paginated result of access requirements associated for an entity
  *
@@ -2921,6 +3253,60 @@ export const getAccessRequirementById = <T extends AccessRequirement>(
 }
 
 /**
+ * Add an Access Requirement to an Entity, or Team. This service may only be
+ * used by the Synapse Access and Compliance Team.
+ *
+ * See https://rest-docs.synapse.org/rest/POST/accessRequirement.html
+ *
+ * @param accessToken token of user
+ * @param accessRequirement access requirement to create
+ * @returns created access requirement
+ */
+export const createAccessRequirement = <T extends AccessRequirement>(
+  accessToken: string | undefined,
+  accessRequirement: Partial<T>,
+): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
+  return doPost<T>(
+    ACCESS_REQUIREMENT,
+    accessRequirement,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Modify an existing Access Requirement. This service may only be used by the
+ * Synapse Access and Compliance Team.
+ *
+ * See https://rest-docs.synapse.org/rest/PUT/accessRequirement/requirementId.html
+ *
+ * @param accessToken token of user
+ * @param accessRequirement access requirement to update
+ * @returns updated access requirement
+ */
+export const updateAccessRequirement = <T extends AccessRequirement>(
+  accessToken: string | undefined,
+  accessRequirement: T,
+): Promise<T> => {
+  // SWC-6941 - the description field has been replaced with name
+  if ('description' in accessRequirement) {
+    delete accessRequirement.description
+  }
+
+  return doPut<T>(
+    `${ACCESS_REQUIREMENT}/${accessRequirement.id}`,
+    accessRequirement,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Fetch the ACL for the access requirement with the given id.
  *
  * See https://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/acl.html
@@ -2937,6 +3323,61 @@ export const getAccessRequirementAcl = (
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
+  )
+}
+
+/**
+ * Delete the ACL for the access requirement with the given id.
+ * Only an ACT member is allowed to delete the ACL.
+ *
+ * See https://rest-docs.synapse.org/rest/DELETE/accessRequirement/requirementId/acl.html
+ */
+export const deleteAccessRequirementAcl = (
+  accessToken: string | undefined,
+  id: string | number,
+): Promise<void> => {
+  return doDelete(
+    ACCESS_REQUIREMENT_ACL(id),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Assign the given ACL to the access requirement with the given id.
+ * Only an ACT member is allowed to assign the ACL.
+ * Only supports REVIEW_SUBMISSIONS and EXEMPTION_ELIGIBLE access types.
+ *
+ * See https://rest-docs.synapse.org/rest/POST/accessRequirement/requirementId/acl.html
+ */
+export const createAccessRequirementAcl = (
+  accessToken: string | undefined,
+  acl: AccessControlList,
+): Promise<AccessControlList> => {
+  return doPost<AccessControlList>(
+    ACCESS_REQUIREMENT_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Updates the ACL for the access requirement with the given id.
+ * Only an ACT member is allowed to update the ACL.
+ * Only supports REVIEW_SUBMISSIONS and EXEMPTION_ELIGIBLE access types.
+ *
+ * See https://rest-docs.synapse.org/rest/PUT/accessRequirement/requirementId/acl.html
+ */
+export const updateAccessRequirementAcl = (
+  accessToken: string | undefined,
+  acl: AccessControlList,
+): Promise<AccessControlList> => {
+  return doPut<AccessControlList>(
+    ACCESS_REQUIREMENT_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -3862,37 +4303,37 @@ export const createProfileVerificationSubmission = (
 }
 
 // https://rest-docs.synapse.org/rest/POST/user/changePassword.html
-export const changePasswordWithCurrentPassword = (
-  newPassword: ChangePasswordWithCurrentPassword,
-  accessToken: string | undefined,
-) => {
-  return doPost<ChangePasswordWithCurrentPassword>(
-    '/auth/v1/user/changePassword',
-    newPassword,
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
-// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
-export const changePasswordWithToken = (
-  newPassword: ChangePasswordWithToken,
-) => {
-  return doPost<ChangePasswordWithToken>(
-    '/auth/v1/user/changePassword',
-    newPassword,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
+export const changePassword = (
+  request:
+    | ChangePasswordWithToken
+    | ChangePasswordWithCurrentPassword
+    | ChangePasswordWithTwoFactorAuthToken,
+): Promise<TwoFactorAuthErrorResponse | ''> => {
+  return returnIfTwoFactorAuthError(() =>
+    doPost<''>(
+      CHANGE_PASSWORD,
+      request,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
 // http://rest-docs.synapse.org/rest/POST/user/password/reset.html
 export const resetPassword = (email: string) => {
-  const endpoint = window.location.href + '?passwordResetToken='
+  const endpoint = appendFinalQueryParamKey(
+    new URL(window.location.href),
+    'passwordResetToken',
+  )
   const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(
     endpoint,
   )}`
-  return doPost(url, { email }, undefined, BackendDestinationEnum.REPO_ENDPOINT)
+  return doPost<''>(
+    url,
+    { email },
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
@@ -3940,7 +4381,7 @@ export const addEmailAddressStep2 = (
  */
 export const deleteEmail = (accessToken: string | undefined, email: string) => {
   return doDelete(
-    `/repo/v1/email?email=${email}`,
+    `/repo/v1/email?email=${encodeURIComponent(email)}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -4722,12 +5163,39 @@ export function getDOIAssociation(
   params.set('type', objectType)
   params.set('id', objectId)
   if (objectVersion) {
-    params.set('type', objectVersion.toString())
+    params.set('version', objectVersion.toString())
   }
 
   return allowNotFoundError(() =>
     doGet<DoiAssociation>(
       `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
+  )
+}
+
+/**
+ *Retrieves the DOI for the object and its associated DOI metadata. Note: this call calls an external API, which may impact performance To just retrieve the DOI association, see: GET /doi/association
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi.html
+ */
+export function getDOI(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<Doi | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('version', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<Doi>(
+      `${DOI}?${params.toString()}`,
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
@@ -4760,6 +5228,17 @@ export function getPortalFileHandleServletUrl(
   return `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}/Portal/filehandleassociation?${search.toString()}`
+}
+
+/**
+ * Get the feature flags from the SWC appconfig servlet.
+ */
+export const getFeatureFlags = () => {
+  return doGet<FeatureFlags>(
+    `Portal/featureflags`,
+    undefined,
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html
@@ -4904,4 +5383,65 @@ export async function getAnnotationColumnModels(
   }
 
   return getAllOfNextPageTokenPaginatedService(fn)
+}
+
+const getMessageToUser = async (
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+) => {
+  const cleanedMessageBody = xss(body, xssOptions)
+  const uploadedFileResult = await uploadFile(
+    accessToken,
+    'content',
+    new Blob([cleanedMessageBody], { type: 'text/plain' }),
+  )
+
+  const messageToUser: Partial<MessageToUser> = {
+    recipients,
+    subject,
+    notificationUnsubscribeEndpoint: `${getEndpoint(
+      BackendDestinationEnum.PORTAL_ENDPOINT,
+    )}SignedToken:`,
+    fileHandleId: uploadedFileResult.fileHandleId,
+  }
+  return messageToUser
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser(
+    recipients,
+    subject,
+    body,
+    accessToken,
+  )
+
+  return doPost<MessageToUser>(
+    `${REPO}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function sendMessageToEntityOwner(
+  entityId: string,
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser([], subject, body, accessToken)
+
+  return doPost<MessageToUser>(
+    `${REPO}/entity/${entityId}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }

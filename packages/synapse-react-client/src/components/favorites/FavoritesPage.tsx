@@ -178,7 +178,7 @@ export default function FavoritesPage() {
                       <td>
                         <a
                           rel="noopener noreferrer"
-                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
+                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${item.id}`}
                         >
                           {item.name}
                         </a>

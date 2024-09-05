@@ -30,3 +30,7 @@ export const mockEvaluations: Evaluation[] = [mockEvaluationQueue]
 export const generatedEvaulations: Evaluation[] = times(10, () =>
   generateEvaluation(),
 )
+
+export const sevenGeneratedEvaulations: Evaluation[] = times(7, () =>
+  generateEvaluation(),
+)

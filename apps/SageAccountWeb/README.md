@@ -1,8 +1,8 @@
 ## This project is code for OneSage user account portal.
 
-_Production_ branch is automatically deployed to https://accounts.sagebionetworks.org
+_Production_ branch is automatically deployed to https://accounts.synapse.org
 
-_Staging_ branch is automatically deployed to https://staging.accounts.sagebionetworks.org
+_Staging_ branch is automatically deployed to https://staging.accounts.synapse.org
 
 ## How do I add my app to OneSage?
 
@@ -14,9 +14,9 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
    - **Primary and Secondary colors**: These are used to generate a palette.
    - **Description**: A plain text short description of your app (<200 characters).
    - **OAuth Client ID**: If using an OAuth Client to connect, please provide your 'client ID'. This value will be used as your 'appId'.
-3. Web Engineering will send you an 'appId'. To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below). You should also provide the 'redirectURL' query parameter.
+3. Web Engineering will send you an 'appId'. To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below). After account creation, users will be redirected to the URL that you provided above (as the Default URL).
 
-_Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/#!Synapse:syn45291362/tables/) as the data source.
+_Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/Synapse:syn45291362/tables/) as the data source.
 
 ## Entry points
 
@@ -59,8 +59,6 @@ This will immediately log you out of your account.
 ### Note about query parameters
 
 All routes look for the query parameter 'appId' to set the source app configuration (icon, application name, ...). For example, '/register1?appId=MTB' can be used to register for a new Sage Bionetworks account with the Mobile Toolbox product branding.
-
-All routes also looks for the query parameter 'redirectURL'. This is used to redirect back to the source app on various pages on the OneSage website.
 
 ## Available Scripts
 

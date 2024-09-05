@@ -39,12 +39,12 @@ import {
 import { IconOptions } from '../Icon'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { SynapseCardLabel } from './SynapseCardLabel'
-import { useAtomValue } from 'jotai'
-import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
 import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
+import { useGetEntity } from '../../synapse-queries'
+import { useQueryContext } from '../QueryContext'
 
 export type KeyToAlias = {
   key: string
@@ -186,7 +186,7 @@ export const VersionLabel: React.FC<{
       <a
         target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
-        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synapseId}.${version}`}
+        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${synapseId}.${version}`}
       >
         (Show Version History on Synapse)
       </a>
@@ -210,21 +210,23 @@ export function getCardLinkHref(
     if (!data || !schema) {
       throw Error('Must specify CardLink and data for linking to work')
     }
-    const {
-      matchColumnName,
-      URLColumnName,
-      overrideLinkURLColumnName,
-      overrideValueWithRowID,
-    } = cardLink
+    const { matchColumnName, overrideValueWithRowID } = cardLink
 
     // PORTALS-2088:  Return the link, unless...
-    // an overrideLinkURLColumnName has been set and it's value is defined.
+    // an overrideLinkURLColumnName has been set and its value is defined.
     // In this case, just use the overrideLinkURLColumnName value
-    if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
-      const indexOfOverrideLinkURLColumnName = schema[overrideLinkURLColumnName]
-      const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
-      if (overrideLinkValue) {
-        return overrideLinkValue
+    if ('overrideLinkURLColumnName' in cardLink) {
+      const { overrideLinkURLColumnName, overrideLinkURLColumnTransform } =
+        cardLink
+      if (schema[overrideLinkURLColumnName]) {
+        const indexOfOverrideLinkURLColumnName =
+          schema[overrideLinkURLColumnName]
+        const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
+        if (overrideLinkValue && overrideLinkURLColumnTransform) {
+          return overrideLinkURLColumnTransform(overrideLinkValue)
+        } else if (overrideLinkValue) {
+          return overrideLinkValue
+        }
       }
     }
 
@@ -233,11 +235,12 @@ export function getCardLinkHref(
       console.error(
         `Could not find match for data: ${data} with columnName ${matchColumnName}`,
       )
-    } else {
+    } else if ('baseURL' in cardLink) {
+      const { baseURL, URLColumnName } = cardLink
       const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
       if (value) {
         // value is defined!
-        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        return `/${baseURL}?${URLColumnName}=${encodeURIComponent(value)}`
       }
     }
   }
@@ -256,7 +259,7 @@ export function getLinkParams(
   let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
-    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
+    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
   } else if (link.match(DOI_REGEX)) {
     defaultTarget = TargetEnum.NEW_WINDOW
     href = `https://dx.doi.org/${link}`
@@ -347,7 +350,6 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
       ctaLinkConfig,
       labelLinkConfig,
       descriptionConfig,
-      rgbIndex,
       columnIconOptions,
       table,
       queryVisualizationContext: { getColumnDisplayName },
@@ -499,7 +501,6 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
           target={target}
           isAlignToLeftNav={true}
           secondaryLabelLimit={secondaryLabelLimit}
-          rgbIndex={rgbIndex}
         />
       )
     }
@@ -617,8 +618,11 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
 }
 
 export default function GenericCard(props: GenericCardProps) {
-  const table = useAtomValue(tableQueryEntityAtom)
+  const { entityId, versionNumber } = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
+
+  const { data: table } = useGetEntity<Table>(entityId, versionNumber)
+
   return (
     <_GenericCard
       {...props}

@@ -26,6 +26,11 @@ describe('SynapseCardLabel tests', () => {
       id: 'a',
       name: 'dataset',
     },
+    {
+      columnType: ColumnTypeEnum.STRING,
+      id: 'b',
+      name: 'override',
+    },
   ]
 
   test('works with a single value', () => {
@@ -164,8 +169,7 @@ describe('SynapseCardLabel tests', () => {
       },
     ]
     // make sure it doesn't parse out the extra commas
-    const value =
-      '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
+    const value = '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/)"]'
     const { container } = render(
       <SynapseCardLabel
         value={value}
@@ -198,7 +202,53 @@ describe('SynapseCardLabel tests', () => {
     )
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toEqual(
-      `https://www.synapse.org/#!Synapse:${value}`,
+      `https://www.synapse.org/Synapse:${value}`,
     )
+  })
+
+  it('overrideLinkURLColumnName', () => {
+    const value = 'syn1234567'
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={{
+          isMarkdown: false,
+          matchColumnName: 'dataset',
+          overrideLinkURLColumnName: 'override',
+        }}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={DATASETS}
+        rowData={[value, 'https://some-override-link.gov']}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const link = screen.getByRole('link')
+    expect(link.getAttribute('href')).toEqual(`https://some-override-link.gov`)
+  })
+
+  it('overrideLinkURLColumnName with transform', () => {
+    const value = 'syn1234567'
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={{
+          isMarkdown: false,
+          matchColumnName: 'dataset',
+          overrideLinkURLColumnName: 'override',
+          overrideLinkURLColumnTransform: (columnValue: string) =>
+            `https://${columnValue}.gov`,
+        }}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={DATASETS}
+        rowData={[value, 'some-override-link']}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const link = screen.getByRole('link')
+    expect(link.getAttribute('href')).toEqual(`https://some-override-link.gov`)
   })
 })

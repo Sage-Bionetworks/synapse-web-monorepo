@@ -133,4 +133,16 @@ describe('AccessTokenCard', () => {
       expect(mockOnDelete).toHaveBeenCalled()
     })
   })
+
+  test('SWC-6827: renders unknown scope definitions without crashing', () => {
+    const tokenProps: AccessTokenCardProps = {
+      accessToken: {
+        ...activeTokenProps.accessToken,
+        scopes: ['unknownscope'],
+      },
+      onDelete: mockOnDelete,
+    }
+    renderComponent(tokenProps)
+    expect(screen.queryByText('Unknownscope')).toBeInTheDocument()
+  })
 })

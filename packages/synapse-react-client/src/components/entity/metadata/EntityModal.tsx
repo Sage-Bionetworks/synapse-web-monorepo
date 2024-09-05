@@ -96,7 +96,7 @@ export function EntityModal(props: EntityModalProps) {
         window.open(
           `${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}#!Synapse:${entityId}`,
+          )}Synapse:${entityId}`,
           '_blank',
           'noopener',
         )

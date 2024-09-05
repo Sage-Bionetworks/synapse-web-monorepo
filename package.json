@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=8"
+    "node": ">=20",
+    "pnpm": ">=9"
   },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint --quiet",
     "test": "nx run-many --target=test:ci",
@@ -15,20 +15,24 @@
     "type-check": "nx run-many --target=type-check"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.61.0",
-    "@typescript-eslint/parser": "^5.61.0",
-    "eslint": "^8.44.0",
-    "eslint-plugin-jest": "^27.2.2",
-    "eslint-plugin-jest-dom": "^5.0.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-storybook": "^0.6.12",
-    "eslint-plugin-testing-library": "^5.11.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.2.3",
-    "nx": "^17.0.2",
-    "rimraf": "^5.0.1",
-    "typescript": "5.4.2"
+    "@eslint/compat": "^1.1.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.5.0",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.14.1",
+    "dotenv-cli": "^7.4.2",
+    "eslint": "^9.5.0",
+    "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-jest-dom": "^5.4.0",
+    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-storybook": "^0.8.0",
+    "eslint-plugin-testing-library": "^6.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.0",
+    "nx": "^18.0.8",
+    "rimraf": "^5.0.5",
+    "typescript": "5.5.2"
   },
   "npmClient": "pnpm",
   "lint-staged": {
@@ -41,7 +45,7 @@
     "overrides": {
       "word-wrap": "^1.2.4",
       "semver": "^7.5.4",
-      "@types/react": "18.0.27",
+      "@types/react": "18.2.64",
       "goober": "2.1.9",
       "react-hot-toast": "2.2.0",
       "postcss": "^8.4.31"

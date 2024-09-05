@@ -5,7 +5,7 @@ import { Link, Skeleton } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import { times } from 'lodash-es'
 import { useGetPresignedUrlContentFromFHA } from '../../synapse-queries/file/useFiles'
-import { MarkdownSynapse } from '../Markdown'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type tcItem = {
   iconFileHandleId: string

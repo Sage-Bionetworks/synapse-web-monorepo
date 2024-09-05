@@ -2,10 +2,6 @@ import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { LoginAwareButton } from './LoginAwareButton'
-import {
-  SynapseContextConsumer,
-  SynapseContextProvider,
-} from '../../utils/context'
 
 const meta: Meta = {
   title: 'UI/LoginAwareButton',
@@ -19,28 +15,10 @@ const meta: Meta = {
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
-      defaultValue: true,
     },
   },
-  render: args => {
-    const isAuthenticated = args.isAuthenticated
-    delete args.isAuthenticated
-    return (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <LoginAwareButton {...args} />
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    )
+  args: {
+    isAuthenticated: true,
   },
 } satisfies Meta
 

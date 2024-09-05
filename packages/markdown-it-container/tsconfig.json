@@ -1,0 +1,13 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "target": "esnext",
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["index.mjs", "test/**/*"]
+}

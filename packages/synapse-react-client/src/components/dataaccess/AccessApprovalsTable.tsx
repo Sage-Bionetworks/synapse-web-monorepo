@@ -68,7 +68,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                   role="button"
                   active={sort.field === AccessApprovalSortField.MODIFIED_ON}
                   direction={
-                    sort.field === 'MODIFIED_ON'
+                    sort.field === AccessApprovalSortField.MODIFIED_ON
                       ? sort.direction === 'DESC'
                         ? Direction.DESC
                         : Direction.ASC
@@ -85,7 +85,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                   role="button"
                   active={sort.field === AccessApprovalSortField.EXPIRED_ON}
                   direction={
-                    sort.field === 'EXPIRED_ON'
+                    sort.field === AccessApprovalSortField.EXPIRED_ON
                       ? sort.direction === 'DESC'
                         ? Direction.DESC
                         : Direction.ASC
@@ -103,7 +103,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <tr key={item.id}>
                 <td>
                   <a
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.accessRequirementId}`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}AccessRequirement:AR_ID=${item.accessRequirementId}`}
                   >
                     {item.accessRequirementId}
                   </a>

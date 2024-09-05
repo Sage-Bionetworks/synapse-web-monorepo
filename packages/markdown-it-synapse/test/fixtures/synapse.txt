@@ -103,7 +103,7 @@ testing standard [link](http://link.com)
 .
 testing standard linkify syn123 auto-link
 .
-<p>testing standard linkify <a href="#!Synapse:syn123">syn123</a> auto-link</p>
+<p>testing standard linkify <a href="/Synapse:syn123">syn123</a> auto-link</p>
 .
 
 .
@@ -118,6 +118,13 @@ testing internal link [Explore/Data](/Explore/Data)
 <p>testing internal link <a href="/Explore/Data">Explore/Data</a></p>
 .
 
+.
+testing Synapse link [Research Communities](#!Synapse:syn3722562/wiki/219258)
+.
+<p>testing Synapse link <a href="/Synapse:syn3722562/wiki/219258">Research Communities</a></p>
+.
+
+
 coverage
 .
 *~f
@@ -127,3 +134,9 @@ coverage
 
 clean up init (constructor)
 remove icon
+
+.
+*italic* and ** bold ** or _italic_ and __bold__
+.
+<p><em>italic</em> and <strong> bold </strong> or <em>italic</em> and <strong>bold</strong></p>
+.

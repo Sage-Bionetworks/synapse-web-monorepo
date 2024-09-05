@@ -1,9 +1,8 @@
-import { Alert, Box, TextField, Typography } from '@mui/material'
+import { Alert, Box, Radio, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { useGetEntityEvaluations } from '../../synapse-queries'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { RadioOption } from '../widgets/RadioGroup'
 
 type EvaluationQueueListProps = {
   projectId: string
@@ -37,11 +36,10 @@ function EvaluationQueueList({
       disableColumnMenu: true,
       renderCell: params => {
         return (
-          <RadioOption
+          <Radio
             value={params.id as string}
             checked={params.id === selectedEvaluation}
-            onChange={onEvaluationChange}
-            label=""
+            onChange={event => onEvaluationChange(event.target.value)}
           />
         )
       },

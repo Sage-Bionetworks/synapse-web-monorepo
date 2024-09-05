@@ -92,9 +92,7 @@ export function getPreviousStep(
 }
 
 export function isLastStep(step: CreateTableViewWizardStep) {
-  // TODO: after PLFM-8209 is complete, TABLE_SQL can come before TABLE_NAME
-  // TABLE_SQL should then be removed from this fn
-  return step === 'TABLE_NAME' || step === 'TABLE_SQL'
+  return step === 'TABLE_NAME'
 }
 
 export function getStepAfterTypeSelection(

@@ -1,0 +1,28 @@
+{
+  "name": "portals-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf coverage",
+    "lint": "eslint src",
+    "type-check": "tsc",
+    "_portal:build": "pnpm nx run ${PORTAL}:build",
+    "portal:build": "dotenv -- pnpm _portal:build",
+    "_portal:start": "pnpm nx run ${PORTAL}:preview --port 3000",
+    "portal:start": "dotenv -- pnpm _portal:start",
+    "portal:stop": "pid=$(lsof -i :3000 -t) && kill ${pid}",
+    "e2e": "playwright test",
+    "e2e:chromium": "playwright test --project=chromium",
+    "e2e:report": "pnpm exec playwright show-report",
+    "e2e:report:blob": "pnpm exec playwright merge-reports --reporter html ./blob-report && pnpm e2e:report",
+    "playwright:update": "pnpm add -D @playwright/test@latest; pnpm playwright install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.14.10",
+    "dotenv": "^16.4.5",
+    "tslib": "^2.6.2",
+    "typescript": "5.5.2"
+  }
+}

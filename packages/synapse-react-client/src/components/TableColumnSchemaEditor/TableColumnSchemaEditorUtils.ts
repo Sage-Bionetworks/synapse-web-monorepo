@@ -27,11 +27,13 @@ import { JSONSchema7Definition } from 'json-schema'
  * These column types can only be used in Tables. They can not be used in views.
  *  See SWC-6333 - for views, only allow column types that are mapped to annotation types.
  */
-const unsupportedTypesForViews = [
-  ColumnTypeEnum.LARGETEXT,
-  ColumnTypeEnum.MEDIUMTEXT,
-  ColumnTypeEnum.JSON,
-]
+const unsupportedTypesForViews = [ColumnTypeEnum.JSON]
+
+/**
+ * Get the allowed column types for a column model based on the table type.
+ * @param isView - whether the base table is a view
+ * @param isJsonSubColumnFacet - whether the proposed column is a JSON subcolumn facet
+ */
 export function getAllowedColumnTypes(
   isView: boolean,
   isJsonSubColumnFacet: boolean,

@@ -19,6 +19,11 @@ import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { GenericCardSchema } from '../GenericCard'
 import { StatConfig } from '../ReleaseCard'
 import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
+import {
+  ReleaseMetadataConfig,
+  SelectedFacetConfig,
+} from '../ReleaseCard/ReleaseCardTypes'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -113,9 +118,76 @@ export const PublicationCard: Story = {
   },
 }
 
+const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
+  {
+    destinationTableColumnName: 'cohort',
+    sourceTableColumnName: 'Cohort',
+  },
+  {
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
+  },
+]
+
+export const ReleaseCardLarge: Story = {
+  args: {
+    sql: "select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
+    type: RELEASE_CARD,
+    limit: 3,
+    releaseCardConfig: {
+      cardSize: 'large',
+      prependRelease: false,
+      releaseMetadataConfig: {
+        releaseDateColumnName: 'ReleaseDate',
+        releaseEntityIdColumnName: 'id',
+        releaseNameColumnName: 'nameReleaseCard',
+      },
+      statsConfig: [
+        { columnName: 'Patients', label: 'Patients' },
+        { columnName: 'Samples', label: 'Samples' },
+      ],
+      primaryBtnConfig: {
+        label: 'Explore Data Release',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: genieSelectedFacetConfigs,
+      },
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: genieSelectedFacetConfigs,
+        staticSelectedFacets: [
+          {
+            facet: 'dataType',
+            facetValue: 'data_guide',
+          },
+        ],
+      },
+    },
+  },
+}
+
+const releaseMetadataConfig: ReleaseMetadataConfig = {
+  releaseDateColumnName: 'releaseDate',
+  releaseEntityIdColumnName: 'releaseEntityId',
+  releaseNameColumnName: 'releaseName',
+}
+
 const statsConfig: StatConfig[] = [
   { columnName: 'countPatients', label: 'Patients' },
   { columnName: 'countSamples', label: 'Samples' },
+]
+
+const selectedFacetConfigs: SelectedFacetConfig[] = [
+  {
+    destinationTableColumnName: 'releaseType',
+    sourceTableColumnName: 'releaseType',
+  },
+  {
+    destinationTableColumnName: 'version',
+    sourceTableColumnName: 'version',
+  },
 ]
 
 const currentReleaseCardSql = `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = true`
@@ -128,17 +200,35 @@ export const ReleaseCardLargeMock: Story = {
     releaseCardConfig: {
       cardSize: 'large',
       prependRelease: false,
+      releaseMetadataConfig: releaseMetadataConfig,
       statsConfig: statsConfig,
-      buttonToExplorePageConfig: {
+      primaryBtnConfig: {
         label: 'Explore Current Data Release',
-        sourcePathColumnName: 'releaseExplorePath',
-        exploreDataSql: currentReleaseCardSql, // generally this would refer to a different table, not the source table
-        exploreDataFacetColumnName: 'releaseType',
-        sourceDataFacetValueColumnName: 'releaseType',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: selectedFacetConfigs,
       },
-      dataGuidePath: 'data guide',
+      secondaryBtnConfig: {
+        label: 'View Data Guide',
+        sourceTablePathColumnName: 'releaseExplorePath',
+        sourceTableSqlColumnName: 'exploreDataSql',
+        selectedFacetConfigs: selectedFacetConfigs,
+        staticSelectedFacets: [
+          {
+            facet: 'dataType',
+            facetValue: 'data_guide',
+          },
+        ],
+      },
     },
   },
+  loaders: [
+    () =>
+      registerTableQueryResult(
+        { sql: currentReleaseCardSql },
+        mockCurrentReleaseCardsQueryResultBundle,
+      ),
+  ],
   parameters: {
     stack: 'mock',
     design: {
@@ -149,10 +239,7 @@ export const ReleaseCardLargeMock: Story = {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(
-          mockCurrentReleaseCardsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-        ),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },
@@ -166,9 +253,20 @@ export const ReleaseCardMediumMock: Story = {
     releaseCardConfig: {
       cardSize: 'medium',
       requestAccessPath: 'data access',
+      releaseMetadataConfig: releaseMetadataConfig,
       statsConfig: statsConfig,
     },
   },
+  loaders: [
+    () => {
+      registerTableQueryResult(
+        {
+          sql: `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false`,
+        },
+        mockPreviousReleaseCardsQueryResultBundle,
+      )
+    },
+  ],
   parameters: {
     stack: 'mock',
     design: {
@@ -179,10 +277,7 @@ export const ReleaseCardMediumMock: Story = {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(
-          mockPreviousReleaseCardsQueryResultBundle,
-          MOCK_REPO_ORIGIN,
-        ),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },

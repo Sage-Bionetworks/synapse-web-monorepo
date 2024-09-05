@@ -12,6 +12,7 @@ export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"
   textDescription?: string
   showCopyPlainText?: boolean
+  title?: string
 } & MarkdownSynapseProps
 
 /**
@@ -32,14 +33,33 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
     }
   }
 
-  const { textDescription = 'full text', showCopyPlainText } = props
+  const {
+    textDescription = 'full text',
+    showCopyPlainText,
+    markdown,
+    ownerId,
+    title,
+  } = props
+  if (markdown == undefined && ownerId == undefined) {
+    return
+  }
   const iconSx: SxProps = {
     color: 'grey.700',
     marginBottom: '-5px !important',
     height: '18px',
   }
   return (
-    <div className="MarkdownCollapse">
+    <div
+      className="MarkdownCollapse"
+      style={{
+        display: wordCount != undefined && wordCount > 0 ? 'block' : 'none',
+      }}
+    >
+      {title && (
+        <Typography variant="subtitle1" sx={{ margin: '20px 0px 10px 0px' }}>
+          {title}
+        </Typography>
+      )}
       <Box
         sx={{
           display: 'flex',

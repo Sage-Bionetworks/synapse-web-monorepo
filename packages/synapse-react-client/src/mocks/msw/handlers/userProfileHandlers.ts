@@ -11,10 +11,6 @@ import {
   USER_PROFILE_ID,
 } from '../../../utils/APIConstants'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import {
   TwoFactorAuthStatus,
   TYPE_FILTER,
   UserBundle,
@@ -66,13 +62,10 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
    * Get the caller's user bundle
    */
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-    async (req, res, ctx) => {
-      const result: UserBundle = mockUserBundle
-      return res(ctx.status(200), ctx.json(result))
-    },
-  ),
+  rest.get(`${backendOrigin}${USER_BUNDLE}`, async (req, res, ctx) => {
+    const result: UserBundle = mockUserBundle
+    return res(ctx.status(200), ctx.json(result))
+  }),
 
   /**
    * Get a user bundle by ID

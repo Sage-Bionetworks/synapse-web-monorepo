@@ -13,7 +13,7 @@ import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../mocks/team/mockTeam'
 import { getAccessRequirementStatusHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { mockSelfSignAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockSelfSignAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 async function renderComponent(props: ChallengeRequirementsModalProps) {
@@ -27,7 +27,7 @@ async function renderComponent(props: ChallengeRequirementsModalProps) {
     name: 'Challenge Terms and Conditions',
   })
   const registerButton = await within(dialog).findByRole('button', {
-    name: 'Register',
+    name: /Register|Continue/,
   })
   const cancelButton = await within(dialog).findByRole('button', {
     name: 'Cancel',

@@ -24,7 +24,7 @@ export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   onChange: (newValue: TReturn | undefined) => void
   disabled?: boolean
   TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
-  SelectProps?: Omit<SelectProps, 'value' | 'onChange' | 'disabled'>
+  SelectProps?: Omit<SelectProps, 'variant' | 'value' | 'onChange' | 'disabled'>
   selectFormHelperText?: React.ReactNode
 }
 

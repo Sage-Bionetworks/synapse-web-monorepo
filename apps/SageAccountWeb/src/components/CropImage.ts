@@ -10,63 +10,40 @@ export const createImg = (url: string) =>
   })
 
 export const getCroppedImg = async (
-  imgSrc: string,
+  imageSrc: string,
   pixelCrop: Area,
-  rotation = 0,
+  outputWidth: number,
+  outputHeight: number,
 ) => {
-  const image = await createImg(imgSrc)
+  const image = await createImg(imageSrc)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
 
+  canvas.width = outputWidth
+  canvas.height = outputHeight
   if (!ctx) {
     throw new Error('No 2d context')
   }
-
-  const SX = 0
-  const SY = 0
-  const DX = 0
-  const DY = 0
-
-  const scaleX = image.naturalWidth / image.width
-  const scaleY = image.naturalHeight / image.height
-  const pixelRatio = 1
-
-  canvas.width = Math.floor(pixelCrop.width * scaleX * pixelRatio)
-  canvas.height = Math.floor(pixelCrop.height * scaleY * pixelRatio)
-
-  ctx.scale(pixelRatio, pixelRatio)
-  ctx.imageSmoothingQuality = 'high'
-
-  const cropX = pixelCrop.x * scaleX
-  const cropY = pixelCrop.y * scaleY
-
-  const centerX = image.naturalWidth / 2
-  const centerY = image.naturalHeight / 2
-
-  ctx.save()
-
-  // Move the crop origin to the canvas origin (0,0)
-  ctx.translate(-cropX, -cropY)
-  // Move the origin to the center of the original position
-  ctx.translate(centerX, centerY)
-  // Move the center of the image to the origin (0,0)
-  ctx.translate(-centerX, -centerY)
+  // Draw the image on the canvas
   ctx.drawImage(
     image,
-    SX,
-    SY,
-    image.naturalWidth,
-    image.naturalHeight,
-    DX,
-    DY,
-    image.naturalWidth,
-    image.naturalHeight,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    outputWidth,
+    outputHeight,
   )
-  ctx.restore()
 
-  return new Promise<File>(resolve => {
-    canvas.toBlob(blob => {
-      resolve(new File([blob!], 'profilePic.jpg', { type: 'image/jpeg' }))
+  return new Promise<File>((resolve, reject) => {
+    canvas.toBlob(file => {
+      if (!file) {
+        reject(new Error('Canvas is empty'))
+        return
+      }
+      resolve(new File([file!], 'profilePic.jpg', { type: 'image/jpeg' }))
     }, 'image/jpeg')
   })
 }

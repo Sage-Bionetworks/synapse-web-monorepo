@@ -14,6 +14,7 @@ jobs:
           [
             synapse-react-client,
             markdown-it-synapse,
+            '@sage-bionetworks/markdown-it-container',
             '@sage-bionetworks/synapse-types',
           ]
     runs-on: ubuntu-latest
@@ -29,6 +30,7 @@ jobs:
       - id: package-version-check
         uses: EndBug/version-check@v2
         with:
+          diff-search: true
           file-name: './${{ steps.package-path.outputs.packagePath }}/package.json'
       # Build the package to publish
       - name: Build package

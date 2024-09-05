@@ -20,10 +20,11 @@ import {
 } from '../../utils/functions/getEndpoint'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
+import { noop } from 'lodash-es'
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+  .mockImplementation(() => noop)
 jest.mock('../../../src/components/SynapseForm/WarningDialog', () => ({
   WarningDialog: jest.fn().mockImplementation(() => {
     return <div></div>

@@ -7,6 +7,8 @@ import {
   AccountLevelBadgeType,
 } from '../AccountLevelBadge/AccountLevelBadge'
 import { ErrorBanner } from '../error/ErrorBanner'
+import useRevokeCertificationUI from './useRevokeCertificationUI'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type AccountLevelBadgesProps = {
   userId: string
@@ -36,6 +38,17 @@ export const AccountLevelBadges: React.FunctionComponent<
   }
   const hasBadges = Object.values(badgeStatuses).some(value => value)
 
+  const {
+    showButton: showRevokeCertificationButton,
+    buttonProps: revokeCertificationButtonProps,
+    confirmationDialogProps: revokeCertificationConfirmationDialogProps,
+  } = useRevokeCertificationUI({
+    userId,
+    buttonProps: {
+      variant: 'outlined',
+    },
+  })
+
   if (isLoading) {
     return <></>
   }
@@ -45,6 +58,7 @@ export const AccountLevelBadges: React.FunctionComponent<
 
   return (
     <>
+      <ConfirmationDialog {...revokeCertificationConfirmationDialogProps} />
       {hasBadges && (
         <Box
           display="flex"
@@ -54,9 +68,17 @@ export const AccountLevelBadges: React.FunctionComponent<
         >
           {Object.entries(badgeStatuses).map(([key, value]) => {
             const badgeType = key as AccountLevelBadgeType
+            const buttonProps =
+              badgeType === 'certified' && showRevokeCertificationButton
+                ? revokeCertificationButtonProps
+                : undefined
             return (
               value && (
-                <AccountLevelBadge key={badgeType} badgeType={badgeType} />
+                <AccountLevelBadge
+                  key={badgeType}
+                  badgeType={badgeType}
+                  buttonProps={buttonProps}
+                />
               )
             )
           })}

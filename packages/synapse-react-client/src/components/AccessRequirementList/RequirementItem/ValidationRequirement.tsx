@@ -1,9 +1,9 @@
 import React from 'react'
 import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { useOneSageURL } from '../../../utils/hooks/useOneSageURL'
 
 /**
  * When creating requests for access requirements on a particular file, one or more access requirements may require that the
@@ -13,6 +13,11 @@ import { RequirementItemStatus } from '../AccessApprovalCheckMark'
  */
 export default function ValidationRequirement() {
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
+  const validationURL = useOneSageURL(
+    '/authenticated/myaccount',
+    undefined,
+    'trust',
+  )
 
   return (
     <RequirementItem
@@ -26,7 +31,7 @@ export default function ValidationRequirement() {
     >
       <Typography variant={'body1'}>
         You must first apply to have your{' '}
-        <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:v/settings`}>
+        <Link href={validationURL.toString()} target={'_blank'}>
           user profile validated
         </Link>
       </Typography>

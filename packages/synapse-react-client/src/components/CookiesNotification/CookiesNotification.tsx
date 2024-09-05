@@ -1,42 +1,102 @@
-import React from 'react'
+import React, { useState } from 'react'
 import FullWidthAlert from '../FullWidthAlert'
+import { Link, Typography } from '@mui/material'
+import CookiePreferencesDialog from './CookiePreferencesDialog'
+import {
+  COOKIES_AGREEMENT_COOKIE_KEY,
+  CookiePreference,
+  allowAll,
+  allowNone,
+  useCookiePreferences,
+} from '../../utils/hooks/useCookiePreferences'
+import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
+import UniversalCookies from 'universal-cookie'
+
+const cookies = new UniversalCookies()
 
 export const alertConfig = {
   title: 'Our site uses cookies.',
-  description:
-    'This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy.',
-  primaryButtonText: 'ACCEPT AND CONTINUE',
+  description: (
+    <Typography variant="body1">
+      We use necessary cookies and store your data to ensure our websites
+      function properly. With your consent, we would also like to use cookies to
+      remember your preferences and enhance our websites. Please review our{' '}
+      <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link>. By clicking
+      “Accept All,” you consent to our use of cookies. You can adjust your
+      cookie preferences anytime on the Settings page.
+    </Typography>
+  ),
+  primaryButtonText: 'ALLOW ALL',
+  secondaryButtonText: 'Disable All',
+  tertiaryButtonText: 'Customize',
 }
 
-export const COOKIES_AGREEMENT_LOCALSTORAGE_KEY =
-  'org.sagebionetworks.security.cookies.portal.notification.okclicked'
+export type CookieNotificationProps = {
+  onClose?: (cookiePrefs: CookiePreference) => void
+}
 
-const CookiesNotification = () => {
-  const [okClicked, setOkClicked] = React.useState(
-    localStorage.getItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY) !== null,
+const CookiesNotification = (props: CookieNotificationProps) => {
+  const { onClose } = props
+  const [, setCookiePreferences] = useCookiePreferences()
+
+  const [notificationDismissed, setNotificationDismissed] = useState(
+    !!cookies.get(COOKIES_AGREEMENT_COOKIE_KEY),
   )
 
+  const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
+    useState(false)
   // show banner if they haven't clicked okay, otherwise show nothing
-  return okClicked ? (
+  return notificationDismissed ? (
     <></>
   ) : (
-    <FullWidthAlert
-      variant="info"
-      title={alertConfig.title}
-      description={alertConfig.description}
-      primaryButtonConfig={{
-        text: alertConfig.primaryButtonText,
-        onClick: () => {
-          localStorage.setItem(COOKIES_AGREEMENT_LOCALSTORAGE_KEY, 'true')
-          setOkClicked(true)
-        },
-      }}
-      secondaryButtonConfig={{
-        text: 'LEARN MORE',
-        href: 'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf',
-      }}
-      isGlobal={true}
-    />
+    <>
+      <FullWidthAlert
+        globalAlertSx={{ zIndex: 1500 }}
+        variant="info"
+        title={alertConfig.title}
+        description={alertConfig.description}
+        primaryButtonConfig={{
+          text: alertConfig.primaryButtonText,
+          onClick: () => {
+            setCookiePreferences(allowAll)
+            setNotificationDismissed(true)
+            if (onClose) {
+              onClose(allowAll)
+            }
+          },
+        }}
+        secondaryButtonConfig={{
+          text: alertConfig.secondaryButtonText,
+          onClick: () => {
+            setCookiePreferences(allowNone)
+            setNotificationDismissed(true)
+            if (onClose) {
+              onClose(allowNone)
+            }
+          },
+        }}
+        tertiaryButtonConfig={{
+          text: alertConfig.tertiaryButtonText,
+          onClick: () => {
+            setIsCookiePrefsDialogVisible(true)
+          },
+        }}
+        isGlobal={true}
+      />
+      <CookiePreferencesDialog
+        isOpen={isCookiePrefsDialogVisible}
+        onSave={prefs => {
+          setNotificationDismissed(true)
+          setIsCookiePrefsDialogVisible(false)
+          if (onClose) {
+            onClose(prefs)
+          }
+        }}
+        onHide={() => {
+          setIsCookiePrefsDialogVisible(false)
+        }}
+      />
+    </>
   )
 }
 

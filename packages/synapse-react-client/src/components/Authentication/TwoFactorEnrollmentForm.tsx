@@ -149,9 +149,10 @@ export default function TwoFactorEnrollmentForm(
           <Typography variant="body1">
             After setting up 2FA, you’ll use an authenticator app as part of
             your login process, in addition to your existing password. If you
-            log in using your Google{' '}
-            {/* Remove conditionality when NIH RAS login is supported */}
-            {false && 'or NIH RAS'} account, you may need to use 2FA as part of
+            log in using your Google
+            {/* eslint-disable-next-line no-constant-binary-expression -- Remove conditionality when NIH RAS login is supported */}
+            {false && ', NIH RAS,'} or ORCiD account, you may need to use 2FA as
+            part of
             {/*those processes*/}
             that process as well.{' '}
             <Link href={TWO_FACTOR_DOCS_LINK}>Learn more about 2FA</Link>.

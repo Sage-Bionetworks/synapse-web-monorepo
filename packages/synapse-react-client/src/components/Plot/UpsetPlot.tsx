@@ -12,6 +12,7 @@ import UpSetJS, {
   ISetLike,
   ISets,
   UpSetFontSizes,
+  UpSetSelectionProps,
 } from '@upsetjs/react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
@@ -33,7 +34,7 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-}
+} & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
   sets: ISets<any>
@@ -52,6 +53,7 @@ export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   height = 700,
   summaryLinkText,
   summaryLink,
+  onClick,
 }) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -168,7 +170,7 @@ export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                 width={size.width!}
                 height={height}
                 onHover={setSelection}
-                // onClick={setSelection}
+                onClick={onClick}
                 selection={selection}
                 color={colorPalette[0]}
                 selectionColor={colorPalette[0]}

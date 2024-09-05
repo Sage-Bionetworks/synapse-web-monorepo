@@ -27,6 +27,11 @@ import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
+  onIndividualThemeBarPlotPointClick?: ({
+    facetValue,
+    type,
+    event,
+  }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -76,6 +81,7 @@ const dotPlotLayoutConfig: Partial<Plotly.Layout> = {
     autotick: true,
     ticks: 'outside',
     tickcolor: '#ddd',
+    type: 'log',
   },
 
   yaxis: {
@@ -206,6 +212,7 @@ export function ThemesPlot({
   sideBarPlot,
   tooltipProps = tooltipVisualProps,
   onPointClick,
+  onIndividualThemeBarPlotPointClick,
   dotPlotYAxisLabel = 'Research Themes',
 }: ThemesPlotProps) {
   const { accessToken } = useSynapseContext()
@@ -220,9 +227,24 @@ export function ThemesPlot({
     const sideBarPlotData = fetchData(accessToken!, sideBarPlot)
     Promise.all([dotPlotData, topBarPlotData, sideBarPlotData])
       .then(result => {
-        setDotPlotQueryData(resultToJson(result[0].headers, result[0].rows))
-        setTopBarQueryData(resultToJson(result[1].headers, result[1].rows))
-        setSideBarQueryData(resultToJson(result[2].headers, result[2].rows))
+        setDotPlotQueryData(
+          resultToJson(
+            result[0].headers,
+            result[0].rows,
+          ) as unknown as GraphItem[],
+        )
+        setTopBarQueryData(
+          resultToJson(
+            result[1].headers,
+            result[1].rows,
+          ) as unknown as GraphItem[],
+        )
+        setSideBarQueryData(
+          resultToJson(
+            result[2].headers,
+            result[2].rows,
+          ) as unknown as GraphItem[],
+        )
         setIsLoaded(true)
       })
       .catch(err => {
@@ -233,7 +255,6 @@ export function ThemesPlot({
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
-  let xMaxForSideBarPlot = 0
   let topBarPlotDataSorted: TotalsGroupByY[] = []
   let totalsByDotPlotY: TotalsGroupByY[] = []
   if (isLoaded) {
@@ -241,7 +262,6 @@ export function ThemesPlot({
     yLabelsForDotPlot = totalsByDotPlotY
       .sort((a, b) => b.count - a.count)
       .map(item => item.y)
-    xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
     topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
       'y',
@@ -338,9 +358,18 @@ export function ThemesPlot({
                           optionsConfig={optionsConfig}
                           plotData={sideBarPlotData}
                           isTop={false}
-                          xMax={xMaxForSideBarPlot}
+                          // PORTALS-3061: No longer use a global x max for the side bar (where the bar size of 1 grant is consistent),
+                          //    Instead, each bar chart is independent (the size of 1 grant differs across bar charts).
+                          xMax={totalsByDotPlotY[i].count}
                           label={label}
                           colors={fadeColors({ ...topBarPlot.colors }, '1')}
+                          onClick={(e: any) => {
+                            if (onIndividualThemeBarPlotPointClick) {
+                              onIndividualThemeBarPlotPointClick(
+                                getClickTargetData(e, false),
+                              )
+                            }
+                          }}
                         />
                       </div>
                     </ElementWithTooltip>

@@ -9,16 +9,17 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import {
+  useGetFeatureFlag,
   useGetJson,
   useGetSchemaBinding,
   useGetValidationResults,
 } from '../../../synapse-queries'
-import { useSynapseContext } from '../../../utils'
 import { SkeletonTable } from '../../Skeleton'
 import dayjs from 'dayjs'
 import FullWidthAlert from '../../FullWidthAlert'
 import { isISOTimestamp } from '../../../utils/functions/DateTimeUtils'
 import { formatDate } from '../../../utils/functions/DateFormatter'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type AnnotationsTableProps = {
   readonly entityId: string
@@ -40,7 +41,9 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
   /**
    * Currently, schema/validation features are only shown in experimental mode.
    */
-  const { isInExperimentalMode } = useSynapseContext()
+  const isFeatureEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
+  )
 
   const {
     data: entityData,
@@ -51,15 +54,15 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
   const annotations = entityData?.annotations
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: isInExperimentalMode,
+    enabled: isFeatureEnabled,
   })
 
   const { data: validationResults, refetch: refetchValidationInformation } =
     useGetValidationResults(entityId, {
-      enabled: isInExperimentalMode && Boolean(boundSchema),
+      enabled: isFeatureEnabled && Boolean(boundSchema),
     })
 
-  const showSchemaInformation = isInExperimentalMode && Boolean(boundSchema)
+  const showSchemaInformation = isFeatureEnabled && Boolean(boundSchema)
 
   // If the entity has not yet been validated since the last fetch, then derived annotations may not have been calculated.
   const recentChangesHaveNotBeenValidated =

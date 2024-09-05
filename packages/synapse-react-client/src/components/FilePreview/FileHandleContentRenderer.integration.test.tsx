@@ -32,7 +32,7 @@ function renderComponent(props: FileHandleContentRendererProps) {
       withErrorBoundary: true,
       isInExperimentalMode: false,
       utcTime: false,
-      downloadCartPageUrl: '/#!DownloadCart:0',
+      downloadCartPageUrl: '/DownloadCart:0',
     }),
   })
 }

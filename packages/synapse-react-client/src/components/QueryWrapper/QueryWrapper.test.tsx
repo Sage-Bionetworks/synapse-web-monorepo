@@ -1,54 +1,36 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
+import { QueryContextType, useQueryContext } from '../QueryContext'
+import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../QueryContext'
-import {
-  isLoadingNewBundleAtom,
-  QueryWrapper,
-  QueryWrapperProps,
-  tableQueryDataAtom,
-} from './QueryWrapper'
-import { SynapseConstants } from '../../utils'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  Row,
-} from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+  ALL_QUERY_BUNDLE_PARTS,
+  DEFAULT_PAGE_SIZE,
+} from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
-import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { useAtomValue } from 'jotai'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { selectedRowsAtom } from './TableRowSelectionState'
+import mockQueryResponseData from '../../mocks/mockQueryResponseData'
+import { server } from '../../mocks/msw/server'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import Mock = jest.Mock
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableAsyncJobResults: jest.fn(),
-  getEntity: jest.fn(),
-}))
-
-const mockGetQueryTableAsyncJobResults = jest.mocked(
-  SynapseClient.getQueryTableAsyncJobResults,
+const getQueryTableAsyncJobResultsSpy = jest.spyOn(
+  SynapseClient,
+  'getQueryTableAsyncJobResults',
 )
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
-let isLoadingNewBundleValue: boolean | undefined
-let currentQueryDataValue: QueryResultBundle | undefined
 let selectedRows: Row[] | undefined
 let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
 const QueryContextReceiver = () => {
   // An error would be thrown if context was not provided by QueryWrapper
   const context = useQueryContext()
-  isLoadingNewBundleValue = useAtomValue(isLoadingNewBundleAtom)
-  currentQueryDataValue = useAtomValue(tableQueryDataAtom)
   selectedRows = useAtomValue(selectedRowsAtom)
   setSelectedRows = useSetAtom(selectedRowsAtom)
   providedContext = context
@@ -57,25 +39,28 @@ const QueryContextReceiver = () => {
 
 // utility function
 function renderComponent(props: QueryWrapperProps) {
-  let renderResult
-  act(() => {
-    renderResult = render(
-      <QueryWrapper {...props}>
-        <QueryContextReceiver />
-      </QueryWrapper>,
-      { wrapper: createWrapper() },
-    )
-  })
+  const mockOnQueryChange: Mock<QueryWrapperProps['onQueryChange']> = jest.fn()
+  const mockOnQueryResultBundleChange: Mock<
+    QueryWrapperProps['onQueryChange']
+  > = jest.fn()
 
-  return renderResult
+  const component = render(
+    <QueryWrapper
+      onQueryChange={mockOnQueryChange}
+      onQueryResultBundleChange={mockOnQueryResultBundleChange}
+      {...props}
+    >
+      <QueryContextReceiver />
+    </QueryWrapper>,
+    { wrapper: createWrapper() },
+  )
+
+  return { component, mockOnQueryChange, mockOnQueryResultBundleChange }
 }
 
 const initialQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  partMask:
-    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  partMask: ALL_QUERY_BUNDLE_PARTS,
   entityId: 'syn16787123',
   query: {
     sql: 'SELECT * FROM syn16787123',
@@ -84,24 +69,19 @@ const initialQueryRequest: QueryBundleRequest = {
 }
 
 describe('QueryWrapper', () => {
+  beforeAll(() => server.listen())
   beforeEach(() => {
-    isLoadingNewBundleValue = undefined
-    currentQueryDataValue = undefined
     selectedRows = undefined
     setSelectedRows = undefined
     jest.clearAllMocks()
     window.history.pushState({}, 'Page Title', '/')
 
     providedContext = undefined
-    mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
-      return Promise.resolve({
-        ...mockCompleteAsyncJob,
-        requestBody: queryBundleRequest,
-        jobState: 'COMPLETE',
-        responseBody: syn16787123Json,
-      })
-    })
+
+    registerTableQueryResult(initialQueryRequest.query, mockQueryResponseData)
   })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
   describe('basic functionality', () => {
     it('renders without crashing', async () => {
@@ -109,15 +89,13 @@ describe('QueryWrapper', () => {
       await screen.findByText(renderedTextConfirmation)
     })
 
-    it('Data atom is set', async () => {
-      renderComponent({ initQueryRequest: initialQueryRequest })
-      await waitFor(() => {
-        expect(isLoadingNewBundleValue).toBe(false)
-        expect(currentQueryDataValue).toEqual(syn16787123Json)
-      })
-    })
-
     it('Executing a new query updates the last query request', async () => {
+      const newSql = 'SELECT new_columns FROM syn16787123'
+      registerTableQueryResult(
+        { ...initialQueryRequest.query, sql: newSql },
+        mockQueryResponseData,
+      )
+
       renderComponent({ initQueryRequest: initialQueryRequest })
 
       // Wait for the children to render to ensure context is created
@@ -158,8 +136,14 @@ describe('QueryWrapper', () => {
 
       const newSql = initialQueryRequest.query.sql + ' WHERE x = 1'
 
+      registerTableQueryResult(
+        { ...initialQueryRequest.query, sql: newSql },
+        mockQueryResponseData,
+      )
+
       await waitFor(() => expect(providedContext).toBeDefined())
 
+      // Call under test -- update the query
       act(() => {
         providedContext!.executeQueryRequest({
           ...initialQueryRequest,
@@ -176,21 +160,28 @@ describe('QueryWrapper', () => {
           new URLSearchParams(location.search).get('QueryWrapper0')!,
         )
         expect(query.sql).toEqual(newSql)
-        expect(mockGetQueryTableAsyncJobResults).toHaveBeenCalled()
+        expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalled()
       })
     })
 
     it('test onQueryChange and onQueryResultBundleChange', async () => {
-      const mockOnQueryChange = jest.fn()
-      const mockOnQueryResultBundleChange = jest.fn()
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        shouldDeepLink: true,
-        onQueryChange: mockOnQueryChange,
-        onQueryResultBundleChange: mockOnQueryResultBundleChange,
-      })
+      const { mockOnQueryChange, mockOnQueryResultBundleChange } =
+        renderComponent({
+          initQueryRequest: initialQueryRequest,
+          shouldDeepLink: true,
+        })
 
-      await waitFor(() => expect(providedContext).toBeDefined())
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+
+        // Note: onQueryResultBundleChange should include the entire (merged) QueryResultBundle
+        expect(mockOnQueryResultBundleChange).toHaveBeenCalled()
+        const lastCallPassedQueryResultBundle =
+          mockOnQueryResultBundleChange.mock.lastCall![0]
+        expect(JSON.parse(lastCallPassedQueryResultBundle)).toEqual(
+          mockQueryResponseData,
+        )
+      })
 
       act(() => {
         providedContext!.executeQueryRequest({
@@ -207,8 +198,17 @@ describe('QueryWrapper', () => {
           expect.stringContaining(initialQueryRequest.query.sql),
         )
 
-        expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
-          expect.stringContaining(JSON.stringify(syn16787123Json)),
+        // Because there is now an offset, the bundle passed to the callback should not include the first 10 rows
+        const expectedBundle = cloneDeep(mockQueryResponseData)
+        expectedBundle.queryResult.queryResults.rows =
+          expectedBundle.queryResult.queryResults.rows.slice(10)
+
+        // Note: onQueryResultBundleChange should include the entire (merged) QueryResultBundle
+        expect(mockOnQueryResultBundleChange).toHaveBeenCalled()
+        const lastCallPassedQueryResultBundle =
+          mockOnQueryResultBundleChange.mock.lastCall![0]
+        expect(JSON.parse(lastCallPassedQueryResultBundle)).toEqual(
+          expectedBundle,
         )
       })
     })
@@ -242,6 +242,9 @@ describe('QueryWrapper', () => {
     it('when there is a single param in the url', async () => {
       const lqr = cloneDeep(initialQueryRequest)
       lqr.query.sql = 'SELECT * FROM syn12345'
+
+      registerTableQueryResult(lqr.query, mockQueryResponseData)
+
       window.history.pushState(
         {},
         'Page Title',
@@ -260,6 +263,9 @@ describe('QueryWrapper', () => {
     it('when there are multiple params in the url', async () => {
       const lqr = cloneDeep(initialQueryRequest)
       lqr.query.sql = 'SELECT * FROM syn12345'
+
+      registerTableQueryResult(lqr.query, mockQueryResponseData)
+
       window.history.pushState(
         {},
         'Page Title',
@@ -276,63 +282,13 @@ describe('QueryWrapper', () => {
     })
   })
 
-  describe('locked facet', () => {
-    const lockedColumn: LockedColumn = {
-      columnName: 'tumorType',
-      value: 'Cutaneous Neurofibroma',
-    }
-    const noLockedColumn: LockedColumn = {}
-
-    it('removeLockedColumnData should remove locked facet data', async () => {
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        lockedColumn: lockedColumn,
-      })
-
-      await waitFor(() => {
-        expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
-      })
-
-      // One facet should be removed
-      expect(currentQueryDataValue!.facets!.length).toEqual(
-        syn16787123Json.facets!.length - 1,
-      )
-      // The removed facet should match the locked facet name
-      expect(
-        currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === 'tumorType',
-        ),
-      ).not.toBeDefined()
-    })
-
-    it('removeLockedColumnData should not remove any data if locked facet value is not set', async () => {
-      renderComponent({
-        initQueryRequest: initialQueryRequest,
-        lockedColumn: noLockedColumn,
-      })
-      await waitFor(() => {
-        expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
-      })
-
-      expect(currentQueryDataValue!.facets!.length).toEqual(
-        syn16787123Json.facets!.length,
-      )
-
-      expect(
-        currentQueryDataValue!.facets!.find(
-          facet => facet.columnName === 'tumorType',
-        ),
-      ).toBeDefined()
-    })
-  })
-
   describe('query change when rows are selected', () => {
     it('requires confirmation to change the query when rows are selected', async () => {
       const mockOnQueryChange = jest.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
+
+      registerTableQueryResult({ sql: newQuery }, mockQueryResponseData)
 
       renderComponent({
         initQueryRequest: initialQueryRequest,
@@ -343,7 +299,6 @@ describe('QueryWrapper', () => {
       // Select a row
       await waitFor(() => {
         expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
         expect(selectedRows).toBeDefined()
         expect(setSelectedRows).toBeDefined()
       })
@@ -402,6 +357,8 @@ describe('QueryWrapper', () => {
 
       const newQuery = 'SELECT * FROM syn98765'
 
+      registerTableQueryResult({ sql: newQuery }, mockQueryResponseData)
+
       renderComponent({
         initQueryRequest: initialQueryRequest,
         onQueryChange: mockOnQueryChange,
@@ -410,7 +367,6 @@ describe('QueryWrapper', () => {
 
       await waitFor(() => {
         expect(providedContext).toBeDefined()
-        expect(currentQueryDataValue).toBeDefined()
         expect(selectedRows).toBeDefined()
         expect(setSelectedRows).toBeDefined()
       })

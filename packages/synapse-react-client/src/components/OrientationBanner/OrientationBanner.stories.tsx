@@ -23,7 +23,7 @@ export const Demo: Story = {
     text: 'Teams allow you to easily manage groups of users to control access to projects, communicate with colleagues, and participate in challenges.',
     primaryButtonConfig: {
       text: 'Search Teams',
-      href: 'https://www.synapse.org/#!TeamSearch:',
+      href: 'https://www.synapse.org/TeamSearch:',
     },
     secondaryButtonConfig: {
       text: 'Learn More About Teams',

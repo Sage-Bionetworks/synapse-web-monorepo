@@ -1,23 +1,49 @@
 import { faker } from '@faker-js/faker'
-import { Entity, EntityHeader, Project } from '@sage-bionetworks/synapse-types'
+import {
+  AccessControlList,
+  Entity,
+  EntityHeader,
+  EntityType,
+  Project,
+  RestrictionLevel,
+  UserEntityPermissions,
+} from '@sage-bionetworks/synapse-types'
 import { pickRandomMockUser } from './fakerUtils'
 import { MockEntityData } from '../entity/MockEntityData'
+import {
+  convertToConcreteEntityType,
+  isContainerType,
+} from '../../utils/functions/EntityTypeUtils'
+import mockProjectEntityData from '../entity/mockProject'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
-export function generateBaseEntity(
-  entityDataOverrides?: Partial<Entity>,
-  idOverride?: number,
-): MockEntityData {
-  const id = idOverride ?? faker.number.int({ min: 10000, max: 99999 })
+export function generateBaseEntity<T extends Entity = Entity>(
+  overrides: {
+    id?: number
+    type?: EntityType
+    entity?: Omit<Partial<T>, 'id' | 'concreteType'>
+    acl?: Pick<AccessControlList, 'resourceAccess'>
+    permissions?: Partial<UserEntityPermissions>
+  } = {},
+): MockEntityData<T> {
+  const {
+    id = faker.number.int({ min: 10000, max: 99999 }),
+    type = EntityType.FILE,
+    entity: entityOverrides,
+    acl: aclOverride,
+    permissions: permissionsOverride,
+  } = overrides
   const entity = {
     id: `syn${id}`,
+    name: faker.lorem.words({ min: 1, max: 4 }),
     createdBy: String(pickRandomMockUser().id),
     createdOn: faker.date.anytime().toISOString(),
     etag: faker.string.uuid(),
     modifiedBy: String(pickRandomMockUser().id),
     modifiedOn: faker.date.anytime().toISOString(),
-    name: faker.lorem.words({ min: 1, max: 4 }),
-    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-    ...entityDataOverrides,
+    concreteType: convertToConcreteEntityType(type),
+    parentId: mockProjectEntityData.id,
+    ...(entityOverrides as Partial<Entity>),
   } satisfies Entity
   const header: EntityHeader = {
     id: entity.id,
@@ -27,7 +53,9 @@ export function generateBaseEntity(
     createdOn: entity.createdOn,
     modifiedBy: entity.modifiedBy,
     modifiedOn: entity.modifiedOn,
-    benefactorId: id,
+    benefactorId: normalizeNumericId(
+      aclOverride ? entity.id : mockProjectEntityData.id,
+    ),
     isLatestVersion: true,
     versionLabel:
       'versionLabel' in entity ? (entity.versionLabel as string) : undefined,
@@ -35,11 +63,84 @@ export function generateBaseEntity(
       'versionNumber' in entity ? (entity.versionNumber as number) : undefined,
   }
 
+  const acl: AccessControlList | undefined = aclOverride
+    ? {
+        ...aclOverride,
+        id: entity.id,
+        etag: faker.string.uuid(),
+        createdBy: entity.createdBy,
+        modifiedBy: entity.modifiedBy,
+        modifiedOn: entity.modifiedOn,
+      }
+    : undefined
+
   return {
     id: entity.id!,
-    entity: entity,
+    entity: entity as T,
     name: entity.name,
     entityHeader: header,
+    bundle: {
+      entity: entity,
+      entityType: type,
+      accessControlList: acl,
+      benefactorAcl: acl ?? mockProjectEntityData.bundle.accessControlList!,
+      permissions: {
+        ownerPrincipalId: parseInt(entity.createdBy),
+        canView: true,
+        canEdit: true,
+        canMove: true,
+        canAddChild: isContainerType(type),
+        canCertifiedUserEdit: true,
+        canCertifiedUserAddChild: isContainerType(type),
+        isCertifiedUser: true,
+        canChangePermissions: true,
+        canChangeSettings: true,
+        canDelete: true,
+        canDownload: true,
+        canUpload: true,
+        canEnableInheritance: true,
+        canPublicRead: true,
+        canModerate: true,
+        isCertificationRequired: true,
+        isEntityOpenData: false,
+        isUserDataContributor: true,
+        ...permissionsOverride,
+      },
+      annotations: {
+        id: entity.id,
+        etag: faker.string.uuid(),
+        annotations: {},
+      },
+      path: {
+        // TODO: Properly generate a path given the parent entity
+        path: [
+          {
+            name: 'Redacted',
+            id: 'syn4489',
+            type: 'org.sagebionetworks.repo.model.Folder',
+          },
+          {
+            name: mockProjectEntityData.name,
+            id: mockProjectEntityData.id,
+            type: mockProjectEntityData.entity.concreteType,
+          },
+          {
+            name: entity.name,
+            id: entity.id,
+            type: entity.concreteType,
+          },
+        ],
+      },
+      hasChildren: false,
+      fileHandles: [],
+      threadCount: 0,
+      restrictionInformation: {
+        objectId: id,
+        restrictionDetails: [],
+        restrictionLevel: RestrictionLevel.OPEN,
+        hasUnmetAccessRequirement: false,
+      },
+    },
   }
 }
 
@@ -47,12 +148,12 @@ export function generateProject(
   entityDataOverrides?: Partial<Project>,
   idOverride?: number,
 ): MockEntityData<Project> {
-  return generateBaseEntity(
-    {
+  return generateBaseEntity({
+    id: idOverride,
+    type: EntityType.PROJECT,
+    entity: {
       name: faker.lorem.words({ min: 1, max: 4 }),
-      concreteType: 'org.sagebionetworks.repo.model.Project',
       ...entityDataOverrides,
     },
-    idOverride,
-  ) as MockEntityData<Project>
+  }) as MockEntityData<Project>
 }

@@ -5,7 +5,7 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, noop } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
@@ -14,14 +14,11 @@ import {
   getCopy,
 } from './DatasetItemsEditor'
 import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
-import { displayToast } from '../../ToastMessage/ToastMessage'
+import { displayToast } from '../../ToastMessage'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '../../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../utils/context/SynapseContext'
+import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
+import { SynapseContextType } from '../../../utils'
 import {
   EntityRef,
   EntityType,
@@ -52,7 +49,9 @@ jest.mock(
       children({ height: 450, width: 1200 }),
 )
 
-jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {})
+jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {
+  return noop
+})
 
 const mockFileReference: Reference = {
   targetId: mockFileEntity.id!,
@@ -99,7 +98,6 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
 
 async function addItemsViaEntityFinder() {
   const addItemsButton = screen.getAllByRole('button', {
-    exact: false,
     name: /Add (File|Dataset)s/,
   })[0]
   // Mocked entity finder is not visible
@@ -120,7 +118,7 @@ async function addItemsViaEntityFinder() {
 
 async function selectIndividualItem(id: string) {
   // Click the checkbox for the corresponding item
-  const checkbox = await screen.findByTestId(`dataset-editor-checkbox-${id}`)
+  const checkbox = await screen.findByRole('checkbox', { name: `Select ${id}` })
   await userEvent.click(checkbox)
 }
 
@@ -132,7 +130,6 @@ async function removeItem(id: string) {
 async function clickRemove() {
   await userEvent.click(
     screen.getByRole('button', {
-      exact: true,
       name: /Remove (File|Dataset)s/,
     }),
   )
@@ -163,7 +160,6 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
   await waitFor(() =>
     expect(
       screen.getAllByRole('button', {
-        exact: false,
         name: /Add (File|Dataset)s/,
       })[0],
     ).not.toBeDisabled(),
@@ -192,7 +188,6 @@ async function verifyNoneSelected() {
   await waitFor(() =>
     expect(
       screen.getByRole('button', {
-        exact: false,
         name: /Remove (File|Dataset)s/,
       }),
     ).toBeDisabled(),
@@ -268,7 +263,6 @@ describe('Dataset Items Editor tests', () => {
     await renderComponent()
     await screen.findByText(NO_ITEMS_IN_THIS_DATASET, { exact: true })
     const addItemsButtons = await screen.findAllByRole('button', {
-      exact: false,
       name: ADD_ITEMS,
     })
     expect(addItemsButtons.length).toBe(2)
@@ -285,7 +279,6 @@ describe('Dataset Items Editor tests', () => {
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
-          exact: false,
           name: ADD_ITEMS,
         })[0],
       ).not.toBeDisabled(),
@@ -307,7 +300,6 @@ describe('Dataset Items Editor tests', () => {
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
-          exact: false,
           name: ADD_ITEMS,
         })[1],
       ).not.toBeDisabled(),
@@ -445,7 +437,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getByRole('button', {
-            exact: false,
             name: REMOVE_ITEMS,
           }),
         ).toBeDisabled(),
@@ -457,7 +448,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getByRole('button', {
-            exact: false,
             name: REMOVE_ITEMS,
           }),
         ).not.toBeDisabled(),
@@ -747,7 +737,6 @@ describe('Dataset Items Editor tests', () => {
       await waitFor(() =>
         expect(
           screen.getAllByRole('button', {
-            exact: false,
             name: ADD_ITEMS,
           })[1],
         ).not.toBeDisabled(),

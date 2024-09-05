@@ -1,6 +1,8 @@
 import { rest } from 'msw'
 import {
+  ACCESS_REQUIREMENT,
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ENTITY_ACCESS_REQUIREMENTS,
@@ -8,6 +10,7 @@ import {
 import {
   AccessApproval,
   AccessRequirement,
+  AccessRequirementSearchRequest,
   AccessRequirementStatus,
   CreateAccessApprovalRequest,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -18,10 +21,14 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import {
+  MOCK_AR_ETAG,
+  MOCK_NEWLY_CREATED_AR_ID,
   mockAccessRequirements,
   mockAccessRequirementWikiPageKeys,
+  mockSearchResultsPageOne,
+  mockSearchResultsPageTwo,
   mockSelfSignAccessRequirement,
-} from '../../mockAccessRequirements'
+} from '../../accessRequirement/mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 
@@ -71,6 +78,34 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     },
   ),
 ]
+
+export function createAccessRequirement(backendOrigin: string) {
+  return rest.post(
+    `${backendOrigin}${ACCESS_REQUIREMENT}`,
+    async (req, res, ctx) => {
+      const requestBody: AccessRequirement = await req.json()
+      return res(
+        ctx.status(201),
+        ctx.json({
+          ...requestBody,
+          id: MOCK_NEWLY_CREATED_AR_ID,
+          etag: MOCK_AR_ETAG,
+        }),
+      )
+    },
+  )
+}
+
+export function updateAccessRequirement(backendOrigin: string) {
+  return rest.put(
+    `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+    async (req, res, ctx) => {
+      const requestBody: AccessRequirement = await req.json()
+      return res(ctx.status(200), ctx.json(requestBody))
+    },
+  )
+}
+
 export const getAccessRequirementEntityBindingHandlers = (
   backendOrigin: string,
   entityId = ':entityId',
@@ -188,12 +223,35 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
   )
 }
 
+export function getAccessRequirementSearchHandler(backendOrigin: string) {
+  return rest.post(
+    `${backendOrigin}${ACCESS_REQUIREMENT_SEARCH}`,
+
+    async (req, res, ctx) => {
+      let response
+      if (
+        (await req.json<AccessRequirementSearchRequest>()).nextPageToken ===
+        mockSearchResultsPageOne.nextPageToken
+      ) {
+        response = mockSearchResultsPageTwo
+      } else {
+        response = mockSearchResultsPageOne
+      }
+
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+}
+
 export function getAllAccessRequirementHandlers(backendOrigin: string) {
   return [
     ...getAccessRequirementHandlers(backendOrigin),
+    createAccessRequirement(backendOrigin),
+    updateAccessRequirement(backendOrigin),
     ...getAccessRequirementEntityBindingHandlers(backendOrigin),
     getAccessRequirementsBoundToTeamHandler(backendOrigin),
     ...getAccessRequirementStatusHandlers(backendOrigin),
     getCreateAccessApprovalHandler(backendOrigin),
+    getAccessRequirementSearchHandler(backendOrigin),
   ]
 }

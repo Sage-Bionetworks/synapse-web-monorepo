@@ -7,6 +7,13 @@ export const AUTHENTICATED_PRINCIPAL_ID = 273948
 export const PUBLIC_PRINCIPAL_ID = 273949
 /** The single user representing all unauthenticated users */
 export const ANONYMOUS_PRINCIPAL_ID = 273950
+
+export const PUBLIC_PRINCIPAL_IDS = [
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+  ANONYMOUS_PRINCIPAL_ID,
+]
+
 /** The Synapse Access and Compliance team */
 export const ACT_TEAM_ID = 464532
 /** The team containing Synapse users whose HTML files may be rendered without sanitization */
@@ -24,6 +31,18 @@ export const BUNDLE_MASK_LAST_UPDATED_ON = 0x80
 export const BUNDLE_MASK_COMBINED_SQL = 0x100
 export const BUNDLE_MASK_ACTIONS_REQUIRED = 0x200
 
+export const ALL_QUERY_BUNDLE_PARTS =
+  BUNDLE_MASK_QUERY_RESULTS |
+  BUNDLE_MASK_QUERY_COUNT |
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+  BUNDLE_MASK_QUERY_COLUMN_MODELS |
+  BUNDLE_MASK_QUERY_FACETS |
+  BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+  BUNDLE_MASK_LAST_UPDATED_ON |
+  BUNDLE_MASK_COMBINED_SQL |
+  BUNDLE_MASK_ACTIONS_REQUIRED
+
 /** Row Types  */
 export const STUDY: string = 'study'
 /** Unannotated value for query */
@@ -39,6 +58,7 @@ export const AMP_CONSORTIUM: string = 'AMP_Consortium'
 export const FUNDER: string = 'funder'
 export const PUBLICATION: string = 'publication'
 export const TOOL: string = 'tool'
+export const EXTERNAL_RESOURCE: string = 'external resource'
 export const GENERIC_CARD: string = 'GENERIC_CARD'
 export const OBSERVATION_CARD: string = 'observation_card'
 export const RELEASE_CARD: string = 'release_card'
@@ -50,6 +70,7 @@ export const CLINICAL: string = 'clinical'
 export const PROJECT: string = 'Project'
 export const GRANT: string = 'Grant'
 export const ORGANIZATION: string = 'ORGANIZATION'
+export const CONTRIBUTOR: string = 'contributor'
 export const PERSON: string = 'PERSON'
 export const MOUSE: string = 'MOUSE'
 export const EXPLORE: string = 'explore'
@@ -121,6 +142,8 @@ export const BASE = 1024,
   GB = MB * BASE,
   TB = GB * BASE
 
+export const DAY_IN_MS = 1000 * 60 * 60 * 24
+
 export const NETWORK_UNAVAILABLE_MESSAGE =
   'This site cannot be reached. Either a connection is unavailable, or your network administrator has blocked you from accessing this site.'
 
@@ -165,6 +188,13 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
 
 /* Persistent localStorage keys on SWC logout */
-export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS.push(
+export const PERSISTENT_LOCAL_STORAGE_KEYS = [
+  ...ORIENTATION_BANNER_KEYS,
   EXTERNAL_COMPUTE_ENV_DISCLAIMER,
-)
+]
+
+export const PRIVACY_POLICY_LINK =
+  'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf'
+
+export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
+export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'

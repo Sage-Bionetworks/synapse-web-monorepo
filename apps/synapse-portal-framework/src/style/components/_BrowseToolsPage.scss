@@ -1,0 +1,83 @@
+@use '../variables' as Portal;
+
+.browse-tools-page {
+  // main contain has a padding bottom. Negative margin-bottom to connect last section to footer.
+  margin-bottom: -60px;
+  .home-container-description {
+    padding: 0px 0px 60px 0px;
+    margin: 0px;
+  }
+
+  .header {
+    background: Portal.$primary-action-color;
+    color: white;
+    padding: 50px 0px 30px 0px;
+  }
+  .sectionTitle {
+    padding: 50px 0px 15px 0px;
+    text-align: center;
+  }
+  .sectionSubtitle {
+    margin: 10px 0px 25px 0px;
+    text-align: center;
+  }
+  .searchToolsRow {
+    margin-top: 20px;
+    display: grid;
+    max-width: 750px;
+    width: 100%;
+    grid-template-columns: auto 100px 25px;
+    margin-left: 10px;
+    input {
+      height: 41px;
+    }
+    .search-button-container {
+      place-self: center;
+    }
+  }
+  .PopularSearches {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0px 20px 0px;
+    width: 800px;
+  }
+  .description {
+    max-width: 750px;
+  }
+  .categories {
+    display: flex;
+    @media (min-width: 1350px) {
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    @media (max-width: 1349px) {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    p {
+      color: #fff !important;
+      border-bottom: 1px transparent;
+      position: relative;
+      top: -84px;
+      display: block;
+      font-size: 18px;
+    }
+  }
+  .highlightSubmitToolContainer {
+    background-color: #003a55;
+    color: white;
+    padding: 50px 0px 100px 0px;
+  }
+
+  .highlightSubmitToolButton {
+    // TODO: Use theme to provide this color and hover state, see PORTALS-2653
+    background-color: #e27134;
+    color: white;
+    &:hover {
+      background-color: #dc6525;
+    }
+  }
+  .Ecosystem {
+    padding-bottom: 0px;
+  }
+}

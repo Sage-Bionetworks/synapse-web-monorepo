@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import SynapseClient from '../../synapse-client'
@@ -115,6 +115,13 @@ describe('TwoFactorAuthSettingsPanel', () => {
       name: 'Deactivate 2FA',
     })
     await userEvent.click(deactivateButton)
+    const confirmationDialog = await screen.findByRole('dialog')
+    await within(confirmationDialog).findByText('Disable 2FA?')
+    const confirmButton = await within(confirmationDialog).findByRole(
+      'button',
+      { name: 'Disable 2FA' },
+    )
+    await userEvent.click(confirmButton)
     await waitFor(() =>
       expect(mockDisableTwoFactorAuth).toHaveBeenCalledTimes(1),
     )

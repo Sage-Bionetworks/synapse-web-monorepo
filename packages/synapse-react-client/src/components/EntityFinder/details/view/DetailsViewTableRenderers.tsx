@@ -1,4 +1,4 @@
-import { Skeleton, Tooltip } from '@mui/material'
+import { Checkbox, Skeleton, Tooltip } from '@mui/material'
 import BaseTable, {
   CallOrReturn,
   ColumnShape,
@@ -26,7 +26,6 @@ import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
 import { DatasetItemsEditorTableData } from '../../../SynapseTable/datasets/DatasetItemsEditor'
-import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
@@ -228,9 +227,7 @@ export const DetailsViewCheckboxRenderer: ColumnShape<EntityFinderTableViewRowDa
     return (
       !isDisabled && (
         <Checkbox
-          label={`Select ${rowData.entityId}`}
-          hideLabel={true}
-          className="SRC-pointer-events-none"
+          inputProps={{ 'aria-label': `Select ${rowData.entityId}` }}
           checked={isSelected}
           onChange={() => {
             // no-op
@@ -485,13 +482,11 @@ export function DatasetEditorCheckboxRenderer<
   return (
     !isDisabled && (
       <Checkbox
-        data-testid={`dataset-editor-checkbox-${entityId}`}
         disabled={isDisabled}
-        label={`Select ${entityId}`}
-        hideLabel={true}
+        inputProps={{ 'aria-label': `Select ${entityId}` }}
         checked={isSelected}
-        onChange={value => {
-          setSelected(value)
+        onChange={(_event, checked) => {
+          setSelected(checked)
         }}
       />
     )

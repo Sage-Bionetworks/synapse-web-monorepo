@@ -98,7 +98,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   let name = ''
   const linkLocation = link
     ? link
-    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userProfile.ownerId}`
+    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${userProfile.ownerId}`
   // linkLocation is overriden by custom click handler
   const email = `${userName}@synapse.org`
   if (displayName) {

@@ -95,7 +95,11 @@ export default function RequirementItem(props: RequirementItemProps) {
           sx={{ gridColumnStart: 2, gridRow: '3 / span 1', mt: 2 }}
         >
           {actions.map((buttonProps, i) => (
-            <Button key={i} disabled={status === 'LOADING'} {...buttonProps} />
+            <Button
+              key={i}
+              disabled={status === RequirementItemStatus.LOADING}
+              {...buttonProps}
+            />
           ))}
         </InlineButtonContainer>
       )}

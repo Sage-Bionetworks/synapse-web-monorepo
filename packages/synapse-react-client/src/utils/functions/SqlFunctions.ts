@@ -148,18 +148,17 @@ export const parseEntityIdAndVersionFromSqlStatement = (
   }
 }
 
-export const resultToJson = <T>(
+export const resultToJson = (
   headerColumns: SelectColumn[],
   rowColumns: Row[],
-): T[] => {
-  const result: T[] = []
+) => {
   const rows = rowColumns.map(row => row.values)
   const headers = headerColumns.map(column => column.name)
-  rows.forEach((row, index) => {
-    result[index] = {} as T
+  return rows.map(row => {
+    const obj: Record<string, string | null> = {}
     row.forEach((text, cellIndex) => {
-      ;(result[index] as Record<string, unknown>)[headers[cellIndex]] = text
+      obj[headers[cellIndex]] = text
     })
+    return obj
   })
-  return result
 }

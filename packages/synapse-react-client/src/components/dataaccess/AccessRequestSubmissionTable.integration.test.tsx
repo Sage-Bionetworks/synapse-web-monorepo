@@ -18,7 +18,7 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../utils/APIConstants'
-import { mockSubmissionSearchResponse } from '../../mocks/mockAccessRequest'
+import { mockSubmissionSearchResponse } from '../../mocks/dataaccess/mockAccessRequest'
 import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,

@@ -32,16 +32,17 @@ const MAX_RETRY = 3
  * @throws SynapseClientError
  */
 const fetchWithExponentialTimeout = async <TResponse>(
-  url: RequestInfo,
+  requestInfo: RequestInfo,
   options: RequestInit,
   delayMs = 1000,
 ): Promise<TResponse> => {
+  const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
   let response
   try {
-    response = await fetch(url, options)
+    response = await fetch(requestInfo, options)
   } catch (err) {
     console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
+    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
   }
 
   let numOfTry = 1
@@ -49,7 +50,7 @@ const fetchWithExponentialTimeout = async <TResponse>(
     await delay(delayMs)
     // Exponential backoff if we re-fetch
     delayMs = delayMs * 2
-    response = await fetch(url, options)
+    response = await fetch(requestInfo, options)
     if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
       numOfTry++
       if (numOfTry == MAX_RETRY) {
@@ -80,14 +81,14 @@ const fetchWithExponentialTimeout = async <TResponse>(
     throw new SynapseClientError(
       response.status,
       responseObject.reason,
-      url.toString(),
+      url,
       responseObject,
     )
   } else {
     throw new SynapseClientError(
       response.status,
       JSON.stringify(responseObject),
-      url.toString(),
+      url,
     )
   }
 }
@@ -103,7 +104,7 @@ export const doPost = <T>(
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf8',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     method: 'POST',
@@ -163,7 +164,7 @@ export const doPut = <T>(
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf8',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     method: 'PUT',

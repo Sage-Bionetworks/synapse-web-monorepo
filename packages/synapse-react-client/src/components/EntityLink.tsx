@@ -78,7 +78,7 @@ export const EntityLink = (props: EntityLinkProps) => {
               ? link
               : `${getEndpoint(
                   BackendDestinationEnum.PORTAL_ENDPOINT,
-                )}#!Synapse:${entity.id!}${
+                )}Synapse:${entity.id!}${
                   versionNumber ? `.${versionNumber}` : ''
                 }`
           }

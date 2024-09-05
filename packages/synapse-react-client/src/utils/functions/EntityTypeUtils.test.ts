@@ -4,6 +4,7 @@ import {
   getVersionDisplay,
   isContainerType,
   isVersionableEntityType,
+  normalizeSynPrefix,
 } from './EntityTypeUtils'
 import {
   Dataset,
@@ -177,6 +178,18 @@ describe('EntityTypeUtils tests', () => {
       }
 
       expect(getVersionDisplay(dataset as Entity)).toEqual('Draft')
+    })
+  })
+
+  describe('normalizeSynPrefix', () => {
+    test.each([
+      ['syn123', 'syn123'],
+      ['syn123.4', 'syn123.4'],
+      ['Syn123.4', 'syn123.4'],
+      ['123', 'syn123'],
+      ['123.4', 'syn123.4'],
+    ])('normalizeSynPrefix - %s', (synId, expected) => {
+      expect(normalizeSynPrefix(synId)).toBe(expected)
     })
   })
 })

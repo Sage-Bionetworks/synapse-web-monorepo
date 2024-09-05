@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import StandaloneLoginForm from '../StandaloneLoginForm'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { sessionChangeHandler } from '../../StorybookComponentWrapper'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Authentication/Login',
@@ -21,5 +22,6 @@ export const LoginDemo: Story = {
         )
       })
     },
+    onPasswordLoginSelected: fn(),
   },
 }

@@ -13,8 +13,8 @@ import { truncate } from './FacetPlotLegendUtils'
 import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
 import QueryWrapper from '../../QueryWrapper'
 import { server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -77,7 +77,7 @@ function renderComponent(overrides?: FacetNavPanelProps) {
 describe('FacetNavPanel tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(testData))
+    registerTableQueryResult(request.query, testData)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -89,7 +89,9 @@ describe('FacetNavPanel tests', () => {
 
     const buttons = await screen.findAllByRole<HTMLButtonElement>('button')
     expect(buttons.length).toBe(3)
-    await screen.findByRole('button', { name: 'Filter by specific facet' })
+    await screen.findByRole('button', {
+      name: `Filter by ${stringFacetValues.columnName}`,
+    })
     await screen.findByRole('button', { name: 'Expand to large graph' })
     await screen.findByRole('button', { name: 'Hide graph under Show More' })
 

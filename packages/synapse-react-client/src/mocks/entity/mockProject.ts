@@ -13,8 +13,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
-import { generateProject } from '../faker/generateFakeEntity'
 import { times } from 'lodash-es'
+import { MOCK_TEAM_ID } from '../team/mockTeam'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 export const mockProjectIds = times(20).map(i => i + 10001)
 
@@ -45,6 +46,36 @@ const mockProjectEntity = {
   parentId: 'syn4489',
   concreteType: 'org.sagebionetworks.repo.model.Project',
 } satisfies Project
+
+const mockProjectAcl = {
+  id: MOCK_PROJECT_ID,
+  creationDate: '2020-11-18T20:05:06.540Z',
+  etag: 'f143bbfd-ba09-4a42-b1e9-f9368777ad9b',
+  resourceAccess: [
+    {
+      principalId: MOCK_USER_ID,
+      accessType: [
+        ACCESS_TYPE.DELETE,
+        ACCESS_TYPE.CHANGE_SETTINGS,
+        ACCESS_TYPE.MODERATE,
+        ACCESS_TYPE.CHANGE_PERMISSIONS,
+        ACCESS_TYPE.UPDATE,
+        ACCESS_TYPE.READ,
+        ACCESS_TYPE.DOWNLOAD,
+        ACCESS_TYPE.CREATE,
+      ],
+    },
+    {
+      principalId: MOCK_TEAM_ID,
+      accessType: [
+        ACCESS_TYPE.READ,
+        ACCESS_TYPE.DOWNLOAD,
+        ACCESS_TYPE.MODERATE,
+        ACCESS_TYPE.CREATE,
+      ],
+    },
+  ],
+}
 
 const mockProjectEntityBundle: EntityBundle = {
   entity: mockProjectEntity,
@@ -86,6 +117,7 @@ const mockProjectEntityBundle: EntityBundle = {
     canMove: true,
     isEntityOpenData: false,
     isCertificationRequired: true,
+    isUserDataContributor: true,
   },
   path: {
     path: [
@@ -102,67 +134,15 @@ const mockProjectEntityBundle: EntityBundle = {
     ],
   },
   hasChildren: true,
-  accessControlList: {
-    id: MOCK_PROJECT_ID,
-    creationDate: '2020-11-18T20:05:06.540Z',
-    etag: 'f143bbfd-ba09-4a42-b1e9-f9368777ad9b',
-    resourceAccess: [
-      {
-        principalId: MOCK_USER_ID,
-        accessType: [
-          ACCESS_TYPE.DELETE,
-          ACCESS_TYPE.CHANGE_SETTINGS,
-          ACCESS_TYPE.MODERATE,
-          ACCESS_TYPE.CHANGE_PERMISSIONS,
-          ACCESS_TYPE.UPDATE,
-          ACCESS_TYPE.READ,
-          ACCESS_TYPE.DOWNLOAD,
-          ACCESS_TYPE.CREATE,
-        ],
-      },
-      {
-        principalId: 273948,
-        accessType: [ACCESS_TYPE.READ],
-      },
-      {
-        principalId: 273949,
-        accessType: [ACCESS_TYPE.READ],
-      },
-    ],
-  },
+  accessControlList: mockProjectAcl,
   fileHandles: [],
   rootWikiId: '607416',
-  benefactorAcl: {
-    id: MOCK_PROJECT_ID,
-    creationDate: '2020-11-18T20:05:06.540Z',
-    etag: 'f143bbfd-ba09-4a42-b1e9-f9368777ad9b',
-    resourceAccess: [
-      {
-        principalId: MOCK_USER_ID,
-        accessType: [
-          ACCESS_TYPE.DELETE,
-          ACCESS_TYPE.CHANGE_SETTINGS,
-          ACCESS_TYPE.MODERATE,
-          ACCESS_TYPE.CHANGE_PERMISSIONS,
-          ACCESS_TYPE.UPDATE,
-          ACCESS_TYPE.READ,
-          ACCESS_TYPE.DOWNLOAD,
-          ACCESS_TYPE.CREATE,
-        ],
-      },
-      {
-        principalId: 273948,
-        accessType: [ACCESS_TYPE.READ],
-      },
-      {
-        principalId: 273949,
-        accessType: [ACCESS_TYPE.READ],
-      },
-    ],
-  },
+  benefactorAcl: mockProjectAcl,
   doiAssociation: mockDoiAssociation,
   threadCount: 2,
   restrictionInformation: {
+    objectId: normalizeNumericId(MOCK_PROJECT_ID),
+    restrictionDetails: [],
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },
@@ -211,21 +191,5 @@ const mockProjectEntityData = {
   projectHeader: mockProjectHeader,
   json: mockProjectJson,
 } satisfies MockEntityData<Project>
-
-const generatedProjectsEntityData = mockProjectIds.map(id => {
-  if (`syn${id}` === MOCK_PROJECT_ID) {
-    return mockProjectEntityData
-  }
-  return generateProject(undefined, id)
-})
-
-export const mockProjects: Project[] = generatedProjectsEntityData.map(
-  projectData => projectData.entity,
-)
-
-export const mockProjectsEntityData: MockEntityData<Project>[] = [
-  mockProjectEntityData,
-  ...generatedProjectsEntityData,
-]
 
 export default mockProjectEntityData

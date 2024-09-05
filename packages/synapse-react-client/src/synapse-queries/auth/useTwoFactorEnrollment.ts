@@ -8,6 +8,8 @@ import {
 import {
   TotpSecret,
   TotpSecretActivationRequest,
+  TwoFactorAuthDisableRequest,
+  TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
@@ -102,5 +104,28 @@ export function useGetTwoFactorEnrollmentStatus(
     queryFn: () =>
       SynapseClient.getCurrentUserTwoFactorEnrollmentStatus(accessToken),
     ...options,
+  })
+}
+
+export function useResetTwoFactorAuth(
+  options?: Partial<
+    UseMutationOptions<void, SynapseClientError, TwoFactorAuthResetRequest>
+  >,
+) {
+  return useMutation<void, SynapseClientError, TwoFactorAuthResetRequest>({
+    ...options,
+    mutationFn: request => SynapseClient.resetTwoFactorAuth(request),
+  })
+}
+
+export function useDisableTwoFactorAuthWithResetToken(
+  options?: Partial<
+    UseMutationOptions<void, SynapseClientError, TwoFactorAuthDisableRequest>
+  >,
+) {
+  return useMutation<void, SynapseClientError, TwoFactorAuthDisableRequest>({
+    ...options,
+    // Invalidating query data isn't needed, since the user is not authenticated in this case
+    mutationFn: request => SynapseClient.disableTwoFactorAuth(request),
   })
 }

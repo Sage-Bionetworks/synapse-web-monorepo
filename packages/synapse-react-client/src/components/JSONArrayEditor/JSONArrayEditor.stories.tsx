@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import JSONArrayEditorModal, {
   JSONArrayEditorModalProps,
 } from './JSONArrayEditorModal'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'UI/JSONArrayEditor',
@@ -13,5 +14,7 @@ type Story = StoryObj<typeof meta>
 export const Modal: Story = {
   args: {
     isShowingModal: true,
+    onConfirm: fn(),
+    onCancel: fn(),
   },
 }

@@ -48,3 +48,6 @@ build-storybook.log
 
 # Nx cache
 .nx/cache
+
+apps/portals/*/public/build-date.txt
+apps/portals/*/public/deploy-date.txt

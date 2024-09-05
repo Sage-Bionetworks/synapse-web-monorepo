@@ -4,6 +4,11 @@ import useLogin from '../../utils/hooks/useLogin'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import LoginForm from './LoginForm'
 import LoginFlowBackButton from './LoginFlowBackButton'
+import {
+  RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
+  TOTP_GUIDANCE_TEXT,
+} from './Constants'
+import { OAuth2State } from '../../utils'
 
 export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string
@@ -12,9 +17,22 @@ export type StandaloneLoginFormProps = {
   resetPasswordUrl?: string
   /* Invoked before redirecting to Google. Useful in portals where we may want to store the current URL to redirect back here. */
   onBeginOAuthSignIn?: () => void
-  showUsernameOrPassword?: boolean | undefined
   /* optionally pass the 2FA error response to directly start the 2FA challenge */
   twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
+  /* If a twoFactorAuthError is encountered (including passed in the twoFactorAuthenticationRequired prop), this callback will be invoked */
+  onTwoFactorAuthRequired?: (
+    twoFaErrorResponse: Pick<
+      TwoFactorAuthErrorResponse,
+      'twoFaToken' | 'userId'
+    >,
+  ) => void
+  hideRegisterButton?: boolean
+  hideForgotPasswordButton?: boolean
+  ssoState?: OAuth2State
+  /* The URI where the user should be directed in an email when attempting to reset 2FA */
+  twoFactorAuthResetUri?: string
+  /* Invoked when password login is selected */
+  onPasswordLoginSelected?: () => void
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -24,6 +42,12 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     registerAccountUrl,
     resetPasswordUrl,
     onBeginOAuthSignIn,
+    onTwoFactorAuthRequired,
+    hideRegisterButton,
+    hideForgotPasswordButton,
+    ssoState,
+    twoFactorAuthResetUri,
+    onPasswordLoginSelected,
   } = props
 
   const {
@@ -32,8 +56,15 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
-    isLoading,
-  } = useLogin(sessionCallback, props.twoFactorAuthenticationRequired)
+    loginIsPending,
+    beginTwoFactorAuthReset,
+    twoFactorAuthResetIsPending,
+    twoFactorAuthResetIsSuccess,
+  } = useLogin({
+    sessionCallback,
+    twoFaErrorResponse: props.twoFactorAuthenticationRequired,
+    onTwoFactorAuthRequired,
+  })
 
   return (
     <Box
@@ -51,14 +82,12 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
       />
       {step === 'VERIFICATION_CODE' && (
         <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
-          Enter the 6-digit, time-based verification code provided by your
-          authenticator app.
+          {TOTP_GUIDANCE_TEXT}
         </Typography>
       )}
       {step === 'RECOVERY_CODE' && (
         <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
-          Enter a one-time backup code. Your backup code is a 16 digit code,
-          with groups of 4 letters or numbers separated by hyphens.
+          {RECOVERY_CODE_GUIDANCE_TEXT_SHORT}
         </Typography>
       )}
       <LoginForm
@@ -71,7 +100,15 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         registerAccountUrl={registerAccountUrl}
         resetPasswordUrl={resetPasswordUrl}
         onBeginOAuthSignIn={onBeginOAuthSignIn}
-        isLoading={isLoading}
+        loginIsPending={loginIsPending}
+        beginTwoFactorAuthReset={beginTwoFactorAuthReset}
+        hideRegisterButton={hideRegisterButton}
+        hideForgotPasswordButton={hideForgotPasswordButton}
+        twoFactorAuthResetIsPending={twoFactorAuthResetIsPending}
+        twoFactorAuthResetIsSuccess={twoFactorAuthResetIsSuccess}
+        ssoState={ssoState}
+        twoFactorAuthResetUri={twoFactorAuthResetUri}
+        onPasswordLoginSelected={onPasswordLoginSelected}
       />
     </Box>
   )

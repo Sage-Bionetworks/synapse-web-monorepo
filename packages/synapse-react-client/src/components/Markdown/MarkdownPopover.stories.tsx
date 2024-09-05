@@ -4,7 +4,7 @@ import { MarkdownPopover, MarkdownPopoverProps } from './MarkdownPopover'
 import { userEvent, within } from '@storybook/testing-library'
 import { InfoTwoTone } from '@mui/icons-material'
 
-const meta = {
+const meta: Meta<MarkdownPopoverProps> = {
   title: 'Markdown/MarkdownPopover',
   component: MarkdownPopover,
   args: {
@@ -23,7 +23,7 @@ const meta = {
     const showPopoverButton = canvas.getByRole('button')
     await userEvent.click(showPopoverButton)
   },
-} satisfies Meta<MarkdownPopoverProps>
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

@@ -40,7 +40,7 @@ function LinkTab(props: {
 }
 
 type ReviewerDashboardProps = {
-  /** Used to determine the base path for the component. Default is #!DataAccessManagement:default */
+  /** Used to determine the base path for the component. Default is DataAccessManagement:default */
   routerBaseName?: string
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For demo purposes only. */
   useMemoryRouter?: boolean
@@ -48,7 +48,7 @@ type ReviewerDashboardProps = {
 
 export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const {
-    routerBaseName = '#!DataAccessManagement:default',
+    routerBaseName = 'DataAccessManagement:default',
     useMemoryRouter = false,
   } = props
 

@@ -1,5 +1,5 @@
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../accessRequirement/mockAccessRequirements'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import {
   MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,

@@ -12,11 +12,11 @@ import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import QueryWrapper from '../../QueryWrapper'
 import { server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import JsonColumnFacetFilters, {
   JsonColumnFacetFiltersProps,
 } from './JsonColumnFacetFilters'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const queryRequest: QueryBundleRequest = {
   partMask: 255,
@@ -124,7 +124,7 @@ describe('FacetFilterControls tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     jest.clearAllMocks()
-    server.use(...getHandlersForTableQuery(queryResponseDataWithJsonFacet))
+    registerTableQueryResult(queryRequest.query, queryResponseDataWithJsonFacet)
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

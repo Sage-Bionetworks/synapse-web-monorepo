@@ -1,4 +1,12 @@
-import { Box, Card, Link, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Card,
+  Link,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import React from 'react'
 import { ReactComponent as Certified } from '../../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../../assets/icons/account-validated.svg'
@@ -9,8 +17,9 @@ type AccountLevelBadgeConfig = {
   label: string
   description: string
   tooltipText: string
-  icon: React.ReactElement
+  icon: React.ReactNode
   linkHref: string
+  buttonNode?: React.ReactNode
 }
 
 export const accountLevelBadgeConfig: Record<
@@ -46,11 +55,13 @@ export const accountLevelBadgeConfig: Record<
 
 export type AccountLevelBadgeProps = {
   badgeType: AccountLevelBadgeType
+  /* If truthy, show a button with the following props. If undefined, no button will be shown */
+  buttonProps?: ButtonProps
 }
 
 export const AccountLevelBadge: React.FunctionComponent<
   AccountLevelBadgeProps
-> = ({ badgeType }: AccountLevelBadgeProps) => {
+> = ({ badgeType, buttonProps }: AccountLevelBadgeProps) => {
   const badgeConfig = accountLevelBadgeConfig[badgeType]
   return (
     <Card
@@ -58,31 +69,40 @@ export const AccountLevelBadge: React.FunctionComponent<
         maxWidth: 325,
         minWidth: 250,
         padding: '30px 20px',
-        display: 'flex',
-        width: '100%',
-        alignItems: 'center',
       }}
     >
-      <Tooltip title={badgeConfig.tooltipText}>
-        <Box alignSelf="start" mr="10px">
-          {badgeConfig.icon}
+      <Box display="flex" width="100%" alignItems="center">
+        <Tooltip title={badgeConfig.tooltipText}>
+          <Box alignSelf="start" mr="10px">
+            {badgeConfig.icon}
+          </Box>
+        </Tooltip>
+        <Box>
+          <Typography variant="headline3" gutterBottom component="div">
+            {badgeConfig.label}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'grey.700', mb: '10px' }}>
+            {badgeConfig.description}
+          </Typography>
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={badgeConfig.linkHref}
+          >
+            <Typography variant="buttonLink">Learn more</Typography>
+          </Link>
         </Box>
-      </Tooltip>
-      <Box>
-        <Typography variant="headline3" gutterBottom component="div">
-          {badgeConfig.label}
-        </Typography>
-        <Typography variant="body1" sx={{ color: 'grey.700', mb: '10px' }}>
-          {badgeConfig.description}
-        </Typography>
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          href={badgeConfig.linkHref}
-        >
-          <Typography variant="buttonLink">Learn more</Typography>
-        </Link>
       </Box>
+      {buttonProps && (
+        <Button
+          fullWidth
+          {...buttonProps}
+          sx={{
+            mt: 2,
+            ...buttonProps.sx,
+          }}
+        ></Button>
+      )}
     </Card>
   )
 }

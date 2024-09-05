@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { EvaluationCard } from './EvaluationCard'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Challenge/EvaluationCard',
@@ -21,5 +22,9 @@ export const Card: Story = {
       submissionInstructionsMessage: 'Do a barrel roll',
       submissionReceiptMessage: 'We received your submission',
     },
+    onEdit: fn(),
+    onModifyAccess: fn(),
+    onSubmit: fn(),
+    onDeleteSuccess: fn(),
   },
 }

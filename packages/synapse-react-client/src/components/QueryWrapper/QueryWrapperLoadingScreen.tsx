@@ -1,20 +1,16 @@
-import { useQueryContext } from '../QueryContext'
-import { useAtomValue } from 'jotai'
-import { isLoadingNewBundleAtom, tableQueryDataAtom } from './QueryWrapper'
 import { Box, LinearProgress, Typography } from '@mui/material'
 import React from 'react'
 
-export default function QueryWrapperLoadingScreen() {
-  const { asyncJobStatus } = useQueryContext()
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const data = useAtomValue(tableQueryDataAtom)
-  if (data || !isLoadingNewBundle) {
-    return <></>
-  }
+type QueryWrapperLoadingScreenProps = { progressMessage?: string }
+
+export default function QueryWrapperLoadingScreen(
+  props: QueryWrapperLoadingScreenProps,
+) {
+  const { progressMessage } = props
   return (
-    <Box sx={{ mt: 15, mx: 15 }}>
+    <Box sx={{ my: 7.5, mx: 15 }}>
       <LinearProgress />
-      {asyncJobStatus?.progressMessage && (
+      {progressMessage && (
         <Typography
           variant={'smallText1'}
           sx={{
@@ -24,7 +20,7 @@ export default function QueryWrapperLoadingScreen() {
             my: 1,
           }}
         >
-          {asyncJobStatus?.progressMessage}
+          {progressMessage}
         </Typography>
       )}
     </Box>

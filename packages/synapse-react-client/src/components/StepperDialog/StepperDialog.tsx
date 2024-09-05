@@ -5,8 +5,8 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
 import { DialogContentProps } from '@mui/material'
 
-export type Step = {
-  id: string
+export type Step<TStepId = string> = {
+  id: TStepId
   title: string
   cancelButtonText?: string
   onConfirm?: () => void

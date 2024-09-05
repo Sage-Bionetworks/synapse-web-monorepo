@@ -1,8 +1,8 @@
 import { WarningSharp } from '@mui/icons-material'
 import React from 'react'
 import { SynapseConstants } from '../../utils'
-import { isDataset } from '../../utils/functions/EntityTypeUtils'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+import { isEntityRefCollectionView } from '../../utils/functions/EntityTypeUtils'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
@@ -26,9 +26,9 @@ export type MissingQueryResultsWarningProps = {
 const MissingQueryResultsWarning: React.FunctionComponent<
   MissingQueryResultsWarningProps
 > = ({ entity }) => {
-  // Currently, Datasets are the only table type for which we can reliably get this info.
+  // Currently, Datasets and Dataset collections are the only table type for which we can reliably get this info.
   // Other cases will need a new service, tracked by PLFM-7046
-  const isMissingResultsCalculable = entity && isDataset(entity)
+  const isMissingResultsCalculable = entity && isEntityRefCollectionView(entity)
 
   const request: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -43,15 +43,20 @@ const MissingQueryResultsWarning: React.FunctionComponent<
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
   }
 
-  const { data: queryResult } = useGetQueryResultBundle(request, {
-    enabled: isMissingResultsCalculable,
-  })
+  const { data: queryResult } = useGetQueryResultBundleWithAsyncStatus(
+    request,
+    {
+      enabled: isMissingResultsCalculable,
+    },
+  )
   if (isMissingResultsCalculable && queryResult && entity) {
-    const totalVisibleResults = queryResult.queryCount!
+    const totalVisibleResults = queryResult.responseBody!.queryCount!
     const totalResults = entity.items?.length ?? 0
 
-    if (totalVisibleResults === totalResults) {
-      // All of the results are visible, so there is no need to show a warning.
+    if (totalVisibleResults >= totalResults) {
+      // All the results are visible, so there is no need to show a warning.
+      // SWC-6727 / PLFM-8326 - `totalVisibleResults` should never be greater than `totalResults`, but in case it is (e.g. stale cache),
+      // don't show the warning.
       return <></>
     }
 

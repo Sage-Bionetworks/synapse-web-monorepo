@@ -4,20 +4,6 @@ import { cleanup } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
 declare const global: any
-global.markdownit = require('markdown-it')
-global.markdownitSynapse = require('markdown-it-synapse')
-global.markdownitSub = require('markdown-it-sub-alt')
-global.markdownitSup = require('markdown-it-sup-alt')
-global.markdownitCentertext = require('markdown-it-center-text')
-global.markdownitSynapseHeading = require('markdown-it-synapse-heading')
-global.markdownitSynapseTable = require('markdown-it-synapse-table')
-global.markdownitStrikethroughAlt = require('markdown-it-strikethrough-alt')
-global.markdownitContainer = require('markdown-it-container')
-global.markdownitEmphasisAlt = require('markdown-it-emphasis-alt')
-global.markdownitInlineComments = require('markdown-it-inline-comments')
-global.markdownitBr = require('markdown-it-br')
-global.markdownitMath = require('markdown-it-synapse-math')
-
 // Need to add this line
 global.fetch = fetch
 
@@ -44,11 +30,9 @@ afterEach(() => {
 // Mock window.location
 // https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
 const oldWindowLocation = window.location
-beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
-  delete window.location
-  window.location = Object.defineProperties(
+vi.stubGlobal(
+  'location',
+  Object.defineProperties(
     {},
     {
       ...Object.getOwnPropertyDescriptors(oldWindowLocation),
@@ -61,10 +45,5 @@ beforeAll(() => {
         value: vi.fn(),
       },
     },
-  ) as Location
-})
-afterAll(() => {
-  // restore `window.location` to the original `jsdom`
-  // `Location` object
-  window.location = oldWindowLocation
-})
+  ),
+)

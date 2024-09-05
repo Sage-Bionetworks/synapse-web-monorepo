@@ -1,9 +1,9 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import RangeSlider from './RangeSlider'
+import RangeSlider, { RangeSliderProps } from './RangeSlider'
 import { Paper } from '@mui/material'
 
-const meta = {
+const meta: Meta<RangeSliderProps> = {
   title: 'UI/RangeSlider',
   component: RangeSlider,
   decorators: [
@@ -13,7 +13,7 @@ const meta = {
       </Paper>
     ),
   ],
-} satisfies Meta
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

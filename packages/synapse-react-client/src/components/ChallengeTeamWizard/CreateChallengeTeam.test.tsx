@@ -54,7 +54,6 @@ function renderComponent() {
   })
   const inviteeField = screen.getByRole('textbox', {
     name: /Emails/,
-    exact: false,
   })
 
   return {

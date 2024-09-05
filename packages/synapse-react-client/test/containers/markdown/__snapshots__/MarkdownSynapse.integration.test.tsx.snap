@@ -1,9 +1,73 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`MarkdownSynapse tests Snapshot tests supports bootstrap rows and columns 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+    >
+      <div
+        class="container-fluid"
+      >
+        <div
+          class="row"
+        >
+          <div
+            class="col-sm-4"
+          >
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+            >
+              Left
+            </p>
+            
+
+          </div>
+          
+
+          <div
+            class="col-sm-4"
+          >
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+            >
+              Center
+            </p>
+            
+
+          </div>
+          
+
+          <div
+            class="col-sm-4"
+          >
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+            >
+              Right
+            </p>
+            
+
+          </div>
+          
+
+        </div>
+      </div>
+      
+
+    </span>
+  </div>
+</div>
+`;
+
 exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loose text 1`] = `
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -40,6 +104,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -51,7 +116,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
       >
         header 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-jgibl5-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-axgts0-MuiTypography-root-MuiLink-root"
           href="https://synapse.org"
           target="_blank"
         >
@@ -69,6 +134,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
 <div>
   <div
     class="markdown"
+    data-testid="markdown"
   >
     <span
       class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
@@ -78,7 +144,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
             tabindex="0"
           >
@@ -87,7 +153,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
             tabindex="0"
           >

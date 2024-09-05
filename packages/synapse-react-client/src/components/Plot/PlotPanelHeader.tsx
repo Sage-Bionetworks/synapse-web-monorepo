@@ -1,16 +1,15 @@
 import React from 'react'
-import { IconButton, Tooltip } from '@mui/material'
-import IconSvg from '../IconSvg'
 import {
   FacetColumnResultValues,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { SkeletonInlineBlock } from '../Skeleton/SkeletonInlineBlock'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
+import { IconSvgButton } from '../IconSvgButton'
 
 export type PlotPanelHeaderProps = {
   data?: QueryResultBundle
-  isLoadingNewBundle?: boolean
+  isLoading?: boolean
   title: string
   facetToPlot?: FacetColumnResultValues
   onHide: () => void
@@ -18,11 +17,10 @@ export type PlotPanelHeaderProps = {
 }
 
 export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
-  const { data, isLoadingNewBundle, title, facetToPlot, onHide, setShowModal } =
-    props
+  const { data, isLoading, title, facetToPlot, onHide, setShowModal } = props
   return (
     <div className="FacetNavPanel__title">
-      {!data && isLoadingNewBundle ? (
+      {!data && isLoading ? (
         <SkeletonInlineBlock width={100} />
       ) : (
         <span className="FacetNavPanel__title__name">{title}</span>
@@ -32,17 +30,21 @@ export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
           <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
         )}
         {setShowModal && (
-          <Tooltip title={'Expand to large graph'}>
-            <IconButton onClick={() => setShowModal(true)} size={'small'}>
-              <IconSvg icon={'openInFull'} wrap={false} fontSize={'inherit'} />
-            </IconButton>
-          </Tooltip>
+          <IconSvgButton
+            tooltipText="Expand to large graph"
+            tooltipPlacement="bottom"
+            onClick={() => setShowModal(true)}
+            size="small"
+            icon="openInFull"
+          />
         )}
-        <Tooltip title={'Hide graph under Show More'}>
-          <IconButton onClick={() => onHide()} size={'small'}>
-            <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
-          </IconButton>
-        </Tooltip>
+        <IconSvgButton
+          tooltipText="Hide graph under Show More"
+          tooltipPlacement="bottom"
+          onClick={() => onHide()}
+          size="small"
+          icon="close"
+        />
       </div>
     </div>
   )

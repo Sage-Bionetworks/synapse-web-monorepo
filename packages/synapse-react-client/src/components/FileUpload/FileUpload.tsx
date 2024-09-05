@@ -1,6 +1,9 @@
 import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
-import { uploadFile } from '../../synapse-client/SynapseClient'
+import {
+  uploadFile,
+  ProgressCallback,
+} from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   FileUploadComplete,
@@ -38,11 +41,19 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
         onUploadStart()
       }
       const file = e.target.files[0]
+      const progressCallback: (
+        progress: ProgressCallback,
+      ) => void = progress => {
+        console.log(`Progress: ${progress.value} / ${progress.total}`)
+      }
       try {
         const resp: FileUploadComplete = await uploadFile(
           accessToken,
           file.name,
           file,
+          undefined,
+          undefined,
+          progressCallback,
         )
         if (onComplete) {
           onComplete({
@@ -65,6 +76,7 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
   return (
     <>
       <input
+        data-testid="file-input"
         type={'file'}
         ref={hiddenFileInput}
         onChange={e => {

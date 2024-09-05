@@ -7,6 +7,7 @@ export default mergeConfig(config, {
     include: ['@vitest/utils', 'vitest/browser'],
   },
   test: {
+    globals: true,
     environment: 'jsdom',
     reporters: ['default', 'html'],
     outputFile: { html: './coverage/report/index.html' },

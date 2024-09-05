@@ -5,7 +5,7 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
+import { Link, Tooltip } from '@mui/material'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 
 export const EntityNodeLabel = (data: EntityHeader) => {
@@ -22,11 +22,11 @@ export const EntityNodeLabel = (data: EntityHeader) => {
         <>
           <div>
             <Tooltip title={data.name} placement="top" enterNextDelay={300}>
-              <a
-                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
+              <Link
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${entityVersionString}`}
               >
                 {data.name}
-              </a>
+              </Link>
             </Tooltip>
           </div>
           {isVersionableEntityType(convertToEntityType(data.type)) && (

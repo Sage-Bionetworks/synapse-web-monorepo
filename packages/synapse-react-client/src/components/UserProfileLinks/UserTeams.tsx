@@ -57,7 +57,7 @@ export default function UserTeams({ userId }: UserTeamsProps) {
                   <a
                     target="_self"
                     rel="noopener noreferrer"
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${item.id}`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Team:${item.id}`}
                   >
                     {item.name}
                   </a>

@@ -22,7 +22,7 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Checkbox as MUICheckbox,
+  Checkbox,
   styled,
   Typography,
 } from '@mui/material'
@@ -423,12 +423,8 @@ function TableColumnSchemaFormActions(
         }}
         disabled={disabled || columnModels.length == 0}
       >
-        {/*
-           MUI Checkbox looks a little different from ours, but it has an indeterminate state
-           TODO: reconcile these differences
-          */}
-        <MUICheckbox
-          size={'small'}
+        <Checkbox
+          sx={{ mr: 1 }}
           checked={allSelected}
           indeterminate={numSelected > 0 && !allSelected}
           disabled={disabled || columnModels.length == 0}

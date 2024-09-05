@@ -81,7 +81,7 @@ export const palette: PaletteOptions = {
   darkPrimary: generatePalette('#164B6E'),
   lightPrimary: { ...generatePalette('#f8f9fa'), contrastText: '#164B6E' },
   light: { ...generatePalette('#f8f9fa'), contrastText: '#22252a' }, // grey-1000
-  success: { main: '#32a330' },
+  success: { main: '#32a330', contrastText: '#ffffff' },
   info: { main: '#017fa5' },
   warning: { main: '#cc9f00' },
   error: { main: '#c13415' },
@@ -175,8 +175,8 @@ export const challengePortalPalette: PaletteOptions = {
 
 export const geniePalette: PaletteOptions = {
   ...palette,
-  primary: generatePalette('#5F6870'),
-  secondary: generatePalette('#4CB848'),
+  primary: generatePalette('#26881F'),
+  secondary: generatePalette('#26881F'),
 }
 
 export default {

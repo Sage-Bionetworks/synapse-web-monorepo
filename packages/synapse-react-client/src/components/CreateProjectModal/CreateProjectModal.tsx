@@ -32,7 +32,7 @@ export const CreateProjectModal: React.FunctionComponent<
       )
       setIsShowingSuccessAlert(true)
       hide()
-      window.location.href = `/#!Synapse:${newProject.id}`
+      window.location.href = `/Synapse:${newProject.id}`
     } catch (err) {
       if (err.reason) {
         setErrorMessage(err.reason)

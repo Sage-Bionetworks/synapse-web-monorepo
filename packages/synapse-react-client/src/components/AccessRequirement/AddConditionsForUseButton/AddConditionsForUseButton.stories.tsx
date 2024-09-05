@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import AddConditionsForUseButton from './AddConditionsForUseButton'
-
+import { fn } from '@storybook/test'
 const meta = {
   title: 'Components/AddConditionsForUseButton',
   component: AddConditionsForUseButton,
@@ -13,5 +13,6 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     entityId: 'syn45328519',
+    onACTMemberClick: fn(),
   },
 }

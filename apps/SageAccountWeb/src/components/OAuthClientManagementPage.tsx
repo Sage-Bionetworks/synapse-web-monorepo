@@ -19,9 +19,9 @@ export function OAuthClientManagementPageInternal() {
           },
         }}
       >
-        <BackButton to={'/authenticated/myaccount'} />
-        <Box sx={{ padding: '60px' }}>
-          <SourceAppLogo sx={{ display: 'block' }} />
+        <Box sx={{ padding: '60px', position: 'relative' }}>
+          <BackButton to={'/authenticated/myaccount'} />
+          <SourceAppLogo />
           <Typography
             variant="headline3"
             sx={{ marginTop: '20px', marginBottom: '20px' }}

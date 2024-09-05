@@ -13,8 +13,6 @@ export type ManagedACTAccessRequirement = {
   versionNumber: number
   /* The unique immutable ID. Provided by the system, the user may not set this field. */
   id: number
-  /* @deprecated Replaced by name. */
-  description: string
   /* Name of the AR. Limited to 50 characters and must be unique. Required. */
   name: string
   /* Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates. Since the E-Tag changes every time an entity is updated it is used to detect when a client's current representation of an object is out-of-date. */
@@ -41,7 +39,7 @@ export type ManagedACTAccessRequirement = {
   /* If true, then accessor needs to fill, sign, and submit a Data Use Certificate (DUC) to gain access to the data. */
   isDUCRequired: boolean
   /* If the Data Use Certificate (DUC) is required, creator of this requirement needs to upload a Data Use Certificate (DUC) template. Users have to download this template, fill out, sign and submit it. */
-  ducTemplateFileHandleId: string
+  ducTemplateFileHandleId?: string
   /* If true, then accessor needs to submit an Institutional Review Board (IRB) Approval document to gain access to the data. */
   isIRBApprovalRequired: boolean
   /* If true, then accessor needs to upload attachment(s) other than Data Use Certificate (DUC) and Institutional Review Board (IRB) Approval document to gain access to the data. */

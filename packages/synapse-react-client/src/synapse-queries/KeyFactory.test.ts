@@ -549,7 +549,7 @@ describe('KeyFactory tests', () => {
           },
           partMask: BUNDLE_MASK_QUERY_RESULTS,
         },
-        true,
+        false,
       )
 
       expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
@@ -572,7 +572,7 @@ describe('KeyFactory tests', () => {
             },
             partMask: BUNDLE_MASK_QUERY_RESULTS,
           },
-          true,
+          false,
         ),
       )
       expectQueryKeyNotToMatch(
@@ -588,7 +588,7 @@ describe('KeyFactory tests', () => {
             // Different part mask
             partMask: BUNDLE_MASK_QUERY_COUNT,
           },
-          true,
+          false,
         ),
       )
     })

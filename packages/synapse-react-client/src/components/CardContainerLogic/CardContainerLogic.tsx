@@ -9,21 +9,20 @@ import {
   QueryBundleRequest,
   SortDirection,
 } from '@sage-bionetworks/synapse-types'
-import CardContainer from '../CardContainer/CardContainer'
-import { ErrorBanner } from '../error/ErrorBanner'
 import { GenericCardSchema } from '../GenericCard'
 import { IconSvgProps } from '../IconSvg'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapper } from '../QueryWrapper'
 import QuerySortSelector from '../QuerySortSelector'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { IconOptions } from '../Icon/Icon'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { ReleaseCardConfig } from '../ReleaseCard'
+import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -56,28 +55,36 @@ export enum TargetEnum {
   FULL_WINDOW_BODY = '_top',
 }
 
-export interface CardLink {
-  baseURL: string
-  // the key that will go into the url
-  URLColumnName: string
-  // the column name whose value will be used as the display text
-  matchColumnName: string
-  // If set, use the rowID as the column value.  Otherwise, use the value in the matchColumnName column
-  overrideValueWithRowID?: boolean
-  // If true, value will be processed as Markdown
-  isMarkdown: false
-  // the value that will go into the url link should be surrounded with parenthesis, making the search
-  // param study=(ROSMAP) instead of study=ROSMAP
-  wrapValueWithParens?: boolean
-  // If set and a value exists in this column for the row, just use this value for the href
-  overrideLinkURLColumnName?: string
-  // If set, also show a tooltip
-  tooltipText?: string
-  // If set, will specify where to open the link
-  target?: TargetEnum
-  // If true, the data is a synID and the entity name should be resolved
-  resolveEntityName?: boolean
-}
+export type CardLink =
+  | {
+      // the column name whose value will be used as the display text
+      matchColumnName: string
+      // If set, use the rowID as the column value.  Otherwise, use the value in the matchColumnName column
+      overrideValueWithRowID?: boolean
+      // If true, value will be processed as Markdown
+      isMarkdown: false
+      // If set, also show a tooltip
+      tooltipText?: string
+      // If set, will specify where to open the link
+      target?: TargetEnum
+    } & (
+      | {
+          baseURL: string
+          // the key that will go into the url
+          URLColumnName: string
+          // the value that will go into the url link should be surrounded with parenthesis, making the search
+          // param study=(ROSMAP) instead of study=ROSMAP
+          wrapValueWithParens?: boolean
+          // If true, the data is a synID and the entity name should be resolved
+          resolveEntityName?: boolean
+        }
+      | {
+          // If set and a value exists in this column for the row, just use this value (or a transform of this value) for the href
+          overrideLinkURLColumnName: string
+          // Optionally apply a transform to each value of the overrideLinkURLColumn
+          overrideLinkURLColumnTransform?: (columnValue: string) => string
+        }
+    )
 
 export type MarkdownLink = {
   isMarkdown: true
@@ -139,7 +146,6 @@ export type CardConfiguration = {
   type: string
   hasInternalLink?: boolean
   iconOptions?: IconOptions
-  initialLimit?: number
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
@@ -151,6 +157,7 @@ export type CardContainerLogicProps = {
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
+  initialLimit?: number
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
@@ -164,7 +171,7 @@ export type CardContainerLogicProps = {
 /**
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
  */
-export const CardContainerLogic = (props: CardContainerLogicProps) => {
+export function CardContainerLogic(props: CardContainerLogicProps) {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
   const queryFilters = getAdditionalFilters(
     props.additionalFiltersSessionStorageKey,
@@ -210,11 +217,13 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
           props.noContentPlaceholderType ?? NoContentPlaceholderType.STATIC
         }
       >
-        {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
-        <CardContainer {...props} />
-        <QueryContextConsumer>
-          {queryContext => <ErrorBanner error={queryContext?.error} />}
-        </QueryContextConsumer>
+        <QueryWrapperErrorBoundary>
+          {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
+          <RowSetView
+            cardConfiguration={props}
+            initialLimit={props.initialLimit}
+          />
+        </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )

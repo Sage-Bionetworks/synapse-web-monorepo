@@ -1,18 +1,24 @@
 import React from 'react'
-import { Box, Grid, Paper, Typography, useTheme } from '@mui/material'
-import { ShowMore } from 'synapse-react-client'
-import { useHistory } from 'react-router-dom'
-import { StyledOuterContainer } from './StyledComponents'
-import { BackButton } from './BackButton'
-import { useSourceAppConfigs } from './useSourceAppConfigs'
 import {
-  DEFAULT_SOURCE_APP_ID,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+  Link,
+} from '@mui/material'
+import { ShowMore } from 'synapse-react-client'
+import { StyledOuterContainer } from './StyledComponents'
+import { useSourceAppConfigs } from './useSourceAppConfigs'
+import { Link as RouterLink } from 'react-router-dom'
+import {
+  SYNAPSE_SOURCE_APP_ID,
   SourceAppProvider,
   useSourceApp,
 } from './useSourceApp'
 
 export function SageResourcesPageInternal() {
-  const history = useHistory()
   const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()
   const sageSourceAppConfig = useSourceApp()
@@ -22,21 +28,16 @@ export function SageResourcesPageInternal() {
         className="SageResourcesPage"
         sx={{
           margin: '0 auto',
-          width: '900px',
+          maxWidth: '900px',
         }}
       >
         <Box
           sx={{
-            px: theme.spacing(8),
-            paddingTop: theme.spacing(8),
+            px: { xs: '0px', sm: theme.spacing(8) },
+            paddingTop: { xs: '0px', sm: theme.spacing(8) },
             position: 'relative',
           }}
         >
-          <BackButton
-            onClick={() => {
-              history.goBack()
-            }}
-          />
           <Box
             sx={{
               backgroundColor: '#3959790D',
@@ -49,7 +50,7 @@ export function SageResourcesPageInternal() {
               variant="subtitle1"
               sx={{ marginTop: '30px', paddingBottom: '30px', fontWeight: 500 }}
             >
-              Your Sage Account gets you access to all these tools.
+              Your Synapse account gets you access to all these tools.
             </Typography>
 
             <Typography
@@ -63,9 +64,37 @@ export function SageResourcesPageInternal() {
               variant="body1"
               sx={{ paddingBottom: '30px', fontWeight: 500 }}
             >
-              Your Sage Account can be used across all these different products.
-              You can manage your account at{' '}
-              <a href="/authenticated/myaccount">accounts.sagebionetwork.org</a>
+              Your Synapse account can be used across all these different
+              products.
+            </Typography>
+            <Button
+              type="button"
+              color="primary"
+              variant="contained"
+              sx={{
+                padding: '10px 50px',
+                marginTop: '30px',
+                height: '100%',
+                '&:hover': { color: 'white' },
+              }}
+              href="https://www.synapse.org"
+            >
+              Take me to Synapse
+            </Button>
+
+            <Typography variant="body1" sx={{ padding: '15px 0px 30px 50px' }}>
+              <Link
+                color="primary"
+                component={RouterLink}
+                to="/authenticated/myaccount"
+                sx={{
+                  paddingTop: '15px',
+                  paddingBottom: '15px',
+                  textAlign: 'center',
+                }}
+              >
+                Complete my profile
+              </Link>
             </Typography>
           </Box>
         </Box>
@@ -77,11 +106,16 @@ export function SageResourcesPageInternal() {
         >
           <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
             {sourceAppConfigs?.map(config => {
-              if (config.isPublicized) {
+              if (
+                config.isPublicized &&
+                config.appId !== SYNAPSE_SOURCE_APP_ID
+              ) {
                 return (
                   <Grid
                     item
-                    xs={4}
+                    xs={12}
+                    sm={6}
+                    lg={4}
                     className="sourceAppItem"
                     key={config.appId}
                   >
@@ -107,8 +141,8 @@ export function SageResourcesPageInternal() {
 
 export function SageResourcesPage() {
   return (
-    // This page should always use the Sage Bionetworks resources and theme
-    <SourceAppProvider sourceAppId={DEFAULT_SOURCE_APP_ID}>
+    // This page should always use the Synapse resources and theme
+    <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
       <SageResourcesPageInternal />
     </SourceAppProvider>
   )

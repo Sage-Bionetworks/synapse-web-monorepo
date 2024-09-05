@@ -59,7 +59,7 @@ export default function UserProjects({ userId }: UserProjectsProps) {
                   <a
                     target="_self"
                     rel="noopener noreferrer"
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${item.id}`}
                   >
                     {item.name}
                   </a>

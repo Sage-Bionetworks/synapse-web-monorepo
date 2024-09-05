@@ -26,15 +26,15 @@ import mockTableEntityData, {
   mockTableEntity,
 } from '../../mocks/entity/mockTableEntity'
 import { GenericCardProps } from './GenericCard'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '../../mocks/mockFileViewQuery'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { cloneDeep } from 'lodash-es'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const renderComponent = (
   props: GenericCardProps,
@@ -158,10 +158,24 @@ const propsForHeaderMode: GenericCardProps = {
 describe('GenericCard tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(...getHandlersForTableQuery(mockQueryResultBundle))
+    registerTableQueryResult(
+      {
+        ...mockQueryBundleRequest.query,
+        sql: `SELECT * FROM ${mockTableEntity.id}`,
+      },
+      mockQueryResultBundle,
+    )
+    registerTableQueryResult(
+      {
+        ...mockQueryBundleRequest.query,
+        sql: `SELECT * FROM ${mockFileViewEntity.id}`,
+      },
+      mockQueryResultBundle,
+    )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
+
   test('renders the correct UI in non header mode', () => {
     const { container } = renderComponent(propsForNonHeaderMode, 'TableEntity')
     screen.getByRole('img')
@@ -351,7 +365,7 @@ describe('GenericCard tests', () => {
   describe('it makes the correct URL for the title', () => {
     test('creates a link to synapse', () => {
       const synId = 'syn12345678'
-      const synLink = `https://www.synapse.org/#!Synapse:${synId}`
+      const synLink = `https://www.synapse.org/Synapse:${synId}`
       const { href, target } = getLinkParams(
         synId,
         undefined,
@@ -409,7 +423,7 @@ describe('GenericCard tests', () => {
     })
 
     test('creates an internal details page link', () => {
-      const value = '1234'
+      const value = '1234+5+6'
       const data = [value]
       const URLColumnName = 'Grant Number'
       const matchColumnName = 'Funder'
@@ -422,7 +436,9 @@ describe('GenericCard tests', () => {
         matchColumnName,
         URLColumnName,
       }
-      const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+      const expectedLink = `/${
+        titleLinkConfig.baseURL
+      }?${URLColumnName}=${encodeURIComponent(value)}`
       const { href: href1, target: target1 } = getLinkParams(
         '',
         titleLinkConfig,
@@ -443,6 +459,50 @@ describe('GenericCard tests', () => {
       expect(href2).toEqual(expectedLink)
       // PORTALS-2254: Verify we can override the target via the parameter in the CardLink config
       expect(target2).toEqual(TargetEnum.FULL_WINDOW_BODY)
+    })
+
+    it('uses another column value for link override', () => {
+      const value = 'foo'
+      const hrefOverrideValue = 'bar'
+      const data = [value, hrefOverrideValue]
+      const matchColumnName = 'Funder'
+      const hrefOverrideColumnName = 'Override Col'
+      const schema = {
+        [matchColumnName]: 0,
+        [hrefOverrideColumnName]: 1,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        matchColumnName,
+        overrideLinkURLColumnName: hrefOverrideColumnName,
+      }
+      const expectedLink = hrefOverrideValue
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
+    })
+
+    it('uses another column value for link override with transform', () => {
+      const value = 'foo'
+      const hrefOverrideValue = 'bar'
+      const data = [value, hrefOverrideValue]
+      const matchColumnName = 'Funder'
+      const hrefOverrideColumnName = 'Override Col'
+      const transform = (value: string) => `https://example.com/${value}`
+      const schema = {
+        [matchColumnName]: 0,
+        [hrefOverrideColumnName]: 1,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        matchColumnName,
+        overrideLinkURLColumnName: hrefOverrideColumnName,
+        overrideLinkURLColumnTransform: transform,
+      }
+      const expectedLink = 'https://example.com/bar'
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
     })
   })
 

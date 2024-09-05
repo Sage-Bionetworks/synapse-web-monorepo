@@ -6,13 +6,15 @@ import {
   DATA_ACCESS_SUBMISSION_BY_ID,
 } from '../../utils/APIConstants'
 import { mockSubmissions } from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import SubmissionPage from './SubmissionPage'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const meta = {
   title: 'Governance/SubmissionPage',
@@ -24,6 +26,13 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   name: 'SubmissionPage',
+  loaders: [
+    () =>
+      registerTableQueryResult(
+        { sql: `SELECT * FROM ${REJECT_SUBMISSION_CANNED_RESPONSES_TABLE}` },
+        mockRejectionReasonsTableQueryResultBundle,
+      ),
+  ],
   parameters: {
     msw: {
       handlers: [
@@ -84,7 +93,7 @@ export const Demo: Story = {
             )
           },
         ),
-        ...getHandlersForTableQuery(mockRejectionReasonsTableQueryResultBundle),
+        ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
         rest.put(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 

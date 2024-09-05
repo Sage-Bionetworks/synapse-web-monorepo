@@ -3,40 +3,16 @@
 
 .ForumTable {
   &__top-level-control {
-    float: right;
     margin-bottom: 16px;
     display: flex;
-  }
-
-  thead {
-    background-color: map.get(SRC.$colors, 'gray-200');
-    th {
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-  }
-
-  th,
-  td {
-    border: none;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .avatarContainer {
     display: inline-flex;
     margin: 0 2px;
     vertical-align: middle;
-  }
-  tr td:nth-child(1) {
-    max-width: 14rem;
-  }
-  tr td:nth-child(3) {
-    width: auto;
-  }
-  tr td:nth-child(2),
-  tr td:nth-child(4),
-  tr td:nth-child(5),
-  tr td:nth-child(6) {
-    width: 1px;
   }
 }
 

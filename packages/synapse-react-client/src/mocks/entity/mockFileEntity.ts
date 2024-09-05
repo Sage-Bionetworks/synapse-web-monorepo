@@ -1,5 +1,4 @@
 import {
-  ACCESS_TYPE,
   AnnotationsValueType,
   EntityBundle,
   EntityHeader,
@@ -18,8 +17,8 @@ import {
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProject from './mockProject'
-import { times } from 'lodash-es'
-import { generateBaseEntity } from '../faker/generateFakeEntity'
+import mockProjectEntityData from './mockProject'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 const parentId = mockProject.id
 const projectName = mockProject.name
@@ -146,34 +145,7 @@ const mockFileEntityBundle: EntityBundle = {
   },
   rootWikiId: MOCK_WIKI_ID,
   fileName: mockFileEntity.name,
-  benefactorAcl: {
-    id: parentId,
-    creationDate: '2020-11-18T20:05:06.540Z',
-    etag: 'f143bbfd-ba09-4a42-b1e9-f9368777ad9b',
-    resourceAccess: [
-      {
-        principalId: MOCK_USER_ID,
-        accessType: [
-          ACCESS_TYPE.DELETE,
-          ACCESS_TYPE.CHANGE_SETTINGS,
-          ACCESS_TYPE.MODERATE,
-          ACCESS_TYPE.CHANGE_PERMISSIONS,
-          ACCESS_TYPE.UPDATE,
-          ACCESS_TYPE.READ,
-          ACCESS_TYPE.DOWNLOAD,
-          ACCESS_TYPE.CREATE,
-        ],
-      },
-      {
-        principalId: 273948,
-        accessType: [ACCESS_TYPE.READ],
-      },
-      {
-        principalId: 273949,
-        accessType: [ACCESS_TYPE.READ],
-      },
-    ],
-  },
+  benefactorAcl: mockProjectEntityData.bundle.accessControlList!,
   permissions: {
     canView: true,
     canEdit: true,
@@ -193,18 +165,17 @@ const mockFileEntityBundle: EntityBundle = {
     canModerate: true,
     isCertificationRequired: true,
     isEntityOpenData: false,
+    isUserDataContributor: true,
   },
   threadCount: 5,
   path: filePath,
   restrictionInformation: {
+    objectId: normalizeNumericId(MOCK_FILE_ENTITY_ID),
+    restrictionDetails: [],
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },
   hasChildren: false,
-  accessControlList: {
-    id: '65165198',
-    resourceAccess: [],
-  },
 }
 
 const mockFileEntityJson: EntityJson = {
@@ -236,17 +207,6 @@ const mockFileEntityHeader: EntityHeader = {
   isLatestVersion: true,
 }
 
-const generatedFileEntityData: MockEntityData<FileEntity>[] = times(50).map(
-  i =>
-    generateBaseEntity(
-      {
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-        parentId: mockProject.id,
-      },
-      30000 + i + 1,
-    ) as MockEntityData<FileEntity>,
-)
-
 const mockFileEntityData = {
   id: MOCK_FILE_ENTITY_ID,
   name: MOCK_FILE_NAME,
@@ -258,10 +218,5 @@ const mockFileEntityData = {
   entityHeader: mockFileEntityHeader,
   path: filePath,
 } satisfies MockEntityData<FileEntity>
-
-export const mockFileEntities = [
-  mockFileEntityData,
-  ...generatedFileEntityData,
-] satisfies MockEntityData<FileEntity>[]
 
 export default mockFileEntityData

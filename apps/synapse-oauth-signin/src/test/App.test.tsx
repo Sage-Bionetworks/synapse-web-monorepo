@@ -1,60 +1,86 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitFor,
+  waitForOptions,
+  within,
+} from '@testing-library/react'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
+import {
+  defaultQueryClientConfig,
+  SynapseConstants,
+} from 'synapse-react-client'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
-import { afterEach, describe, expect, test, vi } from 'vitest'
-import { waitForOptions } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import {
+  ACCESS_CODE_PROVIDED_BY_SERVER,
+  getOAuth2DescriptionWithInvalidRedirectUriHandler,
+  getOAuth2DescriptionWithUnverifiedClientHandler,
+  resetConsentedInMockService,
+} from '../mocks/handlers'
+import mockOauthClient from '../mocks/MockOAuthClient'
+import { QueryClient } from '@tanstack/react-query'
 
 const overrideWaitForOptions: waitForOptions = {
   timeout: 5000,
 }
 
-vi.mock('synapse-react-client', async importActual => {
-  const actual = await importActual<typeof import('synapse-react-client')>()
-  return {
-    ...actual,
-    SynapseClient: {
-      ...actual.SynapseClient,
-      // Create mock but use actual implementation so we can spy on calls
-      consentToOAuth2Request: vi.fn(
-        actual.SynapseClient.consentToOAuth2Request,
-      ),
-    },
-  }
-})
-
-const mockConsentToOAuth2Request = vi.mocked(
-  SynapseClient.consentToOAuth2Request,
-)
-
 const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
   SynapseConstants
-function createParams(prompt?: string) {
-  const params = new URLSearchParams()
-  params.set('response_type', 'code')
-  params.set('client_id', '1234')
-  params.set('scope', 'openid')
-  params.set('state', '1ga1bi0qm')
-  params.set('redirect_uri', 'https://some-client-uri.abc/redirect')
-  params.set('claims', JSON.stringify({ id_token: { userid: null } }))
-  if (prompt) {
-    params.set('prompt', prompt)
+
+type ParamOverrides = Partial<
+  Record<
+    | 'response_type'
+    | 'client_id'
+    | 'scope'
+    | 'state'
+    | 'redirect_uri'
+    | 'claims'
+    | 'prompt',
+    string | null
+  >
+>
+
+function createParams(paramOverrides?: ParamOverrides) {
+  const paramsObject = {
+    response_type: 'code',
+    client_id: '1234',
+    scope: 'openid',
+    state: '1ga1bi0qm',
+    redirect_uri: 'https://some-client-uri.abc/redirect',
+    claims: JSON.stringify({ id_token: { userid: null } }),
+    ...paramOverrides,
   }
+
+  const params = new URLSearchParams()
+  Object.entries(paramsObject).forEach(([key, value]) => {
+    if (value == null) {
+      params.delete(key)
+    } else {
+      params.set(key, value)
+    }
+  })
   return params
 }
 
-function renderApp(prompt?: string, updateHistory = true) {
+function renderApp(paramOverrides?: ParamOverrides, updateHistory = true) {
+  // create a query client that is isolated to each test to prevent undesirable cache hits between tests
+  const queryClient = new QueryClient(defaultQueryClientConfig)
+  const params = createParams(paramOverrides)
   if (updateHistory) {
-    window.history.pushState(null, '', `/?${createParams(prompt).toString()}`)
+    window.history.pushState(null, '', `/?${params.toString()}`)
   }
-  return render(<App />)
+  return { component: render(<App queryClient={queryClient} />), params }
 }
 
 describe('App integration tests', () => {
+  beforeEach(() => {
+    resetConsentedInMockService(false)
+  })
   afterEach(() => {
     vi.clearAllMocks()
     document.cookie = ''
@@ -160,7 +186,7 @@ describe('App integration tests', () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    renderApp()
+    const { params } = renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
     await screen.findByText(
@@ -172,18 +198,25 @@ describe('App integration tests', () => {
     const consentButton = await screen.findByRole('button', { name: 'Allow' })
     await userEvent.click(consentButton)
 
-    // Should redirect
-    // TODO: Verify the redirect URL
-    await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(mockConsentToOAuth2Request).toHaveBeenCalled()
+    // Should redirect back to the client app with the code provided by the server, and the original state provided by the client via the browser.
+    await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get('redirect_uri')}?state=${params.get(
+          'state',
+        )}&code=${ACCESS_CODE_PROVIDED_BY_SERVER}`,
+      )
+    })
   })
+
   test('Deny consent to app terms', async () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
-    renderApp()
+    const { params } = renderApp({ prompt: 'consent' })
 
     // The user has logged in but has not granted consent, so check for the consent text
+    await screen.findByText(mockOauthClient.client_name!)
     await screen.findByText(
       /requests permission/,
       undefined,
@@ -194,43 +227,124 @@ describe('App integration tests', () => {
     await userEvent.click(denyButton)
 
     // Should redirect
-    // TODO: Verify the redirect URL
-    await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(mockConsentToOAuth2Request).not.toHaveBeenCalled()
+    // Note that no code is provided because the user denied consent
+    // The state is still returned
+    // and the 'access_denied' error is sent
+    await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get('redirect_uri')}?state=${params.get(
+          'state',
+        )}&error=access_denied`,
+      )
+    })
   })
 
-  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', () => {
+  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', async () => {
     const prompt = 'consent'
     // Consent has already been granted:
-    const hasGrantedConsent = true
+    resetConsentedInMockService(true)
+
+    // Need a token in the cookie so the app tries to use it
+    document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
+
+    renderApp({ prompt })
+    // Verify that the consent button appears
+    await screen.findByRole('button', { name: 'Allow' })
+
+    expect(window.location.replace).not.toHaveBeenCalled()
+  })
+
+  test('Redirects if a token is provided and the user has already consented, and prompt is none', async () => {
+    const prompt = 'none'
+    // Consent has already been granted:
+    resetConsentedInMockService(true)
+
+    // Need a token in the cookie so the app tries to use it
+    document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
+
+    const { params } = renderApp({ prompt })
+
+    await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get('redirect_uri')}?state=${params.get(
+          'state',
+        )}&code=${ACCESS_CODE_PROVIDED_BY_SERVER}`,
+      )
+    })
+  })
+
+  test('Shows an error if a the redirect URI is invalid', async () => {
+    // Configure mock server to throw an error that the redirect_uri is invalid
+    server.use(getOAuth2DescriptionWithInvalidRedirectUriHandler())
+
+    const { params } = renderApp()
+
+    const alert = await screen.findByRole(
+      'alert',
+      undefined,
+      overrideWaitForOptions,
+    )
+    await within(alert).findByText('invalid_redirect_uri', { exact: false })
+    await within(alert).findByText(params.get('redirect_uri')!, {
+      exact: false,
+    })
+
+    expect(window.location.replace).not.toHaveBeenCalled()
+  })
+
+  test('Shows an error if the backend provides an unhandled error when providing the authorization code', async () => {
+    const errorMsg = 'some error'
+    document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
+
     server.use(
       rest.post(
-        'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck',
+        'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
         (req, res, ctx) => {
           return res(
-            ctx.status(200),
+            ctx.status(500),
             ctx.json({
-              granted: hasGrantedConsent,
+              reason: errorMsg,
             }),
           )
         },
       ),
     )
 
-    // Need a token in the cookie so the app tries to use it
-    document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
+    renderApp()
 
-    renderApp(prompt)
+    const consentButton = await screen.findByRole('button', { name: 'Allow' })
+    await userEvent.click(consentButton)
+
+    const alert = await screen.findByRole(
+      'alert',
+      undefined,
+      overrideWaitForOptions,
+    )
+    await within(alert).findByText(errorMsg, { exact: false })
 
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
-  test.todo(
-    'Redirects if a token is provided and the user has already consented, and prompt is not consent',
-  )
-  test.todo('Redirects in error if a the redirect URI is invalid')
-  test.todo('Redirects in error if the backend provides an unhandled error')
-  test.todo('Shows warning if the client is unverified')
+  test('Shows warning if the client is unverified', async () => {
+    // Configure mock server to throw an error that the client is not verified
+    server.use(getOAuth2DescriptionWithUnverifiedClientHandler())
+
+    renderApp()
+
+    const alert = await screen.findByRole(
+      'alert',
+      undefined,
+      overrideWaitForOptions,
+    )
+    await within(alert).findByText(
+      /The OAuth client \(\d+\) is not verified\./,
+      { exact: false },
+    )
+
+    expect(window.location.replace).not.toHaveBeenCalled()
+  })
 
   test('Supports OAuth2 login with 2FA', async () => {
     vi.spyOn(window.history, 'replaceState')
@@ -304,6 +418,8 @@ describe('App integration tests', () => {
       )
     })
 
+    // No errors should be shown (such as in PORTALS-3094)
+    expect(screen.queryByRole('alert')).toBe(null)
     // Verify the TOTP prompt is on-screen and type in '123456'
     await screen.findByText(
       'Enter the 6-digit, time-based verification code provided by your authenticator app.',
@@ -336,4 +452,22 @@ describe('App integration tests', () => {
       )
     })
   })
+
+  test.each(['client_id', 'scope', 'response_type', 'redirect_uri'])(
+    `An error is shown if the required parameter %s is missing`,
+    async missingParam => {
+      renderApp({
+        // Delete the param from the URLSearchParams
+        [missingParam]: null,
+      })
+
+      await waitFor(() => {
+        const alert = screen.getByRole('alert')
+        within(alert).findByText(
+          `Invalid request. Missing required parameter(s): ${missingParam}`,
+        )
+      })
+      expect(window.location.replace).not.toHaveBeenCalled()
+    },
+  )
 })

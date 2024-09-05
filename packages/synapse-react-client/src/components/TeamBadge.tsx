@@ -5,45 +5,51 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '../utils/SynapseConstants'
+import { Box, Link } from '@mui/material'
+
+export const AUTHENTICATED_GROUP_DISPLAY_TEXT = 'All registered Synapse users'
+export const PUBLIC_GROUP_DISPLAY_TEXT = 'Anyone on the web'
 
 export type TeamBadgeProps = {
   teamId: string | number
   teamName: string
   disableHref?: boolean
+  openLinkInNewTab?: boolean
 }
 
 export default function TeamBadge(props: TeamBadgeProps) {
-  const { teamId } = props
+  const { teamId, openLinkInNewTab } = props
   let { teamName, disableHref } = props
 
   let icon: IconName = 'team'
 
   if (teamId == AUTHENTICATED_PRINCIPAL_ID) {
     icon = 'public'
-    teamName = 'All registered Synapse users'
+    teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
   }
   if (teamId == PUBLIC_PRINCIPAL_ID) {
     icon = 'public'
-    teamName = 'Anyone on the web'
+    teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true
   }
 
-  const Tag = disableHref ? 'span' : 'a'
+  const Tag = disableHref ? 'span' : Link
 
   return (
-    <span>
-      <IconSvg icon={icon} />
+    <Box component={'span'} display={'inline-flex'} alignItems={'center'}>
+      <IconSvg icon={icon} fontSize={'small'} />
       <Tag
         style={{ marginLeft: '5px' }}
         href={
           disableHref
             ? undefined
-            : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${teamId}`
+            : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Team:${teamId}`
         }
+        target={openLinkInNewTab ? '_blank' : ''}
       >
         {teamName}
       </Tag>
-    </span>
+    </Box>
   )
 }

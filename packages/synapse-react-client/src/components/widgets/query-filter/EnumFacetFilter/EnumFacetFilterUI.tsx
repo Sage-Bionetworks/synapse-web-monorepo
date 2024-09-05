@@ -1,26 +1,37 @@
-import { Collapse, IconButton, TextField, Tooltip } from '@mui/material'
+import {
+  Checkbox,
+  Collapse,
+  FormControlLabel,
+  IconButton,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { FacetColumnResultValueCount } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { Checkbox } from '../../Checkbox'
 import { FacetFilterHeader } from '../FacetFilterHeader'
 import { EnumFacetFilterOption } from './EnumFacetFilterOption'
 import EnumFacetFilterDropdown from './EnumFacetFilterDropdown'
+import { SetOptional } from 'type-fest'
 
 const MAX_ENUMERATION_VALUES_TO_SHOW = 5
 
-export type RenderedFacetValue = FacetColumnResultValueCount & {
+export type RenderedFacetValue<TValue = string> = Omit<
+  SetOptional<FacetColumnResultValueCount, 'count'>,
+  'value'
+> & {
+  value: TValue
   /* Text displayed for the option, and also used to filter in search */
   displayText: string
 }
 
-export type EnumFacetFilterUIProps = {
+export type EnumFacetFilterUIProps<TValue = string> = {
   /* The title of the faceted column to be displayed */
   facetTitle: string
   /* List of all facet values and information associated with each value */
-  facetValues: RenderedFacetValue[]
-  /* Whether the 'All' checkbox should be selected. */
-  allIsSelected: boolean // allIsSelected cannot be derived from facetValues[*].isSelected. See PORTALS-2680
+  facetValues: RenderedFacetValue<TValue>[]
+  /* Determines how the component is styled and whether the 'All' checkbox should be selected. */
+  filterIsActive: boolean // filterIsActive cannot be derived from facetValues[*].isSelected. See PORTALS-2680
   /* The EnumFacetFilter can be rendered as a collapsible panel or a dropdown. Default is `'Collapsible'` */
   containerAs?: 'Collapsible' | 'Dropdown'
   /* If `containerAs` is a dropdown, the dropdown can be either an IconButton or a SelectBox. Default is `'Icon'` */
@@ -28,22 +39,26 @@ export type EnumFacetFilterUIProps = {
   /* If true, hides the button to collapse the panel (only shown if `containerAs` is 'Collapsible'). Default is false.*/
   hideCollapsible?: boolean
   /* Called when an unselected value is selected */
-  onAddValueToSelection: (value: string) => void
+  onAddValueToSelection: (value: TValue) => void
   /* Called when a selected value is unselected */
-  onRemoveValueFromSelection: (value: string) => void
+  onRemoveValueFromSelection: (value: TValue) => void
   /* Called when all values should be unselected (e.g. 'All' is clicked) */
   onRemoveAllFacetSelections: () => void
   /* Called when an value is hovered over */
-  onHoverOverValue: (value: string) => void
+  onHoverOverValue: (value: TValue) => void
+  /* Set to true if multiple values can be selected for the filter */
+  canMultiSelect: boolean
 }
 
 function removeWhitespace(value: string): string {
   return value.replace(/\s/g, '').toLowerCase()
 }
 
-export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
+export default function EnumFacetFilterUI<TValue = string>(
+  props: EnumFacetFilterUIProps<TValue>,
+) {
   const {
-    allIsSelected,
+    filterIsActive,
     containerAs = 'Collapsible',
     dropdownType = 'Icon',
     hideCollapsible = false,
@@ -53,6 +68,7 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
     facetTitle,
     onRemoveAllFacetSelections,
     onHoverOverValue,
+    canMultiSelect = true,
   } = props
   const [toggleShowAll, setToggleShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
@@ -150,22 +166,22 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
         />
         {!showSearch && (
           <div className="EnumFacetFilter__checkAll">
-            <Checkbox
+            <FormControlLabel
+              control={<Checkbox />}
               className="EnumFacetFilter__checkbox"
               onChange={() => {
-                if (!allIsSelected) {
+                if (filterIsActive) {
                   onRemoveAllFacetSelections()
                 }
               }}
               key="select_all"
-              checked={allIsSelected}
+              checked={!filterIsActive}
               label="All"
-              isSelectAll={true}
             />
             <Tooltip title={'Search'}>
               <IconButton
                 size={'small'}
-                className="EnumFacetFilter__searchbtn"
+                sx={{ aspectRatio: '1 / 1' }}
                 onClick={() => {
                   setSearchText('')
                   setShowSearch(true)
@@ -188,10 +204,10 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
 
           return (
             <EnumFacetFilterOption
-              key={value}
+              key={String(value)}
               id={[
                 removeWhitespace(facetTitle),
-                removeWhitespace(value),
+                removeWhitespace(String(value)),
                 index,
               ].join('-')}
               label={displayText}
@@ -208,6 +224,7 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
                   onRemoveValueFromSelection(value)
                 }
               }}
+              inputType={canMultiSelect ? 'checkbox' : 'radio'}
             />
           )
         })}
@@ -247,24 +264,25 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
   )
 
   const menuText = useMemo(() => {
-    if (allIsSelected) {
+    if (!filterIsActive) {
       return 'All'
     } else if (
-      !allIsSelected &&
+      filterIsActive &&
       facetValuesToShow.filter(item => item.isSelected).length === 1
     ) {
-      return facetValuesToShow.filter(item => item.isSelected)[0].value
+      return facetValuesToShow.filter(item => item.isSelected)[0].displayText
     } else {
       return 'Multiple Values Selected'
     }
-  }, [allIsSelected, facetValuesToShow])
+  }, [filterIsActive, facetValuesToShow])
 
   if (isDropdown) {
     return (
       <EnumFacetFilterDropdown
+        facetTitle={facetTitle}
         dropdownType={dropdownType}
         menuText={menuText}
-        hasSelection={!allIsSelected}
+        filterIsActive={filterIsActive}
       >
         {content}
       </EnumFacetFilterDropdown>

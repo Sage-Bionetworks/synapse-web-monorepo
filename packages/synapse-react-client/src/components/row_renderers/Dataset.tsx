@@ -28,7 +28,7 @@ class Dataset extends React.Component<DatasetProps, never> {
     (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       window.open(
-        `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`,
+        `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`,
         '_blank',
       )
     }
@@ -99,7 +99,7 @@ class Dataset extends React.Component<DatasetProps, never> {
             <h3>
               <a
                 target="_self"
-                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${id}`}
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${id}`}
               >
                 {datasetName}
               </a>

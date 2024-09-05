@@ -7,7 +7,6 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { Dropdown } from 'react-bootstrap'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
@@ -37,6 +36,7 @@ import {
   VirtualizedTree,
 } from './VirtualizedTree'
 import { displayToast } from '../../ToastMessage/ToastMessage'
+import DropdownSelect from '../../DropdownSelect'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -402,6 +402,13 @@ export function EntityTree(props: EntityTreeProps) {
     [scope, initialContainerPath],
   )
 
+  const filteredOptions = Object.values(FinderScope).filter(
+    scopeOption =>
+      !(scopeOption === FinderScope.CURRENT_PROJECT && projectId == null),
+  )
+
+  const selectedIndex = filteredOptions.indexOf(scope)
+
   return (
     <div
       className={`TreeView ${
@@ -413,38 +420,21 @@ export function EntityTree(props: EntityTreeProps) {
       <div className="Header">
         <div className="Browse">Browse:</div>
         <div onClick={e => e.stopPropagation()}>
-          <Dropdown>
-            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
-              {scope}
-            </Dropdown.Toggle>
-            <Dropdown.Menu role="menu">
-              {Object.values(FinderScope).map(scopeOption => {
-                if (
-                  scopeOption === FinderScope.CURRENT_PROJECT &&
-                  projectId == null
-                ) {
-                  return <React.Fragment key={scopeOption} />
-                }
-                return (
-                  <Dropdown.Item
-                    role="menuitem"
-                    key={scopeOption}
-                    onClick={e => {
-                      e.stopPropagation()
-                      if (scope !== scopeOption) {
-                        setScope(scopeOption)
-                        setCurrentContainer(
-                          getScopeOptionDefaultContainer(scopeOption),
-                        )
-                      }
-                    }}
-                  >
-                    {scopeOption}
-                  </Dropdown.Item>
+          <DropdownSelect
+            variant={'outlined'}
+            options={filteredOptions}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={index => {
+              const selectedScope = filteredOptions[index]
+              if (scope !== selectedScope) {
+                setScope(selectedScope)
+                setCurrentContainer(
+                  getScopeOptionDefaultContainer(selectedScope),
                 )
-              })}
-            </Dropdown.Menu>
-          </Dropdown>
+              }
+            }}
+            size="small"
+          />
         </div>
       </div>
       {isLoading ? (

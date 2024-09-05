@@ -1,61 +1,31 @@
 import dayjs from 'dayjs'
-import React, { useEffect, useRef, useState } from 'react'
-import { Table } from 'react-bootstrap'
+import React, { useMemo, useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
-import { useGetEntity } from '../../synapse-queries'
 import {
   useGetItemsInTrashCanInfinite,
   usePurgeEntities,
   useRestoreEntities,
 } from '../../synapse-queries/trash/useTrashCan'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils'
 import { TrashedEntity } from '@sage-bionetworks/synapse-types'
-import { Alert, Button, Typography } from '@mui/material'
+import { Alert, Box, Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import WarningDialog from '../SynapseForm/WarningDialog'
-import { Checkbox } from '../widgets/Checkbox'
-
-type TrashCanListItemProps = {
-  item: TrashedEntity
-  isSelected: boolean
-  setIsSelected: (isSelected: boolean) => void
-  onRestore: () => void
-}
-
-function TrashCanListItem(props: TrashCanListItemProps) {
-  const { item, isSelected, setIsSelected, onRestore } = props
-  const { data: parentEntity } = useGetEntity(item.originalParentId)
-  return (
-    <tr>
-      <td>
-        <Checkbox
-          label={`Select ${item.entityId}`}
-          hideLabel={true}
-          checked={isSelected}
-          onChange={setIsSelected}
-        />
-      </td>
-      <td>{item.entityId}</td>
-      <td>{item.entityName}</td>
-      <td>{entityTypeToFriendlyName(item.entityType)}</td>
-      {/* <td>TypePlaceholder</td> */}
-      <td>
-        <>
-          {parentEntity && <EntityLink entity={parentEntity} />} (
-          {item.originalParentId})
-        </>
-      </td>
-      <td>{formatDate(dayjs(item.deletedOn))}</td>
-      <td>
-        <Button size="small" variant="outlined" onClick={onRestore}>
-          Restore
-        </Button>
-      </td>
-    </tr>
-  )
-}
+import {
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  RowSelectionState,
+  Table,
+  useReactTable,
+} from '@tanstack/react-table'
+import {
+  CheckBoxCell,
+  CheckBoxHeader,
+} from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 /**
  * Convert an array of Promise results to an array of errors
@@ -70,18 +40,66 @@ function toSynapseClientErrorList(
     .map(result => result.reason as SynapseClientError)
 }
 
+const columnHelper = createColumnHelper<TrashedEntity>()
+
+function getTrashCanColumns(
+  onRestore: (entityId: string) => void,
+): ColumnDef<TrashedEntity, any>[] {
+  return [
+    {
+      id: 'select',
+      header: CheckBoxHeader,
+      cell: CheckBoxCell,
+      maxSize: 50,
+    },
+    columnHelper.accessor('entityId', {
+      header: 'ID',
+    }),
+    columnHelper.accessor('entityName', {
+      header: 'Name',
+    }),
+    columnHelper.accessor('entityType', {
+      header: 'Entity Type',
+      cell: info => entityTypeToFriendlyName(info.getValue()),
+    }),
+    columnHelper.accessor('originalParentId', {
+      header: 'Location',
+      cell: info => (
+        <>
+          {info.getValue() && <EntityLink entity={info.getValue()} />} (
+          {info.getValue()})
+        </>
+      ),
+      size: 200,
+    }),
+    columnHelper.accessor('deletedOn', {
+      header: 'Deleted On',
+      cell: info => formatDate(dayjs(info.getValue())),
+    }),
+    {
+      id: 'restoreButton',
+      header: '',
+      cell: ({ row }) => (
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => {
+            onRestore(row.original.entityId)
+            row.toggleSelected(false)
+          }}
+        >
+          Restore
+        </Button>
+      ),
+      maxSize: 100,
+    },
+  ]
+}
+
 export function TrashCanList() {
-  const isMounted = useRef(true)
-  const [selected, setSelected] = useState<Set<string>>(new Set())
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [errors, setErrors] = useState<SynapseClientError[]>([])
-
-  useEffect(() => {
-    isMounted.current = true
-    return () => {
-      isMounted.current = false
-    }
-  })
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   /**
    * When a mutation operation settles, update the list of errors and clear the selected set
@@ -90,14 +108,12 @@ export function TrashCanList() {
     results?: PromiseSettledResult<void>[],
     error?: SynapseClientError | null,
   ) {
-    if (isMounted.current) {
-      if (results) {
-        setErrors(toSynapseClientErrorList(results))
-      } else if (error) {
-        setErrors([error])
-      }
-      setSelected(new Set())
+    if (results) {
+      setErrors(toSynapseClientErrorList(results))
+    } else if (error) {
+      setErrors([error])
     }
+    setRowSelection({})
   }
 
   const { mutate: restore, isPending: isPendingRestore } = useRestoreEntities({
@@ -113,21 +129,38 @@ export function TrashCanList() {
     useGetItemsInTrashCanInfinite({
       throwOnError: true,
     })
+  const items = useMemo(
+    () => data?.pages.flatMap(page => page.results) ?? [],
+    [data],
+  )
 
-  const items = data?.pages.flatMap(page => page.results) ?? []
+  const columns = useMemo<ColumnDef<TrashedEntity, any>[]>(
+    () =>
+      getTrashCanColumns(entityId => {
+        restore(entityId)
+      }),
+    [restore],
+  )
 
-  const isAllSelected = selected.size === items.length
+  const table: Table<TrashedEntity> = useReactTable<TrashedEntity>({
+    data: items,
+    columns,
+    state: {
+      rowSelection: rowSelection,
+    },
+    getRowId: row => row.entityId,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: 'onChange',
+  })
 
-  const onSelectAll = () => {
-    if (isAllSelected) {
-      setSelected(new Set())
-    } else {
-      setSelected(new Set(items.map(item => item.entityId)))
-    }
-  }
+  const selectedEntityIds = table
+    .getSelectedRowModel()
+    .rows.map(row => row.original.entityId)
 
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       <BlockingLoader
         show={isMutating}
         headlineText={isPendingPurge ? 'Deleting...' : 'Restoring...'}
@@ -148,7 +181,7 @@ export function TrashCanList() {
         confirmButtonText="Delete"
         confirmButtonColor="error"
         onConfirm={() => {
-          purge(selected)
+          purge(selectedEntityIds)
           setShowDeleteConfirmation(false)
         }}
         onCancel={() => {
@@ -158,54 +191,18 @@ export function TrashCanList() {
       />
       {isLoading && <SynapseSpinner />}
       {!isLoading && items.length === 0 && (
-        <Typography variant="body1">Trash Can is currently empty.</Typography>
+        <Alert severity={'info'} sx={{ my: 2 }}>
+          <Typography variant="body1">
+            Your trash can is currently empty.
+          </Typography>
+        </Alert>
       )}
       {!isLoading && items.length > 0 && (
         <>
-          <Table striped borderless bordered={false}>
-            <thead>
-              <tr>
-                <th>
-                  <Checkbox
-                    label="Select All"
-                    hideLabel={true}
-                    checked={isAllSelected}
-                    onChange={onSelectAll}
-                  />
-                </th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Entity Type</th>
-                {/* <th>TypePlaceholder</th> */}
-                <th>Location</th>
-                <th>Deleted On</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <TrashCanListItem
-                  key={item.entityId}
-                  item={item}
-                  isSelected={selected.has(item.entityId)}
-                  setIsSelected={isSelected => {
-                    setSelected(selected => {
-                      if (isSelected) {
-                        selected.add(item.entityId)
-                      } else {
-                        selected.delete(item.entityId)
-                      }
-                      return new Set(selected)
-                    })
-                  }}
-                  onRestore={() => {
-                    restore(item.entityId)
-                    selected.delete(item.entityId)
-                  }}
-                />
-              ))}
-            </tbody>
-          </Table>
+          <StyledTanStackTable
+            table={table}
+            styledTableContainerProps={{ sx: { my: 4 } }}
+          />
           {errors.length > 0 && (
             <Alert severity={'error'} sx={{ mb: 1 }}>
               The following errors were encountered:
@@ -216,13 +213,7 @@ export function TrashCanList() {
               </ul>
             </Alert>
           )}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '10px',
-            }}
-          >
+          <Box display="flex" justifyContent="flex-end" gap={2}>
             {hasNextPage && (
               <Button
                 variant="contained"
@@ -238,7 +229,7 @@ export function TrashCanList() {
             <Button
               variant="contained"
               color="error"
-              disabled={selected.size === 0}
+              disabled={selectedEntityIds.length === 0}
               onClick={() => {
                 setShowDeleteConfirmation(true)
               }}
@@ -247,14 +238,14 @@ export function TrashCanList() {
             </Button>
             <Button
               variant="outlined"
-              disabled={selected.size === 0}
+              disabled={selectedEntityIds.length === 0}
               onClick={() => {
-                restore(selected)
+                restore(selectedEntityIds)
               }}
             >
               Restore Selected
             </Button>
-          </div>
+          </Box>
         </>
       )}
     </div>

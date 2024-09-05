@@ -2,11 +2,11 @@ import React, { useMemo, useState } from 'react'
 import { useSynapseContext } from '../../utils'
 import {
   ColumnTypeEnum,
-  QueryResultBundle,
   Row,
+  RowSet,
+  Table,
 } from '@sage-bionetworks/synapse-types'
 import { LabelLinkConfig } from '../CardContainerLogic'
-import loadingScreen from '../LoadingScreen/LoadingScreen'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
@@ -15,13 +15,9 @@ import {
   isFileViewOrDataset,
   isSortableColumn,
 } from './SynapseTableUtils'
-import { TablePagination } from './TablePagination'
-import ExpandableTableDataCell from './ExpandableTableDataCell'
-import { Box, Skeleton } from '@mui/material'
 import {
-  ColumnDef,
+  Cell,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
   VisibilityState,
@@ -36,16 +32,28 @@ import {
   TableDataColumnHeader,
 } from './SynapseTableRenderers'
 import { SynapseTableContext } from './SynapseTableContext'
-import { usePrefetchTableData } from './usePrefetchTableData'
+import { usePrefetchResourcesInTable } from './usePrefetchTableData'
 import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-  tableQueryEntityAtom,
-} from '../QueryWrapper/QueryWrapper'
 import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { useGetEntity } from '../../synapse-queries'
+
+export type SynapseTableConfiguration = Pick<
+  SynapseTableProps,
+  | 'showAccessColumn'
+  | 'showDownloadColumn'
+  | 'hideDownload'
+  | 'showDirectDownloadColumn'
+  | 'hideAddToDownloadListColumn'
+  | 'columnLinks'
+>
 
 export type SynapseTableProps = {
+  /** The row data shown in the table. */
+  rowSet: RowSet
+  /** Whether a new page of data is being loaded */
+  isLoadingNewPage: boolean
+
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
   /** @deprecated use showDirectDownloadColumn */
@@ -58,10 +66,6 @@ export type SynapseTableProps = {
   hideAddToDownloadListColumn?: boolean
   /** Configuration to override cell renderers with e.g. a link to a portals detail page */
   columnLinks?: LabelLinkConfig
-  /** If provided, will use the value in this column instead of the rowID for the access column, download column, etc */
-  rowEntityIDColumnName?: string
-  /** If provided, will use the value in this column instead of the row version number for the access column, download column, etc */
-  rowEntityVersionColumnName?: string
 }
 
 const columnHelper = createColumnHelper<Row>()
@@ -69,26 +73,32 @@ const columnHelper = createColumnHelper<Row>()
 export function SynapseTable(props: SynapseTableProps) {
   const { showDownloadColumn, hideDownload } = props
   const {
+    rowSet,
+    isLoadingNewPage,
     showAccessColumn,
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
     columnLinks,
-    rowEntityIDColumnName,
-    rowEntityVersionColumnName,
   } = props
-  const { getCurrentQueryRequest } = useQueryContext()
+  const {
+    entityId,
+    versionNumber,
+    getCurrentQueryRequest,
+    fileIdColumnName,
+    fileVersionColumnName,
+  } = useQueryContext()
   const queryRequest = useMemo(
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
-  const data = useAtomValue(tableQueryDataAtom)
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const entity = useAtomValue(tableQueryEntityAtom)
+
+  const selectColumns = rowSet.headers
+
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+
   const { columnsToShowInTable, NoContentPlaceholder } =
     useQueryVisualizationContext()
   const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
-
-  const { selectColumns = [] } = data ?? {}
 
   const isLoggedIn = !!useSynapseContext().accessToken
 
@@ -101,15 +111,14 @@ export function SynapseTable(props: SynapseTableProps) {
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
       entity &&
-      ((isEntityViewOrDataset(entity) && allRowsHaveId(data)) ||
-        rowEntityIDColumnName),
+      ((isEntityViewOrDataset(entity) && allRowsHaveId(rowSet)) ||
+        fileIdColumnName),
   )
 
   const rowsAreDownloadable =
     entity &&
     isLoggedIn &&
-    ((isFileViewOrDataset(entity) && allRowsHaveId(data)) ||
-      rowEntityIDColumnName)
+    ((isFileViewOrDataset(entity) && allRowsHaveId(rowSet)) || fileIdColumnName)
 
   const isShowingDirectDownloadColumn = Boolean(
     rowsAreDownloadable && showDirectDownloadColumn,
@@ -120,24 +129,20 @@ export function SynapseTable(props: SynapseTableProps) {
       !hideAddToDownloadListColumn &&
       !isRowSelectionVisible,
   )
-  const rowEntityIDColumnIndex = rowEntityIDColumnName
-    ? data?.queryResult?.queryResults.headers.findIndex(
-        col => col.name == rowEntityIDColumnName,
-      )
+  const rowEntityIDColumnIndex = fileIdColumnName
+    ? rowSet.headers.findIndex(col => col.name == fileIdColumnName)
     : undefined
-  const rowEntityVersionColumnIndex = rowEntityVersionColumnName
-    ? data?.queryResult?.queryResults.headers.findIndex(
-        col => col.name == rowEntityVersionColumnName,
-      )
+  const rowEntityVersionColumnIndex = fileVersionColumnName
+    ? rowSet.headers.findIndex(col => col.name == fileVersionColumnName)
     : undefined
 
-  const columns: ColumnDef<Row, string | null>[] = useMemo(
+  const columns = useMemo(
     () => [
       rowSelectionColumn,
       addToDownloadListColumn,
       directDownloadColumn,
       accessColumn,
-      ...(data?.selectColumns?.map((selectColumn, index) => {
+      ...(selectColumns.map((selectColumn, index) => {
         return columnHelper.accessor(row => row.values[index], {
           id: selectColumn.name,
           enableSorting: isSortableColumn(selectColumn.columnType),
@@ -147,7 +152,7 @@ export function SynapseTable(props: SynapseTableProps) {
         })
       }) ?? []),
     ],
-    [data?.selectColumns],
+    [selectColumns],
   )
 
   const prependColumnVisibility: VisibilityState = useMemo(
@@ -169,17 +174,20 @@ export function SynapseTable(props: SynapseTableProps) {
   // Transform our `columnsToShowInTable` to @tanstack/react-table's `VisibilityState`
   const columnVisibility: VisibilityState = useMemo(
     () =>
-      (data?.selectColumns ?? []).reduce((prev: VisibilityState, curr) => {
+      selectColumns.reduce((prev: VisibilityState, curr) => {
         return {
           ...prev,
           [curr.name]: columnsToShowInTable.includes(curr.name),
         }
       }, prependColumnVisibility),
-    [columnsToShowInTable, data?.selectColumns, prependColumnVisibility],
+    [columnsToShowInTable, selectColumns, prependColumnVisibility],
   )
 
+  const { dataHasBeenPrefetched } = usePrefetchResourcesInTable(rowSet)
+  const renderTableDataPlaceholder = isLoadingNewPage || !dataHasBeenPrefetched
+
   const table = useReactTable({
-    data: data?.queryResult?.queryResults.rows ?? [],
+    data: rowSet.rows,
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualSorting: true,
@@ -192,25 +200,36 @@ export function SynapseTable(props: SynapseTableProps) {
       columnVisibility: columnVisibility,
     },
     meta: {
+      rowSet,
       // make the rowEntityIDColumnIndex available to all cell renderers
       rowEntityIDColumnIndex,
       rowEntityVersionColumnIndex,
+      renderPlaceholderData: renderTableDataPlaceholder,
+      getWrapInExpandableTd: (cell: Cell<Row, unknown>) => {
+        const selectColumn = selectColumns.find(
+          cm => cm.name === cell.column.id,
+        )
+        return Boolean(
+          selectColumn &&
+            /* JSON handles its own overflow*/
+            selectColumn.columnType !== ColumnTypeEnum.JSON,
+        )
+      },
     },
   })
-
-  const { dataHasBeenPrefetched } = usePrefetchTableData()
 
   /**
    * Display the view
    */
-  if (!data && isLoadingNewBundle) {
-    return loadingScreen
-  } else if (!data) {
+  if (!rowSet) {
     return <></>
   }
-  const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
-  // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
-  if (!hasResults && queryRequest.query.offset === 0) {
+  const hasResults = (rowSet.rows?.length ?? 0) > 0
+  // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0 or null/undefined).
+  if (
+    !hasResults &&
+    (queryRequest.query.offset === 0 || queryRequest.query.offset == null)
+  ) {
     return <NoContentPlaceholder />
   }
 
@@ -225,89 +244,15 @@ export function SynapseTable(props: SynapseTableProps) {
             queryBundleRequest={queryRequest}
           />
         )}
-        <div
-          className="SynapseTable SRC-overflowAuto"
-          data-testid="SynapseTable"
-        >
-          <table style={{ width: table.getTotalSize() }}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => {
-                return (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{ width: header.getSize() }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                        {header.column.getCanResize() && (
-                          <div
-                            className={`resizer ${
-                              header.column.getIsResizing() ? 'isResizing' : ''
-                            }`}
-                            onMouseDown={header.getResizeHandler()}
-                            onTouchStart={header.getResizeHandler()}
-                          />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                )
-              })}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => {
-                    const selectColumn = selectColumns.find(
-                      cm => cm.name === cell.column.id,
-                    )
-
-                    const shouldWrapInExpandable =
-                      selectColumn &&
-                      selectColumn.columnType !==
-                        ColumnTypeEnum.JSON /* JSON handles its own overflow*/
-                    const TableDataCellElement = shouldWrapInExpandable
-                      ? ExpandableTableDataCell
-                      : 'td'
-
-                    const renderPlaceholder = !dataHasBeenPrefetched
-
-                    return (
-                      <TableDataCellElement
-                        key={cell.id}
-                        style={{
-                          width: cell.column.getSize(),
-                        }}
-                        align={(cell.column.columnDef.meta as any)?.align}
-                      >
-                        {renderPlaceholder ? (
-                          <p>
-                            <Skeleton width={'80%'} height={'20px'} />
-                          </p>
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        )}
-                      </TableDataCellElement>
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Box sx={{ mt: 2, textAlign: 'right' }}>
-          <TablePagination />
-        </Box>
+        <StyledTanStackTable
+          styledTableContainerProps={{
+            className: 'SynapseTable',
+            ['data-testid']: 'SynapseTable',
+            density: 'default',
+          }}
+          table={table}
+          fullWidth={false}
+        />
       </div>
     </SynapseTableContext.Provider>
   )
@@ -318,8 +263,6 @@ export function SynapseTable(props: SynapseTableProps) {
  * Presence of row IDs also indicates that the query is also necessarily not summary data, e.g. the query does
  * not include an operation like GROUP BY, DISTINCT, etc., that would cause rows to not map 1:1 to Synapse Entities
  */
-function allRowsHaveId(data?: QueryResultBundle): boolean {
-  return Boolean(data?.queryResult?.queryResults.rows.every(row => !!row.rowId))
+function allRowsHaveId(rowSet: RowSet): boolean {
+  return Boolean(rowSet.rows?.every(row => !!row.rowId))
 }
-
-export default SynapseTable

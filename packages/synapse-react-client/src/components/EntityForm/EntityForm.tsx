@@ -212,7 +212,7 @@ export class EntityForm extends React.Component<
       )
       // ok, found an entity of the same name.
       console.log(
-        `EntityForm uploading to https://www.synapse.org/#!Synapse:${entityId.id}`,
+        `EntityForm uploading to https://www.synapse.org/Synapse:${entityId.id}`,
       )
       this.setState({
         userprofile,

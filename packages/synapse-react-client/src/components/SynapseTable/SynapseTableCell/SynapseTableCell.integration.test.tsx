@@ -33,11 +33,12 @@ import * as EntityLinkModule from '../../EntityLink'
 import * as UserBadgeModule from '../../UserCard/UserBadge'
 import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
 import { QueryWrapper } from '../../../index'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
 import { MOCK_TEAM_ID, mockTeamData } from '../../../mocks/team/mockTeam'
 import { uniqueId } from 'lodash-es'
+import { AUTHENTICATED_GROUP_DISPLAY_TEXT } from '../../TeamBadge'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
@@ -114,8 +115,8 @@ jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
 describe('SynapseTableCell tests', () => {
   beforeAll(() => {
     server.listen()
+    registerTableQueryResult(lastQueryRequest.query, queryResultBundle)
     server.use(
-      ...getHandlersForTableQuery(queryResultBundle),
       rest.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
@@ -241,7 +242,7 @@ describe('SynapseTableCell tests', () => {
       columnValue: AUTHENTICATED_PRINCIPAL_ID.toString(),
     })
 
-    await screen.findByText('All registered Synapse users', { exact: false })
+    await screen.findByText(AUTHENTICATED_GROUP_DISPLAY_TEXT, { exact: false })
   })
 
   it('renders a link for a team', async () => {

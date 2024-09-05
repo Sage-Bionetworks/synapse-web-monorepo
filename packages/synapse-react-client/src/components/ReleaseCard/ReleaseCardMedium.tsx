@@ -1,5 +1,6 @@
-import { Box, Link, Typography } from '@mui/material'
+import { Box, Button, Link, Typography } from '@mui/material'
 import React from 'react'
+import { Link as ReactRouterLink } from 'react-router-dom'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardMediumConfig, ReleaseCardStat } from './ReleaseCardTypes'
@@ -38,10 +39,15 @@ export const ReleaseCardMedium: React.FunctionComponent<
   includePortalCardClass = true,
   releaseCardConfig,
 }: ReleaseCardMediumProps) => {
-  const { releaseVersion, releaseEntity, releaseDate, stats } =
-    formatReleaseCardData(schema, data, releaseCardConfig.statsConfig)
+  const { releaseName, releaseEntityId, releaseDate, stats } =
+    formatReleaseCardData(
+      schema,
+      data,
+      releaseCardConfig.releaseMetadataConfig,
+      releaseCardConfig.statsConfig,
+    )
 
-  if (releaseVersion === null) return <></>
+  if (releaseName === null) return <></>
 
   const nCols = 2
   const SPAN_ALL_COLS = `span ${nCols}`
@@ -65,7 +71,7 @@ export const ReleaseCardMedium: React.FunctionComponent<
       my={0} // remove margin added by .SRC-portalCard - CardContainer list will set the gap between cards
     >
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" alignSelf="end">
-        <Typography variant="headline1">{releaseVersion}</Typography>
+        <Typography variant="headline1">{releaseName}</Typography>
       </Box>
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mb="30px">
         <Typography
@@ -79,17 +85,22 @@ export const ReleaseCardMedium: React.FunctionComponent<
         <StatGrid key={stat.label} {...stat} />
       ))}
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mt="20px" mb="5px">
-        <Link href={releaseCardConfig.requestAccessPath} fontSize="14px">
+        <Button
+          component={ReactRouterLink}
+          to={releaseCardConfig.requestAccessPath}
+          sx={{ fontSize: '14px' }}
+        >
           Request Access
-        </Link>
+        </Button>
       </Box>
       <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1">
-        {releaseEntity && (
+        {releaseEntityId && (
           <Link
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${releaseEntity}`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${releaseEntityId}`}
             target="_blank"
             rel="noreferrer"
             fontSize="14px"
+            sx={{ textDecoration: 'none' }}
           >
             View on Synapse.org
           </Link>

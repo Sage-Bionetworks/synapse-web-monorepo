@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import MarkdownSynapse from './MarkdownSynapse'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Markdown/MarkdownSynapse',
@@ -19,6 +20,20 @@ export const WikiPage: Story = {
     ownerId: 'syn12666371',
     wikiId: '585317',
     loadingSkeletonRowCount: 20,
+  },
+}
+
+// Note: this story currently displays an error, but should display a wiki
+// after MarkdownSynapse is updated to handle root WikiPages for ACCESS_REQUIREMENT
+// object types. See https://sagebionetworks.jira.com/browse/SWC-6791.
+export const RootWikiPageAccessRequirement: Story = {
+  args: {
+    ownerId: '9602704',
+    wikiId: undefined,
+    objectType: ObjectType.ACCESS_REQUIREMENT,
+  },
+  parameters: {
+    stack: 'development',
   },
 }
 

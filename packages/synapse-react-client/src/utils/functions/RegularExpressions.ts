@@ -1,4 +1,5 @@
 import { Reference } from '@sage-bionetworks/synapse-types'
+import { normalizeSynPrefix } from './EntityTypeUtils'
 
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second and third forward slash in the regex above
@@ -17,7 +18,7 @@ export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/i
  * > result[2]
  * '9'
  */
-export const SYNAPSE_ENTITY_ID_REGEX = /^(syn\d+)(?:\.(\d+))?$/
+export const SYNAPSE_ENTITY_ID_REGEX = /^(syn\d+)(?:\.(\d+))?$/i
 
 /**
  * Given a Synapse Entity ID of the form `syn123` or `syn123.4`, returns the
@@ -29,7 +30,7 @@ export function parseSynId(synId: string): Reference | null {
   const synIdMatch = SYNAPSE_ENTITY_ID_REGEX.exec(synId)
   if (synIdMatch) {
     return {
-      targetId: synIdMatch[1],
+      targetId: normalizeSynPrefix(synIdMatch[1]),
       targetVersionNumber: synIdMatch[2] ? parseInt(synIdMatch[2]) : undefined,
     }
   } else {

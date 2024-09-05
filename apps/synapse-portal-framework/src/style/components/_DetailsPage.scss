@@ -1,0 +1,210 @@
+@use '../variables' as Portal;
+@use 'synapse-react-client/dist/style/abstracts/mixins' as SrcMixins;
+// local variable for study page
+
+$marginTop: 40px;
+$study-page-tab-height: 50px;
+$svg-icon-height: 30px;
+
+%svg-icon {
+  color: #fff;
+  fill: #fff;
+}
+
+%svg-icon-active {
+  color: Portal.$primary-action-color;
+  fill: Portal.$primary-action-color;
+}
+
+%alignContent {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.SRC-portalCardHeader {
+  padding-bottom: 45px;
+  border: none;
+}
+
+.DetailsPage {
+  display: flex;
+
+  // keeps h2 in markdown and in this component the same
+  .h2,
+  h2 {
+    font-size: 21px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #515359;
+    margin-top: 42px;
+  }
+
+  // Jump menu css
+  .menu-row-button {
+    @extend %alignContent;
+    span {
+      height: 25px;
+      @extend %alignContent;
+    }
+    background: rgba(60, 74, 99, 0.1);
+    height: 40px;
+    width: 180px;
+    text-align: left;
+    padding-left: 20px;
+    color: #515359;
+    border: 1px solid rgba(26, 28, 41, 0.1);
+    border-top: none;
+  }
+  .menu-row-button:nth-child(1) {
+    border-top: 1px solid rgba(26, 28, 41, 0.1);
+  }
+  .menu-row-button:nth-child(1) {
+    background: rgba(60, 74, 99, 0.1);
+    height: 40px;
+    width: 180px;
+    text-align: left;
+    padding-left: 20px;
+    color: #515359;
+  }
+  .button-container {
+    top: 100px;
+    height: fit-content;
+    margin-right: 30px;
+    position: sticky;
+    flex: 1;
+    margin-top: $marginTop;
+  }
+
+  .component-container {
+    flex: 4;
+    // PORTALS-2982: make TOC "sticky", but prevent overflow in digitalhealth detail pages
+    min-width: 0;
+    [role='heading'] {
+      padding-top: 30px;
+    }
+  }
+
+  &.tab-layout {
+    margin-top: -50px;
+  }
+
+  hr {
+    margin: 14px 0;
+  }
+  h2 {
+    padding-top: 0px;
+  }
+  div.SRC-overflowAuto {
+    min-height: 150px !important; // Overwrite javascript injected css
+  }
+  .first-title {
+    margin-top: $marginTop;
+  }
+  &__ComingSoon {
+    margin-top: 40px;
+    text-align: center;
+    h2 {
+      font-weight: bold;
+    }
+  }
+
+  .tab-groups {
+    display: flex;
+    font-size: 16px;
+    justify-content: center;
+    height: $study-page-tab-height;
+    line-height: $study-page-tab-height;
+    .tab-item {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 4px;
+      border-radius: 4px 4px 0 0;
+      white-space: nowrap;
+      flex-grow: 1;
+      text-align: center;
+
+      svg {
+        padding-right: 10px;
+        font-size: 34px;
+        vertical-align: middle;
+        height: $svg-icon-height;
+        width: auto;
+      }
+    }
+    .tab-item:not([aria-current='true']) {
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      svg,
+      path {
+        @extend %svg-icon;
+      }
+    }
+    .tab-item[aria-current='true'] {
+      background-color: #fff;
+      svg,
+      path {
+        @extend %svg-icon-active;
+      }
+    }
+    .tab-database svg {
+      height: 26px;
+    }
+    .tab-item:first-child {
+      margin-left: 0;
+    }
+
+    .tab-item:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .tab-content {
+    .TopLevelControls [role='heading'] {
+      padding-top: 0px;
+    }
+    .tab-groups {
+      height: 55px;
+      box-shadow: 0px 5px 6px -4px rgb(0 0 0 / 15%);
+      @include SrcMixins.underline-tabs($inactive-color: unset);
+      justify-content: center;
+      .tab-item {
+        font-weight: 700;
+        flex-grow: 0.2;
+        border-radius: 0px;
+        color: unset;
+        background-color: unset;
+      }
+    }
+  }
+  .tab-content-group {
+    padding-top: 30px;
+  }
+
+  .metadata-table table {
+    width: 100% !important; // Override !important from js library
+  }
+
+  @media screen and (max-width: 800px) {
+    .tab-groups {
+      .tab-item {
+        padding: 0 2%;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .tab-groups {
+      overflow-x: auto;
+      justify-content: left;
+
+      .tab-item {
+        font-size: 14px;
+
+        svg {
+          display: none;
+        }
+      }
+    }
+  }
+}

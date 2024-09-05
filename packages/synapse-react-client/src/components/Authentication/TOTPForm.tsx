@@ -8,11 +8,11 @@ const DIGIT_CHARACTERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 type TOTPFormProps = {
   onSubmit: (value: string) => void
-  isLoading: UseLoginReturn['isLoading']
+  loginIsPending: UseLoginReturn['loginIsPending']
 }
 
 export default function TOTPForm(props: TOTPFormProps) {
-  const { onSubmit, isLoading } = props
+  const { onSubmit, loginIsPending } = props
   const [verificationCode, setVerificationCode] = React.useState('')
   return (
     <Box>
@@ -27,6 +27,8 @@ export default function TOTPForm(props: TOTPFormProps) {
         }}
         gap={'2px'}
         sx={{
+          mx: 'auto',
+          maxWidth: '350px',
           '.MuiInputBase-root': {
             paddingLeft: '5px',
             paddingRight: '5px',
@@ -45,7 +47,6 @@ export default function TOTPForm(props: TOTPFormProps) {
             },
         }}
       />
-
       <Button
         fullWidth
         type="submit"
@@ -56,13 +57,13 @@ export default function TOTPForm(props: TOTPFormProps) {
           mt: 4,
           mb: 2,
         }}
-        disabled={verificationCode.length !== TOTP_LENGTH || isLoading}
+        disabled={verificationCode.length !== TOTP_LENGTH || loginIsPending}
         onClick={e => {
           e.preventDefault()
           onSubmit(verificationCode)
         }}
       >
-        {isLoading ? 'Verifying...' : 'Submit'}
+        {loginIsPending ? 'Verifying...' : 'Submit'}
       </Button>
     </Box>
   )

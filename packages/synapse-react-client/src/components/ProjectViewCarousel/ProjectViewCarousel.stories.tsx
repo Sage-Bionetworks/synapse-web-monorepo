@@ -1,8 +1,10 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProjectViewCarousel from './ProjectViewCarousel'
+import ProjectViewCarousel, {
+  ProjectViewCarouselProps,
+} from './ProjectViewCarousel'
 
-const meta = {
+const meta: Meta<ProjectViewCarouselProps> = {
   title: 'Home Page/ProjectViewCarousel',
   component: ProjectViewCarousel,
   decorators: [
@@ -12,7 +14,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

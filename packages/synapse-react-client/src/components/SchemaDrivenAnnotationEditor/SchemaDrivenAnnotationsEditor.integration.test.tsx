@@ -31,7 +31,7 @@ import { SynapseContextType } from '../../utils/context/SynapseContext'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding, mockValidationSchema } from '../../mocks/mockSchema'
 import { rest, server } from '../../mocks/msw/server'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, noop } from 'lodash-es'
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {
   await userEvent.clear(el)
@@ -41,7 +41,7 @@ async function chooseAutocompleteOption(el: HTMLElement, option: string) {
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+  .mockImplementation(() => noop)
 
 const mockAsyncTokenId = 888888
 

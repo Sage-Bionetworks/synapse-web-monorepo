@@ -6,7 +6,7 @@ on:
     branches: [main]
 env:
   PW_ALL_BLOBS_DIR: all-blob-reports
-  PORTALS_SUBDIR: apps/portals
+  PORTALS_E2E_SUBDIR: apps/portals-e2e
 concurrency:
   group: '${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}'
   cancel-in-progress: true
@@ -27,6 +27,7 @@ jobs:
             challengeportal,
             digitalhealth,
             elportal,
+            genie,
             nf,
             psychencode,
             stopadportal,
@@ -38,28 +39,23 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
-        run: |
-          cd "${{ env.PORTALS_SUBDIR }}"
-          chmod +x ./build.sh
-          ./build.sh "${{ matrix.PORTAL }}"
-      - name: Start portal
-        run: pnpm nx run portals:portal:start
-      - name: Install Playwright Browsers
-        run: |
-          cd "${{ env.PORTALS_SUBDIR }}"
-          pnpm playwright install --with-deps
-      - name: Run e2e tests
-        run: pnpm nx run portals:e2e
+        run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
-      - name: Stop portal
-        run: pnpm nx run portals:portal:stop
+      - name: Install Playwright Browsers
+        run: |
+          cd "${{ env.PORTALS_E2E_SUBDIR }}"
+          pnpm playwright install --with-deps
+      - name: Run e2e tests
+        run: pnpm nx run portals-e2e:e2e
+        env:
+          PORTAL: ${{ matrix.PORTAL }}
       - name: Upload blob report to GitHub Actions Artifacts
         uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
-          path: '${{ env.PORTALS_SUBDIR }}/blob-report'
+          path: '${{ env.PORTALS_E2E_SUBDIR }}/blob-report'
           retention-days: 1
   merge-e2e-reports:
     # Merge reports after e2e-tests, even if some shards have failed
@@ -77,12 +73,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
-          path: ${{ env.PORTALS_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
+          path: ${{ env.PORTALS_E2E_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
       - name: Merge into HTML Report
-        run: cd ${{ env.PORTALS_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+        run: cd ${{ env.PORTALS_E2E_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
       - name: Upload HTML report
         uses: actions/upload-artifact@v3
         with:
           name: html-report--attempt-${{ github.run_attempt }}
-          path: '${{ env.PORTALS_SUBDIR }}/playwright-report'
+          path: '${{ env.PORTALS_E2E_SUBDIR }}/playwright-report'
           retention-days: 14
