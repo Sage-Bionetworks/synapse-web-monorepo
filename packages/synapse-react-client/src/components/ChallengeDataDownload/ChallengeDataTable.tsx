@@ -331,7 +331,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
   }
 
   return (
-    <div className="EntityFinderDetailsView bootstrap-4-backport">
+    <div className="EntityFinderDetailsView">
       <BlockingLoader
         show={showLoadingScreen}
         currentProgress={entities.length}
