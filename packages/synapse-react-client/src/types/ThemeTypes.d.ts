@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 import '@mui/material/styles'
+import { Color } from '@mui/material'
 
 // If creating a new Typography variant, add it to this list.
 type CustomTypographyVariants =
@@ -48,6 +49,7 @@ declare module '@mui/material/styles' {
     extends RecordWithCustomVariantKeys<React.CSSProperties | undefined> {}
 
   interface Palette {
+    primary: Color
     tertiary: Palette['primary']
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */

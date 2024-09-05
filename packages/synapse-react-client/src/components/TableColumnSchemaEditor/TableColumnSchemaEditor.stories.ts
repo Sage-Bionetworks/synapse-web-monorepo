@@ -16,7 +16,16 @@ import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 const meta = {
   title: 'Synapse/Table Column Schema Editor',
   component: TableColumnSchemaEditor,
-  parameters: { stack: 'mock' },
+  parameters: {
+    stack: 'mock',
+    design: [
+      {
+        name: 'Use Recommended Sizes button',
+        type: 'figma',
+        url: 'https://www.figma.com/design/ek9F9IqpsS8UnihBR9filP/Schema-Editor?node-id=83-9747',
+      },
+    ],
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

@@ -12,6 +12,13 @@ export const MOCK_ANNOTATION_COLUMNS: ViewColumnModelResponse = {
       name: 'columnFromAnnotations',
       maximumSize: 10,
     },
+    {
+      id: '1235326',
+      columnType: ColumnTypeEnum.STRING_LIST,
+      name: 'listColumnFromAnnotations',
+      maximumSize: 20,
+      maximumListLength: 5,
+    },
   ],
   nextPageToken: null,
 }

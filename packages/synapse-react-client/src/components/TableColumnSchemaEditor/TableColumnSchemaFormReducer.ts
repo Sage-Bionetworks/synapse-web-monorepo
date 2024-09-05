@@ -6,9 +6,8 @@ import {
   canHaveSize,
   configureFacetsForType,
   DEFAULT_STRING_SIZE,
-  doesAllFormDataSatisfyAnnotationMinimums,
-  doesFormDataValueSatisfyAnnotationMinimum,
   findMatchingColumnModel,
+  isFormDataValueSmallerThanRecommendedValue,
 } from './TableColumnSchemaEditorUtils'
 import {
   ColumnModelFormData,
@@ -201,7 +200,7 @@ function updateColumnSizesToRecommendedValues(
     }
 
     if (
-      !doesFormDataValueSatisfyAnnotationMinimum(
+      isFormDataValueSmallerThanRecommendedValue(
         cm.maximumSize,
         defaultAnnotationModel.maximumSize,
       )
@@ -210,7 +209,7 @@ function updateColumnSizesToRecommendedValues(
     }
 
     if (
-      !doesFormDataValueSatisfyAnnotationMinimum(
+      isFormDataValueSmallerThanRecommendedValue(
         cm.maximumListLength,
         defaultAnnotationModel.maximumListLength,
       )

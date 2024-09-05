@@ -13,31 +13,18 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import {
-  getIsAllSelected,
-  getNumberOfSelectedItems,
-  tableColumnSchemaFormDataAtom,
-} from './TableColumnSchemaFormReducer'
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Checkbox,
-  styled,
-  Typography,
-} from '@mui/material'
+import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
+import { Box, Button, styled } from '@mui/material'
 import { groupBy, isEqual, noop, omit, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
-import { AddCircleTwoTone, Healing, North, South } from '@mui/icons-material'
-import IconSvg from '../IconSvg'
+import { AddCircleTwoTone } from '@mui/icons-material'
 import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '../../utils/functions/EntityTypeUtils'
 import {
-  doesAllFormDataSatisfyAnnotationMinimums,
   findMatchingColumnModel,
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
@@ -53,6 +40,7 @@ import { SetOptional } from 'type-fest'
 import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
 import pluralize from 'pluralize'
+import { TableColumnSchemaFormActions } from './TableColumnSchemaFormActions'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
@@ -398,102 +386,6 @@ function TableColumnSchemaFormInternal(
           disabled={isSubmitting}
         />
       </Box>
-    </Box>
-  )
-}
-
-type TableColumnSchemaFormActionsProps = {
-  disabled?: boolean
-  annotationColumnModelsQuery: ReturnType<typeof useGetAnnotationColumnModels>
-}
-
-function TableColumnSchemaFormActions(
-  props: TableColumnSchemaFormActionsProps,
-) {
-  const { disabled = false, annotationColumnModelsQuery } = props
-  const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
-
-  const columnModels = useAtomValue(tableColumnSchemaFormDataAtom)
-  const allSelected = getIsAllSelected(columnModels)
-  const numSelected = getNumberOfSelectedItems(columnModels)
-
-  return (
-    <Box display={'flex'} gap={1}>
-      <Button
-        aria-label={'Select All'}
-        variant={'outlined'}
-        color={'neutral'}
-        onClick={() => {
-          dispatch({ type: 'toggleSelectAll' })
-        }}
-        disabled={disabled || columnModels.length == 0}
-      >
-        <Checkbox
-          sx={{ mr: 1 }}
-          checked={allSelected}
-          indeterminate={numSelected > 0 && !allSelected}
-          disabled={disabled || columnModels.length == 0}
-        />
-        <Typography variant="smallText1" color={'text.secondary'}>
-          {numSelected} selected
-        </Typography>
-      </Button>
-      <ButtonGroup>
-        <Button
-          aria-label={'Move Down'}
-          variant={'outlined'}
-          color={'neutral'}
-          onClick={() => {
-            dispatch({ type: 'moveDown' })
-          }}
-          disabled={disabled || numSelected == 0}
-        >
-          <South fontSize={'small'} />
-        </Button>
-        <Button
-          aria-label={'Move Up'}
-          variant={'outlined'}
-          color={'neutral'}
-          onClick={() => {
-            dispatch({ type: 'moveUp' })
-          }}
-          disabled={disabled || numSelected == 0}
-        >
-          <North fontSize={'small'} />
-        </Button>
-      </ButtonGroup>
-      <Button
-        aria-label={'Delete'}
-        variant={'outlined'}
-        color={'neutral'}
-        onClick={() => {
-          dispatch({ type: 'delete' })
-        }}
-        disabled={disabled || numSelected == 0}
-      >
-        <IconSvg fontSize={'small'} icon={'delete'} wrap={false} />
-      </Button>
-      {annotationColumnModelsQuery.data ? (
-        <Button
-          variant={'outlined'}
-          startIcon={<Healing />}
-          onClick={() => {
-            dispatch({
-              type: 'updateColumnSizesToRecommendedValues',
-              annotationColumnModels: annotationColumnModelsQuery.data,
-            })
-          }}
-          disabled={doesAllFormDataSatisfyAnnotationMinimums(
-            columnModels,
-            annotationColumnModelsQuery.data,
-          )}
-        >
-          Use Recommended Sizes
-        </Button>
-      ) : annotationColumnModelsQuery.isLoading ? (
-        // TODO: make better
-        <SynapseSpinner />
-      ) : null}
     </Box>
   )
 }
