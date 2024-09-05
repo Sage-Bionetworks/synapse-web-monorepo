@@ -11,6 +11,7 @@ import {
 } from './CreateChallengeTeam'
 import { mockChallenge } from '../../mocks/challenge/mockChallenge'
 import { Button } from '@mui/material'
+import { fn } from '@storybook/test'
 
 const meta: Meta<CreateChallengeTeamProps & { isAuthenticated: boolean }> = {
   title: 'Synapse/Challenge/CreateChallengeTeam',
@@ -32,6 +33,8 @@ const meta: Meta<CreateChallengeTeamProps & { isAuthenticated: boolean }> = {
   },
   args: {
     isAuthenticated: true,
+    onCanSubmitChange: fn(),
+    onFinished: fn(),
   },
   render: function RenderFn(args) {
     const [canSubmit, setCanSubmit] = useState(false)
