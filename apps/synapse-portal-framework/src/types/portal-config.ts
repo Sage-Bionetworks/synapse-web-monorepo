@@ -26,6 +26,7 @@ import {
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
+  DynamicFormProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
@@ -73,6 +74,11 @@ type QueryWrapperPlotNav = {
 type UserCard = {
   name: 'UserCard'
   props: UserCardProps
+}
+
+type DynamicForm = {
+  name: 'DynamicForm'
+  props: DynamicFormProps
 }
 
 type Markdown = {
@@ -381,6 +387,7 @@ export type SynapseConfig = (
   | ChallengeSubmissionWrapper
   | TimelinePlot
   | DatasetJsonLdScript
+  | DynamicForm
 ) &
   Metadata
 
