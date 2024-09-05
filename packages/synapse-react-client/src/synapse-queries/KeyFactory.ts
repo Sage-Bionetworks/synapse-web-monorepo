@@ -902,8 +902,4 @@ export class KeyFactory {
   public getAgentSessionQueryKey(sessionId: string) {
     return this.getKey('agentSession', sessionId)
   }
-
-  public getAgentChatWithAsyncStatusQueryKey(request: AgentChatRequest) {
-    return this.getKey('agentChat', request.chatText, request.sessionId)
-  }
 }

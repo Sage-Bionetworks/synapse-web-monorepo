@@ -5,9 +5,7 @@
 import {
   useMutation,
   UseMutationOptions,
-  useQuery,
   useQueryClient,
-  UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
@@ -51,32 +49,33 @@ export function useCreateAgentSession(
   })
 }
 
-export function useGetAgentChatWithAsyncStatus<
-  TData = AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
->(
-  request: AgentChatRequest,
-  options?: Partial<
-    UseQueryOptions<
-      AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
-      SynapseClientError,
-      TData
-    >
+export function useGetAgentChatWithAsyncStatus(
+  options?: UseMutationOptions<
+    AgentChatResponse,
+    SynapseClientError,
+    AgentChatRequest
   >,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
   ) => void,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
-
-  return useQuery({
-    ...options,
-    queryKey: keyFactory.getAgentChatWithAsyncStatusQueryKey(request),
-
-    queryFn: () =>
-      SynapseClient.getAgentChatAsyncJobResults(
+  const { accessToken } = useSynapseContext()
+  return useMutation<
+    AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
+    SynapseClientError,
+    AgentChatRequest
+  >({
+    mutationFn: (request: AgentChatRequest) => {
+      return SynapseClient.getAgentChatAsyncJobResults(
         request,
         accessToken,
         setCurrentAsyncStatus,
-      ),
+      )
+    },
+    onSuccess: (data, variables, ctx) => {
+      if (options?.onSuccess && data.responseBody) {
+        options.onSuccess(data.responseBody, variables, ctx)
+      }
+    },
   })
 }

@@ -1,29 +1,19 @@
-import React, { useMemo } from 'react'
-import { ListItem, ListItemText, Skeleton } from '@mui/material'
+import React from 'react'
+import { ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { AgentChatRequest } from '@sage-bionetworks/synapse-types'
-import { useGetAgentChatWithAsyncStatus } from 'src/synapse-queries/chat/useChat'
+import { SkeletonParagraph } from '../Skeleton'
 
 export type SynapseChatInteractionProps = {
-  sessionId: string
   userMessage: string
+  chatResponseText?: string
 }
 
 export const SynapseChatInteraction: React.FunctionComponent<
   SynapseChatInteractionProps
-> = ({ sessionId, userMessage }) => {
+> = ({ userMessage, chatResponseText }) => {
   const theme = useTheme()
-  const agentChatRequest: AgentChatRequest = useMemo(() => {
-    return {
-      chatText: userMessage,
-      sessionId: sessionId,
-    }
-  }, [userMessage])
-  const { data: chatResponse, isLoading } =
-    useGetAgentChatWithAsyncStatus(agentChatRequest)
 
-  const chatResponseText = chatResponse?.responseBody?.responseText
   return (
     <>
       <ListItem sx={{ justifyContent: 'flex-end' }}>
@@ -37,8 +27,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
           }}
         />
       </ListItem>
-      {isLoading && <Skeleton width={200} height={100} />}
-      {!isLoading && chatResponseText && (
+      {chatResponseText && (
         <ListItem>
           <ListItemText
             primary={chatResponseText}
@@ -50,6 +39,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
           />
         </ListItem>
       )}
+      {!chatResponseText && <SkeletonParagraph numRows={3} />}
     </>
   )
 }

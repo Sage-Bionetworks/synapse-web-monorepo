@@ -8,10 +8,7 @@ import {
 import {
   AgentChatRequest,
   AgentChatResponse,
-  AgentSession,
-  CreateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
-import BasicMockedCrudService from '../util/BasicMockedCrudService'
 import {
   mockAgentChatResponse,
   mockAgentSession,
@@ -20,24 +17,11 @@ import {
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
 
-const agentService = new BasicMockedCrudService<AgentSession, 'sessionId'>({
-  initialData: [mockAgentSession],
-  idField: 'sessionId',
-  autoGenerateId: true,
-})
-
 export const getChatbotHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) => [
   rest.post(`${backendOrigin}${AGENT_SESSION}`, async (req, res, ctx) => {
-    const request: CreateAgentSessionRequest = await req.json()
-    const newAgentSession = agentService.create({
-      agentAccessLevel: request.agentAccessLevel,
-      startedOn: new Date().toISOString(),
-      agentId: request.agentId,
-      sessionId: 'newSessionId',
-    })
-    return res(ctx.status(201), ctx.json(newAgentSession))
+    return res(ctx.status(201), ctx.json(mockAgentSession))
   }),
 
   //list chat sessions

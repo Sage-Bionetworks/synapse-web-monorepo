@@ -1,41 +1,60 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import {
-  Box,
-  List,
-  Paper,
-  Typography,
-  FormControl,
-  InputAdornment,
-  IconButton,
-} from '@mui/material'
+import { Box, List, Paper, Typography, IconButton } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { OutlinedInput } from '@mui/material'
 import { ArrowUpward } from '@mui/icons-material'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
-import { useCreateAgentSession } from 'src/synapse-queries/chat/useChat'
+import {
+  useCreateAgentSession,
+  useGetAgentChatWithAsyncStatus,
+} from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
+import { TextField } from '@mui/material'
 
 export type SynapseChatProps = {
-  initialMessage: string
+  initialMessage?: string //optional initial message
   agentId?: string // if provided, use this agent
 }
 
+type ChatInteraction = {
+  userMessage: string
+  chatResponseText?: string
+}
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
   agentId,
 }) => {
-  // Create a new Agent Session on mount, add ability to initialize this component with a starting message from the user.
-  const [agentSessionId, setAgentSessionId] = useState('')
-  const { mutate: createAgentSession } = useCreateAgentSession({
-    onSuccess: newAgentSession => {
-      setAgentSessionId(newAgentSession.sessionId)
-    },
-  })
+  const { data: agentSession, mutate: createAgentSession } =
+    useCreateAgentSession()
   const theme = useTheme()
-  const [messages, setMessages] = useState([initialMessage])
+  // When both the current message and current response are available, add a new ChatInteraction to the array
+  const [interactions, setInteractions] = useState<ChatInteraction[]>([])
   const [currentMessage, setCurrentMessage] = useState('')
+  const [currentResponse, setCurrentResponse] = useState('')
+  // Keep track of the text that the user is currently typing into the textfield
+  const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
+
+  const { mutate: createAgentChatInteraction } = useGetAgentChatWithAsyncStatus(
+    {
+      onSuccess: data => {
+        // whenever the response is returned, set the last interaction response text
+        setCurrentResponse(data.responseText)
+      },
+    },
+  )
+
+  useEffect(() => {
+    // when we have both a message and response, add a new interaction and reset
+    if (currentMessage && currentResponse) {
+      setInteractions([
+        ...interactions,
+        { userMessage: currentMessage, chatResponseText: currentResponse },
+      ])
+      setCurrentResponse('')
+      setCurrentMessage('')
+    }
+  }, [currentMessage, currentResponse])
 
   useEffect(() => {
     // on mount, create a new agent session!
@@ -47,24 +66,37 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     }
   }, [createAgentSession])
 
+  useEffect(() => {
+    // on mount, resolve the initial message chat interaction (if set)
+    if (agentSession && initialMessage) {
+      setCurrentMessage(initialMessage)
+      createAgentChatInteraction({
+        chatText: initialMessage,
+        sessionId: agentSession!.sessionId,
+      })
+    }
+  }, [agentSession, initialMessage])
+
   const handleSendMessage = () => {
-    if (currentMessage.trim()) {
-      setMessages([...messages, currentMessage])
-      setCurrentMessage('')
+    if (userChatTextfieldValue.trim()) {
+      setCurrentMessage(userChatTextfieldValue)
+      setUserChatTextfieldValue('')
+      createAgentChatInteraction({
+        chatText: userChatTextfieldValue,
+        sessionId: agentSession!.sessionId,
+      })
     }
   }
 
-  const handleKeyDown: KeyboardEventHandler<
-    HTMLInputElement | HTMLTextAreaElement
-  > = event => {
-    if (event.key === 'Enter') {
+  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
+    if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       handleSendMessage()
     }
   }
-  const isMessage = !!currentMessage
+  const isMessage = !!userChatTextfieldValue
   const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
-  if (!agentSessionId) {
+  if (!agentSession) {
     return <SkeletonParagraph numRows={6} />
   }
 
@@ -83,46 +115,45 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           SynapseChat
         </Typography>
         <List>
-          {messages.map((message, index) => {
+          {interactions.map((interaction, index) => {
             return (
               <SynapseChatInteraction
                 key={index}
-                sessionId={agentSessionId}
-                userMessage={message}
+                userMessage={interaction.userMessage}
+                chatResponseText={interaction.chatResponseText}
               />
             )
           })}
         </List>
       </Paper>
       <Box component="form" onSubmit={handleSendMessage}>
-        <FormControl fullWidth sx={{ m: 1 }}>
-          <OutlinedInput
-            value={currentMessage}
-            endAdornment={
-              <InputAdornment
-                position="end"
-                sx={{ p: '0px', ml: '7px', mr: '13px' }}
+        <TextField
+          fullWidth
+          value={userChatTextfieldValue}
+          onChange={e => setUserChatTextfieldValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={'Message SynapseChat'}
+          sx={{ m: 1 }}
+          InputProps={{
+            sx: { borderRadius: 96.6 },
+            endAdornment: (
+              <IconButton
+                disabled={!isMessage}
+                onClick={handleSendMessage}
+                sx={{
+                  ml: '7px',
+                  mr: '13px',
+                  color: sendMessageButtonColor,
+                  borderStyle: 'solid',
+                  borderWidth: isMessage ? '2px' : '1px',
+                  borderColor: isMessage ? sendMessageButtonColor : 'gray',
+                }}
               >
-                <IconButton
-                  disabled={!isMessage}
-                  onClick={handleSendMessage}
-                  sx={{
-                    color: sendMessageButtonColor,
-                    borderStyle: 'solid',
-                    borderWidth: isMessage ? '2px' : '1px',
-                    borderColor: isMessage ? sendMessageButtonColor : 'gray',
-                  }}
-                >
-                  <ArrowUpward />
-                </IconButton>
-              </InputAdornment>
-            }
-            placeholder={'Message SynapseChat'}
-            sx={{ borderRadius: 96.6 }}
-            onChange={e => setCurrentMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        </FormControl>
+                <ArrowUpward />
+              </IconButton>
+            ),
+          }}
+        />
       </Box>
     </Box>
   )
