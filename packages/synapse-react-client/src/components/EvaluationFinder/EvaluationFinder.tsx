@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useGetEvaluationsInfinite } from '../../synapse-queries/evaluation/useEvaluation'
-import { HelpPopover } from '../HelpPopover/HelpPopover'
+import { HelpPopover } from '../HelpPopover'
 import {
   Alert,
   Box,
@@ -65,16 +65,20 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
               }
               key={evaluation.id}
               label={
-                <>
-                  {evaluation.name}{' '}
+                <Box display={'flex'} alignItems={'center'} gap={1}>
+                  {evaluation.name}
                   {evaluation.submissionInstructionsMessage &&
                     evaluation.submissionInstructionsMessage.length > 0 && (
-                      <HelpPopover
-                        markdownText={evaluation.submissionInstructionsMessage}
-                        placement={'right'}
-                      />
+                      <Box fontSize={'10px'}>
+                        <HelpPopover
+                          markdownText={
+                            evaluation.submissionInstructionsMessage
+                          }
+                          placement={'right'}
+                        />
+                      </Box>
                     )}
-                </>
+                </Box>
               }
               checked={selectedIds.includes(evaluation.id!)}
               onChange={() => {
