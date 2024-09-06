@@ -363,7 +363,7 @@ describe('TableColumnSchemaEditor', () => {
     await user.type(textarea, '1')
 
     // Verify we have a warning in display on hover
-    verifyTooltipText(textarea, /Recommended size is 300/, user)
+    await verifyTooltipText(textarea, /Recommended size is 300/, user)
 
     // Write a maxSize equal to the recommended size (the original value)
     await user.clear(textarea)
