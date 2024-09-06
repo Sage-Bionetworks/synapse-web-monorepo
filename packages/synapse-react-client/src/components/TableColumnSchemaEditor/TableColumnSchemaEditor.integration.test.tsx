@@ -22,8 +22,9 @@ import { SetOptional } from 'type-fest'
 import {
   addColumnModelToForm,
   modifyColumnModelInForm,
+  verifyTooltipText,
 } from './TableColumnSchemaEditorTestUtils'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import * as TableColumnSchemaUtils from '../../utils/functions/TableColumnSchemaUtils'
@@ -33,6 +34,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -93,7 +95,7 @@ describe('TableColumnSchemaEditor', () => {
     server.use(
       /* Each test in this suite should register its own table query handler */
       ...getDefaultColumnHandlers(),
-      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS),
+      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMN_RESPONSE),
       getCreateColumnModelBatchHandler(),
       ...getTableTransactionHandlers({
         concreteType:
@@ -296,9 +298,8 @@ describe('TableColumnSchemaEditor', () => {
 
     await waitFor(async () => {
       // IDs are stripped from imported columns, in case column properties are changed
-      const expectedProposedSchema = MOCK_ANNOTATION_COLUMNS.results.map(cm =>
-        omit(cm, 'id'),
-      )
+      const expectedProposedSchema =
+        MOCK_ANNOTATION_COLUMN_RESPONSE.results.map(cm => omit(cm, 'id'))
 
       expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
@@ -354,26 +355,151 @@ describe('TableColumnSchemaEditor', () => {
     // The annotation column(s) are editable, so we can find a name text field.
     await screen.findAllByLabelText('Name')
 
-    const textarea = screen.getByRole('textbox', { name: 'Maximum Size' })
+    const textarea = screen.getAllByRole('textbox', { name: 'Maximum Size' })[0]
     await waitFor(() => expect(textarea).not.toBeDisabled())
 
     // Write a maxSize smaller than the recommended size
     await user.clear(textarea)
     await user.type(textarea, '1')
 
-    // Verify we have a warning in display
-    expect(
-      screen.queryByText('Recommended size is at least 10'),
-    ).toBeInTheDocument()
+    // Verify we have a warning in display on hover
+    verifyTooltipText(textarea, /Recommended size is 300/, user)
 
-    // Write a maxSize equal to the recommended size
+    // Write a maxSize equal to the recommended size (the original value)
     await user.clear(textarea)
-    await user.type(textarea, '10')
+    await user.type(textarea, '300')
 
-    // Verify that warning disappears in display
-    expect(
-      screen.queryByText('Recommended size is at least 10'),
-    ).not.toBeInTheDocument()
+    // Verify the tooltip text is gone
+    await expect(
+      verifyTooltipText(textarea, /Recommended size is 300/, user),
+    ).rejects.toThrow()
+  })
+
+  it('Shows info when a columns maximum size was manually changed', async () => {
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockFileViewEntity,
+          tableBundle: {
+            // The view MUST have columns to tell the user if something changed!
+            columnModels: mockQueryResultBundle.columnModels,
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+    const { user } = await setUp({
+      entityId: mockFileViewEntity.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    const textarea = (
+      await screen.findAllByRole('textbox', { name: 'Maximum Size' })
+    )[0]
+    await waitFor(() => expect(textarea).not.toBeDisabled())
+
+    // Increase the size
+    await user.clear(textarea)
+    await user.type(textarea, '350')
+
+    // Verify we have info displayed on hover
+    await verifyTooltipText(
+      textarea,
+      /This value has changed since the table was last saved./,
+      user,
+    )
+    await verifyTooltipText(textarea, /The last saved value was 300./, user)
+
+    // Write a maxSize equal to the original value
+    await user.clear(textarea)
+    await user.type(textarea, '300')
+
+    // Verify the tooltip text is gone
+    await expect(
+      verifyTooltipText(
+        textarea,
+        /This value has changed since the table was last saved./,
+        user,
+      ),
+    ).rejects.toThrow()
+  })
+
+  it('Updates annotation columns below the maximum size when the Use Recommended Sizes button is clicked', async () => {
+    const annotationColumn = MOCK_ANNOTATION_COLUMN_RESPONSE.results[0]
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockFileViewEntity,
+          tableBundle: {
+            // The view initially has a column that matches an annotation column,
+            // but the maximum size is too small.
+            columnModels: [
+              {
+                ...annotationColumn,
+                maximumSize: annotationColumn.maximumSize! - 1,
+              },
+            ],
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+    const { user } = await setUp({
+      entityId: mockFileViewEntity.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    // There exists a column with a size that is smaller than the recommended size, so the button should be enabled
+    const useRecommendedSizesButton = await screen.findByRole('button', {
+      name: 'Use Recommended Sizes',
+    })
+    // Need to first fetch the annotation columns, so it may be a moment before the button is ready
+    await waitFor(() => expect(useRecommendedSizesButton).toBeEnabled(), {})
+
+    // Verify user is told that the maximum size field is too small
+    const textarea = (
+      await screen.findAllByRole('textbox', { name: 'Maximum Size' })
+    )[0]
+    await verifyTooltipText(textarea, /Recommended size is 300/, user)
+
+    await user.click(useRecommendedSizesButton)
+
+    // A confirmation dialog appears
+    const dialog = await screen.findByRole('dialog')
+    within(dialog).getByText('This will change 1 column in this schema')
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Use Recommended Sizes' }),
+    )
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument()
+    })
+
+    // Verify the maximum size has been updated
+    await waitFor(() => {
+      expect(textarea).toHaveValue(String(annotationColumn.maximumSize!))
+    })
+
+    // Verify the old tooltip text is gone
+    await expect(
+      verifyTooltipText(textarea, /Recommended size is 300/, user),
+    ).rejects.toThrow()
+
+    // Verify a new tooltip tells the user that the value has changed
+    await verifyTooltipText(
+      textarea,
+      /This value has changed since the table was last saved./,
+      user,
+    )
+    await verifyTooltipText(textarea, /The last saved value was 299./, user)
+
+    // Verify the button is now disabled, since no columns can be updated
+    expect(useRecommendedSizesButton).toBeDisabled()
   })
 
   it('Existing default columns are not editable, except facetType', async () => {

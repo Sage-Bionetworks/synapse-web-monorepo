@@ -1,10 +1,21 @@
-import React from 'react'
-import { TextField, TextFieldProps, Tooltip } from '@mui/material'
-import { isFormDataValueSmallerThanRecommendedValue } from '../TableColumnSchemaEditorUtils'
+import {
+  alpha,
+  SxProps,
+  TextField,
+  TextFieldProps,
+  Theme,
+  Tooltip,
+} from '@mui/material'
 import { ColumnType, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import React from 'react'
+import {
+  getFormDataValueAsNumber,
+  isFormDataValueSmallerThanRecommendedValue,
+} from '../TableColumnSchemaEditorUtils'
 
 export type FieldWithRecommendedValueProps = Omit<TextFieldProps, 'value'> & {
   value: string | number | undefined
+  originalValue?: string | number | undefined
   recommendedValue?: number
   columnType: ColumnType
 }
@@ -14,6 +25,7 @@ export function FieldWithRecommendedMinimum(
 ) {
   const {
     value,
+    originalValue,
     recommendedValue,
     columnType,
     error: errorFromProps,
@@ -23,21 +35,41 @@ export function FieldWithRecommendedMinimum(
   const isSmallerThanRecommendedValue =
     isFormDataValueSmallerThanRecommendedValue(value, recommendedValue)
 
+  const hasChangedFromOriginal =
+    originalValue != null &&
+    getFormDataValueAsNumber(value) !== getFormDataValueAsNumber(originalValue)
+
   const showError = !!errorFromProps || isSmallerThanRecommendedValue
 
-  const tooltipText = isSmallerThanRecommendedValue ? (
-    <>
-      <p>Data annotations are longer than allowed by current schema.</p>
-      <p>
-        Recommended size is <strong>{recommendedValue}</strong>.
-      </p>
-      {ColumnTypeEnum.STRING === columnType && (
-        <p>If unsure, choose “MediumText” from the Column Type menu.</p>
-      )}
-    </>
-  ) : (
-    ''
-  )
+  let tooltipText = null
+  let additionalSx: SxProps<Theme> | undefined = undefined
+  if (isSmallerThanRecommendedValue) {
+    tooltipText = (
+      <>
+        <p>Data annotations are longer than allowed by current schema.</p>
+        <p>
+          Recommended size is <strong>{recommendedValue}</strong>.
+        </p>
+        {ColumnTypeEnum.STRING === columnType && (
+          <p>If unsure, choose “MediumText” from the Column Type menu.</p>
+        )}
+      </>
+    )
+  } else if (hasChangedFromOriginal) {
+    tooltipText = (
+      <>
+        <p>This value has changed since the table was last saved.</p>
+        <p>The last saved value was {originalValue}.</p>
+      </>
+    )
+    additionalSx = theme => ({
+      '& .MuiInputBase-root': {
+        backgroundColor: alpha(theme.palette.info.main, 0.1),
+        border: '1px solid',
+        borderColor: theme.palette.info.main,
+      },
+    })
+  }
 
   return (
     <Tooltip title={tooltipText}>
@@ -46,6 +78,12 @@ export function FieldWithRecommendedMinimum(
         error={showError}
         color={showError ? 'error' : undefined}
         focused={isSmallerThanRecommendedValue ? true : undefined}
+        sx={[
+          ...(Array.isArray(textFieldProps.sx)
+            ? textFieldProps.sx
+            : [textFieldProps.sx]),
+          additionalSx,
+        ]}
         {...textFieldProps}
       />
     </Tooltip>

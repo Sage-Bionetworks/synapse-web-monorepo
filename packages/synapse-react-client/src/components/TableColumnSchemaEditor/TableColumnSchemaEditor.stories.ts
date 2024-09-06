@@ -11,7 +11,7 @@ import { rest } from 'msw'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import mockTableEntityData from '../../mocks/entity/mockTableEntity'
 import mockEntities from '../../mocks/entity'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 
 const meta = {
   title: 'Synapse/Table Column Schema Editor',
@@ -42,7 +42,7 @@ export const Demo: Story = {
       handlers: [
         ...getDefaultColumnHandlers(MOCK_REPO_ORIGIN),
         ...getAnnotationColumnHandlers(
-          MOCK_ANNOTATION_COLUMNS,
+          MOCK_ANNOTATION_COLUMN_RESPONSE,
           MOCK_REPO_ORIGIN,
         ),
         rest.post(

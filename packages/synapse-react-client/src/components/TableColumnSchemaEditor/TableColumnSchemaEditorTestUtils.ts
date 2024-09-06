@@ -1,3 +1,4 @@
+import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -17,7 +18,7 @@ export async function addColumnModelToForm(
 
 export async function modifyColumnModelInForm(
   index: number,
-  data: { columnName: string },
+  data: { columnName?: string; columnType?: ColumnType; maximumSize?: number },
   user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
 ) {
   if (data.columnName) {
@@ -25,4 +26,28 @@ export async function modifyColumnModelInForm(
     await user.clear(nameField)
     await user.type(nameField, data.columnName)
   }
+  if (data.columnType) {
+    const columnTypeField = (await screen.findAllByLabelText('Column Type'))[
+      index
+    ]
+    await user.selectOptions(columnTypeField, data.columnType)
+  }
+  if (data.maximumSize) {
+    const maxSizeField = (await screen.findAllByLabelText('Maximum Size'))[
+      index
+    ]
+    await user.clear(maxSizeField)
+    await user.type(maxSizeField, String(data.maximumSize))
+  }
+}
+
+export async function verifyTooltipText(
+  element: Element,
+  text: string | RegExp,
+  user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
+) {
+  await user.hover(element)
+  const tooltip = await screen.findByRole('tooltip')
+  expect(tooltip).toHaveTextContent(text)
+  await user.unhover(element)
 }

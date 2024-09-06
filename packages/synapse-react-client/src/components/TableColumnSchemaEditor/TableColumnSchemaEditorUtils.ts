@@ -416,9 +416,9 @@ export const findMatchingColumnModel = (
   return closestMatch
 }
 
-const getFormDataValueAsNumber = (
+export function getFormDataValueAsNumber(
   formDataValue: string | number | undefined,
-): number | null => {
+): number | null {
   const maxSize =
     formDataValue !== null ? parseFloat(String(formDataValue)) : null
   const isInteger = Number.isInteger(maxSize)

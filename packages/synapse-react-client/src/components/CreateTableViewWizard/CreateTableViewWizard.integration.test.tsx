@@ -29,7 +29,7 @@ import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumn
 import { rest } from 'msw'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { omit } from 'lodash-es'
 import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
@@ -57,9 +57,8 @@ const getAnnotationColumnsSpy = jest.mocked(
 const defaultColumnModelsWithoutId = defaultFileViewColumnModels.map(cm =>
   omit(cm, ['id']),
 )
-const annotationColumnModelsWithoutId = MOCK_ANNOTATION_COLUMNS.results.map(
-  cm => omit(cm, ['id']),
-)
+const annotationColumnModelsWithoutId =
+  MOCK_ANNOTATION_COLUMN_RESPONSE.results.map(cm => omit(cm, ['id']))
 
 async function getLatestCreatedColumnModelIdsFromSpy(
   spy: typeof createColumnModelsSpy,

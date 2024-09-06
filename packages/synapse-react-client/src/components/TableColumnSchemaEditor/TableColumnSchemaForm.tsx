@@ -87,6 +87,8 @@ type TableColumnSchemaFormProps = {
   initialData?: SetOptional<ColumnModel, 'id'>[]
   onSubmit?: (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => void
   isSubmitting?: boolean
+  /** The original/current column models that are applied to the table, if they exist. */
+  originalColumnModels?: ColumnModel[]
 }
 
 const ColumnHeader = styled(Box, {
@@ -105,6 +107,7 @@ function TableColumnSchemaFormInternal(
     viewScope,
     onSubmit = noop,
     isSubmitting = false,
+    originalColumnModels,
   } = props
 
   const numColumnModels = useAtomValue(
@@ -325,6 +328,7 @@ function TableColumnSchemaFormInternal(
               key={index}
               columnModelValidationErrors={errorsByColumnModel[index]}
               annotationColumnModels={annotationColumnModels}
+              originalColumnModels={originalColumnModels}
             />
           )
         })}
@@ -396,6 +400,7 @@ type TableColumnSchemaFormRowProps = {
   disabled: boolean
   columnModelValidationErrors: ZodIssue[] | null
   annotationColumnModels?: ColumnModel[]
+  originalColumnModels?: ColumnModel[]
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
@@ -405,6 +410,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     disabled,
     columnModelValidationErrors = null,
     annotationColumnModels,
+    originalColumnModels,
   } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
@@ -418,6 +424,11 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
       [columnModelIndex],
     ),
   )
+
+  // Find the original column model that matches the current column model by name and type, so we can tell the user what fields have changed
+  const originalColumnModel = originalColumnModels
+    ? findMatchingColumnModel(originalColumnModels, columnModel)
+    : undefined
 
   // Find the closest match between passed column model and current column model with name and type
   const defaultAnnotationModel = annotationColumnModels
@@ -449,6 +460,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
         disabled={disabled}
         validationErrors={columnModelValidationErrors}
         defaultAnnotationModel={defaultAnnotationModel}
+        originalColumnModel={originalColumnModel}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&

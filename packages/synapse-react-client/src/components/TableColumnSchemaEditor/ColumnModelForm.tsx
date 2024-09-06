@@ -55,6 +55,7 @@ type ColumnModelFormProps = {
   /* Can be used to override the schema used for validating ColumnModels */
   validationErrors?: ZodIssue[] | null
   defaultAnnotationModel?: ColumnModel | null
+  originalColumnModel?: ColumnModel | null
 }
 const jsonSubColumnFieldSx: SxProps = {
   height: '28px',
@@ -94,6 +95,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
     disabled = false,
     validationErrors = null,
     defaultAnnotationModel,
+    originalColumnModel,
   } = props
   const isJsonSubColumn = jsonSubColumnIndex != undefined
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
@@ -269,6 +271,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           ) : (
             <FieldWithRecommendedMinimum
               value={(columnModel as ColumnModelFormData).maximumSize ?? ''}
+              originalValue={originalColumnModel?.maximumSize}
               recommendedValue={defaultAnnotationModel?.maximumSize}
               columnType={columnModel.columnType as ColumnTypeEnum}
               disabled={disabled || !canHaveSize(columnModel.columnType)}
@@ -312,6 +315,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               value={
                 (columnModel as ColumnModelFormData).maximumListLength ?? ''
               }
+              originalValue={originalColumnModel?.maximumListLength}
               recommendedValue={defaultAnnotationModel?.maximumListLength}
               columnType={columnModel.columnType as ColumnTypeEnum}
               disabled={
