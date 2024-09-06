@@ -14,7 +14,6 @@ import {
   AgentSession,
   AsynchronousJobStatus,
   CreateAgentSessionRequest,
-  SessionHistoryRequest,
   SessionHistoryResponse,
 } from '@sage-bionetworks/synapse-types'
 
@@ -50,7 +49,7 @@ export function useCreateAgentSession(
   })
 }
 
-export function useGetAgentChatWithAsyncStatus(
+export function useSendChatMessageToAgent(
   options?: UseMutationOptions<
     AgentChatResponse,
     SynapseClientError,

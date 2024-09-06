@@ -1,7 +1,6 @@
 import {
   AccessApprovalSearchRequest,
   AccessRequirementSearchRequest,
-  AgentChatRequest,
   AvailableFilesRequest,
   BatchFileRequest,
   DiscussionFilter,

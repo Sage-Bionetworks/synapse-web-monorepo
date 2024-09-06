@@ -8,7 +8,7 @@ import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
   useGetAgentChatSessionHistory,
-  useGetAgentChatWithAsyncStatus,
+  useSendChatMessageToAgent,
 } from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
@@ -37,14 +37,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
-  const { mutate: createAgentChatInteraction } = useGetAgentChatWithAsyncStatus(
-    {
-      onSuccess: data => {
-        // whenever the response is returned, set the last interaction response text
-        setCurrentResponse(data.responseText)
-      },
+  const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent({
+    onSuccess: data => {
+      // whenever the response is returned, set the last interaction response text
+      setCurrentResponse(data.responseText)
     },
-  )
+  })
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
   const { data: sessionHistory, mutate: getSessionHistory } =
@@ -52,6 +50,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // when we have both a message and response, add a new interaction and reset
+    // Note : We want the current interaction to be visible to the user while this async job processes (show the user message, and a loading response).
+    // You might think we could do this work in the onSuccess of createAgentChatInteraction, but I think there's a race condition (currentInteraction may not be set when onSuccess is called).
     if (currentResponse && currentInteraction) {
       currentInteraction.chatResponseText = currentResponse
       setInteractions([...interactions, currentInteraction])
@@ -74,7 +74,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     // on mount, resolve the initial message chat interaction (if set)
     if (agentSession && initialMessage && !initialMessageProcessed) {
       setCurrentInteraction({ userMessage: initialMessage })
-      createAgentChatInteraction({
+      sendChatMessageToAgent({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
       })
@@ -93,7 +93,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     if (userChatTextfieldValue.trim()) {
       setCurrentInteraction({ userMessage: userChatTextfieldValue })
       setUserChatTextfieldValue('')
-      createAgentChatInteraction({
+      sendChatMessageToAgent({
         chatText: userChatTextfieldValue,
         sessionId: agentSession!.sessionId,
       })
