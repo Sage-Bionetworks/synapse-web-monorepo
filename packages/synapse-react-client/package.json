@@ -237,9 +237,7 @@
   "scripts": {
     "clean": "rimraf dist storybook-static coverage",
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
-    "start-js": "vite",
     "start": "storybook dev -p 6060",
-    "start-deprecated-demo": "start-js",
     "test": "jest",
     "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
