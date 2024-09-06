@@ -1,4 +1,4 @@
-import React, { KeyboardEventHandler, useEffect, useState } from 'react'
+import React, { KeyboardEventHandler, useEffect, useRef, useState } from 'react'
 import { Box, List, Paper, Typography, IconButton } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
@@ -35,7 +35,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [currentResponse, setCurrentResponse] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
-
   const { mutate: createAgentChatInteraction } = useGetAgentChatWithAsyncStatus(
     {
       onSuccess: data => {
@@ -87,13 +86,15 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     }
   }
 
+  const isDisabled = !userChatTextfieldValue || !!currentInteraction
+
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (!isDisabled && event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       handleSendMessage()
     }
   }
-  const isMessage = !!userChatTextfieldValue
+
   const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
   if (!agentSession) {
     return <SkeletonParagraph numRows={6} />
@@ -113,7 +114,15 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
         <Typography variant="h6" gutterBottom>
           SynapseChat
         </Typography>
-        <List>
+        <List
+          sx={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           {interactions.map((interaction, index) => {
             return (
               <SynapseChatInteraction
@@ -127,6 +136,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             <SynapseChatInteraction
               userMessage={currentInteraction.userMessage}
               chatResponseText={currentInteraction.chatResponseText}
+              scrollIntoView
             />
           )}
         </List>
@@ -143,15 +153,15 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             sx: { borderRadius: 96.6 },
             endAdornment: (
               <IconButton
-                disabled={!isMessage}
+                disabled={isDisabled}
                 onClick={handleSendMessage}
                 sx={{
                   ml: '7px',
                   mr: '13px',
                   color: sendMessageButtonColor,
                   borderStyle: 'solid',
-                  borderWidth: isMessage ? '2px' : '1px',
-                  borderColor: isMessage ? sendMessageButtonColor : 'gray',
+                  borderWidth: isDisabled ? '1px' : '2px',
+                  borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
                 }}
               >
                 <ArrowUpward />

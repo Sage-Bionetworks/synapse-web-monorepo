@@ -1,34 +1,73 @@
-import React from 'react'
-import { ListItem, ListItemText } from '@mui/material'
+import React, { useEffect, useRef } from 'react'
+import { Box, ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SkeletonParagraph } from '../Skeleton'
+import { SmartToyTwoTone } from '@mui/icons-material'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
+  scrollIntoView?: boolean
 }
 
 export const SynapseChatInteraction: React.FunctionComponent<
   SynapseChatInteractionProps
-> = ({ userMessage, chatResponseText }) => {
+> = ({ userMessage, chatResponseText, scrollIntoView = false }) => {
   const theme = useTheme()
+  const ref = useRef<HTMLLIElement | null>(null)
+  useEffect(() => {
+    // on mount, scroll into view if instructed
+    if (scrollIntoView) {
+      if (ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }, [ref])
 
   return (
     <>
-      <ListItem sx={{ justifyContent: 'flex-end' }}>
-        <ListItemText
-          primary={userMessage}
-          sx={{
-            backgroundColor: (theme.palette.secondary as ColorPartial)[100],
-            borderRadius: '10px',
-            padding: '10px',
-            maxWidth: '75%',
-          }}
-        />
+      <ListItem
+        ref={ref}
+        sx={{
+          alignSelf: 'flex-end',
+          backgroundColor: (theme.palette.secondary as ColorPartial)[100],
+          borderRadius: '24px',
+          maxWidth: '70%',
+          display: 'block',
+          marginBottom: '5px',
+          padding: '8px 12px',
+          wordWrap: 'break-word',
+          width: 'auto',
+        }}
+      >
+        <ListItemText primary={userMessage} />
       </ListItem>
       {chatResponseText && (
-        <ListItem>
+        <ListItem
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '50px auto',
+            columnGap: '0px',
+            justifyItems: 'center',
+            alignItems: 'start',
+          }}
+        >
+          <Box
+            sx={{
+              p: '3px',
+              mt: '10px',
+              height: '31px',
+              borderRadius: '50%',
+              borderStyle: 'solid',
+              borderWidth: '1px',
+              borderColor: (theme.palette.grey as ColorPartial)[300],
+            }}
+          >
+            <SmartToyTwoTone
+              sx={{ color: (theme.palette.secondary as ColorPartial)[500] }}
+            />
+          </Box>
           <ListItemText
             primary={chatResponseText}
             sx={{
