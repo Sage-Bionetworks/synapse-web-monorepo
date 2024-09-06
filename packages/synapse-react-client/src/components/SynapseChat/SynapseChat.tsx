@@ -1,5 +1,5 @@
-import React, { KeyboardEventHandler, useEffect, useRef, useState } from 'react'
-import { Box, List, Paper, Typography, IconButton } from '@mui/material'
+import React, { KeyboardEventHandler, useEffect, useState } from 'react'
+import { Box, List, IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -35,6 +35,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [currentResponse, setCurrentResponse] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
+  const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
   const { mutate: createAgentChatInteraction } = useGetAgentChatWithAsyncStatus(
     {
       onSuccess: data => {
@@ -66,14 +67,15 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
-    if (agentSession && initialMessage) {
+    if (agentSession && initialMessage && !initialMessageProcessed) {
       setCurrentInteraction({ userMessage: initialMessage })
       createAgentChatInteraction({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
       })
+      setInitialMessageProcessed(true)
     }
-  }, [agentSession, initialMessage])
+  }, [agentSession, initialMessage, initialMessageProcessed])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
@@ -106,14 +108,11 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       flexDirection="column"
       justifyContent="space-between"
       height="100vh"
-      maxWidth="700px"
+      maxWidth="800px"
       mx="auto"
       p={2}
     >
-      <Paper elevation={3} sx={{ flexGrow: 1, overflowY: 'auto', p: 2, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          SynapseChat
-        </Typography>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
         <List
           sx={{
             flex: 1,
@@ -140,15 +139,14 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             />
           )}
         </List>
-      </Paper>
-      <Box component="form" onSubmit={handleSendMessage}>
+      </Box>
+      <Box component="form" sx={{ pb: '10px' }} onSubmit={handleSendMessage}>
         <TextField
           fullWidth
           value={userChatTextfieldValue}
           onChange={e => setUserChatTextfieldValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'Message SynapseChat'}
-          sx={{ m: 1 }}
           InputProps={{
             sx: { borderRadius: 96.6 },
             endAdornment: (
@@ -169,6 +167,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             ),
           }}
         />
+        <Typography
+          variant="smallText1"
+          sx={{ pt: '8px', textAlign: 'center' }}
+        >
+          SynapseChat can make mistakes.
+        </Typography>
       </Box>
     </Box>
   )

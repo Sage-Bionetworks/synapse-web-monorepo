@@ -35,8 +35,8 @@ export const SynapseChatInteraction: React.FunctionComponent<
           borderRadius: '24px',
           maxWidth: '70%',
           display: 'block',
-          marginBottom: '5px',
-          padding: '8px 12px',
+          mb: '5px',
+          p: '8px 12px',
           wordWrap: 'break-word',
           width: 'auto',
         }}
@@ -51,6 +51,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
             columnGap: '0px',
             justifyItems: 'center',
             alignItems: 'start',
+            p: '0px',
           }}
         >
           <Box
