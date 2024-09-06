@@ -177,6 +177,8 @@ export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
 export const AGENT = `${REPO}/agent`
 export const AGENT_SESSION = `${AGENT}/session`
 export const LIST_AGENT_SESSIONS = `${AGENT_SESSION}s/list`
+export const AGENT_SESSION_HISTORY = (sessionId: string) =>
+  `${AGENT_SESSION}/history/${sessionId}`
 export const START_CHAT_ASYNC = `${AGENT}/chat/async/start`
 export const GET_CHAT_ASYNC = (jobId: string | number) =>
   `${AGENT}/chat/async/get/${jobId}`

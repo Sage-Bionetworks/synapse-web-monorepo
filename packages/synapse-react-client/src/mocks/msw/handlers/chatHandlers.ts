@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import {
   AGENT_SESSION,
+  AGENT_SESSION_HISTORY,
   GET_CHAT_ASYNC,
   LIST_AGENT_SESSIONS,
   START_CHAT_ASYNC,
@@ -12,7 +13,9 @@ import {
 import {
   mockAgentChatResponse,
   mockAgentSession,
+  mockChatSessionId,
   mockListAgentSessionsResponse,
+  mockSessionHistoryResponse,
 } from 'src/mocks/chat/mockChat'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
@@ -29,6 +32,14 @@ export const getChatbotHandlers = (
     // const request: ListAgentSessionsRequest = await req.json()
     return res(ctx.status(201), ctx.json(mockListAgentSessionsResponse))
   }),
+
+  //session history
+  rest.post(
+    `${backendOrigin}${AGENT_SESSION_HISTORY(mockChatSessionId)}`,
+    async (req, res, ctx) => {
+      return res(ctx.status(201), ctx.json(mockSessionHistoryResponse))
+    },
+  ),
   //Async job to send chat message to the agent
   generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
     START_CHAT_ASYNC,

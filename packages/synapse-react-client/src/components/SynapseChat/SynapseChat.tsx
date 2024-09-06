@@ -7,6 +7,7 @@ import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
+  useGetAgentChatSessionHistory,
   useGetAgentChatWithAsyncStatus,
 } from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
@@ -44,6 +45,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       },
     },
   )
+  // Restore chat session history, if exists.
+  // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
+  const { data: sessionHistory, mutate: getSessionHistory } =
+    useGetAgentChatSessionHistory()
 
   useEffect(() => {
     // when we have both a message and response, add a new interaction and reset
@@ -76,6 +81,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setInitialMessageProcessed(true)
     }
   }, [agentSession, initialMessage, initialMessageProcessed])
+
+  useEffect(() => {
+    // on mount, read a page worth of previous messages
+    if (agentSession && getSessionHistory) {
+      getSessionHistory(agentSession.sessionId)
+    }
+  }, [agentSession, getSessionHistory])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
@@ -122,6 +134,17 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             flexDirection: 'column',
           }}
         >
+          {/* Note: session history is ordered from most recent to least recent, so reverse the order when restoring the chat interface */}
+          {sessionHistory &&
+            sessionHistory.page.reverse().map((interaction, index) => {
+              return (
+                <SynapseChatInteraction
+                  key={index}
+                  userMessage={interaction.usersRequestText}
+                  chatResponseText={interaction.agentResponseText}
+                />
+              )
+            })}
           {interactions.map((interaction, index) => {
             return (
               <SynapseChatInteraction

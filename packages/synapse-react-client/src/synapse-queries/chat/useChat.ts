@@ -1,7 +1,6 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-
 import {
   useMutation,
   UseMutationOptions,
@@ -15,6 +14,8 @@ import {
   AgentSession,
   AsynchronousJobStatus,
   CreateAgentSessionRequest,
+  SessionHistoryRequest,
+  SessionHistoryResponse,
 } from '@sage-bionetworks/synapse-types'
 
 export function useCreateAgentSession(
@@ -59,7 +60,8 @@ export function useGetAgentChatWithAsyncStatus(
     status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
   ) => void,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
   return useMutation<
     AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
     SynapseClientError,
@@ -75,6 +77,38 @@ export function useGetAgentChatWithAsyncStatus(
     onSuccess: (data, variables, ctx) => {
       if (options?.onSuccess && data.responseBody) {
         options.onSuccess(data.responseBody, variables, ctx)
+      }
+      const queryKey = keyFactory.getChatHistoryQueryKey(
+        data.requestBody.sessionId,
+      )
+      queryClient.invalidateQueries({
+        queryKey: queryKey,
+      })
+    },
+  })
+}
+
+export function useGetAgentChatSessionHistory(
+  options?: UseMutationOptions<
+    SessionHistoryResponse,
+    SynapseClientError,
+    string
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<SessionHistoryResponse, SynapseClientError, string>({
+    mutationFn: (sessionId: string) =>
+      SynapseClient.getSessionHistory(sessionId, accessToken),
+    onSuccess: async (history, variables, ctx) => {
+      const queryKey = keyFactory.getChatHistoryQueryKey(history.sessionId)
+      queryClient.invalidateQueries({
+        queryKey: queryKey,
+      })
+
+      if (options?.onSuccess) {
+        await options.onSuccess(history, variables, ctx)
       }
     },
   })

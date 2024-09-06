@@ -84,3 +84,23 @@ export type AgentChatResponse = {
    */
   responseText: string
 }
+
+// Represents a request for a single page of a session's history
+export type SessionHistoryRequest = {
+  nextPageToken?: string // Optional field to request the next page of results
+}
+
+// Represents a single interaction between the user and an agent
+export type Interaction = {
+  usersRequestText: string // The text of the user's request
+  usersRequestTimestamp: string // ISO 8601 date-time format for when the user made the request
+  agentResponseText: string // The text of the agent's response
+  agentResponseTimestamp: string // ISO 8601 date-time format for when the agent produced the response
+}
+
+// Represents a response containing a single page of a session's history
+export type SessionHistoryResponse = {
+  sessionId: string // The session ID of this conversation's history
+  page: Interaction[] // Array of interactions in the session's history, ordered by interaction timestamp
+  nextPageToken?: string // Optional token to retrieve the next page of results
+}

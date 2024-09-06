@@ -20,6 +20,7 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
   AGENT_SESSION,
+  AGENT_SESSION_HISTORY,
   ALIAS_AVAILABLE,
   ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
@@ -319,6 +320,8 @@ import {
   ListAgentSessionsResponse,
   AgentChatRequest,
   AgentChatResponse,
+  SessionHistoryRequest,
+  SessionHistoryResponse,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5498,5 +5501,20 @@ export const getAgentChatAsyncJobResults = async (
     GET_CHAT_ASYNC(asyncJobId.token),
     accessToken,
     setCurrentAsyncStatus,
+  )
+}
+
+export const getSessionHistory = (
+  sessionId: string,
+  // request: SessionHistoryRequest,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<SessionHistoryResponse> => {
+  return doPost<SessionHistoryResponse>(
+    AGENT_SESSION_HISTORY(sessionId),
+    {},
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
   )
 }
