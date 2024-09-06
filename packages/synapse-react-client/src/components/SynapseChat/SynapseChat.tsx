@@ -30,7 +30,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const theme = useTheme()
   // When both the current message and current response are available, add a new ChatInteraction to the array
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
-  const [currentMessage, setCurrentMessage] = useState('')
+  const [currentInteraction, setCurrentInteraction] =
+    useState<ChatInteraction>()
   const [currentResponse, setCurrentResponse] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
@@ -46,15 +47,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // when we have both a message and response, add a new interaction and reset
-    if (currentMessage && currentResponse) {
-      setInteractions([
-        ...interactions,
-        { userMessage: currentMessage, chatResponseText: currentResponse },
-      ])
+    if (currentResponse && currentInteraction) {
+      currentInteraction.chatResponseText = currentResponse
+      setInteractions([...interactions, currentInteraction])
       setCurrentResponse('')
-      setCurrentMessage('')
+      setCurrentInteraction(undefined)
     }
-  }, [currentMessage, currentResponse])
+  }, [currentResponse, currentInteraction])
 
   useEffect(() => {
     // on mount, create a new agent session!
@@ -69,7 +68,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
     if (agentSession && initialMessage) {
-      setCurrentMessage(initialMessage)
+      setCurrentInteraction({ userMessage: initialMessage })
       createAgentChatInteraction({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
@@ -79,7 +78,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
-      setCurrentMessage(userChatTextfieldValue)
+      setCurrentInteraction({ userMessage: userChatTextfieldValue })
       setUserChatTextfieldValue('')
       createAgentChatInteraction({
         chatText: userChatTextfieldValue,
@@ -124,6 +123,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
               />
             )
           })}
+          {currentInteraction && (
+            <SynapseChatInteraction
+              userMessage={currentInteraction.userMessage}
+              chatResponseText={currentInteraction.chatResponseText}
+            />
+          )}
         </List>
       </Paper>
       <Box component="form" onSubmit={handleSendMessage}>
