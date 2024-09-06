@@ -449,7 +449,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           <FormControl fullWidth>
             <Select
               label="Facet Type"
-              value={columnModel.facetType}
+              value={columnModel.facetType || ''}
               disabled={disabled || allowedFacetTypes === null}
               onChange={e => {
                 dispatch({

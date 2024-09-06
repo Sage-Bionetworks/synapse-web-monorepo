@@ -35,7 +35,7 @@ function DefaultValueBooleanField(props: DefaultValueFieldProps<string>) {
       <Select
         {...SelectProps}
         disabled={disabled}
-        value={value}
+        value={value || ''}
         onChange={e => {
           if (e.target.value == null) {
             onChange(undefined)
