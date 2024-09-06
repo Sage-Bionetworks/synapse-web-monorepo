@@ -33,6 +33,7 @@ import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColum
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { omit } from 'lodash-es'
 import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from '../TableColumnSchemaEditor/TableColumnSchemaForm'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -221,7 +222,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)
@@ -342,7 +343,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)
@@ -447,7 +448,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)

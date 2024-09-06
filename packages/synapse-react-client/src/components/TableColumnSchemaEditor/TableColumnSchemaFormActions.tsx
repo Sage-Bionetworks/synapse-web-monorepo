@@ -22,6 +22,8 @@ import pluralize from 'pluralize'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useGetAnnotationColumnModels } from '../../synapse-queries/table/useColumnModel'
 
+export const USE_RECOMMENDED_SIZES_BUTTON_TEXT = 'Use Recommended Sizes'
+
 const RECOMMENDED_SIZES_CONFIRMATION_MODAL_CONTENT = (
   <>
     <Typography variant={'body1'}>
@@ -150,7 +152,7 @@ export function TableColumnSchemaFormActions(
             )} in this schema`}
             content={RECOMMENDED_SIZES_CONFIRMATION_MODAL_CONTENT}
             confirmButtonProps={{
-              children: 'Use Recommended Sizes',
+              children: USE_RECOMMENDED_SIZES_BUTTON_TEXT,
             }}
           />
           <Tooltip

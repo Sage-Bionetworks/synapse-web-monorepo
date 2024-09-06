@@ -97,6 +97,8 @@ const ColumnHeader = styled(Box, {
   fontWeight: 700,
 })
 
+export const ADD_ALL_ANNOTATIONS_BUTTON_TEXT = 'Add All Annotations'
+
 function TableColumnSchemaFormInternal(
   props: TableColumnSchemaFormProps,
   ref: React.ForwardedRef<SubmitHandle>,
@@ -380,7 +382,7 @@ function TableColumnSchemaFormInternal(
               addAnnotationColumns()
             }}
           >
-            Add All Annotations
+            {ADD_ALL_ANNOTATIONS_BUTTON_TEXT}
           </Button>
         )}
         <ImportTableColumnsButton

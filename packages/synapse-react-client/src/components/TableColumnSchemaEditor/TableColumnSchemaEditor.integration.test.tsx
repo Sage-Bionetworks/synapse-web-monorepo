@@ -35,6 +35,8 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
+import { USE_RECOMMENDED_SIZES_BUTTON_TEXT } from './TableColumnSchemaFormActions'
+import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from './TableColumnSchemaForm'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -193,6 +195,42 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
+  it('Does not show annotation-related buttons for TableEntity', async () => {
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockTableEntityData.entity,
+          tableBundle: {
+            columnModels: mockTableQueryData.columnModels!,
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+    await setUp({
+      entityId: mockTableEntityData.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    await expect(
+      screen.findByRole(
+        'button',
+        { name: USE_RECOMMENDED_SIZES_BUTTON_TEXT },
+        { timeout: 100 },
+      ),
+    ).rejects.toThrow()
+    await expect(
+      screen.findByRole(
+        'button',
+        { name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT },
+        { timeout: 100 },
+      ),
+    ).rejects.toThrow()
+  })
+
   it('User can add default columns', async () => {
     // Must use a file view -- tables don't have default columns
     server.use(
@@ -276,7 +314,7 @@ describe('TableColumnSchemaEditor', () => {
     })
 
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     // The button will be disabled until the annotation columns have been fetched.
     await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
@@ -337,7 +375,7 @@ describe('TableColumnSchemaEditor', () => {
     })
 
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     // The button will be disabled until the annotation columns have been fetched.
     await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
@@ -457,7 +495,7 @@ describe('TableColumnSchemaEditor', () => {
 
     // There exists a column with a size that is smaller than the recommended size, so the button should be enabled
     const useRecommendedSizesButton = await screen.findByRole('button', {
-      name: 'Use Recommended Sizes',
+      name: USE_RECOMMENDED_SIZES_BUTTON_TEXT,
     })
     // Need to first fetch the annotation columns, so it may be a moment before the button is ready
     await waitFor(() => expect(useRecommendedSizesButton).toBeEnabled(), {})
@@ -474,7 +512,9 @@ describe('TableColumnSchemaEditor', () => {
     const dialog = await screen.findByRole('dialog')
     within(dialog).getByText('This will change 1 column in this schema')
     await user.click(
-      within(dialog).getByRole('button', { name: 'Use Recommended Sizes' }),
+      within(dialog).getByRole('button', {
+        name: USE_RECOMMENDED_SIZES_BUTTON_TEXT,
+      }),
     )
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument()
