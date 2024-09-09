@@ -208,7 +208,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                   onClick={handleSendMessage}
                   sx={{
                     ml: '7px',
-                    mr: '13px',
+                    mr: '-8px',
                     color: sendMessageButtonColor,
                     borderStyle: 'solid',
                     borderWidth: isDisabled ? '1px' : '2px',
