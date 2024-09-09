@@ -125,7 +125,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
-      height="100vh"
       maxWidth="1100px"
       mx="auto"
     >
@@ -138,6 +137,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             position: 'sticky',
             top: '0px',
             backgroundColor: 'white',
+            zIndex: 1,
           }}
         >
           {chatbotName}
