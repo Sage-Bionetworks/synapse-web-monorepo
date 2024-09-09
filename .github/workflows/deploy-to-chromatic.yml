@@ -25,7 +25,7 @@ jobs:
         run: |
           gh run cancel ${{ github.run_id }}
           gh run watch ${{ github.run_id }}
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
