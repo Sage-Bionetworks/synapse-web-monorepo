@@ -1,5 +1,5 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import { Box, List, IconButton, Typography } from '@mui/material'
+import { Box, List, IconButton, Typography, Paper } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -17,6 +17,8 @@ export type SynapseChatProps = {
   initialMessage?: string //optional initial message
   agentId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
+  hideTitle?: boolean
+  textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
 }
 
 type ChatInteraction = {
@@ -27,6 +29,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
   agentId,
   chatbotName = 'SynapseChat',
+  hideTitle = false,
+  textboxPositionOffset = '0px',
 }) => {
   const { data: agentSession, mutate: createAgentSession } =
     useCreateAgentSession()
@@ -122,22 +126,22 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       flexDirection="column"
       justifyContent="space-between"
       height="100vh"
-      maxWidth="800px"
+      maxWidth="1100px"
       mx="auto"
-      p={2}
     >
-      <Typography
-        variant="headline1"
-        sx={{ p: '20px', borderBottom: '1px solid #EAECEE' }}
-      >
-        {chatbotName}
-      </Typography>
+      {!hideTitle && (
+        <Typography
+          variant="headline1"
+          sx={{ p: '20px', borderBottom: '1px solid #EAECEE' }}
+        >
+          {chatbotName}
+        </Typography>
+      )}
       <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
         <List
           sx={{
             flex: 1,
             overflowY: 'auto',
-            p: '10px',
             pt: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -172,39 +176,51 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           )}
         </List>
       </Box>
-      <Box component="form" sx={{ pb: '10px' }} onSubmit={handleSendMessage}>
-        <TextField
-          fullWidth
-          value={userChatTextfieldValue}
-          onChange={e => setUserChatTextfieldValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={`Message ${chatbotName}`}
-          InputProps={{
-            sx: { borderRadius: 96.6 },
-            endAdornment: (
-              <IconButton
-                disabled={isDisabled}
-                onClick={handleSendMessage}
-                sx={{
-                  ml: '7px',
-                  mr: '13px',
-                  color: sendMessageButtonColor,
-                  borderStyle: 'solid',
-                  borderWidth: isDisabled ? '1px' : '2px',
-                  borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
-                }}
-              >
-                <ArrowUpward />
-              </IconButton>
-            ),
-          }}
-        />
-        <Typography
-          variant="smallText1"
-          sx={{ pt: '8px', textAlign: 'center' }}
+      <Box
+        sx={{
+          position: 'sticky',
+          bottom: textboxPositionOffset,
+          backgroundColor: 'white',
+        }}
+      >
+        <Box
+          component="form"
+          sx={{ pb: '10px', position: 'sticky' }}
+          onSubmit={handleSendMessage}
         >
-          {chatbotName} can make mistakes.
-        </Typography>
+          <TextField
+            fullWidth
+            value={userChatTextfieldValue}
+            onChange={e => setUserChatTextfieldValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={`Message ${chatbotName}`}
+            InputProps={{
+              sx: { borderRadius: 96.6 },
+              endAdornment: (
+                <IconButton
+                  disabled={isDisabled}
+                  onClick={handleSendMessage}
+                  sx={{
+                    ml: '7px',
+                    mr: '13px',
+                    color: sendMessageButtonColor,
+                    borderStyle: 'solid',
+                    borderWidth: isDisabled ? '1px' : '2px',
+                    borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
+                  }}
+                >
+                  <ArrowUpward />
+                </IconButton>
+              ),
+            }}
+          />
+          <Typography
+            variant="smallText1"
+            sx={{ pt: '8px', textAlign: 'center' }}
+          >
+            {chatbotName} can make mistakes.
+          </Typography>
+        </Box>
       </Box>
     </Box>
   )

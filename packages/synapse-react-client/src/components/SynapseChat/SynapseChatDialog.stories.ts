@@ -1,13 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SynapseChat from './SynapseChat'
 import { getChatbotHandlers } from 'src/mocks/msw/handlers/chatHandlers'
 import { MOCK_REPO_ORIGIN } from 'src/utils/functions/getEndpoint'
 import { getUserProfileHandlers } from 'src/mocks/msw/handlers/userProfileHandlers'
 import { getEntityHandlers } from 'src/mocks/msw/handlers/entityHandlers'
+import SynapseChatDialog from './SynapseChatDialog'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/Chat',
-  component: SynapseChat,
+  component: SynapseChatDialog,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
@@ -15,8 +16,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const ChatWithSynapse: Story = {
-  args: { initialMessage: 'hello' },
+export const ChatWithSynapseDialog: Story = {
+  args: {
+    open: true,
+    onClose: fn(),
+    initialMessage: 'hello',
+  },
   parameters: {
     stack: 'mock',
     msw: {
