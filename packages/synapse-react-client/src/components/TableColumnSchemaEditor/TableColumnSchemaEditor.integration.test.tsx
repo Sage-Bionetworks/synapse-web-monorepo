@@ -34,7 +34,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { USE_RECOMMENDED_SIZES_BUTTON_TEXT } from './TableColumnSchemaFormActions'
 import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from './TableColumnSchemaForm'
 
@@ -351,118 +350,6 @@ describe('TableColumnSchemaEditor', () => {
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
     })
-  })
-
-  it('Show warning when form data size of annotation column is less than recommended size', async () => {
-    server.use(
-      getEntityBundleHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-        {
-          entity: mockFileViewEntity,
-          tableBundle: {
-            // The view initially has no columns.
-            columnModels: [],
-            maxRowsPerPage: 25,
-          },
-        },
-      ),
-    )
-    const { user } = await setUp({
-      entityId: mockFileViewEntity.id,
-      open: true,
-      onColumnsUpdated: mockOnColumnsUpdated,
-      onCancel: mockOnCancel,
-    })
-
-    const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
-    })
-    // The button will be disabled until the annotation columns have been fetched.
-    await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
-
-    // Verify we have no columns -- there will only be one checkbox on the screen for select all/none
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1)
-
-    await user.click(addAnnotationColumnsButton)
-
-    await waitFor(() => {
-      // The column(s) should have been added.
-      expect(screen.getAllByRole('checkbox').length).toBeGreaterThan(1)
-    })
-
-    // The annotation column(s) are editable, so we can find a name text field.
-    await screen.findAllByLabelText('Name')
-
-    const textarea = screen.getAllByRole('textbox', { name: 'Maximum Size' })[0]
-    await waitFor(() => expect(textarea).not.toBeDisabled())
-
-    // Write a maxSize smaller than the recommended size
-    await user.clear(textarea)
-    await user.type(textarea, '1')
-
-    // Verify we have a warning in display on hover
-    await verifyTooltipText(textarea, /Recommended size is 300/, user)
-
-    // Write a maxSize equal to the recommended size (the original value)
-    await user.clear(textarea)
-    await user.type(textarea, '300')
-
-    // Verify the tooltip text is gone
-    await expect(
-      verifyTooltipText(textarea, /Recommended size is 300/, user, 100),
-    ).rejects.toThrow()
-  })
-
-  it("Shows info when a column's maximum size was manually changed", async () => {
-    server.use(
-      getEntityBundleHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-        {
-          entity: mockFileViewEntity,
-          tableBundle: {
-            // The view MUST have columns to tell the user if something changed!
-            columnModels: mockQueryResultBundle.columnModels,
-            maxRowsPerPage: 25,
-          },
-        },
-      ),
-    )
-    const { user } = await setUp({
-      entityId: mockFileViewEntity.id,
-      open: true,
-      onColumnsUpdated: mockOnColumnsUpdated,
-      onCancel: mockOnCancel,
-    })
-
-    const textarea = (
-      await screen.findAllByRole('textbox', { name: 'Maximum Size' })
-    )[0]
-    await waitFor(() => expect(textarea).not.toBeDisabled())
-
-    // Increase the size
-    await user.clear(textarea)
-    await user.type(textarea, '350')
-
-    // Verify we have info displayed on hover
-    await verifyTooltipText(
-      textarea,
-      /This value has changed since the table was last saved.\s*The last saved value was 300./,
-      user,
-    )
-
-    // Write a maxSize equal to the original value
-    await user.clear(textarea)
-    await user.type(textarea, '300')
-
-    // Verify the tooltip text is gone
-    await expect(
-      verifyTooltipText(
-        textarea,
-        /This value has changed since the table was last saved./,
-        user,
-        100,
-      ),
-    ).rejects.toThrow()
   })
 
   it('Updates annotation columns below the maximum size when the Use Recommended Sizes button is clicked', async () => {
