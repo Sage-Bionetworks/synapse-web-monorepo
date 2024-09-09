@@ -321,6 +321,7 @@ import {
   AgentChatRequest,
   AgentChatResponse,
   SessionHistoryResponse,
+  SessionHistoryRequest,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5504,14 +5505,13 @@ export const getAgentChatAsyncJobResults = async (
 }
 
 export const getSessionHistory = (
-  sessionId: string,
-  // request: SessionHistoryRequest,
+  request: SessionHistoryRequest,
   accessToken: string | undefined = undefined,
   signal?: AbortSignal,
 ): Promise<SessionHistoryResponse> => {
   return doPost<SessionHistoryResponse>(
-    AGENT_SESSION_HISTORY(sessionId),
-    {}, //SessionHistoryRequest, needed for loading multiple pages of old chat interactions
+    AGENT_SESSION_HISTORY(request.sessionId),
+    request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },

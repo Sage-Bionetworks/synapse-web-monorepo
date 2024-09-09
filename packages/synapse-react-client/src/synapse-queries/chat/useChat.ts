@@ -1,7 +1,14 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useMutation,
+  UseMutationOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
@@ -10,6 +17,7 @@ import {
   AgentSession,
   AsynchronousJobStatus,
   CreateAgentSessionRequest,
+  SessionHistoryRequest,
   SessionHistoryResponse,
 } from '@sage-bionetworks/synapse-types'
 
@@ -68,22 +76,34 @@ export function useSendChatMessageToAgent(
   })
 }
 
-export function useGetAgentChatSessionHistory(
-  options?: UseMutationOptions<
-    SessionHistoryResponse,
-    SynapseClientError,
-    string
+export function useGetAgentChatSessionHistoryInfinite<
+  TData = InfiniteData<SessionHistoryResponse>,
+>(
+  params: SessionHistoryRequest,
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      SessionHistoryResponse,
+      SynapseClientError,
+      TData,
+      SessionHistoryResponse,
+      QueryKey,
+      SessionHistoryResponse['nextPageToken']
+    >
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-
-  return useMutation<SessionHistoryResponse, SynapseClientError, string>({
-    mutationFn: (sessionId: string) =>
-      SynapseClient.getSessionHistory(sessionId, accessToken),
-    onSuccess: async (history, variables, ctx) => {
-      if (options?.onSuccess) {
-        await options.onSuccess(history, variables, ctx)
-      }
-    },
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useInfiniteQuery<
+    SessionHistoryResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    SessionHistoryResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.chatAgentSessionHistoryQueryKey(params),
+    queryFn: context =>
+      SynapseClient.getSessionHistory({ ...params }, accessToken),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
   })
 }

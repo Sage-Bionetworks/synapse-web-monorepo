@@ -62,12 +62,10 @@ export const SynapseChatInteraction: React.FunctionComponent<
               borderRadius: '50%',
               borderStyle: 'solid',
               borderWidth: '1px',
-              borderColor: (theme.palette.grey as ColorPartial)[300],
+              borderColor: 'grey.300',
             }}
           >
-            <SmartToyTwoTone
-              sx={{ color: (theme.palette.secondary as ColorPartial)[500] }}
-            />
+            <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
           </Box>
           <ListItemText
             primary={chatResponseText}

@@ -22,6 +22,7 @@ import {
   RestrictionInformationBatchRequest,
   RestrictionInformationRequest,
   SearchQuery,
+  SessionHistoryRequest,
   SubmissionInfoPageRequest,
   SubmissionSearchRequest,
   SubscriptionObjectType,
@@ -896,5 +897,9 @@ export class KeyFactory {
   }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
     return this.getKey('evaluation', 'paginated', request)
+  }
+
+  public chatAgentSessionHistoryQueryKey(params?: SessionHistoryRequest) {
+    return this.getKey('chatHistory', params)
   }
 }

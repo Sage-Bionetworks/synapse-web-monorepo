@@ -87,6 +87,10 @@ export type AgentChatResponse = {
 
 // Represents a request for a single page of a session's history
 export type SessionHistoryRequest = {
+  /**
+   * The sessionId that identifies the conversation with the agent.
+   */
+  sessionId?: string
   nextPageToken?: string // Optional field to request the next page of results
 }
 

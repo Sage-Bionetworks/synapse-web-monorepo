@@ -7,7 +7,7 @@ import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
-  useGetAgentChatSessionHistory,
+  useGetAgentChatSessionHistoryInfinite,
   useSendChatMessageToAgent,
 } from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
@@ -37,7 +37,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const theme = useTheme()
   // When both the current message and current response are available, add a new ChatInteraction to the array
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
-  const [currentInteraction, setCurrentInteraction] =
+  const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
   const [currentResponse, setCurrentResponse] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
@@ -51,20 +51,29 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   })
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
-  const { data: sessionHistory, mutate: getSessionHistory } =
-    useGetAgentChatSessionHistory()
+  const {
+    data: sessionHistory,
+  } = //, hasNextPage: hasMoreSessionHistory, fetchNextPage: fetchNextSessionHistoryPage, isLoading: isSessionHistoryLoading } =
+    useGetAgentChatSessionHistoryInfinite(
+      {
+        sessionId: agentSession?.sessionId,
+      },
+      {
+        enabled: !!agentSession,
+      },
+    )
 
   useEffect(() => {
     // when we have both a message and response, add a new interaction and reset
     // Note : We want the current interaction to be visible to the user while this async job processes (show the user message, and a loading response).
     // You might think we could do this work in the onSuccess of createAgentChatInteraction, but I think there's a race condition (currentInteraction may not be set when onSuccess is called).
-    if (currentResponse && currentInteraction) {
-      currentInteraction.chatResponseText = currentResponse
-      setInteractions([...interactions, currentInteraction])
+    if (currentResponse && pendingInteraction) {
+      pendingInteraction.chatResponseText = currentResponse
+      setInteractions([...interactions, pendingInteraction])
       setCurrentResponse('')
-      setCurrentInteraction(undefined)
+      setPendingInteraction(undefined)
     }
-  }, [currentResponse, currentInteraction])
+  }, [currentResponse, pendingInteraction])
 
   useEffect(() => {
     // on mount, create a new agent session!
@@ -79,7 +88,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
     if (agentSession && initialMessage && !initialMessageProcessed) {
-      setCurrentInteraction({ userMessage: initialMessage })
+      setPendingInteraction({ userMessage: initialMessage })
       sendChatMessageToAgent({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
@@ -88,16 +97,9 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     }
   }, [agentSession, initialMessage, initialMessageProcessed])
 
-  useEffect(() => {
-    // on mount, read a page worth of previous messages
-    if (agentSession && getSessionHistory) {
-      getSessionHistory(agentSession.sessionId)
-    }
-  }, [agentSession, getSessionHistory])
-
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
-      setCurrentInteraction({ userMessage: userChatTextfieldValue })
+      setPendingInteraction({ userMessage: userChatTextfieldValue })
       setUserChatTextfieldValue('')
       sendChatMessageToAgent({
         chatText: userChatTextfieldValue,
@@ -106,7 +108,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     }
   }
 
-  const isDisabled = !userChatTextfieldValue || !!currentInteraction
+  const isDisabled = !userChatTextfieldValue || !!pendingInteraction
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
     if (!isDisabled && event.key === 'Enter' && !event.shiftKey) {
@@ -133,7 +135,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           variant="headline1"
           sx={{
             p: '20px',
-            borderBottom: '1px solid #EAECEE',
+            borderBottom: '1px solid',
+            borderColor: 'grey.300',
             position: 'sticky',
             top: '0px',
             backgroundColor: 'white',
@@ -153,16 +156,22 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             flexDirection: 'column',
           }}
         >
-          {/* Note: session history is ordered from most recent to least recent, so reverse the order when restoring the chat interface */}
           {sessionHistory &&
-            sessionHistory.page.reverse().map((interaction, index) => {
-              return (
-                <SynapseChatInteraction
-                  key={index}
-                  userMessage={interaction.usersRequestText}
-                  chatResponseText={interaction.agentResponseText}
-                />
-              )
+            sessionHistory.pages.map(sessionHistoryResponse => {
+              {
+                /* Note: session history is ordered from most recent to least recent in each page, so reverse the order when restoring the chat interface */
+              }
+              return sessionHistoryResponse.page
+                .reverse()
+                .map((interaction, index) => {
+                  return (
+                    <SynapseChatInteraction
+                      key={index}
+                      userMessage={interaction.usersRequestText}
+                      chatResponseText={interaction.agentResponseText}
+                    />
+                  )
+                })
             })}
           {interactions.map((interaction, index) => {
             return (
@@ -173,10 +182,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
               />
             )
           })}
-          {currentInteraction && (
+          {pendingInteraction && (
             <SynapseChatInteraction
-              userMessage={currentInteraction.userMessage}
-              chatResponseText={currentInteraction.chatResponseText}
+              userMessage={pendingInteraction.userMessage}
+              chatResponseText={pendingInteraction.chatResponseText}
               scrollIntoView
             />
           )}
