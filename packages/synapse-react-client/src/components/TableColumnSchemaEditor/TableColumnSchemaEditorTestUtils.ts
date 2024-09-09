@@ -45,9 +45,10 @@ export async function verifyTooltipText(
   element: Element,
   text: string | RegExp,
   user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
+  timeout?: number,
 ) {
   await user.hover(element)
-  const tooltip = await screen.findByRole('tooltip')
+  const tooltip = await screen.findByRole('tooltip', undefined, { timeout })
   expect(tooltip).toHaveTextContent(text)
   await user.unhover(element)
 }

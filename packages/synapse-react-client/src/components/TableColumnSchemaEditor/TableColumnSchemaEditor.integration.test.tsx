@@ -409,11 +409,11 @@ describe('TableColumnSchemaEditor', () => {
 
     // Verify the tooltip text is gone
     await expect(
-      verifyTooltipText(textarea, /Recommended size is 300/, user),
+      verifyTooltipText(textarea, /Recommended size is 300/, user, 100),
     ).rejects.toThrow()
   })
 
-  it('Shows info when a columns maximum size was manually changed', async () => {
+  it("Shows info when a column's maximum size was manually changed", async () => {
     server.use(
       getEntityBundleHandler(
         getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
@@ -446,10 +446,9 @@ describe('TableColumnSchemaEditor', () => {
     // Verify we have info displayed on hover
     await verifyTooltipText(
       textarea,
-      /This value has changed since the table was last saved./,
+      /This value has changed since the table was last saved.\s*The last saved value was 300./,
       user,
     )
-    await verifyTooltipText(textarea, /The last saved value was 300./, user)
 
     // Write a maxSize equal to the original value
     await user.clear(textarea)
@@ -461,6 +460,7 @@ describe('TableColumnSchemaEditor', () => {
         textarea,
         /This value has changed since the table was last saved./,
         user,
+        100,
       ),
     ).rejects.toThrow()
   })
@@ -527,16 +527,15 @@ describe('TableColumnSchemaEditor', () => {
 
     // Verify the old tooltip text is gone
     await expect(
-      verifyTooltipText(textarea, /Recommended size is 300/, user),
+      verifyTooltipText(textarea, /Recommended size is 300/, user, 100),
     ).rejects.toThrow()
 
     // Verify a new tooltip tells the user that the value has changed
     await verifyTooltipText(
       textarea,
-      /This value has changed since the table was last saved./,
+      /This value has changed since the table was last saved.\s*The last saved value was 299./,
       user,
     )
-    await verifyTooltipText(textarea, /The last saved value was 299./, user)
 
     // Verify the button is now disabled, since no columns can be updated
     expect(useRecommendedSizesButton).toBeDisabled()
