@@ -132,7 +132,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       {!hideTitle && (
         <Typography
           variant="headline1"
-          sx={{ p: '20px', borderBottom: '1px solid #EAECEE' }}
+          sx={{
+            p: '20px',
+            borderBottom: '1px solid #EAECEE',
+            position: 'sticky',
+            top: '0px',
+            backgroundColor: 'white',
+          }}
         >
           {chatbotName}
         </Typography>
