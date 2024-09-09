@@ -1838,8 +1838,8 @@ importers:
         specifier: ^4.3.1
         version: 4.3.1(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2))
       '@welldone-software/why-did-you-render':
-        specifier: ^7.0.1
-        version: 7.0.1(react@18.2.0)
+        specifier: ^8.0.3
+        version: 8.0.3(react@18.2.0)
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.24.7)
@@ -5578,10 +5578,10 @@ packages:
   '@webassemblyjs/wast-printer@1.12.1':
     resolution: {integrity: sha512-+X4WAlOisVWQMikjbcvY2e0rwPsKQ9F688lksZhBcPycBBuii3O7m8FACbDMWDojpAqvjIncrG8J0XHKyQfVeA==}
 
-  '@welldone-software/why-did-you-render@7.0.1':
-    resolution: {integrity: sha512-Qe/8Xxa2G+LMdI6VoazescPzjjkHYduCDa8aHOJR50e9Bgs8ihkfMBY+ev7B4oc3N59Zm547Sgjf8h5y0FOyoA==}
+  '@welldone-software/why-did-you-render@8.0.3':
+    resolution: {integrity: sha512-bb5bKPMStYnocyTBVBu4UTegZdBqzV1mPhxc0UIV/S43KFUSRflux9gvzJfu2aM4EWLJ3egTvdjOi+viK+LKGA==}
     peerDependencies:
-      react: ^16 || ^17 || ^18
+      react: ^18
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -15946,7 +15946,7 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
 
-  '@welldone-software/why-did-you-render@7.0.1(react@18.2.0)':
+  '@welldone-software/why-did-you-render@8.0.3(react@18.2.0)':
     dependencies:
       lodash: 4.17.21
       react: 18.2.0
