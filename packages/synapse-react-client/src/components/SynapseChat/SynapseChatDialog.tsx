@@ -6,7 +6,7 @@ import { DialogBase } from '../DialogBase'
 export type SynapseChatDialogProps = {
   open: boolean
   onClose: () => void
-} & Omit<SynapseChatProps, 'hideTitle'>
+} & Omit<SynapseChatProps, 'hideTitle' | 'textboxPositionOffset'>
 
 export const SynapseChatDialog: React.FunctionComponent<
   SynapseChatDialogProps
