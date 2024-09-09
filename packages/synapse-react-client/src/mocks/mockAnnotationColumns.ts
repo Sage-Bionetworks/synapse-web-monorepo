@@ -7,7 +7,6 @@ export const MOCK_ANNOTATION_COLUMN_RESPONSE: ViewColumnModelResponse = {
   concreteType: 'org.sagebionetworks.repo.model.table.ViewColumnModelResponse',
   results: [
     ...mockQueryResultBundle.columnModels.filter(
-      // todo fix
       cm =>
         !defaultFileViewColumnModels.find(defaultCm =>
           isEqual(
