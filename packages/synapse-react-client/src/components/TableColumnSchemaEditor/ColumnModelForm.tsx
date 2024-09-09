@@ -485,7 +485,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             )}
           </FormControl>
         </Box>
-      </Box>{' '}
+      </Box>
       {isJsonSubColumn && (
         <Box
           display={'grid'}
