@@ -18,18 +18,18 @@ jobs:
       matrix:
         node-version: [20.x]
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - run: pnpm nx affected --target=build --base=remotes/origin/main
   test:
     runs-on:
-      labels: ubuntu-22.04-4core-16GBRAM-150GBSSD
+      labels: ubuntu-latest
     # Job should not last longer than 60 minutes--and the larger runner is billed per-minute ;)
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -46,7 +46,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -54,7 +54,7 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
