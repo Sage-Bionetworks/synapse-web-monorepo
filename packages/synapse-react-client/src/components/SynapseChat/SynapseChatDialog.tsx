@@ -16,7 +16,7 @@ export const SynapseChatDialog: React.FunctionComponent<
     <DialogBase
       title={chatbotName}
       open={open}
-      onCancel={() => {}}
+      onCancel={onClose}
       maxWidth="lg"
       content={
         <SynapseChat
