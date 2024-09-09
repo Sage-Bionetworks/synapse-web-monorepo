@@ -60,11 +60,11 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         alias: username,
         type: AliasType.USER_NAME,
       })
-      if (!aliasCheckResponse.available) {
-        displayToast('Sorry, that username has already been taken.', 'danger')
-        return
-      } else if (!aliasCheckResponse.valid) {
+      if (!aliasCheckResponse.valid) {
         displayToast('Sorry, that username is not valid.', 'danger')
+        return
+      } else if (!aliasCheckResponse.available) {
+        displayToast('Sorry, that username has already been taken.', 'danger')
         return
       }
       // capture loginResponse here
