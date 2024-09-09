@@ -1,5 +1,5 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import { Box, List, IconButton, Typography, Paper } from '@mui/material'
+import { Box, List, IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -68,13 +68,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // on mount, create a new agent session!
-    if (createAgentSession) {
+    if (createAgentSession && !agentSession) {
       createAgentSession({
         agentAccessLevel: AgentAccessLevel.PUBLICLY_ACCESSIBLE,
         agentId: agentId,
       })
     }
-  }, [createAgentSession])
+  }, [])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
