@@ -335,7 +335,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           }
           let backgroundColor = theme.palette.grey[200]
           if (ownerState.error) {
-            backgroundColor = '#F6E1DC'
+            backgroundColor = alpha(theme.palette.error.main, 0.1)
           }
           const formHelperTextColor =
             ownerState.color === 'warning'
