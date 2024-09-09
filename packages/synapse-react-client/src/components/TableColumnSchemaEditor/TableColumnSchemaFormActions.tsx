@@ -129,6 +129,8 @@ export function TableColumnSchemaFormActions(
       <Box flexGrow={1}>{/* spacer */}</Box>
       <Link
         sx={{ display: 'block', py: '10px', mr: '10px', textAlign: 'right' }}
+        href="https://sagebionetworks.jira.com/wiki/spaces/DRAFT/pages/1972404304/Organizing+Data+With+Tables"
+        target="_blank"
       >
         About schemas and column types
       </Link>
