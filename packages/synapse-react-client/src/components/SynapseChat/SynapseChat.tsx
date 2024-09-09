@@ -16,6 +16,7 @@ import { TextField } from '@mui/material'
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
   agentId?: string // if provided, use this agent
+  chatbotName?: string // optional name of this chatbot agent
 }
 
 type ChatInteraction = {
@@ -25,6 +26,7 @@ type ChatInteraction = {
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
   agentId,
+  chatbotName = 'SynapseChat',
 }) => {
   const { data: agentSession, mutate: createAgentSession } =
     useCreateAgentSession()
@@ -124,12 +126,19 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       mx="auto"
       p={2}
     >
+      <Typography
+        variant="headline1"
+        sx={{ p: '20px', borderBottom: '1px solid #EAECEE' }}
+      >
+        {chatbotName}
+      </Typography>
       <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
         <List
           sx={{
             flex: 1,
             overflowY: 'auto',
-            padding: '10px',
+            p: '10px',
+            pt: '20px',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -169,7 +178,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           value={userChatTextfieldValue}
           onChange={e => setUserChatTextfieldValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={'Message SynapseChat'}
+          placeholder={`Message ${chatbotName}`}
           InputProps={{
             sx: { borderRadius: 96.6 },
             endAdornment: (
@@ -194,7 +203,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           variant="smallText1"
           sx={{ pt: '8px', textAlign: 'center' }}
         >
-          SynapseChat can make mistakes.
+          {chatbotName} can make mistakes.
         </Typography>
       </Box>
     </Box>
