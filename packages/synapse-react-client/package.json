@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.3.10",
+  "version": "3.3.11",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -226,7 +226,7 @@
     "type-fest": "^4.21.0",
     "typescript": "5.5.3",
     "util": "^0.12.5",
-    "vite": "^5.3.3",
+    "vite": "^5.4.3",
     "vite-config": "workspace:*",
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-externalize-deps": "^0.8.0",
