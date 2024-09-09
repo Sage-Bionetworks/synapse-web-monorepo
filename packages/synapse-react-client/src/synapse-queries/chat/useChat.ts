@@ -1,11 +1,7 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-import {
-  useMutation,
-  UseMutationOptions,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
@@ -24,8 +20,7 @@ export function useCreateAgentSession(
     CreateAgentSessionRequest
   >,
 ) {
-  const queryClient = useQueryClient()
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { accessToken } = useSynapseContext()
 
   return useMutation<
     AgentSession,
@@ -35,13 +30,6 @@ export function useCreateAgentSession(
     mutationFn: (request: CreateAgentSessionRequest) =>
       SynapseClient.createAgentSession(request, accessToken),
     onSuccess: async (newAgentSession, variables, ctx) => {
-      const queryKey = keyFactory.getAgentSessionQueryKey(
-        newAgentSession.sessionId,
-      )
-      queryClient.invalidateQueries({
-        queryKey: queryKey,
-      })
-
       if (options?.onSuccess) {
         await options.onSuccess(newAgentSession, variables, ctx)
       }
@@ -59,8 +47,7 @@ export function useSendChatMessageToAgent(
     status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
   ) => void,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
-  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
   return useMutation<
     AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
     SynapseClientError,
@@ -77,12 +64,6 @@ export function useSendChatMessageToAgent(
       if (options?.onSuccess && data.responseBody) {
         options.onSuccess(data.responseBody, variables, ctx)
       }
-      const queryKey = keyFactory.getChatHistoryQueryKey(
-        data.requestBody.sessionId,
-      )
-      queryClient.invalidateQueries({
-        queryKey: queryKey,
-      })
     },
   })
 }
@@ -94,18 +75,12 @@ export function useGetAgentChatSessionHistory(
     string
   >,
 ) {
-  const queryClient = useQueryClient()
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { accessToken } = useSynapseContext()
 
   return useMutation<SessionHistoryResponse, SynapseClientError, string>({
     mutationFn: (sessionId: string) =>
       SynapseClient.getSessionHistory(sessionId, accessToken),
     onSuccess: async (history, variables, ctx) => {
-      const queryKey = keyFactory.getChatHistoryQueryKey(history.sessionId)
-      queryClient.invalidateQueries({
-        queryKey: queryKey,
-      })
-
       if (options?.onSuccess) {
         await options.onSuccess(history, variables, ctx)
       }

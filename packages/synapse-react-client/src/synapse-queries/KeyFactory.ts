@@ -22,7 +22,6 @@ import {
   RestrictionInformationBatchRequest,
   RestrictionInformationRequest,
   SearchQuery,
-  SessionHistoryRequest,
   SubmissionInfoPageRequest,
   SubmissionSearchRequest,
   SubscriptionObjectType,
@@ -187,7 +186,6 @@ const downloadListQueryKeys = {
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 const ROOT_WIKI_PAGE_KEY_QUERY_KEY = 'rootWikiPageKey'
 const WIKI_PAGE_QUERY_KEY = 'wikiPage'
-const CHAT_HISTORY_QUERY_KEY = 'chatHistory'
 
 /**
  * Returns a react-query Query Key.
@@ -898,15 +896,5 @@ export class KeyFactory {
   }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
     return this.getKey('evaluation', 'paginated', request)
-  }
-
-  public getAgentSessionQueryKey(sessionId: string) {
-    return this.getKey('agentSession', sessionId)
-  }
-  public getChatHistoryQueryKey(
-    sessionId?: string,
-    request?: SessionHistoryRequest,
-  ) {
-    return this.getKey(CHAT_HISTORY_QUERY_KEY, sessionId, request)
   }
 }

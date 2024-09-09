@@ -74,7 +74,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
         agentId: agentId,
       })
     }
-  }, [])
+  }, [createAgentSession, agentSession])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
