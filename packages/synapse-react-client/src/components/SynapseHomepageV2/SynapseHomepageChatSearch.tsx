@@ -6,7 +6,7 @@ import { Box } from '@mui/material'
 import { Select } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { useGetFeatureFlag } from 'src/synapse-queries'
+import { useGetFeatureFlag } from '../../synapse-queries'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { Search } from '../../assets/themed_icons'
 
