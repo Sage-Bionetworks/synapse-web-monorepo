@@ -37,7 +37,7 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
     if (mode == SearchMode.SEARCH) {
       gotoPlace(`/Search:${encodeURIComponent(searchValue)}`)
     } else {
-      gotoPlace(`/Chat:${encodeURIComponent(chatValue)}`)
+      gotoPlace(`/Chat:initalMessage=${encodeURIComponent(chatValue)}`)
     }
   }
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
