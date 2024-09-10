@@ -87,6 +87,7 @@ import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
 import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
 import { version } from '../package.json'
+import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -193,4 +194,5 @@ export {
   SynapseEnums,
   SynapseQueries,
   Palettes,
+  xssOptions,
 }

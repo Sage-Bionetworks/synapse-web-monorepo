@@ -65,9 +65,9 @@ export const xssOptions: IFilterXSSOptions = {
     svg: [],
     table: ['width', 'border', 'align', 'valign', 'class'],
     tbody: ['align', 'valign'],
-    td: ['width', 'rowspan', 'colspan', 'align', 'valign'],
+    td: ['width', 'rowspan', 'colspan', 'align', 'valign', 'style'],
     tfoot: ['align', 'valign'],
-    th: ['width', 'rowspan', 'colspan', 'align', 'valign', 'class'],
+    th: ['width', 'rowspan', 'colspan', 'align', 'valign', 'class', 'style'],
     thead: ['class', 'align', 'valign'],
     tr: ['rowspan', 'align', 'valign'],
     tt: [],
@@ -85,7 +85,13 @@ export const xssOptions: IFilterXSSOptions = {
   },
   stripIgnoreTagBody: true, // filter out all tags not in the whitelist
   allowCommentTag: false,
-  css: false,
+  css: {
+    whiteList: {
+      // SWC-7015 - Allow text-align property in style attr to support GFM table syntax
+      // The 'style' attribute is used to set text alignment for table cells, so explicitly allow it here
+      'text-align': true,
+    },
+  },
   onIgnoreTag: function (tag, html, options) {
     if (tag === '!doctype') {
       // do not filter doctype
@@ -96,6 +102,7 @@ export const xssOptions: IFilterXSSOptions = {
   safeAttrValue: function (tag, name, value, cssFilter) {
     // Apply default safeAttrValue filtering:
     value = safeAttrValue(tag, name, value, cssFilter)
+    // If the tag is an image and the attribute is 'src', only allow data:image URIs or http(s) URLs
     if (tag === 'img' && name === 'src') {
       if (
         !(
