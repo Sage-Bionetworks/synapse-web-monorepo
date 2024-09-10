@@ -1,18 +1,14 @@
-// Process '## headings'
-
-'use strict'
-
 import MarkdownIt, { Token } from 'markdown-it'
 import StateBlock from 'markdown-it/lib/rules_block/state_block'
 import { RuleBlock } from 'markdown-it/lib/parser_block'
 
 const tableClassStartRE = new RegExp(
-  '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*',
+  '^\\s*{[|]\\s*class\\s*=\\s*"\\s*(.*)"\\s*',
 )
-const tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*')
-const centerStartRE = new RegExp('^s*[-]{1}[>]{1}.*')
-const centerEndRE = new RegExp('.*[<]{1}[-]{1}s*$')
-const outerPipesRE = new RegExp('^s*[|]{1}.+[|]{1}s*$')
+const tableClassEndRE = new RegExp('^\\s*[|]}\\s*')
+const centerStartRE = new RegExp('^s*->.*')
+const centerEndRE = new RegExp('.*<-s*$')
+const outerPipesRE = new RegExp('^s*[|].+[|]s*$')
 
 function getLine(state: StateBlock, line: number): string {
   const pos = state.bMarks[line] + state.blkIndent
@@ -29,7 +25,7 @@ function escapedSplit(str: string): string[] {
   const result: string[] = []
   let pos = 0
   const max = str.length
-  let ch
+  let ch: number
   let escapes = 0
   let lastPos = 0
   let backTicked = false
@@ -66,6 +62,21 @@ function escapedSplit(str: string): string[] {
   result.push(str.substring(lastPos))
 
   return result
+}
+
+const ALLOWED_CLASS_NAMES = [
+  'text-align-center',
+  'text-align-right',
+  'border',
+  'center',
+  'short',
+]
+
+function filterClassNames(classNames: string): string {
+  return classNames
+    .split(' ')
+    .filter(className => ALLOWED_CLASS_NAMES.includes(className))
+    .join(' ')
 }
 
 export default function synapse_table_plugin(md: MarkdownIt) {
@@ -137,19 +148,19 @@ export default function synapse_table_plugin(md: MarkdownIt) {
 
     if (wrapWithDiv) {
       token = state.push('div_wrapper', 'div', 1)
-      token.attrs = [['class', ' markdowntableWrap ']]
+      token.attrJoin('class', 'markdowntableWrap')
     }
     token = state.push('table_open', 'table', 1)
     token.map = tableLines = [startLine, 0]
     if (classNames) {
-      token.attrs = [['class', ' ' + classNames + ' ']]
+      token.attrJoin('class', filterClassNames(classNames))
       // start line of the table (header) is really the second line.
       startLine++
     }
 
     lineText = getLine(state, headerLine + 1).trim()
 
-    // If this line is of the form ---|---|---, then we have column headers and we should skip this line.
+    // If this line is of the form ---|---|---, then we have column headers, and we should skip this line.
     // Else, no column headers and we should skip to the body.
     if (/^[-:| ]+$/.test(lineText) && lineText.indexOf('|') !== -1) {
       // we have column headers

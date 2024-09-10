@@ -5,7 +5,7 @@ Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
 |}
 
 .
-<table class=" border text-align-center ">
+<table class="border text-align-center">
 <tbody>
 <tr>
 <td>Row 1 Content Cell 1</td>
@@ -77,7 +77,7 @@ Single column row 2
 |}
 
 .
-<table class=" border text-align-right ">
+<table class="border text-align-right">
 <tbody>
 <tr>
 <td>Single column row 1</td>
@@ -95,7 +95,7 @@ Single column row 1
 |}
 
 .
-<table class=" border ">
+<table class="border">
 <tbody>
 <tr>
 <td>Single column row 1</td>
@@ -135,8 +135,8 @@ This line is math that contains a vertical pipe $$\(\small \text{Logit}(P(Y=1|X)
 Single column row 1
 |}
 .
-<div class=" markdowntableWrap ">
-<table class=" short ">
+<div class="markdowntableWrap">
+<table class="short">
 <tbody>
 <tr>
 <td>Single column row 1</td>
@@ -255,6 +255,29 @@ coverage
 *~f
 .
 <p>*~f</p>
+.
+
+.
+{| class="border text-align-center removed-class-name"
+Row 1 Content Cell 1 | Row 1 Content Cell 2  | Row 1 Content Cell 3
+Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
+|}
+
+.
+<table class="border text-align-center">
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
 .
 
 clean up init (constructor)

@@ -1,7 +1,7 @@
 import path from 'path'
 import generate from 'markdown-it-testgen'
 import MarkdownIt from 'markdown-it'
-import markdownItSynapseTable from '../'
+import markdownItSynapseTable from '../src/index'
 
 describe('markdown-it-synapse-table', function () {
   const md = new MarkdownIt()
