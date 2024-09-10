@@ -79,6 +79,31 @@ function filterClassNames(classNames: string): string {
     .join(' ')
 }
 
+function parseDividerForAlignment(
+  dividerLine: string,
+): null | ('left' | 'center' | 'right' | null)[] {
+  if (!dividerLine.startsWith('|') || !dividerLine.endsWith('|')) {
+    // Must start and end with pipes for us to parse out alignment
+    return null
+  }
+  const cols = dividerLine.split('|').map(cell => cell.trim())
+  cols.splice(0, 1) // Remove the first element, which will always be empty
+  const alignments: ('left' | 'center' | 'right' | null)[] = []
+  cols.forEach(col => {
+    if (col.startsWith(':') && col.endsWith(':')) {
+      alignments.push('center')
+    } else if (col.startsWith(':')) {
+      alignments.push('left')
+    } else if (col.endsWith(':')) {
+      alignments.push('right')
+    } else {
+      alignments.push(null)
+    }
+  })
+
+  return alignments
+}
+
 export default function synapse_table_plugin(md: MarkdownIt) {
   const table: RuleBlock = (state, startLine, endLine, silent) => {
     let lineText: string
@@ -160,9 +185,11 @@ export default function synapse_table_plugin(md: MarkdownIt) {
 
     lineText = getLine(state, headerLine + 1).trim()
 
+    let alignments: (string | null)[] | null = null
     // If this line is of the form ---|---|---, then we have column headers, and we should skip this line.
     // Else, no column headers and we should skip to the body.
     if (/^[-:| ]+$/.test(lineText) && lineText.indexOf('|') !== -1) {
+      alignments = parseDividerForAlignment(lineText)
       // we have column headers
       tableBodyStartLine = headerLine + 2
       token = state.push('thead_open', 'thead', 1)
@@ -174,6 +201,9 @@ export default function synapse_table_plugin(md: MarkdownIt) {
       for (i = 0; i < columns.length; i++) {
         token = state.push('th_open', 'th', 1)
         token.map = [startLine, startLine + 1]
+        if (alignments && alignments[i]) {
+          token.attrSet('style', `text-align: ${alignments[i]}`)
+        }
 
         token = state.push('inline', '', 0)
         token.content = columns[i].trim()
@@ -223,7 +253,9 @@ export default function synapse_table_plugin(md: MarkdownIt) {
       }
       for (i = 0; i < columnCount; i++) {
         token = state.push('td_open', 'td', 1)
-
+        if (alignments && alignments[i]) {
+          token.attrSet('style', `text-align: ${alignments[i]}`)
+        }
         token = state.push('inline', '', 0)
         token.content = columns[i] ? columns[i].trim() : ''
         token.children = []
