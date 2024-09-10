@@ -2,85 +2,87 @@
 
 'use strict'
 
-module.exports = function synapse_table_plugin(md) {
-  var tableClassStartRE = new RegExp(
-    '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*',
-  )
-  var tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*')
-  var centerStartRE = new RegExp('^s*[-]{1}[>]{1}.*')
-  var centerEndRE = new RegExp('.*[<]{1}[-]{1}s*$')
-  var outerPipesRE = new RegExp('^s*[|]{1}.+[|]{1}s*$')
-  function getLine(state, line) {
-    var pos = state.bMarks[line] + state.blkIndent,
-      max = state.eMarks[line]
+import MarkdownIt, { Token } from 'markdown-it'
+import StateBlock from 'markdown-it/lib/rules_block/state_block'
+import { RuleBlock } from 'markdown-it/lib/parser_block'
 
-    return state.src.substr(pos, max - pos)
+const tableClassStartRE = new RegExp(
+  '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*',
+)
+const tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*')
+const centerStartRE = new RegExp('^s*[-]{1}[>]{1}.*')
+const centerEndRE = new RegExp('.*[<]{1}[-]{1}s*$')
+const outerPipesRE = new RegExp('^s*[|]{1}.+[|]{1}s*$')
+
+function getLine(state: StateBlock, line: number): string {
+  const pos = state.bMarks[line] + state.blkIndent
+  const max = state.eMarks[line]
+
+  return state.src.substring(pos, max)
+}
+
+function escapedSplit(str: string): string[] {
+  if (outerPipesRE.test(str)) {
+    str = str.replace(/^\||\|$/g, '')
   }
 
-  function escapedSplit(str) {
-    if (outerPipesRE.test(str)) {
-      str = str.replace(/^\||\|$/g, '')
+  const result: string[] = []
+  let pos = 0
+  const max = str.length
+  let ch
+  let escapes = 0
+  let lastPos = 0
+  let backTicked = false
+  let lastBackTick = (ch = str.charCodeAt(pos))
+
+  while (pos < max) {
+    if (ch === 0x60 && escapes % 2 === 0) {
+      // `
+      backTicked = !backTicked
+      lastBackTick = pos
+    } else if (ch === 0x7c && escapes % 2 === 0 && !backTicked) {
+      // |
+      result.push(str.substring(lastPos, pos))
+      lastPos = pos + 1
+    } else if (ch === 0x5c) {
+      // \
+      escapes++
+    } else {
+      escapes = 0
     }
 
-    var result = [],
-      pos = 0,
-      max = str.length,
-      ch,
-      escapes = 0,
-      lastPos = 0,
-      backTicked = false,
-      lastBackTick = 0
+    pos++
+
+    // If there was an un-closed backtick, go back to just after
+    // the last backtick, but as if it was a normal character
+    if (pos === max && backTicked) {
+      backTicked = false
+      pos = lastBackTick + 1
+    }
 
     ch = str.charCodeAt(pos)
-
-    while (pos < max) {
-      if (ch === 0x60 && escapes % 2 === 0) {
-        // `
-        backTicked = !backTicked
-        lastBackTick = pos
-      } else if (ch === 0x7c && escapes % 2 === 0 && !backTicked) {
-        // |
-        result.push(str.substring(lastPos, pos))
-        lastPos = pos + 1
-      } else if (ch === 0x5c) {
-        // \
-        escapes++
-      } else {
-        escapes = 0
-      }
-
-      pos++
-
-      // If there was an un-closed backtick, go back to just after
-      // the last backtick, but as if it was a normal character
-      if (pos === max && backTicked) {
-        backTicked = false
-        pos = lastBackTick + 1
-      }
-
-      ch = str.charCodeAt(pos)
-    }
-
-    result.push(str.substring(lastPos))
-
-    return result
   }
 
-  function table(state, startLine, endLine, silent) {
-    var lineText,
-      pos,
-      i,
-      nextLine,
-      columns,
-      columnCount,
-      token,
-      tableLines,
-      tbodyLines,
-      classNames,
-      tableBodyStartLine,
-      headerLine,
-      isSpecialSyntaxTable = false,
-      wrapWithDiv = false
+  result.push(str.substring(lastPos))
+
+  return result
+}
+
+export default function synapse_table_plugin(md: MarkdownIt) {
+  const table: RuleBlock = (state, startLine, endLine, silent) => {
+    let lineText: string
+    let pos: number
+    let i: number
+    let nextLine: number
+    let columns: string[]
+    let token: Token
+    let tableLines: [number, number]
+    let tbodyLines: [number, number]
+    let classNames: string
+    let tableBodyStartLine: number
+    let headerLine: number
+    let isSpecialSyntaxTable = false
+    let wrapWithDiv = false
     // should have at least two lines
     // (!!! Synapse change, used to be 3 due to required ---|---|--- line).  Header and single row.
     if (startLine + 1 > endLine) {
@@ -127,7 +129,7 @@ module.exports = function synapse_table_plugin(md) {
     columns = escapedSplit(lineText)
     // header row will define an amount of columns in the entire table,
     // and align row shouldn't be smaller than that (the rest of the rows can)
-    columnCount = columns.length
+    const columnCount = columns.length
 
     if (silent) {
       return true
@@ -219,17 +221,17 @@ module.exports = function synapse_table_plugin(md) {
       }
       token = state.push('tr_close', 'tr', -1)
     }
-    token = state.push('tbody_close', 'tbody', -1)
-    token = state.push('table_close', 'table', -1)
+    state.push('tbody_close', 'tbody', -1)
+    state.push('table_close', 'table', -1)
 
     if (wrapWithDiv) {
-      token = state.push('div_wrapper', 'div', -1)
+      state.push('div_wrapper', 'div', -1)
     }
 
     tableLines[1] = tbodyLines[1] = nextLine
     state.line = nextLine
     return true
   }
-  var rulesCanBeTerminated = ['paragraph', 'reference']
+  const rulesCanBeTerminated = ['paragraph', 'reference']
   md.block.ruler.at('table', table, { alt: rulesCanBeTerminated.slice() })
 }

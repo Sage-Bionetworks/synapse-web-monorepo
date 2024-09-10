@@ -1,8 +1,11 @@
 {
   "name": "markdown-it-synapse-table",
-  "version": "1.0.6",
-  "description": "tag for markdown-it markdown parser.",
-  "main": "index.js",
+  "version": "1.0.7",
+  "description": "markdown-it-plugin for table formatting in Synapse.org",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "markdown-it-plugin",
     "markdown-it",
@@ -11,43 +14,34 @@
     "table"
   ],
   "scripts": {
-    "browserify": "(printf \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" && browserify ./ -s markdownitSynapseTable) > dist/markdown-it-synapse-table.js",
-    "predist": "npm run test",
-    "dist": "rm -fr dist && mkdir dist && npm run browserify && npm run minify",
-    "lint": "eslint --reset index.js",
-    "minify": "uglifyjs dist/markdown-it-synapse-table.js -b beautify=false,ascii-only=true -c -m --preamble \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" > dist/markdown-it-synapse-table.min.js",
-    "prepublish": "npm run dist",
-    "pretest": "npm run lint",
-    "test": "npm run lint && mocha -R spec",
-    "coverage": "rm -rf coverage && istanbul cover node_modules/.bin/_mocha",
-    "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf coverage"
+    "build": "tsup",
+    "lint": "eslint src/*",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse-table:build"
   },
-  "homepage": "https://github.com/jay-hodgson/markdown-it-synapse-table",
+  "homepage": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/markdown-it-synapse-table",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jay-hodgson/markdown-it-synapse-table.git"
+    "url": "git://github.com/Sage-Bionetworks/synapse-web-monorepo.git"
   },
   "bugs": {
-    "url": "https://github.com/jay-hodgson/markdown-it-synapse-table/issues"
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/issues"
   },
   "license": "MIT",
-  "main": "index.js",
-  "devDependencies": {
-    "browserify": "*",
-    "coveralls": "^2.11.2",
-    "eslint": "0.10.2",
-    "eslint-plugin-nodeca": "^1.0.0",
-    "istanbul": "*",
-    "lodash": "*",
-    "markdown-it": "markdown-it/markdown-it",
-    "markdown-it-testgen": "~0.1.0",
-    "mocha": "*",
-    "request": "*",
-    "uglify-js": "*"
-  },
   "dependencies": {},
-  "directories": {
-    "test": "test"
+  "devDependencies": {
+    "@types/markdown-it": "^13.0.7",
+    "@types/node": "^20.14.10",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-testgen": "~0.1.6",
+    "tslib": "^2.6.2",
+    "tsup": "^8.0.2",
+    "typescript": "5.5.2",
+    "vite-config": "workspace:*",
+    "vitest": "^1.6.0"
   },
   "author": "Jay"
 }
