@@ -12,4 +12,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, use the re-implemented ACL Editor for entities
   REACT_ENTITY_ACL_EDITOR = 'REACT_ENTITY_ACL_EDITOR',
+
+  // If enabled, show the chatbot entrypoint from the new Synapse Homepage
+  HOMEPAGE_CHATBOT = 'HOMEPAGE_CHATBOT',
 }
