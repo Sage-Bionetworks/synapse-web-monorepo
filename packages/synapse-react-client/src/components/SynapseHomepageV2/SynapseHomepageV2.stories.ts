@@ -1,9 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import {
+  MOCK_REPO_ORIGIN,
+  PRODUCTION_ENDPOINT_CONFIG,
+} from '../../utils/functions/getEndpoint'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
 import { registerSynapseHomepageMockQueries } from '../../mocks/query/mockHomepageQueryResultData'
+import { getFeatureFlagsOverride } from 'src/mocks/msw/handlers/featureFlagHandlers'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Synapse/HomePage',
@@ -36,6 +41,12 @@ export const DemoVersion2: Story = {
       handlers: [
         ...getFileHandlers(MOCK_REPO_ORIGIN),
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
+        getFeatureFlagsOverride({
+          portalOrigin: PRODUCTION_ENDPOINT_CONFIG.PORTAL,
+          overrides: {
+            [FeatureFlagEnum.HOMEPAGE_CHATBOT]: true,
+          },
+        }),
       ],
     },
   },
