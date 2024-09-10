@@ -195,9 +195,9 @@ const routes: GenericRoute[] = [
         name: 'DynamicForm',
         props: {
           schemaUrl:
-            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationSchema.json',
+            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationSchema.json',
           uiSchemaUrl:
-            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/cconrad8-patch-1/NF-Tools-Schemas/SubmitObservationUiSchema.json',
+            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationUiSchema.json',
           postUrl: 'https://submit-form.com/KwZ46H4T',
         },
         isOutsideContainer: false,
