@@ -14,7 +14,7 @@
     "table"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "vite build",
     "lint": "eslint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",
@@ -29,7 +29,6 @@
     "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/issues"
   },
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@types/markdown-it": "^13.0.7",
     "@types/node": "^20.14.10",
@@ -38,9 +37,11 @@
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
     "tslib": "^2.6.2",
-    "tsup": "^8.0.2",
     "typescript": "5.5.2",
+    "vite": "^5.4.3",
     "vite-config": "workspace:*",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.6.0"
   },
   "author": "Jay"
