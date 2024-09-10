@@ -11,12 +11,21 @@ import { rest } from 'msw'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import mockTableEntityData from '../../mocks/entity/mockTableEntity'
 import mockEntities from '../../mocks/entity'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 
 const meta = {
   title: 'Synapse/Table Column Schema Editor',
   component: TableColumnSchemaEditor,
-  parameters: { stack: 'mock' },
+  parameters: {
+    stack: 'mock',
+    design: [
+      {
+        name: 'Use Recommended Sizes button',
+        type: 'figma',
+        url: 'https://www.figma.com/design/ek9F9IqpsS8UnihBR9filP/Schema-Editor?node-id=83-9747',
+      },
+    ],
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -33,7 +42,7 @@ export const Demo: Story = {
       handlers: [
         ...getDefaultColumnHandlers(MOCK_REPO_ORIGIN),
         ...getAnnotationColumnHandlers(
-          MOCK_ANNOTATION_COLUMNS,
+          MOCK_ANNOTATION_COLUMN_RESPONSE,
           MOCK_REPO_ORIGIN,
         ),
         rest.post(

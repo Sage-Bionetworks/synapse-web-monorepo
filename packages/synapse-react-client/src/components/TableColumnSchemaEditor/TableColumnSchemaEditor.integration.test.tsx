@@ -22,8 +22,9 @@ import { SetOptional } from 'type-fest'
 import {
   addColumnModelToForm,
   modifyColumnModelInForm,
+  verifyTooltipText,
 } from './TableColumnSchemaEditorTestUtils'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import * as TableColumnSchemaUtils from '../../utils/functions/TableColumnSchemaUtils'
@@ -33,6 +34,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { USE_RECOMMENDED_SIZES_BUTTON_TEXT } from './TableColumnSchemaFormActions'
+import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from './TableColumnSchemaForm'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -93,7 +96,7 @@ describe('TableColumnSchemaEditor', () => {
     server.use(
       /* Each test in this suite should register its own table query handler */
       ...getDefaultColumnHandlers(),
-      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS),
+      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMN_RESPONSE),
       getCreateColumnModelBatchHandler(),
       ...getTableTransactionHandlers({
         concreteType:
@@ -191,6 +194,42 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
+  it('Does not show annotation-related buttons for TableEntity', async () => {
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockTableEntityData.entity,
+          tableBundle: {
+            columnModels: mockTableQueryData.columnModels!,
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+    await setUp({
+      entityId: mockTableEntityData.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    await expect(
+      screen.findByRole(
+        'button',
+        { name: USE_RECOMMENDED_SIZES_BUTTON_TEXT },
+        { timeout: 100 },
+      ),
+    ).rejects.toThrow()
+    await expect(
+      screen.findByRole(
+        'button',
+        { name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT },
+        { timeout: 100 },
+      ),
+    ).rejects.toThrow()
+  })
+
   it('User can add default columns', async () => {
     // Must use a file view -- tables don't have default columns
     server.use(
@@ -274,7 +313,7 @@ describe('TableColumnSchemaEditor', () => {
     })
 
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     // The button will be disabled until the annotation columns have been fetched.
     await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
@@ -296,9 +335,8 @@ describe('TableColumnSchemaEditor', () => {
 
     await waitFor(async () => {
       // IDs are stripped from imported columns, in case column properties are changed
-      const expectedProposedSchema = MOCK_ANNOTATION_COLUMNS.results.map(cm =>
-        omit(cm, 'id'),
-      )
+      const expectedProposedSchema =
+        MOCK_ANNOTATION_COLUMN_RESPONSE.results.map(cm => omit(cm, 'id'))
 
       expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
@@ -314,15 +352,22 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
-  it('Show warning when form data size of annotation column is less than recommended size', async () => {
+  it('Updates annotation columns below the maximum size when the Use Recommended Sizes button is clicked', async () => {
+    const annotationColumn = MOCK_ANNOTATION_COLUMN_RESPONSE.results[0]
     server.use(
       getEntityBundleHandler(
         getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
         {
           entity: mockFileViewEntity,
           tableBundle: {
-            // The view initially has no columns.
-            columnModels: [],
+            // The view initially has a column that matches an annotation column,
+            // but the maximum size is too small.
+            columnModels: [
+              {
+                ...annotationColumn,
+                maximumSize: annotationColumn.maximumSize! - 1,
+              },
+            ],
             maxRowsPerPage: 25,
           },
         },
@@ -335,45 +380,52 @@ describe('TableColumnSchemaEditor', () => {
       onCancel: mockOnCancel,
     })
 
-    const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+    // There exists a column with a size that is smaller than the recommended size, so the button should be enabled
+    const useRecommendedSizesButton = await screen.findByRole('button', {
+      name: USE_RECOMMENDED_SIZES_BUTTON_TEXT,
     })
-    // The button will be disabled until the annotation columns have been fetched.
-    await waitFor(() => expect(addAnnotationColumnsButton).not.toBeDisabled())
+    // Need to first fetch the annotation columns, so it may be a moment before the button is ready
+    await waitFor(() => expect(useRecommendedSizesButton).toBeEnabled(), {})
 
-    // Verify we have no columns -- there will only be one checkbox on the screen for select all/none
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1)
+    // Verify user is told that the maximum size field is too small
+    const textarea = (
+      await screen.findAllByRole('textbox', { name: 'Maximum Size' })
+    )[0]
+    await verifyTooltipText(textarea, /Recommended size is 300/, user)
 
-    await user.click(addAnnotationColumnsButton)
+    await user.click(useRecommendedSizesButton)
 
+    // A confirmation dialog appears
+    const dialog = await screen.findByRole('dialog')
+    within(dialog).getByText('This will change 1 column in this schema')
+    await user.click(
+      within(dialog).getByRole('button', {
+        name: USE_RECOMMENDED_SIZES_BUTTON_TEXT,
+      }),
+    )
     await waitFor(() => {
-      // The column(s) should have been added.
-      expect(screen.getAllByRole('checkbox').length).toBeGreaterThan(1)
+      expect(dialog).not.toBeInTheDocument()
     })
 
-    // The annotation column(s) are editable, so we can find a name text field.
-    await screen.findAllByLabelText('Name')
+    // Verify the maximum size has been updated
+    await waitFor(() => {
+      expect(textarea).toHaveValue(String(annotationColumn.maximumSize!))
+    })
 
-    const textarea = screen.getByRole('textbox', { name: 'Maximum Size' })
-    await waitFor(() => expect(textarea).not.toBeDisabled())
+    // Verify the old tooltip text is gone
+    await expect(
+      verifyTooltipText(textarea, /Recommended size is 300/, user, 100),
+    ).rejects.toThrow()
 
-    // Write a maxSize smaller than the recommended size
-    await user.clear(textarea)
-    await user.type(textarea, '1')
+    // Verify a new tooltip tells the user that the value has changed
+    await verifyTooltipText(
+      textarea,
+      /This value has changed since the table was last saved.\s*The last saved value was 299./,
+      user,
+    )
 
-    // Verify we have a warning in display
-    expect(
-      screen.queryByText('Recommended size is at least 10'),
-    ).toBeInTheDocument()
-
-    // Write a maxSize equal to the recommended size
-    await user.clear(textarea)
-    await user.type(textarea, '10')
-
-    // Verify that warning disappears in display
-    expect(
-      screen.queryByText('Recommended size is at least 10'),
-    ).not.toBeInTheDocument()
+    // Verify the button is now disabled, since no columns can be updated
+    expect(useRecommendedSizesButton).toBeDisabled()
   })
 
   it('Existing default columns are not editable, except facetType', async () => {

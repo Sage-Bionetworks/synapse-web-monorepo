@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { ColumnModelFormData } from './Validators/ColumnModelValidator'
 import {
   getDefaultColumnModelFormData,
@@ -924,5 +924,145 @@ describe('TableColumnSchemaFormReducer', () => {
     ]
 
     expect(getNumberOfSelectedItems(state)).toBe(2)
+  })
+
+  test('updateColumnSizesToRecommendedValues', () => {
+    const prevState: ColumnModelFormData[] = [
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol1',
+        columnType: ColumnTypeEnum.STRING,
+        maximumSize: 5,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol2',
+        columnType: ColumnTypeEnum.STRING,
+        maximumSize: 15,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol3',
+        columnType: ColumnTypeEnum.STRING,
+        maximumSize: 10,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol1',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        maximumSize: 5,
+        maximumListLength: 5,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol2',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        maximumSize: 15,
+        maximumListLength: 15,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol3',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        maximumSize: 10,
+        maximumListLength: 10,
+      },
+    ]
+    const stringAnnotationColumnModel: ColumnModel = {
+      id: '123',
+      name: 'stringCol1',
+      columnType: ColumnTypeEnum.STRING,
+      // All will have a recommended maximumSize of 10
+      maximumSize: 10,
+    }
+
+    const stringListAnnotationColumnModel: ColumnModel = {
+      id: '123',
+      name: 'stringListCol1',
+      columnType: ColumnTypeEnum.STRING_LIST,
+      // All will have a recommended maximumSize & maximumListLength of 10
+      maximumSize: 10,
+      maximumListLength: 10,
+    }
+
+    const annotationColumnModels: ColumnModel[] = [
+      {
+        ...stringAnnotationColumnModel,
+        name: 'stringCol1',
+      },
+      {
+        ...stringAnnotationColumnModel,
+        name: 'stringCol2',
+      },
+      {
+        ...stringAnnotationColumnModel,
+        name: 'stringCol3',
+      },
+      {
+        ...stringListAnnotationColumnModel,
+        name: 'stringListCol1',
+      },
+      {
+        ...stringListAnnotationColumnModel,
+        name: 'stringListCol2',
+      },
+      {
+        ...stringListAnnotationColumnModel,
+        name: 'stringListCol3',
+      },
+    ]
+
+    const newState = reducer(prevState, {
+      type: 'updateColumnSizesToRecommendedValues',
+      annotationColumnModels: annotationColumnModels,
+    })
+
+    expect(newState).toEqual([
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol1',
+        columnType: ColumnTypeEnum.STRING,
+        // Should have been updated to the recommended value
+        maximumSize: 10,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol2',
+        columnType: ColumnTypeEnum.STRING,
+        // Greater than the recommended value, so leave it alone
+        maximumSize: 15,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringCol3',
+        columnType: ColumnTypeEnum.STRING,
+        // Equal to the recommended value, so leave it alone
+        maximumSize: 10,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol1',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        // Both should have been updated to the recommended value
+        maximumSize: 10,
+        maximumListLength: 10,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol2',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        // Both were greater than the recommended value, so leave them alone
+        maximumSize: 15,
+        maximumListLength: 15,
+      },
+      {
+        ...getDefaultColumnModelFormData(),
+        name: 'stringListCol3',
+        columnType: ColumnTypeEnum.STRING_LIST,
+        // Both were equal to the recommended value, so leave them alone
+        maximumSize: 10,
+        maximumListLength: 10,
+      },
+    ])
   })
 })

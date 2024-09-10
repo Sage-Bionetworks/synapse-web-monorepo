@@ -392,3 +392,86 @@ export function getJsonSchemaItemDefinitionForColumnType(
       return { type: 'string', minLength: 1 }
   }
 }
+
+const columnModelMatchesFormData = (
+  model: ColumnModel,
+  target: ColumnModelFormData,
+): boolean => {
+  return model.name === target.name && model.columnType === target.columnType
+}
+
+export const findMatchingColumnModel = (
+  columnModels: ColumnModel[],
+  target: ColumnModelFormData,
+): ColumnModel | undefined => {
+  let closestMatch: ColumnModel | undefined
+
+  for (const model of columnModels) {
+    if (columnModelMatchesFormData(model, target)) {
+      closestMatch = model
+      break
+    }
+  }
+
+  return closestMatch
+}
+
+export function getFormDataValueAsNumber(
+  formDataValue: string | number | undefined,
+): number | null {
+  const maxSize =
+    formDataValue !== null ? parseFloat(String(formDataValue)) : null
+  const isInteger = Number.isInteger(maxSize)
+  return isInteger ? maxSize : null
+}
+
+export const isFormDataValueSmallerThanRecommendedValue = (
+  formDataValue: string | number | undefined,
+  recommendedValue: number | undefined,
+): boolean => {
+  const currentValue = getFormDataValueAsNumber(formDataValue)
+  return recommendedValue != null && currentValue != null && currentValue > 0
+    ? currentValue < recommendedValue
+    : false
+}
+
+export function doesColumnModelSatisfyAnnotationMinimums(
+  columnModel: ColumnModelFormData,
+  annotationColumnModel?: ColumnModel,
+): boolean {
+  if (!annotationColumnModel) {
+    return true
+  }
+
+  if (
+    isFormDataValueSmallerThanRecommendedValue(
+      columnModel.maximumSize,
+      annotationColumnModel.maximumSize,
+    ) ||
+    isFormDataValueSmallerThanRecommendedValue(
+      columnModel.maximumListLength,
+      annotationColumnModel.maximumListLength,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+export function getNumberOfColumnModelsWithValuesBelowMinimumRecommendedSizes(
+  columnModels: ColumnModelFormData[],
+  annotationColumnModels: ColumnModel[],
+): number {
+  return columnModels.filter(cm => {
+    const matchingAnnotationColumnModel = findMatchingColumnModel(
+      annotationColumnModels,
+      cm,
+    )
+
+    return !doesColumnModelSatisfyAnnotationMinimums(
+      cm,
+      matchingAnnotationColumnModel,
+    )
+  }).length
+}

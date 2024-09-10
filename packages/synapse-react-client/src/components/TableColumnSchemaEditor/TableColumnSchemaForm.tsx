@@ -13,30 +13,19 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import {
-  getIsAllSelected,
-  getNumberOfSelectedItems,
-  tableColumnSchemaFormDataAtom,
-} from './TableColumnSchemaFormReducer'
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Checkbox,
-  styled,
-  Typography,
-} from '@mui/material'
+import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
+import { Box, Button, styled } from '@mui/material'
 import { groupBy, isEqual, noop, omit, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
-import { AddCircleTwoTone, North, South } from '@mui/icons-material'
-import IconSvg from '../IconSvg'
+import { AddCircleTwoTone } from '@mui/icons-material'
 import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '../../utils/functions/EntityTypeUtils'
 import {
+  findMatchingColumnModel,
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
 } from './TableColumnSchemaEditorUtils'
@@ -48,12 +37,10 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
-import {
-  ColumnModelFormData,
-  validateColumnModelFormData,
-} from './Validators/ColumnModelValidator'
+import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
 import pluralize from 'pluralize'
+import { TableColumnSchemaFormActions } from './TableColumnSchemaFormActions'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
@@ -100,6 +87,8 @@ type TableColumnSchemaFormProps = {
   initialData?: SetOptional<ColumnModel, 'id'>[]
   onSubmit?: (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => void
   isSubmitting?: boolean
+  /** The original/current column models that are applied to the table, if they exist. */
+  originalColumnModels?: ColumnModel[]
 }
 
 const ColumnHeader = styled(Box, {
@@ -107,6 +96,8 @@ const ColumnHeader = styled(Box, {
 })({
   fontWeight: 700,
 })
+
+export const ADD_ALL_ANNOTATIONS_BUTTON_TEXT = 'Add All Annotations'
 
 function TableColumnSchemaFormInternal(
   props: TableColumnSchemaFormProps,
@@ -118,6 +109,7 @@ function TableColumnSchemaFormInternal(
     viewScope,
     onSubmit = noop,
     isSubmitting = false,
+    originalColumnModels,
   } = props
 
   const numColumnModels = useAtomValue(
@@ -152,10 +144,7 @@ function TableColumnSchemaFormInternal(
       },
     )
 
-  const {
-    data: annotationColumnModels,
-    isLoading: isLoadingAnnotationColumns,
-  } = useGetAnnotationColumnModels(
+  const annotationColumnModelsQuery = useGetAnnotationColumnModels(
     {
       viewScope: viewScope!,
       includeDerivedAnnotations: true,
@@ -166,6 +155,11 @@ function TableColumnSchemaFormInternal(
       enabled: hasAnnotationColumnModels,
     },
   )
+
+  const {
+    data: annotationColumnModels,
+    isLoading: isLoadingAnnotationColumns,
+  } = annotationColumnModelsQuery
 
   /**
    * Set the initialData in the form state atom on mount, if it exists and we have no data.
@@ -298,7 +292,10 @@ function TableColumnSchemaFormInternal(
         py: 2.5,
       }}
     >
-      <TableColumnSchemaFormActions disabled={isSubmitting} />
+      <TableColumnSchemaFormActions
+        disabled={isSubmitting}
+        annotationColumnModelsQuery={annotationColumnModelsQuery}
+      />
       <Box
         display={'grid'}
         sx={{
@@ -333,6 +330,7 @@ function TableColumnSchemaFormInternal(
               key={index}
               columnModelValidationErrors={errorsByColumnModel[index]}
               annotationColumnModels={annotationColumnModels}
+              originalColumnModels={originalColumnModels}
             />
           )
         })}
@@ -384,7 +382,7 @@ function TableColumnSchemaFormInternal(
               addAnnotationColumns()
             }}
           >
-            Add All Annotations
+            {ADD_ALL_ANNOTATIONS_BUTTON_TEXT}
           </Button>
         )}
         <ImportTableColumnsButton
@@ -398,109 +396,13 @@ function TableColumnSchemaFormInternal(
   )
 }
 
-type TableColumnSchemaFormActionsProps = {
-  disabled?: boolean
-}
-
-function TableColumnSchemaFormActions(
-  props: TableColumnSchemaFormActionsProps,
-) {
-  const { disabled = false } = props
-  const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
-
-  const columnModels = useAtomValue(tableColumnSchemaFormDataAtom)
-  const allSelected = getIsAllSelected(columnModels)
-  const numSelected = getNumberOfSelectedItems(columnModels)
-
-  return (
-    <Box display={'flex'} gap={1}>
-      <Button
-        aria-label={'Select All'}
-        variant={'outlined'}
-        color={'neutral'}
-        onClick={() => {
-          dispatch({ type: 'toggleSelectAll' })
-        }}
-        disabled={disabled || columnModels.length == 0}
-      >
-        <Checkbox
-          sx={{ mr: 1 }}
-          checked={allSelected}
-          indeterminate={numSelected > 0 && !allSelected}
-          disabled={disabled || columnModels.length == 0}
-        />
-        <Typography variant="smallText1" color={'text.secondary'}>
-          {numSelected} selected
-        </Typography>
-      </Button>
-      <ButtonGroup>
-        <Button
-          aria-label={'Move Down'}
-          variant={'outlined'}
-          color={'neutral'}
-          onClick={() => {
-            dispatch({ type: 'moveDown' })
-          }}
-          disabled={disabled || numSelected == 0}
-        >
-          <South fontSize={'small'} />
-        </Button>
-        <Button
-          aria-label={'Move Up'}
-          variant={'outlined'}
-          color={'neutral'}
-          onClick={() => {
-            dispatch({ type: 'moveUp' })
-          }}
-          disabled={disabled || numSelected == 0}
-        >
-          <North fontSize={'small'} />
-        </Button>
-      </ButtonGroup>
-      <Button
-        aria-label={'Delete'}
-        variant={'outlined'}
-        color={'neutral'}
-        onClick={() => {
-          dispatch({ type: 'delete' })
-        }}
-        disabled={disabled || numSelected == 0}
-      >
-        <IconSvg fontSize={'small'} icon={'delete'} wrap={false} />
-      </Button>
-    </Box>
-  )
-}
-
-const findMatchingColumnModel = (
-  columnModels: ColumnModel[],
-  target: ColumnModelFormData,
-): ColumnModel | undefined => {
-  let closestMatch: ColumnModel | undefined
-
-  for (const model of columnModels) {
-    if (columnModelMatchesFormData(model, target)) {
-      closestMatch = model
-      break
-    }
-  }
-
-  return closestMatch
-}
-
-const columnModelMatchesFormData = (
-  model: ColumnModel,
-  target: ColumnModelFormData,
-): boolean => {
-  return model.name === target.name && model.columnType === target.columnType
-}
-
 type TableColumnSchemaFormRowProps = {
   entityType: EntityType
   columnModelIndex: number
   disabled: boolean
   columnModelValidationErrors: ZodIssue[] | null
   annotationColumnModels?: ColumnModel[]
+  originalColumnModels?: ColumnModel[]
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
@@ -510,6 +412,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     disabled,
     columnModelValidationErrors = null,
     annotationColumnModels,
+    originalColumnModels,
   } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
@@ -523,6 +426,11 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
       [columnModelIndex],
     ),
   )
+
+  // Find the original column model that matches the current column model by name and type, so we can tell the user what fields have changed
+  const originalColumnModel = originalColumnModels
+    ? findMatchingColumnModel(originalColumnModels, columnModel)
+    : undefined
 
   // Find the closest match between passed column model and current column model with name and type
   const defaultAnnotationModel = annotationColumnModels
@@ -554,6 +462,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
         disabled={disabled}
         validationErrors={columnModelValidationErrors}
         defaultAnnotationModel={defaultAnnotationModel}
+        originalColumnModel={originalColumnModel}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&

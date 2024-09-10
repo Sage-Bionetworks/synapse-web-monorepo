@@ -333,6 +333,10 @@ export const defaultMuiThemeOptions: ThemeOptions = {
               outline = `1px solid ${theme.palette[ownerState.color].main}`
             }
           }
+          let backgroundColor = theme.palette.grey[200]
+          if (ownerState.error) {
+            backgroundColor = alpha(theme.palette.error.main, 0.1)
+          }
           const formHelperTextColor =
             ownerState.color === 'warning'
               ? theme.palette[ownerState.color].main
@@ -341,7 +345,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             borderRadius: '3px',
             fontSize: '14px',
             position: 'relative',
-            backgroundColor: theme.palette.grey[200],
+            backgroundColor: backgroundColor,
             outline: outline,
             '&+.MuiFormHelperText-root': {
               color: formHelperTextColor,

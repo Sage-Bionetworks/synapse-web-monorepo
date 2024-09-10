@@ -23,7 +23,7 @@ import {
   getHandlersForTableQuery,
 } from './handlers/tableQueryHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
-import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import getAllChallengeHandlers from './handlers/challengeHandlers'
 import getAllTeamHandlers from './handlers/teamHandlers'
@@ -62,7 +62,10 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getSubscriptionHandlers(backendOrigin),
   ...getEvaluationHandlers(backendOrigin),
   getCreateColumnModelBatchHandler(backendOrigin),
-  ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS, backendOrigin),
+  ...getAnnotationColumnHandlers(
+    MOCK_ANNOTATION_COLUMN_RESPONSE,
+    backendOrigin,
+  ),
   ...getDefaultColumnHandlers(backendOrigin),
   ...getPersonalAccessTokenHandlers(backendOrigin),
   ...getAllTeamHandlers(backendOrigin),

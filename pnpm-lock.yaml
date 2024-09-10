@@ -1363,6 +1363,42 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
 
+  packages/markdown-it-synapse-table:
+    devDependencies:
+      '@types/markdown-it':
+        specifier: ^13.0.7
+        version: 13.0.7
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
+      '@vitest/coverage-v8':
+        specifier: ^1.6.0
+        version: 1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))
+      '@vitest/ui':
+        specifier: ^1.6.0
+        version: 1.6.0(vitest@1.6.0)
+      markdown-it:
+        specifier: ^14.1.0
+        version: 14.1.0
+      markdown-it-testgen:
+        specifier: ~0.1.6
+        version: 0.1.6
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.3
+      tsup:
+        specifier: ^8.0.2
+        version: 8.0.2(@microsoft/api-extractor@7.43.0)(postcss@8.4.39)(typescript@5.5.2)
+      typescript:
+        specifier: 5.5.2
+        version: 5.5.2
+      vite-config:
+        specifier: workspace:*
+        version: link:../vite-config
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
+
   packages/synapse-react-client:
     dependencies:
       '@apidevtools/json-schema-ref-parser':
@@ -8405,6 +8441,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
