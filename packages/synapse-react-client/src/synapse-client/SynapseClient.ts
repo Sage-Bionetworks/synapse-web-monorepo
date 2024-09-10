@@ -19,6 +19,8 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
+  AGENT_SESSION,
+  AGENT_SESSION_HISTORY,
   ALIAS_AVAILABLE,
   ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
@@ -52,7 +54,9 @@ import {
   FILE_HANDLE_BATCH,
   FORUM,
   FORUM_THREAD,
+  GET_CHAT_ASYNC,
   INVITEE_VERIFICATION_SIGNED_TOKEN,
+  LIST_AGENT_SESSIONS,
   MEMBERSHIP_INVITATION,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
@@ -66,6 +70,7 @@ import {
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
   SIGN_TERMS_OF_USE,
+  START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
   TEAM,
@@ -309,6 +314,14 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
+  CreateAgentSessionRequest,
+  AgentSession,
+  ListAgentSessionsRequest,
+  ListAgentSessionsResponse,
+  AgentChatRequest,
+  AgentChatResponse,
+  SessionHistoryResponse,
+  SessionHistoryRequest,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5443,5 +5456,64 @@ export async function sendMessageToEntityOwner(
     messageToUser,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const createAgentSession = (
+  request: CreateAgentSessionRequest,
+  accessToken: string | undefined = undefined,
+): Promise<AgentSession> => {
+  return doPost<AgentSession>(
+    AGENT_SESSION,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const listAgentSessions = (
+  request: ListAgentSessionsRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ListAgentSessionsResponse> => {
+  return doPost<ListAgentSessionsResponse>(
+    LIST_AGENT_SESSIONS,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getAgentChatAsyncJobResults = async (
+  request: AgentChatRequest,
+  accessToken?: string,
+  setCurrentAsyncStatus?: (
+    result: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
+  ) => void,
+): Promise<AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    START_CHAT_ASYNC,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultFromJobId<AgentChatRequest, AgentChatResponse>(
+    asyncJobId.token,
+    GET_CHAT_ASYNC(asyncJobId.token),
+    accessToken,
+    setCurrentAsyncStatus,
+  )
+}
+
+export const getSessionHistory = (
+  request: SessionHistoryRequest,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<SessionHistoryResponse> => {
+  return doPost<SessionHistoryResponse>(
+    AGENT_SESSION_HISTORY(request.sessionId),
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
   )
 }
