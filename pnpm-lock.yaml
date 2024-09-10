@@ -1048,7 +1048,7 @@ importers:
         version: 3.0.0
       isomorphic-fetch:
         specifier: ^3.0.0
-        version: 3.0.0
+        version: 3.0.0(encoding@0.1.13)
       jsdom:
         specifier: ^21.1.2
         version: 21.1.2
@@ -1060,7 +1060,7 @@ importers:
         version: 3.5.3
       msw:
         specifier: ^1.3.2
-        version: 1.3.2(typescript@5.5.2)
+        version: 1.3.2(encoding@0.1.13)(typescript@5.5.2)
       object-assign:
         specifier: ^4.1.1
         version: 4.1.1
@@ -1546,8 +1546,8 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5
       markdown-it-synapse-table:
-        specifier: ^1.0.6
-        version: 1.0.6
+        specifier: workspace:*
+        version: link:../markdown-it-synapse-table
       mui-one-time-password-input:
         specifier: ^2.0.2
         version: 2.0.2(@emotion/react@11.11.4(@types/react@18.2.64)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.2.64)(react@18.2.0))(@types/react@18.2.64)(react@18.2.0))(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.2.64)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.2.64)(react@18.2.0))(@types/react@18.2.64)(react@18.2.0))(@types/react@18.2.64)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.64)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1929,10 +1929,10 @@ importers:
         version: 3.5.3
       msw:
         specifier: ^1.3.2
-        version: 1.3.2(typescript@5.5.3)
+        version: 1.3.2(encoding@0.1.13)(typescript@5.5.3)
       msw-storybook-addon:
         specifier: ^1.10.0
-        version: 1.10.0(msw@1.3.2(typescript@5.5.3))
+        version: 1.10.0(msw@1.3.2(encoding@0.1.13)(typescript@5.5.3))
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -7002,6 +7002,9 @@ packages:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
     engines: {node: '>= 0.8'}
 
+  encoding@0.1.13:
+    resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+
   end-of-stream@1.4.4:
     resolution: {integrity: sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==}
 
@@ -8698,9 +8701,6 @@ packages:
   markdown-it-synapse-math@3.0.5:
     resolution: {integrity: sha512-jbmJRx0fKYjhZoja2RGVQDpXB+qckUp5TucWFZIxtsLbOi/Cw62ocS3BaSsfmikhj0U51zpIp8F/HKmaxwiTDg==}
 
-  markdown-it-synapse-table@1.0.6:
-    resolution: {integrity: sha512-znhzQZhMxZ8sSQ9IBfdVv4ufW54i+P8M//rHEswcgg7SI3J0AN1s2T7T0KqYGG+9rHf/ORsdcUZst9hMiBC9xA==}
-
   markdown-it-testgen@0.1.6:
     resolution: {integrity: sha512-hYC71G4Mcv3Y7fLTsi4PyoHKSs0P4UgkpzmGBtUYoR/TS83lFbfXUMaI71OiMJ9r4p3fbMhHBwdNTLhSDwmt6Q==}
 
@@ -8711,12 +8711,6 @@ packages:
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
-
-  markdown-to-jsx@7.4.3:
-    resolution: {integrity: sha512-qwu2XftKs/SP+f6oCe0ruAFKX6jZaKxrBfDBV4CthqbVbRQwHhNM28QGDQuTldCaOn+hocaqbmGvCuXO5m3smA==}
-    engines: {node: '>= 10'}
-    peerDependencies:
-      react: '>= 0.14.0'
 
   markdown-to-jsx@7.4.7:
     resolution: {integrity: sha512-0+ls1IQZdU6cwM1yu0ZjjiVWYtkbExSyUIFU2ZeDIFuZM1W42Mh4OlJ4nb4apX4H8smxDHRdFaoIVJGwfv5hkg==}
@@ -14343,7 +14337,7 @@ snapshots:
       '@rjsf/utils': 5.17.1(react@18.2.0)
       lodash: 4.17.21
       lodash-es: 4.17.21
-      markdown-to-jsx: 7.4.3(react@18.2.0)
+      markdown-to-jsx: 7.4.7(react@18.2.0)
       nanoid: 3.3.7
       prop-types: 15.8.1
       react: 18.2.0
@@ -17519,6 +17513,11 @@ snapshots:
 
   encodeurl@1.0.2: {}
 
+  encoding@0.1.13:
+    dependencies:
+      iconv-lite: 0.6.3
+    optional: true
+
   end-of-stream@1.4.4:
     dependencies:
       once: 1.4.0
@@ -18924,9 +18923,9 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-fetch@3.0.0:
+  isomorphic-fetch@3.0.0(encoding@0.1.13):
     dependencies:
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
@@ -19928,8 +19927,6 @@ snapshots:
     optionalDependencies:
       ascii2mathml: 0.6.2
 
-  markdown-it-synapse-table@1.0.6: {}
-
   markdown-it-testgen@0.1.6:
     dependencies:
       chai: 1.10.0
@@ -19952,10 +19949,6 @@ snapshots:
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
-
-  markdown-to-jsx@7.4.3(react@18.2.0):
-    dependencies:
-      react: 18.2.0
 
   markdown-to-jsx@7.4.7(react@18.2.0):
     dependencies:
@@ -20079,7 +20072,7 @@ snapshots:
 
   mlly@1.7.1:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       pathe: 1.1.2
       pkg-types: 1.1.1
       ufo: 1.5.3
@@ -20131,12 +20124,12 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw-storybook-addon@1.10.0(msw@1.3.2(typescript@5.5.3)):
+  msw-storybook-addon@1.10.0(msw@1.3.2(encoding@0.1.13)(typescript@5.5.3)):
     dependencies:
       is-node-process: 1.2.0
-      msw: 1.3.2(typescript@5.5.3)
+      msw: 1.3.2(encoding@0.1.13)(typescript@5.5.3)
 
-  msw@1.3.2(typescript@5.5.2):
+  msw@1.3.2(encoding@0.1.13)(typescript@5.5.2):
     dependencies:
       '@mswjs/cookies': 0.2.2
       '@mswjs/interceptors': 0.17.10
@@ -20151,7 +20144,7 @@ snapshots:
       inquirer: 8.2.6
       is-node-process: 1.2.0
       js-levenshtein: 1.1.6
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       outvariant: 1.4.2
       path-to-regexp: 6.2.1
       strict-event-emitter: 0.4.6
@@ -20163,7 +20156,7 @@ snapshots:
       - encoding
       - supports-color
 
-  msw@1.3.2(typescript@5.5.3):
+  msw@1.3.2(encoding@0.1.13)(typescript@5.5.3):
     dependencies:
       '@mswjs/cookies': 0.2.2
       '@mswjs/interceptors': 0.17.10
@@ -20178,7 +20171,7 @@ snapshots:
       inquirer: 8.2.6
       is-node-process: 1.2.0
       js-levenshtein: 1.1.6
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       outvariant: 1.4.2
       path-to-regexp: 6.2.1
       strict-event-emitter: 0.4.6
@@ -20275,9 +20268,11 @@ snapshots:
 
   node-fetch-native@1.6.2: {}
 
-  node-fetch@2.7.0:
+  node-fetch@2.7.0(encoding@0.1.13):
     dependencies:
       whatwg-url: 5.0.0
+    optionalDependencies:
+      encoding: 0.1.13
 
   node-gyp-build@4.8.0: {}
 
