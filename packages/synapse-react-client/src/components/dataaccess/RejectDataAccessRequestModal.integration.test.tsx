@@ -16,6 +16,8 @@ import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../utils/APIConstants'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import failOnConsoleError from 'jest-fail-on-console'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import SynapseClient from '../../synapse-client'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const props: RejectDataAccessRequestModalProps = {
   submissionId: mockSubmittedSubmission.id,
@@ -24,7 +26,10 @@ const props: RejectDataAccessRequestModalProps = {
   onClose: jest.fn(),
 }
 
-const onServerReceivedUpdate = jest.fn()
+const updateSubmissionStatusSpy = jest.spyOn(
+  SynapseClient,
+  'updateSubmissionStatus',
+)
 
 function renderComponent() {
   return render(<RejectDataAccessRequestModal {...props} />, {
@@ -46,7 +51,6 @@ describe('RejectDataAccessRequestModal', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
         async (req, res, ctx) => {
-          onServerReceivedUpdate(await req.json())
           return res(ctx.status(200))
         },
       ),
@@ -120,12 +124,17 @@ describe('RejectDataAccessRequestModal', () => {
 
     // Verify that we send the rejection request to the server
     const fullRejectionMessage = email + customAddition
-    await waitFor(() => expect(onServerReceivedUpdate).toHaveBeenCalledTimes(1))
-    expect(onServerReceivedUpdate).toHaveBeenCalledWith({
-      submissionId: mockSubmittedSubmission.id,
-      newState: SubmissionState.REJECTED,
-      rejectedReason: fullRejectionMessage,
-    })
+    await waitFor(() =>
+      expect(updateSubmissionStatusSpy).toHaveBeenCalledTimes(1),
+    )
+    expect(updateSubmissionStatusSpy).toHaveBeenCalledWith(
+      {
+        submissionId: mockSubmittedSubmission.id,
+        newState: SubmissionState.REJECTED,
+        rejectedReason: fullRejectionMessage,
+      },
+      MOCK_ACCESS_TOKEN,
+    )
     await waitFor(() => expect(props.onClose).toHaveBeenCalled())
   })
 })
