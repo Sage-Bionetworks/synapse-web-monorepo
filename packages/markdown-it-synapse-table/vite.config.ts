@@ -13,7 +13,7 @@ export default mergeConfig(vitestConfig, {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'markdownitSynapseTable',
       fileName: 'index',
-      formats: ['es', 'cjs'],
+      formats: ['es', 'cjs', 'umd'],
     },
   },
   test: {
