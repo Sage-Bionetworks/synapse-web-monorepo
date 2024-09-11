@@ -246,10 +246,10 @@ export default function CannedRejectionDialog(
     defaultMessageAppend,
     rejectionFormPromptCopy,
     children,
+    error,
   } = props
 
   const [step, setStep] = React.useState<1 | 2>(1)
-  const [error, setError] = React.useState<SynapseClientError | null>(null)
   // selectedRowIds are the row IDs of the canned responses the user selected:
   const [emailText, setEmailText] = useState('')
   const [selectedRowIds, setSelectedRowIds] = useState(Set<number>())
