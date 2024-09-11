@@ -76,7 +76,7 @@
     "markdown-it-synapse": "workspace:*",
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.5",
-    "markdown-it-synapse-table": "^1.0.6",
+    "markdown-it-synapse-table": "workspace:*",
     "mui-one-time-password-input": "^2.0.2",
     "papaparse": "^5.4.1",
     "plotly.js": "2.28.0",

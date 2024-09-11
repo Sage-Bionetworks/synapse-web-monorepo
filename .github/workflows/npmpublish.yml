@@ -14,6 +14,7 @@ jobs:
           [
             synapse-react-client,
             markdown-it-synapse,
+            markdown-it-synapse-table,
             '@sage-bionetworks/markdown-it-container',
             '@sage-bionetworks/synapse-types',
           ]

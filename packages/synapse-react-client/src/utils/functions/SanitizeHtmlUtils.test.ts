@@ -39,4 +39,26 @@ describe('HTML Santization', () => {
     expect(anchor).not.toBeNull()
     expect(anchor.getAttribute('href')).toEqual(validHref)
   })
+
+  describe.each(['td', 'th'])('%s cell text alignment', tag => {
+    test(`Allows ${tag} with text-align style`, () => {
+      const input = `<${tag} style="text-align:center;">foo</${tag}>`
+      const expected = input
+      const sanitized = xss(input, xssOptions)
+
+      // style should be allowed in this case
+      expect(sanitized).toEqual(expected)
+    })
+
+    test(`Removes styles other than text-align from ${tag}`, () => {
+      // Some other style is applied, which is not allowed (may be a click-jacking attempt!)
+      const input = `<${tag} style="text-align:center; position: absolute;">foo</${tag}>`
+      // position is not an allowed CSS property
+      const expected = `<${tag} style="text-align:center;">foo</${tag}>`
+      const sanitized = xss(input, xssOptions)
+
+      // style should be allowed in this case
+      expect(sanitized).toEqual(expected)
+    })
+  })
 })
