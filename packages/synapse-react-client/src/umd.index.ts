@@ -86,6 +86,7 @@ import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
 import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
+import SynapseChat from './components/SynapseChat/SynapseChat'
 import { version } from '../package.json'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 
@@ -179,6 +180,7 @@ const SynapseComponents = {
   CookiesNotification,
   getCurrentCookiePreferences,
   EntityAclEditorModal,
+  SynapseChat,
 }
 
 // Include the version in the build
