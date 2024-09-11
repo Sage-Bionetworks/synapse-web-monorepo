@@ -1,40 +1,34 @@
-import React, { useEffect, useState } from 'react'
 import {
-  Box,
-  Button,
   Checkbox,
   Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
-  IconButton,
   Stack,
   TextField,
   Typography,
 } from '@mui/material'
-import IconSvg from '../IconSvg/IconSvg'
-import {
-  useGetFullTableQueryResults,
-  useUpdateDataAccessSubmissionState,
-} from '../../synapse-queries'
-import {
-  BUNDLE_MASK_QUERY_RESULTS,
-  REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
-} from '../../utils/SynapseConstants'
-import { Set } from 'immutable'
 import {
   QueryResultBundle,
   Row,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseQueryResult } from '@tanstack/react-query'
+import { Set } from 'immutable'
+import React, { useEffect, useState } from 'react'
+import {
+  useGetFullTableQueryResults,
+  useUpdateDataAccessSubmissionState,
+} from '../../synapse-queries'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
+} from '../../utils/SynapseConstants'
+import ConfirmationDialog from '../ConfirmationDialog'
 import { ErrorBanner } from '../error/ErrorBanner'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import IconSvg from '../IconSvg/IconSvg'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
 const CATEGORY_COLUMN_NAME = 'category'
@@ -359,64 +353,57 @@ export default function RejectDataAccessRequestModal(
 
   // If fetching/processing the table fails, gracefully fall back to just show the email template
   return (
-    <Dialog open={open} onClose={onClose} maxWidth={'md'} fullWidth>
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          Reject Request?
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onClose}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-      <DialogContent>
-        {step === 1 && (
-          <SelectRejectionReasonsForm
-            tableQuery={tableQuery}
-            selectedRowIds={selectedRowIds}
-            setSelectedRowIds={setSelectedRowIds}
-          />
-        )}
-        {step === 2 && (
-          <DraftRejectionMessage
-            emailText={emailText}
-            setEmailText={setEmailText}
-          />
-        )}
-        {error && (
-          <FullWidthAlert
-            variant={'danger'}
-            description={error.reason}
-            isGlobal={false}
-          />
-        )}
-      </DialogContent>
-      <DialogActions>
-        {step === 2 && (
-          <Button variant="outlined" onClick={() => setStep(1)}>
-            Back
-          </Button>
-        )}
-        <Box sx={{ flexGrow: 1 }} />
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
-        {step === 1 && (
-          <Button variant="contained" onClick={() => setStep(2)}>
-            Generate Email
-          </Button>
-        )}
-        {step === 2 && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              rejectSubmission(emailText)
-            }}
-          >
-            Reject and Notify Requester
-          </Button>
-        )}
-      </DialogActions>
-    </Dialog>
+    <ConfirmationDialog
+      open={open}
+      onCancel={() => {
+        if (step === 1) {
+          onClose()
+        }
+        if (step === 2) {
+          setStep(1)
+        }
+      }}
+      maxWidth={'md'}
+      fullWidth
+      title="Reject Request?"
+      content={
+        <>
+          {step === 1 && (
+            <SelectRejectionReasonsForm
+              tableQuery={tableQuery}
+              selectedRowIds={selectedRowIds}
+              setSelectedRowIds={setSelectedRowIds}
+            />
+          )}
+          {step === 2 && (
+            <DraftRejectionMessage
+              emailText={emailText}
+              setEmailText={setEmailText}
+            />
+          )}
+          {error && (
+            <FullWidthAlert
+              variant={'danger'}
+              description={error.reason}
+              isGlobal={false}
+            />
+          )}
+        </>
+      }
+      onConfirm={() => {
+        if (step === 1) {
+          setStep(2)
+        }
+        if (step === 2) {
+          rejectSubmission(emailText)
+        }
+      }}
+      confirmButtonProps={{
+        children: step === 1 ? 'Generate Email' : 'Reject and Notify Requester',
+      }}
+      cancelButtonProps={{
+        children: step === 1 ? 'Cancel' : 'Back',
+      }}
+    />
   )
 }
