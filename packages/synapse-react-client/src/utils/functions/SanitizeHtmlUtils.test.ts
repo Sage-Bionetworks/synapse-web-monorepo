@@ -53,7 +53,7 @@ describe('HTML Santization', () => {
     test(`Removes styles other than text-align from ${tag}`, () => {
       // Some other style is applied, which is not allowed (may be a click-jacking attempt!)
       const input = `<${tag} style="text-align:center; position: absolute;">foo</${tag}>`
-      // We don't parse the `style` attribute, so the entire attribute should be removed
+      // position is not an allowed CSS property
       const expected = `<${tag} style="text-align:center;">foo</${tag}>`
       const sanitized = xss(input, xssOptions)
 
