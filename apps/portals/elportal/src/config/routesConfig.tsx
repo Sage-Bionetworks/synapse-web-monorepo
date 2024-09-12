@@ -7,7 +7,7 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { peopleSql, projectsSql, upsetPlotSql } from './resources'
+import { partnersSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
 import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
 const routes: GenericRoute[] = [
@@ -136,39 +136,31 @@ const routes: GenericRoute[] = [
       //   },
       // },
 
-      // TODO: PORTALS-3208: Surface Our Partners (similar to NF)
-      // {
-      //   name: 'CardContainerLogic',
-      //   title: 'Our Partners',
-      //   outsideContainerClassName: 'home-spacer',
-      //   centerTitle: true,
-      //   props: {
-      //     sql: fundersSql,
-      //     type: SynapseConstants.GENERIC_CARD,
-      //     titleLinkConfig: organizationDetailsPageLinkConfig,
-      //     genericCardSchema: {
-      //       ...organizationCardSchema,
-      //       imageFileHandleColumnName: 'cardLogo',
-      //     },
-      //     descriptionConfig: {
-      //       showFullDescriptionByDefault: true,
-      //     },
-      //     ctaLinkConfig: {
-      //       text: 'Visit Website',
-      //       link: 'website',
-      //     },
-      //   },
-      // },
-      // PORTALS-3208: for now, include a wiki
+      //PORTALS-3208: Surface Our Partners (similar to NF)
       {
+        name: 'CardContainerLogic',
         title: 'Our Partners',
-        centerTitle: true,
         outsideContainerClassName: 'home-spacer',
-        name: 'Markdown',
+        centerTitle: true,
         props: {
-          ownerId: 'syn27229419',
-          wikiId: '629422',
-          loadingSkeletonRowCount: 10,
+          sql: partnersSql,
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: {
+            title: 'organizationName',
+            type: SynapseConstants.ORGANIZATION,
+            description: 'summary',
+            icon: 'abbreviation',
+            link: 'website',
+            thumbnailRequiresPadding: true,
+            imageFileHandleColumnName: 'cardLogo',
+          },
+          descriptionConfig: {
+            showFullDescriptionByDefault: true,
+          },
+          ctaLinkConfig: {
+            text: 'Visit Website',
+            link: 'website',
+          },
         },
       },
       {
