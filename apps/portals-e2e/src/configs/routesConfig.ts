@@ -17,8 +17,15 @@ type RouteConfig = Record<Portal, RouteButtonsLinks>
 // lists each Portal's navigation buttons and links
 const routesConfig: RouteConfig = {
   adknowledgeportal: {
-    buttons: ['Home', 'Explore', 'Sign In'],
-    links: ['Analysis Platforms', 'Data Access', 'Contribute', 'News', 'Help'],
+    buttons: ['Explore', 'Sign In'],
+    links: [
+      'Home',
+      'Analysis Platforms',
+      'Data Access',
+      'Contribute',
+      'News',
+      'Help',
+    ],
   },
   arkportal: {
     buttons: ['Explore', 'Sign In'],
@@ -64,8 +71,8 @@ const routesConfig: RouteConfig = {
     links: ['Home', 'Apply'],
   },
   genie: {
-    buttons: ['Home', 'Explore', 'Sign In'],
-    links: ['Data Releases', 'Access', 'Help'],
+    buttons: ['Explore', 'Sign In'],
+    links: ['Home', 'Data Releases', 'Access', 'Help'],
   },
 }
 
