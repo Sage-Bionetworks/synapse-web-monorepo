@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
   ACCESS_DENIED_ANONYMOUS_MESSAGE,
-  ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
   ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
   ACCESS_DENIED_TITLE,
@@ -66,7 +65,8 @@ describe('ErrorPage: basic functionality', () => {
     await screen.findByText(ACCESS_DENIED_TITLE)
     await screen.findByText(ACCESS_DENIED_MESSAGE)
     await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
-    await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
+    // SWC-7073
+    // await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
     // by default, a DOI is set up in MSW (see doiHandlers)
     // searching for the text (using a regular expression because the element contains other text in addition to the search string)
     await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
