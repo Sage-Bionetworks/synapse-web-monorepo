@@ -499,7 +499,7 @@ export class SynapseFormSubmissionGrid extends React.Component<
             title="More Information"
             content={
               <>
-                Please <Link href="mailto:ModelAD@iupui.edu">contact us</Link>{' '}
+                Please <Link href="mailto:ModelAD@iu.edu">contact us</Link>{' '}
                 for more information about your submission
               </>
             }
