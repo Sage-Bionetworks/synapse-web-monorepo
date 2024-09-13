@@ -89,7 +89,7 @@ import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorMo
 import SynapseChat from './components/SynapseChat/SynapseChat'
 import { version } from '../package.json'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
-
+import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
 // Also include scss in the bundle
 import './style/main.scss'
 
@@ -181,6 +181,7 @@ const SynapseComponents = {
   getCurrentCookiePreferences,
   EntityAclEditorModal,
   SynapseChat,
+  RejectProfileValidationRequestModal,
 }
 
 // Include the version in the build

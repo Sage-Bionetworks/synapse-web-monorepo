@@ -30,7 +30,7 @@ export type CannedRejectionDialogProps = {
   /* SynID of the table which contains the email responses which should populate this modal */
   tableId: string
   /* Callback invoked when the rejection is confirmed */
-  onReject: (message: string) => void
+  onConfirm: (message: string) => void
   onClose: () => void
   /** Text injected into the beginning of the email template */
   defaultMessagePrefix?: string
@@ -50,6 +50,7 @@ type RejectionCategoryProps = {
   rejectionReasonFormTextIndex: number
   selectedRowIds: Set<number>
   setSelectedRowIds: React.Dispatch<React.SetStateAction<Set<number>>>
+  initialIsExpanded?: boolean
 }
 
 type SelectRejectionReasonsFormProps = {
@@ -69,8 +70,9 @@ function RejectionCategory(props: RejectionCategoryProps) {
     selectedRowIds,
     setSelectedRowIds,
     rejectionReasonFormTextIndex,
+    initialIsExpanded = false,
   } = props
-  const [isExpanded, setIsExpanded] = React.useState(false)
+  const [isExpanded, setIsExpanded] = React.useState(initialIsExpanded)
 
   return (
     <>
@@ -175,6 +177,9 @@ function SelectRejectionReasonsForm(props: SelectRejectionReasonsFormProps) {
               selectedRowIds={selectedRowIds}
               setSelectedRowIds={setSelectedRowIds}
               rejectionReasonFormTextIndex={rejectionReasonFormTextIndex!}
+              initialIsExpanded={
+                Object.keys(rowsGroupedByCategory).length === 1
+              }
             />
           ))}
         </FormControl>
@@ -234,16 +239,14 @@ type RejectionMessageObject = {
  * The modal contains a form for selecting rejection reasons and a text field for editing the rejection message.
  * After crafting a message, the user can reject the submission and send the message to the requester.
  */
-export default function CannedRejectionDialog(
-  props: CannedRejectionDialogProps,
-) {
+export function CannedRejectionDialog(props: CannedRejectionDialogProps) {
   const {
     open,
     tableId,
     onClose,
-    onReject,
-    defaultMessagePrefix,
-    defaultMessageAppend,
+    onConfirm: onReject,
+    defaultMessagePrefix = '',
+    defaultMessageAppend = '',
     rejectionFormPromptCopy,
     children,
     error,
@@ -311,10 +314,16 @@ export default function CannedRejectionDialog(
     defaultEmailMessageObject &&
     defaultMessagePrefix +
       Object.keys(defaultEmailMessageObject).reduce((message, key) => {
+        message += '\n'
         const sectionText = defaultEmailMessageObject[key].sectionText
-        message += '\n' + sectionText + '\n'
+        if (sectionText) {
+          message += sectionText + '\n'
+        }
+
         for (const reason of defaultEmailMessageObject[key].reasons) {
-          message += '\n* ' + reason + '\n'
+          if (reason != null) {
+            message += '\n* ' + reason.replaceAll('\\n', '\n') + '\n'
+          }
         }
         return message
       }, '') +

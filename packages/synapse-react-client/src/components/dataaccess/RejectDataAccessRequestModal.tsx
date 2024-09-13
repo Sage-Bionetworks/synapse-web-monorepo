@@ -2,15 +2,15 @@ import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { useUpdateDataAccessSubmissionState } from '../../synapse-queries'
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
-import CannedRejectionDialog from '../CannedRejectionDialog/CannedRejectionDialog'
+import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
-const DEFAULT_MESSAGE_PREPEND =
+export const DEFAULT_MESSAGE_PREPEND =
   'Thank you for submitting your data access request.\n'
-const DEFAULT_MESSAGE_APPEND =
+export const DEFAULT_MESSAGE_APPEND =
   '\nIf you have questions, do not respond to this email address. Instead, reply to:\nact@sagebionetworks.org'
 
-const REJECTION_FORM_PROMPT_COPY =
+export const REJECTION_FORM_PROMPT_COPY =
   "You may wish to reject the user's data access request for a specific reason. The list below contains some common rejection reasons. You will have a chance to edit the response before submitting it, including adding any rejection reason(s) not listed here."
 
 export type RejectDataAccessRequestModalProps = {
@@ -63,7 +63,7 @@ export default function RejectDataAccessRequestModal(
     <CannedRejectionDialog
       open={open}
       tableId={tableId}
-      onReject={rejectSubmission}
+      onConfirm={rejectSubmission}
       onClose={onClose}
       defaultMessagePrefix={DEFAULT_MESSAGE_PREPEND}
       defaultMessageAppend={DEFAULT_MESSAGE_APPEND}
