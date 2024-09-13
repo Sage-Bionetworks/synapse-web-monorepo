@@ -30,3 +30,14 @@ export const Demo: Story = {
     isWizardMode: true,
   },
 }
+
+export const StopADDemo: Story = {
+  args: {
+    formSchemaEntityId: 'syn20680102',
+    fileNamePath: 'naming.compound_name',
+    formUiSchemaEntityId: 'syn20693568',
+    formNavSchemaEntityId: 'syn20680027',
+    formTitle: 'Your Submission',
+    formClass: 'drug-upload-tool',
+  },
+}
