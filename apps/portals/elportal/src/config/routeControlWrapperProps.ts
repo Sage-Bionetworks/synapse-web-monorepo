@@ -5,7 +5,6 @@ import {
   people,
   projects,
   publications,
-  species,
   studies,
 } from './synapseConfigs'
 import computationalTools from './synapseConfigs/computational_tools'
@@ -18,7 +17,6 @@ const routeControlWrapper: RouteControlWrapperProps = {
       synapseConfigArray: [individualsView],
     },
     { path: 'Projects', synapseConfigArray: [projects] },
-    { path: 'Species', synapseConfigArray: [species] },
     { path: 'Studies', synapseConfigArray: [studies] },
     { path: 'Publications', synapseConfigArray: [publications] },
     { path: 'Computational Tools', synapseConfigArray: [computationalTools] },

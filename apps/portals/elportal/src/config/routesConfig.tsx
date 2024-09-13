@@ -69,6 +69,23 @@ const routes: GenericRoute[] = [
           // summaryLink: '/Explore/Data',
         },
       },
+      {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          url: 'https://news.eliteportal.org',
+          itemsToShow: 3,
+          allowCategories: [],
+          // mailChimpListName: 'AMP-AD quarterly newsletter',
+          // mailChimpUrl:
+          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
+          filter: {
+            value: 'whats-new',
+          },
+        },
+      },
       // {
       //   name: 'FeaturedDataTabs',
       //   centerTitle: true,
@@ -136,6 +153,27 @@ const routes: GenericRoute[] = [
       //   },
       // },
 
+      {
+        name: 'Ecosystem',
+        title: 'Related Resources',
+        centerTitle: true,
+        subtitle: '',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          config: [
+            {
+              title: 'Data Repositories',
+              ownerId: 'syn27229419',
+              wikiId: '621470',
+            },
+            {
+              title: 'Cross-Species Research Resources',
+              ownerId: 'syn27229419',
+              wikiId: '621472',
+            },
+          ],
+        },
+      },
       //PORTALS-3208: Surface Our Partners (similar to NF)
       {
         name: 'CardContainerLogic',
@@ -164,27 +202,6 @@ const routes: GenericRoute[] = [
         },
       },
       {
-        name: 'Ecosystem',
-        title: 'Related Resources',
-        centerTitle: true,
-        subtitle: '',
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          config: [
-            {
-              title: 'Data Repositories',
-              ownerId: 'syn27229419',
-              wikiId: '621470',
-            },
-            {
-              title: 'Cross-Species Research Resources',
-              ownerId: 'syn27229419',
-              wikiId: '621472',
-            },
-          ],
-        },
-      },
-      {
         name: 'UserCardListRotate',
         title: 'Our People & Institutions',
         outsideContainerClassName: 'home-spacer home-bg-dark',
@@ -196,23 +213,6 @@ const routes: GenericRoute[] = [
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
           summaryLinkText: 'View All People',
-        },
-      },
-      {
-        name: 'RssFeedCards',
-        title: "What's New",
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          url: 'https://news.eliteportal.org',
-          itemsToShow: 3,
-          allowCategories: [],
-          // mailChimpListName: 'AMP-AD quarterly newsletter',
-          // mailChimpUrl:
-          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-          filter: {
-            value: 'whats-new',
-          },
         },
       },
     ],
@@ -297,10 +297,6 @@ const routes: GenericRoute[] = [
             ],
           },
         ],
-      },
-      {
-        path: 'Species',
-        hideRouteFromNavbar: false,
       },
       {
         path: 'Studies',
