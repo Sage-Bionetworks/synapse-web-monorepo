@@ -18,14 +18,7 @@ type RouteConfig = Record<Portal, RouteButtonsLinks>
 const routesConfig: RouteConfig = {
   adknowledgeportal: {
     buttons: ['Explore', 'Sign In'],
-    links: [
-      'Home',
-      'Analysis Platforms',
-      'Data Access',
-      'Contribute',
-      'News',
-      'Help',
-    ],
+    links: ['Analysis Platforms', 'Data Access', 'Contribute', 'News', 'Help'],
   },
   arkportal: {
     buttons: ['Explore', 'Sign In'],
