@@ -299,10 +299,6 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Species',
-        hideRouteFromNavbar: false,
-      },
-      {
         path: 'Studies',
         routes: [
           {
