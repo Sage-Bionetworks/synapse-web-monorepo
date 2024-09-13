@@ -10,7 +10,8 @@ export const computationalSql = 'SELECT * FROM syn51469335'
 export const upsetPlotSql = 'SELECT files, assay FROM syn51581771'
 export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
-export const partnersSql = 'SELECT * FROM syn62661043'
+export const partnersSql =
+  'SELECT * FROM syn62661043 order by organizationName desc'
 
 export const defaultSearchConfiguration = {
   fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',
