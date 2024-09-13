@@ -27,6 +27,7 @@ import {
   UserCardListRotateProps,
   UserCardProps,
   DynamicFormProps,
+  SharePageLinkButtonProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
@@ -176,6 +177,10 @@ type ARKWelcomePage = {
 type GenieHomePageHeader = {
   name: 'GenieHomePageHeader'
   props: undefined
+}
+type SharePageLinkButton = {
+  name: 'SharePageLinkButton'
+  props: SharePageLinkButtonProps
 }
 type SynapseComponentCollapse = {
   name: 'SynapseComponentCollapse'
@@ -388,6 +393,7 @@ export type SynapseConfig = (
   | TimelinePlot
   | DatasetJsonLdScript
   | DynamicForm
+  | SharePageLinkButton
 ) &
   Metadata
 

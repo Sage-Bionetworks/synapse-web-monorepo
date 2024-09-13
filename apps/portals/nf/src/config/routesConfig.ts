@@ -260,6 +260,22 @@ const routes: GenericRoute[] = [
                 path: '',
                 synapseConfigArray: [
                   {
+                    name: 'SharePageLinkButton',
+                    props: {
+                      buttonProps: {
+                        color: 'white',
+                        variant: 'text',
+                        sx: {
+                          position: 'absolute',
+                          top: '50px',
+                          right: '20px',
+                          zIndex: 100,
+                        },
+                      },
+                    },
+                    containerClassName: 'container-full-width',
+                  },
+                  {
                     name: 'CardContainerLogic',
                     isOutsideContainer: true,
                     props: {
