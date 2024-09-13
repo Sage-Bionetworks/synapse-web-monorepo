@@ -1,4 +1,9 @@
-import React, { KeyboardEventHandler, useEffect, useState } from 'react'
+import React, {
+  KeyboardEventHandler,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Box, List, IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
@@ -52,7 +57,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
   const {
-    data: sessionHistory,
+    data: sessionHistoryInfiniteData,
   } = //, hasNextPage: hasMoreSessionHistory, fetchNextPage: fetchNextSessionHistoryPage, isLoading: isSessionHistoryLoading } =
     useGetAgentChatSessionHistoryInfinite(
       {
@@ -62,6 +67,15 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
         enabled: !!agentSession,
       },
     )
+
+  const sessionHistory = useMemo(
+    () =>
+      sessionHistoryInfiniteData?.pages
+        .flatMap(page => page.page)
+        /* Note: session history is ordered from most recent to least recent in each page, so reverse the order when restoring the chat interface */
+        .reverse() ?? [],
+    [sessionHistoryInfiniteData],
+  )
 
   useEffect(() => {
     // when we have both a message and response, add a new interaction and reset
@@ -157,21 +171,14 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           }}
         >
           {sessionHistory &&
-            sessionHistory.pages.map(sessionHistoryResponse => {
-              {
-                /* Note: session history is ordered from most recent to least recent in each page, so reverse the order when restoring the chat interface */
-              }
-              return sessionHistoryResponse.page
-                .reverse()
-                .map((interaction, index) => {
-                  return (
-                    <SynapseChatInteraction
-                      key={index}
-                      userMessage={interaction.usersRequestText}
-                      chatResponseText={interaction.agentResponseText}
-                    />
-                  )
-                })
+            sessionHistory.map((interaction, index) => {
+              return (
+                <SynapseChatInteraction
+                  key={index}
+                  userMessage={interaction.usersRequestText}
+                  chatResponseText={interaction.agentResponseText}
+                />
+              )
             })}
           {interactions.map((interaction, index) => {
             return (
