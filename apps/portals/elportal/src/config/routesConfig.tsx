@@ -150,7 +150,7 @@ const routes: GenericRoute[] = [
             type: SynapseConstants.ORGANIZATION,
             description: 'summary',
             icon: 'abbreviation',
-            link: 'website',
+            link: 'organizationPath',
             thumbnailRequiresPadding: true,
             imageFileHandleColumnName: 'cardLogo',
           },
