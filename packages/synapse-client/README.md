@@ -31,3 +31,5 @@ npx openapi-generator-cli author template -g typescript-fetch
 Any template files that do not need to be modified or overridden can be deleted.
 Existing template customizations must then be re-implemented in the new templates. The complexity of this task depends on how drastically the templates have changed upstream.
 For this reason, we should limit the changes we make to templates, and clearly indicate the change and its impact.
+
+We also maintain tests that verify that any custom changes we make to the templates function as expected, which should pass after each upgrade.

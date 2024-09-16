@@ -1,9 +1,13 @@
 import minimist from 'minimist'
 import { request } from 'undici'
 import fs from 'fs'
-import path from 'path'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'node:url'
 
-const outputFile = path.resolve(__dirname, '../spec/openapispecification.json')
+const outputFile = path.resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../spec/openapispecification.json',
+)
 
 const STAGING_SPEC_URL =
   'http://dev.release.rest.doc.sagebase.org.s3-website-us-east-1.amazonaws.com/openapi/openapispecification.json'

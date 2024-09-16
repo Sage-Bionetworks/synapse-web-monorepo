@@ -28,8 +28,9 @@
     "vitest": "^1.6.0"
   },
   "scripts": {
-    "get-spec:staging": "npx tsx src/util/downloadSpec.ts --stack staging",
-    "get-spec:production": "npx tsx src/util/downloadSpec.ts --stack production",
+    "format-spec": "prettier --write src/spec/openapispecification.json",
+    "get-spec:staging": "npx tsx src/util/downloadSpec.ts --stack staging && pnpm format-spec",
+    "get-spec:production": "npx tsx src/util/downloadSpec.ts --stack production && pnpm format-spec",
     "get-spec": "pnpm get-spec:production",
     "configure": "openapi-generator-cli version-manager set 7.7.0",
     "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/util/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS ",
