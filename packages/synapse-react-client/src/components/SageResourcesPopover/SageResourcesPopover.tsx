@@ -1,46 +1,27 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Grid,
-  Popover,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import { ShowMore } from 'synapse-react-client'
+import { Box, Button, Grid, Popover, Typography, useTheme } from '@mui/material'
 import { useSourceAppConfigs } from '../../utils/hooks'
 
 export type SageResourcesPopoverProps = {
-  sourceAppConfigTableID: string
-  buttonProps?: ButtonProps
+  sourceAppConfigTableID?: string
+  anchorEl: HTMLElement | null
+  onClose: () => void
 }
 
 export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
-  sourceAppConfigTableID,
-  buttonProps,
+  sourceAppConfigTableID = 'syn45291362',
+  anchorEl,
+  onClose,
 }) => {
   const theme = useTheme()
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   const open = Boolean(anchorEl)
   const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
   return (
     <>
-      <Button variant="contained" {...buttonProps} onClick={handleClick}>
-        Portals
-      </Button>
       <Popover
         open={open}
         anchorEl={anchorEl}
-        onClose={handleClose}
+        onClose={onClose}
         sx={{ width: '90%', height: '90%' }}
         anchorOrigin={{
           vertical: 'bottom',
@@ -102,7 +83,12 @@ export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
                         },
                       }}
                     >
-                      <div onClick={() => window.open(config.appURL, '_blank')}>
+                      <div
+                        onClick={() => {
+                          window.open(config.appURL, '_blank')
+                          onClose()
+                        }}
+                      >
                         <Box
                           sx={{
                             pb: '10px',

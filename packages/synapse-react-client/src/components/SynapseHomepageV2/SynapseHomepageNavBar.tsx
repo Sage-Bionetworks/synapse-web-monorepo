@@ -16,6 +16,7 @@ import {
 import { useOneSageURL } from '../../utils/hooks'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { useSynapseContext } from '../../utils'
+import SageResourcesPopover from '../SageResourcesPopover'
 
 const LOGIN_LINK = '/LoginPlace:0'
 const DASHBOARD_LINK = '/Profile:v/projects/all'
@@ -63,17 +64,26 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
-  const resourcesLink = useOneSageURL('/sageresources')
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
 
   // mobile view nav bar menu
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+  const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
+    React.useState<null | HTMLElement>(null)
+  const handleClickMobileMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setMobileMenuAnchorEl(event.currentTarget)
   }
-  const handleClose = () => {
-    setAnchorEl(null)
+  const handleCloseMobileMenu = () => {
+    setMobileMenuAnchorEl(null)
+  }
+
+  // Portals dropdown
+  const [portalResourcesAnchorEl, setPortalResourcesAnchorEl] =
+    React.useState<HTMLElement | null>(null)
+  const handleClosePortalResources = () => {
+    setPortalResourcesAnchorEl(null)
   }
   return (
     <Box
@@ -105,8 +115,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
         >
           <Button
             sx={navTextButtonSx}
-            href={resourcesLink.toString()}
-            target="_blank"
+            onClick={event => setPortalResourcesAnchorEl(event.currentTarget)}
           >
             Portals
           </Button>
@@ -156,6 +165,10 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
           )}
         </Box>
       )}
+      <SageResourcesPopover
+        anchorEl={portalResourcesAnchorEl}
+        onClose={handleClosePortalResources}
+      />
       {isSmallView && (
         <Box
           sx={{
@@ -172,12 +185,12 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               borderRadius: '0',
               ml: '70px',
             }}
-            onClick={handleClick}
+            onClick={handleClickMobileMenu}
           >
             <MenuOutlined />
           </IconButton>
           <StyledMenu
-            anchorEl={anchorEl}
+            anchorEl={mobileMenuAnchorEl}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right',
@@ -187,8 +200,8 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               vertical: 'top',
               horizontal: 'right',
             }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
+            open={Boolean(mobileMenuAnchorEl)}
+            onClose={handleCloseMobileMenu}
             MenuListProps={{
               style: {
                 width: '100%',
@@ -197,7 +210,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             }}
           >
             <IconButton
-              onClick={handleClose}
+              onClick={handleCloseMobileMenu}
               sx={{
                 position: 'absolute',
                 top: 5,
@@ -213,9 +226,9 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             </IconButton>
             <StyledMenuItem
               sx={{ mt: '70px' }}
-              onClick={() => {
-                window.open(resourcesLink.toString(), '_blank')
-                handleClose()
+              onClick={event => {
+                setPortalResourcesAnchorEl(event.currentTarget)
+                handleCloseMobileMenu()
               }}
             >
               Portals
@@ -223,7 +236,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             <StyledMenuItem
               onClick={() => {
                 window.open('https://sagebionetworks.org/', '_blank')
-                handleClose()
+                handleCloseMobileMenu()
               }}
             >
               Sage Bionetworks
@@ -235,7 +248,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
                 sx={{ mt: '30px', color: 'secondary.main' }}
                 onClick={() => {
                   window.open(registrationLink.toString(), '_blank')
-                  handleClose()
+                  handleCloseMobileMenu()
                 }}
               >
                 Register Now
@@ -245,7 +258,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               <StyledMenuItem
                 sx={{ mb: '40px' }}
                 onClick={() => {
-                  handleClose()
+                  handleCloseMobileMenu()
                   gotoPlace(LOGIN_LINK)
                 }}
               >
@@ -256,7 +269,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               <StyledMenuItem
                 sx={{ mb: '40px', color: 'secondary.main' }}
                 onClick={() => {
-                  handleClose()
+                  handleCloseMobileMenu()
                   gotoPlace(DASHBOARD_LINK)
                 }}
               >

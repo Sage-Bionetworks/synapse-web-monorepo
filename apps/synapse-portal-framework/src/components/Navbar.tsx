@@ -18,6 +18,7 @@ import { useLogInDialogContext } from './LogInDialogContext'
 import { useHistory } from 'react-router-dom'
 import { RESPONSIVE_SIDE_PADDING } from '../utils'
 import { usePortalContext } from './PortalContext'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 type SynapseSettingLink = {
   text: string
@@ -49,7 +50,9 @@ function Navbar() {
   const isSignedIn = !!accessToken
   const history = useHistory()
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
-
+  const isPortalsDropdownEnabled = SynapseQueries.useGetFeatureFlag(
+    FeatureFlagEnum.PORTALS_DROPDOWN,
+  )
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = React.useRef<HTMLDivElement>(null)
 
@@ -151,7 +154,11 @@ function Navbar() {
   const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
     '/authenticated/myaccount',
   )
-
+  const [portalResourcesAnchorEl, setPortalResourcesAnchorEl] =
+    useState<HTMLElement | null>(null)
+  const handleClosePortalResources = () => {
+    setPortalResourcesAnchorEl(null)
+  }
   return (
     <React.Fragment>
       <Box
@@ -337,6 +344,22 @@ function Navbar() {
               className="nav-button nav-button-container center-content"
               to="/DownloadCart"
             />
+          )}
+          {isPortalsDropdownEnabled && (
+            <>
+              <a
+                className="nav-button nav-button-container center-content"
+                onClick={event =>
+                  setPortalResourcesAnchorEl(event.currentTarget)
+                }
+              >
+                Portals
+              </a>
+              <SynapseComponents.SageResourcesPopover
+                anchorEl={portalResourcesAnchorEl}
+                onClose={handleClosePortalResources}
+              />
+            </>
           )}
           {
             // we have to loop backwards due to css rendering of flex-direction: row-reverse
