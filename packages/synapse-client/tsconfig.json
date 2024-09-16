@@ -13,10 +13,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  },
   "include": ["src/**/*.ts"]
 }

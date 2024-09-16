@@ -1,4 +1,4 @@
-import { countBy, isEqual, upperFirst } from 'lodash'
+import { countBy, isEqual, upperFirst } from 'lodash-es'
 
 /**
  * Given a set of "shortened" canonical names, returns just those that are duplicated.
