@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
-import { STATIC_SOURCE_APP_CONFIG } from './useSourceAppConfigs'
+import { SynapseHookUtils } from 'synapse-react-client'
 
 export const TermsOfUseRightPanelText = () => {
   const sourceApp = useSourceApp()
   const sourceAppName = sourceApp?.friendlyName
-  const synapseAppName = STATIC_SOURCE_APP_CONFIG.friendlyName
+  const synapseAppName = SynapseHookUtils.STATIC_SOURCE_APP_CONFIG.friendlyName
   return (
     <>
       <Typography variant="headline2">What is the Synapse Pledge?</Typography>

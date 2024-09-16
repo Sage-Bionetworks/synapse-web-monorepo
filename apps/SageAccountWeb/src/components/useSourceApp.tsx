@@ -1,13 +1,13 @@
 import { sourceAppConfigTableID } from '../resources'
 import { SourceAppConfig } from './SourceAppConfigs'
-import {
-  STATIC_SOURCE_APP_CONFIG,
-  useSourceAppConfigs,
-} from './useSourceAppConfigs'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { getSearchParam } from '../URLUtils'
 import { useLocalStorageValue } from '@react-hookz/web'
-import { SynapseTheme, useLastLoginInfoState } from 'synapse-react-client'
+import {
+  SynapseHookUtils,
+  SynapseTheme,
+  useLastLoginInfoState,
+} from 'synapse-react-client'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { sageAccountWebThemeOverrides } from '../style/theme'
 
@@ -21,7 +21,7 @@ export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
  * This must be exported to use the context in class components.
  */
 export const SourceAppContext = React.createContext<SourceAppContextType>(
-  STATIC_SOURCE_APP_CONFIG,
+  SynapseHookUtils.STATIC_SOURCE_APP_CONFIG,
 )
 
 export type SourceAppContextProviderProps = React.PropsWithChildren<{
@@ -77,10 +77,12 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const sourceAppId = idFromProps ?? idFromLocalStorage
 
-  const sourceAppConfigs = useSourceAppConfigs()
+  const sourceAppConfigs = SynapseHookUtils.useSourceAppConfigs(
+    sourceAppConfigTableID,
+  )
   const defaultSageSourceApp =
     sourceAppConfigs?.find(config => config.appId === SYNAPSE_SOURCE_APP_ID) ??
-    STATIC_SOURCE_APP_CONFIG
+    SynapseHookUtils.STATIC_SOURCE_APP_CONFIG
 
   // PORTALS-2746: Find target source app.  Fallback to synapse.org source app if target not found.
   const sourceApp = sourceAppConfigs?.find(
@@ -125,7 +127,7 @@ export function useSourceApp(): SourceAppContextType {
   const context = useContext(SourceAppContext)
   if (context === undefined) {
     console.error('useSourceApp must be used within a SourceAppProvider')
-    return STATIC_SOURCE_APP_CONFIG
+    return SynapseHookUtils.STATIC_SOURCE_APP_CONFIG
   }
   return context
 }

@@ -1,13 +1,20 @@
-import { SourceAppConfig } from './SourceAppConfigs'
 import { PaletteOptions } from '@mui/material'
 import React from 'react'
-import {
-  Palettes,
-  SynapseConstants,
-  SynapseQueries,
-} from 'synapse-react-client'
-import SourceAppImage from './SourceAppImage'
-import { sourceAppConfigTableID } from '../resources'
+import SourceAppImage from '../../components/SourceAppImage'
+import Palettes from '../../theme/palette/Palettes'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
+import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
+
+export type SourceAppConfig = {
+  appId: string // app ID used in the query params
+  appURL: string // URL that points to the production version of this app
+  friendlyName: string
+  logo: JSX.Element
+  palette: PaletteOptions
+  description: string
+  requestAffiliation: boolean // If set to true, a special screen is shown requesting the user to fill out UserProfile.company
+  isPublicized: boolean // If set to true, this will be included in the list of the available Sage Resources
+}
 
 // A static SourceAppConfig to use as a fallback in case the request to get source app configs fails
 export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
@@ -21,17 +28,18 @@ export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
   palette: { ...Palettes.palette },
 }
 
-export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
-  const { data: tableQueryResult } =
-    SynapseQueries.useGetQueryResultBundleWithAsyncStatus({
-      entityId: sourceAppConfigTableID,
-      query: {
-        sql: `SELECT * FROM ${sourceAppConfigTableID}`,
-        limit: 75,
-      },
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    })
+export const useSourceAppConfigs = (
+  sourceAppConfigTableID: string,
+): SourceAppConfig[] | undefined => {
+  const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus({
+    entityId: sourceAppConfigTableID,
+    query: {
+      sql: `SELECT * FROM ${sourceAppConfigTableID}`,
+      limit: 75,
+    },
+    partMask: BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  })
   const rowSet = tableQueryResult?.responseBody?.queryResult?.queryResults
   // transform row data to SourceAppConfig[]
   const headers = rowSet?.headers
@@ -69,7 +77,11 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
     const fileHandleId = rowVals[logoFileHandleColIndex]
     const friendlyName = rowVals[friendlyNameColIndex] ?? ''
     const logo = (
-      <SourceAppImage fileHandleId={fileHandleId} friendlyName={friendlyName} />
+      <SourceAppImage
+        sourceAppConfigTableID={sourceAppConfigTableID}
+        fileHandleId={fileHandleId}
+        friendlyName={friendlyName}
+      />
     )
     const appPalette: PaletteOptions = {
       ...Palettes.palette,
