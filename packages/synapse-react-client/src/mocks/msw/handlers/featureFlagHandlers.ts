@@ -8,6 +8,7 @@ const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = {
   [FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS]: false,
   [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]: false,
   [FeatureFlagEnum.HOMEPAGE_CHATBOT]: false,
+  [FeatureFlagEnum.PORTALS_DROPDOWN]: false,
 }
 
 type FeatureFlagHandlerOptions = {
