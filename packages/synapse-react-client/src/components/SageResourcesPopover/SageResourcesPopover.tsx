@@ -33,7 +33,7 @@ export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
   const open = Boolean(anchorEl)
   const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
   return (
-    <div>
+    <>
       <Button variant="contained" {...buttonProps} onClick={handleClick}>
         Portals
       </Button>
@@ -41,6 +41,7 @@ export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
+        sx={{ width: '90%', height: '90%' }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
@@ -50,84 +51,84 @@ export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
           horizontal: 'center',
         }}
       >
-        <Box
-          sx={{
-            px: { xs: '0px', sm: theme.spacing(8) },
-            paddingTop: { xs: '0px', sm: theme.spacing(8) },
-            position: 'relative',
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: '#3959790D',
-              padding: '30px',
-              marginBottom: '40px',
-            }}
-          >
-            <Typography
-              variant="headline1"
-              sx={{ paddingBottom: '30px', fontWeight: 500 }}
-            >
-              Portals
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ paddingBottom: '30px', fontWeight: 500 }}
-            >
-              Community data portals in Sage Bionetworks serve as specialized
-              platforms designed to facilitate open data sharing and
-              collaboration among researchers.
-            </Typography>
-            <Button
-              type="button"
-              color="primary"
-              variant="contained"
-              sx={{
-                padding: '10px 50px',
-                marginTop: '30px',
-                height: '100%',
-                '&:hover': { color: 'white' },
-              }}
-              href="https://accounts.synapse.org/sageresources"
-            >
-              See All Solutions
-            </Button>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            px: theme.spacing(8),
-            py: theme.spacing(0),
-          }}
-        >
-          <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
-            {sourceAppConfigs?.map(config => {
-              if (config.isPublicized) {
-                return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    lg={4}
-                    className="sourceAppItem"
-                    key={config.appId}
-                  >
-                    <a href={config.appURL}>{config.logo}</a>
-                    <Typography
-                      variant="body1"
-                      sx={{ paddingBottom: '30px', fontWeight: 500 }}
-                    >
-                      <ShowMore summary={config.description} />
-                    </Typography>
-                  </Grid>
-                )
-              } else {
-                return false
-              }
-            })}
+        <Grid container spacing={2} sx={{ p: '24px' }}>
+          <Grid item xs={12} lg={3}>
+            <Box sx={{ p: theme.spacing(4), pr: '5px' }}>
+              <Typography
+                variant="headline1"
+                sx={{ fontSize: '40px', pb: '30px', fontWeight: 600 }}
+              >
+                Portals
+              </Typography>
+              <Typography variant="body1" sx={{ pb: '10px', fontWeight: 500 }}>
+                Community data portals in Sage Bionetworks serve as specialized
+                platforms designed to facilitate open data sharing and
+                collaboration among researchers.
+              </Typography>
+              <Button
+                type="button"
+                color="primary"
+                variant="contained"
+                sx={{
+                  p: '10px 50px',
+                  mt: '30px',
+                  height: '100%',
+                  '&:hover': { color: 'white' },
+                }}
+                href="https://accounts.synapse.org/sageresources"
+              >
+                See All Solutions
+              </Button>
+            </Box>
           </Grid>
-        </Box>
+          <Grid item xs={12} lg={9}>
+            <Grid container>
+              {sourceAppConfigs?.map(config => {
+                if (config.isPublicized) {
+                  return (
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      lg={4}
+                      className="sourceAppItem"
+                      key={config.appId}
+                      sx={{
+                        p: '30px',
+                        border: '1px solid #F1F3F5',
+                        '&:hover': {
+                          backgroundColor: '#d7dee433',
+                          cursor: 'pointer',
+                        },
+                      }}
+                    >
+                      <div onClick={() => window.open(config.appURL, '_blank')}>
+                        <Box
+                          sx={{
+                            pb: '10px',
+                            img: {
+                              maxHeight: '50px',
+                              height: '50px',
+                              maxWidth: '100%',
+                            },
+                          }}
+                        >
+                          {config.logo}
+                        </Box>
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                          {config.shortDescription}
+                        </Typography>
+                      </div>
+                    </Grid>
+                  )
+                } else {
+                  return false
+                }
+              })}
+            </Grid>
+          </Grid>
+        </Grid>
       </Popover>
-    </div>
+    </>
   )
 }

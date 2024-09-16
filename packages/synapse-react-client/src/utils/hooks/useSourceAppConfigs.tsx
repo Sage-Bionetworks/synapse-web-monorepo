@@ -14,6 +14,7 @@ export type SourceAppConfig = {
   description: string
   requestAffiliation: boolean // If set to true, a special screen is shown requesting the user to fill out UserProfile.company
   isPublicized: boolean // If set to true, this will be included in the list of the available Sage Resources
+  shortDescription: string
 }
 
 // A static SourceAppConfig to use as a fallback in case the request to get source app configs fails
@@ -26,6 +27,7 @@ export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
   logo: <></>,
   isPublicized: true,
   palette: { ...Palettes.palette },
+  shortDescription: '',
 }
 
 export const useSourceAppConfigs = (
@@ -70,6 +72,9 @@ export const useSourceAppConfigs = (
   const isPublicizedColIndex = headers?.findIndex(
     selectColumn => selectColumn.name == 'isPublicized',
   )!
+  const shortDescriptionColIndex = headers?.findIndex(
+    selectColumn => selectColumn.name == 'shortDescription',
+  )!
 
   const rows = rowSet?.rows
   return rows?.map(row => {
@@ -100,6 +105,7 @@ export const useSourceAppConfigs = (
       logo,
       isPublicized: rowVals[isPublicizedColIndex] == 'true' ?? true,
       palette: appPalette,
+      shortDescription: rowVals[shortDescriptionColIndex] ?? '',
     }
     return sourceAppConfig
   })
