@@ -13,6 +13,7 @@ export type UserOrTeamBadgeProps = {
   showFullName?: boolean
   disableHref?: boolean
   showCardOnHover?: boolean
+  openLinkInNewTab?: boolean
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
@@ -22,6 +23,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     showCardOnHover,
     showFullName,
     userGroupHeader: providedUserGroupHeader,
+    openLinkInNewTab,
   } = props
 
   if (principalId == null) {
@@ -51,6 +53,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
         disableLink={disableHref}
         showFullName={showFullName}
         showCardOnHover={showCardOnHover}
+        openLinkInNewTab={openLinkInNewTab}
       />
     )
   } else {
@@ -59,6 +62,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
         teamId={principalId!}
         teamName={userGroupHeader.userName}
         disableHref={disableHref}
+        openLinkInNewTab={openLinkInNewTab}
       />
     )
   }

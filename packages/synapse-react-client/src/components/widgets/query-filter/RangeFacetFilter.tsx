@@ -6,12 +6,11 @@ import {
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RangeValues } from '../Range'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../../QueryWrapper/QueryWrapper'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { isNumber } from 'lodash-es'
 import { RangeFacetFilterUI } from './RangeFacetFilterUI'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
@@ -30,11 +29,17 @@ export type RangeFacetFilterProps = {
 
 export function RangeFacetFilter(props: RangeFacetFilterProps) {
   const { facetResult, hideCollapsible = false } = props
-  const data = useAtomValue(tableQueryDataAtom)
-  const { setRangeFacetValue, removeSelectedFacet, getCurrentQueryRequest } =
-    useQueryContext()
-  const columnModel = data?.columnModels
-    ? getCorrespondingColumnForFacet(facetResult, data.columnModels)
+  const {
+    setRangeFacetValue,
+    removeSelectedFacet,
+    getCurrentQueryRequest,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
+
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+
+  const columnModel = queryMetadata.columnModels
+    ? getCorrespondingColumnForFacet(facetResult, queryMetadata.columnModels)
     : undefined
 
   const { getColumnDisplayName } = useQueryVisualizationContext()

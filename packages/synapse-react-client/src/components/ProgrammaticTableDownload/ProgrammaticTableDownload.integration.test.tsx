@@ -14,9 +14,9 @@ import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
 } from './ProgrammaticTableDownload'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { SynapseConstants } from '../../index'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const onHide = jest.fn()
 
@@ -69,6 +69,22 @@ describe('ProgrammaticOptions tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
+  it('Successfully transform sql', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+    registerTableQueryResult(queryBundleRequest.query, {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      combinedSql: COMBINED_SQL_RESULT,
+    })
+
+    renderComponent({
+      onHide,
+      queryBundleRequest,
+    })
+
+    const dialog = await screen.findByRole('dialog')
+    await within(dialog).findByText(COMBINED_SQL_RESULT, { exact: false })
+  })
+
   it('Query errors are thrown to error boundary', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {})
     server.use(...getErrorMSWHandler())
@@ -81,23 +97,5 @@ describe('ProgrammaticOptions tests', () => {
     await within(errorBoundary).findByText('Unable to start query', {
       exact: false,
     })
-  })
-
-  it('Successfully transform sql', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {})
-    server.use(
-      ...getHandlersForTableQuery({
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-        combinedSql: COMBINED_SQL_RESULT,
-      }),
-    )
-
-    renderComponent({
-      onHide,
-      queryBundleRequest,
-    })
-
-    const dialog = await screen.findByRole('dialog')
-    await within(dialog).findByText(COMBINED_SQL_RESULT, { exact: false })
   })
 })

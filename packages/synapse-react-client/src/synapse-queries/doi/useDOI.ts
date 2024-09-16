@@ -1,4 +1,4 @@
-import { DoiAssociation } from '@sage-bionetworks/synapse-types'
+import { Doi, DoiAssociation } from '@sage-bionetworks/synapse-types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -26,5 +26,21 @@ export function useGetDOIAssociation(
         versionNumber,
         objectType,
       ),
+  })
+}
+
+export function useGetDOI(
+  objectId: string,
+  versionNumber?: number,
+  objectType = 'ENTITY',
+  options?: Partial<UseQueryOptions<Doi | null, SynapseClientError>>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDOIQueryKey(objectType, objectId, versionNumber),
+
+    queryFn: () =>
+      SynapseClient.getDOI(accessToken, objectId, versionNumber, objectType),
   })
 }

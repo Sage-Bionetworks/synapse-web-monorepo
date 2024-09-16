@@ -1,10 +1,8 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import {
   DownloadConfirmationUI,
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
-import { SynapseContextConsumer, SynapseContextProvider } from '../../index'
 import { fn } from '@storybook/test'
 
 const meta: Meta<DownloadConfirmationUIProps & { isAuthenticated: boolean }> = {
@@ -17,27 +15,10 @@ const meta: Meta<DownloadConfirmationUIProps & { isAuthenticated: boolean }> = {
     },
   },
   args: {
+    isAuthenticated: true,
     onAddToDownloadCart: fn(),
     onCancel: fn(),
   },
-  decorators: [
-    (Story, args) => (
-      <SynapseContextConsumer>
-        {context => (
-          <SynapseContextProvider
-            synapseContext={{
-              ...context,
-              accessToken: args.isAuthenticated
-                ? context.accessToken ?? 'fake token'
-                : undefined,
-            }}
-          >
-            <Story />
-          </SynapseContextProvider>
-        )}
-      </SynapseContextConsumer>
-    ),
-  ],
 }
 export default meta
 type Story = StoryObj<typeof meta>

@@ -19,6 +19,8 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
+  AGENT_SESSION,
+  AGENT_SESSION_HISTORY,
   ALIAS_AVAILABLE,
   ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
@@ -28,6 +30,7 @@ import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  DOI,
   DOI_ASSOCIATION,
   ENTITY,
   ENTITY_ACCESS,
@@ -51,7 +54,9 @@ import {
   FILE_HANDLE_BATCH,
   FORUM,
   FORUM_THREAD,
+  GET_CHAT_ASYNC,
   INVITEE_VERIFICATION_SIGNED_TOKEN,
+  LIST_AGENT_SESSIONS,
   MEMBERSHIP_INVITATION,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
@@ -65,6 +70,7 @@ import {
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
   SIGN_TERMS_OF_USE,
+  START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
   TEAM,
@@ -84,6 +90,7 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
+  VERIFICATION_SUBMISSION_STATE,
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
   WIKI_PAGE_ID,
@@ -156,6 +163,7 @@ import {
   DiscussionThreadBundle,
   DiscussionThreadOrder,
   DockerCommit,
+  Doi,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -253,6 +261,8 @@ import {
   ResearchProject,
   ResponseMessage,
   RestrictableObjectDescriptor,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   SearchQuery,
@@ -305,6 +315,15 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
+  CreateAgentSessionRequest,
+  AgentSession,
+  ListAgentSessionsRequest,
+  ListAgentSessionsResponse,
+  AgentChatRequest,
+  AgentChatResponse,
+  SessionHistoryResponse,
+  SessionHistoryRequest,
+  VerificationState,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -510,11 +529,6 @@ export const getQueryTableAsyncJobResults = async (
     result: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ): Promise<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>> => {
-  console.log(
-    `Querying ${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
-      queryBundleRequest.entityId
-    }`,
-  )
   const asyncJobId = await doPost<AsyncJobId>(
     TABLE_QUERY_ASYNC_START(queryBundleRequest.entityId),
     queryBundleRequest,
@@ -1163,6 +1177,30 @@ export const getEntityHeader = async (
 }
 
 /**
+ * Create a new Access Control List (ACL), overriding inheritance.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/POST/entity/id/acl.html
+ */
+export const createEntityACL = (
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPost<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Update an Entity's ACL
  * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
  * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
@@ -1174,6 +1212,30 @@ export const updateEntityACL = (
   return doPut<AccessControlList>(
     ENTITY_ACL(acl.id),
     acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Delete the Access Control List (ACL) for a given Entity.
+ *
+ * By default, Entities such as FileEntity and Folder inherit their permission from their containing Project. For such
+ * Entities the Project is the Entity's 'benefactor'. This permission inheritance can be overridden by creating an ACL
+ * for the Entity. When this occurs the Entity becomes its own benefactor and all permission are determined by its own ACL.
+ *
+ * If the ACL of an Entity is deleted, then its benefactor will automatically be set to its parent's benefactor. The ACL
+ * for a Project cannot be deleted.
+ *
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const deleteEntityACL = (
+  id: string,
+  accessToken: string | undefined = undefined,
+): Promise<void> => {
+  return doDelete(
+    ENTITY_ACL(id),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1963,7 +2025,12 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
 }
 
 export const signOut = async () => {
-  const accessToken = await getAccessTokenFromCookie()
+  let accessToken = undefined
+  try {
+    accessToken = await getAccessTokenFromCookie()
+  } catch (e) {
+    console.warn('Could not get the access token from the cookie', e)
+  }
   if (accessToken) {
     try {
       // This call may fail if the token was already revoked, so just log any encountered errors
@@ -3135,6 +3202,24 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Retrieve restriction information on a batch of restrictable object, limited to a maximum of 50 object ids
+ *
+ * https://repo-prod.prod.sagebase.org/repo/v1/restrictionInformation/batch
+ */
+export const getRestrictionInformationBatch = (
+  request: RestrictionInformationBatchRequest,
+  accessToken: string | undefined,
+): Promise<RestrictionInformationBatchResponse> => {
+  return doPost(
+    `/repo/v1/restrictionInformation/batch`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Returns a paginated result of access requirements associated for an entity
  *
@@ -4232,6 +4317,20 @@ export const createProfileVerificationSubmission = (
   )
 }
 
+// https://rest-docs.synapse.org/rest/POST/verificationSubmission/id/state.html
+export function updateVerificationSubmissionState(
+  id: string,
+  verificationState: Pick<VerificationState, 'state' | 'reason' | 'notes'>,
+  accessToken: string,
+): Promise<void> {
+  return doPost<void>(
+    VERIFICATION_SUBMISSION_STATE(id),
+    verificationState,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 // https://rest-docs.synapse.org/rest/POST/user/changePassword.html
 export const changePassword = (
   request:
@@ -5093,12 +5192,39 @@ export function getDOIAssociation(
   params.set('type', objectType)
   params.set('id', objectId)
   if (objectVersion) {
-    params.set('type', objectVersion.toString())
+    params.set('version', objectVersion.toString())
   }
 
   return allowNotFoundError(() =>
     doGet<DoiAssociation>(
       `${DOI_ASSOCIATION}?${params.toString()}`,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
+  )
+}
+
+/**
+ *Retrieves the DOI for the object and its associated DOI metadata. Note: this call calls an external API, which may impact performance To just retrieve the DOI association, see: GET /doi/association
+ *
+ * https://rest-docs.synapse.org/rest/GET/doi.html
+ */
+export function getDOI(
+  accessToken: string | undefined,
+  objectId: string,
+  objectVersion?: number,
+  objectType = 'ENTITY',
+): Promise<Doi | null> {
+  const params = new URLSearchParams()
+  params.set('type', objectType)
+  params.set('id', objectId)
+  if (objectVersion) {
+    params.set('version', objectVersion.toString())
+  }
+
+  return allowNotFoundError(() =>
+    doGet<Doi>(
+      `${DOI}?${params.toString()}`,
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
@@ -5288,12 +5414,12 @@ export async function getAnnotationColumnModels(
   return getAllOfNextPageTokenPaginatedService(fn)
 }
 
-export async function sendMessage(
+const getMessageToUser = async (
   recipients: string[],
   subject: string,
   body: string,
   accessToken: string,
-): Promise<MessageToUser> {
+) => {
   const cleanedMessageBody = xss(body, xssOptions)
   const uploadedFileResult = await uploadFile(
     accessToken,
@@ -5309,11 +5435,101 @@ export async function sendMessage(
     )}SignedToken:`,
     fileHandleId: uploadedFileResult.fileHandleId,
   }
+  return messageToUser
+}
+
+export async function sendMessage(
+  recipients: string[],
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser(
+    recipients,
+    subject,
+    body,
+    accessToken,
+  )
 
   return doPost<MessageToUser>(
     `${REPO}/message`,
     messageToUser,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function sendMessageToEntityOwner(
+  entityId: string,
+  subject: string,
+  body: string,
+  accessToken: string,
+): Promise<MessageToUser> {
+  const messageToUser = await getMessageToUser([], subject, body, accessToken)
+
+  return doPost<MessageToUser>(
+    `${REPO}/entity/${entityId}/message`,
+    messageToUser,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const createAgentSession = (
+  request: CreateAgentSessionRequest,
+  accessToken: string | undefined = undefined,
+): Promise<AgentSession> => {
+  return doPost<AgentSession>(
+    AGENT_SESSION,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const listAgentSessions = (
+  request: ListAgentSessionsRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ListAgentSessionsResponse> => {
+  return doPost<ListAgentSessionsResponse>(
+    LIST_AGENT_SESSIONS,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getAgentChatAsyncJobResults = async (
+  request: AgentChatRequest,
+  accessToken?: string,
+  setCurrentAsyncStatus?: (
+    result: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
+  ) => void,
+): Promise<AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    START_CHAT_ASYNC,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultFromJobId<AgentChatRequest, AgentChatResponse>(
+    asyncJobId.token,
+    GET_CHAT_ASYNC(asyncJobId.token),
+    accessToken,
+    setCurrentAsyncStatus,
+  )
+}
+
+export const getSessionHistory = (
+  request: SessionHistoryRequest,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<SessionHistoryResponse> => {
+  return doPost<SessionHistoryResponse>(
+    AGENT_SESSION_HISTORY(request.sessionId),
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
   )
 }

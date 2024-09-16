@@ -60,6 +60,7 @@ const Versions: React.FunctionComponent = () => {
     <>
       {(deployDate || buildDate) && (
         <Tooltip
+          placement="top"
           title={
             <div style={{ textAlign: 'center' }}>
               {buildDate && <>Built: {buildDate}</>}
@@ -70,13 +71,13 @@ const Versions: React.FunctionComponent = () => {
         >
           <span>
             <a
-              className="Versions footer-item"
+              className="Versions"
               target="_blank"
               rel="noopener noreferrer"
               href="https://github.com/Sage-Bionetworks/synapse-web-monorepo"
               style={{ opacity: 0.6 }}
             >
-              VERSION
+              Version Number
             </a>
           </span>
         </Tooltip>

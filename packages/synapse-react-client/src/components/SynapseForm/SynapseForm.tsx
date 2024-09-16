@@ -21,6 +21,9 @@ import SummaryTable from './SummaryTable'
 import WarningDialog from './WarningDialog'
 import Switch from 'react-switch'
 import { Prompt } from 'react-router-dom'
+import SynapseFormRadioWidget from './SynapseFormRadioWidget'
+import SynapseFormCheckboxWidget from './SynapseFormCheckboxWidget'
+import SynapseFormCheckboxesWidget from './SynapseFormCheckboxesWidget'
 
 export interface IFormData {
   [key: string]: {
@@ -937,6 +940,11 @@ export default class SynapseForm extends React.Component<
                     disabled={
                       this.state.currentStep.excluded || this.state.isSubmitted
                     }
+                    widgets={{
+                      CheckboxWidget: SynapseFormCheckboxWidget,
+                      CheckboxesWidget: SynapseFormCheckboxesWidget,
+                      RadioWidget: SynapseFormRadioWidget,
+                    }}
                   >
                     <div style={{ display: 'none' }}>
                       <button type="submit" ref={this.submitButtonRef}></button>

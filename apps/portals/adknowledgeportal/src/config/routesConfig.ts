@@ -25,6 +25,25 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 const routes: GenericRoute[] = [
   {
     path: '',
+    exact: false,
+    synapseConfigArray: [
+      {
+        name: 'SurveyToast',
+        props: {
+          localStorageKey:
+            'org.sagebionetworks.security.cookies.portal.adkpsurvey.dismissed',
+          title:
+            'What Metrics Matter to You? Help Us Improve the AD Knowledge Portal!',
+          description:
+            'Take our quick survey and share your feedback to make the portal even better. Your input will directly impact the data and insights we provide.',
+          surveyURL:
+            'https://docs.google.com/forms/d/e/1FAIpQLScpWL2N3LGQlNcqKRXQ-qST-UPKngutNkvbhPVkozD7cQR8-g/viewform',
+        },
+      },
+    ],
+  },
+  {
+    path: '',
     hideRouteFromNavbar: true,
     exact: true,
     synapseConfigArray: [

@@ -1,4 +1,4 @@
-import { Alert, Button, Skeleton, Typography } from '@mui/material'
+import { Alert, Button, Checkbox, Skeleton, Typography } from '@mui/material'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import BaseTable, {
   AutoResizer,
@@ -45,7 +45,6 @@ import { VersionSelectionType } from '../../EntityFinder/VersionSelectionType'
 import { BlockingLoader } from '../../LoadingScreen/LoadingScreen'
 import WarningDialog from '../../SynapseForm/WarningDialog'
 import { displayToast } from '../../ToastMessage'
-import { Checkbox } from '../../widgets/Checkbox'
 import WideButton from '../../../components/styled/WideButton'
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
@@ -440,9 +439,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }}
       >
         <Checkbox
-          label="Select All"
-          hideLabel={true}
-          className="SRC-pointer-events-none"
+          inputProps={{ 'aria-label': 'Select All' }}
           checked={isChecked}
           disabled={datasetToUpdate.items.length === 0}
           onChange={() => {

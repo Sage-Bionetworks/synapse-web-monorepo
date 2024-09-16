@@ -8,10 +8,16 @@ import { InfoOutlined } from '@mui/icons-material'
 import Switch from 'react-switch'
 import { useTheme } from '@mui/material'
 
+const EXPERIMENTAL_MODE_SWITCH_ID = 'experimental-mode'
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
-const ExperimentalMode: React.FC = () => {
+export type ExperimentalModeProps = {
+  onExperimentalModeToggle?: (newValue: boolean) => void
+}
+const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
+  onExperimentalModeToggle,
+}) => {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()
@@ -31,17 +37,29 @@ const ExperimentalMode: React.FC = () => {
   const createExperimentalModeCookie = () => {
     cookies.set(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     setIsExperimentalModeOn(true)
+    if (onExperimentalModeToggle) {
+      onExperimentalModeToggle(true)
+    }
   }
 
   const deleteExperimentalModeCookie = () => {
     // cookie.remove requires to re-calculate date obj each time, this is more straightforward
     document.cookie = `${EXPERIMENTAL_MODE_COOKIE}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`
     setIsExperimentalModeOn(false)
+    if (onExperimentalModeToggle) {
+      onExperimentalModeToggle(false)
+    }
   }
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Typography variant="body1">Experimental Mode</Typography>
+      <Typography
+        component={'label'}
+        variant="body1"
+        htmlFor={EXPERIMENTAL_MODE_SWITCH_ID}
+      >
+        Experimental Mode
+      </Typography>
       <Tooltip title={experimentalModeText} arrow placement="top">
         <IconButton
           aria-label="info"
@@ -52,6 +70,7 @@ const ExperimentalMode: React.FC = () => {
         </IconButton>
       </Tooltip>
       <Switch
+        id={EXPERIMENTAL_MODE_SWITCH_ID}
         width={35}
         height={20}
         onColor={theme.palette.secondary.main}

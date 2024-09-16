@@ -1113,6 +1113,52 @@ describe('useImmutableTableQuery tests', () => {
     jest.useRealTimers()
   })
 
+  it('allows resetting the debounce timer', () => {
+    jest.useFakeTimers()
+    const onQueryChange = jest.fn()
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        onQueryChange,
+      }),
+    )
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+
+    const newQuery = cloneDeep(options.initQueryRequest)
+    newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
+
+    // Call under test - change the query
+    act(() => {
+      result.current.setQuery(newQuery, { debounce: true })
+    })
+    expect(onQueryChange).not.toHaveBeenCalled()
+
+    act(() => {
+      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+    })
+    // Still should not have been committed
+    expect(onQueryChange).not.toHaveBeenCalled()
+
+    act(() => {
+      result.current.resetDebounceTimer()
+    })
+    // Timer is reset, so advancing again by half the delay should not commit
+    act(() => {
+      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+    })
+    expect(onQueryChange).not.toHaveBeenCalled()
+
+    // Finish the timer
+    act(() => {
+      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+    })
+
+    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
+
+    jest.useRealTimers()
+  })
+
   it('commits changes only when explicitly committed when noCommit', () => {
     jest.useFakeTimers()
     const onQueryChange = jest.fn()

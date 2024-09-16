@@ -18,4 +18,5 @@ export type UserEntityPermissions = {
   canModerate: boolean
   isCertificationRequired: boolean
   isEntityOpenData: boolean
+  isUserDataContributor: boolean
 }

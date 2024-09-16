@@ -69,6 +69,7 @@ export const AccessRequirementAclEditor = React.forwardRef(
       addResourceAccessItem,
       updateResourceAccessItem,
       removeResourceAccessItem,
+      resetDirtyState,
     } = useUpdateAcl({
       onChange: () => setError(null),
       onError: setError,
@@ -77,6 +78,7 @@ export const AccessRequirementAclEditor = React.forwardRef(
     // set resourceAccessList when the fetched acl changes
     useEffect(() => {
       if (originalAcl) {
+        resetDirtyState()
         setResourceAccessList(originalAcl.resourceAccess)
       }
     }, [originalAcl, setResourceAccessList])
@@ -164,13 +166,15 @@ export const AccessRequirementAclEditor = React.forwardRef(
           resourceAccessList={resourceAccessList}
           availablePermissionLevels={availablePermissionLevels}
           isLoading={isLoadingOriginalAcl}
-          isInEditMode={true}
+          canEdit={true}
           emptyText={EMPTY_RESOURCE_ACCESS_LIST_TEXT}
           onAddPrincipalToAcl={id =>
             addResourceAccessItem(id, [ACCESS_TYPE.REVIEW_SUBMISSIONS])
           }
           updateResourceAccessItem={updateResourceAccessItem}
           removeResourceAccessItem={removeResourceAccessItem}
+          showAddRemovePublicButton={false}
+          showNotifyCheckbox={false}
         />
         {error && <Alert severity="error">{error}</Alert>}
       </Stack>

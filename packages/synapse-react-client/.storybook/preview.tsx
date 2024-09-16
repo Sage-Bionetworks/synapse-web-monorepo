@@ -1,5 +1,5 @@
 import React from 'react'
-import '../demo/style/DemoStyle.scss'
+import '../stories/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
@@ -27,6 +27,7 @@ import {
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
+import { Decorator } from '@storybook/react'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -122,7 +123,7 @@ if (isChromatic() && document.fonts) {
   loaders.push(fontLoader)
 }
 
-export const decorators = [
+export const decorators: Decorator[] = [
   (Story, context) => {
     return (
       <StorybookComponentWrapper storybookContext={context}>

@@ -16,7 +16,7 @@ import {
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
-import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
 
 const mockDisplayToast = jest
@@ -117,7 +117,7 @@ describe('ChangePasswordWithToken tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
   beforeEach(() => {
-    useGetFeatureFlagsOverride()
+    server.use(getFeatureFlagsOverride())
   })
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())

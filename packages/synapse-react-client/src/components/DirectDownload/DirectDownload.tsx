@@ -36,7 +36,10 @@ type DirectDownloadIconProps = {
   iconSvgPropOverrides?: Partial<IconSvgProps>
 }
 
-function DirectDownloadIcon(props: DirectDownloadIconProps) {
+const DirectDownloadIcon = React.forwardRef<
+  HTMLButtonElement,
+  DirectDownloadIconProps
+>(function DirectDownloadIcon(props: DirectDownloadIconProps, ref) {
   const {
     isExternalFile,
     onClick,
@@ -51,6 +54,7 @@ function DirectDownloadIcon(props: DirectDownloadIconProps) {
   if (isExternalFile) {
     return (
       <button
+        ref={ref}
         className={'btn-download-icon'}
         onClick={event => {
           if (onClick) {
@@ -73,6 +77,7 @@ function DirectDownloadIcon(props: DirectDownloadIconProps) {
   if (hasFileAccess) {
     return (
       <button
+        ref={ref}
         className={'btn-download-icon'}
         onClick={event => {
           getDownloadLink()
@@ -85,7 +90,7 @@ function DirectDownloadIcon(props: DirectDownloadIconProps) {
     )
   }
   return <></>
-}
+})
 
 function DirectDownload(props: DirectFileDownloadProps) {
   const { accessToken } = useSynapseContext()
@@ -209,19 +214,17 @@ function DirectDownload(props: DirectFileDownloadProps) {
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="left"
     >
-      <div>
-        <DirectDownloadIcon
-          isExternalFile={isExternalFile}
-          hasFileAccess={hasFileAccess}
-          onClick={onClickCallback}
-          getDownloadLink={getDownloadLink}
-          stopPropagation={stopPropagation}
-          externalURL={externalURL}
-          displayFileName={displayFileName}
-          fileName={fileName}
-          iconSvgPropOverrides={iconSvgPropOverrides}
-        />
-      </div>
+      <DirectDownloadIcon
+        isExternalFile={isExternalFile}
+        hasFileAccess={hasFileAccess}
+        onClick={onClickCallback}
+        getDownloadLink={getDownloadLink}
+        stopPropagation={stopPropagation}
+        externalURL={externalURL}
+        displayFileName={displayFileName}
+        fileName={fileName}
+        iconSvgPropOverrides={iconSvgPropOverrides}
+      />
     </Tooltip>
   )
 }

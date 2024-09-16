@@ -12,7 +12,7 @@ import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding } from '../../../mocks/mockSchema'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
-import { useGetFeatureFlagsOverride } from '../../../mocks/msw/handlers/featureFlagHandlers'
+import { getFeatureFlagsOverride } from '../../../mocks/msw/handlers/featureFlagHandlers'
 
 const { id: MOCK_FILE_ENTITY_ID, json: mockFileEntityJson } = mockFileEntityData
 
@@ -30,7 +30,7 @@ describe('AnnotationsTable tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
   beforeEach(() => {
-    useGetFeatureFlagsOverride()
+    server.use(getFeatureFlagsOverride())
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

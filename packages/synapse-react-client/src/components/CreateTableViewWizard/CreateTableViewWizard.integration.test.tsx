@@ -29,10 +29,11 @@ import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumn
 import { rest } from 'msw'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 import { omit } from 'lodash-es'
-import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from '../TableColumnSchemaEditor/TableColumnSchemaForm'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -57,9 +58,8 @@ const getAnnotationColumnsSpy = jest.mocked(
 const defaultColumnModelsWithoutId = defaultFileViewColumnModels.map(cm =>
   omit(cm, ['id']),
 )
-const annotationColumnModelsWithoutId = MOCK_ANNOTATION_COLUMNS.results.map(
-  cm => omit(cm, ['id']),
-)
+const annotationColumnModelsWithoutId =
+  MOCK_ANNOTATION_COLUMN_RESPONSE.results.map(cm => omit(cm, ['id']))
 
 async function getLatestCreatedColumnModelIdsFromSpy(
   spy: typeof createColumnModelsSpy,
@@ -89,7 +89,7 @@ describe('CreateTableWizard integration tests', () => {
   })
 
   beforeEach(() => {
-    useGetFeatureFlagsOverride()
+    server.use(getFeatureFlagsOverride())
   })
 
   afterEach(() => {
@@ -222,7 +222,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)
@@ -343,7 +343,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)
@@ -448,7 +448,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
-      name: 'Add All Annotations',
+      name: ADD_ALL_ANNOTATIONS_BUTTON_TEXT,
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
     await user.click(addAnnotationColumnsButton)

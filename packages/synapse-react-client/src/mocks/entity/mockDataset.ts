@@ -10,6 +10,7 @@ import {
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'
+import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 export const MOCK_DATASET_ENTITY_ID = `syn60000`
 export const MOCK_DATASET_NAME = 'A Mocked Dataset'
@@ -118,6 +119,8 @@ const bundle: EntityBundle = {
   fileHandles: [],
   hasChildren: false,
   restrictionInformation: {
+    objectId: normalizeNumericId(MOCK_DATASET_ENTITY_ID),
+    restrictionDetails: [],
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },
@@ -144,6 +147,7 @@ const bundle: EntityBundle = {
     canModerate: true,
     isCertificationRequired: true,
     isEntityOpenData: false,
+    isUserDataContributor: true,
   },
 }
 

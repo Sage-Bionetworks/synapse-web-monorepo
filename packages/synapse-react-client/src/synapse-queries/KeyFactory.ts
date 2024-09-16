@@ -16,8 +16,10 @@ import {
   GetProjectsParameters,
   QueryBundleRequest,
   ReferenceList,
+  RestrictionInformationBatchRequest,
   RestrictionInformationRequest,
   SearchQuery,
+  SessionHistoryRequest,
   SubmissionInfoPageRequest,
   SubmissionSearchRequest,
   SubscriptionObjectType,
@@ -29,7 +31,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
-import { hashCode } from '../utils/functions/StringUtils'
+import { hashCode, normalizeNumericId } from '../utils/functions/StringUtils'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -447,13 +449,28 @@ export class KeyFactory {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id, 'wikiPageKey')
   }
 
-  public getAccessRequirementRestrictionInformationQueryKey(
-    request?: RestrictionInformationRequest,
+  public getRestrictionInformationQueryKey(
+    request: RestrictionInformationRequest,
   ) {
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, 'restrictionInformation', {
+      ...request,
+      // The ID may be a number, or a stringified number, or a synID. Transform to just a number to normalize the cache.
+      objectId: normalizeNumericId(request.objectId),
+    })
+  }
+
+  public getRestrictionInformationBatchQueryKey(
+    request: RestrictionInformationBatchRequest,
+  ) {
+    const normalizedRequest: RestrictionInformationBatchRequest = {
+      ...request,
+      // The IDs may be number, or stringified numbers, or synIDs. Transform to normalize the cache.
+      objectIds: request.objectIds.map(normalizeNumericId).map(String),
+    }
     return this.getKey(
       ACCESS_REQUIREMENT_QUERY_KEY,
-      'restrictionInformation',
-      request,
+      'restrictionInformationBatch',
+      normalizedRequest,
     )
   }
 
@@ -645,6 +662,14 @@ export class KeyFactory {
       objectId,
       versionNumber,
     ])
+  }
+
+  public getDOIQueryKey(
+    objectType: string,
+    objectId: string,
+    versionNumber?: number,
+  ) {
+    return this.getKey(['doi', objectType, objectId, versionNumber])
   }
 
   public getAllSubscribersQueryKey() {
@@ -870,5 +895,9 @@ export class KeyFactory {
   }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
     return this.getKey('evaluation', 'paginated', request)
+  }
+
+  public chatAgentSessionHistoryQueryKey(params?: SessionHistoryRequest) {
+    return this.getKey('chatHistory', params)
   }
 }

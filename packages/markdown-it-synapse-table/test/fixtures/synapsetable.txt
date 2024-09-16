@@ -1,0 +1,347 @@
+.
+{| class="border text-align-center"
+Row 1 Content Cell 1 | Row 1 Content Cell 2  | Row 1 Content Cell 3
+Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
+|}
+
+.
+<table class="border text-align-center">
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+Header 1 | Header 2 | Header 3
+--- | --- | ---
+Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3
+Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
+.
+<table>
+<thead>
+<tr>
+<th>Header 1</th>
+<th>Header 2</th>
+<th>Header 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3
+Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
+.
+<table>
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+{| class="border text-align-right"
+Single column row 1
+Single column row 2
+|}
+
+.
+<table class="border text-align-right">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+<tr>
+<td>Single column row 2</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+{|class="border"
+Single column row 1
+|}
+
+.
+<table class="border">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+</tbody>
+</table>
+.
+
+
+.
+text before
+${badge?isUser=true&id=3323817&inlineWidget=true}|${badge?isUser=true&id=3324793&inlineWidget=true}|${badge?isUser=true&id=3329582&inlineWidget=true}|${badge?isUser=true&id=3327730&inlineWidget=true}
+text after
+.
+<p>text before</p>
+<table>
+<tbody>
+<tr>
+<td>${badge?isUser=true&amp;id=3323817&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3324793&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3329582&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3327730&amp;inlineWidget=true}</td>
+</tr>
+</tbody>
+</table>
+<p>text after</p>
+.
+
+.
+This line is math that contains a vertical pipe $$\(\small \text{Logit}(P(Y=1|X))=\b+\b{1}X\)$$, but this should not be considered a table
+.
+<p>This line is math that contains a vertical pipe $$(\small \text{Logit}(P(Y=1|X))=\b+\b{1}X)$$, but this should not be considered a table</p>
+.
+
+.
+{|class="short"
+Single column row 1
+|}
+.
+<div class="markdowntableWrap">
+<table class="short">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+.
+
+.
+  ->  | centering | block | table |   <-  
+
+## and a heading
+.
+<table>
+<tbody>
+<tr>
+<td></td>
+<td>centering</td>
+<td>block</td>
+<td>table</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>and a heading</h2>
+.
+
+.
+**a** | 
+b | c
+d | e
+**f** | 
+g | h
+.
+<table>
+<tbody>
+<tr>
+<td><strong>a</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td><strong>f</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>g</td>
+<td>h</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+ | a
+b | c
+.
+<table>
+<tbody>
+<tr>
+<td></td>
+<td>a</td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+| with outer | pipes |
+| b | c |
+.
+<table>
+<tbody>
+<tr>
+<td>with outer</td>
+<td>pipes</td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+-> this | that | foo <-
+-----
+.
+<table>
+<tbody>
+<tr>
+<td>this</td>
+<td>that</td>
+<td>foo</td>
+</tr>
+</tbody>
+</table>
+<hr>
+.
+
+coverage
+.
+*~f
+.
+<p>*~f</p>
+.
+
+.
+{| class="border text-align-center removed-class-name"
+Row 1 Content Cell 1 | Row 1 Content Cell 2  | Row 1 Content Cell 3
+Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
+|}
+
+.
+<table class="border text-align-center">
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+Standard GFM table
+.
+| Header 1 | Header 2 | Header 3 |
+| --- | --- | --- |
+| Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3 |
+| Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3 |
+.
+<table>
+<thead>
+<tr>
+<th>Header 1</th>
+<th>Header 2</th>
+<th>Header 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+Standard GFM table with alignment
+.
+| No Alignment Header | Left Header | Center Header | Right Header |
+|---|:---|:---:|---:|
+| Row 1 No Alignment | Row 1 Left Alignment  |  Row 1 Center Alignment  |  Row 1 Right Alignment |
+| Row 2 No Alignment | Row 2 Left Alignment  |  Row 2 Center Alignment  |  Row 2 Right Alignment |
+.
+<table>
+<thead>
+<tr>
+<th>No Alignment Header</th>
+<th style="text-align: left">Left Header</th>
+<th style="text-align: center">Center Header</th>
+<th style="text-align: right">Right Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Row 1 No Alignment</td>
+<td style="text-align: left">Row 1 Left Alignment</td>
+<td style="text-align: center">Row 1 Center Alignment</td>
+<td style="text-align: right">Row 1 Right Alignment</td>
+</tr>
+<tr>
+<td>Row 2 No Alignment</td>
+<td style="text-align: left">Row 2 Left Alignment</td>
+<td style="text-align: center">Row 2 Center Alignment</td>
+<td style="text-align: right">Row 2 Right Alignment</td>
+</tr>
+</tbody>
+</table>
+.
+
+clean up init (constructor)
+remove icon

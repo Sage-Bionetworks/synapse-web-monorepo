@@ -45,9 +45,15 @@ const routes: GenericRoute[] = [
     exact: false,
     synapseConfigArray: [
       {
-        name: 'NFSurveyToast',
-        centerTitle: true,
-        props: undefined,
+        name: 'SurveyToast',
+        props: {
+          localStorageKey:
+            'org.sagebionetworks.security.cookies.portal.nfsurvey.dismissed',
+          description:
+            'Help us improve the NF Data Portal by completing a data access survey!',
+          surveyURL:
+            'https://docs.google.com/forms/d/e/1FAIpQLSdSgkq66IoLHbvXNmMEjEg4nMELwM-_CaJK3rFkU9pn84gYuA/viewform',
+        },
       },
     ],
   },
@@ -183,6 +189,24 @@ const routes: GenericRoute[] = [
           toolsSql,
         },
         isOutsideContainer: true,
+      },
+    ],
+  },
+  {
+    path: 'SubmissionForm1',
+    exact: true,
+    hideRouteFromNavbar: true,
+    synapseConfigArray: [
+      {
+        name: 'DynamicForm',
+        props: {
+          schemaUrl:
+            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationSchema.json',
+          uiSchemaUrl:
+            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationUiSchema.json',
+          postUrl: 'https://submit-form.com/KwZ46H4T',
+        },
+        isOutsideContainer: false,
       },
     ],
   },

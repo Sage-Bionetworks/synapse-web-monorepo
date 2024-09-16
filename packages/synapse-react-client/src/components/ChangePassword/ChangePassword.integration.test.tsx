@@ -20,7 +20,7 @@ import {
   getSuccessfulChangePasswordHandler,
 } from '../../mocks/msw/handlers/changePasswordHandlers'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { useGetFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
 import { SynapseContextType } from '../../utils'
 import { KeyFactory } from '../../synapse-queries'
 import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
@@ -145,7 +145,7 @@ describe('ChangePassword tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => jest.clearAllMocks())
   beforeEach(() => {
-    useGetFeatureFlagsOverride()
+    server.use(getFeatureFlagsOverride())
   })
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())

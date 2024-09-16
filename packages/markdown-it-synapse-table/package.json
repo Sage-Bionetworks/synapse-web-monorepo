@@ -1,0 +1,48 @@
+{
+  "name": "markdown-it-synapse-table",
+  "version": "1.0.8",
+  "description": "markdown-it-plugin for table formatting in Synapse.org",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "markdown-it-plugin",
+    "markdown-it",
+    "markdown",
+    "synapse",
+    "table"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint src/*",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse-table:build"
+  },
+  "homepage": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/markdown-it-synapse-table",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Sage-Bionetworks/synapse-web-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/markdown-it": "^13.0.7",
+    "@types/node": "^20.14.10",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-testgen": "~0.1.6",
+    "tslib": "^2.6.2",
+    "typescript": "5.5.2",
+    "vite": "^5.4.3",
+    "vite-config": "workspace:*",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-externalize-deps": "^0.8.0",
+    "vitest": "^1.6.0"
+  },
+  "author": "Jay"
+}

@@ -20,22 +20,13 @@ declare module 'markdown-it-synapse-heading' {
   const plugin = MarkdownIt.PluginSimple
   export = plugin
 }
-declare module 'markdown-it-synapse-table' {
-  import type MarkdownIt from 'markdown-it'
-  const plugin = MarkdownIt.PluginSimple
-  export = plugin
-}
+
 declare module 'markdown-it-strikethrough-alt' {
   import type MarkdownIt from 'markdown-it'
   const plugin = MarkdownIt.PluginSimple
   export = plugin
 }
 declare module '@sage-bionetworks/markdown-it-container' {
-  import type MarkdownIt from 'markdown-it'
-  const plugin = MarkdownIt.PluginSimple
-  export = plugin
-}
-declare module 'markdown-it-emphasis-alt' {
   import type MarkdownIt from 'markdown-it'
   const plugin = MarkdownIt.PluginSimple
   export = plugin

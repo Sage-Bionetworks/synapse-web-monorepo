@@ -7,7 +7,7 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { peopleSql, projectsSql, upsetPlotSql } from './resources'
+import { partnersSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
 import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
 const routes: GenericRoute[] = [
@@ -67,6 +67,23 @@ const routes: GenericRoute[] = [
           onClick: handleUpsetPlotClick,
           // summaryLinkText: 'Explore All Data',
           // summaryLink: '/Explore/Data',
+        },
+      },
+      {
+        name: 'RssFeedCards',
+        title: "What's New",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          url: 'https://news.eliteportal.org',
+          itemsToShow: 3,
+          allowCategories: [],
+          // mailChimpListName: 'AMP-AD quarterly newsletter',
+          // mailChimpUrl:
+          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
+          filter: {
+            value: 'whats-new',
+          },
         },
       },
       // {
@@ -135,12 +152,13 @@ const routes: GenericRoute[] = [
       //     ],
       //   },
       // },
+
       {
         name: 'Ecosystem',
         title: 'Related Resources',
         centerTitle: true,
         subtitle: '',
-        outsideContainerClassName: 'home-spacer',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
           config: [
             {
@@ -149,16 +167,38 @@ const routes: GenericRoute[] = [
               wikiId: '621470',
             },
             {
-              title: 'Project Websites',
-              ownerId: 'syn27229419',
-              wikiId: '621471',
-            },
-            {
               title: 'Cross-Species Research Resources',
               ownerId: 'syn27229419',
               wikiId: '621472',
             },
           ],
+        },
+      },
+      //PORTALS-3208: Surface Our Partners (similar to NF)
+      {
+        name: 'CardContainerLogic',
+        title: 'Our Partners',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
+        props: {
+          sql: partnersSql,
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: {
+            title: 'organizationName',
+            type: SynapseConstants.ORGANIZATION,
+            description: 'summary',
+            icon: 'abbreviation',
+            link: 'organizationPath',
+            thumbnailRequiresPadding: true,
+            imageFileHandleColumnName: 'cardLogo',
+          },
+          descriptionConfig: {
+            showFullDescriptionByDefault: true,
+          },
+          ctaLinkConfig: {
+            text: 'Visit Website',
+            link: 'website',
+          },
         },
       },
       {
@@ -173,23 +213,6 @@ const routes: GenericRoute[] = [
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
           summaryLinkText: 'View All People',
-        },
-      },
-      {
-        name: 'RssFeedCards',
-        title: "What's New",
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          url: 'https://news.eliteportal.org',
-          itemsToShow: 3,
-          allowCategories: [],
-          // mailChimpListName: 'AMP-AD quarterly newsletter',
-          // mailChimpUrl:
-          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-          filter: {
-            value: 'whats-new',
-          },
         },
       },
     ],
@@ -274,10 +297,6 @@ const routes: GenericRoute[] = [
             ],
           },
         ],
-      },
-      {
-        path: 'Species',
-        hideRouteFromNavbar: false,
       },
       {
         path: 'Studies',

@@ -96,6 +96,8 @@ export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
 export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
+export const VERIFICATION_SUBMISSION_STATE = (id: string) =>
+  `${VERIFICATION_SUBMISSION}/${id}/state`
 export const CHANGE_PASSWORD = `${AUTH}/user/changePassword`
 
 export const ACCESS_REQUIREMENT = `${REPO}/accessRequirement`
@@ -173,6 +175,15 @@ export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`
 export const THREAD = `${REPO}/thread`
 export const THREAD_ID = (id: string) => `${THREAD}/${id}`
 export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
+
+export const AGENT = `${REPO}/agent`
+export const AGENT_SESSION = `${AGENT}/session`
+export const LIST_AGENT_SESSIONS = `${AGENT_SESSION}s/list`
+export const AGENT_SESSION_HISTORY = (sessionId?: string) =>
+  `${AGENT_SESSION}/history/${sessionId}`
+export const START_CHAT_ASYNC = `${AGENT}/chat/async/start`
+export const GET_CHAT_ASYNC = (jobId: string | number) =>
+  `${AGENT}/chat/async/get/${jobId}`
 
 export const DOI = `${REPO}/doi`
 export const DOI_ASSOCIATION = `${DOI}/association`

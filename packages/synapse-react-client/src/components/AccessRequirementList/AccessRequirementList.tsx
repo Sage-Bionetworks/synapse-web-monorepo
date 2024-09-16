@@ -82,7 +82,7 @@ export type AccessRequirementListProps = {
     }
 )
 
-const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
+const SUPPORTED_ACCESS_REQUIREMENT_TYPES = new Set<
   AccessRequirement['concreteType']
 >([
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -113,11 +113,11 @@ DialogSubsectionHeader.defaultProps = {
 export const checkHasUnsupportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
 ): boolean => {
-  return accessRequirements.filter(isARUnsupported).length > 0
+  return accessRequirements.some(isARUnsupported)
 }
 
 const isARUnsupported = (accessRequirement: AccessRequirement) => {
-  return !SUPPORTED_ACCESS_REQUIREMENTS.has(accessRequirement.concreteType)
+  return !SUPPORTED_ACCESS_REQUIREMENT_TYPES.has(accessRequirement.concreteType)
 }
 
 /**

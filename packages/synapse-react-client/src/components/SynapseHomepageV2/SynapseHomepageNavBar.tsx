@@ -15,8 +15,10 @@ import {
 } from '@mui/material'
 import { useOneSageURL } from '../../utils/hooks'
 import { ColorPartial } from '@mui/material/styles/createPalette'
+import { useSynapseContext } from '../../utils'
 
 const LOGIN_LINK = '/LoginPlace:0'
+const DASHBOARD_LINK = '/Profile:v/projects/all'
 
 const navTextButtonSx: SxProps = {
   fontSize: '18px',
@@ -58,6 +60,8 @@ export type SynapseHomepageNavBarProps = {
 export const SynapseHomepageNavBar: React.FunctionComponent<
   SynapseHomepageNavBarProps
 > = ({ gotoPlace }) => {
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
   const resourcesLink = useOneSageURL('/sageresources')
   const theme = useTheme()
@@ -113,26 +117,43 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
           >
             Sage Bionetworks
           </Button>
-          <Button
-            size="large"
-            variant="outlined"
-            color="secondary"
-            sx={navButtonSx}
-            onClick={() => {
-              gotoPlace(LOGIN_LINK)
-            }}
-          >
-            Login
-          </Button>
-          <Button
-            size="large"
-            variant="contained"
-            color="secondary"
-            sx={navButtonSx}
-            href={registrationLink.toString()}
-          >
-            Register Now
-          </Button>
+          {!isLoggedIn && (
+            <Button
+              size="large"
+              variant="outlined"
+              color="secondary"
+              sx={navButtonSx}
+              onClick={() => {
+                gotoPlace(LOGIN_LINK)
+              }}
+            >
+              Login
+            </Button>
+          )}
+          {!isLoggedIn && (
+            <Button
+              size="large"
+              variant="contained"
+              color="secondary"
+              sx={navButtonSx}
+              href={registrationLink.toString()}
+            >
+              Register Now
+            </Button>
+          )}
+          {isLoggedIn && (
+            <Button
+              size="large"
+              variant="outlined"
+              color="secondary"
+              sx={navButtonSx}
+              onClick={() => {
+                gotoPlace(DASHBOARD_LINK)
+              }}
+            >
+              View Dashboard
+            </Button>
+          )}
         </Box>
       )}
       {isSmallView && (
@@ -209,24 +230,39 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             </StyledMenuItem>
 
             <Divider sx={{ pt: '100px' }} />
-            <StyledMenuItem
-              sx={{ mt: '30px', color: 'secondary.main' }}
-              onClick={() => {
-                window.open(registrationLink.toString(), '_blank')
-                handleClose()
-              }}
-            >
-              Register Now
-            </StyledMenuItem>
-            <StyledMenuItem
-              sx={{ mb: '40px' }}
-              onClick={() => {
-                handleClose()
-                gotoPlace(LOGIN_LINK)
-              }}
-            >
-              Log In
-            </StyledMenuItem>
+            {!isLoggedIn && (
+              <StyledMenuItem
+                sx={{ mt: '30px', color: 'secondary.main' }}
+                onClick={() => {
+                  window.open(registrationLink.toString(), '_blank')
+                  handleClose()
+                }}
+              >
+                Register Now
+              </StyledMenuItem>
+            )}
+            {!isLoggedIn && (
+              <StyledMenuItem
+                sx={{ mb: '40px' }}
+                onClick={() => {
+                  handleClose()
+                  gotoPlace(LOGIN_LINK)
+                }}
+              >
+                Log In
+              </StyledMenuItem>
+            )}
+            {isLoggedIn && (
+              <StyledMenuItem
+                sx={{ mb: '40px', color: 'secondary.main' }}
+                onClick={() => {
+                  handleClose()
+                  gotoPlace(DASHBOARD_LINK)
+                }}
+              >
+                View Dashboard
+              </StyledMenuItem>
+            )}
           </StyledMenu>
         </Box>
       )}

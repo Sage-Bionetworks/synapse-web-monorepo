@@ -6,12 +6,16 @@ import {
   useTheme,
   useMediaQuery,
   SxProps,
+  Fade,
 } from '@mui/material'
 import React from 'react'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
-import { useScrollFadeTransition } from '../../utils/hooks/useScrollFadeTransition'
+import { useInView } from 'react-intersection-observer'
+import { Slide } from '@mui/material'
+
+const transitionTimeoutMs = 320
 
 export type SynapseInActionItemProps = {
   tableId: string
@@ -50,9 +54,8 @@ export const SynapseInActionItem: React.FunctionComponent<
 }) => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-
-  // opacity of the desktop image
-  const { ref, opacity } = useScrollFadeTransition()
+  // desktop image animation support
+  const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
 
   return (
     <Box
@@ -150,13 +153,20 @@ export const SynapseInActionItem: React.FunctionComponent<
           display: { xs: 'none', md: 'block' },
           justifySelf: 'end',
           alignSelf: 'end',
-          opacity: opacity,
         }}
       >
-        <ImageFromSynapseTable
-          tableId={tableId}
-          fileHandleId={imageFileHandleId}
-        />
+        <Fade in={inView} timeout={transitionTimeoutMs}>
+          <div>
+            <Slide direction="left" timeout={transitionTimeoutMs} in={inView}>
+              <div>
+                <ImageFromSynapseTable
+                  tableId={tableId}
+                  fileHandleId={imageFileHandleId}
+                />
+              </div>
+            </Slide>
+          </div>
+        </Fade>
       </Box>
     </Box>
   )

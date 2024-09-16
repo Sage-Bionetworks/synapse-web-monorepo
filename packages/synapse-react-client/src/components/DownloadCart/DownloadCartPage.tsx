@@ -89,10 +89,10 @@ export const DownloadCartPage: React.FunctionComponent<
             </Tooltip>
           </div>
           <Typography className="description" variant="body1">
-            You may find your added files in the tabs below. Any files which
-            require actions before download can be found in the Access Actions
-            Required tab, while any that can be downloaded now can be found in
-            the Download List tab.
+            Your added files can be found in the tabs below. Files requiring
+            actions before download are listed in the Access Actions Required
+            tab, while those ready for download can be found in the Download
+            List tab.
           </Typography>
         </div>
       </div>

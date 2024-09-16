@@ -242,7 +242,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
             <a
               className="synapseIcon"
               rel="noopener noreferrer"
-              onClick={() => gotoPlace('/Home:0')}
+              onClick={() => gotoPlace('/Home:x')}
               aria-label="Synapse Home"
             >
               <SynapseIconWhite />

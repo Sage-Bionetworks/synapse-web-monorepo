@@ -12,6 +12,7 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
+
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
@@ -39,20 +40,17 @@ export const studyCardConfiguration: CardConfiguration = {
   genericCardSchema: {
     type: SynapseConstants.STUDY,
     title: 'studyName',
-    subTitle: 'dataContributor',
+    // subTitle: 'dataContributor',
     icon: 'Access_Type',
     description: 'studyAbstract',
     secondaryLabels: [
+      'dataStatus',
       'dataTypeAll',
       'studyFocus',
       'species',
       'specimenType',
-      'program',
       'projectFullName',
-      'grants',
-      'Number_Of_Individuals',
-      'Cohort_Type',
-      'Study_Status',
+      'grantNumber',
     ],
   },
 }
@@ -111,9 +109,6 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           columnName: 'methods',
           title: 'Methods',
           props: {},
-          resolveSynId: {
-            title: true,
-          },
         },
         {
           name: 'CardContainerLogic',

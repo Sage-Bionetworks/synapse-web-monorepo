@@ -91,10 +91,11 @@ const expectTopLevelControls = async (
       const buttonNames = [
         'Hide filters',
         'Show / Hide Search Bar',
-        'Copy this search to the clipboard',
         'Show / Hide Visualizations',
         // 'Download Options', - hidden in some portal tabs
       ]
+      if (getPortal() !== 'elportal')
+        buttonNames.push('Copy this search to the clipboard')
       if (isTableTab) buttonNames.push('Show/Hide Columns')
       await expectButtons(header, buttonNames)
     })
@@ -419,7 +420,8 @@ const expectTable = async (page: Page, exploreTab: string) => {
       })
 
       await test.step('confirm rows shown matches page count or total rows', async () => {
-        const rowsPerPage = await page.getByRole('combobox').inputValue()
+        const rowsPerPageText = await page.getByRole('combobox').textContent()
+        const rowsPerPage = parseInt(rowsPerPageText!.split(' ')[0])
         await expect(rows).toHaveCount(
           // add one for the header row
           Math.min(Number(rowsPerPage), totalRows) + 1,

@@ -1,4 +1,11 @@
-import { Alert, Box, TextField, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from '@mui/material'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -20,7 +27,6 @@ import {
   AccessorRequirements,
 } from '../SetBasicAccessRequirementFields'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import { Checkbox } from '../widgets/Checkbox'
 
 export const DUC_TEMPLATE_UPLOAD_ERROR =
   'There was an error uploading the DUC template. '
@@ -182,10 +188,11 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
               <Typography variant="body1" fontWeight={700}>
                 DUC
               </Typography>
-              <Checkbox
+              <FormControlLabel
+                control={<Checkbox />}
                 label="DUC is required."
                 checked={updatedAr.isDUCRequired}
-                onChange={(checked: boolean) =>
+                onChange={(_event, checked: boolean) =>
                   setUpdatedAr({
                     ...updatedAr,
                     isDUCRequired: checked,
@@ -212,20 +219,23 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
                   </Alert>
                 )}
               </SynapseErrorBoundary>
-              <Checkbox
+              <FormControlLabel
                 label="IRB approval is required."
                 checked={updatedAr.isIRBApprovalRequired}
-                onChange={(checked: boolean) =>
+                control={<Checkbox />}
+                onChange={(_event, checked: boolean) =>
                   setUpdatedAr({
                     ...updatedAr,
                     isIRBApprovalRequired: checked,
                   })
                 }
+                sx={{ ml: 0 }}
               />
-              <Checkbox
+              <FormControlLabel
+                control={<Checkbox />}
                 label="Other documents are required."
                 checked={updatedAr.areOtherAttachmentsRequired}
-                onChange={(checked: boolean) =>
+                onChange={(_event, checked: boolean) =>
                   setUpdatedAr({
                     ...updatedAr,
                     areOtherAttachmentsRequired: checked,
@@ -254,10 +264,11 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
                 }}
               />
               <Box mt={1}>
-                <Checkbox
+                <FormControlLabel
+                  control={<Checkbox />}
                   label="Intended Data Use statement is required."
                   checked={updatedAr.isIDURequired}
-                  onChange={(checked: boolean) => {
+                  onChange={(_event, checked: boolean) => {
                     if (checked) {
                       setUpdatedAr({
                         ...updatedAr,
@@ -272,11 +283,12 @@ export const SetManagedAccessRequirementFields = React.forwardRef(
                     }
                   }}
                 />
-                <Checkbox
+                <FormControlLabel
+                  control={<Checkbox />}
                   label="Intended Data Use statements will be publicly available."
                   checked={updatedAr.isIDUPublic}
                   disabled={!updatedAr.isIDURequired}
-                  onChange={(checked: boolean) =>
+                  onChange={(_event, checked: boolean) =>
                     setUpdatedAr({
                       ...updatedAr,
                       isIDUPublic: checked,

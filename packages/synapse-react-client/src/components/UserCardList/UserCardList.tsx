@@ -4,7 +4,7 @@ import { UserProfileList } from '../../synapse-client/SynapseClient'
 import { MEDIUM_USER_CARD, UserCardSize } from '../../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
-  QueryResultBundle,
+  RowSet,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import UserCard from '../UserCard/UserCard'
@@ -16,7 +16,7 @@ export type UserCardListProps = {
   size?: UserCardSize
   // Data should not be needed, however, it gives the option to fill in a user profile with other column
   // fields. This is required specifically by AMP-AD Explore/People page
-  data?: QueryResultBundle
+  rowSet?: RowSet
 }
 
 export type UserCardListState = {
@@ -73,26 +73,22 @@ export class UserCardList extends React.Component<
   /**
    * Given data this will find rows where there is no userId columnType and create faux user profiles
    * using firstName, lastName, and institution (company in UserProfile object).
-   * @param {QueryResultBundle} data
+   * @param {RowSet} rowSet
    * @returns list of UserProfiles with firstName, lastName, company, userName (first letter of firstName) filled out.
    * @memberof UserCardList
    */
-  manuallyExtractData(data: QueryResultBundle) {
-    const firstNameIndex = data.queryResult!.queryResults.headers.findIndex(
+  manuallyExtractData(rowSet: RowSet) {
+    const firstNameIndex = rowSet.headers.findIndex(
       el => el.name === 'firstName',
     )
-    const lastNameIndex = data.queryResult!.queryResults.headers.findIndex(
-      el => el.name === 'lastName',
-    )
-    const institutionIndex = data.queryResult!.queryResults.headers.findIndex(
+    const lastNameIndex = rowSet.headers.findIndex(el => el.name === 'lastName')
+    const institutionIndex = rowSet.headers.findIndex(
       el => el.name === 'institution',
     )
-    const ownerId = data.queryResult!.queryResults.headers.findIndex(
+    const ownerId = rowSet.headers.findIndex(
       el => el.columnType === ColumnTypeEnum.USERID,
     )
-    const nullOwnerIdsRows = data.queryResult!.queryResults.rows.filter(
-      el => !el.values[ownerId],
-    )
+    const nullOwnerIdsRows = rowSet.rows.filter(el => !el.values[ownerId])
     return nullOwnerIdsRows.map<Omit<UserProfile, 'ownerId'>>(el => {
       const values = el.values
       return {
@@ -108,9 +104,9 @@ export class UserCardList extends React.Component<
   }
 
   render() {
-    const { size = MEDIUM_USER_CARD, data, list } = this.props
+    const { size = MEDIUM_USER_CARD, rowSet, list } = this.props
     const { userProfileMap = {} } = this.state
-    const fauxUserProfilesList = data && this.manuallyExtractData(data)
+    const fauxUserProfilesList = rowSet && this.manuallyExtractData(rowSet)
     let fauxUserProfileIndex = 0
     return (
       <div className="SRC-card-grid-row">

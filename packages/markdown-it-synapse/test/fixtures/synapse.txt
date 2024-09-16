@@ -134,3 +134,9 @@ coverage
 
 clean up init (constructor)
 remove icon
+
+.
+*italic* and ** bold ** or _italic_ and __bold__
+.
+<p><em>italic</em> and <strong> bold </strong> or <em>italic</em> and <strong>bold</strong></p>
+.

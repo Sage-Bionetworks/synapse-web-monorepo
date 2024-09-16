@@ -85,8 +85,11 @@ import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
 import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
 import { CookiesNotification } from './components/CookiesNotification'
 import { getCurrentCookiePreferences } from './utils/hooks'
+import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
+import SynapseChat from './components/SynapseChat/SynapseChat'
 import { version } from '../package.json'
-
+import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
+import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
 // Also include scss in the bundle
 import './style/main.scss'
 
@@ -176,6 +179,9 @@ const SynapseComponents = {
   GoogleAnalytics,
   CookiesNotification,
   getCurrentCookiePreferences,
+  EntityAclEditorModal,
+  SynapseChat,
+  RejectProfileValidationRequestModal,
 }
 
 // Include the version in the build
@@ -191,4 +197,5 @@ export {
   SynapseEnums,
   SynapseQueries,
   Palettes,
+  xssOptions,
 }

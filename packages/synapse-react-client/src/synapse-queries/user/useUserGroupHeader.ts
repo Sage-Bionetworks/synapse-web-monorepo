@@ -41,7 +41,7 @@ export function useGetUserGroupHeader(
 /**
  * Get an array of UserGroupHeaders, utilizing a react-query cache.  This is always an unauthenticated call
  * (the users current email addresses will never be returned in the result).
- * @param principalId
+ * @param principalIds
  * @param options
  * @returns
  */

@@ -108,6 +108,7 @@ export default function TableColumnSchemaEditor(
             onSubmit={formData => {
               onSubmit(formData)
             }}
+            originalColumnModels={originalColumnModels}
           />
           {error && (
             <Alert severity={'error'} sx={{ my: 2 }}>

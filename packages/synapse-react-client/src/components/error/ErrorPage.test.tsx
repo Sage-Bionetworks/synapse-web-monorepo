@@ -1,19 +1,124 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import ErrorPage, { ErrorPageProps } from './ErrorPage'
+import { render, screen, waitFor } from '@testing-library/react'
+import ErrorPage, {
+  ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
+  ACCESS_DENIED_ANONYMOUS_MESSAGE,
+  ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
+  ACCESS_DENIED_MESSAGE,
+  ACCESS_DENIED_TITLE,
+  ErrorPageProps,
+  HELP_FORUM_LINK_TEXT,
+  LOG_IN_LINK_TEXT,
+  NOT_FOUND_MESSAGE,
+  NOT_FOUND_TITLE,
+  SYNAPSE_DOWN_TITLE,
+  SynapseErrorType,
+} from './ErrorPage'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import userEvent from '@testing-library/user-event'
+import { server } from '../../mocks/msw/server'
+import { MOCK_DOI } from '../../mocks/doi/MockDoi'
 
-describe('DirectDownload: basic functionality', () => {
-  const propsNoAccess: ErrorPageProps = {
-    image: 'noAccess',
-    title: 'bcd',
-    message: '5678',
-  }
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
-  it('should render the correct content', () => {
-    render(<ErrorPage {...propsNoAccess} />)
-    // Should actually be an image, but our test platform doesn't currently load SVGs imported as React Components
-    expect(screen.getByRole('img').getAttribute('title')).toBe('noAccess')
-    screen.getByRole('heading', { name: propsNoAccess.title })
-    screen.getByText(propsNoAccess.message)
+const mockGotoPlace = jest.fn()
+
+function renderComponent(props: ErrorPageProps, isLoggedIn: boolean) {
+  const component = render(<ErrorPage {...props} />, {
+    wrapper: createWrapper({
+      accessToken: isLoggedIn ? MOCK_ACCESS_TOKEN : undefined,
+    }),
+  })
+  return { component }
+}
+
+async function setUp(props: ErrorPageProps, isLoggedIn: boolean) {
+  const user = userEvent.setup()
+  const { component } = renderComponent(props, isLoggedIn)
+
+  let imageElement: HTMLElement | undefined
+  await waitFor(() => {
+    imageElement = screen.getByRole('img')
+    expect(imageElement).toBeDefined()
+  })
+
+  return { component, user }
+}
+
+describe('ErrorPage: basic functionality', () => {
+  beforeEach(() => jest.clearAllMocks())
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+  it('403 error on an entity', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.ACCESS_DENIED,
+      entityId: 'syn123',
+      gotoPlace: mockGotoPlace,
+    }
+    const { user } = await setUp(props, true)
+    expect(screen.getByRole('img').getAttribute('title')).toBe(
+      props.type.toString(),
+    )
+    await screen.findByText(ACCESS_DENIED_TITLE)
+    await screen.findByText(ACCESS_DENIED_MESSAGE)
+    await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
+    // SWC-7073
+    // await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
+    // by default, a DOI is set up in MSW (see doiHandlers)
+    // searching for the text (using a regular expression because the element contains other text in addition to the search string)
+    await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
+    await screen.findByText(new RegExp(MOCK_DOI.titles[0].title))
+
+    const helpForumLink = screen.getByText(HELP_FORUM_LINK_TEXT)
+    await user.click(helpForumLink)
+    await waitFor(() =>
+      expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
+    )
+
+    // SWC-7073
+    // verify link pops up the SendMessageToEntityOwnerDialog
+    // const contactAdminLink = screen.getByText(CONTACT_ADMIN_LINK_TEXT)
+    // await user.click(contactAdminLink)
+    // expect(
+    //   screen.queryByRole('dialog', {
+    //     name: new RegExp(CONTACT_ADMIN_DIALOG_TITLE),
+    //   }),
+    // ).toBeInTheDocument()
+  })
+
+  it('403 error on an entity - anonymous test', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.ACCESS_DENIED,
+      entityId: 'syn123',
+      gotoPlace: mockGotoPlace,
+    }
+    const { user } = await setUp(props, false)
+
+    await screen.findByText(ACCESS_DENIED_ANONYMOUS_MESSAGE)
+    await screen.findByText(ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION)
+
+    const logInLink = screen.getByText(LOG_IN_LINK_TEXT)
+    await user.click(logInLink)
+    await waitFor(() =>
+      expect(mockGotoPlace).toHaveBeenLastCalledWith('/LoginPlace:0'),
+    )
+  })
+  it('404 error page', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.NOT_FOUND,
+      gotoPlace: mockGotoPlace,
+    }
+    await setUp(props, false)
+    await screen.findByText(NOT_FOUND_TITLE)
+    await screen.findByText(NOT_FOUND_MESSAGE)
+  })
+  it('Synapse Down error page', async () => {
+    const props: ErrorPageProps = {
+      type: SynapseErrorType.DOWN,
+      gotoPlace: mockGotoPlace,
+    }
+    await setUp(props, false)
+    await screen.findByText(SYNAPSE_DOWN_TITLE)
   })
 })

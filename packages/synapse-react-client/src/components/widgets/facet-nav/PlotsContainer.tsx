@@ -1,24 +1,20 @@
 import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
-import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
+import { UniqueFacetIdentifier } from '../../../utils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import {
-  tableQueryDataAtom,
-  isLoadingNewBundleAtom,
-} from '../../QueryWrapper/QueryWrapper'
-import { QueryWrapperSynapsePlotProps } from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import React from 'react'
-import { useState, useMemo, useEffect } from 'react'
-import { getFacets } from './useFacetPlots'
+import QueryWrapperSynapsePlot, {
+  QueryWrapperSynapsePlotProps,
+} from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
+import useFacetPlots, { getFacets } from './useFacetPlots'
 import FacetNavPanel, {
   FacetNavPanelProps,
   PlotType,
 } from '../facet-nav/FacetNavPanel'
-import { useAtomValue } from 'jotai'
-import { Button, Box } from '@mui/material'
-import QueryWrapperSynapsePlot from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import useFacetPlots from './useFacetPlots'
+import { Box, Button } from '@mui/material'
 import { PlotType as PlotlyPlotType } from 'plotly.js-basic-dist'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { PlotsContainerSkeleton } from './PlotsContainerSkeleton'
 
 const DEFAULT_VISIBLE_PLOTS = 2
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
@@ -133,14 +129,13 @@ const DEFAULT_PLOT_TYPE: PlotType = 'PIE'
 const DEFAULT_FACETS_TO_PLOT: string[] = []
 const DEFAULT_CUSTOM_PLOTS: QueryWrapperSynapsePlotProps[] = []
 
-export default function PlotsContainer(props: PlotsContainerProps) {
+function PlotsContainer(props: PlotsContainerProps) {
   const {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
   } = props
-  const { error } = useQueryContext()
-  const data = useAtomValue(tableQueryDataAtom)
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const { queryMetadataQueryOptions } = useQueryContext()
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
   const [plotUiStateArray, setPlotUiStateArray] = useState<UiPlotState[]>([])
   const facetNavPanelPropsArray = useFacetPlots(facetsToPlot)
@@ -239,100 +234,103 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     // TODO: customPlots should use the color index
     // additionally, it is unclear why this object is created
     // We can probably just pass the index from `plotUiStateArray.map)
-    getFacets(data, facetsToPlot).map((el, index) => {
+    getFacets(queryMetadata, facetsToPlot).map((el, index) => {
       return {
         facet: { columnName: el.columnName, jsonPath: el.jsonPath },
         colorIndex: index,
       }
     })
 
-  if (error || (!data && isLoadingNewBundle)) {
-    return <></>
-  } else {
-    return (
-      <>
-        {plotUiStateArray.length > 0 && (
-          <div
-            className={`PlotsContainer ${
-              showPlotVisualization ? '' : 'hidden'
-            } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
-          >
-            <div className="PlotsContainer__row" role="list">
-              {plotUiStateArray.map(plotUiState => {
-                const isCustomPlot = '__custom' in plotUiState.plotId
-                const customPlotProps = customPlots.find(customPlot =>
-                  plotMatchesDefinition(
-                    getCustomPlotIdentifier(customPlot),
-                    plotUiState.plotId,
-                  ),
-                )
-                const facetNavPanelProps = facetNavPanelPropsArray.find(props =>
-                  plotMatchesDefinition(props.facetToPlot, plotUiState.plotId),
-                )
+  return (
+    <>
+      {plotUiStateArray.length > 0 && (
+        <div
+          className={`PlotsContainer ${showPlotVisualization ? '' : 'hidden'} ${
+            showMoreButtonState === 'LESS' ? 'less' : ''
+          }`}
+        >
+          <div className="PlotsContainer__row" role="list">
+            {plotUiStateArray.map(plotUiState => {
+              const isCustomPlot = '__custom' in plotUiState.plotId
+              const customPlotProps = customPlots.find(customPlot =>
+                plotMatchesDefinition(
+                  getCustomPlotIdentifier(customPlot),
+                  plotUiState.plotId,
+                ),
+              )
+              const facetNavPanelProps = facetNavPanelPropsArray.find(props =>
+                plotMatchesDefinition(props.facetToPlot, plotUiState.plotId),
+              )
 
-                return (
-                  <div
-                    style={{
-                      minWidth: '435px',
-                      display: isPlotHiddenInGrid(plotUiState.plotId)
-                        ? 'none'
-                        : 'block',
-                    }}
-                    key={generatePlotKey(plotUiState)}
-                  >
-                    {isCustomPlot && customPlotProps && (
-                      <QueryWrapperSynapsePlot
-                        {...customPlotProps}
-                        onHide={() => hidePlotInGrid(plotUiState.plotId)}
-                      />
-                    )}
-                    {!isCustomPlot && facetNavPanelProps && (
-                      <FacetNavPanel
-                        index={
-                          colorTracker.find(el =>
-                            plotMatchesDefinition(el.facet, plotUiState.plotId),
-                          )?.colorIndex!
-                        }
-                        onHide={() => hidePlotInGrid(plotUiState.plotId)}
-                        plotType={getPlotType(plotUiState.plotId)}
-                        onSetPlotType={(plotType: PlotType) =>
-                          setPlotType(plotUiState.plotId, plotType)
-                        }
-                        isModalView={false}
-                        {...facetNavPanelProps}
-                      />
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-            {showMoreButtonState !== 'NONE' && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                sx={{
-                  backgroundColor: 'grey.100',
-                  p: 2,
-                  mt: 2,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() =>
-                    onShowMoreClick(showMoreButtonState === 'MORE')
-                  }
-                  sx={{ width: '150px' }}
+              return (
+                <div
+                  style={{
+                    minWidth: '435px',
+                    display: isPlotHiddenInGrid(plotUiState.plotId)
+                      ? 'none'
+                      : 'block',
+                  }}
+                  key={generatePlotKey(plotUiState)}
                 >
-                  {showMoreButtonState === 'LESS'
-                    ? 'Hide Charts'
-                    : 'View All Charts'}
-                </Button>
-              </Box>
-            )}
+                  {isCustomPlot && customPlotProps && (
+                    <QueryWrapperSynapsePlot
+                      {...customPlotProps}
+                      onHide={() => hidePlotInGrid(plotUiState.plotId)}
+                    />
+                  )}
+                  {!isCustomPlot && facetNavPanelProps && (
+                    <FacetNavPanel
+                      index={
+                        colorTracker.find(el =>
+                          plotMatchesDefinition(el.facet, plotUiState.plotId),
+                        )?.colorIndex!
+                      }
+                      onHide={() => hidePlotInGrid(plotUiState.plotId)}
+                      plotType={getPlotType(plotUiState.plotId)}
+                      onSetPlotType={(plotType: PlotType) =>
+                        setPlotType(plotUiState.plotId, plotType)
+                      }
+                      isModalView={false}
+                      {...facetNavPanelProps}
+                    />
+                  )}
+                </div>
+              )
+            })}
           </div>
-        )}
-      </>
-    )
-  }
+          {showMoreButtonState !== 'NONE' && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              sx={{
+                backgroundColor: 'grey.100',
+                p: 2,
+                mt: 2,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
+                sx={{ width: '150px' }}
+              >
+                {showMoreButtonState === 'LESS'
+                  ? 'Hide Charts'
+                  : 'View All Charts'}
+              </Button>
+            </Box>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+export default function PlotsContainerWithSuspense(props: PlotsContainerProps) {
+  const { showPlots } = useQueryVisualizationContext()
+  return (
+    <Suspense fallback={showPlots ? <PlotsContainerSkeleton /> : null}>
+      <PlotsContainer {...props} />
+    </Suspense>
+  )
 }

@@ -2,8 +2,8 @@ import {
   QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import React, { useReducer, useState } from 'react'
-import { UniqueFacetIdentifier } from '../../types/UniqueFacetIdentifier'
+import React, { useMemo, useReducer, useState } from 'react'
+import { UniqueFacetIdentifier } from '../../types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import {
   queryRequestsHaveSameTotalResults,
@@ -92,6 +92,7 @@ export type TableQueryReducerAction = {
   | { type: 'commitChanges' }
   | { type: 'confirmChanges' }
   | { type: 'cancelChanges' }
+  | { type: 'resetDebounce' }
 )
 
 /**
@@ -105,6 +106,8 @@ export function useTableQueryReducer(
   requireConfirmationOnChange: boolean,
   onQueryChange?: (queryJsonString: string) => void,
 ) {
+  // Increment to reset the debounce counter.
+  const [resetDebounceCounter, setResetDebounceCounter] = useState(0)
   const [commitAfterDebounce, setCommitAfterDebounce] = useState(false)
 
   // Note: we must use a reducer because we're tracking interrelated state variables. Attempts to separate these will
@@ -116,6 +119,11 @@ export function useTableQueryReducer(
     ): TableQueryReducerState => {
       let updatedNextQueryRequest = prevState.nextQueryRequest
       switch (action.type) {
+        case 'resetDebounce': {
+          setResetDebounceCounter(v => v + 1)
+          // Do not update state
+          return prevState
+        }
         case 'setQuery': {
           updatedNextQueryRequest = getQueryFromSetStateAction(
             action,
@@ -259,14 +267,26 @@ export function useTableQueryReducer(
       }
     },
     // nextQueryRequest MUST be included in the dependencies to ensure the debounce resets when it changes
-    [state.nextQueryRequest, commitAfterDebounce, setCommitAfterDebounce],
+    [
+      state.nextQueryRequest,
+      commitAfterDebounce,
+      setCommitAfterDebounce,
+      resetDebounceCounter,
+    ],
     DEBOUNCE_DELAY_MS,
   )
 
-  return {
-    currentQueryRequest: state.currentQueryRequest,
-    nextQueryRequest: state.nextQueryRequest,
-    isConfirmingChange: state.isConfirmingChange,
-    dispatch,
-  }
+  return useMemo(
+    () => ({
+      currentQueryRequest: state.currentQueryRequest,
+      nextQueryRequest: state.nextQueryRequest,
+      isConfirmingChange: state.isConfirmingChange,
+      dispatch,
+    }),
+    [
+      state.currentQueryRequest,
+      state.isConfirmingChange,
+      state.nextQueryRequest,
+    ],
+  )
 }

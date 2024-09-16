@@ -25,6 +25,8 @@ export type ImmutableTableQueryResult = {
   currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
   /** The next (uncommitted) query request. This will become the current query request when commitChanges is called, or the configured debounced timer elapses. */
   nextQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** Resets the debounce timer to delay committing changes in `nextQueryRequest` */
+  resetDebounceTimer: () => void
   /** Update the currentQueryRequest to be the nextQueryRequest */
   commitChanges: () => void
   getInitQueryRequest: () => QueryBundleRequest
@@ -345,9 +347,14 @@ export default function useImmutableTableQuery(
     dispatch({ type: 'commitChanges' })
   }, [dispatch])
 
+  const resetDebounceTimer = useCallback(() => {
+    dispatch({ type: 'resetDebounce' })
+  }, [dispatch])
+
   return {
     entityId,
     commitChanges,
+    resetDebounceTimer,
     currentQueryRequest,
     nextQueryRequest,
     versionNumber,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import {
   defaultQueryClientConfig,
@@ -64,6 +64,9 @@ export function StorybookComponentWrapper(props: {
   children: React.ReactNode
   /* This will match the `globalTypes` object in preview.tsx. */
   storybookContext: {
+    args: {
+      isAuthenticated?: boolean
+    }
     globals: {
       stack?: SynapseStack
       showReactQueryDevtools?: boolean
@@ -105,7 +108,12 @@ export function StorybookComponentWrapper(props: {
 
   const synapseContext: Partial<SynapseContextType> = useMemo(
     () => ({
-      accessToken: accessToken,
+      accessToken:
+        storybookContext.args.isAuthenticated && currentStack === 'mock'
+          ? 'fake token'
+          : !storybookContext.args.isAuthenticated && currentStack === 'mock'
+          ? undefined
+          : accessToken,
       isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
       utcTime: SynapseClient.getUseUtcTimeFromCookie(),
       withErrorBoundary: true,
@@ -115,17 +123,19 @@ export function StorybookComponentWrapper(props: {
   )
 
   return (
-    <QueryClientProvider client={storybookQueryClient}>
-      <SynapseContextProvider synapseContext={synapseContext}>
-        {storybookContext.globals.showReactQueryDevtools && (
-          <ReactQueryDevtools />
-        )}
-        <MemoryRouter>
-          <SynapseToastContainer />
-          <main>{props.children}</main>
-        </MemoryRouter>
-      </SynapseContextProvider>
-    </QueryClientProvider>
+    <Suspense fallback={'global suspense loading...'}>
+      <QueryClientProvider client={storybookQueryClient}>
+        <SynapseContextProvider synapseContext={synapseContext}>
+          {storybookContext.globals.showReactQueryDevtools && (
+            <ReactQueryDevtools />
+          )}
+          <MemoryRouter>
+            <SynapseToastContainer />
+            <main>{props.children}</main>
+          </MemoryRouter>
+        </SynapseContextProvider>
+      </QueryClientProvider>
+    </Suspense>
   )
 }
 

@@ -1,5 +1,6 @@
 import '@tanstack/react-table'
 import { RowData } from '@tanstack/react-table'
+import { RowSet } from '@sage-bionetworks/synapse-types'
 
 // Type that represents an enumerated value that can be passed to a column to render a filter control
 type ColumnFilterEnumValue<TValue = unknown> = {
@@ -9,6 +10,14 @@ type ColumnFilterEnumValue<TValue = unknown> = {
 }
 
 declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    rowSet?: RowSet
+    rowEntityIDColumnIndex?: number
+    rowEntityVersionColumnIndex?: number
+    getWrapInExpandableTd?: (cell: Cell<TData>) => boolean
+    renderPlaceholderData?: boolean
+  }
+
   interface ColumnMeta<TData extends RowData, TValue> {
     textAlign?: React.CSSProperties['textAlign']
 

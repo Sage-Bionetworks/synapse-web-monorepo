@@ -18,7 +18,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import { SynapseComponent } from '../../components/SynapseComponent'
 import { SynapseConfig } from '../../types/portal-config'
 import {
@@ -62,10 +62,9 @@ function HeadlineWithLink(props: {
       <Typography variant="sectionTitle" role="heading">
         {title}
         {helpText && (
-          <>
-            {' '}
+          <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
             <SynapseComponents.HelpPopover markdownText={helpText} />
-          </>
+          </Box>
         )}
         <span
           style={{
@@ -446,7 +445,7 @@ export const DetailsPageSynapseConfigArray: React.FC<{
               )}
               {showTitleSeperator && el.title && <hr />}
               {el.subtitle && (
-                <div className="bootstrap-4-backport">
+                <div>
                   <Typography variant="subsectionHeader" role="heading">
                     {el.subtitle}
                   </Typography>

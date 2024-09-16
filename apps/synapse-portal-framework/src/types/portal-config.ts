@@ -26,6 +26,7 @@ import {
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
+  DynamicFormProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
@@ -44,6 +45,7 @@ import { RedirectToURLProps } from '../components/RedirectToURL'
 import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
 import { BrowseToolsPageProps } from '../components/BrowseToolsPage'
 import { EcosystemProps } from '../components/csbc-home-page/Ecosystem'
+import { SurveyToastProps } from '../components/SurveyToast'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -73,6 +75,11 @@ type QueryWrapperPlotNav = {
 type UserCard = {
   name: 'UserCard'
   props: UserCardProps
+}
+
+type DynamicForm = {
+  name: 'DynamicForm'
+  props: DynamicFormProps
 }
 
 type Markdown = {
@@ -154,10 +161,9 @@ type BrowseToolsPage = {
   name: 'BrowseToolsPage'
   props: BrowseToolsPageProps
 }
-
-type NFSurveyToast = {
-  name: 'NFSurveyToast'
-  props: undefined
+type SurveyToast = {
+  name: 'SurveyToast'
+  props: SurveyToastProps
 }
 type ELBetaLaunchBanner = {
   name: 'ELBetaLaunchBanner'
@@ -364,7 +370,7 @@ export type SynapseConfig = (
   | TableFeedCards
   | DownloadCartPage
   | BrowseToolsPage
-  | NFSurveyToast
+  | SurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage
   | GenieHomePageHeader
@@ -381,6 +387,7 @@ export type SynapseConfig = (
   | ChallengeSubmissionWrapper
   | TimelinePlot
   | DatasetJsonLdScript
+  | DynamicForm
 ) &
   Metadata
 
@@ -414,6 +421,7 @@ export type FooterConfig = {
   termsOfService?: string
   forum?: string
   about?: string
+  additionalLogos?: string[] //svg
 }
 // Footer end
 

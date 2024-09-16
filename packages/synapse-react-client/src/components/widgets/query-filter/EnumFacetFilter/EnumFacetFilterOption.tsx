@@ -1,6 +1,5 @@
-import { Checkbox } from '../../Checkbox'
 import React from 'react'
-import { RadioOption } from '../../RadioGroup'
+import { Box, Checkbox, FormControlLabel, Radio } from '@mui/material'
 
 type EnumFacetFilterOptionProps = {
   readonly id: string
@@ -24,8 +23,14 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
     onHover,
     inputType,
   } = props
+
+  let control = inputType === 'checkbox' ? <Checkbox /> : <Radio />
+
   return (
-    <div
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
       className="EnumFacetFilter__checkboxContainer"
       onClick={() => {
         // If this is a dropdown option, clicking anywhere in the field should toggle selection
@@ -35,31 +40,18 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
       }}
       onMouseEnter={onHover}
     >
-      {inputType === 'checkbox' && (
-        <Checkbox
-          className="EnumFacetFilter__checkbox"
-          onClick={event => event.stopPropagation()}
-          onChange={newValue => {
-            onChange(newValue)
-          }}
-          key={`${id}`}
-          checked={checked}
-          label={label}
-        ></Checkbox>
-      )}
-      {inputType === 'radio' && (
-        <RadioOption
-          className="EnumFacetFilter__checkbox"
-          value={id || label}
-          onClick={event => event.stopPropagation()}
-          onChange={() => {
-            onChange(!checked)
-          }}
-          key={`${id}`}
-          checked={checked}
-          label={label}
-        />
-      )}
+      <FormControlLabel
+        control={control}
+        className="EnumFacetFilter__checkbox"
+        onClick={event => event.stopPropagation()}
+        onChange={(_event, newValue) => {
+          onChange(newValue)
+        }}
+        key={`${id}`}
+        checked={checked}
+        label={label}
+      />
+
       {count != null && (
         <>
           {isDropdown && (
@@ -74,6 +66,6 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
           )}
         </>
       )}
-    </div>
+    </Box>
   )
 }

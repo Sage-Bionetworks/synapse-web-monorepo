@@ -170,7 +170,7 @@ const SynapsePlans = () => {
         <BasicPlanCell>
           <Typography variant="body1">
             Sage Managed <br />
-            Shared Storage*
+            Individual Storage*
           </Typography>
         </BasicPlanCell>
         <SelfManagedPlanCell>
@@ -182,7 +182,7 @@ const SynapsePlans = () => {
         <SelfManagedPlanCell>
           <Typography variant="body1">
             Sage Managed <br />
-            Shared Storage*
+            Individual Storage*
           </Typography>
         </SelfManagedPlanCell>
 

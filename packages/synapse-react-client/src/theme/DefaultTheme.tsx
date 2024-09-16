@@ -15,6 +15,9 @@ import {
   HighlightOffTwoTone,
   InfoTwoTone,
 } from '@mui/icons-material'
+import Checked from '../assets/icons/Checkbox/Checked'
+import Unchecked from '../assets/icons/Checkbox/Unchecked'
+import Indeterminate from '../assets/icons/Checkbox/Indeterminate'
 
 const DIALOG_INNER_PADDING = '2px'
 
@@ -143,9 +146,113 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         square: true,
       },
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          // Remove negative margin
+          marginLeft: '0px',
+          // When rendering a checkbox/radio, add margin between the control and the label
+          '& .MuiCheckbox-root, & .MuiRadio-root': {
+            marginRight: theme.spacing(1),
+          },
+        }),
+      },
+    },
     MuiCheckbox: {
       defaultProps: {
         color: 'secondary',
+        icon: <Unchecked />,
+        checkedIcon: <Checked />,
+        indeterminateIcon: <Indeterminate />,
+        size: 'small',
+      },
+      styleOverrides: {
+        root: ({ theme, ownerState: { color = 'primary' } }) => {
+          const paletteColor =
+            color === 'default' ? theme.palette.primary : theme.palette[color]
+          const outlineColor =
+            100 in paletteColor ? paletteColor[100] : paletteColor.light
+          const focusColor =
+            600 in paletteColor ? paletteColor[600] : paletteColor.dark
+
+          return {
+            padding: '0px',
+            borderRadius: '0px',
+            '&:not(.Mui-checked):not(.MuiCheckbox-indeterminate)': {
+              color: theme.palette.grey[600],
+              '&:not(.Mui-disabled):hover': {
+                boxShadow: `0px 0px 2px 2px ${outlineColor}`,
+              },
+              '&.Mui-focusVisible': {
+                color: paletteColor.main,
+              },
+            },
+            '&:hover.Mui-checked, &.Mui-focusVisible.Mui-checked, &.Mui-focusVisible.MuiCheckbox-indeterminate, &:hover.MuiCheckbox-indeterminate':
+              {
+                'svg > rect': {
+                  stroke: outlineColor,
+                },
+                'svg > path': {
+                  transform: 'scale(0.95)',
+                  transformOrigin: 'center',
+                },
+              },
+            '&:hover:active.Mui-checked, &:hover:active.MuiCheckbox-indeterminate':
+              {
+                'svg > rect': {
+                  fill: focusColor,
+                },
+              },
+            '&.Mui-disabled': {
+              color: theme.palette.grey[400],
+            },
+          }
+        },
+      },
+    },
+    MuiRadio: {
+      defaultProps: {
+        color: 'secondary',
+        size: 'small',
+      },
+      styleOverrides: {
+        root: ({ theme, ownerState: { color = 'primary' } }) => {
+          const paletteColor =
+            color === 'default' ? theme.palette.primary : theme.palette[color]
+          const unselectedOutlineColor = theme.palette.grey[400]
+          const selectedOutlineColor =
+            100 in paletteColor ? paletteColor[100] : paletteColor.light
+          const focusColor =
+            600 in paletteColor ? paletteColor[600] : paletteColor.dark
+
+          return {
+            padding: '0px',
+            ':hover, &.Mui-focusVisible': {
+              outline: `2px solid`,
+              outlineOffset: '-1px',
+            },
+            '&:not(.Mui-checked)': {
+              color: theme.palette.grey[600],
+              '&:not(.Mui-disabled):hover': {
+                outlineColor: unselectedOutlineColor,
+              },
+              '&.Mui-focusVisible': {
+                color: paletteColor.main,
+                outlineColor: selectedOutlineColor,
+              },
+            },
+            '&:hover.Mui-checked, &.Mui-focusVisible.Mui-checked': {
+              outlineColor: selectedOutlineColor,
+              color: focusColor,
+            },
+            '&:hover:active.Mui-checked': {
+              outlineColor: selectedOutlineColor,
+            },
+            '&.Mui-disabled': {
+              color: theme.palette.grey[400],
+            },
+          }
+        },
       },
     },
     MuiDialog: {
@@ -226,6 +333,10 @@ export const defaultMuiThemeOptions: ThemeOptions = {
               outline = `1px solid ${theme.palette[ownerState.color].main}`
             }
           }
+          let backgroundColor = theme.palette.grey[200]
+          if (ownerState.error) {
+            backgroundColor = alpha(theme.palette.error.main, 0.1)
+          }
           const formHelperTextColor =
             ownerState.color === 'warning'
               ? theme.palette[ownerState.color].main
@@ -234,7 +345,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             borderRadius: '3px',
             fontSize: '14px',
             position: 'relative',
-            backgroundColor: theme.palette.grey[200],
+            backgroundColor: backgroundColor,
             outline: outline,
             '&+.MuiFormHelperText-root': {
               color: formHelperTextColor,

@@ -31,6 +31,18 @@ export const BUNDLE_MASK_LAST_UPDATED_ON = 0x80
 export const BUNDLE_MASK_COMBINED_SQL = 0x100
 export const BUNDLE_MASK_ACTIONS_REQUIRED = 0x200
 
+export const ALL_QUERY_BUNDLE_PARTS =
+  BUNDLE_MASK_QUERY_RESULTS |
+  BUNDLE_MASK_QUERY_COUNT |
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+  BUNDLE_MASK_QUERY_COLUMN_MODELS |
+  BUNDLE_MASK_QUERY_FACETS |
+  BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+  BUNDLE_MASK_LAST_UPDATED_ON |
+  BUNDLE_MASK_COMBINED_SQL |
+  BUNDLE_MASK_ACTIONS_REQUIRED
+
 /** Row Types  */
 export const STUDY: string = 'study'
 /** Unannotated value for query */
@@ -135,8 +147,10 @@ export const DAY_IN_MS = 1000 * 60 * 60 * 24
 export const NETWORK_UNAVAILABLE_MESSAGE =
   'This site cannot be reached. Either a connection is unavailable, or your network administrator has blocked you from accessing this site.'
 
-/* The ID of the table in production that contains the canned responses for the submission rejection form. */
+/* The ID of the table in production that contains the canned responses for the data access submission rejection form. */
 export const REJECT_SUBMISSION_CANNED_RESPONSES_TABLE = 'syn50683097'
+/* The ID of the table in production that contains the canned responses for the profile validation rejection form. */
+export const REJECT_VALIDATION_CANNED_RESPONSES_TABLE = 'syn63119445'
 export const AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY =
   'last_user_authentication_receipt'
 

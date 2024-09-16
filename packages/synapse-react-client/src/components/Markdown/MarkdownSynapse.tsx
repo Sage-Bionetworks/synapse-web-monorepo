@@ -28,7 +28,6 @@ import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
 import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
-import markdownitEmphasisAlt from 'markdown-it-emphasis-alt'
 import markdownitInlineComments from 'markdown-it-inline-comments'
 import markdownitBr from 'markdown-it-br'
 import markdownitMath from 'markdown-it-synapse-math'
@@ -86,7 +85,6 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       markdownitSynapseTable,
       markdownitStrikethroughAlt,
       markdownitContainer,
-      markdownitEmphasisAlt,
       markdownitInlineComments,
       markdownitBr,
     )
@@ -411,7 +409,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       // be unforseen issues with attributes being misnamed according to what react will respect
       // e.g. class instead of className
       const attributes = element.attributes
-      const props: Record<string, string> = {}
+      const rawProps: Record<string, string> = {}
       for (let i = 0; i < attributes.length; i++) {
         let name = ''
         let value = ''
@@ -421,9 +419,19 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
           value = attribute.value
         }
         if (name && value) {
-          props[name] = value
+          rawProps[name] = value
         }
       }
+
+      const { style: styleString, class: className, ...props } = rawProps
+      // Remap class to className
+      props.className = className
+      if (styleString) {
+        // React expects the `style` prop to be an object, not a string, so use
+        // the all-caps STYLE to pass the style string as a custom attribute
+        props.STYLE = styleString
+      }
+
       if (element.childNodes.length === 0) {
         // case 2
         // e.g. self closing tag like <br/> or <img>

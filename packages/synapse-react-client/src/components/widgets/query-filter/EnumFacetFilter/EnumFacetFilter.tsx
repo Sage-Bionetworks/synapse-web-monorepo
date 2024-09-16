@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
@@ -12,17 +12,17 @@ import {
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../../../QueryContext'
-import { isFacetColumnValuesRequest } from '../../../../utils'
-import { cloneDeep, pick, sortBy } from 'lodash-es'
+import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
+import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
-import { useAtomValue } from 'jotai'
-import { tableQueryDataAtom } from '../../../QueryWrapper/QueryWrapper'
 import {
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
 } from '../../../../utils/functions/queryUtils'
 import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 
 export type EnumFacetFilterProps = {
   facet: FacetColumnResultValues
@@ -31,7 +31,7 @@ export type EnumFacetFilterProps = {
   hideCollapsible?: boolean
 }
 
-export function EnumFacetFilter(props: EnumFacetFilterProps) {
+function _EnumFacetFilter(props: EnumFacetFilterProps) {
   const {
     facet,
     containerAs = 'Collapsible',
@@ -43,10 +43,11 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     addValueToSelectedFacet,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
-    executeQueryRequest,
+    queryMetadataQueryOptions,
+    resetDebounceTimer,
   } = useQueryContext()
 
-  const data = useAtomValue(tableQueryDataAtom)
+  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const currentSelectedFacet: FacetColumnValuesRequest | undefined =
@@ -77,8 +78,8 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
     facet,
   )
 
-  const columnModel = data?.columnModels
-    ? getCorrespondingColumnForFacet(facet, data.columnModels)
+  const columnModel = queryMetadata.columnModels
+    ? getCorrespondingColumnForFacet(facet, queryMetadata.columnModels)
     : undefined
 
   const userIds =
@@ -111,27 +112,35 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
   })
 
   const displayedFacetValues: RenderedFacetValue[] = useMemo(() => {
-    return sortBy(
-      facet.facetValues.map(
-        (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
-          return {
-            ...facetValue,
-            // Selected status should be based on the 'nextQuery', not the result data
-            // This ensures the checkboxes respond instantly to user interaction, like while waiting for multiple changes to debounce
-            isSelected:
-              currentSelectedFacet?.facetValues.includes(facetValue.value) ??
-              false,
-            displayText: valueToLabel(
-              facetValue,
-              userGroupHeaders,
-              entityHeaders,
-              evaluations,
-            ),
-          }
-        },
-      ),
-      fv => -1 * fv.count!,
+    const renderedFacetValues = facet.facetValues.map(
+      (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
+        return {
+          ...facetValue,
+          // Selected status should be based on the 'nextQuery', not the result data
+          // This ensures the checkboxes respond instantly to user interaction, like while waiting for multiple changes to debounce
+          isSelected:
+            currentSelectedFacet?.facetValues.includes(facetValue.value) ??
+            false,
+          displayText: valueToLabel(
+            facetValue,
+            userGroupHeaders,
+            entityHeaders,
+            evaluations,
+          ),
+        }
+      },
     )
+    //Abby V's suggestion, always show the VALUE_NOT_SET facet value on the bottom of this sorted list
+    const partitions = partition(
+      renderedFacetValues,
+      facet => facet.value === SynapseConstants.VALUE_NOT_SET,
+    )
+    const valueNotSetFacetArray = partitions[0]
+    const restOfFacetValuesArray = partitions[1]
+    return [
+      ...sortBy(restOfFacetValuesArray, fv => fv.displayText.toLowerCase()),
+      ...valueNotSetFacetArray,
+    ]
   }, [
     currentSelectedFacet?.facetValues,
     entityHeaders,
@@ -154,12 +163,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
       hideCollapsible={hideCollapsible}
       onHoverOverValue={() => {
         // SWC-6698: delay the query execution (via the debounce) when an item is hovered over
-        executeQueryRequest(
-          request => {
-            return cloneDeep(request)
-          },
-          { debounce: true },
-        )
+        resetDebounceTimer()
       }}
       onAddValueToSelection={value => {
         addValueToSelectedFacet(
@@ -180,5 +184,21 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
       }
       canMultiSelect={true}
     />
+  )
+}
+
+export function EnumFacetFilter(props: EnumFacetFilterProps) {
+  const { containerAs = 'Collapsible', dropdownType = 'Icon' } = props
+  return (
+    <Suspense
+      fallback={
+        <EnumFacetFilterSkeleton
+          containerAs={containerAs}
+          dropdownType={dropdownType}
+        />
+      }
+    >
+      <_EnumFacetFilter {...props} />
+    </Suspense>
   )
 }

@@ -20,7 +20,6 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
-import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
@@ -40,7 +39,7 @@ import {
   TypeIconRenderer,
 } from './DetailsViewTableRenderers'
 import { VersionColumnHeader } from './VersionColumnHeader'
-import { Tooltip } from '@mui/material'
+import { Checkbox, Tooltip } from '@mui/material'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -322,9 +321,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           }}
         >
           <Checkbox
-            label="Select All"
-            hideLabel={true}
-            className="SRC-pointer-events-none"
+            inputProps={{ 'aria-label': 'Select All' }}
             checked={selectAllIsChecked}
             disabled={!isEnabled}
             onChange={() => {
@@ -378,7 +375,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   }
 
   return (
-    <div className="EntityFinderDetailsView bootstrap-4-backport">
+    <div className="EntityFinderDetailsView">
       <BlockingLoader
         show={showLoadingScreen}
         currentProgress={entities.length}

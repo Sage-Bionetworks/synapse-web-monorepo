@@ -9,21 +9,20 @@ import {
   QueryBundleRequest,
   SortDirection,
 } from '@sage-bionetworks/synapse-types'
-import CardContainer from '../CardContainer/CardContainer'
-import { ErrorBanner } from '../error/ErrorBanner'
 import { GenericCardSchema } from '../GenericCard'
 import { IconSvgProps } from '../IconSvg'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapper } from '../QueryWrapper'
 import QuerySortSelector from '../QuerySortSelector'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { IconOptions } from '../Icon/Icon'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { ReleaseCardConfig } from '../ReleaseCard'
+import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -147,7 +146,6 @@ export type CardConfiguration = {
   type: string
   hasInternalLink?: boolean
   iconOptions?: IconOptions
-  initialLimit?: number
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
@@ -159,6 +157,7 @@ export type CardContainerLogicProps = {
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
+  initialLimit?: number
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
@@ -172,7 +171,7 @@ export type CardContainerLogicProps = {
 /**
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
  */
-export const CardContainerLogic = (props: CardContainerLogicProps) => {
+export function CardContainerLogic(props: CardContainerLogicProps) {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
   const queryFilters = getAdditionalFilters(
     props.additionalFiltersSessionStorageKey,
@@ -218,11 +217,13 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
           props.noContentPlaceholderType ?? NoContentPlaceholderType.STATIC
         }
       >
-        {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
-        <CardContainer {...props} />
-        <QueryContextConsumer>
-          {queryContext => <ErrorBanner error={queryContext?.error} />}
-        </QueryContextConsumer>
+        <QueryWrapperErrorBoundary>
+          {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
+          <RowSetView
+            cardConfiguration={props}
+            initialLimit={props.initialLimit}
+          />
+        </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )
