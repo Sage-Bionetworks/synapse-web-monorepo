@@ -1,0 +1,14 @@
+import{j as t}from"./jsx-runtime-DoxjgJx5.js";import{A as s}from"./ActionRequiredCard-CH8mXd4e.js";import{W as d}from"./WideButton-BOHZkkT8.js";import{E as c}from"./SynapseConstants-CnTS8uWh.js";import{T as u}from"./Typography-5kwXSe6k.js";import{B as g}from"./Button-PewxtVEx.js";import"./index-Cu9bd8lq.js";import"./Icon-B5DRttpk.js";import"./SortDown-Bz1uWA0S.js";import"./createSvgIcon-RFCzz5wB.js";import"./createTheme-CSXEdrm4.js";import"./index-GEGPABih.js";import"./styled-DhbZfYjm.js";import"./IconSvg-Uicv0V0N.js";import"./Tooltip-BUEOzDXu.js";import"./index-DnaZGQZH.js";import"./utils-BX4sETT_.js";import"./TransitionGroupContext-C4KIfRep.js";import"./useForkRef-Bm_QQ74L.js";import"./index-BlO3JfGB.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-WB7TPAH6.js";import"./mergeSlotProps-BvStzxp7.js";import"./isHostComponent-DVu5iVWx.js";import"./useControlled-JEQ1v-P8.js";import"./useId-g68bhPgm.js";import"./useIsFocusVisible-Lp1_y5xp.js";import"./LayersTwoTone-_9iArYlq.js";import"./ErrorOutlined-CY90nJ7_.js";import"./GetAppTwoTone-6qo15GJD.js";import"./InfoOutlined-so_MDirv.js";import"./CheckCircleTwoTone-DZeepUDu.js";import"./Paper-BNspCzZ8.js";import"./Box-CSxp1att.js";import"./Skeleton-DTl-q8yD.js";import"./colorManipulator-CBwtHKAF.js";import"./OrientationBanner-BsmFKABX.js";import"./FullWidthAlert-DfzvViOl.js";import"./Alert-BjW6UdMW.js";import"./IconButton-dV1PosdL.js";import"./ButtonBase-B1PyklHR.js";import"./Stack-B3TCA9BM.js";import"./AlertTitle-CaC9w9kZ.js";import"./ClickAwayListener-Ba-YFlDA.js";const et={title:"Download/ActionRequiredCard",component:s,tags:["autodocs"],argTypes:{actionNode:{options:["Button","Button with text (Sharing Settings)"],mapping:{Button:t.jsx(d,{variant:"contained",children:"Start"}),"Button with text (Sharing Settings)":t.jsxs(t.Fragment,{children:[t.jsx(u,{variant:"smallText1",sx:{color:"grey.700"},children:"Contact an administrator to request download permission"}),t.jsx(g,{variant:"outlined",children:"View Sharing Settings"})]})}}}},o={args:{isLoading:!0}},r={args:{isLoading:!1,title:"The title of the card",description:"The description of the card",actionNode:"Button",iconType:c,count:42}};var i,e,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    isLoading: true
+  }
+}`,...(a=(e=o.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var n,p,m;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isLoading: false,
+    title: 'The title of the card',
+    description: 'The description of the card',
+    actionNode: 'Button',
+    iconType: EASY_DIFFICULTY,
+    count: 42
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const at=["Loading","Card"];export{r as Card,o as Loading,at as __namedExportsOrder,et as default};
