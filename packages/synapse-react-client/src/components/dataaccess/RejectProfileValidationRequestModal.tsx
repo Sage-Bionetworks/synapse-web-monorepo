@@ -22,6 +22,7 @@ export type RejectProfileValidationRequestModalProps = {
   tableId?: string
   open: boolean
   onRejectionSubmittedSuccess?: () => void
+  currentState: VerificationStateEnum
   onClose: () => void
 }
 
@@ -39,6 +40,7 @@ export function RejectProfileValidationRequestModal(
     open,
     onRejectionSubmittedSuccess = noop,
     onClose,
+    currentState,
   } = props
 
   const [actInternalNotes, setActInternalNotes] = useState<string>('')
@@ -46,11 +48,27 @@ export function RejectProfileValidationRequestModal(
   const { mutate, error } = useUpdateVerificationSubmission()
 
   function rejectVerificationSubmission(reason: string, notes: string) {
+    let newState: VerificationStateEnum
+    switch (currentState) {
+      case VerificationStateEnum.SUBMITTED:
+        newState = VerificationStateEnum.REJECTED
+        break
+      case VerificationStateEnum.APPROVED:
+        newState = VerificationStateEnum.SUSPENDED
+        break
+      case VerificationStateEnum.REJECTED:
+      case VerificationStateEnum.SUSPENDED:
+        console.error(
+          'Cannot reject a request where the current state is already rejected or suspended',
+        )
+        onClose()
+        return
+    }
     mutate(
       {
         id: validationSubmissionId,
         verificationState: {
-          state: VerificationStateEnum.REJECTED,
+          state: newState,
           reason,
           notes,
         },
@@ -59,7 +77,11 @@ export function RejectProfileValidationRequestModal(
         onSuccess: () => {
           onRejectionSubmittedSuccess()
           displayToast(
-            'Submission rejected and message sent to requester',
+            `Submission ${
+              newState === VerificationStateEnum.REJECTED
+                ? 'rejected'
+                : 'suspended'
+            } and message sent to requester`,
             'info',
           )
           onClose()
@@ -68,7 +90,6 @@ export function RejectProfileValidationRequestModal(
     )
   }
 
-  // If fetching/processing the table fails, gracefully fall back to just show the email template
   return (
     <CannedRejectionDialog
       open={open}
