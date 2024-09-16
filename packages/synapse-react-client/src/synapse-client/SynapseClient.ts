@@ -90,6 +90,7 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
+  VERIFICATION_SUBMISSION_STATE,
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
   WIKI_PAGE_ID,
@@ -322,6 +323,7 @@ import {
   AgentChatResponse,
   SessionHistoryResponse,
   SessionHistoryRequest,
+  VerificationState,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -4310,6 +4312,20 @@ export const createProfileVerificationSubmission = (
   return doPost(
     VERIFICATION_SUBMISSION,
     verificationSubmission,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/verificationSubmission/id/state.html
+export function updateVerificationSubmissionState(
+  id: string,
+  verificationState: Pick<VerificationState, 'state' | 'reason' | 'notes'>,
+  accessToken: string,
+): Promise<void> {
+  return doPost<void>(
+    VERIFICATION_SUBMISSION_STATE(id),
+    verificationState,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
