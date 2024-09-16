@@ -6,6 +6,7 @@ import { fn } from '@storybook/test'
 import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import { RejectProfileValidationRequestModal } from './RejectProfileValidationRequestModal'
+import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Governance/RejectProfileValidationRequestModal',
@@ -31,6 +32,7 @@ export const Demo: Story = {
   name: 'RejectProfileValidationRequestModal',
   args: {
     open: true,
+    currentState: VerificationStateEnum.SUBMITTED,
     tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
     verificationSubmissionId: '',
     onClose: fn(),

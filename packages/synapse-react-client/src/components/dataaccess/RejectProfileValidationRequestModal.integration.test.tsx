@@ -33,6 +33,7 @@ const mockCannedRejectionDialog = jest.mocked(CannedRejectionDialog)
 
 const props: RejectProfileValidationRequestModalProps = {
   verificationSubmissionId: '123',
+  currentState: VerificationStateEnum.SUBMITTED,
   tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
   open: true,
   onClose: jest.fn(),
@@ -43,11 +44,16 @@ const updateVerificationSubmissionStateSpy = jest.spyOn(
   'updateVerificationSubmissionState',
 )
 
-function renderComponent() {
+function renderComponent(
+  propOverrides?: Partial<RejectProfileValidationRequestModalProps>,
+) {
   const user = userEvent.setup()
-  const component = render(<RejectProfileValidationRequestModal {...props} />, {
-    wrapper: createWrapper(),
-  })
+  const component = render(
+    <RejectProfileValidationRequestModal {...props} {...propOverrides} />,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 
   return { user, component }
 }
@@ -70,7 +76,7 @@ describe('RejectProfileValidationRequestModal', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('Renders CannedRejectionDialog, which invokes a callback to update the submission status', async () => {
+  it('Renders CannedRejectionDialog, which invokes a callback to reject the submission', async () => {
     const { user } = renderComponent()
 
     await waitFor(() => {
@@ -117,6 +123,53 @@ describe('RejectProfileValidationRequestModal', () => {
         state: VerificationStateEnum.REJECTED,
         reason: rejectionMessage,
         notes: internalNotes,
+      },
+      MOCK_ACCESS_TOKEN,
+    )
+    await waitFor(() => expect(props.onClose).toHaveBeenCalled())
+  })
+
+  it('Handles suspending an existing submission', async () => {
+    renderComponent({
+      currentState: VerificationStateEnum.APPROVED,
+    })
+
+    await waitFor(() => {
+      expect(mockCannedRejectionDialog).toHaveBeenCalledWith(
+        {
+          open: true,
+          defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
+          defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
+          error: null,
+          onClose: expect.any(Function),
+          onConfirm: expect.any(Function),
+          rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
+          tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
+          children: expect.anything(),
+        },
+        expect.anything(),
+      )
+    })
+
+    // Generate the email using the mocked modal
+    const onConfirmCallback =
+      mockCannedRejectionDialog.mock.lastCall![0].onConfirm
+    const rejectionMessage = 'some rejection reason'
+    act(() => {
+      onConfirmCallback(rejectionMessage)
+    })
+
+    // Verify that we send the rejection request to the server
+    await waitFor(() =>
+      expect(updateVerificationSubmissionStateSpy).toHaveBeenCalledTimes(1),
+    )
+    expect(updateVerificationSubmissionStateSpy).toHaveBeenCalledWith(
+      props.verificationSubmissionId,
+      {
+        // New state should be SUSPENDED
+        state: VerificationStateEnum.SUSPENDED,
+        reason: rejectionMessage,
+        notes: '',
       },
       MOCK_ACCESS_TOKEN,
     )
