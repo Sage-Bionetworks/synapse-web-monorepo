@@ -148,7 +148,7 @@ export function ApplicationSessionManager(
     } else {
       refreshSession()
     }
-    // PORTALS-Set up an interval to call refreshSession every 60 seconds (60000 milliseconds)
+    // PORTALS-3249: Set up an interval to call refreshSession every 60 seconds (60000 milliseconds)
     const intervalId = setInterval(refreshSession, 60000)
 
     // Clean up the interval when the component is unmounted
