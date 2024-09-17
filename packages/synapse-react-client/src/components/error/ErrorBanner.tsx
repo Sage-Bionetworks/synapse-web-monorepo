@@ -11,6 +11,7 @@ import { Optional } from '../../utils/types/Optional'
 import { useJiraIssueCollector } from '../JiraIssueCollector'
 import FullWidthAlert from '../FullWidthAlert'
 import SignInButton from '../SignInButton'
+import SynapseClient from '../../synapse-client'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -74,16 +75,25 @@ export const ClientError = (props: { error: SynapseClientError }) => {
 
 export const ErrorBanner = (props: ErrorBannerProps) => {
   const { error, reloadButtonFn } = props
-
   if (!error) {
     return <></>
   }
-
   let synapseClientError: SynapseClientError | undefined = undefined
   let jsError: Error | undefined = undefined
   let stringError: string | undefined = undefined
   if (error instanceof SynapseClientError) {
     synapseClientError = error
+    const message = synapseClientError.message.toLowerCase()
+    // PORTALS-3249: Special case - If the error message suggests that the access token used is expired/invalid, sign out (clear access token from context),
+    // and reload the page to clear all page content (which could include privileged data)
+    if (
+      message.includes('token has expired') ||
+      message.includes('invalid access token')
+    ) {
+      SynapseClient.signOut().then(() => {
+        window.location.reload()
+      })
+    }
   } else if (error instanceof Error) {
     jsError = error
   } else if (typeof error === 'string') {
