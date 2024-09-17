@@ -11,7 +11,6 @@ import {
   ChallengeServicesApi,
   Configuration,
   DataAccessServicesApi,
-  DefaultConfig,
   DiscussionServicesApi,
   DockerAuthorizationServicesApi,
   DockerCommitServicesApi,
