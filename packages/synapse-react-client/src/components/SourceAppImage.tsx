@@ -1,12 +1,13 @@
 import React from 'react'
-import { SynapseQueries } from 'synapse-react-client'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import Skeleton from '@mui/material/Skeleton'
+import { useGetStablePresignedUrl } from '../synapse-queries'
 
 export type SourceAppImageProps = {
+  sourceAppConfigTableID: string
   fileHandleId: string | null
   friendlyName?: string
 }
@@ -15,19 +16,15 @@ export type SourceAppImageProps = {
 const SourceAppImage: React.FC<SourceAppImageProps> = (
   props: SourceAppImageProps,
 ) => {
-  const { fileHandleId, friendlyName } = props
+  const { sourceAppConfigTableID, fileHandleId, friendlyName } = props
   const fha: FileHandleAssociation = {
-    associateObjectId: 'syn45291362',
+    associateObjectId: sourceAppConfigTableID,
     associateObjectType: FileHandleAssociateType.TableEntity,
     fileHandleId: fileHandleId ?? '',
   }
-  const stablePresignedUrl = SynapseQueries.useGetStablePresignedUrl(
-    fha,
-    true,
-    {
-      enabled: !!fileHandleId,
-    },
-  )
+  const stablePresignedUrl = useGetStablePresignedUrl(fha, true, {
+    enabled: !!fileHandleId,
+  })
 
   const dataUrl = stablePresignedUrl?.dataUrl
   const error = stablePresignedUrl?.queryResult?.error

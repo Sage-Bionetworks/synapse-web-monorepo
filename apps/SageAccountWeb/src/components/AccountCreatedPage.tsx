@@ -6,14 +6,17 @@ import { Link as RouterLink } from 'react-router-dom'
 import { LeftRightPanel } from './LeftRightPanel'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
 import { useSourceApp } from './useSourceApp'
-import { useSourceAppConfigs } from './useSourceAppConfigs'
+import { SynapseHookUtils } from 'synapse-react-client'
+import { sourceAppConfigTableID } from '../resources'
 
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
   const membershipInvitation = useMembershipInvitationTokenHandler()
   const sourceApp = useSourceApp()
-  const sourceAppConfigs = useSourceAppConfigs()
+  const sourceAppConfigs = SynapseHookUtils.useSourceAppConfigs(
+    sourceAppConfigTableID,
+  )
   return (
     <>
       <AppContextConsumer>
