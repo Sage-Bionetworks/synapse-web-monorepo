@@ -95,6 +95,11 @@ export const useSourceAppConfigs = (
         rowVals[secondaryColorColIndex] ?? '',
       ),
     }
+    const appId = rowVals[appIdColIndex] == null ? '' : rowVals[appIdColIndex]
+    const appURL =
+      rowVals[appURLColIndex] == null ? '' : rowVals[appURLColIndex]
+    const description =
+      rowVals[descriptionColIndex] == null ? '' : rowVals[descriptionColIndex]
     const shortDescription =
       rowVals[shortDescriptionColIndex] == null
         ? ''
@@ -103,16 +108,20 @@ export const useSourceAppConfigs = (
       rowVals[requestAffiliationColIndex] == null
         ? false
         : rowVals[requestAffiliationColIndex] == 'true'
+    const isPublicized =
+      rowVals[isPublicizedColIndex] == null
+        ? true
+        : rowVals[isPublicizedColIndex] == 'true'
     const sourceAppConfig: SourceAppConfig = {
-      appId: rowVals[appIdColIndex] ?? '',
-      appURL: rowVals[appURLColIndex] ?? '',
-      description: rowVals[descriptionColIndex] ?? '',
-      friendlyName: friendlyName,
-      requestAffiliation: requestAffiliation,
+      appId,
+      appURL,
+      description,
+      friendlyName,
+      requestAffiliation,
       logo,
-      isPublicized: rowVals[isPublicizedColIndex] == 'true' ?? true,
+      isPublicized,
       palette: appPalette,
-      shortDescription: shortDescription,
+      shortDescription,
     }
     return sourceAppConfig
   })
