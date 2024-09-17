@@ -148,7 +148,6 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     () => setSendMessageToAdminDialogOpen(false),
     [],
   )
-  console.log('Entity ID', entityId)
   return (
     <>
       <Box
