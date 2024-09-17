@@ -11,7 +11,8 @@
     "emitDeclarationOnly": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "types": ["vitest/globals"]
   },
   "include": ["src/**/*.ts"]
 }

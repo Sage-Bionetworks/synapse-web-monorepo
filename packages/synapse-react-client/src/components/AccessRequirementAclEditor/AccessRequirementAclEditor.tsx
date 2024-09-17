@@ -8,7 +8,7 @@ import {
   useGetAccessRequirementACL,
   useUpdateAccessRequirementACL,
 } from '../../synapse-queries'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AclEditor } from '../AclEditor/AclEditor'
 import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'

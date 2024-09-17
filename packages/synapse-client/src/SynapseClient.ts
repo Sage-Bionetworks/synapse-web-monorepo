@@ -2,12 +2,14 @@ import {
   AccessApprovalServicesApi,
   AccessRequirementServicesApi,
   ActivityServicesApi,
+  AgentChatServicesApi,
   AsynchronousJobServicesApi,
   AuthenticationServices2FAApi,
   AuthenticationServicesApi,
   BaseAPI,
   CertifiedUserServicesApi,
   ChallengeServicesApi,
+  Configuration,
   DataAccessServicesApi,
   DefaultConfig,
   DiscussionServicesApi,
@@ -40,9 +42,15 @@ import {
   UserGroupServicesApi,
   UserProfileServicesApi,
   VerificationServicesApi,
+  WebhookServicesApi,
   WikiPageServices2Api,
   WikiPageServicesApi,
 } from './generated'
+import { fetchWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+
+const DEFAULT_CONFIG = new Configuration({
+  fetchApi: fetchWithExponentialTimeout,
+})
 
 /**
  * Creates one class that encapsulates all sets of Synapse API services.
@@ -51,6 +59,7 @@ export class SynapseClient extends BaseAPI {
   public accessApprovalServicesClient: AccessApprovalServicesApi
   public accessRequirementServicesClient: AccessRequirementServicesApi
   public activityServicesClient: ActivityServicesApi
+  public agentChatServicesClient: AgentChatServicesApi
   public asynchronousJobServicesClient: AsynchronousJobServicesApi
   public authenticationServices2FAClient: AuthenticationServices2FAApi
   public authenticationServicesClient: AuthenticationServicesApi
@@ -87,11 +96,19 @@ export class SynapseClient extends BaseAPI {
   public userGroupServicesClient: UserGroupServicesApi
   public userProfileServicesClient: UserProfileServicesApi
   public verificationServicesClient: VerificationServicesApi
+  public webhookServicesClient: WebhookServicesApi
   public wikiPageServices2Client: WikiPageServices2Api
   public wikiPageServicesClient: WikiPageServicesApi
 
-  constructor(protected configuration = DefaultConfig) {
+  constructor(protected configuration = DEFAULT_CONFIG) {
+    // Merge the default configuration with the provided configuration
+    configuration = new Configuration({
+      ...DEFAULT_CONFIG.config,
+      ...configuration.config,
+    })
+
     super(configuration)
+
     this.accessApprovalServicesClient = new AccessApprovalServicesApi(
       configuration,
     )
@@ -99,6 +116,7 @@ export class SynapseClient extends BaseAPI {
       configuration,
     )
     this.activityServicesClient = new ActivityServicesApi(configuration)
+    this.agentChatServicesClient = new AgentChatServicesApi(configuration)
     this.asynchronousJobServicesClient = new AsynchronousJobServicesApi(
       configuration,
     )
@@ -158,6 +176,7 @@ export class SynapseClient extends BaseAPI {
     this.userGroupServicesClient = new UserGroupServicesApi(configuration)
     this.userProfileServicesClient = new UserProfileServicesApi(configuration)
     this.verificationServicesClient = new VerificationServicesApi(configuration)
+    this.webhookServicesClient = new WebhookServicesApi(configuration)
     this.wikiPageServices2Client = new WikiPageServices2Api(configuration)
     this.wikiPageServicesClient = new WikiPageServicesApi(configuration)
   }

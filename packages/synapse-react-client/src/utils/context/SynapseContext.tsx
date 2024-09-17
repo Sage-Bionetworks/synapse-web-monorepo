@@ -1,8 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
-import { KeyFactory } from '../../synapse-queries'
+import { KeyFactory } from '../../synapse-queries/KeyFactory'
 import { Configuration, SynapseClient } from 'synapse-client'
-import { fetchWithExponentialTimeout } from '../../synapse-client/HttpClient'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -59,8 +58,6 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
 
   const synapseApiClient = useMemo(() => {
     const configuration = new Configuration({
-      // TODO: Extract fetchWithExponentialTimeout so it can be used in `synapse-client` by default
-      fetchApi: fetchWithExponentialTimeout,
       apiKey: providedContext.accessToken
         ? `Bearer ${providedContext.accessToken}`
         : undefined,

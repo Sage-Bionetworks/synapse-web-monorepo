@@ -13,7 +13,7 @@ import {
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 
 function render() {
   const renderedHook = renderHook(() => useCreateAndRegisterChallengeTeam(), {

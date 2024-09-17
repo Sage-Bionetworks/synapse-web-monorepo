@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import SynapseClient from '../../synapse-client'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,

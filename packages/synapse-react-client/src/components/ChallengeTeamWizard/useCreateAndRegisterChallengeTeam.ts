@@ -10,7 +10,7 @@ import {
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 
 /**
  * Hook that in one call will

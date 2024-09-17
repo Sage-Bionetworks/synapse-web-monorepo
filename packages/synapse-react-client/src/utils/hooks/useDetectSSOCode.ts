@@ -1,9 +1,6 @@
 import { BackendDestinationEnum } from '../functions'
-import {
-  LoginResponse,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../SynapseClientError'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError, TwoFactorAuthErrorResponse } from 'synapse-client'
 import {
   bindOAuthProviderToAccount,
   getRootURL,

@@ -11,7 +11,7 @@ import { getFileColumnModelId } from '../../components/SynapseTable/SynapseTable
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
 import { UseQueryOptions } from '@tanstack/react-query'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,

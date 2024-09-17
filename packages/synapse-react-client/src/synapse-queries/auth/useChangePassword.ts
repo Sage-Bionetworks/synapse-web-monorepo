@@ -3,9 +3,8 @@ import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
   ChangePasswordWithTwoFactorAuthToken,
-  TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError, TwoFactorAuthErrorResponse } from 'synapse-client'
 import SynapseClient from '../../synapse-client'
 
 export function useChangePassword(

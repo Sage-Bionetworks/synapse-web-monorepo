@@ -144,9 +144,6 @@ export const BASE = 1024,
 
 export const DAY_IN_MS = 1000 * 60 * 60 * 24
 
-export const NETWORK_UNAVAILABLE_MESSAGE =
-  'This site cannot be reached. Either a connection is unavailable, or your network administrator has blocked you from accessing this site.'
-
 /* The ID of the table in production that contains the canned responses for the data access submission rejection form. */
 export const REJECT_SUBMISSION_CANNED_RESPONSES_TABLE = 'syn50683097'
 /* The ID of the table in production that contains the canned responses for the profile validation rejection form. */
