@@ -103,7 +103,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   useEffect(() => {
     // on mount, create a new agent session!
     if (
-      accessToken &&
       createAgentSession &&
       (!agentSession || agentSession.agentAccessLevel != agentAccessLevel)
     ) {
@@ -155,7 +154,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       </Alert>
     )
   }
-
   return (
     <Box
       display="flex"

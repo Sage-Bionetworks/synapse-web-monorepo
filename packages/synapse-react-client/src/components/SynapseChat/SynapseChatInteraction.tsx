@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react'
-import { Alert, Box, ListItem, ListItemText } from '@mui/material'
+import { Alert, Box, ListItem, ListItemText, Typography } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SkeletonParagraph } from '../Skeleton'
 import { SmartToyTwoTone } from '@mui/icons-material'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
@@ -79,6 +80,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
               borderRadius: '10px',
               padding: '10px',
               maxWidth: '100%',
+              whiteSpace: 'pre-wrap',
             }}
           />
         </ListItem>
@@ -89,7 +91,19 @@ export const SynapseChatInteraction: React.FunctionComponent<
         </Alert>
       )}
       {!chatResponseText && !chatErrorReason && (
-        <SkeletonParagraph numRows={3} />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography sx={{ textAlign: 'center' }} variant="body1Italic">
+            Processing...
+          </Typography>
+          <SynapseSpinner size={40} />
+          <SkeletonParagraph numRows={3} />
+        </Box>
       )}
     </>
   )
