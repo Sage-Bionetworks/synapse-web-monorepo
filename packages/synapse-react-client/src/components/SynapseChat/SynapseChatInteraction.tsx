@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { Box, ListItem, ListItemText } from '@mui/material'
+import { Alert, Box, ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SkeletonParagraph } from '../Skeleton'
@@ -9,11 +9,17 @@ export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
   scrollIntoView?: boolean
+  chatErrorReason?: string
 }
 
 export const SynapseChatInteraction: React.FunctionComponent<
   SynapseChatInteractionProps
-> = ({ userMessage, chatResponseText, scrollIntoView = false }) => {
+> = ({
+  userMessage,
+  chatResponseText,
+  chatErrorReason,
+  scrollIntoView = false,
+}) => {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   useEffect(() => {
@@ -77,7 +83,14 @@ export const SynapseChatInteraction: React.FunctionComponent<
           />
         </ListItem>
       )}
-      {!chatResponseText && <SkeletonParagraph numRows={3} />}
+      {chatErrorReason && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {chatErrorReason}
+        </Alert>
+      )}
+      {!chatResponseText && !chatErrorReason && (
+        <SkeletonParagraph numRows={3} />
+      )}
     </>
   )
 }

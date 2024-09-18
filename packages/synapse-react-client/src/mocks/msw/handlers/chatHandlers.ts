@@ -47,4 +47,13 @@ export const getChatbotHandlers = (
     mockAgentChatResponse,
     backendOrigin,
   ),
+  // generateAsyncJobHandlers(
+  //   START_CHAT_ASYNC,
+  //   tokenParam => GET_CHAT_ASYNC(tokenParam),
+  //   {
+  //     reason: 'Failed to respond, timed out for example',
+  //   },
+  //   backendOrigin,
+  //   400
+  // )
 ]

@@ -1,10 +1,5 @@
-import React, {
-  KeyboardEventHandler,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { Box, List, IconButton, Typography } from '@mui/material'
+import React, { KeyboardEventHandler, useEffect, useState } from 'react'
+import { Box, List, IconButton, Typography, Alert } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -12,11 +7,11 @@ import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
-  useGetAgentChatSessionHistoryInfinite,
   useSendChatMessageToAgent,
 } from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
+import { useSynapseContext } from 'src/utils'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -29,6 +24,7 @@ export type SynapseChatProps = {
 type ChatInteraction = {
   userMessage: string
   chatResponseText?: string
+  chatErrorReason?: string
 }
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
@@ -37,14 +33,19 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   hideTitle = false,
   textboxPositionOffset = '0px',
 }) => {
-  const { data: agentSession, mutate: createAgentSession } =
-    useCreateAgentSession()
+  const { accessToken } = useSynapseContext()
+  const {
+    data: agentSession,
+    mutate: createAgentSession,
+    error: createAgentSessionError,
+  } = useCreateAgentSession()
   const theme = useTheme()
   // When both the current message and current response are available, add a new ChatInteraction to the array
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
   const [currentResponse, setCurrentResponse] = useState('')
+  const [currentResponseError, setCurrentResponseError] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
@@ -53,51 +54,56 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       // whenever the response is returned, set the last interaction response text
       setCurrentResponse(data.responseText)
     },
+    onError: err => {
+      setCurrentResponseError(err.reason)
+    },
   })
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
-  const {
-    data: sessionHistoryInfiniteData,
-  } = //, hasNextPage: hasMoreSessionHistory, fetchNextPage: fetchNextSessionHistoryPage, isLoading: isSessionHistoryLoading } =
-    useGetAgentChatSessionHistoryInfinite(
-      {
-        sessionId: agentSession?.sessionId,
-      },
-      {
-        enabled: !!agentSession,
-      },
-    )
+  // const {
+  //   data: sessionHistoryInfiniteData,
+  // } = //, hasNextPage: hasMoreSessionHistory, fetchNextPage: fetchNextSessionHistoryPage, isLoading: isSessionHistoryLoading } =
+  //   useGetAgentChatSessionHistoryInfinite(
+  //     {
+  //       sessionId: agentSession?.sessionId,
+  //     },
+  //     {
+  //       enabled: !!agentSession,
+  //     },
+  //   )
 
-  const sessionHistory = useMemo(
-    () =>
-      sessionHistoryInfiniteData?.pages
-        .flatMap(page => page.page)
-        /* Note: session history is ordered from most recent to least recent in each page, so reverse the order when restoring the chat interface */
-        .reverse() ?? [],
-    [sessionHistoryInfiniteData],
-  )
+  // const sessionHistory = useMemo(
+  //   () =>
+  //     sessionHistoryInfiniteData?.pages
+  //       .flatMap(page => page.page)
+  //       /* Note: session history is ordered from most recent to least recent in each page, so reverse the order when restoring the chat interface */
+  //       .reverse() ?? [],
+  //   [sessionHistoryInfiniteData],
+  // )
 
   useEffect(() => {
-    // when we have both a message and response, add a new interaction and reset
+    // when we have both a message and either a response or response error, add a new interaction and reset
     // Note : We want the current interaction to be visible to the user while this async job processes (show the user message, and a loading response).
     // You might think we could do this work in the onSuccess of createAgentChatInteraction, but I think there's a race condition (currentInteraction may not be set when onSuccess is called).
-    if (currentResponse && pendingInteraction) {
+    if (pendingInteraction && (currentResponse || currentResponseError)) {
       pendingInteraction.chatResponseText = currentResponse
+      pendingInteraction.chatErrorReason = currentResponseError
       setInteractions([...interactions, pendingInteraction])
       setCurrentResponse('')
+      setCurrentResponseError('')
       setPendingInteraction(undefined)
     }
-  }, [currentResponse, pendingInteraction])
+  }, [currentResponse, currentResponseError, pendingInteraction])
 
   useEffect(() => {
     // on mount, create a new agent session!
-    if (createAgentSession && !agentSession) {
+    if (accessToken && createAgentSession && !agentSession) {
       createAgentSession({
         agentAccessLevel: AgentAccessLevel.PUBLICLY_ACCESSIBLE,
         agentId: agentId,
       })
     }
-  }, [createAgentSession, agentSession])
+  }, [createAgentSession, agentSession, accessToken])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
@@ -132,10 +138,16 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   }
 
   const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
+  if (createAgentSessionError) {
+    return (
+      <Alert severity={'error'} sx={{ my: 2 }}>
+        {createAgentSessionError.reason}
+      </Alert>
+    )
+  }
   if (!agentSession) {
     return <SkeletonParagraph numRows={6} />
   }
-
   return (
     <Box
       display="flex"
@@ -170,7 +182,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             flexDirection: 'column',
           }}
         >
-          {sessionHistory &&
+          {/* {sessionHistory &&
             sessionHistory.map((interaction, index) => {
               return (
                 <SynapseChatInteraction
@@ -179,13 +191,14 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                   chatResponseText={interaction.agentResponseText}
                 />
               )
-            })}
+            })} */}
           {interactions.map((interaction, index) => {
             return (
               <SynapseChatInteraction
                 key={index}
                 userMessage={interaction.userMessage}
                 chatResponseText={interaction.chatResponseText}
+                chatErrorReason={interaction.chatErrorReason}
               />
             )
           })}
@@ -193,11 +206,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
             <SynapseChatInteraction
               userMessage={pendingInteraction.userMessage}
               chatResponseText={pendingInteraction.chatResponseText}
+              chatErrorReason={pendingInteraction.chatErrorReason}
               scrollIntoView
             />
           )}
         </List>
       </Box>
+
       <Box
         sx={{
           position: 'sticky',

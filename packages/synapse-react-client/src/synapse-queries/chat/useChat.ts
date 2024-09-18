@@ -73,6 +73,11 @@ export function useSendChatMessageToAgent(
         options.onSuccess(data.responseBody, variables, ctx)
       }
     },
+    onError: (err, variables, ctx) => {
+      if (options?.onError) {
+        options.onError(err, variables, ctx)
+      }
+    },
   })
 }
 
