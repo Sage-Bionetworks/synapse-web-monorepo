@@ -31,7 +31,6 @@ runs:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-    #    TODO: Storing the Nx cache is failing builds because the cache is not meant to be shared between machines.
     - name: Set up Nx build cache
       # Note that using the shared Nx cache may present security risks.
       # It should be safe to use when running tests, but do not use it in deploy workflows.
@@ -43,8 +42,8 @@ runs:
         key: ${{ runner.os }}-nx-${{ github.ref }}-${{ env.HEAD_COMMIT }}
         restore-keys: |
           ${{ runner.os }}-nx-${{ github.ref }}-${{ env.HEAD_COMMIT }}
-          ${{ runner.os }}-nx-${{ github.ref }}
-          ${{ runner.os }}-nx
+          ${{ runner.os }}-nx-${{ github.ref }}-
+          ${{ runner.os }}-nx-
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
