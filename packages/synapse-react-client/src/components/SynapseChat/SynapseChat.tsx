@@ -12,6 +12,7 @@ import {
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
 import { useSynapseContext } from 'src/utils'
+import AccessLevelMenu from './AccessLevelMenu'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -26,6 +27,7 @@ type ChatInteraction = {
   chatResponseText?: string
   chatErrorReason?: string
 }
+
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
   agentId,
@@ -40,6 +42,9 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     error: createAgentSessionError,
   } = useCreateAgentSession()
   const theme = useTheme()
+  const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
+    AgentAccessLevel.PUBLICLY_ACCESSIBLE,
+  )
   // When both the current message and current response are available, add a new ChatInteraction to the array
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
   const [pendingInteraction, setPendingInteraction] =
@@ -97,13 +102,17 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // on mount, create a new agent session!
-    if (accessToken && createAgentSession && !agentSession) {
+    if (
+      accessToken &&
+      createAgentSession &&
+      (!agentSession || agentSession.agentAccessLevel != agentAccessLevel)
+    ) {
       createAgentSession({
-        agentAccessLevel: AgentAccessLevel.PUBLICLY_ACCESSIBLE,
+        agentAccessLevel: agentAccessLevel,
         agentId: agentId,
       })
     }
-  }, [createAgentSession, agentSession, accessToken])
+  }, [createAgentSession, agentSession, accessToken, agentAccessLevel])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
@@ -128,7 +137,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     }
   }
 
-  const isDisabled = !userChatTextfieldValue || !!pendingInteraction
+  const isDisabled =
+    !agentSession || !userChatTextfieldValue || !!pendingInteraction
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
     if (!isDisabled && event.key === 'Enter' && !event.shiftKey) {
@@ -145,9 +155,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       </Alert>
     )
   }
-  if (!agentSession) {
-    return <SkeletonParagraph numRows={6} />
-  }
+
   return (
     <Box
       display="flex"
@@ -172,17 +180,25 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
           {chatbotName}
         </Typography>
       )}
-      <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
-        <List
-          sx={{
-            flex: 1,
-            overflowY: 'auto',
-            pt: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* {sessionHistory &&
+      <AccessLevelMenu
+        initAccessLevel={agentAccessLevel}
+        onChange={newAccessLevel => {
+          setAgentAccessLevel(newAccessLevel)
+        }}
+      />
+      {!agentSession && <SkeletonParagraph numRows={10} />}
+      {agentSession && (
+        <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
+          <List
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              pt: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* {sessionHistory &&
             sessionHistory.map((interaction, index) => {
               return (
                 <SynapseChatInteraction
@@ -192,27 +208,27 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                 />
               )
             })} */}
-          {interactions.map((interaction, index) => {
-            return (
+            {interactions.map((interaction, index) => {
+              return (
+                <SynapseChatInteraction
+                  key={index}
+                  userMessage={interaction.userMessage}
+                  chatResponseText={interaction.chatResponseText}
+                  chatErrorReason={interaction.chatErrorReason}
+                />
+              )
+            })}
+            {pendingInteraction && (
               <SynapseChatInteraction
-                key={index}
-                userMessage={interaction.userMessage}
-                chatResponseText={interaction.chatResponseText}
-                chatErrorReason={interaction.chatErrorReason}
+                userMessage={pendingInteraction.userMessage}
+                chatResponseText={pendingInteraction.chatResponseText}
+                chatErrorReason={pendingInteraction.chatErrorReason}
+                scrollIntoView
               />
-            )
-          })}
-          {pendingInteraction && (
-            <SynapseChatInteraction
-              userMessage={pendingInteraction.userMessage}
-              chatResponseText={pendingInteraction.chatResponseText}
-              chatErrorReason={pendingInteraction.chatErrorReason}
-              scrollIntoView
-            />
-          )}
-        </List>
-      </Box>
-
+            )}
+          </List>
+        </Box>
+      )}
       <Box
         sx={{
           position: 'sticky',
