@@ -1,5 +1,10 @@
 name: 'Set up pnpm and configure environment'
 description: 'Installs Node, pnpm, fetches cache (if exists), and runs pnpm install'
+inputs:
+  STORE_NX_CACHE:
+    description: 'Whether to store/load the Nx cache in the action cache'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -27,14 +32,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
     #    TODO: Storing the Nx cache is failing builds because the cache is not meant to be shared between machines.
-    #    This check can be disabled, but may present security risks. See: https://nx.dev/recipes/troubleshooting/unknown-local-cache#you-share-cache-with-another-machine-using-a-network-drive
-    #    - name: Set up Nx build cache
-    #      uses: actions/cache@v3
-    #      with:
-    #        path: .nx/cache
-    #        key: ${{ runner.os }}-nx-cache
-    #        restore-keys: |
-    #          ${{ runner.os }}-nx-cache
+    - name: Set up Nx build cache
+      # Note that using the shared Nx cache may present security risks.
+      # It should be safe to use when running tests, but do not use it in deploy workflows.
+      # See: https://nx.dev/recipes/troubleshooting/unknown-local-cache#you-share-cache-with-another-machine-using-a-network-drive
+      if: ${{ inputs.STORE_NX_CACHE == 'true' }}
+      uses: actions/cache@v3
+      with:
+        path: .nx/cache
+        key: ${{ runner.os }}-nx-cache
+        restore-keys: |
+          ${{ runner.os }}-nx-cache
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
