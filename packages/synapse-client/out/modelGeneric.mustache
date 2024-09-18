@@ -28,7 +28,7 @@ export function instanceOf{{classname}}(value: object): value is {{classname}} {
     {{! if the property is a required enum, check that the value is a valid enum value }}
     {{#isEnum}}
       if (!Object.values({{classname}}{{enumName}}).includes(value["{{name}}"] as {{classname}}{{enumName}})) {
-      return false
+        return false
       }
     {{/isEnum}}
     {{! END CUSTOM TEMPLATING FOR synapse-client }}
