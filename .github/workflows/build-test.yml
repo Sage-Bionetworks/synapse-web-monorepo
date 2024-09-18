@@ -22,8 +22,13 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        with:
+          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=build --base=remotes/origin/main
+        env:
+          NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
   test:
+    needs: build
     runs-on:
       labels: ubuntu-latest
     # Job should not last longer than 60 minutes--and the larger runner is billed per-minute ;)
@@ -33,8 +38,12 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        with:
+          STORE_NX_CACHE: 'true'
       - id: test
         run: pnpm nx affected --target test --base=remotes/origin/main
+        env:
+          NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@v3
@@ -44,18 +53,28 @@ jobs:
             ./packages/*/coverage/
             ./apps/*/coverage/
   lint:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        with:
+          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=lint --base=remotes/origin/main
+        env:
+          NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
   typecheck:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        with:
+          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
+        env:
+          NX_REJECT_UNKNOWN_LOCAL_CACHE: 0

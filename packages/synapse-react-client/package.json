@@ -239,7 +239,6 @@
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start": "storybook dev -p 6060",
     "test": "jest",
-    "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",

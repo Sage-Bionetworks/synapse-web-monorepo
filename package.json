@@ -10,7 +10,7 @@
     "prepare": "husky",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint --quiet",
-    "test": "nx run-many --target=test:ci",
+    "test": "nx run-many --target=test --coverage",
     "clean": "nx run-many --target=clean",
     "type-check": "nx run-many --target=type-check"
   },
@@ -30,7 +30,7 @@
     "eslint-plugin-testing-library": "^6.2.2",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.0",
-    "nx": "^18.0.8",
+    "nx": "19.7.3",
     "rimraf": "^5.0.5",
     "typescript": "5.5.2"
   },
