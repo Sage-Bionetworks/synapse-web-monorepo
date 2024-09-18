@@ -57,13 +57,16 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
   )
 
   const synapseApiClient = useMemo(() => {
+    if (providedContext.synapseClient) {
+      return providedContext.synapseClient
+    }
     const configuration = new Configuration({
       apiKey: providedContext.accessToken
         ? `Bearer ${providedContext.accessToken}`
         : undefined,
     })
     return new SynapseClient(configuration)
-  }, [providedContext.accessToken])
+  }, [providedContext.synapseClient, providedContext.accessToken])
 
   const synapseContext: SynapseContextType = useMemo(
     () => ({

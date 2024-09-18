@@ -3,7 +3,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { rest, server } from '../../mocks/msw/server'
 import {
   CreateOAuthModal,
@@ -19,7 +19,6 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
-import SynapseClient from '../../synapse-client'
 import { noop } from 'lodash-es'
 
 const mockToastFn = jest
@@ -44,10 +43,14 @@ const defaultProps: CreateOAuthModalProps = {
   setIsShowingConfirmModal: jest.fn(),
 }
 
-jest.spyOn(SynapseClient, 'createOAuthClient')
-jest.spyOn(SynapseClient, 'updateOAuthClient')
-const createOAuthClientSpy = jest.mocked(SynapseClient.createOAuthClient)
-const updateOAuthClientSpy = jest.mocked(SynapseClient.updateOAuthClient)
+const createOAuthClientSpy = jest.spyOn(
+  MOCK_CONTEXT_VALUE.synapseClient.openIDConnectServicesClient,
+  'postAuthV1Oauth2Client',
+)
+const updateOAuthClientSpy = jest.spyOn(
+  MOCK_CONTEXT_VALUE.synapseClient.openIDConnectServicesClient,
+  'putAuthV1Oauth2ClientId',
+)
 
 function renderComponent(props: CreateOAuthModalProps = defaultProps) {
   render(<CreateOAuthModal {...props} />, {
@@ -156,8 +159,8 @@ describe('Create OAuth Client', () => {
 
     await user.click(saveButton)
 
-    expect(createOAuthClientSpy).toHaveBeenLastCalledWith(
-      {
+    expect(createOAuthClientSpy).toHaveBeenLastCalledWith({
+      oAuthClient: {
         client_id: undefined,
         client_name: mockClient.client_name,
         client_uri: mockClient.client_uri,
@@ -168,8 +171,7 @@ describe('Create OAuth Client', () => {
         tos_uri: '',
         userinfo_signed_response_alg: OIDCSigningAlgorithm.RS256,
       },
-      MOCK_ACCESS_TOKEN,
-    )
+    })
 
     await waitFor(() =>
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -223,8 +225,9 @@ describe('Create OAuth Client', () => {
     })
     await user.click(saveButton)
 
-    expect(updateOAuthClientSpy).toHaveBeenLastCalledWith(
-      {
+    expect(updateOAuthClientSpy).toHaveBeenLastCalledWith({
+      id: mockClient.client_id,
+      oAuthClient: {
         client_id: mockClient.client_id,
         client_name: `${mockClient.client_name}rename`,
         client_uri: mockClient.client_uri,
@@ -235,8 +238,7 @@ describe('Create OAuth Client', () => {
         tos_uri: mockClient.tos_uri,
         userinfo_signed_response_alg: OIDCSigningAlgorithm.RS256,
       },
-      MOCK_ACCESS_TOKEN,
-    )
+    })
 
     await waitFor(() =>
       expect(mockToastFn).toHaveBeenCalledWith('Successfully saved', 'success'),
@@ -269,8 +271,9 @@ describe('Create OAuth Client', () => {
 
     await user.click(saveButton)
 
-    expect(updateOAuthClientSpy).toHaveBeenLastCalledWith(
-      {
+    expect(updateOAuthClientSpy).toHaveBeenLastCalledWith({
+      id: mockClient.client_id,
+      oAuthClient: {
         client_id: mockClient.client_id,
         client_name: mockClient.client_name,
         client_uri: mockClient.client_uri,
@@ -280,8 +283,7 @@ describe('Create OAuth Client', () => {
         tos_uri: mockClient.tos_uri,
         userinfo_signed_response_alg: undefined,
       },
-      MOCK_ACCESS_TOKEN,
-    )
+    })
 
     await waitFor(() =>
       expect(mockToastFn).toHaveBeenCalledWith('Successfully saved', 'success'),
