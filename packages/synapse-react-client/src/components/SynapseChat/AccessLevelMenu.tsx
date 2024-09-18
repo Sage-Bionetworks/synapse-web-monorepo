@@ -79,21 +79,6 @@ export const AccessLevelMenu: React.FunctionComponent<AccessLevelMenuProps> = ({
         ))}
       </Menu>
     </Box>
-    // <Autocomplete
-    //   disableClearable
-    //   options={accessLevelOptions}
-    //   getOptionLabel={(option) => option.label}
-    //   value={selectedAccessLevel}
-    //   onChange={(_event, newValue)=>{
-    //     if (newValue) {
-    //       setSelectedAccessLevel(newValue)
-    //       onChange(newValue.value)
-    //     }
-    //   }}
-    //   renderInput={(params) => (
-    //     <TextField {...params} label="Access Level" variant="outlined" />
-    //   )}
-    // />
   )
 }
 
