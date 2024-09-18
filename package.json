@@ -10,7 +10,7 @@
     "prepare": "husky",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint --quiet",
-    "test": "nx run-many --target=test:ci",
+    "test": "nx run-many --target=test --coverage",
     "clean": "nx run-many --target=clean",
     "type-check": "nx run-many --target=type-check"
   },
