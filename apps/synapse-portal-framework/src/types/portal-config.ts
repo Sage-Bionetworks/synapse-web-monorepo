@@ -46,6 +46,7 @@ import { RedirectToURLProps } from '../components/RedirectToURL'
 import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
 import { BrowseToolsPageProps } from '../components/BrowseToolsPage'
 import { EcosystemProps } from '../components/csbc-home-page/Ecosystem'
+import { SurveyToastProps } from '../components/SurveyToast'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -161,10 +162,9 @@ type BrowseToolsPage = {
   name: 'BrowseToolsPage'
   props: BrowseToolsPageProps
 }
-
-type NFSurveyToast = {
-  name: 'NFSurveyToast'
-  props: undefined
+type SurveyToast = {
+  name: 'SurveyToast'
+  props: SurveyToastProps
 }
 type ELBetaLaunchBanner = {
   name: 'ELBetaLaunchBanner'
@@ -375,7 +375,7 @@ export type SynapseConfig = (
   | TableFeedCards
   | DownloadCartPage
   | BrowseToolsPage
-  | NFSurveyToast
+  | SurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage
   | GenieHomePageHeader

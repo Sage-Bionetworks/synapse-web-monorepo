@@ -1,55 +1,45 @@
-import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import RejectDataAccessRequestModal, {
-  RejectDataAccessRequestModalProps,
-} from './RejectDataAccessRequestModal'
-import { rest, server } from '../../mocks/msw/server'
-import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import userEvent from '@testing-library/user-event'
-import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../utils/APIConstants'
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import failOnConsoleError from 'jest-fail-on-console'
+import React from 'react'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import { server } from '../../mocks/msw/server'
+import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import {
+  CannedRejectionDialog,
+  CannedRejectionDialogProps,
+} from './CannedRejectionDialog'
 
-const props: RejectDataAccessRequestModalProps = {
-  submissionId: mockSubmittedSubmission.id,
+const MESSAGE_PREFIX = 'Thank you for submitting your request.\n'
+const MESSAGE_APPEND =
+  '\nIf you have questions, do not respond to this email address. Instead, reply to:\nact@sagebionetworks.org'
+
+const props: CannedRejectionDialogProps = {
   tableId: 'syn50683097',
   open: true,
+  error: null,
+  defaultMessagePrefix: MESSAGE_PREFIX,
+  defaultMessageAppend: MESSAGE_APPEND,
+  onConfirm: jest.fn(),
   onClose: jest.fn(),
 }
 
-const onServerReceivedUpdate = jest.fn()
-
-function renderComponent() {
-  return render(<RejectDataAccessRequestModal {...props} />, {
+function renderComponent(
+  propOverrides: Partial<CannedRejectionDialogProps> = {},
+) {
+  return render(<CannedRejectionDialog {...props} {...propOverrides} />, {
     wrapper: createWrapper(),
   })
 }
 
-describe('RejectDataAccessRequestModal', () => {
+describe('CannedRejectionDialog', () => {
   failOnConsoleError()
   beforeAll(() => {
     server.listen()
     registerTableQueryResult(
       { sql: `SELECT * FROM ${props.tableId}` },
       mockRejectionReasonsTableQueryResultBundle,
-    )
-    server.use(
-      rest.put(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
-        async (req, res, ctx) => {
-          onServerReceivedUpdate(await req.json())
-          return res(ctx.status(200))
-        },
-      ),
     )
   })
   afterEach(() => server.restoreHandlers())
@@ -99,12 +89,12 @@ describe('RejectDataAccessRequestModal', () => {
     )
 
     const email =
-      'Thank you for submitting your data access request.\n\n' +
+      `${MESSAGE_PREFIX}\n` +
       'The information you provided on the electronic data access request tool is incomplete or requires more information. Please address the following:\n\n' +
       '* Provide the first and last name of your Project Lead.\n\n' +
       'To access this data, please provide complete and/or current documentation. The following items are incomplete or need to be updated:\n\n' +
-      '* Please provide the correct Synapse usernames of the members of your research team (these must match exactly between the DUC and the electronic data access request tool).\n\n' +
-      'If you have questions, do not respond to this email address. Instead, reply to:\nact@sagebionetworks.org'
+      '* Please provide the correct Synapse usernames of the members of your research team (these must match exactly between the DUC and the electronic data access request tool).\n' +
+      `${MESSAGE_APPEND}`
 
     const textField = await screen.findByRole('textbox')
     expect(textField).toHaveValue(email)
@@ -118,14 +108,26 @@ describe('RejectDataAccessRequestModal', () => {
       screen.getByRole('button', { name: 'Reject and Notify Requester' }),
     )
 
-    // Verify that we send the rejection request to the server
+    // Verify that we call the onConfirm callback with the expected message
     const fullRejectionMessage = email + customAddition
-    await waitFor(() => expect(onServerReceivedUpdate).toHaveBeenCalledTimes(1))
-    expect(onServerReceivedUpdate).toHaveBeenCalledWith({
-      submissionId: mockSubmittedSubmission.id,
-      newState: SubmissionState.REJECTED,
-      rejectedReason: fullRejectionMessage,
-    })
-    await waitFor(() => expect(props.onClose).toHaveBeenCalled())
+    await waitFor(() => expect(props.onConfirm).toHaveBeenCalledTimes(1))
+    expect(props.onConfirm).toHaveBeenCalledWith(fullRejectionMessage)
+  })
+
+  it('Renders some additional UI on the second page', async () => {
+    const CHILD_DIV_TESTID = 'child-div'
+    renderComponent({ children: <div data-testid={CHILD_DIV_TESTID} /> })
+    const dialog = await screen.findByRole('dialog')
+    within(dialog).getByText('Reject Request?')
+
+    expect(screen.queryByTestId(CHILD_DIV_TESTID)).not.toBeInTheDocument()
+
+    // Go to the next page to see the email
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Generate Email' }),
+    )
+
+    // Verify the child div is now rendered
+    await screen.findByTestId(CHILD_DIV_TESTID)
   })
 })

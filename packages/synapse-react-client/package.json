@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.3.12",
+  "version": "3.3.13",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -228,9 +228,6 @@
     "util": "^0.12.5",
     "vite": "^5.4.3",
     "vite-config": "workspace:*",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-externalize-deps": "^0.8.0",
-    "vite-plugin-svgr": "^4.2.0",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.20"
   },
@@ -239,7 +236,6 @@
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start": "storybook dev -p 6060",
     "test": "jest",
-    "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",

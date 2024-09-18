@@ -15,4 +15,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the chatbot entrypoint from the new Synapse Homepage
   HOMEPAGE_CHATBOT = 'HOMEPAGE_CHATBOT',
+
+  // If enabled, show the Portals dropdown on the portal site (to discover other portals)
+  PORTALS_DROPDOWN = 'PORTALS_DROPDOWN',
 }

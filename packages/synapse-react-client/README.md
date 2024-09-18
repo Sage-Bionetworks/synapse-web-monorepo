@@ -117,10 +117,6 @@ Runs Storybook, which allows you to inspect and interact with components.
 
 Launches the test runner in the interactive watch mode.
 
-### `pnpm test:ci`
-
-Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
-
 Links to Resources on Testing:
 
 - Jest: https://jestjs.io/

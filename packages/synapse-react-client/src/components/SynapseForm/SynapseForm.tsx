@@ -2,7 +2,6 @@ import React from 'react'
 import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
 import Form from '@rjsf/core'
-import { Widgets } from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { UiSchema, ErrorListProps, RJSFValidationError } from '@rjsf/utils'
 import {
@@ -22,6 +21,9 @@ import SummaryTable from './SummaryTable'
 import WarningDialog from './WarningDialog'
 import Switch from 'react-switch'
 import { Prompt } from 'react-router-dom'
+import SynapseFormRadioWidget from './SynapseFormRadioWidget'
+import SynapseFormCheckboxWidget from './SynapseFormCheckboxWidget'
+import SynapseFormCheckboxesWidget from './SynapseFormCheckboxesWidget'
 
 export interface IFormData {
   [key: string]: {
@@ -939,9 +941,9 @@ export default class SynapseForm extends React.Component<
                       this.state.currentStep.excluded || this.state.isSubmitted
                     }
                     widgets={{
-                      CheckboxWidget: Widgets.CheckboxWidget,
-                      CheckboxesWidget: Widgets.CheckboxesWidget,
-                      RadioWidget: Widgets.RadioWidget,
+                      CheckboxWidget: SynapseFormCheckboxWidget,
+                      CheckboxesWidget: SynapseFormCheckboxesWidget,
+                      RadioWidget: SynapseFormRadioWidget,
                     }}
                   >
                     <div style={{ display: 'none' }}>

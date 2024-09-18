@@ -1,7 +1,8 @@
 export const datasetsSql = 'SELECT * FROM syn50913342'
 export const publicationsSql = 'SELECT * FROM syn16857542'
 export const studiesSql = 'SELECT * FROM syn52694652'
-export const initiativesSql = 'SELECT * FROM syn24189696'
+export const initiativesSql =
+  'SELECT * FROM syn24189696 order by initiative asc'
 export const toolsSql = 'SELECT * FROM syn51730943'
 export const peopleSql = 'SELECT * FROM syn23564971'
 export const filesSql = `SELECT * FROM syn52702673 WHERE resourceType in ('experimentalData', 'results', 'analysis')`

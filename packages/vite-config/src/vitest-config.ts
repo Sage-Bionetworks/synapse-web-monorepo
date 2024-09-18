@@ -1,12 +1,15 @@
-import { mergeConfig } from 'vitest/config'
-import { config } from './vite-config.js'
+import { defineConfig } from 'vitest/config'
 
-export default mergeConfig(config, {
+/**
+ * Partial config used to add a Vitest configuration to a Vite project.
+ */
+export default defineConfig({
   optimizeDeps: {
     exclude: ['vitest/utils'],
     include: ['@vitest/utils', 'vitest/browser'],
   },
   test: {
+    watch: false,
     globals: true,
     environment: 'jsdom',
     reporters: ['default', 'html'],

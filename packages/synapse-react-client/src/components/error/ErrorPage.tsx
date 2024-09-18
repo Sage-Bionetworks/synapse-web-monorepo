@@ -133,11 +133,12 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
           onClick: () => gotoPlace('/SynapseForum:default'),
           description: ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
         })
-        acts.push({
-          linkText: CONTACT_ADMIN_LINK_TEXT,
-          onClick: () => setSendMessageToAdminDialogOpen(true),
-          description: ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
-        })
+        // SWC-7073: Remove ability to send a message to the admins until we have a better option for the majority of the cases (service desk, contact emails, ...)
+        // acts.push({
+        //   linkText: CONTACT_ADMIN_LINK_TEXT,
+        //   onClick: () => setSendMessageToAdminDialogOpen(true),
+        //   description: ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
+        // })
       }
     }
     return acts
@@ -147,7 +148,6 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
     () => setSendMessageToAdminDialogOpen(false),
     [],
   )
-
   return (
     <>
       <Box

@@ -3,11 +3,9 @@ import { render, screen, waitFor } from '@testing-library/react'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
   ACCESS_DENIED_ANONYMOUS_MESSAGE,
-  ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
   ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
   ACCESS_DENIED_TITLE,
-  CONTACT_ADMIN_LINK_TEXT,
   ErrorPageProps,
   HELP_FORUM_LINK_TEXT,
   LOG_IN_LINK_TEXT,
@@ -22,7 +20,6 @@ import { server } from '../../mocks/msw/server'
 import { MOCK_DOI } from '../../mocks/doi/MockDoi'
 
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { CONTACT_ADMIN_DIALOG_TITLE } from './SendMessageToEntityOwnerDialog'
 
 const mockGotoPlace = jest.fn()
 
@@ -66,7 +63,8 @@ describe('ErrorPage: basic functionality', () => {
     await screen.findByText(ACCESS_DENIED_TITLE)
     await screen.findByText(ACCESS_DENIED_MESSAGE)
     await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
-    await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
+    // SWC-7073
+    // await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
     // by default, a DOI is set up in MSW (see doiHandlers)
     // searching for the text (using a regular expression because the element contains other text in addition to the search string)
     await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
@@ -78,14 +76,15 @@ describe('ErrorPage: basic functionality', () => {
       expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
     )
 
+    // SWC-7073
     // verify link pops up the SendMessageToEntityOwnerDialog
-    const contactAdminLink = screen.getByText(CONTACT_ADMIN_LINK_TEXT)
-    await user.click(contactAdminLink)
-    expect(
-      screen.queryByRole('dialog', {
-        name: new RegExp(CONTACT_ADMIN_DIALOG_TITLE),
-      }),
-    ).toBeInTheDocument()
+    // const contactAdminLink = screen.getByText(CONTACT_ADMIN_LINK_TEXT)
+    // await user.click(contactAdminLink)
+    // expect(
+    //   screen.queryByRole('dialog', {
+    //     name: new RegExp(CONTACT_ADMIN_DIALOG_TITLE),
+    //   }),
+    // ).toBeInTheDocument()
   })
 
   it('403 error on an entity - anonymous test', async () => {

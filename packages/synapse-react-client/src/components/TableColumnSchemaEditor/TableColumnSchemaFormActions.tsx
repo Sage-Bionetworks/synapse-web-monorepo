@@ -129,6 +129,8 @@ export function TableColumnSchemaFormActions(
       <Box flexGrow={1}>{/* spacer */}</Box>
       <Link
         sx={{ display: 'block', py: '10px', mr: '10px', textAlign: 'right' }}
+        href="https://help.synapse.org/docs/Organizing-Data-With-Tables.2011038095.html"
+        target="_blank"
       >
         About schemas and column types
       </Link>

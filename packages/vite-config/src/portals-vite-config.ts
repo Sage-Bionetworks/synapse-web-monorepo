@@ -1,13 +1,15 @@
-import vitestConfig from './vitest-config.js'
-import { mergeConfig } from 'vitest/config'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import { ConfigBuilder } from './ConfigBuilder.js'
 
-export default mergeConfig(vitestConfig, {
-  plugins: [
-    createHtmlPlugin({
-      inject: {
-        data: {
-          headContent: `<meta charset="utf-8" />
+const portalsSharedViteConfig = new ConfigBuilder()
+  .setIncludeReactConfig(true)
+  .setIncludeVitestConfig(true)
+  .setConfigOverrides({
+    plugins: [
+      createHtmlPlugin({
+        inject: {
+          data: {
+            headContent: `<meta charset="utf-8" />
     <link rel="shortcut icon" href="/favicon.svg" />
 
 
@@ -71,13 +73,16 @@ export default mergeConfig(vitestConfig, {
 
         globalThis.global = globalThis
     </script>`,
-          gtmNoscript: `    <!-- Google Tag Manager (noscript) -->
+            gtmNoscript: `    <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 `,
+          },
         },
-      },
-    }),
-  ],
-})
+      }),
+    ],
+  })
+  .build()
+
+export default portalsSharedViteConfig
