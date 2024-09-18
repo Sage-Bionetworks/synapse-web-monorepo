@@ -228,9 +228,6 @@
     "util": "^0.12.5",
     "vite": "^5.4.3",
     "vite-config": "workspace:*",
-    "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-externalize-deps": "^0.8.0",
-    "vite-plugin-svgr": "^4.2.0",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.20"
   },
