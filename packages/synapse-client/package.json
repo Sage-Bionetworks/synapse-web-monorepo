@@ -38,6 +38,15 @@
     "build": "rimraf ./dist && pnpm generate && vite build",
     "test": "vitest"
   },
+  "nx": {
+    "targets": {
+      "test": {
+        "dependsOn": [
+          "build"
+        ]
+      }
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0"
