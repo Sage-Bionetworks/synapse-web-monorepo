@@ -1,9 +1,6 @@
 import { describe, expect, expectTypeOf, test } from 'vitest'
-import {
-  EntityFromJSONTyped,
-  FileEntity,
-  instanceOfFileEntity,
-} from './generated'
+import { EntityFromJSONTyped } from './generated/models/Entity'
+import { FileEntity, instanceOfFileEntity } from './generated/models/FileEntity'
 
 describe('Tests for the generated specification', () => {
   test('instanceOfXxx works for a model with a concreteType', () => {

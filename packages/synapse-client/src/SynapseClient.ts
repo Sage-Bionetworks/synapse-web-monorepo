@@ -1,50 +1,47 @@
-import {
-  AccessApprovalServicesApi,
-  AccessRequirementServicesApi,
-  ActivityServicesApi,
-  AgentChatServicesApi,
-  AsynchronousJobServicesApi,
-  AuthenticationServices2FAApi,
-  AuthenticationServicesApi,
-  BaseAPI,
-  CertifiedUserServicesApi,
-  ChallengeServicesApi,
-  Configuration,
-  DataAccessServicesApi,
-  DiscussionServicesApi,
-  DockerAuthorizationServicesApi,
-  DockerCommitServicesApi,
-  DockerRegistryEventServicesApi,
-  DOIServicesApi,
-  DownloadListServicesApi,
-  DrsServicesApi,
-  EntityBundleServicesV2Api,
-  EntityServicesApi,
-  EvaluationServicesApi,
-  FileServicesApi,
-  FormServicesApi,
-  JSONSchemaServicesApi,
-  LogServiceApi,
-  MembershipInvitationServicesApi,
-  MembershipRequestServicesApi,
-  MessageServicesApi,
-  OpenIDConnectServicesApi,
-  PrincipalServicesApi,
-  ProjectSettingsServicesApi,
-  RecycleBinServicesApi,
-  SearchServicesApi,
-  StatisticsServicesApi,
-  StorageReportServicesApi,
-  SubscriptionServicesApi,
-  TableServicesApi,
-  TeamServicesApi,
-  UserGroupServicesApi,
-  UserProfileServicesApi,
-  VerificationServicesApi,
-  WebhookServicesApi,
-  WikiPageServices2Api,
-  WikiPageServicesApi,
-} from './generated'
+import { AccessApprovalServicesApi } from './generated/apis/AccessApprovalServicesApi'
+import { AccessRequirementServicesApi } from './generated/apis/AccessRequirementServicesApi'
+import { ActivityServicesApi } from './generated/apis/ActivityServicesApi'
+import { AgentChatServicesApi } from './generated/apis/AgentChatServicesApi'
+import { AsynchronousJobServicesApi } from './generated/apis/AsynchronousJobServicesApi'
+import { AuthenticationServices2FAApi } from './generated/apis/AuthenticationServices2FAApi'
+import { AuthenticationServicesApi } from './generated/apis/AuthenticationServicesApi'
+import { CertifiedUserServicesApi } from './generated/apis/CertifiedUserServicesApi'
+import { ChallengeServicesApi } from './generated/apis/ChallengeServicesApi'
+import { DataAccessServicesApi } from './generated/apis/DataAccessServicesApi'
+import { DiscussionServicesApi } from './generated/apis/DiscussionServicesApi'
+import { DockerAuthorizationServicesApi } from './generated/apis/DockerAuthorizationServicesApi'
+import { DockerCommitServicesApi } from './generated/apis/DockerCommitServicesApi'
+import { DockerRegistryEventServicesApi } from './generated/apis/DockerRegistryEventServicesApi'
+import { DOIServicesApi } from './generated/apis/DOIServicesApi'
+import { DownloadListServicesApi } from './generated/apis/DownloadListServicesApi'
+import { DrsServicesApi } from './generated/apis/DrsServicesApi'
+import { EntityBundleServicesV2Api } from './generated/apis/EntityBundleServicesV2Api'
+import { EntityServicesApi } from './generated/apis/EntityServicesApi'
+import { EvaluationServicesApi } from './generated/apis/EvaluationServicesApi'
+import { FileServicesApi } from './generated/apis/FileServicesApi'
+import { FormServicesApi } from './generated/apis/FormServicesApi'
+import { JSONSchemaServicesApi } from './generated/apis/JSONSchemaServicesApi'
+import { LogServiceApi } from './generated/apis/LogServiceApi'
+import { MembershipInvitationServicesApi } from './generated/apis/MembershipInvitationServicesApi'
+import { MembershipRequestServicesApi } from './generated/apis/MembershipRequestServicesApi'
+import { MessageServicesApi } from './generated/apis/MessageServicesApi'
+import { OpenIDConnectServicesApi } from './generated/apis/OpenIDConnectServicesApi'
+import { PrincipalServicesApi } from './generated/apis/PrincipalServicesApi'
+import { ProjectSettingsServicesApi } from './generated/apis/ProjectSettingsServicesApi'
+import { RecycleBinServicesApi } from './generated/apis/RecycleBinServicesApi'
+import { SearchServicesApi } from './generated/apis/SearchServicesApi'
+import { StatisticsServicesApi } from './generated/apis/StatisticsServicesApi'
+import { StorageReportServicesApi } from './generated/apis/StorageReportServicesApi'
+import { SubscriptionServicesApi } from './generated/apis/SubscriptionServicesApi'
+import { TableServicesApi } from './generated/apis/TableServicesApi'
+import { TeamServicesApi } from './generated/apis/TeamServicesApi'
+import { UserGroupServicesApi } from './generated/apis/UserGroupServicesApi'
+import { UserProfileServicesApi } from './generated/apis/UserProfileServicesApi'
+import { VerificationServicesApi } from './generated/apis/VerificationServicesApi'
+import { WebhookServicesApi } from './generated/apis/WebhookServicesApi'
+import { WikiPageServices2Api } from './generated/apis/WikiPageServices2Api'
+import { WikiPageServicesApi } from './generated/apis/WikiPageServicesApi'
+import { BaseAPI, Configuration } from './generated/runtime'
 import { fetchWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
 
 const DEFAULT_CONFIG = new Configuration({
