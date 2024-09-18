@@ -8,11 +8,13 @@ import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
   useSendChatMessageToAgent,
+  useUpdateAgentSession,
 } from '../../synapse-queries/chat/useChat'
-import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
+import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
+import { displayToast } from '../ToastMessage'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -36,11 +38,20 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   textboxPositionOffset = '0px',
 }) => {
   const { accessToken } = useSynapseContext()
-  const {
-    data: agentSession,
-    mutate: createAgentSession,
-    error: createAgentSessionError,
-  } = useCreateAgentSession()
+  const [agentSession, setAgentSession] = useState<AgentSession>()
+  const { mutate: createAgentSession, error: createAgentSessionError } =
+    useCreateAgentSession({
+      onSuccess: newAgentSession => setAgentSession(newAgentSession),
+    })
+
+  const { mutate: updateAgentSession } = useUpdateAgentSession({
+    onSuccess: updatedAgentSession => setAgentSession(updatedAgentSession),
+    onError: err =>
+      displayToast(
+        `Unable to update the agent session: ${err.message}`,
+        'danger',
+      ),
+  })
   const theme = useTheme()
   const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
     AgentAccessLevel.PUBLICLY_ACCESSIBLE,
@@ -102,16 +113,13 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     // on mount, create a new agent session!
-    if (
-      createAgentSession &&
-      (!agentSession || agentSession.agentAccessLevel != agentAccessLevel)
-    ) {
+    if (createAgentSession && !agentSession) {
       createAgentSession({
-        agentAccessLevel: agentAccessLevel,
-        agentId: agentId,
+        agentAccessLevel,
+        agentId,
       })
     }
-  }, [createAgentSession, agentSession, accessToken, agentAccessLevel])
+  }, [createAgentSession, agentSession, accessToken])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
@@ -182,6 +190,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
         initAccessLevel={agentAccessLevel}
         onChange={newAccessLevel => {
           setAgentAccessLevel(newAccessLevel)
+          updateAgentSession({
+            agentAccessLevel: newAccessLevel,
+            sessionId: agentSession!.sessionId,
+          })
         }}
       />
       {!agentSession && <SkeletonParagraph numRows={10} />}

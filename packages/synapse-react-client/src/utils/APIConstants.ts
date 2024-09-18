@@ -178,6 +178,8 @@ export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
 
 export const AGENT = `${REPO}/agent`
 export const AGENT_SESSION = `${AGENT}/session`
+export const UPDATE_AGENT_SESSION = (sessionId?: string) =>
+  `${AGENT_SESSION}/${sessionId}`
 export const LIST_AGENT_SESSIONS = `${AGENT_SESSION}s/list`
 export const AGENT_SESSION_HISTORY = (sessionId?: string) =>
   `${AGENT_SESSION}/history/${sessionId}`

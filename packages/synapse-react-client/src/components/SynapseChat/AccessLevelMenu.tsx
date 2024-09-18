@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { ArrowDropDown } from '@mui/icons-material'
+import DropdownSelect from '../DropdownSelect'
 
 export type AccessLevelMenuProps = {
   initAccessLevel: AgentAccessLevel
@@ -24,60 +24,36 @@ export const AccessLevelMenu: React.FunctionComponent<AccessLevelMenuProps> = ({
   onChange,
   initAccessLevel,
 }) => {
-  const initOption = accessLevelOptions.find(v => v.value == initAccessLevel)
-  const [selectedAccessLevel, setSelectedAccessLevel] = useState(initOption)
-  const [anchorEl, setAnchorEl] = useState<
-    (EventTarget & HTMLButtonElement) | null
-  >(null)
-  const open = Boolean(anchorEl)
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
+  const initOption = accessLevelOptions.findIndex(
+    v => v.value == initAccessLevel,
+  )
+  const options = accessLevelOptions.map(v => v.label)
+  const [selectedIndex, setSelectedIndex] = useState(initOption)
   return (
     <Box
       sx={{
-        display: 'grid',
-        gridTemplateColumns: 'auto 65px 240px',
+        display: 'flex',
+        justifyContent: 'flex-end',
         mt: '20px',
       }}
     >
-      <Typography variant="label" sx={{ gridColumn: '2', mt: '10px' }}>
+      <Typography
+        variant="label"
+        sx={{ gridColumn: '2', mt: '10px', mr: '15px' }}
+      >
         Access:
       </Typography>
-      <Button
-        sx={{ gridColumn: '3' }}
-        aria-controls="access-level-menu"
-        aria-haspopup="true"
-        onClick={event => {
-          setAnchorEl(event.currentTarget)
+      <DropdownSelect
+        variant={'outlined'}
+        options={options}
+        selectedIndex={selectedIndex}
+        setSelectedIndex={index => {
+          if (selectedIndex !== index) {
+            setSelectedIndex(index)
+            onChange(accessLevelOptions[index].value)
+          }
         }}
-        variant="outlined"
-        endIcon={<ArrowDropDown />}
-      >
-        {selectedAccessLevel!.label}
-      </Button>
-      <Menu
-        id="access-level-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        {accessLevelOptions.map(option => (
-          <MenuItem
-            key={option.value}
-            selected={option.value === selectedAccessLevel!.value}
-            onClick={() => {
-              setSelectedAccessLevel(option)
-              onChange(option.value)
-              handleClose()
-            }}
-          >
-            {option.label}
-          </MenuItem>
-        ))}
-      </Menu>
+      />
     </Box>
   )
 }

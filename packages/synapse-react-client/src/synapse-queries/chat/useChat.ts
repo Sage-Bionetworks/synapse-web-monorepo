@@ -19,6 +19,7 @@ import {
   CreateAgentSessionRequest,
   SessionHistoryRequest,
   SessionHistoryResponse,
+  UpdateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
 
 export function useCreateAgentSession(
@@ -40,6 +41,35 @@ export function useCreateAgentSession(
     onSuccess: async (newAgentSession, variables, ctx) => {
       if (options?.onSuccess) {
         await options.onSuccess(newAgentSession, variables, ctx)
+      }
+    },
+  })
+}
+
+export function useUpdateAgentSession(
+  options?: UseMutationOptions<
+    AgentSession,
+    SynapseClientError,
+    UpdateAgentSessionRequest
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<
+    AgentSession,
+    SynapseClientError,
+    UpdateAgentSessionRequest
+  >({
+    mutationFn: (request: UpdateAgentSessionRequest) =>
+      SynapseClient.updateAgentSession(request, accessToken),
+    onSuccess: async (session, variables, ctx) => {
+      if (options?.onSuccess) {
+        await options.onSuccess(session, variables, ctx)
+      }
+    },
+    onError: async (err, variables, ctx) => {
+      if (options?.onError) {
+        await options.onError(err, variables, ctx)
       }
     },
   })
