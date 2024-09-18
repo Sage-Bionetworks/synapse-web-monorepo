@@ -5,6 +5,7 @@ import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SkeletonParagraph } from '../Skeleton'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
@@ -74,15 +75,15 @@ export const SynapseChatInteraction: React.FunctionComponent<
           >
             <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
           </Box>
-          <ListItemText
-            primary={chatResponseText}
+          <Box
             sx={{
               borderRadius: '10px',
               padding: '10px',
               maxWidth: '100%',
-              whiteSpace: 'pre-wrap',
             }}
-          />
+          >
+            <MarkdownSynapse markdown={chatResponseText} />
+          </Box>
         </ListItem>
       )}
       {chatErrorReason && (
