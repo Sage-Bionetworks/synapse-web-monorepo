@@ -11,7 +11,7 @@ import {
 } from '../../synapse-queries/chat/useChat'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
-import { useSynapseContext } from 'src/utils'
+import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
 
 export type SynapseChatProps = {
