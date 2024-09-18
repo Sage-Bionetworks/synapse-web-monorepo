@@ -1,4 +1,4 @@
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 import { UseMutationOptions, useMutation } from '@tanstack/react-query'
 import { validateDefiningSql } from '../../synapse-client'
 import {

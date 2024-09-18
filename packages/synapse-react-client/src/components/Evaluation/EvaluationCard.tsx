@@ -3,7 +3,7 @@ import {
   deleteEvaluation,
   getEvaluationPermissions,
 } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { Button } from '@mui/material'
 import { Card, Col, Dropdown, Row } from 'react-bootstrap'

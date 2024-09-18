@@ -14,7 +14,7 @@ import {
   useGetSchemaBinding,
   useUpdateViaJson,
 } from '../../synapse-queries'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 import {
   ENTITY_CONCRETE_TYPE,
   EntityJson,

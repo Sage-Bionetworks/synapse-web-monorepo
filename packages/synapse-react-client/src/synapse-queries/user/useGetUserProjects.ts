@@ -5,7 +5,7 @@ import {
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { ProjectHeaderList } from '@sage-bionetworks/synapse-types'
 import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'

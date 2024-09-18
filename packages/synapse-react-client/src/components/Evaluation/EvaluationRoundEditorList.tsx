@@ -7,7 +7,7 @@ import {
   EvaluationRoundInput,
 } from './input_models/models'
 import { getEvaluationRoundsList } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '@sage-bionetworks/synapse-types'
 import { ErrorBanner } from '../error/ErrorBanner'

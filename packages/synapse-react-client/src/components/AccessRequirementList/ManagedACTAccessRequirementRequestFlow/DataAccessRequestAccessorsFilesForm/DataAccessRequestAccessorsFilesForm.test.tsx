@@ -39,7 +39,7 @@ import {
 import userEvent from '@testing-library/user-event'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
-import { SynapseClientError } from '../../../../utils'
+import { SynapseClientError } from 'synapse-client'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 

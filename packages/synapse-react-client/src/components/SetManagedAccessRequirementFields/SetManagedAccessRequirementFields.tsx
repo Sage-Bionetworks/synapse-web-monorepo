@@ -18,7 +18,7 @@ import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
 } from '../../synapse-queries'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 import { UploadDocumentField } from '../AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

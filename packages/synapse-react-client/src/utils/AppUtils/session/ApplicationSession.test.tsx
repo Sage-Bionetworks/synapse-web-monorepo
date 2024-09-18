@@ -12,7 +12,7 @@ import {
   MOCK_USER_ID,
   mockUserProfileData,
 } from '../../../mocks/user/mock_user_profile'
-import { SynapseClientError } from '../../SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import { MemoryRouter } from 'react-router-dom'
 import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'

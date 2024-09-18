@@ -12,7 +12,7 @@ import {
   Entity,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client'
 import SubmissionViewScopeEditorModal, {
   SubmissionViewScopeEditorModalProps,
 } from './SubmissionViewScopeEditorModal'

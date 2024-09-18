@@ -8,7 +8,7 @@ import TwoFactorEnrollmentForm, {
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 

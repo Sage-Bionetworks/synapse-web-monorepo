@@ -499,8 +499,8 @@ export class SynapseFormSubmissionGrid extends React.Component<
             title="More Information"
             content={
               <>
-                Please <Link href="mailto:ModelAD@iu.edu">contact us</Link>{' '}
-                for more information about your submission
+                Please <Link href="mailto:ModelAD@iu.edu">contact us</Link> for
+                more information about your submission
               </>
             }
             className={`theme-${this.props.formClass}`}

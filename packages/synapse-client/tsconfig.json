@@ -1,0 +1,18 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": false,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.ts"]
+}
