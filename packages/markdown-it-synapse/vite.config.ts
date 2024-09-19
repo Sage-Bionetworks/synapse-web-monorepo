@@ -1,9 +1,11 @@
-import { vitestConfig } from 'vite-config'
-import { mergeConfig } from 'vitest/config'
+import { ConfigBuilder } from 'vite-config'
 
-export default mergeConfig(vitestConfig, {
-  test: {
-    globals: true,
-    include: ['test/**/*.test.[jt]s?(x)'],
-  },
-})
+export default new ConfigBuilder()
+  .setIncludeVitestConfig(true)
+  .setConfigOverrides({
+    test: {
+      globals: true,
+      include: ['test/**/*.test.[jt]s?(x)'],
+    },
+  })
+  .build()
