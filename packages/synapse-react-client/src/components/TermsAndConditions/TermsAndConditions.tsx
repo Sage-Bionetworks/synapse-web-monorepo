@@ -17,7 +17,7 @@ export type TermsAndConditionsProps = {
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   termsAndConditionsTableID = 'syn51718002',
-  termsAndConditionsTableVersion = '4',
+  termsAndConditionsTableVersion = '5',
   onFormChange,
   hideLinkToFullTC = false,
 }) => {
@@ -65,8 +65,9 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
     }
   }, [data])
 
-  const governancePolicy =
-    'https://help.synapse.org/docs/Synapse-Governance.2004255211.html'
+  const sageTermsOfService =
+    'https://www.synapse.org/TrustCenter:TermsOfService'
+  const trustCenter = 'https://sagebionetworks.org/trust-center'
   const getInitialCheckboxState = (checkboxCount: number) =>
     Array.from(Array(checkboxCount).fill(false))
   let mounted = true
@@ -116,14 +117,18 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
 
   return (
     <section className="terms-conditions">
-      <h3 className="page-header">Synapse Pledge</h3>
+      <h3 className="page-header">Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to all{' '}
-          <Link target="_blank" href={governancePolicy}>
-            Sage Governance policies
+          I affirm my commitment to Sage's{' '}
+          <Link target="_blank" href={sageTermsOfService}>
+            Terms of Service
           </Link>{' '}
-          for responsible research and data handling (linked below), including:
+          and policies for responsible research and data handling (
+          <Link target="_blank" href={trustCenter}>
+            Trust Center
+          </Link>
+          ), including:
         </label>
         <ul className="term-list">
           {isLoading && <LoadingItem numLoadingItems={6} />}
