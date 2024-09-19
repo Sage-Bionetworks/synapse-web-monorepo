@@ -46,14 +46,14 @@
     "targets": {
       "generate": {
         "inputs": [
-          "{workspaceRoot}/src/spec/openapispecification.json",
-          "{workspaceRoot}/src/codegen",
-          "{workspaceRoot}/package.json",
-          "{workspaceRoot}/openapitools.json",
-          "{workspaceRoot}/config.json"
+          "{projectRoot}/src/spec/openapispecification.json",
+          "{projectRoot}/src/codegen",
+          "{projectRoot}/package.json",
+          "{projectRoot}/openapitools.json",
+          "{projectRoot}/config.json"
         ],
         "outputs": [
-          "{workspaceRoot}/src/generated"
+          "{projectRoot}/src/generated"
         ]
       },
       "test": {
