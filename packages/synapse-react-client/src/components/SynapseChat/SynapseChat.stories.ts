@@ -11,6 +11,14 @@ const meta = {
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
+  argTypes: {
+    isAuthenticated: {
+      type: 'boolean',
+    },
+  },
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
