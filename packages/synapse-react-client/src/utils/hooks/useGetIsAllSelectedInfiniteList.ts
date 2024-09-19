@@ -3,7 +3,7 @@ import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 
 /**
  * Given a list of items and predicates to determine what items are are selected, and which are selectable, return a boolean indicating if all of the entities that can be selected

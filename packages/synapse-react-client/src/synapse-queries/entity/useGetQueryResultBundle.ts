@@ -9,7 +9,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,

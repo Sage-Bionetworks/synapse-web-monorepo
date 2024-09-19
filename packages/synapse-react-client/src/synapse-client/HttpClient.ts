@@ -1,5 +1,5 @@
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
-import { fetchWithExponentialTimeout } from 'synapse-client'
+import { fetchWithExponentialTimeout } from 'synapse-client/util/fetchWithExponentialTimeout'
 
 /**
  * Waits t number of milliseconds

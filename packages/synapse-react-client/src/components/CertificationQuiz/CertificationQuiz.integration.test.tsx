@@ -18,7 +18,7 @@ import {
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
 import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { rest, server } from '../../mocks/msw/server'
 import { useGetCurrentUserBundle } from '../../synapse-queries'

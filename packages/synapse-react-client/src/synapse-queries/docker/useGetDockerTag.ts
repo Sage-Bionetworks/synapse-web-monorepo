@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import {
   Direction,
   DockerCommit,

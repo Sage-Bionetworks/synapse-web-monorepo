@@ -15,7 +15,7 @@ import {
   MOCK_RESEARCH_PROJECT,
 } from '../../../../mocks/dataaccess/MockResearchProject'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 

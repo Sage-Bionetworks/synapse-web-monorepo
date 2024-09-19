@@ -3,14 +3,16 @@
   "version": "0.0.1",
   "description": "",
   "type": "module",
-  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "types": "./dist/*.d.ts"
     }
   },
   "devDependencies": {
@@ -34,15 +36,33 @@
     "get-spec:production": "npx tsx src/codegen/downloadSpec.ts --stack production && pnpm format-spec",
     "get-spec": "pnpm get-spec:production",
     "configure": "openapi-generator-cli version-manager set 7.8.0",
-    "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS ",
-    "build": "rimraf ./dist && pnpm generate && vite build",
+    "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS",
+    "typecheck": "pnpm tsc",
+    "build": "rimraf ./dist && pnpm tsc -p tsconfig.build.json",
     "test": "vitest"
   },
   "nx": {
     "targets": {
+      "generate": {
+        "inputs": [
+          "{workspaceRoot}/src/spec/openapispecification.json",
+          "{workspaceRoot}/src/codegen",
+          "{workspaceRoot}/package.json",
+          "{workspaceRoot}/openapitools.json",
+          "{workspaceRoot}/config.json"
+        ],
+        "outputs": [
+          "{workspaceRoot}/src/generated"
+        ]
+      },
       "test": {
         "dependsOn": [
-          "build"
+          "generate"
+        ]
+      },
+      "build": {
+        "dependsOn": [
+          "generate"
         ]
       }
     }

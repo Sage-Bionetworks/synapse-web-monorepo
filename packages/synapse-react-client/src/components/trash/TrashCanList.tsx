@@ -7,7 +7,7 @@ import {
   usePurgeEntities,
   useRestoreEntities,
 } from '../../synapse-queries/trash/useTrashCan'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { TrashedEntity } from '@sage-bionetworks/synapse-types'
 import { Alert, Box, Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'

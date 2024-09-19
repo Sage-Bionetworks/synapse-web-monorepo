@@ -1,10 +1,5 @@
-import { resolve } from 'path'
 import { ConfigBuilder } from 'vite-config'
 
-const config = new ConfigBuilder()
-  .setIncludeLibraryConfig(true)
-  .setIncludeVitestConfig(true)
-  .setBuildLibEntry(resolve(__dirname, 'src/index.ts'))
-  .build()
+const config = new ConfigBuilder().setIncludeVitestConfig(true).build()
 
 export default config

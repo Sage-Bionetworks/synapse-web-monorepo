@@ -32,7 +32,7 @@ import {
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
 } from '../../../../synapse-queries'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import TextField from '../../../TextField/TextField'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,

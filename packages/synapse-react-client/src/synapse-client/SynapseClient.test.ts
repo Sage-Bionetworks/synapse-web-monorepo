@@ -1,6 +1,7 @@
 import type { FunctionReturningPaginatedResults } from './SynapseClient'
 import * as SynapseClient from './SynapseClient'
-import { SynapseClientError, NETWORK_UNAVAILABLE_MESSAGE } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { NETWORK_UNAVAILABLE_MESSAGE } from 'synapse-client/util/Constants'
 import { ACCESS_TOKEN_COOKIE_KEY } from '../utils/SynapseConstants'
 import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 import UniversalCookies from 'universal-cookie'

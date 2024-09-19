@@ -7,7 +7,7 @@ import {
   TwoFactorAuthOtpType,
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from 'synapse-client'
+import { TwoFactorAuthErrorResponse } from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { useChangePassword, useResetTwoFactorAuth } from '../../synapse-queries'
 import { Alert, Typography } from '@mui/material'
 import {

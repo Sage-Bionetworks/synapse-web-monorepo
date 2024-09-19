@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { ErrorBanner } from './ErrorBanner'
 
 const meta = {

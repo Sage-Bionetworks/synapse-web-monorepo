@@ -1,9 +1,9 @@
+import { ErrorResponseCode } from 'synapse-client/generated/models/ErrorResponseCode'
 import {
-  ErrorResponseCode,
   instanceOfTwoFactorAuthErrorResponse,
-  SynapseClientError,
   TwoFactorAuthErrorResponse,
-} from 'synapse-client'
+} from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 
 export function isOutsideSynapseOrg() {
   return !window.location.hostname.toLowerCase().endsWith('.synapse.org')

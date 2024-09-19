@@ -6,7 +6,7 @@ To generate code, we use the [Synapse REST Services](https://rest-docs.synapse.o
 
 ## Generating code
 
-To generate code for the models and services, simply run `pnpm build`. This will trigger the OpenAPI Generator CLI and also run any scripts that may be needed to improve code generation.
+To generate code for the models and services, simply run `pnpm nx run synapse-client:build`. This will trigger the OpenAPI Generator CLI and also run any scripts that may be needed to improve code generation.
 
 ## Upgrading the OpenAPI definition
 

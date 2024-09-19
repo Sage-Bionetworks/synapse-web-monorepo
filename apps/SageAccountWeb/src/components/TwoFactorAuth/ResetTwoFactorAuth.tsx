@@ -10,7 +10,7 @@ import {
   useQuerySearchParam,
 } from 'synapse-react-client'
 import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from 'synapse-client'
+import { TwoFactorAuthErrorResponse } from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { hexDecodeAndDeserialize } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { LeftRightPanel } from '../LeftRightPanel'

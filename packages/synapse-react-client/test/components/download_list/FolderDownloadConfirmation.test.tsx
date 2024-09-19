@@ -11,7 +11,7 @@ import {
 import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
 import { DownloadConfirmationUIProps } from '../../../src/components/download_list/DownloadConfirmationUI'
 import { FolderDownloadConfirmation } from '../../../src/components/download_list'
-import { SynapseClientError } from 'synapse-client'
+import { SynapseClientError } from 'synapse-client/uti'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,

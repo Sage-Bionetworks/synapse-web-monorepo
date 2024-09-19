@@ -1,8 +1,6 @@
 import { BaseError } from '../generated/models/BaseError'
+import { NETWORK_UNAVAILABLE_MESSAGE } from './Constants'
 import { SynapseClientError } from './SynapseClientError'
-
-export const NETWORK_UNAVAILABLE_MESSAGE =
-  'This site cannot be reached. Either a connection is unavailable, or your network administrator has blocked you from accessing this site.'
 
 /**
  * Waits t number of milliseconds

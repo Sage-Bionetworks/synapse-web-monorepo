@@ -1,9 +1,7 @@
-import {
-  BaseError,
-  DrsErrorResponse,
-  OAuthErrorResponse,
-  TwoFactorAuthErrorResponse,
-} from '../generated'
+import { BaseError } from '../generated/models/BaseError'
+import { DrsErrorResponse } from '../generated/models/DrsErrorResponse'
+import { OAuthErrorResponse } from '../generated/models/OAuthErrorResponse'
+import { TwoFactorAuthErrorResponse } from '../generated/models/TwoFactorAuthErrorResponse'
 
 type SynapseError =
   | BaseError
