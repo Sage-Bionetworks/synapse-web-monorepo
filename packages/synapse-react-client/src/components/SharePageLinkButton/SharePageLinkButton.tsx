@@ -60,8 +60,8 @@ export const SharePageLinkButton: React.FunctionComponent<
         createShortUrl()
       }}
       {...buttonProps}
+      startIcon={<IconSvg icon="contentCopy" wrap={false} />}
     >
-      <IconSvg icon="contentCopy" wrap={false} sx={{ mr: '5px' }} />
       Share Page Link
     </Button>
   )
