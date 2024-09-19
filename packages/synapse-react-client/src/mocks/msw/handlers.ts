@@ -32,6 +32,7 @@ import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHand
 import { getMessageHandlers } from './handlers/messageHandlers'
 import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
 import { getDoiHandler } from './handlers/doiHandlers'
+import { getShortIoHandlers } from './handlers/shortIoHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -75,6 +76,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   getFeatureFlagsOverride({ portalOrigin }),
   ...getHandlersForTableQuery(backendOrigin),
   ...getDoiHandler(backendOrigin),
+  ...getShortIoHandlers(),
 ]
 
 const handlers = getHandlers(

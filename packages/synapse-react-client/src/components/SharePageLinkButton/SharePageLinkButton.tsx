@@ -36,7 +36,6 @@ export const SharePageLinkButton: React.FunctionComponent<
             domain: domain,
           }),
         })
-
         if (!response.ok) {
           const responseText = await response.text()
           throw new Error(responseText)
