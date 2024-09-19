@@ -24,9 +24,9 @@ function getDuplicateNames(canonicalNames: string[][]): string[][] {
   return (
     Object.entries(counts)
       // Return just those that have a count greater than 1
-      .filter(([k, v]) => v > 1)
+      .filter(([_k, v]) => v > 1)
       // And convert the name strings back to arrays
-      .map(([k, v]) => k.split('.'))
+      .map(([k, _v]) => k.split('.'))
   )
 }
 

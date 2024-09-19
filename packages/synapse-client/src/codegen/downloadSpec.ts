@@ -16,7 +16,7 @@ const PROD_SPEC_URL =
 
 const args = minimist(process.argv.slice(2))
 
-const stack = args['stack'] || 'production'
+const stack = (args['stack'] as string | undefined) || 'production'
 
 let restDocsUrl
 switch (stack) {
