@@ -2,14 +2,17 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
   ErrorResponseCode,
   LoginResponse,
-  TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
   TwoFactorAuthOtpType,
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
+import {
+  instanceOfTwoFactorAuthErrorResponse,
+  TwoFactorAuthErrorResponse,
+} from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from '@tanstack/react-query'
-import { SynapseClientError } from '../SynapseClientError'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import SynapseClient from '../../synapse-client'
 import { ONE_TIME_PASSWORD_STEP } from '../../components'
 import { noop } from 'lodash-es'
@@ -186,7 +189,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     },
     onSuccess: async loginResponse => {
       if (loginResponse) {
-        if ('errorCode' in loginResponse) {
+        if (instanceOfTwoFactorAuthErrorResponse(loginResponse)) {
           setStep('VERIFICATION_CODE')
           setTwoFaErrorResponse(loginResponse)
         } else {
@@ -276,8 +279,8 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     setErrorMessage(undefined)
     if (verifyTwoFaErrorIsPresent(twoFaErrorResponse)) {
       const request: TwoFactorAuthLoginRequest = {
-        userId: twoFaErrorResponse.userId,
-        twoFaToken: twoFaErrorResponse.twoFaToken,
+        userId: twoFaErrorResponse.userId!,
+        twoFaToken: twoFaErrorResponse.twoFaToken!,
         otpCode: code,
         otpType: otpType,
       }
@@ -291,7 +294,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     setErrorMessage(undefined)
     if (verifyTwoFaErrorIsPresent(twoFaErrorResponse)) {
       const request: TwoFactorAuthResetRequest = {
-        userId: twoFaErrorResponse.userId,
+        userId: twoFaErrorResponse.userId!,
         twoFaToken: twoFaErrorResponse.twoFaToken,
         twoFaResetEndpoint: twoFaResetEndpoint,
       }

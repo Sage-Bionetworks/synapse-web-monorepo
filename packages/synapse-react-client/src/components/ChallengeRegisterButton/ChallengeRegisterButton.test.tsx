@@ -13,7 +13,7 @@ import {
   mockChallengeTeamMember,
 } from '../../mocks/challenge/mockChallenge'
 import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 
 const mockOnError = jest.fn()
 const mockOnJoinClick = jest.fn()

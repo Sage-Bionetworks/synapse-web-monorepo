@@ -2,11 +2,9 @@ import {
   returnIfTwoFactorAuthError,
   allowNotFoundError,
 } from './SynapseClientUtils'
-import { SynapseClientError } from '../utils/SynapseClientError'
-import {
-  ErrorResponseCode,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { ErrorResponseCode } from 'synapse-client/generated/models/ErrorResponseCode'
+import { TwoFactorAuthErrorResponse } from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
 
 describe('SynapseClientUtils', () => {
   describe('allowNotFoundError', () => {

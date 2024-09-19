@@ -4,10 +4,10 @@ import {
   ChangePasswordWithToken as ChangePasswordWithTokenObject,
   ChangePasswordWithTwoFactorAuthToken,
   PasswordResetSignedToken,
-  TwoFactorAuthErrorResponse,
   TwoFactorAuthOtpType,
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
+import { TwoFactorAuthErrorResponse } from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { useChangePassword, useResetTwoFactorAuth } from '../../synapse-queries'
 import { Alert, Typography } from '@mui/material'
 import {
@@ -106,8 +106,8 @@ export default function useChangePasswordFormState(
           newPassword,
           concreteType:
             'org.sagebionetworks.repo.model.auth.ChangePasswordWithTwoFactorAuthToken',
-          userId: twoFactorAuthErrorResponse.userId,
-          twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+          userId: twoFactorAuthErrorResponse.userId!,
+          twoFaToken: twoFactorAuthErrorResponse.twoFaToken!,
           otpType: otpType,
           otpCode: code,
         }
@@ -127,7 +127,7 @@ export default function useChangePasswordFormState(
     (twoFaResetEndpoint: string) => {
       if (twoFactorAuthErrorResponse) {
         const request: TwoFactorAuthResetRequest = {
-          userId: twoFactorAuthErrorResponse.userId,
+          userId: twoFactorAuthErrorResponse.userId!,
           twoFaResetEndpoint: twoFaResetEndpoint,
           // When attempting to reset 2FA while resetting a password, the current password must be used to request 2FA reset
           password: currentPassword,

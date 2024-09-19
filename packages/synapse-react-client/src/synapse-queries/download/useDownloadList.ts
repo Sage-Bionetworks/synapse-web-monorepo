@@ -22,7 +22,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseClient from '../../synapse-client'
 

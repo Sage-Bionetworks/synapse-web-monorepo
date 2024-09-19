@@ -113,4 +113,7 @@ export default [
       '@typescript-eslint/no-floating-promises': 'error',
     },
   },
+  {
+    ignores: ['synapse-client/src/generated/'],
+  },
 ]

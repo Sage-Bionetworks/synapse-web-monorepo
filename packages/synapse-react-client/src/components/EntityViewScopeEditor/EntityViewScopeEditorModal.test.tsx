@@ -18,7 +18,7 @@ import {
   Entity,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
 
 const mockTableEntityInstance = mockTableEntityData.entity

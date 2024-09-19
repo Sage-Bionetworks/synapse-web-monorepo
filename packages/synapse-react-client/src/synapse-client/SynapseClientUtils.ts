@@ -1,8 +1,9 @@
+import { ErrorResponseCode } from 'synapse-client/generated/models/ErrorResponseCode'
 import {
-  ErrorResponseCode,
+  instanceOfTwoFactorAuthErrorResponse,
   TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../utils/SynapseClientError'
+} from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 
 export function isOutsideSynapseOrg() {
   return !window.location.hostname.toLowerCase().endsWith('.synapse.org')
@@ -47,8 +48,7 @@ export async function returnIfTwoFactorAuthError<T>(
       e.errorResponse &&
       'errorCode' in e.errorResponse &&
       e.errorResponse.errorCode === ErrorResponseCode.TWO_FA_REQUIRED &&
-      e.errorResponse.concreteType ===
-        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse'
+      instanceOfTwoFactorAuthErrorResponse(e.errorResponse)
     ) {
       return e.errorResponse
     } else {

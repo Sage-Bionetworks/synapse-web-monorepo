@@ -15,8 +15,6 @@ import {
   GetEvaluationParameters,
   GetProjectsParameters,
   ObjectType,
-  OIDCAuthorizationRequest,
-  PrincipalAliasRequest,
   QueryBundleRequest,
   ReferenceList,
   RestrictionInformationBatchRequest,
@@ -44,6 +42,8 @@ import {
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '../utils/SynapseConstants'
+import { OIDCAuthorizationRequest } from 'synapse-client/generated/models/OIDCAuthorizationRequest'
+import { PrincipalAliasRequest } from 'synapse-client/generated/models/PrincipalAliasRequest'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */

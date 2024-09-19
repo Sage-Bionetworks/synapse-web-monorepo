@@ -8,7 +8,7 @@ import mockTableEntityData, {
 } from '../../mocks/entity/mockTableEntity'
 import { waitFor } from '@testing-library/react'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import userEvent from '@testing-library/user-event'
 import {
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,

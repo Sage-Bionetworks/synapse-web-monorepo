@@ -1,28 +1,29 @@
+import { BaseError } from '../generated/models/BaseError'
+import { DrsErrorResponse } from '../generated/models/DrsErrorResponse'
+import { OAuthErrorResponse } from '../generated/models/OAuthErrorResponse'
+import { TwoFactorAuthErrorResponse } from '../generated/models/TwoFactorAuthErrorResponse'
+
+type SynapseError =
+  | BaseError
+  | DrsErrorResponse
+  | OAuthErrorResponse
+  | TwoFactorAuthErrorResponse
+
 /**
  * Error message returned by the Synapse backend joined with the
  * HTTP status code.
  */
-import {
-  ErrorResponse,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
-
-import { SynapseError } from './SynapseError'
-
 export class SynapseClientError extends Error {
   public status: number
   public reason: string
-  public errorResponse?:
-    | SynapseError
-    | ErrorResponse
-    | TwoFactorAuthErrorResponse
+  public errorResponse?: SynapseError
   public url: string
 
   constructor(
     status: number,
     reason: string,
     url: string,
-    errorResponse?: SynapseError | ErrorResponse | TwoFactorAuthErrorResponse,
+    errorResponse?: SynapseError,
   ) {
     super(reason)
     this.status = status

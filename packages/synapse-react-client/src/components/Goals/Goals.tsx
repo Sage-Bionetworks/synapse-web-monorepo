@@ -7,7 +7,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { getFiles } from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'

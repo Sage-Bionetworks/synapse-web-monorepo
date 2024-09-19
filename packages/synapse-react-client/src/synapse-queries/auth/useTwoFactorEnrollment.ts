@@ -12,7 +12,7 @@ import {
   TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'

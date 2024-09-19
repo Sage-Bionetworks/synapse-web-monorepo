@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   Alert,
@@ -23,7 +23,6 @@ import {
 } from '../../synapse-queries'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SynapseClient from '../../synapse-client'
 import { useDebouncedEffect } from '../../utils/hooks'

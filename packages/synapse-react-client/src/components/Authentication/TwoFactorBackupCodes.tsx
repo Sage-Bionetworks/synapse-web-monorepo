@@ -16,7 +16,7 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
 import { RecoveryCodeGrid } from './RecoveryCodeGrid'
 import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
 import { useMediaPrintOnly } from '../../utils/hooks/useMediaPrintOnly'
 
 export type TwoFactorBackupCodesProps = {
