@@ -120,7 +120,7 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
       <h3 className="page-header">Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to Sage's{' '}
+          I affirm my commitment to Sage&apos;s{' '}
           <Link target="_blank" href={sageTermsOfService}>
             Terms of Service
           </Link>{' '}
