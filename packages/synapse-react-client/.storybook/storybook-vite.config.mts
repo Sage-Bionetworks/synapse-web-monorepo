@@ -1,6 +1,3 @@
-import { defineConfig } from 'vite'
-import { vitestConfig } from 'vite-config'
+import config from '../vite.config'
 
-export default defineConfig(
-  vitestConfig,
-)
+export default config

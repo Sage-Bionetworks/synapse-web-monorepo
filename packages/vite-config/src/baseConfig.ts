@@ -1,14 +1,15 @@
-import react from '@vitejs/plugin-react'
-import { resolve, dirname } from 'path'
-import { defineConfig, UserConfig } from 'vite'
-import svgr from 'vite-plugin-svgr'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { defineConfig, UserConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-export const config: UserConfig = {
+/**
+ * Vite config properties that are shared across all Vite configurations.
+ */
+const baseConfig: UserConfig = defineConfig({
   server: { port: 3000 },
   build: {
     outDir: './build',
@@ -16,19 +17,7 @@ export const config: UserConfig = {
       transformMixedEsModules: true,
     },
   },
-  plugins: [
-    react(),
-    svgr({
-      svgrOptions: {
-        plugins: ['@svgr/plugin-jsx'],
-        ref: true,
-        exportType: 'named',
-      },
-      // Explicitly exclude SVG imports that end in a query (such as ?url) - Vite can already handle these
-      include: /^.*\.svg$/,
-    }),
-    nodePolyfills(),
-  ],
+  plugins: [nodePolyfills()],
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
@@ -58,6 +47,6 @@ export const config: UserConfig = {
       util: 'util',
     },
   },
-}
+})
 
-export default defineConfig(config)
+export default baseConfig

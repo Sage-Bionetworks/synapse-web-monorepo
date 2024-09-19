@@ -83,6 +83,7 @@ import {
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
+  UPDATE_AGENT_SESSION,
   USER_BUNDLE,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
@@ -323,6 +324,7 @@ import {
   SessionHistoryResponse,
   SessionHistoryRequest,
   VerificationState,
+  UpdateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5481,6 +5483,18 @@ export const createAgentSession = (
 ): Promise<AgentSession> => {
   return doPost<AgentSession>(
     AGENT_SESSION,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const updateAgentSession = (
+  request: UpdateAgentSessionRequest,
+  accessToken: string | undefined = undefined,
+): Promise<AgentSession> => {
+  return doPut<AgentSession>(
+    UPDATE_AGENT_SESSION(request.sessionId),
     request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,

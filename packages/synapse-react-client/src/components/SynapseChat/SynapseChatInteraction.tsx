@@ -1,19 +1,27 @@
 import React, { useEffect, useRef } from 'react'
-import { Box, ListItem, ListItemText } from '@mui/material'
+import { Alert, Box, ListItem, ListItemText, Typography } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SkeletonParagraph } from '../Skeleton'
 import { SmartToyTwoTone } from '@mui/icons-material'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
   scrollIntoView?: boolean
+  chatErrorReason?: string
 }
 
 export const SynapseChatInteraction: React.FunctionComponent<
   SynapseChatInteractionProps
-> = ({ userMessage, chatResponseText, scrollIntoView = false }) => {
+> = ({
+  userMessage,
+  chatResponseText,
+  chatErrorReason,
+  scrollIntoView = false,
+}) => {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   useEffect(() => {
@@ -67,17 +75,37 @@ export const SynapseChatInteraction: React.FunctionComponent<
           >
             <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
           </Box>
-          <ListItemText
-            primary={chatResponseText}
+          <Box
             sx={{
               borderRadius: '10px',
               padding: '10px',
               maxWidth: '100%',
             }}
-          />
+          >
+            <MarkdownSynapse markdown={chatResponseText} />
+          </Box>
         </ListItem>
       )}
-      {!chatResponseText && <SkeletonParagraph numRows={3} />}
+      {chatErrorReason && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {chatErrorReason}
+        </Alert>
+      )}
+      {!chatResponseText && !chatErrorReason && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography sx={{ textAlign: 'center' }} variant="body1Italic">
+            Processing...
+          </Typography>
+          <SynapseSpinner size={40} />
+          <SkeletonParagraph numRows={3} />
+        </Box>
+      )}
     </>
   )
 }

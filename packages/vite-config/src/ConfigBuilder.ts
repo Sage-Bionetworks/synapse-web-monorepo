@@ -1,5 +1,5 @@
 import { getPluginConfig, PluginConfigOptions } from './pluginConfig.js'
-import viteConfig from './vite-config.js'
+import baseConfig from './baseConfig.js'
 import { mergeConfig } from 'vitest/config'
 import viteLibraryConfig from './vite-library-config.js'
 import vitestConfig from './vitest-config.js'
@@ -45,7 +45,7 @@ export class ConfigBuilder {
   }
 
   build() {
-    let config = viteConfig
+    let config = baseConfig
     if (this.includeLibraryConfig) {
       if (!this.buildLibEntry) {
         throw new Error(

@@ -17,6 +17,18 @@ export type CreateAgentSessionRequest = {
    */
   agentId?: string
 }
+export type UpdateAgentSessionRequest = {
+  /**
+   * Required. Specifies the access level that the agent will have during this session only.
+   */
+  agentAccessLevel: AgentAccessLevel
+  /**
+   * The unique identifier for a conversation with an agent. The sessionId issued by Synapse when the session is started.
+   * The caller must provide this sessionId with each chat request to identify a specific conversation with an agent.
+   * A sessionId can only be used by the user that created it.
+   */
+  sessionId: string
+}
 
 // Type for AgentSession
 export type AgentSession = {

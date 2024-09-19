@@ -16,7 +16,7 @@ export const mockCreateAgentSessionRequest: CreateAgentSessionRequest = {
 }
 export const mockAgentSession: AgentSession = {
   sessionId: mockChatSessionId,
-  agentAccessLevel: AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA,
+  agentAccessLevel: AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   startedOn: '2024-09-01T12:00:00Z',
   agentId: 'default-agent',
 }
