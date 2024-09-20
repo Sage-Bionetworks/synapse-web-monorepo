@@ -1,5 +1,8 @@
 import { GenericRoute } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { SharePageLinkButtonConfig } from '@sage-bionetworks/synapse-portal-framework/src/shared-config/SharePageLinkButtonConfig'
+import {
+  SharePageLinkButtonConfig,
+  SharePageLinkButtonDetailPageConfig,
+} from '@sage-bionetworks/synapse-portal-framework/src/shared-config/SharePageLinkButtonConfig'
 import { SynapseConstants } from 'synapse-react-client'
 import {
   newStudiesSql,
@@ -219,6 +222,7 @@ const routes: GenericRoute[] = [
         hideRouteFromNavbar: true,
         exact: true,
         synapseConfigArray: [
+          SharePageLinkButtonConfig,
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,
@@ -266,7 +270,7 @@ const routes: GenericRoute[] = [
               {
                 path: '',
                 synapseConfigArray: [
-                  SharePageLinkButtonConfig,
+                  SharePageLinkButtonDetailPageConfig,
                   {
                     name: 'CardContainerLogic',
                     isOutsideContainer: true,
