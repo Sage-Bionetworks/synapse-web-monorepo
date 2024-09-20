@@ -2055,8 +2055,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2))
       vite-plugin-node-polyfills:
-        specifier: 0.17.0
-        version: 0.17.0(rollup@4.21.2)(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2))
+        specifier: 0.22.0
+        version: 0.22.0(rollup@4.21.2)(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2))
       vite-plugin-svgr:
         specifier: ^4.2.0
         version: 4.2.0(rollup@4.21.2)(typescript@5.5.2)(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2))
@@ -8798,7 +8798,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -11417,8 +11416,8 @@ packages:
     peerDependencies:
       vite: '>=2.0.0'
 
-  vite-plugin-node-polyfills@0.17.0:
-    resolution: {integrity: sha512-iPmPn7376e5u6QvoTSJa16hf5Q0DFwHFXJk2uYpsNlmI3JdPms7hWyh55o+OysJ5jo9J5XPhLC9sMOYifwFd1w==}
+  vite-plugin-node-polyfills@0.22.0:
+    resolution: {integrity: sha512-F+G3LjiGbG8QpbH9bZ//GSBr9i1InSTkaulfUHFa9jkLqVGORFBoqc2A/Yu5Mmh1kNAbiAeKeK+6aaQUf3x0JA==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
 
@@ -14963,7 +14962,7 @@ snapshots:
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.21.2)
       estree-walker: 2.0.2
-      magic-string: 0.30.10
+      magic-string: 0.30.11
     optionalDependencies:
       rollup: 4.21.2
 
@@ -23626,12 +23625,10 @@ snapshots:
       pathe: 0.2.0
       vite: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
 
-  vite-plugin-node-polyfills@0.17.0(rollup@4.21.2)(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)):
+  vite-plugin-node-polyfills@0.22.0(rollup@4.21.2)(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.21.2)
-      buffer-polyfill: buffer@6.0.3
       node-stdlib-browser: 1.2.0
-      process: 0.11.10
       vite: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
     transitivePeerDependencies:
       - rollup
