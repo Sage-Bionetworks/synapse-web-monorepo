@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
+  AlertTitle,
   Box,
   Button,
   Container,
@@ -595,13 +596,19 @@ export const AccountSettings = () => {
                   {verificationState?.state ==
                     VerificationStateEnum.REJECTED && (
                     <Alert severity="error">
-                      Application has been rejected: {verificationState?.reason}
+                      <AlertTitle>Application has been rejected</AlertTitle>
+                      <Typography variant="body1" whiteSpace={'pre-line'}>
+                        {verificationState?.reason}
+                      </Typography>
                     </Alert>
                   )}
                   {verificationState?.state ==
                     VerificationStateEnum.SUSPENDED && (
                     <Alert severity="warning">
-                      Validated profile suspension: {verificationState?.reason}
+                      <AlertTitle>Validated profile suspension</AlertTitle>
+                      <Typography variant="body1" whiteSpace={'pre-line'}>
+                        {verificationState?.reason}
+                      </Typography>
                     </Alert>
                   )}
                   <p style={{ marginTop: '7px' }}>
