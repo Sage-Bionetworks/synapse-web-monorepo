@@ -3,7 +3,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../synapse-queries'
 import { CreateOAuthModal } from './CreateOAuthClient'
-import { OAuthClient } from '@sage-bionetworks/synapse-types'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils'
@@ -38,7 +38,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = useMemo(
-    () => data?.pages.flatMap(page => page.results) ?? [],
+    () => data?.pages.flatMap(page => page.results || []) || [],
     [data],
   )
 

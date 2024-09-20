@@ -8,9 +8,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { OAuthClient, OAuthClientList } from '@sage-bionetworks/synapse-types'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
+import { OAuthClientList } from '@sage-bionetworks/synapse-client/generated/models/OAuthClientList'
 
 export function useGetOAuthClientInfinite<
   TData = InfiniteData<OAuthClientList>,
@@ -26,7 +27,7 @@ export function useGetOAuthClientInfinite<
     >
   >,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     OAuthClientList,
     SynapseClientError,
@@ -37,7 +38,9 @@ export function useGetOAuthClientInfinite<
     ...options,
     queryKey: keyFactory.getMyOAuthClientsQueryKey(),
     queryFn: async context =>
-      await SynapseClient.getOAuth2(accessToken!, context.pageParam),
+      await synapseClient.openIDConnectServicesClient.getAuthV1Oauth2Client({
+        nextPageToken: context.pageParam,
+      }),
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
   })
@@ -70,12 +73,15 @@ export function useUpdateOAuthClient(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
 
   return useMutation<OAuthClient, SynapseClientError, OAuthClient>({
     ...options,
     mutationFn: (client: OAuthClient) =>
-      SynapseClient.updateOAuthClient(client, accessToken!),
+      synapseClient.openIDConnectServicesClient.putAuthV1Oauth2ClientId({
+        id: client.client_id!,
+        oAuthClient: client,
+      }),
     onSuccess: async (updatedClient, client, ctx) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMyOAuthClientsQueryKey(),
@@ -93,12 +99,14 @@ export function useCreateOAuthClient(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
 
   return useMutation<OAuthClient, SynapseClientError, OAuthClient>({
     ...options,
     mutationFn: (client: OAuthClient) =>
-      SynapseClient.createOAuthClient(client, accessToken!),
+      synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Client({
+        oAuthClient: client,
+      }),
     onSuccess: async (updatedClient, client, ctx) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMyOAuthClientsQueryKey(),

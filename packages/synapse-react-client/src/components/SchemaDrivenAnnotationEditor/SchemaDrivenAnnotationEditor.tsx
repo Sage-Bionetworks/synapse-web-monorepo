@@ -14,7 +14,7 @@ import {
   useGetSchemaBinding,
   useUpdateViaJson,
 } from '../../synapse-queries'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ENTITY_CONCRETE_TYPE,
   EntityJson,

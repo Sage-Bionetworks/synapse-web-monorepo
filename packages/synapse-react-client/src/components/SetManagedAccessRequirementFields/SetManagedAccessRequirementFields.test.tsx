@@ -22,7 +22,7 @@ import {
   waitForMarkdownSynapseToGetWiki,
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   WIKI_PAGE_ID,

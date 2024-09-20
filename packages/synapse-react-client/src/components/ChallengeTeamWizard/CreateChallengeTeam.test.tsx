@@ -16,7 +16,7 @@ import {
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
 
 jest.mock('./useCreateAndRegisterChallengeTeam')

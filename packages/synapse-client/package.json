@@ -1,5 +1,5 @@
 {
-  "name": "synapse-client",
+  "name": "@sage-bionetworks/synapse-client",
   "version": "0.0.1",
   "description": "",
   "type": "module",

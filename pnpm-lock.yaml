@@ -102,6 +102,12 @@ importers:
       '@react-hookz/web':
         specifier: ^23.1.0
         version: 23.1.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@sage-bionetworks/synapse-client':
+        specifier: workspace:*
+        version: link:../../packages/synapse-client
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../../packages/synapse-types
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.2.0)
@@ -135,9 +141,6 @@ importers:
       sass:
         specifier: ^1.71.1
         version: 1.77.6
-      synapse-client:
-        specifier: workspace:*
-        version: link:../../packages/synapse-client
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
@@ -145,9 +148,6 @@ importers:
         specifier: ^4.0.4
         version: 4.0.4
     devDependencies:
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../../packages/synapse-types
       '@testing-library/jest-dom':
         specifier: ^6.4.6
         version: 6.4.6(@jest/globals@29.7.0)(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.14.10))(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))
@@ -1470,6 +1470,9 @@ importers:
       '@sage-bionetworks/react-base-table':
         specifier: ^1.13.4
         version: 1.13.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@sage-bionetworks/synapse-client':
+        specifier: workspace:*
+        version: link:../synapse-client
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../synapse-types
@@ -1662,9 +1665,6 @@ importers:
       spark-md5:
         specifier: ^3.0.2
         version: 3.0.2
-      synapse-client:
-        specifier: workspace:*
-        version: link:../synapse-client
       tinycolor2:
         specifier: ^1.6.0
         version: 1.6.0

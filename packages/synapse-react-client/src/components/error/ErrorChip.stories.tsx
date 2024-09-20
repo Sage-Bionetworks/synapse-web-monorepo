@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import ErrorChip, { ErrorChipProps } from './ErrorChip'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 const meta: Meta<ErrorChipProps & { isAuthenticated: boolean }> = {
   title: 'Components/ErrorChip',
