@@ -10,7 +10,13 @@ import {
   useSendChatMessageToAgent,
   useUpdateAgentSession,
 } from '../../synapse-queries/chat/useChat'
-import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
+import {
+  AgentAccessLevel,
+  AgentChatRequest,
+  AgentChatResponse,
+  AgentSession,
+  AsynchronousJobStatus,
+} from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
@@ -61,19 +67,28 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
   const [currentResponse, setCurrentResponse] = useState('')
+  const [currentProgressMessage, setCurrentProgressMessage] = useState<
+    string | undefined
+  >()
   const [currentResponseError, setCurrentResponseError] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
-  const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent({
-    onSuccess: data => {
-      // whenever the response is returned, set the last interaction response text
-      setCurrentResponse(data.responseText)
+  const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
+    {
+      onSuccess: data => {
+        // whenever the response is returned, set the last interaction response text
+        setCurrentResponse(data.responseText)
+      },
+      onError: err => {
+        setCurrentResponseError(err.reason)
+      },
     },
-    onError: err => {
-      setCurrentResponseError(err.reason)
+    (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
+      setCurrentProgressMessage(status?.progressMessage)
     },
-  })
+  )
+
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
   // const {
@@ -107,6 +122,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setInteractions([...interactions, pendingInteraction])
       setCurrentResponse('')
       setCurrentResponseError('')
+      setCurrentProgressMessage('')
       setPendingInteraction(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
@@ -233,6 +249,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                 userMessage={pendingInteraction.userMessage}
                 chatResponseText={pendingInteraction.chatResponseText}
                 chatErrorReason={pendingInteraction.chatErrorReason}
+                progressMessage={currentProgressMessage}
                 scrollIntoView
               />
             )}
