@@ -1,6 +1,7 @@
 import type { CardConfiguration } from 'synapse-react-client'
 import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import { SharePageLinkButtonConfig } from '@sage-bionetworks/synapse-portal-framework/src/shared-config/SharePageLinkButtonConfig'
 import { columnAliases } from './commonProps'
 import {
   catalogNumberSql,
@@ -358,6 +359,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
 }
 
 export const toolsDetailsPage: SynapseConfig[] = [
+  SharePageLinkButtonConfig,
   {
     name: 'CardContainerLogic',
     isOutsideContainer: true,

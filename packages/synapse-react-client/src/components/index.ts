@@ -75,6 +75,7 @@ export * from './AccessRequirementRelatedProjectsList'
 export * from './HelpPopover'
 export * from './MuiContainer'
 export * from './DatasetJsonLdScript'
+export * from './SharePageLinkButton'
 export * from './SageResourcesPopover'
 
 // TODO: Find a better way to expose Icon components
