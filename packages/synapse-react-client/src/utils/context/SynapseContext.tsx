@@ -1,6 +1,8 @@
 import React, { useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
 import { KeyFactory } from '../../synapse-queries/KeyFactory'
+import { Configuration } from 'synapse-client/generated/runtime'
+import { SynapseClient } from 'synapse-client/SynapseClient'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -17,6 +19,8 @@ export type SynapseContextType = {
   keyFactory: KeyFactory
   /** The appId identifying the product. Used to brand the Synapse account management site, aka OneSage. */
   appId?: string
+  /* API client objects for Synapse. Generated automatically. */
+  synapseClient: SynapseClient
 }
 
 const defaultContext = {
@@ -27,6 +31,7 @@ const defaultContext = {
   keyFactory: new KeyFactory(undefined),
   downloadCartPageUrl: '/DownloadCart',
   appId: undefined,
+  synapseClient: new SynapseClient(),
 } satisfies SynapseContextType
 
 /**
@@ -43,7 +48,6 @@ export type SynapseContextProviderProps = React.PropsWithChildren<{
  * Provides context necessary for most components in SRC.
  *
  * The SynapseContextProvider must be wrapped in a react-query QueryClientProvider.
- * @param param0
  * @returns
  */
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
@@ -52,6 +56,18 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
     () => new KeyFactory(providedContext.accessToken),
     [providedContext.accessToken],
   )
+
+  const synapseApiClient = useMemo(() => {
+    if (providedContext.synapseClient) {
+      return providedContext.synapseClient
+    }
+    const configuration = new Configuration({
+      apiKey: providedContext.accessToken
+        ? `Bearer ${providedContext.accessToken}`
+        : undefined,
+    })
+    return new SynapseClient(configuration)
+  }, [providedContext.synapseClient, providedContext.accessToken])
 
   const synapseContext: SynapseContextType = useMemo(
     () => ({
@@ -63,6 +79,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
         providedContext.downloadCartPageUrl ?? '/DownloadCart',
       keyFactory: providedContext.keyFactory ?? queryKeyFactory,
       appId: providedContext.appId,
+      synapseClient: synapseApiClient,
     }),
     [
       providedContext.accessToken,
@@ -73,6 +90,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       providedContext.withErrorBoundary,
       providedContext.appId,
       queryKeyFactory,
+      synapseApiClient,
     ],
   )
 
