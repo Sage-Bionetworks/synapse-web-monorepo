@@ -1,9 +1,10 @@
 import { SynapseConfig } from '../types/portal-config'
 
-export const SharePageLinkButtonConfig: SynapseConfig = {
+const shortIoPublicApiKey = 'pk_y4sPMLrxonM7kNQV'
+export const SharePageLinkButtonDetailPageConfig: SynapseConfig = {
   name: 'SharePageLinkButton',
   props: {
-    shortIoPublicApiKey: 'pk_y4sPMLrxonM7kNQV',
+    shortIoPublicApiKey,
     buttonProps: {
       variant: 'text',
       color: 'light',
@@ -16,4 +17,21 @@ export const SharePageLinkButtonConfig: SynapseConfig = {
     },
   },
   containerClassName: 'container-full-width',
+}
+export const SharePageLinkButtonConfig: SynapseConfig = {
+  name: 'SharePageLinkButton',
+  isOutsideContainer: true,
+  props: {
+    shortIoPublicApiKey,
+    buttonProps: {
+      variant: 'text',
+      color: 'primary',
+      sx: {
+        position: 'absolute',
+        top: '35px',
+        right: '20px',
+        zIndex: 100,
+      },
+    },
+  },
 }
