@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/synapse-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
   "module": "./dist/index.js",
