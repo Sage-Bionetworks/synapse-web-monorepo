@@ -1,5 +1,5 @@
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
-import { fetchWithExponentialTimeout } from 'synapse-client/util/fetchWithExponentialTimeout'
+import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client/util/fetchWithExponentialTimeout'
 
 /**
  * Waits t number of milliseconds

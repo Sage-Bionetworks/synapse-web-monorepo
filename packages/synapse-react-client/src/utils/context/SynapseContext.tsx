@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
 import { KeyFactory } from '../../synapse-queries/KeyFactory'
-import { Configuration } from 'synapse-client/generated/runtime'
-import { SynapseClient } from 'synapse-client/SynapseClient'
+import { Configuration } from '@sage-bionetworks/synapse-client/generated/runtime'
+import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */

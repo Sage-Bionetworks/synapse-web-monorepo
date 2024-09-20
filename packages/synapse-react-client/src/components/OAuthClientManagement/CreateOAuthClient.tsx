@@ -12,8 +12,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { OAuthClient } from 'synapse-client/generated/models/OAuthClient'
-import { OIDCSigningAlgorithm } from 'synapse-client/generated/models/OIDCSigningAlgorithm'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
+import { OIDCSigningAlgorithm } from '@sage-bionetworks/synapse-client/generated/models/OIDCSigningAlgorithm'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,

@@ -9,10 +9,10 @@ import {
 import {
   instanceOfTwoFactorAuthErrorResponse,
   TwoFactorAuthErrorResponse,
-} from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
+} from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from '@tanstack/react-query'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import SynapseClient from '../../synapse-client'
 import { ONE_TIME_PASSWORD_STEP } from '../../components'
 import { noop } from 'lodash-es'

@@ -1,4 +1,4 @@
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { UseMutationOptions, useMutation } from '@tanstack/react-query'
 import { validateDefiningSql } from '../../synapse-client'
 import {

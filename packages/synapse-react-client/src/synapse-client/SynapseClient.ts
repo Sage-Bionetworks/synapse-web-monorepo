@@ -337,7 +337,7 @@ import { SetOptional } from 'type-fest'
 import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
 import xss from 'xss'
 import { xssOptions } from '../utils/functions/SanitizeHtmlUtils'
-import { TwoFactorAuthErrorResponse } from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 
 const cookies = new UniversalCookies()
 

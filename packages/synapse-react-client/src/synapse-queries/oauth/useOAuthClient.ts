@@ -8,10 +8,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { OAuthClient } from 'synapse-client/generated/models/OAuthClient'
-import { OAuthClientList } from 'synapse-client/generated/models/OAuthClientList'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
+import { OAuthClientList } from '@sage-bionetworks/synapse-client/generated/models/OAuthClientList'
 
 export function useGetOAuthClientInfinite<
   TData = InfiniteData<OAuthClientList>,

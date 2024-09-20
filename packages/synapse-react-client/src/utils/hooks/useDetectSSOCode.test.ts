@@ -7,7 +7,7 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { BackendDestinationEnum } from '../functions'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   LOGIN_METHOD_OAUTH2_GOOGLE,
   OAUTH2_PROVIDERS,

@@ -1,9 +1,9 @@
-import { ErrorResponseCode } from 'synapse-client/generated/models/ErrorResponseCode'
+import { ErrorResponseCode } from '@sage-bionetworks/synapse-client/generated/models/ErrorResponseCode'
 import {
   instanceOfTwoFactorAuthErrorResponse,
   TwoFactorAuthErrorResponse,
-} from 'synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { SynapseClientError } from 'synapse-client/util/SynapseClientError'
+} from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 export function isOutsideSynapseOrg() {
   return !window.location.hostname.toLowerCase().endsWith('.synapse.org')
