@@ -1,4 +1,5 @@
 import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import OpenData from './OpenData'
 import { AclEditor, AclEditorProps } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
@@ -26,7 +27,7 @@ import {
   useSuspenseGetEntityBundle,
   useUpdateEntityACL,
 } from '../../synapse-queries'
-import { Alert, Stack } from '@mui/material'
+import { Alert, Link, Stack } from '@mui/material'
 import { InheritanceMessage } from './InheritanceMessage'
 import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
 import { resourceAccessListIsEqual } from '../../utils/functions/AccessControlListUtils'
@@ -35,6 +36,7 @@ import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { getDisplayNameFromProfile } from '../../utils/functions/DisplayUtils'
 import { AclEditorSkeleton } from '../AclEditor/AclEditorSkeleton'
 import { SynapseErrorBoundary } from '../error'
+import FullWidthAlert from '../FullWidthAlert'
 
 const availablePermissionLevels: PermissionLevel[] = [
   'CAN_VIEW',
@@ -45,9 +47,16 @@ const availablePermissionLevels: PermissionLevel[] = [
 ]
 
 export type EntityAclEditorProps = {
+  /** The ID of the entity on which to view/edit the ACL. Note that the ACL may actually belong to an entity ancestor (benefactor). */
   entityId: string
+  /** Invoked when the user can/cannot save the pending changes. */
   onCanSaveChange: (canSaveChanges: boolean) => void
+  /** Invoked when changes are successfully made. */
   onUpdateSuccess: () => void
+  /** Special case to show specific copy and allow changes to an inherited ACL immediately after a file is uploaded.
+   *  Note that if this is true, the entityId should be the ID of the folder or project that is the benefactor of the newly uploaded file(s)
+   * @defaultValue false */
+  isAfterUpload?: boolean
 }
 
 export type EntityAclEditorHandle = {
@@ -122,7 +131,12 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   props: EntityAclEditorProps,
   ref: React.ForwardedRef<EntityAclEditorHandle>,
 ) {
-  const { entityId, onCanSaveChange, onUpdateSuccess } = props
+  const {
+    entityId,
+    onCanSaveChange,
+    onUpdateSuccess,
+    isAfterUpload = false,
+  } = props
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
   const { data: entityBundle } = useSuspenseGetEntityBundle(
@@ -260,6 +274,8 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   const canSave =
     hasAclChanged || isLoadingSendMessageToNewACLUsers || isPending
 
+  const showInheritedAclUpdateWarning = hasAclChanged && isAfterUpload
+
   useEffect(() => {
     onCanSaveChange(canSave)
   }, [onCanSaveChange, canSave])
@@ -318,7 +334,38 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
         isProject={isProject}
         isInherited={updatedIsInherited}
         benefactorId={updatedIsInherited ? parentAcl?.id : entityId}
+        isAfterUpload={isAfterUpload}
       />
+      {showInheritedAclUpdateWarning && (
+        <FullWidthAlert
+          isGlobal={false}
+          variant={'warning'}
+          title={`Edits will affect settings of entire ${entityTypeToFriendlyName(
+            entityBundle?.entityType,
+          ).toLowerCase()}.`}
+          description={
+            <>
+              <p>
+                Editing the settings here will impact the sharing settings for
+                all files and folders within this project, not just the ones
+                you&apos;ve recently uploaded.
+              </p>
+              <p>
+                View the instructions above for setting your{' '}
+                <Link
+                  href={
+                    'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
+                  }
+                  target={'_blank'}
+                >
+                  Local Sharing Settings
+                </Link>
+                .
+              </p>
+            </>
+          }
+        />
+      )}
       <AclEditor
         canEdit={getCanEditResourceAccess(
           canEdit,
@@ -357,12 +404,14 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
         showAddRemovePublicButton={true}
       />
       {/* Create / delete local sharing settings button */}
-      {!isProject && entityBundle.permissions.canEnableInheritance && (
-        <CreateOrDeleteLocalSharingSettingsButton
-          isInherited={updatedIsInherited}
-          setIsInherited={setUpdatedIsInherited}
-        />
-      )}
+      {!isAfterUpload &&
+        !isProject &&
+        entityBundle.permissions.canEnableInheritance && (
+          <CreateOrDeleteLocalSharingSettingsButton
+            isInherited={updatedIsInherited}
+            setIsInherited={setUpdatedIsInherited}
+          />
+        )}
       {error && <Alert severity="error">{error.message}</Alert>}
     </Stack>
   )

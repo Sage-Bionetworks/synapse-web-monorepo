@@ -100,9 +100,20 @@ function verifyHasLocalSharingSettingsMessage() {
   )
 }
 
+function verifyHasProjectMessage() {
+  screen.getByText(/The sharing settings shown below apply to this project/)
+}
+
 function verifyInheritsSharingSettingsFromBenefactorMessage() {
   screen.getByText(
     /The sharing settings shown below are currently being inherited/,
+    { exact: false },
+  )
+}
+
+function verifyInheritsSharingSettingsPostUploadMessage() {
+  screen.getByText(
+    /Currently, the sharing settings are inherited from the project named/,
     { exact: false },
   )
 }
@@ -281,7 +292,7 @@ describe('EntityAclEditor', () => {
       },
       mockProject.bundle.benefactorAcl.resourceAccess.length,
     )
-    verifyHasLocalSharingSettingsMessage()
+    verifyHasProjectMessage()
 
     expect(
       screen.queryByRole('button', {
@@ -625,5 +636,47 @@ describe('EntityAclEditor', () => {
     screen.getByText(
       'You do not have sufficient privileges to modify the sharing settings.',
     )
+  })
+
+  it('shows appropriate UI in the post-upload scenario', async () => {
+    const { ref, user } = await setUp(
+      {
+        entityId: mockProject.id,
+        onCanSaveChange,
+        onUpdateSuccess,
+        isAfterUpload: true,
+      },
+      mockProjectEntityData.bundle.accessControlList!.resourceAccess.length,
+    )
+    verifyInheritsSharingSettingsPostUploadMessage()
+
+    // Verify no alert appears (yet)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+
+    // Add a user to the ACL
+    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
+    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
+
+    // Verify that an alert appears that indicates that the entire project will be updated
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(/Edits will affect settings of entire project/)
+
+    // Save the project
+    act(() => {
+      ref.current!.save()
+    })
+
+    await waitFor(() => {
+      expect(updateAclSpy).toHaveBeenCalledWith(
+        {
+          ...mockProject.bundle.accessControlList,
+          resourceAccess: expect.any(Array),
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(onUpdateSuccess).toHaveBeenCalled()
+      expect(sendMessageSpy).not.toHaveBeenCalled()
+    })
   })
 })

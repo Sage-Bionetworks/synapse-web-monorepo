@@ -1,27 +1,57 @@
 import React from 'react'
 import { EntityLink } from '../EntityLink'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 
 type InheritanceMessageProps = {
   isProject: boolean
   isInherited: boolean
+  isAfterUpload?: boolean
   benefactorId?: string
 }
 
 export function InheritanceMessage(props: InheritanceMessageProps) {
-  const { isProject, isInherited, benefactorId } = props
-  let content: React.ReactNode = ''
-  if (isProject) {
-    content = (
+  const { isProject, isInherited, isAfterUpload = false, benefactorId } = props
+  if (isAfterUpload) {
+    return (
       <>
-        The sharing settings shown below apply to this project and are inherited
-        by all project contents unless local sharing settings have been set.
+        <Typography variant={'body1'}>
+          Currently, the sharing settings are inherited from the project named
+          {benefactorId ? (
+            <>
+              {' '}
+              <EntityLink entity={benefactorId} />{' '}
+            </>
+          ) : (
+            ''
+          )}
+          . If you wish to customize settings for a particular file, folder, or
+          table, you must establish <strong>Local Sharing Settings</strong> to
+          make modifications.
+        </Typography>
+        <Typography variant={'body1'}>
+          After uploading, choose the file you want to customize sharing
+          settings for, then navigate to File Tools &gt;{' '}
+          <Link
+            href={
+              'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
+            }
+          >
+            File Sharing Settings
+          </Link>
+          .
+        </Typography>
       </>
     )
-  }
-  if (isInherited) {
-    content = (
-      <>
+  } else if (isProject) {
+    return (
+      <Typography variant={'body1'}>
+        The sharing settings shown below apply to this project and are inherited
+        by all project contents unless local sharing settings have been set.
+      </Typography>
+    )
+  } else if (isInherited) {
+    return (
+      <Typography variant={'body1'}>
         The sharing settings shown below are currently being inherited{' '}
         {benefactorId ? (
           <>
@@ -31,20 +61,14 @@ export function InheritanceMessage(props: InheritanceMessageProps) {
           ''
         )}
         and cannot be modified here.
-      </>
+      </Typography>
     )
   } else {
-    content = (
-      <>
+    return (
+      <Typography variant={'body1'}>
         The local sharing settings shown below are <strong>not</strong> being
         inherited from a parent resource.
-      </>
+      </Typography>
     )
   }
-
-  return (
-    <Typography variant={'body1'} fontStyle={'italic'} color={'text.secondary'}>
-      {content}
-    </Typography>
-  )
 }
