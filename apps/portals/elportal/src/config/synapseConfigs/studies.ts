@@ -47,7 +47,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'dataStatus',
       'dataTypeAll',
       'studyFocus',
-      'species',
+      'Species',
       'specimenType',
       'projectFullName',
       'grantNumber',
