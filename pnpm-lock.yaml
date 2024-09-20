@@ -136,7 +136,7 @@ importers:
         specifier: ^1.71.1
         version: 1.77.6
       synapse-client:
-        specifier: workspace:*
+        specifier: workspace:@sage-bionetworks/synapse-client@*
         version: link:../../packages/synapse-client
       synapse-react-client:
         specifier: workspace:*
@@ -1663,7 +1663,7 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       synapse-client:
-        specifier: workspace:*
+        specifier: workspace:@sage-bionetworks/synapse-client@*
         version: link:../synapse-client
       tinycolor2:
         specifier: ^1.6.0

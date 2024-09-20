@@ -23,7 +23,7 @@
     "react-easy-crop": "^5.0.7",
     "react-router-dom": "^5.3.4",
     "sass": "^1.71.1",
-    "synapse-client": "workspace:*",
+    "synapse-client": "workspace:@sage-bionetworks/synapse-client@*",
     "synapse-react-client": "workspace:*",
     "universal-cookie": "^4.0.4"
   },
