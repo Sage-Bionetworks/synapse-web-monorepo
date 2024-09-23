@@ -347,8 +347,11 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
             <>
               <p>
                 Editing the settings here will impact the sharing settings for
-                all files and folders within this project, not just the ones
-                you&apos;ve recently uploaded.
+                all files and folders within this{' '}
+                {entityTypeToFriendlyName(
+                  entityBundle?.entityType,
+                ).toLowerCase()}
+                , not just the ones you&apos;ve recently uploaded.
               </p>
               <p>
                 View the instructions above for setting your{' '}
