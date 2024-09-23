@@ -100,9 +100,20 @@ function verifyHasLocalSharingSettingsMessage() {
   )
 }
 
+function verifyHasProjectMessage() {
+  screen.getByText(/The sharing settings shown below apply to this project/)
+}
+
 function verifyInheritsSharingSettingsFromBenefactorMessage() {
   screen.getByText(
     /The sharing settings shown below are currently being inherited/,
+    { exact: false },
+  )
+}
+
+function verifyInheritsSharingSettingsPostUploadMessage() {
+  screen.getByText(
+    /Currently, the sharing settings are inherited from the project named/,
     { exact: false },
   )
 }
@@ -281,7 +292,7 @@ describe('EntityAclEditor', () => {
       },
       mockProject.bundle.benefactorAcl.resourceAccess.length,
     )
-    verifyHasLocalSharingSettingsMessage()
+    verifyHasProjectMessage()
 
     expect(
       screen.queryByRole('button', {
@@ -507,58 +518,6 @@ describe('EntityAclEditor', () => {
     ).toBeInTheDocument()
   })
 
-  it('displays an error on mutate failure', async () => {
-    const errorReason = 'Something was invalid'
-    server.use(
-      rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-          ':entityId',
-        )}/acl`,
-        async (req, res, ctx) => {
-          const status = 400
-          let response: SynapseApiResponse<AccessControlList> = {
-            reason: errorReason,
-          }
-
-          return res(ctx.status(status), ctx.json(response))
-        },
-      ),
-    )
-
-    const { ref, user } = await setUp(
-      {
-        entityId: mockFileEntityWithLocalSharingSettingsData.id,
-        onCanSaveChange,
-        onUpdateSuccess,
-      },
-      mockFileEntityWithLocalSharingSettingsData.bundle!.benefactorAcl
-        .resourceAccess.length,
-    )
-
-    // Enable sending a message, so we can verify that it is not sent when the update fails
-    await checkNotifyUsers(user)
-
-    // Add a user to the ACL
-    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
-    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
-
-    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
-
-    act(() => {
-      ref.current!.save()
-    })
-
-    const alert = await screen.findByRole('alert')
-    within(alert).getByText(errorReason)
-
-    await waitFor(() => {
-      expect(updateAclSpy).toHaveBeenCalled()
-      // Verify callback and sendMessage were not called
-      expect(onUpdateSuccess).not.toHaveBeenCalled()
-      expect(sendMessageSpy).not.toHaveBeenCalled()
-    })
-  })
-
   it('current user cannot remove themselves', async () => {
     const { itemRows } = await setUp(
       {
@@ -625,5 +584,98 @@ describe('EntityAclEditor', () => {
     screen.getByText(
       'You do not have sufficient privileges to modify the sharing settings.',
     )
+  })
+
+  it('shows appropriate UI in the post-upload scenario', async () => {
+    const { ref, user } = await setUp(
+      {
+        entityId: mockProject.id,
+        onCanSaveChange,
+        onUpdateSuccess,
+        isAfterUpload: true,
+      },
+      mockProjectEntityData.bundle.accessControlList!.resourceAccess.length,
+    )
+    verifyInheritsSharingSettingsPostUploadMessage()
+
+    // Verify no alert appears (yet)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+
+    // Add a user to the ACL
+    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
+    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
+
+    // Verify that an alert appears that indicates that the entire project will be updated
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(/Edits will affect settings of entire project/)
+
+    // Save the project
+    act(() => {
+      ref.current!.save()
+    })
+
+    await waitFor(() => {
+      expect(updateAclSpy).toHaveBeenCalledWith(
+        {
+          ...mockProject.bundle.accessControlList,
+          resourceAccess: expect.any(Array),
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(onUpdateSuccess).toHaveBeenCalled()
+      expect(sendMessageSpy).not.toHaveBeenCalled()
+    })
+  })
+  it('displays an error on mutate failure', async () => {
+    const errorReason = 'Something was invalid'
+    server.use(
+      rest.put(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+          ':entityId',
+        )}/acl`,
+        async (req, res, ctx) => {
+          const status = 400
+          let response: SynapseApiResponse<AccessControlList> = {
+            reason: errorReason,
+          }
+
+          return res(ctx.status(status), ctx.json(response))
+        },
+      ),
+    )
+
+    const { ref, user } = await setUp(
+      {
+        entityId: mockFileEntityWithLocalSharingSettingsData.id,
+        onCanSaveChange,
+        onUpdateSuccess,
+      },
+      mockFileEntityWithLocalSharingSettingsData.bundle!.benefactorAcl
+        .resourceAccess.length,
+    )
+
+    // Enable sending a message, so we can verify that it is not sent when the update fails
+    await checkNotifyUsers(user)
+
+    // Add a user to the ACL
+    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
+
+    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
+
+    act(() => {
+      ref.current!.save()
+    })
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorReason)
+
+    await waitFor(() => {
+      expect(updateAclSpy).toHaveBeenCalled()
+      // Verify callback and sendMessage were not called
+      expect(onUpdateSuccess).not.toHaveBeenCalled()
+      expect(sendMessageSpy).not.toHaveBeenCalled()
+    })
   })
 })

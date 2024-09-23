@@ -15,10 +15,17 @@ export type EntityAclEditorModalProps = {
   open: boolean
   onUpdateSuccess?: () => void
   onClose: () => void
+  isAfterUpload?: boolean
 }
 
 export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
-  const { entityId, open, onUpdateSuccess = noop, onClose } = props
+  const {
+    entityId,
+    open,
+    onUpdateSuccess = noop,
+    onClose,
+    isAfterUpload = false,
+  } = props
   const [isDirty, setIsDirty] = useState(false)
   const entityAclEditorRef = useRef<EntityAclEditorHandle>(null)
 
@@ -52,6 +59,7 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
             onUpdateSuccess()
             onClose()
           }}
+          isAfterUpload={isAfterUpload}
         />
       }
       onConfirm={() => {
