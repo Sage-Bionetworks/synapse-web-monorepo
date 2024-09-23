@@ -8,7 +8,6 @@ import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitatio
 import { useSourceApp } from './useSourceApp'
 import { SynapseHookUtils } from 'synapse-react-client'
 import { sourceAppConfigTableID } from '../resources'
-import { EMAIL_INVITATION_TOKEN_KEY } from './RegisterAccount1'
 
 export type AccountCreatedPageProps = {}
 
