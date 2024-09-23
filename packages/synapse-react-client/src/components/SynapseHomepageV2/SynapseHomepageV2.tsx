@@ -546,7 +546,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                   pt: '75px',
                 }}
               >
-                Pricing and Plans
+                Plans
               </Typography>
               <Typography
                 variant="body1"
