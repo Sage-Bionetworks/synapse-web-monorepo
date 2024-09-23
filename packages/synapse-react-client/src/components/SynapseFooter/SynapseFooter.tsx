@@ -12,6 +12,7 @@ import { ReactComponent as Facebook } from '../../assets/homepage/facebook.svg'
 import { ReactComponent as Instagram } from '../../assets/homepage/instagram.svg'
 import { ReactComponent as Youtube } from '../../assets/homepage/youtube.svg'
 import ExperimentalMode from '../ExperimentalMode'
+import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 
 export type SynapseFooterProps = {
   portalVersion: string
@@ -112,9 +113,9 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                     },
                   },
                   {
-                    text: 'Pricing',
+                    text: 'Plans',
                     props: {
-                      href: 'https://help.synapse.org/docs/Sage-Offerings.2965078125.html',
+                      href: PLANS_LINK,
                     },
                   },
                   {

@@ -19,6 +19,7 @@ import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
 import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
+import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -548,6 +549,14 @@ export const SynapseNavDrawer: React.FunctionComponent<
                     target="_blank"
                   >
                     Getting Started
+                  </a>
+                  <a
+                    className="SRC-whiteText"
+                    onClick={() => gotoPlace(PLANS_LINK)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Plans
                   </a>
                   <a
                     className="SRC-whiteText"

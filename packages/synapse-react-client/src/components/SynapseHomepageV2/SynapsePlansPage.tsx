@@ -40,7 +40,7 @@ export const SynapsePlansPage: React.FunctionComponent<
               ...homepageBodyText,
               pt: {
                 xs: '20px',
-                lg: '48px',
+                md: '48px',
               },
             }}
           >
@@ -48,7 +48,7 @@ export const SynapsePlansPage: React.FunctionComponent<
             sharing needs including NIH Data Management and Sharing plans.
           </Typography>
         </Box>
-        <Box sx={{ py: { xs: '30px', lg: '60px' } }}>
+        <Box sx={{ py: { xs: '30px', md: '60px' } }}>
           <SynapsePlans />
         </Box>
       </Box>
