@@ -518,58 +518,6 @@ describe('EntityAclEditor', () => {
     ).toBeInTheDocument()
   })
 
-  it('displays an error on mutate failure', async () => {
-    const errorReason = 'Something was invalid'
-    server.use(
-      rest.put(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-          ':entityId',
-        )}/acl`,
-        async (req, res, ctx) => {
-          const status = 400
-          let response: SynapseApiResponse<AccessControlList> = {
-            reason: errorReason,
-          }
-
-          return res(ctx.status(status), ctx.json(response))
-        },
-      ),
-    )
-
-    const { ref, user } = await setUp(
-      {
-        entityId: mockFileEntityWithLocalSharingSettingsData.id,
-        onCanSaveChange,
-        onUpdateSuccess,
-      },
-      mockFileEntityWithLocalSharingSettingsData.bundle!.benefactorAcl
-        .resourceAccess.length,
-    )
-
-    // Enable sending a message, so we can verify that it is not sent when the update fails
-    await checkNotifyUsers(user)
-
-    // Add a user to the ACL
-    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
-    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
-
-    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
-
-    act(() => {
-      ref.current!.save()
-    })
-
-    const alert = await screen.findByRole('alert')
-    within(alert).getByText(errorReason)
-
-    await waitFor(() => {
-      expect(updateAclSpy).toHaveBeenCalled()
-      // Verify callback and sendMessage were not called
-      expect(onUpdateSuccess).not.toHaveBeenCalled()
-      expect(sendMessageSpy).not.toHaveBeenCalled()
-    })
-  })
-
   it('current user cannot remove themselves', async () => {
     const { itemRows } = await setUp(
       {
@@ -676,6 +624,57 @@ describe('EntityAclEditor', () => {
         MOCK_ACCESS_TOKEN,
       )
       expect(onUpdateSuccess).toHaveBeenCalled()
+      expect(sendMessageSpy).not.toHaveBeenCalled()
+    })
+  })
+  it('displays an error on mutate failure', async () => {
+    const errorReason = 'Something was invalid'
+    server.use(
+      rest.put(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+          ':entityId',
+        )}/acl`,
+        async (req, res, ctx) => {
+          const status = 400
+          let response: SynapseApiResponse<AccessControlList> = {
+            reason: errorReason,
+          }
+
+          return res(ctx.status(status), ctx.json(response))
+        },
+      ),
+    )
+
+    const { ref, user } = await setUp(
+      {
+        entityId: mockFileEntityWithLocalSharingSettingsData.id,
+        onCanSaveChange,
+        onUpdateSuccess,
+      },
+      mockFileEntityWithLocalSharingSettingsData.bundle!.benefactorAcl
+        .resourceAccess.length,
+    )
+
+    // Enable sending a message, so we can verify that it is not sent when the update fails
+    await checkNotifyUsers(user)
+
+    // Add a user to the ACL
+    const newUserRow = await addUserToAcl(user, MOCK_USER_NAME_2)
+    confirmItem(newUserRow, MOCK_USER_NAME_2, 'Can download')
+
+    await waitFor(() => expect(onCanSaveChange).toHaveBeenLastCalledWith(true))
+
+    act(() => {
+      ref.current!.save()
+    })
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorReason)
+
+    await waitFor(() => {
+      expect(updateAclSpy).toHaveBeenCalled()
+      // Verify callback and sendMessage were not called
+      expect(onUpdateSuccess).not.toHaveBeenCalled()
       expect(sendMessageSpy).not.toHaveBeenCalled()
     })
   })
