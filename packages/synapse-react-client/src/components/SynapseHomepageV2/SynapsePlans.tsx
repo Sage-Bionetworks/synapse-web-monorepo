@@ -7,7 +7,14 @@ import { useOneSageURL } from '../../utils/hooks'
 export const SynapsePlans: React.FunctionComponent = () => {
   const registrationUrl = useOneSageURL('/register1')
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '20px',
+        justifyContent: 'center',
+      }}
+    >
       <SynapsePlan
         title="Free"
         description="Our basic plan"
