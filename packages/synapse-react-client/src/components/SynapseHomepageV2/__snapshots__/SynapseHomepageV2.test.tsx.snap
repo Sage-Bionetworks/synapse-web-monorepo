@@ -790,7 +790,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <p
             class="MuiTypography-root MuiTypography-headline1 css-14ql2dw-MuiTypography-root"
           >
-            Pricing and Plans
+            Plans
           </p>
           <p
             class="MuiTypography-root MuiTypography-body1 css-1yxtjap-MuiTypography-root"
