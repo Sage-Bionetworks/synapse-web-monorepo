@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -33,8 +33,10 @@ describe('SharePageLinkButton', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Share Page Link' }),
     )
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      MOCK_SHORT_IO_URL,
-    )
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        MOCK_SHORT_IO_URL,
+      )
+    })
   })
 })

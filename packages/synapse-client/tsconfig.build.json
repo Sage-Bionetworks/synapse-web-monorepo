@@ -4,6 +4,11 @@
     "noEmit": false,
     "types": ["vitest/globals"]
   },
-  "include": ["src/*.ts", "src/generated/**/*.ts", "src/util/**/*.ts"],
+  "include": [
+    "src/index.ts",
+    "src/SynapseClient.ts",
+    "src/generated/**/*.ts",
+    "src/util/**/*.ts"
+  ],
   "exclude": ["src/**/*.test.ts"]
 }

@@ -25,24 +25,19 @@ export function delay(t: number) {
 const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
 const MAX_RETRY_STATUS_CODES = [502, 503]
 const MAX_RETRY = 3
+
 /**
- * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
- * handling errors returned by the Synapse backend.
+ * Fetches data, retrying if the HTTP status code indicates that it could be retried.
+ * To use it in our generated client, this function must NOT consume the response body.
+ *
  * @throws SynapseClientError
  */
-export const fetchWithExponentialTimeout = async <TResponse>(
+export const fetchResponseWithExponentialTimeout = async (
   requestInfo: RequestInfo,
   options: RequestInit,
   delayMs = 1000,
-): Promise<TResponse> => {
-  const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
-  let response
-  try {
-    response = await fetch(requestInfo, options)
-  } catch (err) {
-    console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
-  }
+) => {
+  let response = await fetch(requestInfo, options)
 
   let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
@@ -58,6 +53,31 @@ export const fetchWithExponentialTimeout = async <TResponse>(
     }
   }
 
+  return response
+}
+
+/**
+ * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
+ * handling errors returned by the Synapse backend.
+ * @throws SynapseClientError
+ */
+export const fetchWithExponentialTimeout = async <TResponse>(
+  requestInfo: RequestInfo,
+  options: RequestInit,
+  delayMs = 1000,
+): Promise<TResponse> => {
+  const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
+  let response
+  try {
+    response = await fetchResponseWithExponentialTimeout(
+      requestInfo,
+      options,
+      delayMs,
+    )
+  } catch (err) {
+    console.error(err)
+    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
+  }
   const contentType = response.headers.get('Content-Type')
   const responseBody = await response.text()
   let responseObject: TResponse | BaseError | string = responseBody

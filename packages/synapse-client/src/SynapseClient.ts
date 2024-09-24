@@ -41,17 +41,63 @@ import { VerificationServicesApi } from './generated/apis/VerificationServicesAp
 import { WebhookServicesApi } from './generated/apis/WebhookServicesApi'
 import { WikiPageServices2Api } from './generated/apis/WikiPageServices2Api'
 import { WikiPageServicesApi } from './generated/apis/WikiPageServicesApi'
-import { BaseAPI, Configuration } from './generated/runtime'
-import { fetchWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+import { ErrorResponse } from './generated/models/ErrorResponse'
+import {
+  Configuration,
+  ConfigurationParameters,
+  ErrorContext,
+  ResponseContext,
+} from './generated/runtime'
+import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+import { NETWORK_UNAVAILABLE_MESSAGE } from './util/Constants'
+import { SynapseClientError } from './util/SynapseClientError'
 
-const DEFAULT_CONFIG = new Configuration({
-  fetchApi: fetchWithExponentialTimeout,
-})
+const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
+  fetchApi: fetchResponseWithExponentialTimeout,
+  middleware: [
+    {
+      async post(context: ResponseContext): Promise<Response | void> {
+        const { response, url } = context
+        if (!response.ok) {
+          const error = await response.json()
+          if (
+            error !== null &&
+            typeof error === 'object' &&
+            'reason' in error
+          ) {
+            throw new SynapseClientError(
+              response.status,
+              (error as ErrorResponse).reason!,
+              url,
+              error as ErrorResponse,
+            )
+          } else {
+            throw new SynapseClientError(
+              response.status,
+              JSON.stringify(error),
+              url,
+            )
+          }
+        }
+      },
+      // Convert error objects to our SynapseClientError
+      onError(context: ErrorContext): Promise<Response | void> {
+        const { response, error } = context
+        console.error(error)
+        throw new SynapseClientError(
+          0,
+          NETWORK_UNAVAILABLE_MESSAGE,
+          response?.url!,
+        )
+      },
+    },
+  ],
+}
 
 /**
  * Creates one class that encapsulates all sets of Synapse API services.
  */
-export class SynapseClient extends BaseAPI {
+export class SynapseClient {
   public accessApprovalServicesClient: AccessApprovalServicesApi
   public accessRequirementServicesClient: AccessRequirementServicesApi
   public activityServicesClient: ActivityServicesApi
@@ -96,14 +142,12 @@ export class SynapseClient extends BaseAPI {
   public wikiPageServices2Client: WikiPageServices2Api
   public wikiPageServicesClient: WikiPageServicesApi
 
-  constructor(protected configuration = DEFAULT_CONFIG) {
+  constructor(configurationParameters?: ConfigurationParameters) {
     // Merge the default configuration with the provided configuration
-    configuration = new Configuration({
-      ...DEFAULT_CONFIG.config,
-      ...configuration.config,
+    const configuration = new Configuration({
+      ...DEFAULT_CONFIG_PARAMETERS,
+      ...configurationParameters,
     })
-
-    super(configuration)
 
     this.accessApprovalServicesClient = new AccessApprovalServicesApi(
       configuration,
