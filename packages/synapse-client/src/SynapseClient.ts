@@ -57,7 +57,7 @@ const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
   middleware: [
     {
       async post(context: ResponseContext): Promise<Response | void> {
-        const { response } = context
+        const { response, url } = context
         if (!response.ok) {
           const error = await response.json()
           if (
@@ -68,14 +68,14 @@ const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
             throw new SynapseClientError(
               response.status,
               (error as ErrorResponse).reason!,
-              response.url,
+              url,
               error as ErrorResponse,
             )
           } else {
             throw new SynapseClientError(
               response.status,
               JSON.stringify(error),
-              response.url,
+              url,
             )
           }
         }
