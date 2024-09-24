@@ -19,6 +19,8 @@ import { useSynapseContext } from '../../utils'
 import SageResourcesPopover from '../SageResourcesPopover'
 
 const LOGIN_LINK = '/LoginPlace:0'
+const HOMEPAGE_LINK = '/Home:x'
+export const PLANS_LINK = '/Plans:0'
 const DASHBOARD_LINK = '/Profile:v/projects/all'
 
 const navTextButtonSx: SxProps = {
@@ -99,9 +101,11 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
       }}
     >
       {/* Logo */}
-      <SynapseFullLogo
-        textColor={(theme.palette.primary as ColorPartial)[900]!}
-      />
+      <a onClick={() => gotoPlace(HOMEPAGE_LINK)}>
+        <SynapseFullLogo
+          textColor={(theme.palette.primary as ColorPartial)[900]!}
+        />
+      </a>
       {/* Menu Items */}
       {/* Desktop nav bar, and a mobile hamburger dropdown menu nav bar that contain the same options */}
       {!isSmallView && (
@@ -113,6 +117,9 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             gap: '20px',
           }}
         >
+          <Button sx={navTextButtonSx} onClick={() => gotoPlace(PLANS_LINK)}>
+            Plans
+          </Button>
           <Button
             sx={navTextButtonSx}
             onClick={event => setPortalResourcesAnchorEl(event.currentTarget)}
@@ -226,6 +233,14 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
             </IconButton>
             <StyledMenuItem
               sx={{ mt: '70px' }}
+              onClick={() => {
+                gotoPlace(PLANS_LINK)
+                handleCloseMobileMenu()
+              }}
+            >
+              Plans
+            </StyledMenuItem>
+            <StyledMenuItem
               onClick={event => {
                 setPortalResourcesAnchorEl(event.currentTarget)
                 handleCloseMobileMenu()

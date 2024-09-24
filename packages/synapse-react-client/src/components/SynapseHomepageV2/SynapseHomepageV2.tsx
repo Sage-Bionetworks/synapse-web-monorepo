@@ -39,7 +39,7 @@ export const homepageBodyText: SxProps = {
   color: darkTextColor,
 }
 
-const h2Sx: SxProps = {
+export const h2Sx: SxProps = {
   fontSize: {
     xs: '36px',
     md: '52px',
