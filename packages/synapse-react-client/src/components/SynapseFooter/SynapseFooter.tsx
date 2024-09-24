@@ -116,6 +116,7 @@ export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
                     text: 'Plans',
                     props: {
                       href: PLANS_LINK,
+                      target: '_self',
                     },
                   },
                   {
