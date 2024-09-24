@@ -18,6 +18,7 @@ import {
   SynapseContextConsumer,
   SynapseContextType,
 } from 'synapse-react-client'
+import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { getSearchParam } from './URLUtils'
 import './App.scss'
 import LoginPage from './LoginPage'
@@ -134,6 +135,11 @@ function App() {
                       path={'/authenticated/oauthclientmanagement'}
                       exact
                       render={() => <OAuthClientManagementPage />}
+                    />
+                    <Route
+                      path={'/authenticated/webhook'}
+                      exact
+                      render={() => <WebhookManagementPage />}
                     />
                   </>
                 )}

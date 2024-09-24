@@ -73,10 +73,12 @@ export default class BasicMockedCrudService<
     this.data = this.data.map(item => {
       if (isEqual(item[idField], id)) {
         if (strategy === 'merge') {
-          return { ...item, ...data }
+          item = { ...item, ...data }
         } else if (strategy === 'replace') {
-          return data
+          item = data
         }
+        // ensure the ID isn't dropped or overwritten
+        item[idField] = id as T[TIDField]
       }
       return item
     })
@@ -91,5 +93,9 @@ export default class BasicMockedCrudService<
     }
 
     this.data = this.data.filter(item => !isEqual(item[idField], id))
+  }
+
+  clear(): void {
+    this.data = []
   }
 }

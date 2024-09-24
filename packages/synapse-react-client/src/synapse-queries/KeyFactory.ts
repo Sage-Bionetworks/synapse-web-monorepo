@@ -902,4 +902,8 @@ export class KeyFactory {
   public chatAgentSessionHistoryQueryKey(params?: SessionHistoryRequest) {
     return this.getKey('chatHistory', params)
   }
+
+  public getWebhooksQueryKey() {
+    return this.getKey('webhooks')
+  }
 }

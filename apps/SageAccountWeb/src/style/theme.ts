@@ -13,15 +13,10 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
     MuiButton: {
       styleOverrides: {
         contained: {
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '14px 16px',
-          height: '52px',
           fontWeight: '900',
           borderRadius: '3px',
         },
         outlined: {
-          height: '48px',
           background: '#FFFFFF',
           border: '1px solid #EAECEE',
           boxShadow:
@@ -34,7 +29,6 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
           },
         },
         containedSecondary: {
-          height: '48px',
           background: '#FFFFFF',
           border: '1px solid #EAECEE',
           boxShadow:
@@ -73,9 +67,6 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
     allVariants: {
       fontFamily: fontDefinition,
       fontSize: '14px',
-    },
-    button: {
-      fontSize: '16px',
     },
     headline2: {
       fontWeight: 700,

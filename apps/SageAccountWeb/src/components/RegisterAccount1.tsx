@@ -99,6 +99,7 @@ export const RegisterAccount1 = () => {
 
   const chooseButtonSx = {
     width: '100%',
+    height: '52px',
     marginBottom: '10px',
     padding: '10px',
     color: 'grey.800',

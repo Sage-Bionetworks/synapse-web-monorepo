@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonProps,
+  SxProps,
   tooltipClasses,
   TooltipProps,
   Typography,
@@ -25,6 +26,7 @@ export type MarkdownPopoverProps = React.PropsWithChildren<{
   }
   maxWidth?: string
   minWidth?: string
+  containerSx?: SxProps
 }>
 
 const buttonBoxSx = {
@@ -49,6 +51,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   sx,
   maxWidth = '500px',
   minWidth = '300px',
+  containerSx,
 }: MarkdownPopoverProps) => {
   const id = useId()
   const [openMarkdownPopoverId, setOpenMarkdownPopoverId] = useAtom(
@@ -113,7 +116,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
           e.stopPropagation()
           setOpenMarkdownPopoverId(currentId => (currentId == id ? null : id))
         }}
-        sx={{ display: 'inline-block', cursor: 'pointer' }}
+        sx={{ display: 'inline-block', cursor: 'pointer', ...containerSx }}
       >
         {children}
       </Box>

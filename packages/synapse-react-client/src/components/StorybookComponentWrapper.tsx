@@ -119,13 +119,16 @@ export function StorybookComponentWrapper(props: {
       withErrorBoundary: true,
       downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
     }),
-    [accessToken],
+    [accessToken, currentStack, storybookContext.args.isAuthenticated],
   )
 
   return (
     <Suspense fallback={'global suspense loading...'}>
       <QueryClientProvider client={storybookQueryClient}>
-        <SynapseContextProvider synapseContext={synapseContext}>
+        <SynapseContextProvider
+          key={currentStack}
+          synapseContext={synapseContext}
+        >
           {storybookContext.globals.showReactQueryDevtools && (
             <ReactQueryDevtools />
           )}

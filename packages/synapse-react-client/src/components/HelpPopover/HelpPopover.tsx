@@ -1,6 +1,6 @@
 import React from 'react'
 import { MarkdownPopover } from '../Markdown/MarkdownPopover'
-import { ButtonProps, TooltipProps } from '@mui/material'
+import { ButtonProps, SxProps, TooltipProps } from '@mui/material'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 
 export type HelpPopoverProps = {
@@ -9,6 +9,8 @@ export type HelpPopoverProps = {
   placement?: TooltipProps['placement']
   showCloseButton?: boolean
   className?: string
+  containerSx?: SxProps
+  iconSx?: SxProps
 }
 
 export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
@@ -17,6 +19,8 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
   placement = 'bottom',
   showCloseButton = true,
   className = '',
+  iconSx,
+  containerSx,
 }: HelpPopoverProps) => {
   const actionButtonConfig = helpUrl
     ? {
@@ -34,8 +38,9 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
         actionButton={actionButtonConfig}
         showCloseButton={showCloseButton}
         maxWidth="350px"
+        containerSx={containerSx}
       >
-        <HelpOutlineTwoTone className={`HelpButton ${className}`} />
+        <HelpOutlineTwoTone className={`HelpButton ${className}`} sx={iconSx} />
       </MarkdownPopover>
     </>
   )
