@@ -78,14 +78,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
-      onSuccess: async data => {
+      onSuccess: data => {
         // whenever the response is returned, set the last interaction response text
         setCurrentResponse(data.responseText)
-        setCurrentlyProcessingJobId(undefined)
       },
       onError: err => {
         setCurrentResponseError(err.reason)
-        setCurrentlyProcessingJobId(undefined)
       },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
@@ -139,6 +137,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setCurrentResponse('')
       setCurrentResponseError('')
       setPendingInteraction(undefined)
+      setCurrentlyProcessingJobId(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
 
