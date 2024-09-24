@@ -2,6 +2,7 @@ import React, { Suspense, useMemo } from 'react'
 import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
+  Direction,
   EntityHeader,
   Evaluation,
   FacetColumnRequest,
@@ -29,6 +30,12 @@ export type EnumFacetFilterProps = {
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   hideCollapsible?: boolean
+  sortConfig?: FacetValueSortConfig
+}
+
+export type FacetValueSortConfig = {
+  columnName: string
+  direction: Direction
 }
 
 function _EnumFacetFilter(props: EnumFacetFilterProps) {
@@ -37,6 +44,7 @@ function _EnumFacetFilter(props: EnumFacetFilterProps) {
     containerAs = 'Collapsible',
     dropdownType = 'Icon',
     hideCollapsible = false,
+    sortConfig,
   } = props
   const {
     nextQueryRequest,
@@ -137,8 +145,13 @@ function _EnumFacetFilter(props: EnumFacetFilterProps) {
     )
     const valueNotSetFacetArray = partitions[0]
     const restOfFacetValuesArray = partitions[1]
+    const sortedValues = sortBy(restOfFacetValuesArray, fv =>
+      fv.displayText.toLowerCase(),
+    )
+    //PORTALS-3252: provide way to sort in descending order on the client-side
+    const sortDescending = sortConfig && sortConfig.direction == Direction.DESC
     return [
-      ...sortBy(restOfFacetValuesArray, fv => fv.displayText.toLowerCase()),
+      ...(sortDescending ? sortedValues.reverse() : sortedValues),
       ...valueNotSetFacetArray,
     ]
   }, [

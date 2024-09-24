@@ -69,6 +69,7 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
+  facetValueSortConfigs?: FacetFilterControlsProps['facetValueSortConfigs']
   customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
@@ -122,6 +123,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'cardConfiguration'
   | 'facetsToPlot'
   | 'availableFacets'
+  | 'facetValueSortConfigs'
   | 'hideDownload'
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
@@ -146,6 +148,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     cardConfiguration,
     facetsToPlot,
     availableFacets,
+    facetValueSortConfigs,
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
@@ -231,7 +234,10 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               </SynapseErrorBoundary>
               {isFaceted && (
                 <>
-                  <FacetFilterControls availableFacets={availableFacets} />
+                  <FacetFilterControls
+                    availableFacets={availableFacets}
+                    facetValueSortConfigs={facetValueSortConfigs}
+                  />
                 </>
               )}
               <TotalQueryResults

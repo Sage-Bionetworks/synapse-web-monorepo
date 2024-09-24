@@ -3,6 +3,7 @@ import { EnumFacetFilter, EnumFacetFilterProps } from './EnumFacetFilter'
 import {
   ColumnModel,
   ColumnTypeEnum,
+  Direction,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
   QueryBundleRequest,
@@ -188,6 +189,41 @@ describe('EnumFacetFilter', () => {
           `${stringFacetValues[0].value}`,
         )
         expect(counts[1]).toHaveTextContent(`${stringFacetValues[0].count}`)
+
+        expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
+        expect(counts[2]).toHaveTextContent(`${stringFacetValues[2].count}`)
+      })
+
+      it('should reverse sort order if configured', async () => {
+        const { container } = await init({
+          sortConfig: {
+            columnName: 'MAKE',
+            direction: Direction.DESC,
+          },
+        })
+
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
+        )
+        const counts = container.querySelectorAll<HTMLDivElement>(
+          '.EnumFacetFilter__count',
+        )
+
+        expect(checkboxes).toHaveLength(4)
+        expect(counts).toHaveLength(3)
+
+        expect(checkboxes[0]).toHaveAccessibleName('All')
+
+        // PORTALS-3252 note: Facet values are reverse sorted! [0] will appear before [1] again
+        expect(checkboxes[1]).toHaveAccessibleName(
+          `${stringFacetValues[0].value}`,
+        )
+        expect(counts[0]).toHaveTextContent(`${stringFacetValues[0].count}`)
+
+        expect(checkboxes[2]).toHaveAccessibleName(
+          `${stringFacetValues[1].value}`,
+        )
+        expect(counts[1]).toHaveTextContent(`${stringFacetValues[1].count}`)
 
         expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
         expect(counts[2]).toHaveTextContent(`${stringFacetValues[2].count}`)
