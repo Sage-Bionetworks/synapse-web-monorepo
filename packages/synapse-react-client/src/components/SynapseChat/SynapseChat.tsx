@@ -7,6 +7,7 @@ import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
+  useGetChatAgentTraceEvents,
   useSendChatMessageToAgent,
   useUpdateAgentSession,
 } from '../../synapse-queries/chat/useChat'
@@ -21,6 +22,8 @@ import { TextField } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
 import { displayToast } from '../ToastMessage'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { Tooltip } from '@mui/material'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -66,26 +69,39 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
+  const [currentlyProcessingJobId, setCurrentlyProcessingJobId] =
+    useState<string>()
   const [currentResponse, setCurrentResponse] = useState('')
-  const [currentProgressMessage, setCurrentProgressMessage] = useState<
-    string | undefined
-  >()
   const [currentResponseError, setCurrentResponseError] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
-      onSuccess: data => {
+      onSuccess: async data => {
         // whenever the response is returned, set the last interaction response text
         setCurrentResponse(data.responseText)
+        setCurrentlyProcessingJobId(undefined)
       },
       onError: err => {
         setCurrentResponseError(err.reason)
+        setCurrentlyProcessingJobId(undefined)
       },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
-      setCurrentProgressMessage(status?.progressMessage)
+      setCurrentlyProcessingJobId(status.jobId)
+    },
+  )
+
+  const { data: traceEvents } = useGetChatAgentTraceEvents(
+    {
+      jobId: currentlyProcessingJobId!,
+    },
+    {
+      //enabled if there is a pending interaction
+      enabled: !!currentlyProcessingJobId,
+      refetchInterval: !!currentlyProcessingJobId ? 1000 : false, // Re-fetch every second if enabled
+      refetchIntervalInBackground: true, // Continue polling even when the tab is not active
     },
   )
 
@@ -122,7 +138,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setInteractions([...interactions, pendingInteraction])
       setCurrentResponse('')
       setCurrentResponseError('')
-      setCurrentProgressMessage('')
       setPendingInteraction(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
@@ -144,6 +159,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       sendChatMessageToAgent({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
+        enableTrace: true,
       })
       setInitialMessageProcessed(true)
     }
@@ -156,6 +172,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       sendChatMessageToAgent({
         chatText: userChatTextfieldValue,
         sessionId: agentSession!.sessionId,
+        enableTrace: true,
       })
     }
   }
@@ -245,13 +262,48 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
               )
             })}
             {pendingInteraction && (
-              <SynapseChatInteraction
-                userMessage={pendingInteraction.userMessage}
-                chatResponseText={pendingInteraction.chatResponseText}
-                chatErrorReason={pendingInteraction.chatErrorReason}
-                progressMessage={currentProgressMessage}
-                scrollIntoView
-              />
+              <>
+                <SynapseChatInteraction
+                  userMessage={pendingInteraction.userMessage}
+                  chatResponseText={pendingInteraction.chatResponseText}
+                  chatErrorReason={pendingInteraction.chatErrorReason}
+                  scrollIntoView
+                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <SynapseSpinner size={40} />
+                  {/* Show the current message, as well as the full trace log in a tooltip */}
+                  {traceEvents && traceEvents.page && (
+                    <Tooltip
+                      placement="bottom"
+                      title={
+                        <div style={{ textAlign: 'center' }}>
+                          {traceEvents?.page?.map((event, index) => {
+                            return (
+                              <Typography key={`${index}-${event.message}`}>
+                                {event.message}
+                              </Typography>
+                            )
+                          })}
+                        </div>
+                      }
+                    >
+                      <Typography
+                        sx={{ textAlign: 'center' }}
+                        variant="body1Italic"
+                      >
+                        {traceEvents.page[traceEvents.page.length - 1].message}
+                      </Typography>
+                    </Tooltip>
+                  )}
+                  <SkeletonParagraph numRows={3} />
+                </Box>
+              </>
             )}
           </List>
         </Box>

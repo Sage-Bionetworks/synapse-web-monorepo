@@ -1,15 +1,12 @@
 import React, { useEffect, useRef } from 'react'
-import { Alert, Box, ListItem, ListItemText, Typography } from '@mui/material'
+import { Alert, Box, ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { SkeletonParagraph } from '../Skeleton'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
-  progressMessage?: string
   chatResponseText?: string
   scrollIntoView?: boolean
   chatErrorReason?: string
@@ -19,7 +16,6 @@ export const SynapseChatInteraction: React.FunctionComponent<
   SynapseChatInteractionProps
 > = ({
   userMessage,
-  progressMessage,
   chatResponseText,
   chatErrorReason,
   scrollIntoView = false,
@@ -92,21 +88,6 @@ export const SynapseChatInteraction: React.FunctionComponent<
         <Alert severity={'error'} sx={{ my: 2 }}>
           {chatErrorReason}
         </Alert>
-      )}
-      {!chatResponseText && !chatErrorReason && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography sx={{ textAlign: 'center' }} variant="body1Italic">
-            {progressMessage ?? 'Processing...'}
-          </Typography>
-          <SynapseSpinner size={40} />
-          <SkeletonParagraph numRows={3} />
-        </Box>
       )}
     </>
   )

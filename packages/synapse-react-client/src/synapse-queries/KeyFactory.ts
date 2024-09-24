@@ -25,6 +25,7 @@ import {
   SubmissionSearchRequest,
   SubscriptionObjectType,
   SubscriptionQuery,
+  TraceEventsRequest,
   TYPE_FILTER,
   ViewColumnModelRequest,
   ViewEntityType,
@@ -867,6 +868,10 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getChatAgentTraceKey(request: TraceEventsRequest) {
+    return this.getKey('chatbotTraceEvents', request)
   }
 
   public getPaginatedDockerTagQueryKey(
