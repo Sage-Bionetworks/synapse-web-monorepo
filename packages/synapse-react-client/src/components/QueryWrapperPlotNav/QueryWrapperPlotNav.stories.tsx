@@ -9,6 +9,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
+  Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav, {
@@ -76,6 +77,9 @@ export const Cards: Story = {
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
+    facetValueSortConfigs: [
+      { columnName: 'usageRequirements', direction: Direction.DESC },
+    ],
     cardConfiguration: {
       type: GENERIC_CARD,
       titleLinkConfig: {

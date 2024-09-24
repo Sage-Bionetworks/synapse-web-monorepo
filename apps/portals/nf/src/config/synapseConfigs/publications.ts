@@ -4,6 +4,7 @@ import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/
 import { columnAliases } from './commonProps'
 
 import { publicationsSql } from '../resources'
+import { Direction } from '@sage-bionetworks/synapse-types'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -50,6 +51,7 @@ const publications: SynapseConfig = {
     name: 'Publications',
     cardConfiguration: publicationsCardConfiguration,
     columnAliases,
+    facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
     searchConfiguration: {
       searchable: [
         'title',

@@ -69,6 +69,11 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
+  /**
+   * Controls the sort order (ascending or descending) of facet values for a particular column.
+   * Note: This parameter does not currently apply to the pie/bar chart visualizations, but it probably should.
+   */
+  facetValueSortConfigs?: FacetFilterControlsProps['facetValueSortConfigs']
   customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
@@ -122,6 +127,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'cardConfiguration'
   | 'facetsToPlot'
   | 'availableFacets'
+  | 'facetValueSortConfigs'
   | 'hideDownload'
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
@@ -146,6 +152,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     cardConfiguration,
     facetsToPlot,
     availableFacets,
+    facetValueSortConfigs,
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
@@ -231,7 +238,10 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               </SynapseErrorBoundary>
               {isFaceted && (
                 <>
-                  <FacetFilterControls availableFacets={availableFacets} />
+                  <FacetFilterControls
+                    availableFacets={availableFacets}
+                    facetValueSortConfigs={facetValueSortConfigs}
+                  />
                 </>
               )}
               <TotalQueryResults

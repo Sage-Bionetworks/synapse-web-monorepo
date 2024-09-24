@@ -13,7 +13,10 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../../QueryContext'
-import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
+import {
+  EnumFacetFilter,
+  FacetValueSortConfig,
+} from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { groupBy, noop, sortBy } from 'lodash-es'
@@ -29,6 +32,7 @@ export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
     at least one non-null value will be shown. */
   availableFacets?: string[]
+  facetValueSortConfigs?: FacetValueSortConfig[]
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -98,7 +102,7 @@ export function applyChangesToValuesColumn(
 }
 
 function FacetFilterControls(props: FacetFilterControlsProps) {
-  const { availableFacets } = props
+  const { availableFacets, facetValueSortConfigs } = props
   const {
     getCurrentQueryRequest,
     combineRangeFacetConfig,
@@ -226,10 +230,17 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
       )}
       {shownTopLevelFacets.map(facet => {
         const columnModel = getCorrespondingColumnForFacet(facet, columnModels!)
+        const sortConfig = facetValueSortConfigs?.find(
+          config => config.columnName == facet.columnName,
+        )
         return (
           <div className="FacetFilterControls__facet" key={facet.columnName}>
             {facet.facetType === 'enumeration' && columnModel && (
-              <EnumFacetFilter containerAs="Collapsible" facet={facet} />
+              <EnumFacetFilter
+                containerAs="Collapsible"
+                facet={facet}
+                sortConfig={sortConfig}
+              />
             )}
             {facet.facetType === 'range' && columnModel && (
               <RangeFacetFilter facetResult={facet} />

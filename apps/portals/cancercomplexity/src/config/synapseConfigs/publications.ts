@@ -4,6 +4,7 @@ import type { GenericCardSchema } from 'synapse-react-client'
 import type { CardConfiguration } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
+import { Direction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 1
 
@@ -68,6 +69,9 @@ export const publications: SynapseConfig = {
     shouldDeepLink: true,
     name: 'Publications',
     columnAliases,
+    facetValueSortConfigs: [
+      { columnName: 'publicationYear', direction: Direction.DESC },
+    ],
     searchConfiguration: {
       searchable: [
         'publicationTitle',

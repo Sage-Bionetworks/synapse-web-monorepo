@@ -19,15 +19,14 @@ describe('SharePageLinkButton', () => {
   afterAll(() => server.close())
   beforeEach(() => {
     jest.clearAllMocks()
-    // Replace clipboard.writeText with a mock
+  })
+
+  it('Copies short.io response to clipboard', async () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn().mockImplementation(() => Promise.resolve()),
       },
     })
-  })
-
-  it('Copies short.io response to clipboard', async () => {
     renderComponent({ shortIoPublicApiKey: 'abc' })
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
