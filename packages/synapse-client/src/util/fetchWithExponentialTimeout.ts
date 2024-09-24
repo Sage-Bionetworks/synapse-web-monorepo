@@ -28,8 +28,7 @@ const MAX_RETRY = 3
 
 /**
  * Fetches data, retrying if the HTTP status code indicates that it could be retried.
- * To use it in our generated client, this function must be SIDE-EFFECT FREE, so it does not
- * consume the response body.
+ * To use it in our generated client, this function must NOT consume the response body.
  *
  * @throws SynapseClientError
  */
