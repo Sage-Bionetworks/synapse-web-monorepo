@@ -76,10 +76,12 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
+  // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
       onSuccess: data => {
         // whenever the response is returned, set the last interaction response text
+        // await delay(6000)
         setCurrentResponse(data.responseText)
       },
       onError: err => {
@@ -282,13 +284,16 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                       placement="bottom"
                       title={
                         <div style={{ textAlign: 'center' }}>
-                          {traceEvents?.page?.map((event, index) => {
-                            return (
-                              <Typography key={`${index}-${event.message}`}>
-                                {event.message}
-                              </Typography>
-                            )
-                          })}
+                          {traceEvents?.page
+                            ?.slice()
+                            .reverse()
+                            .map((event, index) => {
+                              return (
+                                <Typography key={`${index}-${event.message}`}>
+                                  {event.message}
+                                </Typography>
+                              )
+                            })}
                         </div>
                       }
                     >
@@ -296,7 +301,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                         sx={{ textAlign: 'center' }}
                         variant="body1Italic"
                       >
-                        {traceEvents.page[traceEvents.page.length - 1].message}
+                        {traceEvents.page[0].message}
                       </Typography>
                     </Tooltip>
                   )}

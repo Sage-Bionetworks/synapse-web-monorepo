@@ -81,20 +81,20 @@ export const mockTraceEventsResponse1: TraceEventsResponse = {
 export const mockTraceEventsResponse2: TraceEventsResponse = {
   jobId: ':id',
   page: [
-    ...mockTraceEventsResponse1.page,
     {
       timestamp: 1695567700, // Example timestamp (in seconds)
       message: 'Gathering entity metadata',
     },
+    ...mockTraceEventsResponse1.page,
   ],
 }
 export const mockTraceEventsResponse3: TraceEventsResponse = {
   jobId: ':id',
   page: [
-    ...mockTraceEventsResponse2.page,
     {
       timestamp: 1695567800, // Example timestamp (in seconds)
       message: 'Combining search results and entity metadata',
     },
+    ...mockTraceEventsResponse2.page,
   ],
 }

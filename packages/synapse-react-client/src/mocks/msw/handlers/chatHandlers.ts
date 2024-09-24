@@ -59,9 +59,9 @@ export const getChatbotHandlers = (
     async (_req, res, ctx) => {
       //mock showing progress (increasing number of items)
       traceCallCount++
-      if (traceCallCount == 2) {
+      if (traceCallCount == 1) {
         return res(ctx.status(201), ctx.json(mockTraceEventsResponse1))
-      } else if (traceCallCount == 3) {
+      } else if (traceCallCount == 2) {
         return res(ctx.status(201), ctx.json(mockTraceEventsResponse2))
       } else return res(ctx.status(201), ctx.json(mockTraceEventsResponse3))
     },
