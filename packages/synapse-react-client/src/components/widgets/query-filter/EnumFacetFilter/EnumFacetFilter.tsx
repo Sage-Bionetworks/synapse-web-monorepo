@@ -158,7 +158,7 @@ function _EnumFacetFilter(props: EnumFacetFilterProps) {
     const restOfFacetValuesArray = partitions[1]
     let sortedValues: RenderedFacetValue[]
     if (isNumberColumnType) {
-      sortedValues = sortBy(restOfFacetValuesArray, fv => new Number(fv.value))
+      sortedValues = sortBy(restOfFacetValuesArray, fv => Number(fv.value))
     } else {
       sortedValues = sortBy(restOfFacetValuesArray, fv =>
         fv.displayText.toLowerCase(),
