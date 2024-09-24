@@ -38,14 +38,7 @@ export const fetchResponseWithExponentialTimeout = async (
   options: RequestInit,
   delayMs = 1000,
 ) => {
-  const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
-  let response
-  try {
-    response = await fetch(requestInfo, options)
-  } catch (err) {
-    console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
-  }
+  let response = await fetch(requestInfo, options)
 
   let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
@@ -75,12 +68,17 @@ export const fetchWithExponentialTimeout = async <TResponse>(
   delayMs = 1000,
 ): Promise<TResponse> => {
   const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
-  const response = await fetchResponseWithExponentialTimeout(
-    requestInfo,
-    options,
-    delayMs,
-  )
-
+  let response
+  try {
+    response = await fetchResponseWithExponentialTimeout(
+      requestInfo,
+      options,
+      delayMs,
+    )
+  } catch (err) {
+    console.error(err)
+    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
+  }
   const contentType = response.headers.get('Content-Type')
   const responseBody = await response.text()
   let responseObject: TResponse | BaseError | string = responseBody

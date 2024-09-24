@@ -46,22 +46,20 @@ import {
   Configuration,
   ConfigurationParameters,
   ErrorContext,
+  ResponseContext,
 } from './generated/runtime'
 import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+import { NETWORK_UNAVAILABLE_MESSAGE } from './util/Constants'
 import { SynapseClientError } from './util/SynapseClientError'
 
 const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
   fetchApi: fetchResponseWithExponentialTimeout,
   middleware: [
     {
-      // Convert error objects to our SynapseClientError
-      onError(context: ErrorContext): Promise<Response | void> {
-        const { response, error } = context
-        if (error instanceof SynapseClientError) {
-          // rethrow
-          throw error
-        }
-        if (response) {
+      async post(context: ResponseContext): Promise<Response | void> {
+        const { response } = context
+        if (!response.ok) {
+          const error = await response.json()
           if (
             error !== null &&
             typeof error === 'object' &&
@@ -81,7 +79,16 @@ const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
             )
           }
         }
-        return Promise.reject(error)
+      },
+      // Convert error objects to our SynapseClientError
+      onError(context: ErrorContext): Promise<Response | void> {
+        const { response, error } = context
+        console.error(error)
+        throw new SynapseClientError(
+          0,
+          NETWORK_UNAVAILABLE_MESSAGE,
+          response?.url!,
+        )
       },
     },
   ],
