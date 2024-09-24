@@ -1,6 +1,7 @@
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
 import { publicationsSql } from '../resources'
+import { Direction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 5
 
@@ -33,6 +34,7 @@ const publications: SynapseConfig = {
     sql: publicationsSql,
     name: 'Publications',
     shouldDeepLink: true,
+    facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
     facetsToPlot: ['Program', 'year', 'grant', 'journal'],
     cardConfiguration: publicationCardProps,
     columnAliases,
