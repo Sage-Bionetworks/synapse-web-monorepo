@@ -6,7 +6,6 @@ import {
   isSingleNotSetValue,
 } from '../../../utils/functions/queryUtils'
 import {
-  Direction,
   FacetColumnRequest,
   FacetColumnResultRange,
   FacetColumnResultValues,

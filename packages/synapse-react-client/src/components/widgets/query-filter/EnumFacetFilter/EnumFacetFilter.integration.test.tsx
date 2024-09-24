@@ -66,6 +66,16 @@ const entityFacetValues: FacetColumnResultValueCount[] = [
   { value: mockTableEntity.id.replace('syn', ''), count: 1, isSelected: false },
 ]
 
+const integerFacetValues: FacetColumnResultValueCount[] = [
+  { value: '20030', count: 2, isSelected: false },
+  { value: '2010', count: 1, isSelected: true },
+  {
+    value: SynapseConstants.VALUE_NOT_SET,
+    count: 1,
+    isSelected: false,
+  },
+]
+
 const columnModel: ColumnModel = {
   columnType: ColumnTypeEnum.STRING,
   facetType: 'enumeration',
@@ -77,6 +87,19 @@ const facet: FacetColumnResultValues = {
   columnName: 'Make',
   facetType: 'enumeration',
   facetValues: stringFacetValues,
+  concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+}
+
+const integerColumnModel: ColumnModel = {
+  columnType: ColumnTypeEnum.INTEGER,
+  facetType: 'enumeration',
+  id: '86424',
+  name: 'Year',
+}
+const integerFacet: FacetColumnResultValues = {
+  columnName: 'Year',
+  facetType: 'enumeration',
+  facetValues: integerFacetValues,
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
 }
 
@@ -192,6 +215,40 @@ describe('EnumFacetFilter', () => {
 
         expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
         expect(counts[2]).toHaveTextContent(`${stringFacetValues[2].count}`)
+      })
+
+      it('should set labels correctly for INTEGER type', async () => {
+        registerTableQueryResult(nextQueryRequest.query, {
+          ...mockQueryResponseData,
+          columnModels: [integerColumnModel],
+        })
+        const { container } = await init({ facet: integerFacet })
+
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
+        )
+        const counts = container.querySelectorAll<HTMLDivElement>(
+          '.EnumFacetFilter__count',
+        )
+
+        expect(checkboxes).toHaveLength(4)
+        expect(counts).toHaveLength(3)
+
+        expect(checkboxes[0]).toHaveAccessibleName('All')
+
+        // Note: Facet values are resorted to numberical order! [1] should appear before [0]
+        expect(checkboxes[1]).toHaveAccessibleName(
+          `${integerFacetValues[1].value}`,
+        )
+        expect(counts[0]).toHaveTextContent(`${integerFacetValues[1].count}`)
+
+        expect(checkboxes[2]).toHaveAccessibleName(
+          `${integerFacetValues[0].value}`,
+        )
+        expect(counts[1]).toHaveTextContent(`${integerFacetValues[0].count}`)
+
+        expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
+        expect(counts[2]).toHaveTextContent(`${integerFacetValues[2].count}`)
       })
 
       it('should reverse sort order if configured', async () => {

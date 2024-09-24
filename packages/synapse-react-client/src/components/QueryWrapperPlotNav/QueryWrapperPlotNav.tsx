@@ -69,6 +69,10 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
+  /**
+   * Controls the sort order (ascending or descending) of facet values for a particular column.
+   * Note: This parameter does not currently apply to the pie/bar chart visualizations, but it probably should.
+   */
   facetValueSortConfigs?: FacetFilterControlsProps['facetValueSortConfigs']
   customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
