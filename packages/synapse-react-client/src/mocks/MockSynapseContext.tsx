@@ -1,9 +1,8 @@
-import React from 'react'
-import { SynapseContextType } from '../utils/context/SynapseContext'
-import FullContextProvider from '../utils/context/FullContextProvider'
-import { KeyFactory } from '../synapse-queries'
-import { Configuration } from '@sage-bionetworks/synapse-client/generated/runtime'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
+import React from 'react'
+import { KeyFactory } from '../synapse-queries'
+import FullContextProvider from '../utils/context/FullContextProvider'
+import { SynapseContextType } from '../utils/context/SynapseContext'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
