@@ -14,11 +14,9 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   downloadCartPageUrl: '/DownloadCart',
   withErrorBoundary: false,
   keyFactory: new KeyFactory(MOCK_ACCESS_TOKEN),
-  synapseClient: new SynapseClient(
-    new Configuration({
-      apiKey: `Bearer ${MOCK_ACCESS_TOKEN}`,
-    }),
-  ),
+  synapseClient: new SynapseClient({
+    accessToken: MOCK_ACCESS_TOKEN,
+  }),
 }
 
 export const MOCK_CONTEXT = React.createContext(MOCK_CONTEXT_VALUE)

@@ -1,8 +1,8 @@
+import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import React, { useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
 import { KeyFactory } from '../../synapse-queries/KeyFactory'
-import { Configuration } from '@sage-bionetworks/synapse-client/generated/runtime'
-import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
+import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -61,12 +61,11 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
     if (providedContext.synapseClient) {
       return providedContext.synapseClient
     }
-    const configuration = new Configuration({
-      apiKey: providedContext.accessToken
-        ? `Bearer ${providedContext.accessToken}`
-        : undefined,
-    })
-    return new SynapseClient(configuration)
+    const configurationParameters = {
+      accessToken: providedContext.accessToken,
+      basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    }
+    return new SynapseClient(configurationParameters)
   }, [providedContext.synapseClient, providedContext.accessToken])
 
   const synapseContext: SynapseContextType = useMemo(
