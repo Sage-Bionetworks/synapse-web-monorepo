@@ -15,6 +15,7 @@ import {
   mockAgentChatResponse,
   mockAgentSession,
   mockChatSessionId,
+  mockEmptyTraceEventsResponse,
   mockListAgentSessionsResponse,
   mockSessionHistoryResponse,
   mockTraceEventsResponse1,
@@ -61,9 +62,11 @@ export const getChatbotHandlers = (
       traceCallCount++
       if (traceCallCount == 1) {
         return res(ctx.status(201), ctx.json(mockTraceEventsResponse1))
-      } else if (traceCallCount == 2) {
+      } else if (traceCallCount == 5) {
         return res(ctx.status(201), ctx.json(mockTraceEventsResponse2))
-      } else return res(ctx.status(201), ctx.json(mockTraceEventsResponse3))
+      } else if (traceCallCount == 8) {
+        return res(ctx.status(201), ctx.json(mockTraceEventsResponse3))
+      } else return res(ctx.status(201), ctx.json(mockEmptyTraceEventsResponse))
     },
   ),
   // generateAsyncJobHandlers(
