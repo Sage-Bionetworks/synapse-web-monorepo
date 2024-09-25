@@ -283,7 +283,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                     <Box sx={{ position: 'relative', pt: '35px' }}>
                       <TransitionGroup>
                         {/* The key is based on the current text so when the text changes, the Fade component will remount */}
-                        <Fade key={traceEvents.page[0].message} timeout={2500}>
+                        <Fade key={traceEvents.page[0].message} timeout={500}>
                           <Tooltip
                             placement="bottom"
                             title={
