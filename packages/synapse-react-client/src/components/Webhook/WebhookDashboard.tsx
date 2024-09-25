@@ -188,7 +188,7 @@ export default function WebhookDashboard() {
     [infiniteData],
   )
 
-  // If the Webhook verification status is PENDING, Synapse has sent the webhook verification code but has not reported a response.
+  // If the Webhook verification status is PENDING, Synapse may not have sent the verification code, or may have not reported a response.
   // Refetch on an interval to check if the verification status has changed.
   useEffect(() => {
     let intervalId: NodeJS.Timeout

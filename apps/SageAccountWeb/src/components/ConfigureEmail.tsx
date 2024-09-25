@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseQueries,
-  useSynapseContext,
-} from 'synapse-react-client'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
+import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
+import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import {
   Box,
   Button,
@@ -18,9 +12,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
-import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
-import { StyledFormControl } from './StyledComponents'
+import React, { useEffect, useState } from 'react'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseQueries,
+  useSynapseContext,
+} from 'synapse-react-client'
+import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 
 export type ConfigureEmailProps = {
   returnToPath: string
