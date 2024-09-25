@@ -310,7 +310,9 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                           placement="bottom"
                           title={
                             <div style={{ textAlign: 'center' }}>
-                              <Typography>Initializing...</Typography>
+                              {allTraceEvents.length == 0 && (
+                                <Typography>Initializing...</Typography>
+                              )}
                               {allTraceEvents.map((event, index) => {
                                 return (
                                   <Typography key={`${index}-${event.message}`}>

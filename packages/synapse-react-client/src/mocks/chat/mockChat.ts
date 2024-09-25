@@ -92,7 +92,8 @@ export const mockTraceEventsResponse3: TraceEventsResponse = {
   page: [
     {
       timestamp: 1695567800, // Example timestamp (in seconds)
-      message: 'Combining search results and entity metadata',
+      message:
+        '<thinking>The metadata shows that the entity with ID syn9602623 is a Synapse project named "SearchIntegrationTest.Projecte475c6e8-414a-4842-b876-bf8232ce05d0". Its description contains the search term "e7b33c3a-2392-4ce7-a357-efa4612e4a41". The metadata ...',
     },
   ],
 }
