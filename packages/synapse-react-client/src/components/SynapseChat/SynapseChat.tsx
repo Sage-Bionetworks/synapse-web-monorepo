@@ -1,5 +1,5 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import { Box, List, IconButton, Typography, Alert } from '@mui/material'
+import { Box, List, IconButton, Typography, Alert, Fade } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -7,6 +7,7 @@ import SynapseChatInteraction from './SynapseChatInteraction'
 import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
+  useGetChatAgentTraceEvents,
   useSendChatMessageToAgent,
   useUpdateAgentSession,
 } from '../../synapse-queries/chat/useChat'
@@ -21,6 +22,9 @@ import { TextField } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
 import { displayToast } from '../ToastMessage'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { Tooltip } from '@mui/material'
+import { TransitionGroup } from 'react-transition-group'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -66,10 +70,9 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
+  const [currentlyProcessingJobId, setCurrentlyProcessingJobId] =
+    useState<string>()
   const [currentResponse, setCurrentResponse] = useState('')
-  const [currentProgressMessage, setCurrentProgressMessage] = useState<
-    string | undefined
-  >()
   const [currentResponseError, setCurrentResponseError] = useState('')
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
@@ -85,7 +88,19 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
-      setCurrentProgressMessage(status?.progressMessage)
+      setCurrentlyProcessingJobId(status.jobId)
+    },
+  )
+
+  const { data: traceEvents } = useGetChatAgentTraceEvents(
+    {
+      jobId: currentlyProcessingJobId!,
+    },
+    {
+      //enabled if there is a pending interaction
+      enabled: !!currentlyProcessingJobId,
+      refetchInterval: currentlyProcessingJobId ? 1000 : false, // Re-fetch every second if enabled
+      refetchIntervalInBackground: true, // Continue polling even when the tab is not active
     },
   )
 
@@ -122,8 +137,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setInteractions([...interactions, pendingInteraction])
       setCurrentResponse('')
       setCurrentResponseError('')
-      setCurrentProgressMessage('')
       setPendingInteraction(undefined)
+      setCurrentlyProcessingJobId(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
 
@@ -144,6 +159,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       sendChatMessageToAgent({
         chatText: initialMessage,
         sessionId: agentSession!.sessionId,
+        enableTrace: true,
       })
       setInitialMessageProcessed(true)
     }
@@ -156,6 +172,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       sendChatMessageToAgent({
         chatText: userChatTextfieldValue,
         sessionId: agentSession!.sessionId,
+        enableTrace: true,
       })
     }
   }
@@ -245,13 +262,65 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
               )
             })}
             {pendingInteraction && (
-              <SynapseChatInteraction
-                userMessage={pendingInteraction.userMessage}
-                chatResponseText={pendingInteraction.chatResponseText}
-                chatErrorReason={pendingInteraction.chatErrorReason}
-                progressMessage={currentProgressMessage}
-                scrollIntoView
-              />
+              <>
+                <SynapseChatInteraction
+                  userMessage={pendingInteraction.userMessage}
+                  chatResponseText={pendingInteraction.chatResponseText}
+                  chatErrorReason={pendingInteraction.chatErrorReason}
+                  scrollIntoView
+                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    gap: '5px',
+                  }}
+                >
+                  <SynapseSpinner size={40} />
+                  {/* Show the current message, as well as the full trace log in a tooltip */}
+                  {traceEvents && traceEvents.page && (
+                    <Box sx={{ position: 'relative', pt: '35px' }}>
+                      <TransitionGroup>
+                        {/* The key is based on the current text so when the text changes, the Fade component will remount */}
+                        <Fade key={traceEvents.page[0].message} timeout={500}>
+                          <Tooltip
+                            placement="bottom"
+                            title={
+                              <div style={{ textAlign: 'center' }}>
+                                {traceEvents?.page
+                                  ?.slice()
+                                  .reverse()
+                                  .map((event, index) => {
+                                    return (
+                                      <Typography
+                                        key={`${index}-${event.message}`}
+                                      >
+                                        {event.message}
+                                      </Typography>
+                                    )
+                                  })}
+                              </div>
+                            }
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: 'center',
+                                position: 'absolute',
+                                width: '100%',
+                                top: 0,
+                              }}
+                              variant="body1Italic"
+                            >
+                              {traceEvents.page[0].message}
+                            </Typography>
+                          </Tooltip>
+                        </Fade>
+                      </TransitionGroup>
+                    </Box>
+                  )}
+                </Box>
+              </>
             )}
           </List>
         </Box>

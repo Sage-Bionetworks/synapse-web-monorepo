@@ -1,5 +1,6 @@
 import { rest } from 'msw'
 import {
+  AGENT_CHAT_TRACE,
   AGENT_SESSION,
   AGENT_SESSION_HISTORY,
   GET_CHAT_ASYNC,
@@ -16,10 +17,14 @@ import {
   mockChatSessionId,
   mockListAgentSessionsResponse,
   mockSessionHistoryResponse,
+  mockTraceEventsResponse1,
+  mockTraceEventsResponse2,
+  mockTraceEventsResponse3,
 } from 'src/mocks/chat/mockChat'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
 
+let traceCallCount = 0
 export const getChatbotHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) => [
@@ -46,6 +51,20 @@ export const getChatbotHandlers = (
     tokenParam => GET_CHAT_ASYNC(tokenParam),
     mockAgentChatResponse,
     backendOrigin,
+  ),
+
+  //trace events
+  rest.post(
+    `${backendOrigin}${AGENT_CHAT_TRACE(':id')}`,
+    async (_req, res, ctx) => {
+      //mock showing progress (increasing number of items)
+      traceCallCount++
+      if (traceCallCount == 1) {
+        return res(ctx.status(201), ctx.json(mockTraceEventsResponse1))
+      } else if (traceCallCount == 2) {
+        return res(ctx.status(201), ctx.json(mockTraceEventsResponse2))
+      } else return res(ctx.status(201), ctx.json(mockTraceEventsResponse3))
+    },
   ),
   // generateAsyncJobHandlers(
   //   START_CHAT_ASYNC,

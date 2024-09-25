@@ -19,6 +19,7 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ACTIVITY_FOR_ENTITY,
+  AGENT_CHAT_TRACE,
   AGENT_SESSION,
   AGENT_SESSION_HISTORY,
   ALIAS_AVAILABLE,
@@ -325,6 +326,8 @@ import {
   SessionHistoryRequest,
   VerificationState,
   UpdateAgentSessionRequest,
+  TraceEventsRequest,
+  TraceEventsResponse,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5541,6 +5544,20 @@ export const getSessionHistory = (
 ): Promise<SessionHistoryResponse> => {
   return doPost<SessionHistoryResponse>(
     AGENT_SESSION_HISTORY(request.sessionId),
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getChatAgentTraceEvents = (
+  request: TraceEventsRequest,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TraceEventsResponse> => {
+  return doPost<TraceEventsResponse>(
+    AGENT_CHAT_TRACE(request.jobId),
     request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,

@@ -187,6 +187,9 @@ export const START_CHAT_ASYNC = `${AGENT}/chat/async/start`
 export const GET_CHAT_ASYNC = (jobId: string | number) =>
   `${AGENT}/chat/async/get/${jobId}`
 
+export const AGENT_CHAT_TRACE = (jobId: string | number) =>
+  `${AGENT}/chat/async/get/${jobId}`
+
 export const DOI = `${REPO}/doi`
 export const DOI_ASSOCIATION = `${DOI}/association`
 

@@ -7,6 +7,7 @@ import {
   ListAgentSessionsRequest,
   ListAgentSessionsResponse,
   SessionHistoryResponse,
+  TraceEventsResponse,
 } from '@sage-bionetworks/synapse-types'
 
 export const mockChatSessionId = 'session-456'
@@ -38,6 +39,7 @@ export const mockListAgentSessionsResponse: ListAgentSessionsResponse = {
 export const mockAgentChatRequest: AgentChatRequest = {
   sessionId: mockChatSessionId,
   chatText: 'Hello! How can I access My Projects?',
+  enableTrace: true,
 }
 
 export const mockAgentChatResponse: AgentChatResponse = {
@@ -64,4 +66,35 @@ export const mockSessionHistoryResponse: SessionHistoryResponse = {
     },
   ],
   nextPageToken: undefined,
+}
+
+export const mockTraceEventsResponse1: TraceEventsResponse = {
+  jobId: ':id',
+  page: [
+    {
+      timestamp: 1695567600, // Example timestamp (in seconds)
+      message: 'Executing search on Synapse',
+    },
+  ],
+}
+
+export const mockTraceEventsResponse2: TraceEventsResponse = {
+  jobId: ':id',
+  page: [
+    {
+      timestamp: 1695567700, // Example timestamp (in seconds)
+      message: 'Gathering entity metadata',
+    },
+    ...mockTraceEventsResponse1.page,
+  ],
+}
+export const mockTraceEventsResponse3: TraceEventsResponse = {
+  jobId: ':id',
+  page: [
+    {
+      timestamp: 1695567800, // Example timestamp (in seconds)
+      message: 'Combining search results and entity metadata',
+    },
+    ...mockTraceEventsResponse2.page,
+  ],
 }

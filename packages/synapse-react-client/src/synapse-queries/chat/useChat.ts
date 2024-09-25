@@ -8,6 +8,8 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
@@ -19,6 +21,8 @@ import {
   CreateAgentSessionRequest,
   SessionHistoryRequest,
   SessionHistoryResponse,
+  TraceEventsRequest,
+  TraceEventsResponse,
   UpdateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
 
@@ -140,5 +144,18 @@ export function useGetAgentChatSessionHistoryInfinite<
       SynapseClient.getSessionHistory({ ...params }, accessToken),
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
+  })
+}
+
+export function useGetChatAgentTraceEvents(
+  request: TraceEventsRequest,
+  options?: Partial<UseQueryOptions<TraceEventsResponse, SynapseClientError>>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getChatAgentTraceKey(request),
+
+    queryFn: () => SynapseClient.getChatAgentTraceEvents(request, accessToken),
   })
 }
