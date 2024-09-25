@@ -157,5 +157,5 @@ export type TraceEventsRequest = {
   /**
    * When a time stamp value is provided, only trace events that occurred after the provided time stamp will be included in the results.
    */
-  olderThanTimestamp?: number // Optional since the JSON definition allows for it to be omitted
+  newerThanTimestamp?: number // Optional since the JSON definition allows for it to be omitted
 }
