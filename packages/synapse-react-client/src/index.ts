@@ -17,6 +17,7 @@ import * as AppUtils from './utils/AppUtils'
 import * as RegularExpressions from './utils/functions/RegularExpressions'
 import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
+import WebhookDashboard from './components/Webhook/WebhookDashboard'
 
 export * from './components'
 export * from './utils'
@@ -43,4 +44,5 @@ export {
   AppUtils,
   RegularExpressions,
   displayToast,
+  WebhookDashboard,
 }

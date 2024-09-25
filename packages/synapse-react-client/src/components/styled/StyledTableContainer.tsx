@@ -58,4 +58,7 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
         opacity: 0.75,
       },
     },
+    '.MuiButton-root': {
+      whiteSpace: 'nowrap',
+    },
   }))

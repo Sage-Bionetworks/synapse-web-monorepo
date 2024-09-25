@@ -9,6 +9,7 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { getAllAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
+import { getWebhookHandlers } from './handlers/webhookHandlers'
 import { getAllWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
@@ -77,6 +78,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getHandlersForTableQuery(backendOrigin),
   ...getDoiHandler(backendOrigin),
   ...getShortIoHandlers(),
+  ...getWebhookHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(

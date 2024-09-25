@@ -86,6 +86,7 @@ export const AccountSettings = () => {
   const twoFactorAuthRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
   const oauthClientManagementRef = useRef<HTMLDivElement>(null)
+  const webhooksRef = useRef<HTMLDivElement>(null)
   const cookieManagementRef = useRef<HTMLDivElement>(null)
   const signOutSectionRef = useRef<HTMLDivElement>(null)
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
@@ -236,6 +237,9 @@ export const AccountSettings = () => {
                 onClick={() => handleScroll(oauthClientManagementRef)}
               >
                 OAuth Clients
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(webhooksRef)}>
+                Webhooks
               </ListItemButton>
               <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
                 Privacy Preferences
@@ -669,12 +673,13 @@ export const AccountSettings = () => {
                   as your password.
                 </Typography>
                 <div className="primary-button-container">
-                  <Link
+                  <Button
                     sx={credentialButtonSX}
+                    variant="outlined"
                     onClick={() => handleChangesFn('personalaccesstokens')}
                   >
                     Manage Personal Access Tokens
-                  </Link>
+                  </Button>
                   <Link
                     href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
                     target="_blank"
@@ -693,14 +698,40 @@ export const AccountSettings = () => {
                   Synapse as an identity provider.
                 </Typography>
                 <div className="primary-button-container">
-                  <Link
+                  <Button
                     sx={credentialButtonSX}
+                    variant="outlined"
                     onClick={() => handleChangesFn('oauthclientmanagement')}
                   >
                     Manage OAuth Clients
-                  </Link>
+                  </Button>
                   <Link
                     href="https://help.synapse.org/docs/Using-Synapse-as-an-OAuth-Server.2048327904.html"
+                    target="_blank"
+                  >
+                    More information
+                  </Link>
+                </div>
+              </Paper>
+              <Paper
+                ref={webhooksRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>Webhooks</Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  Webhooks can be used to receive programmatic events triggered
+                  by actions in Synapse.
+                </Typography>
+                <div className="primary-button-container">
+                  <Button
+                    sx={credentialButtonSX}
+                    variant="outlined"
+                    onClick={() => handleChangesFn('webhook')}
+                  >
+                    Manage Webhooks
+                  </Button>
+                  <Link
+                    href="https://rest-docs.synapse.org/rest/index.html#org.sagebionetworks.repo.web.controller.WebhookController"
                     target="_blank"
                   >
                     More information

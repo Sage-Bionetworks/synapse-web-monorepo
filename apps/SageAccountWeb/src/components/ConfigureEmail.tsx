@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseQueries,
-  useSynapseContext,
-} from 'synapse-react-client'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
+import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
+import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import {
   Box,
   Button,
@@ -14,12 +8,18 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
-import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
-import { StyledFormControl } from './StyledComponents'
+import React, { useEffect, useState } from 'react'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseQueries,
+  useSynapseContext,
+} from 'synapse-react-client'
+import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 
 export type ConfigureEmailProps = {
   returnToPath: string
@@ -176,42 +176,42 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
           )
         }
       })}
-      <StyledFormControl variant="standard" margin="normal" fullWidth>
-        <Box sx={{ display: 'flex' }}>
-          <TextField
-            label={'Add an email address'}
-            id="additionalEmail"
-            sx={{ flexGrow: 1, marginRight: '10px' }}
-            value={newEmail}
-            onChange={e => setNewEmail(e.target.value)}
-          />
-          <Button
-            startIcon={<AddCircleTwoToneIcon />}
-            disabled={!newEmail}
-            variant={'contained'}
-            sx={{ alignSelf: 'flex-end', height: '47px' }}
-            onClick={e => {
-              addEmail(e)
-            }}
-          >
-            Add
-          </Button>
-        </Box>
-      </StyledFormControl>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={sendEmailNotifications}
-            onChange={e => updateEmailNotifications(!sendEmailNotifications)}
-          />
-        }
-        label={
-          <Typography variant="smallText1">
-            Allow Synapse to send me email notifications to my Primary email
-            address.
-          </Typography>
-        }
-      />
+      <Stack my={2} gap={2}>
+        <TextField
+          label={'Add an email address'}
+          id="additionalEmail"
+          fullWidth
+          value={newEmail}
+          onChange={e => setNewEmail(e.target.value)}
+        />
+        <Button
+          startIcon={<AddCircleTwoToneIcon />}
+          disabled={!newEmail}
+          variant={'contained'}
+          onClick={e => {
+            addEmail(e)
+          }}
+          sx={{
+            alignSelf: 'flex-start',
+          }}
+        >
+          Add
+        </Button>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={sendEmailNotifications}
+              onChange={e => updateEmailNotifications(!sendEmailNotifications)}
+            />
+          }
+          label={
+            <Typography variant="smallText1">
+              Allow Synapse to send me email notifications to my Primary email
+              address.
+            </Typography>
+          }
+        />
+      </Stack>
     </div>
   )
 }

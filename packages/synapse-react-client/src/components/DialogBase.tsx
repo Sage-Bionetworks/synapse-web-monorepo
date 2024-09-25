@@ -12,7 +12,7 @@ import {
   SxProps,
 } from '@mui/material'
 import React from 'react'
-import { HelpPopover, HelpPopoverProps } from './HelpPopover'
+import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
 
 const EMPTY_OBJECT = {}
 

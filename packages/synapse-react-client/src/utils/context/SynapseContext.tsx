@@ -57,16 +57,18 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
     [providedContext.accessToken],
   )
 
+  const basePath = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
   const synapseApiClient = useMemo(() => {
     if (providedContext.synapseClient) {
       return providedContext.synapseClient
     }
     const configurationParameters = {
       accessToken: providedContext.accessToken,
-      basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      basePath: basePath,
     }
     return new SynapseClient(configurationParameters)
-  }, [providedContext.synapseClient, providedContext.accessToken])
+  }, [providedContext.synapseClient, providedContext.accessToken, basePath])
 
   const synapseContext: SynapseContextType = useMemo(
     () => ({
