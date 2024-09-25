@@ -17,6 +17,7 @@ import {
   AgentChatResponse,
   AgentSession,
   AsynchronousJobStatus,
+  TraceEvent,
 } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
 import { useSynapseContext } from '../../utils'
@@ -77,6 +78,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
+  const [latestTraceEvent, setLatestTraceEvent] = useState<TraceEvent>()
+  const [allTraceEvents, setAllTraceEvent] = useState<TraceEvent[]>([])
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
       onSuccess: data => {
@@ -92,9 +95,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     },
   )
 
-  const { data: traceEvents } = useGetChatAgentTraceEvents(
+  const { data: newTraceEvents } = useGetChatAgentTraceEvents(
     {
       jobId: currentlyProcessingJobId!,
+      newerThanTimestamp: latestTraceEvent?.timestamp,
     },
     {
       //enabled if there is a pending interaction
@@ -103,6 +107,22 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       refetchIntervalInBackground: true, // Continue polling even when the tab is not active
     },
   )
+
+  useEffect(() => {
+    if (newTraceEvents && newTraceEvents.page.length > 0) {
+      const latestEvent = newTraceEvents.page[newTraceEvents.page.length - 1]
+      setLatestTraceEvent(latestEvent)
+      //if the trace events do not contain the latest event, add the events to the array
+      const foundEvent = allTraceEvents.find(
+        event =>
+          latestEvent.message == event.message &&
+          latestEvent.timestamp == event.timestamp,
+      )
+      if (!foundEvent) {
+        setAllTraceEvent([...allTraceEvents, ...newTraceEvents.page])
+      }
+    }
+  }, [newTraceEvents])
 
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
@@ -139,6 +159,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setCurrentResponseError('')
       setPendingInteraction(undefined)
       setCurrentlyProcessingJobId(undefined)
+      setAllTraceEvent([])
+      setLatestTraceEvent(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
 
@@ -195,6 +217,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       </Alert>
     )
   }
+  const latestTraceEventMessage = latestTraceEvent?.message ?? 'Processing...'
   return (
     <Box
       display="flex"
@@ -279,46 +302,42 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                 >
                   <SynapseSpinner size={40} />
                   {/* Show the current message, as well as the full trace log in a tooltip */}
-                  {traceEvents && traceEvents.page && (
-                    <Box sx={{ position: 'relative', pt: '35px' }}>
-                      <TransitionGroup>
-                        {/* The key is based on the current text so when the text changes, the Fade component will remount */}
-                        <Fade key={traceEvents.page[0].message} timeout={500}>
-                          <Tooltip
-                            placement="bottom"
-                            title={
-                              <div style={{ textAlign: 'center' }}>
-                                {traceEvents?.page
-                                  ?.slice()
-                                  .reverse()
-                                  .map((event, index) => {
-                                    return (
-                                      <Typography
-                                        key={`${index}-${event.message}`}
-                                      >
-                                        {event.message}
-                                      </Typography>
-                                    )
-                                  })}
-                              </div>
-                            }
+                  <Box sx={{ position: 'relative', pt: '35px' }}>
+                    <TransitionGroup>
+                      {/* The key is based on the current text so when the text changes, the Fade component will remount */}
+                      <Fade key={latestTraceEventMessage} timeout={500}>
+                        <Tooltip
+                          placement="bottom"
+                          title={
+                            <div style={{ textAlign: 'center' }}>
+                              {allTraceEvents.length == 0 && (
+                                <Typography>Initializing...</Typography>
+                              )}
+                              {allTraceEvents.map((event, index) => {
+                                return (
+                                  <Typography key={`${index}-${event.message}`}>
+                                    {event.message}...
+                                  </Typography>
+                                )
+                              })}
+                            </div>
+                          }
+                        >
+                          <Typography
+                            sx={{
+                              textAlign: 'center',
+                              position: 'absolute',
+                              width: '100%',
+                              top: 0,
+                            }}
+                            variant="body1Italic"
                           >
-                            <Typography
-                              sx={{
-                                textAlign: 'center',
-                                position: 'absolute',
-                                width: '100%',
-                                top: 0,
-                              }}
-                              variant="body1Italic"
-                            >
-                              {traceEvents.page[0].message}
-                            </Typography>
-                          </Tooltip>
-                        </Fade>
-                      </TransitionGroup>
-                    </Box>
-                  )}
+                            {latestTraceEventMessage}
+                          </Typography>
+                        </Tooltip>
+                      </Fade>
+                    </TransitionGroup>
+                  </Box>
                 </Box>
               </>
             )}
