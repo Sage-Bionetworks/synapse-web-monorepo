@@ -100,7 +100,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     {
       //enabled if there is a pending interaction
       enabled: !!currentlyProcessingJobId,
-      refetchInterval: !!currentlyProcessingJobId ? 1000 : false, // Re-fetch every second if enabled
+      refetchInterval: currentlyProcessingJobId ? 1000 : false, // Re-fetch every second if enabled
       refetchIntervalInBackground: true, // Continue polling even when the tab is not active
     },
   )
