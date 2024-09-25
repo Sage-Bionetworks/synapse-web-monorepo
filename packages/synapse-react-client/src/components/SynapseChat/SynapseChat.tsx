@@ -1,5 +1,5 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import { Box, List, IconButton, Typography, Alert } from '@mui/material'
+import { Box, List, IconButton, Typography, Alert, Fade } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
 import { ArrowUpward } from '@mui/icons-material'
@@ -24,6 +24,7 @@ import AccessLevelMenu from './AccessLevelMenu'
 import { displayToast } from '../ToastMessage'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { Tooltip } from '@mui/material'
+import { TransitionGroup } from 'react-transition-group'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -76,12 +77,10 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
-  // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
       onSuccess: data => {
         // whenever the response is returned, set the last interaction response text
-        // await delay(6000)
         setCurrentResponse(data.responseText)
       },
       onError: err => {
@@ -275,37 +274,51 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
+                    gap: '5px',
                   }}
                 >
                   <SynapseSpinner size={40} />
                   {/* Show the current message, as well as the full trace log in a tooltip */}
                   {traceEvents && traceEvents.page && (
-                    <Tooltip
-                      placement="bottom"
-                      title={
-                        <div style={{ textAlign: 'center' }}>
-                          {traceEvents?.page
-                            ?.slice()
-                            .reverse()
-                            .map((event, index) => {
-                              return (
-                                <Typography key={`${index}-${event.message}`}>
-                                  {event.message}
-                                </Typography>
-                              )
-                            })}
-                        </div>
-                      }
-                    >
-                      <Typography
-                        sx={{ textAlign: 'center' }}
-                        variant="body1Italic"
-                      >
-                        {traceEvents.page[0].message}
-                      </Typography>
-                    </Tooltip>
+                    <Box sx={{ position: 'relative', pt: '35px' }}>
+                      <TransitionGroup>
+                        {/* The key is based on the current text so when the text changes, the Fade component will remount */}
+                        <Fade key={traceEvents.page[0].message} timeout={2500}>
+                          <Tooltip
+                            placement="bottom"
+                            title={
+                              <div style={{ textAlign: 'center' }}>
+                                {traceEvents?.page
+                                  ?.slice()
+                                  .reverse()
+                                  .map((event, index) => {
+                                    return (
+                                      <Typography
+                                        key={`${index}-${event.message}`}
+                                      >
+                                        {event.message}
+                                      </Typography>
+                                    )
+                                  })}
+                              </div>
+                            }
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: 'center',
+                                position: 'absolute',
+                                width: '100%',
+                                top: 0,
+                              }}
+                              variant="body1Italic"
+                            >
+                              {traceEvents.page[0].message}
+                            </Typography>
+                          </Tooltip>
+                        </Fade>
+                      </TransitionGroup>
+                    </Box>
                   )}
-                  <SkeletonParagraph numRows={3} />
                 </Box>
               </>
             )}
