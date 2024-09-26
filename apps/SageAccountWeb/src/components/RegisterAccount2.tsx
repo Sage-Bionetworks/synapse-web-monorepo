@@ -2,7 +2,10 @@ import { Button, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { displayToast, SynapseClient } from 'synapse-react-client'
-import { AliasType } from '@sage-bionetworks/synapse-types'
+import {
+  AliasType,
+  EmailValidationSignedToken,
+} from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
@@ -16,9 +19,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
   const [lastName, setLastName] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
-  const [emailValidationSignedToken, setEmailValidationSignedToken] = useState(
-    undefined as any,
-  )
+  const [emailValidationSignedToken, setEmailValidationSignedToken] = useState<
+    EmailValidationSignedToken | undefined
+  >(undefined)
 
   const emailValidationSignedTokenValue = getSearchParam(
     'emailValidationSignedToken',
@@ -95,6 +98,22 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               <SourceAppLogo />
             </div>
             <div className="form-wrapper">
+              <StyledFormControl
+                fullWidth
+                required
+                variant="standard"
+                margin="normal"
+              >
+                <TextField
+                  fullWidth
+                  required
+                  label={'Email'}
+                  id="email"
+                  name="email"
+                  disabled
+                  value={emailValidationSignedToken?.email ?? ''}
+                />
+              </StyledFormControl>
               <StyledFormControl
                 fullWidth
                 required
