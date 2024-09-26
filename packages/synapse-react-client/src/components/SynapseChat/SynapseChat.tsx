@@ -24,7 +24,6 @@ import { useSynapseContext } from '../../utils'
 import AccessLevelMenu from './AccessLevelMenu'
 import { displayToast } from '../ToastMessage'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Tooltip } from '@mui/material'
 import { TransitionGroup } from 'react-transition-group'
 
 export type SynapseChatProps = {
@@ -84,7 +83,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
   const [latestTraceEvent, setLatestTraceEvent] =
     useState<TraceEventWithFriendlyMessage>()
-  const [allTraceEvents, setAllTraceEvent] = useState<TraceEvent[]>([])
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
       onSuccess: data => {
@@ -129,15 +127,9 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       // Use the thinking texts - fall back to the full trace message if thinking elements are unavailable
       latestEvent.friendlyMessage = thinkingTexts ?? latestEvent.message
       setLatestTraceEvent(latestEvent)
+      //send trace events to the console to ease agent debugging
       //if the trace events do not contain the latest event, add the events to the array
-      const foundEvent = allTraceEvents.find(
-        event =>
-          latestEvent.message == event.message &&
-          latestEvent.timestamp == event.timestamp,
-      )
-      if (!foundEvent) {
-        setAllTraceEvent([...allTraceEvents, ...newTraceEvents.page])
-      }
+      console.debug(newTraceEvents.page)
     }
   }, [newTraceEvents])
 
@@ -176,7 +168,6 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setCurrentResponseError('')
       setPendingInteraction(undefined)
       setCurrentlyProcessingJobId(undefined)
-      setAllTraceEvent([])
       setLatestTraceEvent(undefined)
     }
   }, [currentResponse, currentResponseError, pendingInteraction])
@@ -324,42 +315,17 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                     <TransitionGroup>
                       {/* The key is based on the current text so when the text changes, the Fade component will remount */}
                       <Fade key={latestTraceEventMessage} timeout={500}>
-                        <Tooltip
-                          placement="bottom"
-                          componentsProps={{
-                            tooltip: {
-                              sx: {
-                                maxWidth: '1000px',
-                              },
-                            },
+                        <Typography
+                          sx={{
+                            textAlign: 'center',
+                            position: 'absolute',
+                            width: '100%',
+                            top: 0,
                           }}
-                          title={
-                            <div style={{ textAlign: 'center' }}>
-                              {allTraceEvents.length == 0 && (
-                                <Typography>Initializing...</Typography>
-                              )}
-                              {allTraceEvents.map((event, index) => {
-                                return (
-                                  <Typography key={`${index}-${event.message}`}>
-                                    {event.message}...
-                                  </Typography>
-                                )
-                              })}
-                            </div>
-                          }
+                          variant="body1Italic"
                         >
-                          <Typography
-                            sx={{
-                              textAlign: 'center',
-                              position: 'absolute',
-                              width: '100%',
-                              top: 0,
-                            }}
-                            variant="body1Italic"
-                          >
-                            {latestTraceEventMessage}
-                          </Typography>
-                        </Tooltip>
+                          {latestTraceEventMessage}
+                        </Typography>
                       </Fade>
                     </TransitionGroup>
                   </Box>
