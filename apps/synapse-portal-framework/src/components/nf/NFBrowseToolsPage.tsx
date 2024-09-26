@@ -1,5 +1,5 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
-import Layout from './Layout'
+import Layout from '../Layout'
 import React from 'react'
 import { Button, Link, TextField, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
@@ -8,9 +8,9 @@ import { ReactComponent as Antibodies } from './assets/antibodies.svg'
 import { ReactComponent as Biobanks } from './assets/biobanks.svg'
 import { ReactComponent as CellLines } from './assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.svg'
-import PopularSearches from './PopularSearches'
+import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
-import Ecosystem from './csbc-home-page/Ecosystem'
+import Ecosystem from '../csbc-home-page/Ecosystem'
 
 type Category = {
   resourceName: string
@@ -25,12 +25,12 @@ const categories: Category[] = [
   { resourceName: 'Biobank', image: <Biobanks /> },
 ]
 
-export type BrowseToolsPageProps = {
+export type NFBrowseToolsPageProps = {
   popularSearchesSql: string
   toolsSql: string
 }
 
-const BrowseToolsPage = (props: BrowseToolsPageProps) => {
+const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
   const { popularSearchesSql, toolsSql } = props
   const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
@@ -277,4 +277,4 @@ const BrowseToolsPage = (props: BrowseToolsPageProps) => {
     </div>
   )
 }
-export default BrowseToolsPage
+export default NFBrowseToolsPage

@@ -187,7 +187,7 @@ const routes: GenericRoute[] = [
     exact: true,
     synapseConfigArray: [
       {
-        name: 'BrowseToolsPage',
+        name: 'NFBrowseToolsPage',
         props: {
           popularSearchesSql: popularSearchesSql,
           toolsSql,
