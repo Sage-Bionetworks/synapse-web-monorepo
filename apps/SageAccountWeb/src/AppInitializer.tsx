@@ -24,12 +24,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
     const stagingConfig = {
       REPO: 'https://repo-staging.prod.sagebase.org',
-      PORTAL: 'https://staging.synapse.org',
+      PORTAL: 'https://staging.synapse.org/',
     }
 
     const devConfig = {
       REPO: 'https://repo-dev.dev.sagebase.org',
-      PORTAL: 'https://portal-dev.dev.sagebase.org',
+      PORTAL: 'https://portal-dev.dev.sagebase.org/',
     }
 
     if (isStaging || isDev) {
