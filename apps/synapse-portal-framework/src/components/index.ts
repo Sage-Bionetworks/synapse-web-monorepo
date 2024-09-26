@@ -7,6 +7,7 @@ import Ecosystem from './csbc-home-page/Ecosystem'
 import AboutPortal from './csbc-home-page/AboutPortal'
 import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import NFBrowseToolsPage from './nf/NFBrowseToolsPage'
+import ELBrowseToolsPage from './elportal/ELBrowseToolsPage'
 import ELBetaLaunchBanner from './elportal/ELBetaLaunchBanner'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -42,6 +43,7 @@ const PortalComponents = {
   RedirectWithQuery,
   Redirect,
   NFBrowseToolsPage,
+  ELBrowseToolsPage,
   ELBetaLaunchBanner,
   ARKWelcomePage,
   GenieHomePageHeader,

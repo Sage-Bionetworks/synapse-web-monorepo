@@ -7,7 +7,13 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { partnersSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
+import {
+  computationalSql,
+  partnersSql,
+  peopleSql,
+  projectsSql,
+  upsetPlotSql,
+} from './resources'
 import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
 const routes: GenericRoute[] = [
@@ -214,6 +220,20 @@ const routes: GenericRoute[] = [
           summaryLink: 'Explore/People',
           summaryLinkText: 'View All People',
         },
+      },
+    ],
+  },
+  {
+    path: 'Browse Tools',
+    exact: true,
+    synapseConfigArray: [
+      {
+        name: 'ELBrowseToolsPage',
+        props: {
+          popularSearchesSql: '',
+          toolsSql: computationalSql,
+        },
+        isOutsideContainer: true,
       },
     ],
   },

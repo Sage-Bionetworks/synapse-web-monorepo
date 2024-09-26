@@ -1,40 +1,33 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Link, TextField, Typography } from '@mui/material'
+import { Box, Button, Link, TextField, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
-import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
-import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
-import { ReactComponent as Biobanks } from '../assets/biobanks.svg'
-import { ReactComponent as CellLines } from '../assets/cell-lines.svg'
-import { ReactComponent as PlasmidsReagents } from '../assets/plasmids-reagents.svg'
 import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
 
 type Category = {
   resourceName: string
-  image: React.ReactElement
 }
 
 const categories: Category[] = [
-  { resourceName: 'Animal Model', image: <AnimalModels /> },
-  { resourceName: 'Antibody', image: <Antibodies /> },
-  { resourceName: 'Genetic Reagent', image: <PlasmidsReagents /> },
-  { resourceName: 'Cell Line', image: <CellLines /> },
-  { resourceName: 'Biobank', image: <Biobanks /> },
+  { resourceName: 'Cell Lines' },
+  { resourceName: 'Gene Targets' },
+  { resourceName: 'Biomarkers' },
+  { resourceName: 'Chemoinformatics' },
 ]
 
-export type NFBrowseToolsPageProps = {
+export type ELBrowseToolsPageProps = {
   popularSearchesSql: string
   toolsSql: string
 }
 
-const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
+const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
   const { popularSearchesSql, toolsSql } = props
   const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
-    window.location.assign('/Explore/Tools')
+    window.location.assign('/Explore/Computational%20Tools')
   }
 
   const gotoExploreToolsWithSelectedResource = (selectedResource: string) => {
@@ -50,7 +43,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
       ],
     }
     window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
     )
   }
 
@@ -65,7 +58,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
       additionalFilters: [filter],
     }
     window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
     )
   }
 
@@ -76,7 +69,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
       <div className="header">
         <div className="home-container-description">
           <Typography variant="headline1" className="sectionTitle">
-            NF Research Tools Central
+            EL Translational Research Tools
           </Typography>
           <div
             className="center-content"
@@ -84,12 +77,12 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           >
             <div className="description">
               <Typography variant="body1">
-                NF Research Tools Central aims to support the development of a
-                robust research toolkit and lower the barrier of entry to
-                neurofibromatosis (NF) research. The database includes
-                NF-associated animal models, cell lines, antibodies, and genetic
-                reagents and details on tool characteristics and sourcing, as
-                well as observational and experimental data.
+                Exceptional Longevity (EL) Translational Research Tools aims to
+                support the translation of multidimensional biological data from
+                human longevity studies into potential therapeutic targets for
+                healthy aging. The database includes EL-associated cell lines
+                and chemoinformatics tools, including details on tool
+                characteristics and sourcing.
               </Typography>
             </div>
           </div>
@@ -100,25 +93,43 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           Browse Tools by Category
         </Typography>
         <Typography variant="body1" className="sectionSubtitle">
-          Drill-down to explore specific types of NF research tools.
+          Drill-down to explore specific types of EL translational research
+          tools
         </Typography>
-        <div className="categories">
+        <Box
+          sx={{
+            color: 'white',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            alignItems: 'stretch',
+          }}
+        >
           {categories.map(category => {
             return (
-              <button
-                key={category.resourceName}
-                onClick={() =>
-                  gotoExploreToolsWithSelectedResource(category.resourceName)
-                }
+              <Box
+                sx={{
+                  backgroundColor: '#1d594e',
+                  width: '200px',
+                  textAlign: 'center',
+                }}
               >
-                {category.image}
-                <Typography variant="headline3">
-                  {pluralize(category.resourceName)}
-                </Typography>
-              </button>
+                <button
+                  key={category.resourceName}
+                  onClick={() =>
+                    gotoExploreToolsWithSelectedResource(category.resourceName)
+                  }
+                >
+                  <Typography
+                    variant="headline3"
+                    sx={{ py: '30px', px: '10px' }}
+                  >
+                    {pluralize(category.resourceName)}
+                  </Typography>
+                </button>
+              </Box>
             )
           })}
-        </div>
+        </Box>
         <div className="center-content">
           <SynapseComponents.WideButton
             sx={wideButtonSx}
@@ -161,6 +172,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
         <div className="center-content">
           <div className="searchToolsRow">
             <div className="searchInputWithIcon">
+              <SynapseComponents.IconSvg icon="searchOutlined" />
               <TextField
                 sx={{ width: '100%' }}
                 type="search"
@@ -179,7 +191,6 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             <div className="search-button-container">
               <Button
                 variant="contained"
-                sx={{ px: '25px', py: '8px' }}
                 onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
               >
                 Search
@@ -200,7 +211,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
         </div>
       </div>
 
-      <Layout outsideContainerClassName="home-spacer">
+      {/* <Layout outsideContainerClassName="home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Recently Added Tools
         </Typography>
@@ -209,7 +220,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
         </Typography>
         <div className="center-content">
           <FeaturedToolsList
-            entityId={'syn26450069'}
+            entityId={'syn51469335'}
             idColumnName={'resourceId'}
             nameColumnName={'resourceName'}
             descriptionColumnName={'description'}
@@ -227,7 +238,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             View All Tools
           </SynapseComponents.WideButton>
         </div>
-      </Layout>
+      </Layout> */}
       <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Announcements
@@ -235,47 +246,49 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
         <Ecosystem
           config={[
             {
-              title: 'Free Cell Lines',
-              ownerId: 'syn26451327',
-              wikiId: '614272',
-            },
-            {
-              title: 'Acquire Tissue',
-              ownerId: 'syn26451327',
-              wikiId: '625915',
+              title: 'EL-specific iPSC Library',
+              ownerId: 'syn27229419',
+              wikiId: '629574',
             },
           ]}
         />
       </Layout>
-      <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
-        <Typography variant="sectionTitle" className="sectionTitle">
-          Submit a Tool to NF Research Tools Central
-        </Typography>
-        <div className="center-content">
-          <div className="description">
-            <Typography variant="body1">
-              We are currently accepting submissions that describe any
-              NF1-related mouse model, cell line, genetic reagent (e.g. plasmid,
-              CRISPR), antibody, or biobank. If you have a tool that you would
-              like to add to NF Research Tools Central, please click the {'"'}
-              Submit a Tool{'"'} button below to learn more.
-            </Typography>
+      <Box
+        sx={{
+          backgroundColor: '#1d594e',
+          color: 'white',
+          p: '50px 0px 100px 0px;',
+        }}
+      >
+        <Layout outsideContainerClassName="home-spacer">
+          <Typography variant="sectionTitle" className="sectionTitle">
+            Submit a Tool to EL Translational Research Tools
+          </Typography>
+          <div className="center-content">
+            <div className="description">
+              <Typography variant="body1">
+                We are currently accepting submissions that describe any
+                EL-related cell line, gene target validation, biomarker, or
+                biobank. If you have a tool that you would like to add to EL
+                Translational Research Tools, please click the button below.
+              </Typography>
+            </div>
           </div>
-        </div>
-        <div className="center-content">
-          <SynapseComponents.WideButton
-            sx={wideButtonSx}
-            href="https://forms.gle/htFkH5yewLzP1RAu7"
-            className="highlightSubmitToolButton"
-            variant="contained"
-            // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
-            target="_blank"
-          >
-            Submit A Tool
-          </SynapseComponents.WideButton>
-        </div>
-      </Layout>
+          <div className="center-content">
+            <SynapseComponents.WideButton
+              sx={wideButtonSx}
+              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
+              className="highlightSubmitToolButton"
+              variant="contained"
+              // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
+              target="_blank"
+            >
+              Submit A Tool
+            </SynapseComponents.WideButton>
+          </div>
+        </Layout>
+      </Box>
     </div>
   )
 }
-export default NFBrowseToolsPage
+export default ELBrowseToolsPage
