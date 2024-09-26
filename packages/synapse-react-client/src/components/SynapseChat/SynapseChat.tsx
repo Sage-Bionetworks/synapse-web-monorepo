@@ -41,6 +41,10 @@ type ChatInteraction = {
   chatErrorReason?: string
 }
 
+type TraceEventWithFriendlyMessage = {
+  friendlyMessage?: string
+} & TraceEvent
+
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
   agentId,
@@ -78,7 +82,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
-  const [latestTraceEvent, setLatestTraceEvent] = useState<TraceEvent>()
+  const [latestTraceEvent, setLatestTraceEvent] =
+    useState<TraceEventWithFriendlyMessage>()
   const [allTraceEvents, setAllTraceEvent] = useState<TraceEvent[]>([])
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {
@@ -110,7 +115,19 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
 
   useEffect(() => {
     if (newTraceEvents && newTraceEvents.page.length > 0) {
-      const latestEvent = newTraceEvents.page[newTraceEvents.page.length - 1]
+      const latestEvent = newTraceEvents.page[
+        newTraceEvents.page.length - 1
+      ] as TraceEventWithFriendlyMessage
+      // if available, try to only show the "thinking" text
+      const parser = new DOMParser()
+      const htmlDoc = parser.parseFromString(latestEvent.message, 'text/html')
+      const thinkingElements = htmlDoc.getElementsByTagName('thinking')
+      // Extract the text content from each 'thinking' element
+      const thinkingTexts = Array.from(thinkingElements)
+        .map(element => element?.textContent?.trim())
+        .join('\n')
+      // Use the thinking texts - fall back to the full trace message if thinking elements are unavailable
+      latestEvent.friendlyMessage = thinkingTexts ?? latestEvent.message
       setLatestTraceEvent(latestEvent)
       //if the trace events do not contain the latest event, add the events to the array
       const foundEvent = allTraceEvents.find(
@@ -217,7 +234,8 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       </Alert>
     )
   }
-  const latestTraceEventMessage = latestTraceEvent?.message ?? 'Processing...'
+  const latestTraceEventMessage =
+    latestTraceEvent?.friendlyMessage ?? 'Processing...'
   return (
     <Box
       display="flex"
@@ -302,12 +320,19 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
                 >
                   <SynapseSpinner size={40} />
                   {/* Show the current message, as well as the full trace log in a tooltip */}
-                  <Box sx={{ position: 'relative', pt: '35px' }}>
+                  <Box sx={{ position: 'relative', pt: '130px' }}>
                     <TransitionGroup>
                       {/* The key is based on the current text so when the text changes, the Fade component will remount */}
                       <Fade key={latestTraceEventMessage} timeout={500}>
                         <Tooltip
                           placement="bottom"
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                maxWidth: '1000px',
+                              },
+                            },
+                          }}
                           title={
                             <div style={{ textAlign: 'center' }}>
                               {allTraceEvents.length == 0 && (
