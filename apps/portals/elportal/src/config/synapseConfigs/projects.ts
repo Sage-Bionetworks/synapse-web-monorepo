@@ -103,10 +103,10 @@ const projects: SynapseConfig = {
     cardConfiguration: projectCardConfiguration,
     // unitDescription: 'Projects',
     facetsToPlot: [
-      'name',
+      // 'name', //PORTALS-3259
       'institutions',
       'principalInvestigators',
-      'grant',
+      // 'grant', //PORTALS-3259
       // 'Program',
     ],
     searchConfiguration: defaultSearchConfiguration,

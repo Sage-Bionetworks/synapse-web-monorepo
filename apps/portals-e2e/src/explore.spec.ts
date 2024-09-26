@@ -75,12 +75,12 @@ const expectTopLevelControls = async (
       let exploreTabHeading = exploreTab
       if (
         (getPortal() === 'arkportal' && exploreTab === 'All Data') ||
-        (getPortal() === 'elportal' && exploreTab === 'Data By Files')
+        (getPortal() === 'elportal' && exploreTab === 'Data')
       ) {
         exploreTabHeading = 'Data'
       } else if (
         getPortal() === 'elportal' &&
-        exploreTab === 'Data by Participants'
+        exploreTab === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'
       }

@@ -222,27 +222,35 @@ const routes: GenericRoute[] = [
     routes: [
       {
         exact: true,
-        path: 'Data by Files',
+        path: 'Data',
         hideRouteFromNavbar: false,
       },
       {
         exact: true,
-        path: 'Data by Participants',
+        path: 'Cohort Builder',
         synapseConfigArray: [
           {
             name: 'OrientationBanner',
             isOutsideContainer: true,
             props: {
               name: 'CohortBuilder',
-              title: 'Getting Started With Explore Data by Participants',
+              title: 'Getting Started With Cohort Builder',
               text: (
                 <>
-                  This page helps you find data related to anonymized
-                  Participants in the ELITE Portal. Add filters to build a list
-                  of participants, select the participants you are interested
-                  in, and view the files associated with your selected cohort.
-                  From there, you can download the related data files or{' '}
-                  <strong>Send to CAVATICA</strong> for analysis.
+                  This page helps you explore and find data in the ELITE Portal
+                  related to a specific group of Participants. Add filters to
+                  build a list of participants, select specific participants you
+                  are interested in, and view the files associated with your
+                  chosen cohort. From there, you can download the related data
+                  files or Sent to CAVATICA for analysis. See the ELITE Portal
+                  Help Docs for more information about{' '}
+                  <a
+                    href="https://help.eliteportal.org/help/cohort-builder"
+                    target="_blank"
+                  >
+                    Cohort Builder
+                  </a>
+                  .
                 </>
               ),
               sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },

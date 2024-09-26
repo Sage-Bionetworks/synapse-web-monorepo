@@ -11,9 +11,9 @@ import computationalTools from './synapseConfigs/computational_tools'
 
 const routeControlWrapper: RouteControlWrapperProps = {
   customRoutes: [
-    { path: 'Data by Files', synapseConfigArray: [filesView] },
+    { path: 'Data', synapseConfigArray: [filesView] },
     {
-      path: 'Data by Participants',
+      path: 'Cohort Builder',
       synapseConfigArray: [individualsView],
     },
     { path: 'Projects', synapseConfigArray: [projects] },

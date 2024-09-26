@@ -72,5 +72,5 @@ export const handleSelectedParticipantsToFiles = async (
       ),
     )
   }
-  window.location.href = '/Explore/Data by Files'
+  window.location.href = '/Explore/Data'
 }
