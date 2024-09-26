@@ -1,34 +1,34 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
-import { Router } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import selectEvent from 'react-select-event'
 import {
-  DataAccessSubmissionDashboard,
-  getReviewerFilterID,
-} from './AccessSubmissionDashboard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+  mockManagedACTAccessRequirement as mockAccessRequirement,
+  mockSearchResultsPageOne,
+} from '../../mocks/accessRequirement/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
-import {
-  mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResultsPageOne,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
+import { getLocationTracker } from '../../testutils/LocationTracker'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
 } from '../../utils/APIConstants'
-import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
+import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
+import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+import {
+  DataAccessSubmissionDashboard,
+  getReviewerFilterID,
+} from './AccessSubmissionDashboard'
 
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 const MOCK_AR_ID = '12321'
@@ -41,20 +41,29 @@ const mockAccessRequestSubmissionTable = jest
 
 const onServiceReceivedRequest = jest.fn()
 
-function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
-  const history = createMemoryHistory()
-  if (modifyHistory) {
-    modifyHistory(history)
-  }
-  const renderResult = render(
-    <Router history={history}>
-      <DataAccessSubmissionDashboard />
-    </Router>,
+const { getLocation, LocationTracker } = getLocationTracker()
+
+function renderComponent(initialEntries: string[] = ['/']) {
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/',
+        element: (
+          <>
+            <LocationTracker />
+            <DataAccessSubmissionDashboard />
+          </>
+        ),
+      },
+    ],
     {
-      wrapper: createWrapper(),
+      initialEntries: initialEntries,
     },
   )
-  return { ...renderResult, history }
+  const renderResult = render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
+  return { ...renderResult }
 }
 
 describe('AccessSubmissionDashboard tests', () => {
@@ -107,7 +116,7 @@ describe('AccessSubmissionDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating arName', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const arNameInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
     )
@@ -124,7 +133,7 @@ describe('AccessSubmissionDashboard tests', () => {
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('accessRequirementId'),
+        new URLSearchParams(getLocation().search).get('accessRequirementId'),
       ).toEqual(mockAccessRequirement.id.toString())
 
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
@@ -139,7 +148,7 @@ describe('AccessSubmissionDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
@@ -149,7 +158,7 @@ describe('AccessSubmissionDashboard tests', () => {
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('accessorId'),
+        new URLSearchParams(getLocation().search).get('accessorId'),
       ).toEqual(MOCK_USER_ID.toString())
 
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
@@ -164,7 +173,7 @@ describe('AccessSubmissionDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
@@ -174,7 +183,7 @@ describe('AccessSubmissionDashboard tests', () => {
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('reviewerId'),
+        new URLSearchParams(getLocation().search).get('reviewerId'),
       ).toEqual(MOCK_USER_ID.toString())
 
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
@@ -189,13 +198,12 @@ describe('AccessSubmissionDashboard tests', () => {
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
-    renderComponent(history => {
-      const searchParams = new URLSearchParams('')
-      searchParams.set('accessRequirementId', MOCK_AR_ID.toString())
-      searchParams.set('accessorId', MOCK_USER_ID.toString())
-      searchParams.set('reviewerId', MOCK_USER_ID.toString())
-      history.push('?' + searchParams.toString())
-    })
+    const searchParams = new URLSearchParams('')
+    searchParams.set('accessRequirementId', MOCK_AR_ID.toString())
+    searchParams.set('accessorId', MOCK_USER_ID.toString())
+    searchParams.set('reviewerId', MOCK_USER_ID.toString())
+    const initialEntries = ['/', `/?${searchParams.toString()}`]
+    renderComponent(initialEntries)
 
     await waitFor(() =>
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(

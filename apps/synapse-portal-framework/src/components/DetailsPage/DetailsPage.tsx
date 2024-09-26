@@ -1,24 +1,22 @@
-import { cloneDeep, Dictionary } from 'lodash'
-import pluralize from 'pluralize'
-import React from 'react'
-import { useState } from 'react'
-import { BarLoader } from 'react-spinners'
-import {
-  RegularExpressions,
-  SynapseConstants,
-  SynapseQueries,
-  IconSvg,
-  SynapseUtilityFunctions,
-  SynapseComponents,
-} from 'synapse-react-client'
-import type { LockedColumn } from 'synapse-react-client'
+import { Typography } from '@mui/material'
 import {
   ColumnType,
   ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { cloneDeep, Dictionary } from 'lodash'
+import pluralize from 'pluralize'
+import React from 'react'
+import { Outlet } from 'react-router-dom'
+import { BarLoader } from 'react-spinners'
+import type { LockedColumn } from 'synapse-react-client'
+import {
+  RegularExpressions,
+  SynapseConstants,
+  SynapseQueries,
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
 import { SynapseComponent } from '../../components/SynapseComponent'
 import { SynapseConfig } from '../../types/portal-config'
 import {
@@ -29,6 +27,7 @@ import {
 import injectPropsIntoConfig from '../injectPropsIntoConfig'
 import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
+import { HeadlineWithLink } from './HeadlineWithLink'
 import { SideNavMenu } from './SideNavMenu'
 import { getComponentId, useScrollOnMount } from './utils'
 
@@ -40,63 +39,6 @@ const goToExplorePage = () => {
   const lastLocation = window.location.href.split('/')
   const lastPlace = lastLocation.slice(0, lastLocation.length - 1).join('/')
   window.location.assign(lastPlace)
-}
-
-function HeadlineWithLink(props: {
-  title: string
-  id: string
-  helpText?: string
-}) {
-  const { title, id, helpText } = props
-  const [showLink, setShowLink] = useState(false)
-  const [copied, setCopied] = useState(false)
-  return (
-    <div
-      onMouseOver={() => {
-        setShowLink(true)
-      }}
-      onMouseOut={() => {
-        setShowLink(false)
-      }}
-    >
-      <Typography variant="sectionTitle" role="heading">
-        {title}
-        {helpText && (
-          <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
-            <SynapseComponents.HelpPopover markdownText={helpText} />
-          </Box>
-        )}
-        <span
-          style={{
-            position: 'absolute',
-            marginTop: '-1px',
-            ...(showLink ? { display: 'inline' } : { display: 'none' }),
-          }}
-        >
-          <Tooltip
-            title={copied ? 'Copied' : 'Copy link to section'}
-            placement="right"
-          >
-            <div
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                const urlWithoutHash = window.location.href.replace(
-                  window.location.hash,
-                  '',
-                )
-                const url = `${urlWithoutHash}#${id}`
-                navigator.clipboard.writeText(url).then(() => {
-                  setCopied(true)
-                })
-              }}
-            >
-              <IconSvg icon="link" wrap={false} sx={{ pl: 1 }} />
-            </div>
-          </Tooltip>
-        </span>
-      </Typography>
-    </div>
-  )
 }
 
 /**
@@ -200,13 +142,14 @@ export default function DetailsPage(props: DetailsPageProps) {
     return (
       <>
         {isLoading && <BarLoader color="#878787" loading={true} height={5} />}
-        {!isLoading && config && (
-          <DetailsPageSynapseConfigArray
-            showMenu={showMenu}
-            synapseConfigArray={config}
-            queryResultBundle={queryResultBundle}
-          />
-        )}
+        {/*{!isLoading && config && (*/}
+        {/*  <DetailsPageSynapseConfigArray*/}
+        {/*    showMenu={showMenu}*/}
+        {/*    synapseConfigArray={config}*/}
+        {/*    queryResultBundle={queryResultBundle}*/}
+        {/*  />*/}
+        {/*)}*/}
+        <Outlet />
       </>
     )
   }

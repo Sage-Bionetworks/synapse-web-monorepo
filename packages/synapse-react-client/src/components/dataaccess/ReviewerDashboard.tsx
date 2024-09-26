@@ -4,9 +4,10 @@ import {
   BrowserRouterProps,
   MemoryRouter,
   MemoryRouterProps,
+  Navigate,
   NavLink,
   Route,
-  Switch,
+  Routes,
   useParams,
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
@@ -95,35 +96,45 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
         </div>
         <div className="TabContentContainer">
           <SynapseErrorBoundary>
-            <Switch>
+            <Routes>
               {hasActPermissions && (
-                <Route path="/AccessRequirements">
-                  <AccessRequirementDashboard />
-                </Route>
+                <Route
+                  path="AccessRequirements/"
+                  element={<AccessRequirementDashboard />}
+                />
               )}
               {hasReviewerPermissions && [
-                <Route exact path="/Submissions" key="/Submissions">
-                  {!hasActPermissions && (
-                    <OrientationBanner
-                      name="DataAccessManagement"
-                      title="Getting Started With Data Access Management"
-                      text="When someone requests access to data, that request will show up here. Clicking on the Request ID will take you to a page where you can review the request."
-                      sx={{ margin: '-20px -30px 20px -30px', width: 'auto' }}
-                    />
-                  )}
-                  <DataAccessSubmissionDashboard />
-                </Route>,
-
-                <Route path="/Submissions/:id" key="/Submissions/:id">
-                  <SubmissionPageRouteRenderer />
-                </Route>,
+                <Route
+                  key="Submissions/"
+                  path="Submissions/"
+                  element={
+                    <>
+                      {!hasActPermissions && (
+                        <OrientationBanner
+                          name="DataAccessManagement"
+                          title="Getting Started With Data Access Management"
+                          text="When someone requests access to data, that request will show up here. Clicking on the Request ID will take you to a page where you can review the request."
+                          sx={{
+                            margin: '-20px -30px 20px -30px',
+                            width: 'auto',
+                          }}
+                        />
+                      )}
+                      <DataAccessSubmissionDashboard />
+                    </>
+                  }
+                ></Route>,
+                <Route
+                  key="Submissions/:id"
+                  path="Submissions/:id"
+                  element={<SubmissionPageRouteRenderer />}
+                />,
               ]}
-              {
-                <Route exact path="/UserAccessHistory">
-                  <UserHistoryDashboard />
-                </Route>
-              }
-            </Switch>
+              <Route
+                path="UserAccessHistory/"
+                element={<UserHistoryDashboard />}
+              />
+            </Routes>
           </SynapseErrorBoundary>
         </div>
       </div>
@@ -133,6 +144,9 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
 
 function SubmissionPageRouteRenderer() {
   const { id } = useParams<{ id: string }>()
+  if (!id) {
+    return <Navigate to="Submissions/" />
+  }
   return <SubmissionPage submissionId={id} />
 }
 

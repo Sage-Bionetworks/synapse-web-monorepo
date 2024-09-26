@@ -41,9 +41,7 @@ export type RowSynapseConfig = SynapseConfig & RowToPropTransform
 /**
  * The content of a DetailsPage is either a tab layout, or config array, but not both
  */
-export type DetailsPageContent =
-  | { tabLayout: DetailsPageTabProps[] }
-  | { synapseConfigArray: RowSynapseConfig[] }
+export type DetailsPageContent = { tabLayout?: DetailsPageTabProps[] }
 
 export type DetailsPageProps = DetailsPageContent & {
   showMenu?: boolean // default to true

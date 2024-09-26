@@ -15,7 +15,7 @@ import NavUserLink from '../components/NavUserLink'
 import { ConfigRoute, GenericRoute } from '../types/portal-config'
 import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { RESPONSIVE_SIDE_PADDING } from '../utils'
 import { usePortalContext } from './PortalContext'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
@@ -48,7 +48,7 @@ function Navbar() {
   const { routeConfig, logoHeaderConfig } = usePortalContext()
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
-  const history = useHistory()
+  const navigate = useNavigate()
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
   const isPortalsDropdownEnabled = SynapseQueries.useGetFeatureFlag(
     FeatureFlagEnum.PORTALS_DROPDOWN,
@@ -260,7 +260,7 @@ function Navbar() {
                       }}
                       sessionCallback={() => {
                         refreshSession().then(() => {
-                          AppUtils.redirectAfterSSO(history)
+                          AppUtils.redirectAfterSSO(navigate)
                         })
                       }}
                     />
@@ -306,8 +306,7 @@ function Navbar() {
                     <Dropdown.Item
                       key="DownloadV2"
                       onClick={() => {
-                        // In React Router ^6.6.1, change to useNavigate
-                        history.push('/DownloadCart')
+                        navigate('/DownloadCart')
                       }}
                       className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
                     >

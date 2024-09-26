@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
@@ -52,7 +52,7 @@ export const UserHistoryDashboard = () => {
   const hasActPermissions = userBundle?.isACTMember
 
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 
   const onAccessorChange = useCallback((selected: string | null) => {
@@ -89,10 +89,13 @@ export const UserHistoryDashboard = () => {
             item => item === undefined || item === '',
           ) as Record<string, string>,
         )
-        history.replace({
-          pathname: location.pathname,
-          search: params.toString(),
-        })
+        navigate(
+          {
+            pathname: location.pathname,
+            search: params.toString(),
+          },
+          { replace: true },
+        )
       }
 
       updateQueryParams(accessRequirementId, accessorId)
@@ -107,7 +110,7 @@ export const UserHistoryDashboard = () => {
         accessRequirementId,
       })
     },
-    [accessRequirementId, accessorId, history, location.pathname],
+    [accessRequirementId, accessorId, navigate, location.pathname],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 

@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
@@ -37,7 +37,7 @@ export const DataAccessSubmissionDashboard = () => {
     })
 
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 
   useEffect(() => {
@@ -81,10 +81,13 @@ export const DataAccessSubmissionDashboard = () => {
             item => item === undefined || item === '',
           ) as Record<string, string>,
         )
-        history.replace({
-          pathname: location.pathname,
-          search: params.toString(),
-        })
+        navigate(
+          {
+            pathname: location.pathname,
+            search: params.toString(),
+          },
+          { replace: true },
+        )
       }
 
       updateQueryParams(accessRequirementId, accessorId, reviewerId)
@@ -96,7 +99,7 @@ export const DataAccessSubmissionDashboard = () => {
         submissionState: SubmissionState.SUBMITTED,
       })
     },
-    [accessRequirementId, accessorId, reviewerId, history, location.pathname],
+    [accessRequirementId, accessorId, reviewerId, navigate, location.pathname],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 

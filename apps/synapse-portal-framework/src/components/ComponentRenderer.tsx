@@ -2,6 +2,7 @@ import { SynapseConfig } from '../types/portal-config'
 import { useLocation } from 'react-router-dom'
 import React from 'react'
 import { scrollToWithOffset } from '../utils'
+import SectionTitle from './SectionTitle'
 import { SynapseComponent } from './SynapseComponent'
 import Layout from './Layout'
 import { SynapseComponents } from 'synapse-react-client'
@@ -53,14 +54,7 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
     }
   }, 500)
   const titleComponent = title && (
-    <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
-      {title}
-      {helpText && (
-        <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
-          <SynapseComponents.HelpPopover markdownText={helpText} />
-        </Box>
-      )}
-    </h2>
+    <SectionTitle title={title} centerTitle={centerTitle} helpText={helpText} />
   )
   return (
     <React.Fragment key={JSON.stringify(props)}>

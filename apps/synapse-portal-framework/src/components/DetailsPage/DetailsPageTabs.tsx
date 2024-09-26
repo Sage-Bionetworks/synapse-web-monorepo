@@ -1,18 +1,18 @@
+import { Tooltip } from '@mui/material'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import {
+  Navigate,
   NavLink,
+  Outlet,
   Route,
-  Switch,
+  Routes,
   useLocation,
-  useRouteMatch,
 } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
-import { DetailsPageTabProps } from '../../types/portal-util-types'
-import RedirectWithQuery from '../RedirectWithQuery'
-import { DetailsPageSynapseConfigArray } from './DetailsPage'
 import { SynapseComponents } from 'synapse-react-client'
+import { DetailsPageTabProps } from '../../types/portal-util-types'
+import { DetailsPageSynapseConfigArray } from './DetailsPage'
 
 export type DetailsPageTabsProps = {
   tabConfigs: DetailsPageTabProps[]
@@ -24,21 +24,23 @@ const DetailsPageTabs: React.FunctionComponent<
   DetailsPageTabsProps
 > = props => {
   const { tabConfigs, loading, queryResultBundle } = props
-  const { url } = useRouteMatch()
+  // TODO: does this work?
+  const url = useLocation().pathname
   const rowValues = queryResultBundle?.queryResult?.queryResults.rows[0].values
   const headers = queryResultBundle?.queryResult?.queryResults.headers
   const urlWithTrailingSlash = `${url}${url.endsWith('/') ? '' : '/'}`
   const { search } = useLocation()
   return (
     <>
-      <Switch>
-        {/* Note -- `exact` in Redirect doesn't work without a Switch */}
-        <RedirectWithQuery
-          exact={true}
-          from={urlWithTrailingSlash}
-          to={`${urlWithTrailingSlash}${tabConfigs[0].uriValue}`}
-        />
-      </Switch>
+      {/*<Routes>*/}
+      {/*  /!* Note -- `exact` in Redirect doesn't work without a Switch *!/*/}
+      {/*  <Route*/}
+      {/*    path={`${urlWithTrailingSlash}`}*/}
+      {/*    element={*/}
+      {/*      <Navigate to={`${urlWithTrailingSlash}${tabConfigs[0].uriValue}`} />*/}
+      {/*    }*/}
+      {/*  />*/}
+      {/*</Routes>*/}
       <div className="tab-groups">
         {tabConfigs.map((tab, index) => {
           if (tab.hideIfColumnValueNull) {
@@ -94,14 +96,16 @@ const DetailsPageTabs: React.FunctionComponent<
                       queryResultBundle={queryResultBundle}
                     ></DetailsPageTabs>
                   )}
-                  {'synapseConfigArray' in tabConfig &&
-                    tabConfig.synapseConfigArray && (
-                      <DetailsPageSynapseConfigArray
-                        showMenu={tabConfig.showMenu}
-                        synapseConfigArray={tabConfig.synapseConfigArray}
-                        queryResultBundle={queryResultBundle}
-                      />
-                    )}
+                  <Outlet />
+                  {/* TODO: make sure context is passed */}
+                  {/*{'synapseConfigArray' in tabConfig &&*/}
+                  {/*  tabConfig.synapseConfigArray && (*/}
+                  {/*    <DetailsPageSynapseConfigArray*/}
+                  {/*      showMenu={tabConfig.showMenu}*/}
+                  {/*      synapseConfigArray={tabConfig.synapseConfigArray}*/}
+                  {/*      queryResultBundle={queryResultBundle}*/}
+                  {/*    />*/}
+                  {/*  )}*/}
                 </Route>
               )
             })}
