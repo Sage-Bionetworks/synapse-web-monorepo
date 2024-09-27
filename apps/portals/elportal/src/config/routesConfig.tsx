@@ -267,6 +267,7 @@ const routes: GenericRoute[] = [
                   <a
                     href="https://help.eliteportal.org/help/cohort-builder"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     Cohort Builder
                   </a>

@@ -108,6 +108,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
           {categories.map(category => {
             return (
               <Box
+                key={category.resourceName}
                 sx={{
                   backgroundColor: '#1d594e',
                   width: '200px',
@@ -115,7 +116,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
                 }}
               >
                 <button
-                  key={category.resourceName}
                   onClick={() =>
                     gotoExploreToolsWithSelectedResource(category.resourceName)
                   }
