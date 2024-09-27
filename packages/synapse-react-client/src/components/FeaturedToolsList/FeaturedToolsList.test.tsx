@@ -26,6 +26,7 @@ function init() {
       typeColumnName={'Resource Type'}
       dateColumnName={'Date Added'}
       toolDetailPageURL={'/ToolDetailsPage/resourceId='}
+      filterClause='ORDER BY "Date Added" DESC'
     />,
     { wrapper: createWrapper() },
   )

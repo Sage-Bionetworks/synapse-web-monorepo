@@ -8,13 +8,23 @@ export type FeaturedToolCardProps = {
   name: string
   description: string
   type: string
-  toolDetailPageURL: string
-  date: string
+  date?: string
+  toolDetailPageURL?: string
+  url?: string
 }
 
 export const FeaturedToolCard: React.FunctionComponent<
   FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
-> = ({ id, name, description, type, toolDetailPageURL, date, ...domProps }) => {
+> = ({
+  id,
+  name,
+  description,
+  type,
+  toolDetailPageURL,
+  date,
+  url,
+  ...domProps
+}) => {
   return (
     <div
       {...domProps}
@@ -23,14 +33,19 @@ export const FeaturedToolCard: React.FunctionComponent<
       <div className="FeaturedToolCard__Type">
         <span className="SRC-tag">{type}</span>
       </div>
-      <div className="FeaturedToolCard__Date">
-        {formatDate(dayjs(parseInt(date)), 'MMMM YYYY')}
-      </div>
+      {date && (
+        <div className="FeaturedToolCard__Date">
+          {formatDate(dayjs(parseInt(date)), 'MMMM YYYY')}
+        </div>
+      )}
       <div className="FeaturedToolCard__Name">{name}</div>
       <div className="FeaturedToolCard__Description">
         <ShowMore summary={description} />
       </div>
-      <a className="FeaturedToolCard__Link" href={`${toolDetailPageURL}${id}`}>
+      <a
+        className="FeaturedToolCard__Link"
+        href={toolDetailPageURL ? `${toolDetailPageURL}${id}` : url}
+      >
         View Tool
       </a>
     </div>

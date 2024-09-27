@@ -216,6 +216,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             typeColumnName={'resourceType'}
             dateColumnName={'dateAdded'}
             toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
+            filterClause={'ORDER BY dateAdded DESC'}
           />
         </div>
         <div className="center-content">

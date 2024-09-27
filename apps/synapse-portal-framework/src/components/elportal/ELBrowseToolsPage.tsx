@@ -211,7 +211,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
         </div>
       </div>
 
-      {/* <Layout outsideContainerClassName="home-spacer">
+      <Layout outsideContainerClassName="home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Recently Added Tools
         </Typography>
@@ -221,12 +221,12 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
         <div className="center-content">
           <FeaturedToolsList
             entityId={'syn51469335'}
-            idColumnName={'resourceId'}
-            nameColumnName={'resourceName'}
-            descriptionColumnName={'description'}
-            typeColumnName={'resourceType'}
-            dateColumnName={'dateAdded'}
-            toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
+            idColumnName={'id'}
+            nameColumnName={'name'}
+            descriptionColumnName={'summary'}
+            typeColumnName={'softwareType'}
+            toolURLColumnName={'url'}
+            filterClause={'WHERE "isFeatured" = \'true\''}
           />
         </div>
         <div className="center-content">
@@ -238,7 +238,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
             View All Tools
           </SynapseComponents.WideButton>
         </div>
-      </Layout> */}
+      </Layout>
       <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Announcements
@@ -280,8 +280,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
               href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
               className="highlightSubmitToolButton"
               variant="contained"
-              // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
-              target="_blank"
             >
               Submit A Tool
             </SynapseComponents.WideButton>

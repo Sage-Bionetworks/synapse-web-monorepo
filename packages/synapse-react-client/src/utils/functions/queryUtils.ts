@@ -33,10 +33,10 @@ import {
  * @param result the QueryResultBundle containing the columns
  * @returns The index of the column, or -1 if the column doesn't exist in the result
  */
-export const getFieldIndex = (
-  name: string,
-  result: QueryResultBundle | undefined,
-) => {
+export const getFieldIndex = (name?: string, result?: QueryResultBundle) => {
+  if (name == undefined) {
+    return -1
+  }
   return (
     result?.selectColumns?.findIndex(el => {
       return el.name === name
