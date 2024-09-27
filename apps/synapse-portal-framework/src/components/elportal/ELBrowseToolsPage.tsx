@@ -198,7 +198,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
             </div>
           </div>
         </div>
-        <Typography variant="sectionTitle" className="sectionTitle">
+        {/* <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>
         <div className="center-content">
@@ -208,7 +208,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
               gotoExploreToolsWithFullTextSearch(searchTerm)
             }
           />
-        </div>
+        </div> */}
       </div>
 
       <Layout outsideContainerClassName="home-spacer">
