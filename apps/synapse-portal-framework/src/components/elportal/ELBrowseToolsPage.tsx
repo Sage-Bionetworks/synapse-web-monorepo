@@ -3,7 +3,7 @@ import Layout from '../Layout'
 import React from 'react'
 import { Box, Button, Link, TextField, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
-import PopularSearches from '../PopularSearches'
+// import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
 
@@ -24,7 +24,8 @@ export type ELBrowseToolsPageProps = {
 }
 
 const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
-  const { popularSearchesSql, toolsSql } = props
+  const { toolsSql } = props
+  // const { popularSearchesSql } = props
   const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Computational%20Tools')
