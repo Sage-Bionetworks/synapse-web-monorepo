@@ -11,7 +11,11 @@ export default function GoalsDesktop({
   title,
 }: GoalsDataProps) {
   return (
-    <div className="Goals__Card">
+    <div
+      className="Goals__Card"
+      style={{ cursor: 'pointer' }}
+      onClick={() => window.open(link)}
+    >
       <div
         className="Goals__Card__header"
         style={{ background: `url('${asset}')` }}

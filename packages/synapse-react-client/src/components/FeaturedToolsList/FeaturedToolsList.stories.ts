@@ -8,7 +8,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Demo: Story = {
+export const NFDemo: Story = {
   args: {
     entityId: 'syn26450069',
     idColumnName: 'resourceId',
@@ -17,5 +17,18 @@ export const Demo: Story = {
     typeColumnName: 'resourceType',
     dateColumnName: 'dateAdded',
     toolDetailPageURL: '/Explore/Tools/DetailsPage?Resource_id=',
+    filterClause: 'ORDER BY dateAdded DESC',
+  },
+}
+
+export const ELITEDemo: Story = {
+  args: {
+    entityId: 'syn51469335',
+    idColumnName: 'id',
+    nameColumnName: 'name',
+    descriptionColumnName: 'summary',
+    typeColumnName: 'softwareType',
+    toolURLColumnName: 'url',
+    filterClause: 'WHERE "isFeatured" = \'true\'',
   },
 }

@@ -44,7 +44,8 @@ import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
 import { ChallengeSubmissionWrapperProps } from '../components/challengeportal/ChallengeSubmissionWrapper'
 import { RedirectToURLProps } from '../components/RedirectToURL'
 import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
-import { BrowseToolsPageProps } from '../components/BrowseToolsPage'
+import { NFBrowseToolsPageProps } from '../components/nf/NFBrowseToolsPage'
+import { ELBrowseToolsPageProps } from '../components/elportal/ELBrowseToolsPage'
 import { EcosystemProps } from '../components/csbc-home-page/Ecosystem'
 import { SurveyToastProps } from '../components/SurveyToast'
 
@@ -158,9 +159,14 @@ type DevelopedBySage = {
   props: undefined
 }
 
-type BrowseToolsPage = {
-  name: 'BrowseToolsPage'
-  props: BrowseToolsPageProps
+type NFBrowseToolsPage = {
+  name: 'NFBrowseToolsPage'
+  props: NFBrowseToolsPageProps
+}
+
+type ELBrowseToolsPage = {
+  name: 'ELBrowseToolsPage'
+  props: ELBrowseToolsPageProps
 }
 type SurveyToast = {
   name: 'SurveyToast'
@@ -374,7 +380,8 @@ export type SynapseConfig = (
   | UserCardListGroups
   | TableFeedCards
   | DownloadCartPage
-  | BrowseToolsPage
+  | NFBrowseToolsPage
+  | ELBrowseToolsPage
   | SurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage

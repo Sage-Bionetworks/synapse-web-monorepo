@@ -9,20 +9,30 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type FeaturedToolsListProps = {
   entityId: string
-  toolDetailPageURL: string
-  idColumnName?: string
-  nameColumnName?: string
-  descriptionColumnName?: string
-  typeColumnName?: string
+  idColumnName: string
+  nameColumnName: string
+  descriptionColumnName: string
+  typeColumnName: string
   dateColumnName?: string
-}
+  filterClause: string
+} & ( // for the link, either the toolDetailPageURL or the toolURLColumnName must be set
+  | {
+      toolDetailPageURL: string
+      toolURLColumnName?: never
+    }
+  | {
+      toolDetailPageURL?: never
+      toolURLColumnName: string
+    }
+)
 
 type ToolData = {
   id: string
   name: string
   description: string
   type: string
-  date: string
+  date?: string
+  url?: string //set if URL is in toolURLColumnName, dynamic if pointing to a detail page
 }
 
 /**
@@ -34,13 +44,15 @@ export const FeaturedToolsList: React.FunctionComponent<
 > = ({
   entityId,
   toolDetailPageURL,
+  toolURLColumnName,
   idColumnName = 'id',
   nameColumnName = 'name',
   descriptionColumnName = 'description',
   typeColumnName = 'type',
-  dateColumnName = 'dateAdded',
+  dateColumnName,
+  filterClause,
 }) => {
-  const sql = `SELECT "${idColumnName}", "${nameColumnName}", "${descriptionColumnName}", "${typeColumnName}", "${dateColumnName}" FROM ${entityId} ORDER BY ${dateColumnName} DESC LIMIT 3`
+  const sql = `SELECT * FROM ${entityId} ${filterClause} LIMIT 3`
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -69,7 +81,10 @@ export const FeaturedToolsList: React.FunctionComponent<
           queryResultBundle,
         )
         const dateColumnIndex = getFieldIndex(dateColumnName, queryResultBundle)
-
+        const toolURLColumnIndex = getFieldIndex(
+          toolURLColumnName,
+          queryResultBundle,
+        )
         const tools: ToolData[] =
           queryResultBundle?.queryResult!.queryResults.rows.map(row => {
             if (row.values.some(value => value === null)) {
@@ -82,7 +97,8 @@ export const FeaturedToolsList: React.FunctionComponent<
               description: values[descriptionColumnIndex],
               type: values[typeColumnIndex],
               id: values[idIndex],
-              date: values[dateColumnIndex],
+              date: dateColumnName ? values[dateColumnIndex] : undefined,
+              url: toolURLColumnName ? values[toolURLColumnIndex] : undefined,
             }
           }) ?? []
         if (queryError) {
@@ -111,7 +127,6 @@ export const FeaturedToolsList: React.FunctionComponent<
     descriptionColumnName,
     dateColumnName,
   ])
-
   return error ? (
     <ErrorBanner error={error}></ErrorBanner>
   ) : (
@@ -126,6 +141,7 @@ export const FeaturedToolsList: React.FunctionComponent<
             id={tool.id}
             date={tool.date}
             toolDetailPageURL={toolDetailPageURL}
+            url={tool.url}
           />
         )
       })}
