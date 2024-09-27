@@ -6,7 +6,7 @@ export const SharePageLinkButtonDetailPageConfig: SynapseConfig = {
   props: {
     shortIoPublicApiKey,
     buttonProps: {
-      variant: 'text',
+      variant: 'outlined',
       color: 'light',
       sx: {
         position: 'absolute',
@@ -24,7 +24,7 @@ export const SharePageLinkButtonConfig: SynapseConfig = {
   props: {
     shortIoPublicApiKey,
     buttonProps: {
-      variant: 'text',
+      variant: 'outlined',
       color: 'primary',
       sx: {
         position: 'absolute',
