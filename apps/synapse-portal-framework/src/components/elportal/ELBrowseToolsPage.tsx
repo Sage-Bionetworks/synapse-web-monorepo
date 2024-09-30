@@ -214,7 +214,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
 
       <Layout outsideContainerClassName="home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
-          Recently Added Tools
+          Recently Added Computational Tools
         </Typography>
         <Typography variant="body1" className="sectionSubtitle">
           Check out some recently-catalogued research resources below.
@@ -250,6 +250,11 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
               title: 'EL-specific iPSC Library',
               ownerId: 'syn27229419',
               wikiId: '629574',
+            },
+            {
+              title: 'NCATS Biomedical Data Translator',
+              ownerId: 'syn27229419',
+              wikiId: '629762',
             },
           ]}
         />
