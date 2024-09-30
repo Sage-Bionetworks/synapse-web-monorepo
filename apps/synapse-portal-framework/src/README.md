@@ -64,10 +64,6 @@ Note - if exposing a component from the portal side, you will need to make sure 
 
 # Key Portal Components
 
-## RouteResolver
-
-The route resolver handles taking a URL and matching it the config. Read more in the [component](components/RouteResolver.tsx). This component is also responsible for injecting the access token into the react component.
-
 ## DetailsPages
 
 The detail pages ([e.g.](https://staging.adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn5550404])) give

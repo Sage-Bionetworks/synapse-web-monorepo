@@ -1,4 +1,4 @@
-import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/RouteControlWrapper'
+import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
 import { studies } from './synapseConfigs/studies'
 import { data } from './synapseConfigs/data'
 import { grants } from './synapseConfigs/grants'

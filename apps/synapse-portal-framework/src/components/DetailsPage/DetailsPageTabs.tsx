@@ -13,6 +13,7 @@ import { BarLoader } from 'react-spinners'
 import { SynapseComponents } from 'synapse-react-client'
 import { DetailsPageTabProps } from '../../types/portal-util-types'
 import { DetailsPageSynapseConfigArray } from './DetailsPage'
+import { SideNavMenu } from './SideNavMenu'
 
 export type DetailsPageTabsProps = {
   tabConfigs: DetailsPageTabProps[]
@@ -56,25 +57,12 @@ const DetailsPageTabs: React.FunctionComponent<
             }
           }
           return (
-            <Tooltip
-              key={tab.uriValue}
-              title={tab.toolTip ?? ''}
-              placement="top"
-            >
-              <NavLink
-                to={`${urlWithTrailingSlash}${tab.uriValue + search}`}
-                key={`detailPage-tab-${index}`}
-                className={'tab-item ignoreLink'}
-                aria-current="true"
-              >
-                {tab.iconName && (
-                  <SynapseComponents.Icon
-                    type={tab.iconName}
-                  ></SynapseComponents.Icon>
-                )}
-                {tab.title}
-              </NavLink>
-            </Tooltip>
+            <DetailsPageTabUI
+              title={tab.title}
+              uriValue={tab.uriValue}
+              tooltip={tab.toolTip}
+              iconName={tab.iconName}
+            />
           )
         })}
       </div>
@@ -85,10 +73,7 @@ const DetailsPageTabs: React.FunctionComponent<
           <div className="tab-content">
             {tabConfigs.map((tabConfig, index) => {
               return (
-                <Route
-                  key={tabConfig.uriValue}
-                  path={`${urlWithTrailingSlash}${tabConfig.uriValue}`}
-                >
+                <>
                   {'tabLayout' in tabConfig && tabConfig.tabLayout && (
                     <DetailsPageTabs
                       tabConfigs={tabConfig.tabLayout}
@@ -96,23 +81,56 @@ const DetailsPageTabs: React.FunctionComponent<
                       queryResultBundle={queryResultBundle}
                     ></DetailsPageTabs>
                   )}
-                  <Outlet />
-                  {/* TODO: make sure context is passed */}
-                  {/*{'synapseConfigArray' in tabConfig &&*/}
-                  {/*  tabConfig.synapseConfigArray && (*/}
-                  {/*    <DetailsPageSynapseConfigArray*/}
-                  {/*      showMenu={tabConfig.showMenu}*/}
-                  {/*      synapseConfigArray={tabConfig.synapseConfigArray}*/}
-                  {/*      queryResultBundle={queryResultBundle}*/}
-                  {/*    />*/}
-                  {/*  )}*/}
-                </Route>
+                  <div className="DetailsPage">
+                    <div className="button-container">
+                      <SideNavMenu
+                        synapseConfigArray={synapseConfigArray}
+                        queryResultBundle={queryResultBundle}
+                      />
+                    </div>
+                    <div className="component-container">
+                      <Outlet />
+                    </div>
+                  </div>
+                </>
               )
             })}
           </div>
         </div>
       )}
     </>
+  )
+}
+
+export type DetailsPageTabUIProps = {
+  uriValue: string
+  title: string
+  tooltip?: string
+  iconName?: string
+  iconClassName?: string
+}
+
+export function DetailsPageTabUI(props: DetailsPageTabUIProps) {
+  const location = useLocation()
+
+  return (
+    <Tooltip key={props.uriValue} title={props.tooltip ?? ''} placement="top">
+      <NavLink
+        to={{
+          pathname: props.uriValue,
+          search: location.search,
+        }}
+        className={'tab-item ignoreLink'}
+      >
+        {props.iconName && (
+          <SynapseComponents.Icon
+            type={props.iconName}
+            cssClass={props.iconClassName}
+          />
+        )}
+        {props.title}
+      </NavLink>
+    </Tooltip>
   )
 }
 

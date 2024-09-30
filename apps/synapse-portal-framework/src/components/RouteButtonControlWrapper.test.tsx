@@ -1,7 +1,5 @@
 import React from 'react'
-import RouteControlWrapper, {
-  RouteControlWrapperProps,
-} from './RouteControlWrapper'
+import ExploreWrapper, { RouteControlWrapperProps } from './ExploreWrapper'
 import { MemoryRouter } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import { FullContextProvider } from 'synapse-react-client'
@@ -36,7 +34,7 @@ describe('RouteControlWrapper works', () => {
         }}
       >
         <MemoryRouter initialEntries={[`/Explore/${routeName}`]}>
-          <RouteControlWrapper {...props} />
+          <ExploreWrapper {...props} />
         </MemoryRouter>
       </FullContextProvider>,
     )

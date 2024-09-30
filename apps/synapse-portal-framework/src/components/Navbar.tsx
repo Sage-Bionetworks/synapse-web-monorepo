@@ -1,3 +1,5 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
@@ -10,20 +12,156 @@ import {
   SystemUseNotification,
   useSynapseContext,
 } from 'synapse-react-client'
-import NavLink from '../components/NavLink'
+import { NavLink, useMatch } from 'react-router-dom'
 import NavUserLink from '../components/NavUserLink'
 import { ConfigRoute, GenericRoute } from '../types/portal-config'
-import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  IconButton,
+  Link,
+  Menu,
+  MenuItem,
+  useMediaQuery,
+} from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useNavigate } from 'react-router-dom'
 import { RESPONSIVE_SIDE_PADDING } from '../utils'
 import { usePortalContext } from './PortalContext'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
+function DropdownNavButton(props) {
+  const { route } = props
+  const match = useMatch({ path: route.path, end: route.path === '/' })
+  const isSmallView = useMediaQuery(theme => theme.breakpoints.down('lg'))
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const navLinkChildItems = route.children.map(childRoute => {
+    const LinkElement = childRoute.path.startsWith('http') ? Link : NavLink
+    return (
+      <MenuItem
+        key={childRoute.path}
+        className={'dropdown-item SRC-primary-background-color-hover'}
+      >
+        <LinkElement
+          className="dropdown-item SRC-nested-color"
+          to={childRoute.path}
+          style={{ textDecoration: 'none' }}
+          onClick={handleClose}
+          target={childRoute.path.startsWith('http') ? '_blank' : '_self'}
+          rel={'noopener noreferrer'}
+        >
+          {childRoute.name}
+          {/*// target={target ?? '_self'}*/}
+        </LinkElement>
+      </MenuItem>
+    )
+  })
+
+  return (
+    <>
+      {isSmallView && (
+        <Accordion
+          disableGutters
+          elevation={0}
+          onClick={e => {
+            e.stopPropagation()
+          }}
+        >
+          <AccordionSummary
+            className={'nav-button-container nav-button center-content'}
+            expandIcon={<ExpandMoreIcon />}
+            sx={{
+              '&.Mui-expanded': {
+                backgroundColor: 'secondary.main',
+                '.MuiAccordionSummary-content,.MuiSvgIcon-root': {
+                  color: 'white',
+                },
+              },
+            }}
+          >
+            {route.name}
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              p: 0,
+              '.MuiMenuItem-root': {
+                pl: 4,
+                minHeight: '50px',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                },
+              },
+            }}
+          >
+            {navLinkChildItems}
+          </AccordionDetails>
+        </Accordion>
+      )}
+      {!isSmallView && (
+        <>
+          <Menu
+            className={'portal-nav-menu'}
+            open={open}
+            onClose={handleClose}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            {navLinkChildItems}
+          </Menu>
+          <Button
+            className={`nav-button-container nav-button center-content ${
+              match ? 'active' : ''
+            }`}
+            onClick={handleClick}
+            endIcon={<ExpandMoreIcon />}
+            sx={{
+              '&:hover': {
+                textDecoration: 'none',
+              },
+            }}
+          >
+            {route.name}
+          </Button>
+        </>
+      )}
+    </>
+  )
+}
+
 type SynapseSettingLink = {
   text: string
   hasBorder?: boolean
   settingSubPath?: string
+}
+
+export type NavbarConfig = {
+  routes: {
+    name: string
+    icon?: string
+    path: string
+    children?: { name: string; path: string }[]
+  }[]
 }
 
 const synapseQuickLinks: SynapseSettingLink[] = [
@@ -45,7 +183,7 @@ const synapseQuickLinks: SynapseSettingLink[] = [
 ]
 
 function Navbar() {
-  const { routeConfig, logoHeaderConfig } = usePortalContext()
+  const { navbarConfig, logoHeaderConfig } = usePortalContext()
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const navigate = useNavigate()
@@ -133,23 +271,7 @@ function Navbar() {
       hostname.includes('127.0.0.1') ||
       hostname.includes('localhost')) &&
     !hideLogin
-  const isHomeSelectedCssClassName =
-    window.location.pathname.replace('/', '') === '' ? 'isSelected' : ''
-  const homeRouteConfig: ConfigRoute | undefined = routeConfig.filter(
-    (r: GenericRoute): r is ConfigRoute => {
-      return !!(
-        r.path === '' &&
-        r.synapseConfigArray &&
-        r.synapseConfigArray.length > 0
-      )
-    },
-  )[0]
 
-  // if the home route does not contain any titles, then just show a link
-  const homeConfigTitleCount = homeRouteConfig?.synapseConfigArray?.filter(
-    config => config.title !== undefined,
-  ).length
-  const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
   const registrationPageUrl = SynapseHookUtils.useOneSageURL('/register1')
   const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
     '/authenticated/myaccount',
@@ -176,12 +298,11 @@ function Navbar() {
             style={{ display: 'flex', alignItems: 'center' }}
             to="/"
             id="home-link"
-            text={
-              <>
-                {imageElement} {nameElement}
-              </>
-            }
-          />
+          >
+            <>
+              {imageElement} {nameElement}
+            </>
+          </NavLink>
         </div>
         <div
           className="nav-mobile-menu-btn mb-open"
@@ -360,156 +481,39 @@ function Navbar() {
               />
             </>
           )}
-          {
-            // we have to loop backwards due to css rendering of flex-direction: row-reverse
-            routeConfig
-              .slice()
-              .reverse()
-              .filter(el => !['', '/'].includes(el.path!))
-              .map((el: GenericRoute, topLevelIndex) => {
-                const topLevelTo = el.path
-                const displayName = el.displayName ? el.displayName : topLevelTo
-                const icon = el.icon && (
-                  <img style={{ padding: '0px 4px' }} src={el.icon} />
-                )
-                if (el.hideRouteFromNavbar) {
-                  return false
-                }
-                // hide children and only show top level element if all nested routes are hidden
-                const hideChildren =
-                  el.exact ||
-                  (el.routes &&
-                    el.routes.every(route => route.hideRouteFromNavbar))
-                if (!el.exact && !hideChildren) {
-                  const isSelected =
-                    el.routes &&
-                    el.routes.some(route =>
-                      decodeURIComponent(window.location.pathname).includes(
-                        getLinkHref(route, topLevelTo, false),
-                      ),
-                    )
-                  const isSelectedCssClassName = isSelected ? 'isSelected' : ''
-                  return (
-                    <React.Fragment key={`${topLevelTo}-${topLevelIndex}`}>
-                      {el.routes &&
-                        el.routes.map((route, index) => {
-                          const { path: to, link, target } = route
-                          // Add anchors to the DOM for a crawler to find.  This is an attempt to fix an issue where all routes are Excluded from the index.
-                          if (route.hideRouteFromNavbar) {
-                            return false
-                          }
-                          const routeDisplayName = route.displayName ?? to
-                          const linkDisplay = link ?? `/${topLevelTo}/${to}`
-                          return (
-                            <a
-                              key={`${to}-seo-anchor-${index}`}
-                              className="crawler-link"
-                              href={linkDisplay}
-                              target={target ?? '_self'}
-                            >
-                              {routeDisplayName}
-                            </a>
-                          )
-                        })}
-                      <Dropdown className={getBorder(topLevelTo)}>
-                        <Dropdown.Toggle
-                          variant="light"
-                          id={`Navbar-dropdown-${displayName}`}
-                          className={`nav-button-container nav-button ${isSelectedCssClassName}`}
-                        >
-                          {displayName}
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu className="portal-nav-menu">
-                          {el.routes &&
-                            el.routes.map((route, index) => {
-                              const { path: to, target } = route
-                              if (route.hideRouteFromNavbar) {
-                                return false
-                              }
-                              const routeDisplayName = route.displayName ?? to!
-                              const linkDisplay = getLinkHref(
-                                route,
-                                topLevelTo,
-                                true,
-                              )
-                              return (
-                                <Dropdown.Item key={`${to}-${index}`} as="li">
-                                  <NavLink
-                                    className="dropdown-item SRC-primary-background-color-hover SRC-nested-color"
-                                    to={linkDisplay}
-                                    text={routeDisplayName}
-                                    target={target ?? '_self'}
-                                  />
-                                </Dropdown.Item>
-                              )
-                            })}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </React.Fragment>
-                  )
-                }
-                const linkOrTo = el.link ?? `/${topLevelTo}`
-                const isSelectedCssClassName =
-                  decodeURIComponent(window.location.pathname) === linkOrTo
-                    ? 'isSelected'
-                    : ''
+          {navbarConfig.routes.toReversed().map((route, index) => {
+            if (route.children) {
+              return (
+                <DropdownNavButton route={route}>
+                  {route.name}
+                </DropdownNavButton>
+              )
+            }
+            if (route.path) {
+              if (route.path.startsWith('http')) {
                 return (
-                  <NavLink
-                    key={`${topLevelTo}-${topLevelIndex}`}
-                    className={`nav-button nav-button-container center-content ${isSelectedCssClassName} ${getBorder(
-                      topLevelTo,
-                    )}`}
-                    to={linkOrTo}
-                    target={el.target}
-                    text={
-                      <>
-                        {icon} {displayName}
-                      </>
-                    }
-                  />
-                )
-              })
-          }
-          {
-            // if theres less than 7 navbar items show the home page button
-            routeConfig.filter(el => !el.hideRouteFromNavbar).length < 7 &&
-              (isHomeDropdown ? (
-                <Dropdown className={getBorder('')}>
-                  <Dropdown.Toggle
-                    variant="light"
-                    id={'Navbar-dropdown-Home'}
-                    className={`nav-button-container nav-button ${isHomeSelectedCssClassName}`}
+                  <Link
+                    href={route.path}
+                    key={route.name}
+                    className={'nav-button-container nav-button center-content'}
+                    target={'_blank'}
                   >
-                    Home
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="portal-nav-menu">
-                    {homeRouteConfig &&
-                      homeRouteConfig.synapseConfigArray?.map(
-                        (config, index) => {
-                          const { title } = config
-                          if (!title) return <React.Fragment key={index} />
-
-                          return (
-                            <Dropdown.Item key={title} as="li">
-                              <NavLink
-                                className="dropdown-item SRC-primary-background-color-hover SRC-nested-color"
-                                text={title}
-                                to={`/#${encodeURI(title)}`}
-                              />
-                            </Dropdown.Item>
-                          )
-                        },
-                      )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              ) : (
+                    {route.name}
+                  </Link>
+                )
+              }
+              return (
                 <NavLink
-                  className={`nav-button nav-button-container center-content ${isHomeSelectedCssClassName}`}
-                  to={'/'}
-                  text="Home"
-                />
-              ))
-          }
+                  to={route.path}
+                  key={route.name}
+                  className={'nav-button-container nav-button center-content'}
+                >
+                  {route.name}
+                </NavLink>
+              )
+            }
+            return 'dropdown'
+          })}
         </div>
       </Box>
       <div className="spacer" />

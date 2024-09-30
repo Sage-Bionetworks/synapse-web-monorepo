@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { RouteControl, RouteControlProps } from './RouteControl'
+import {
+  ExploreWrapperTabs,
+  ExploreWrapperTabsProps,
+} from './ExploreWrapperTabs'
 import { Route, useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { SynapseComponent } from '../components/SynapseComponent'
 import { ConfigRoute, NestedRoute } from '../types/portal-config'
@@ -10,46 +13,24 @@ import {
   RESPONSIVE_SIDE_PADDING,
 } from '../utils'
 
-export type RouteControlWrapperProps = NestedRoute & {
-  // we have to pass in all the custom routes because unlike the home page the explore buttons configs aren't held in state
-  customRoutes: ConfigRoute[]
-  searchParams?: any
-}
+export type RouteControlWrapperProps = ExploreWrapperTabsProps
 
 /**
  * RouteControl is the set of controls used on the /Explore page to navigate the
  * different keys.
  */
-export default function RouteControlWrapper(props: RouteControlWrapperProps) {
-  const { customRoutes = [], searchParams } = props
-  const location = useLocation()
-  const navigate = useNavigate()
-  const pathname = location.pathname
-  const subPath = pathname.substring('/Explore/'.length)
-  const handleChangesFn = useCallback(
-    (val: string, _index: number) => {
-      navigate(`/Explore/${val}`)
-    },
-    [navigate],
-  )
-  const routeControlProps: RouteControlProps = useMemo(
-    () => ({
-      customRoutes: customRoutes.map(route => ({
-        name: route.path!,
-        hide: !!route.hideRouteFromNavbar,
-      })),
-      handleChanges: handleChangesFn,
-      isSelected: (name: string) => name === subPath,
-    }),
-    [customRoutes, handleChangesFn, subPath],
-  )
+export default function ExploreWrapper(props: RouteControlWrapperProps) {
+  const { explorePaths } = props
 
-  const selectedTab = subPath
-  const [showSubNav, setShowSubNav] = useState<boolean>(false)
   const theme = useTheme()
   const isDesktopView = useMediaQuery(theme.breakpoints.up('sm'))
+  const [showSubNav, setShowSubNav] = useState<boolean>(false)
 
-  const currentRoute = customRoutes.find(route => route.path === selectedTab)
+  const { pathname } = useLocation()
+  const currentExploreRoute = pathname.substring('/Explore/'.length)
+  const currentRoute = explorePaths.find(
+    route => encodeURI(route.path) === currentExploreRoute,
+  )
   if (currentRoute) {
     const pageName =
       currentRoute.displayName ?? currentRoute.path?.replaceAll('/', '')
@@ -87,7 +68,7 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
           }}
           onClick={() => setShowSubNav(showSubNav => !showSubNav)}
         >
-          <Typography variant={'headline3'}>{selectedTab}</Typography>
+          <Typography variant={'headline3'}>{currentExploreRoute}</Typography>
           {showSubNav ? (
             <ArrowDropDown fontSize={'large'} />
           ) : (
@@ -95,7 +76,7 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
           )}
         </Box>
         {(showSubNav || isDesktopView) && (
-          <RouteControl {...routeControlProps} />
+          <ExploreWrapperTabs explorePaths={explorePaths} />
         )}
       </Box>
       <Box
@@ -113,22 +94,6 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
         }}
       >
         <Outlet />
-        {/*{customRoutes.map(route => (*/}
-        {/*  <Route*/}
-        {/*    key={route.path}*/}
-        {/*    path={`/Explore/${route.path}`}*/}
-        {/*    exact={route.exact}*/}
-        {/*  >*/}
-        {/*    {route.synapseConfigArray &&*/}
-        {/*      route.synapseConfigArray.map((synapseConfig, index) => (*/}
-        {/*        <SynapseComponent*/}
-        {/*          key={index}*/}
-        {/*          synapseConfig={synapseConfig}*/}
-        {/*          searchParams={searchParams}*/}
-        {/*        />*/}
-        {/*      ))}*/}
-        {/*  </Route>*/}
-        {/*))}*/}
       </Box>
     </>
   )

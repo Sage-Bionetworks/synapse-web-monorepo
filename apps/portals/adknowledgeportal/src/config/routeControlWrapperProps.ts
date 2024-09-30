@@ -1,4 +1,4 @@
-import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/RouteControlWrapper'
+import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
 import {
   data,
   people,
@@ -17,29 +17,18 @@ const routeControlWrapper: RouteControlWrapperProps = {
   customRoutes: [
     {
       path: 'Programs',
-      synapseConfigArray: [
-        {
-          className: 'ProgramCardList',
-          name: 'CardContainerLogic',
-          props: {
-            ...programs,
-            sql: programsSql,
-          },
-        },
-      ],
     },
-    { path: 'Projects', synapseConfigArray: [projects] },
-    { path: 'Studies', synapseConfigArray: [studies] },
-    { path: 'Data', synapseConfigArray: [data] },
-    { path: 'Publications', synapseConfigArray: [publications] },
-    { path: 'People', synapseConfigArray: [people] },
-    { path: 'Experimental Models', synapseConfigArray: [experimentalTools] },
-    { path: 'Computational Tools', synapseConfigArray: [computationalTools] },
+    { path: 'Projects' },
+    { path: 'Studies' },
+    { path: 'Data' },
+    { path: 'Publications' },
+    { path: 'People' },
+    { path: 'Experimental Models' },
+    { path: 'Computational Tools' },
     {
       path: 'Target Enabling Resources',
-      synapseConfigArray: [targetEnablingResources],
     },
-    { path: 'Results', synapseConfigArray: [results] },
+    { path: 'Results' },
   ],
 }
 

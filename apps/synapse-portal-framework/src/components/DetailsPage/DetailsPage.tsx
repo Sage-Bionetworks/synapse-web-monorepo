@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Container, Typography } from '@mui/material'
 import {
   ColumnType,
   ColumnTypeEnum,
@@ -24,8 +24,10 @@ import {
   ResolveSynId,
   RowSynapseConfig,
 } from '../../types/portal-util-types'
+import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
 import injectPropsIntoConfig from '../injectPropsIntoConfig'
 import ToggleSynapseObjects from '../ToggleSynapseObjects'
+import { DetailsPageContextProvider } from './DetailsPageContext'
 import DetailsPageTabs from './DetailsPageTabs'
 import { HeadlineWithLink } from './HeadlineWithLink'
 import { SideNavMenu } from './SideNavMenu'
@@ -59,14 +61,17 @@ const goToExplorePage = () => {
  * @class DetailsPage
  * @extends {React.Component<DetailsPageProps, State>}
  */
-export default function DetailsPage(props: DetailsPageProps) {
+export default function DetailsPage(
+  props: React.PropsWithChildren<DetailsPageProps>,
+) {
   const {
     sql,
-    searchParams = {},
     sqlOperator,
     showMenu = true,
     additionalFiltersSessionStorageKey,
   } = props
+
+  const searchParams = useGetPortalComponentSearchParams()
 
   useScrollOnMount()
 
@@ -80,7 +85,9 @@ export default function DetailsPage(props: DetailsPageProps) {
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      partMask:
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS,
       query: {
         sql,
         additionalFilters,
@@ -97,9 +104,6 @@ export default function DetailsPage(props: DetailsPageProps) {
 
   const queryResultBundle = asyncJobStatus?.responseBody
 
-  const tabLayout = 'tabLayout' in props ? props.tabLayout : undefined
-  const config =
-    'synapseConfigArray' in props ? props.synapseConfigArray : undefined
   if (hasError) {
     const currentLocation = window.location.href.split('/')
     const name = currentLocation[currentLocation.length - 2]
@@ -107,10 +111,6 @@ export default function DetailsPage(props: DetailsPageProps) {
       <div className="DetailsPage__ComingSoon">
         <Typography variant="headline1">Coming Soon! </Typography>
         <p>
-          {/*
-                pluralize is used to convert the detail of interest e.g. studies/publications/etc
-                to a singular form like study/publication/etc
-            */}
           This {pluralize.singular(name).toLowerCase()} is not yet available,
           please check back soon.
         </p>
@@ -124,35 +124,18 @@ export default function DetailsPage(props: DetailsPageProps) {
     )
   }
 
-  if (tabLayout?.length) {
-    return (
-      <div className="DetailsPage tab-layout">
-        <div className="component-container">
-          {
-            <DetailsPageTabs
-              tabConfigs={tabLayout}
-              loading={isLoading}
-              queryResultBundle={queryResultBundle}
-            ></DetailsPageTabs>
-          }
-        </div>
-      </div>
-    )
-  } else {
-    return (
-      <>
-        {isLoading && <BarLoader color="#878787" loading={true} height={5} />}
-        {/*{!isLoading && config && (*/}
-        {/*  <DetailsPageSynapseConfigArray*/}
-        {/*    showMenu={showMenu}*/}
-        {/*    synapseConfigArray={config}*/}
-        {/*    queryResultBundle={queryResultBundle}*/}
-        {/*  />*/}
-        {/*)}*/}
-        <Outlet />
-      </>
-    )
+  let row
+  if (queryResultBundle?.queryResult?.queryResults?.rows) {
+    row = queryResultBundle?.queryResult!.queryResults.rows[0]
   }
+  return (
+    <DetailsPageContextProvider value={{ queryResultBundle, rowData: row }}>
+      <Container maxWidth={'lg'} className="DetailsPage tab-layout">
+        {isLoading && <BarLoader color="#878787" loading={true} height={5} />}
+        {props.children}
+      </Container>
+    </DetailsPageContextProvider>
+  )
 }
 
 const SynapseObject: React.FC<{
@@ -284,14 +267,14 @@ export const SplitStringToComponent: React.FC<{
     }
   }
 
-  let searchParams: Dictionary<string> | undefined = undefined
-  if (el.tableSqlKeys) {
-    // create component's query according to keys and value
-    searchParams = {}
-    el.tableSqlKeys.forEach((key: string) => {
-      searchParams![key] = value
-    })
-  }
+  // let searchParams: Dictionary<string> | undefined = undefined
+  // if (el.tableSqlKeys) {
+  //   // create component's query according to keys and value
+  //   searchParams = {}
+  //   el.tableSqlKeys.forEach((key: string) => {
+  //     searchParams![key] = value
+  //   })
+  // }
   const injectedProps = injectPropsIntoConfig(value, el, {
     ...deepCloneOfProps,
   })

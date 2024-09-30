@@ -28,7 +28,6 @@ $svg-icon-height: 30px;
 }
 
 .DetailsPage {
-  display: flex;
   // keeps h2 in markdown and in this component the same
   .h2,
   h2 {
@@ -84,10 +83,6 @@ $svg-icon-height: 30px;
     }
   }
 
-  &.tab-layout {
-    margin-top: -50px;
-  }
-
   hr {
     margin: 14px 0;
   }
@@ -109,6 +104,7 @@ $svg-icon-height: 30px;
   }
 
   .tab-groups {
+    margin-top: -$study-page-tab-height;
     display: flex;
     font-size: 16px;
     justify-content: center;
@@ -131,7 +127,7 @@ $svg-icon-height: 30px;
         width: auto;
       }
     }
-    .tab-item:not([aria-current='true']) {
+    .tab-item:not(.active) {
       background: rgba(0, 0, 0, 0.4);
       color: #fff;
       svg,
@@ -139,7 +135,7 @@ $svg-icon-height: 30px;
         @extend %svg-icon;
       }
     }
-    .tab-item[aria-current='true'] {
+    .tab-item.active {
       background-color: #fff;
       svg,
       path {
@@ -178,6 +174,7 @@ $svg-icon-height: 30px;
   }
   .tab-content-group {
     padding-top: 30px;
+    display: flex;
   }
 
   .metadata-table table {

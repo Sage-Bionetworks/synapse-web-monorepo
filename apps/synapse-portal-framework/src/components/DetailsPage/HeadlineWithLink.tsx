@@ -1,6 +1,26 @@
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { IconSvg, HelpPopover } from 'synapse-react-client'
+import { HelpPopover, IconSvg, SynapseQueries } from 'synapse-react-client'
+
+export function HeadlineWithLinkDerivedFromEntityId(props: {
+  title: string
+  id: string
+  helpText?: string
+}) {
+  const { data: entityHeader, isLoading } = SynapseQueries.useGetEntityHeader(
+    props.id,
+  )
+
+  if (isLoading) {
+    return <Skeleton width={300} />
+  }
+  return (
+    <HeadlineWithLink
+      {...props}
+      title={`${props.title}: ${entityHeader?.name}`}
+    />
+  )
+}
 
 export function HeadlineWithLink(props: {
   title: string

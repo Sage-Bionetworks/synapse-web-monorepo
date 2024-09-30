@@ -5,6 +5,7 @@ import {
   HomePageHeaderConfig,
   LogoConfig,
 } from '../types/portal-config'
+import { NavbarConfig } from './Navbar'
 
 export type PortalContextType = {
   portalName: string
@@ -13,6 +14,7 @@ export type PortalContextType = {
   footerConfig: FooterConfig
   logoHeaderConfig: LogoConfig
   logoFooterConfig: LogoConfig
+  navbarConfig: NavbarConfig
 }
 
 export const PortalContext = React.createContext<PortalContextType | undefined>(

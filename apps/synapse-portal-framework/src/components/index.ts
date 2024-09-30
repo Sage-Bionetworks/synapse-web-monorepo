@@ -1,4 +1,4 @@
-import RouteControlWrapper from './RouteControlWrapper'
+import ExploreWrapper from './ExploreWrapper'
 import DetailsPage from './DetailsPage'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
 import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'
@@ -28,7 +28,7 @@ import SynapseComponentCollapse from './SynapseComponentCollapse'
 import SurveyToast from './SurveyToast'
 
 const PortalComponents = {
-  RouteControlWrapper,
+  RouteControlWrapper: ExploreWrapper,
   DetailsPage,
   ConsortiaGoals,
   HomePageCardContainer,

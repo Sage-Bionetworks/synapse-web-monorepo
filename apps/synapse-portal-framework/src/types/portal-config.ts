@@ -29,7 +29,7 @@ import {
   DynamicFormProps,
   SharePageLinkButtonProps,
 } from 'synapse-react-client'
-import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
+import { RouteControlWrapperProps } from '../components/ExploreWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../components/csbc-home-page/AboutPortal'
 import { DetailsPageProps } from './portal-util-types'

@@ -1,3 +1,4 @@
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash'
 import {
   ChallengeDataDownloadProps,
@@ -5,7 +6,29 @@ import {
 } from 'synapse-react-client'
 import { RowSynapseConfig } from '../types/portal-util-types'
 import { ChallengeSubmissionWrapperProps } from './challengeportal/ChallengeSubmissionWrapper'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+
+export function transformStringIntoMarkdownProps(
+  value: string,
+  injectMarkdown?: boolean,
+) {
+  const newProps: MarkdownSynapseProps = {}
+  if (injectMarkdown) {
+    newProps.markdown = value
+  } else {
+    if (value.includes('wiki')) {
+      // value looks like syn20681023/wiki/594680
+      const split = value.split('/')
+      const ownerId = split[0]
+      const wikiId = split[2]
+      newProps.ownerId = ownerId
+      newProps.wikiId = wikiId
+    } else {
+      // else assume its an ownerId
+      newProps.ownerId = value
+    }
+  }
+  return newProps
+}
 
 /**
  * Given a value and synapse config, returns the props with the value injected into the synapse object accordingly.
@@ -20,23 +43,11 @@ const injectPropsIntoConfig = (
   el: RowSynapseConfig,
   props: any,
 ): any => {
-  const internalProps = cloneDeep(props)
+  let internalProps = cloneDeep(props)
   if (el.name === 'Markdown' || el.name === 'MarkdownCollapse') {
-    const markdownProps = internalProps as MarkdownSynapseProps
-    if (el.injectMarkdown) {
-      markdownProps.markdown = value
-    } else {
-      if (value.includes('wiki')) {
-        // value looks like syn20681023/wiki/594680
-        const split = value.split('/')
-        const ownerId = split[0]
-        const wikiId = split[2]
-        markdownProps.ownerId = ownerId
-        markdownProps.wikiId = wikiId
-      } else {
-        // else assume its an ownerId
-        markdownProps.ownerId = value
-      }
+    internalProps = {
+      ...internalProps,
+      ...transformStringIntoMarkdownProps(value, el.injectMarkdown),
     }
   } else if (el.name === 'ChallengeDataDownloadWrapper') {
     const challengeDataDownloadProps =
