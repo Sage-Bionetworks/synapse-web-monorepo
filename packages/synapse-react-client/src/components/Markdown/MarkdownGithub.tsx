@@ -10,6 +10,10 @@ export type MarkdownGithubProps = {
   filePath: string
 }
 
+/**
+ * Loads the latest tagged version of the (presumably MD) file from GitHub
+ * @returns
+ */
 export const MarkdownGithub: React.FunctionComponent<MarkdownGithubProps> = ({
   repoOwner,
   repoName,
@@ -17,6 +21,7 @@ export const MarkdownGithub: React.FunctionComponent<MarkdownGithubProps> = ({
 }) => {
   const [fileContent, setFileContent] = useState<string | undefined>(undefined)
   const { data: latestTag } = useLatestTag(repoOwner, repoName)
+
   useEffect(() => {
     const fetchFileContent = async () => {
       if (latestTag) {
@@ -28,7 +33,6 @@ export const MarkdownGithub: React.FunctionComponent<MarkdownGithubProps> = ({
             throw new Error(`Error fetching file: ${fileResponse.statusText}`)
           }
 
-          // Step 4: Read the file content
           const content = await fileResponse.text()
           setFileContent(content)
         } catch (error) {
