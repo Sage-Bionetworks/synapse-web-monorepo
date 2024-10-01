@@ -44,23 +44,25 @@ type DetailsPageContextConsumerProps = {
 export function DetailsPageContextConsumer(
   props: DetailsPageContextConsumerProps,
 ) {
+  const { columnName, children } = props
   return (
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
         let value: string | null | undefined = undefined
-        if (context.queryResultBundle && context.rowData && props.columnName) {
+        if (context.queryResultBundle && context.rowData && columnName) {
           const columnIndex = getColumnIndex(
-            props.columnName,
+            columnName,
             context.queryResultBundle.selectColumns,
             context.queryResultBundle.columnModels,
           )
+
           if (columnIndex !== undefined) {
             value = context.rowData.values[columnIndex]
           }
         }
         console.log('context:', { context, value })
 
-        return props.children({ context, value })
+        return children({ context, value })
       }}
     </DetailsPageContext.Consumer>
   )

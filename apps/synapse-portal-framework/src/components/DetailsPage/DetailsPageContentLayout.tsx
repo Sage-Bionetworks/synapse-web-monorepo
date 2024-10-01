@@ -34,7 +34,7 @@ export function DetailsPageContent(props: {
             .map(option => (
               <button
                 key={option.id}
-                className={'menu-row-button'}
+                className={'menu-row-button SRC-primary-background-color-hover'}
                 onClick={() => handleMenuClick(option.id)}
               >
                 {option.title}

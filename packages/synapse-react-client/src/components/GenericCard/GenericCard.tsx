@@ -169,7 +169,7 @@ export const getColumnIndex = (
   columnModels?: ColumnModel[],
 ): number | undefined => {
   return (
-    selectColumns?.findIndex(el => el.name === columnName) ||
+    selectColumns?.findIndex(el => el.name === columnName) ??
     columnModels?.findIndex(el => el.name === columnName)
   )
 }

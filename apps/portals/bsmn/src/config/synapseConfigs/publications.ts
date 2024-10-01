@@ -1,8 +1,10 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
-import { publicationsSql } from '../resources'
 import { Direction } from '@sage-bionetworks/synapse-types'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
+import { publicationsSql } from '../resources'
 
 const rgbIndex = 5
 
@@ -17,21 +19,16 @@ export const publicationsCardConfiguration: CardConfiguration = {
   secondaryLabelLimit: 4,
 }
 
-const publications: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    hideDownload: true,
-    name: 'Publications',
-    cardConfiguration: publicationsCardConfiguration,
-    sql: publicationsSql,
-    facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
-    facetsToPlot: ['grantNumber', 'year', 'journal', 'projectTitle'],
-    searchConfiguration: {
-      searchable: ['title', 'authors', 'year', 'journal', 'grantNumber'],
-    },
+export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  shouldDeepLink: true,
+  hideDownload: true,
+  name: 'Publications',
+  cardConfiguration: publicationsCardConfiguration,
+  sql: publicationsSql,
+  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
+  facetsToPlot: ['grantNumber', 'year', 'journal', 'projectTitle'],
+  searchConfiguration: {
+    searchable: ['title', 'authors', 'year', 'journal', 'grantNumber'],
   },
 }
-
-export default publications
