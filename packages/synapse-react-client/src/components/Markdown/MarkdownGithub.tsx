@@ -53,10 +53,10 @@ export const MarkdownGithub: React.FunctionComponent<MarkdownGithubProps> = ({
     <Box
       sx={{
         display: 'flex',
-        maxWidth: '1500px',
+        maxWidth: '1100px',
         alignItems: 'center',
         justifyContent: 'center',
-        p: '5px',
+        p: { xs: '5px', sm: '30px' },
         ml: { xs: '5px', md: 'auto' },
         mr: { xs: '5px', md: 'auto' },
         '> .markdown': {
