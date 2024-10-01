@@ -911,4 +911,8 @@ export class KeyFactory {
   public getWebhooksQueryKey() {
     return this.getKey('webhooks')
   }
+
+  public getGithubLatestTagKey(repoOwner: string, repoName: string) {
+    return this.getKey('githubLatestTag', repoOwner, repoName)
+  }
 }
