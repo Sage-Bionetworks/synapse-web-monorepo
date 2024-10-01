@@ -23,18 +23,16 @@ type Props = {
 export default function NavLink(props: Props) {
   const link = props.to as string
   let defaultTarget = '_self' // default to open in the same window
-  const isExternal = () => {
-    if (link.includes('http')) {
-      defaultTarget = '_blank' // if this is an external link, default to open in a new window
-      return true
-    } else if (link.includes('mailto')) {
-      return true
-    }
-    return false
+  let isExternal = false
+  if (link.startsWith('http')) {
+    defaultTarget = '_blank' // if this is an external link, default to open in a new window
+    isExternal = true
+  } else if (link.includes('mailto')) {
+    isExternal = true
   }
   const target = props.target ?? defaultTarget
 
-  return isExternal() ? (
+  return isExternal ? (
     <MuiLink href={link} target={target} rel="noreferrer noopener" {...props}>
       {props.children}
     </MuiLink>

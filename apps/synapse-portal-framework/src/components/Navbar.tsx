@@ -8,7 +8,6 @@ import {
   Dialog,
   DialogContent,
   IconButton,
-  Link,
   Menu,
   MenuItem,
   useMediaQuery,
@@ -35,7 +34,7 @@ import NavLink from './NavLink'
 import { usePortalContext } from './PortalContext'
 
 function DropdownNavButton(props) {
-  const { route } = props
+  const { route, onClickedNavLink } = props
   const match = useMatch({ path: route.path, end: route.path === '/' })
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('lg'))
@@ -50,23 +49,22 @@ function DropdownNavButton(props) {
   }
 
   const navLinkChildItems = route.children.map(childRoute => {
-    const LinkElement = childRoute.path.startsWith('http') ? Link : NavLink
     return (
       <MenuItem
         key={childRoute.path}
         className={'dropdown-item SRC-primary-background-color-hover'}
       >
-        <LinkElement
+        <NavLink
           className="dropdown-item SRC-nested-color"
           to={childRoute.path}
           style={{ textDecoration: 'none' }}
-          onClick={handleClose}
-          target={childRoute.path.startsWith('http') ? '_blank' : '_self'}
-          rel={'noopener noreferrer'}
+          onClick={() => {
+            handleClose()
+            onClickedNavLink()
+          }}
         >
           {childRoute.name}
-          {/*// target={target ?? '_self'}*/}
-        </LinkElement>
+        </NavLink>
       </MenuItem>
     )
   })
@@ -80,12 +78,20 @@ function DropdownNavButton(props) {
           onClick={e => {
             e.stopPropagation()
           }}
+          sx={{
+            '&:before': {
+              display: 'none',
+            },
+          }}
         >
           <AccordionSummary
             className={'nav-button-container nav-button center-content'}
             expandIcon={<ExpandMoreIcon />}
             sx={{
               my: 0,
+              '.MuiAccordionSummary-content': {
+                my: 0,
+              },
               '&.Mui-expanded': {
                 backgroundColor: 'secondary.main',
                 '.MuiAccordionSummary-content,.MuiSvgIcon-root': {
@@ -458,10 +464,16 @@ function Navbar() {
               />
             </>
           )}
-          {navbarConfig.routes.toReversed().map((route, index) => {
+          {navbarConfig.routes.toReversed().map(route => {
             if (route.children) {
               return (
-                <DropdownNavButton route={route} key={route.path}>
+                <DropdownNavButton
+                  route={route}
+                  key={route.path}
+                  onClickedNavLink={() => {
+                    setShowMenu(false)
+                  }}
+                >
                   {route.name}
                 </DropdownNavButton>
               )

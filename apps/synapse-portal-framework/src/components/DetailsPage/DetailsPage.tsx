@@ -44,7 +44,12 @@ const goToExplorePage = () => {
 export default function DetailsPage(
   props: React.PropsWithChildren<DetailsPageProps>,
 ) {
-  const { sql, sqlOperator, additionalFiltersSessionStorageKey } = props
+  const {
+    sql,
+    sqlOperator,
+    additionalFiltersSessionStorageKey,
+    ContainerProps,
+  } = props
 
   const searchParams = useGetPortalComponentSearchParams()
 
@@ -105,7 +110,11 @@ export default function DetailsPage(
   }
   return (
     <DetailsPageContextProvider value={{ queryResultBundle, rowData: row }}>
-      <Container maxWidth={'lg'} className="DetailsPage tab-layout">
+      <Container
+        maxWidth={'lg'}
+        className="DetailsPage tab-layout"
+        {...ContainerProps}
+      >
         {isLoading && <BarLoader color="#878787" loading={true} height={5} />}
         {props.children}
       </Container>

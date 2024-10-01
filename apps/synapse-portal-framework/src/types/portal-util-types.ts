@@ -1,3 +1,4 @@
+import { ContainerProps } from '@mui/material'
 import { SynapseConfig } from './portal-config'
 import { IconName } from 'synapse-react-client'
 import {
@@ -51,6 +52,7 @@ export type DetailsPageProps = DetailsPageContent & {
   sql: string
   sqlOperator?: ColumnSingleValueFilterOperator | ColumnMultiValueFunction
   additionalFiltersSessionStorageKey?: string
+  ContainerProps?: ContainerProps
 }
 
 export type DetailsPageTabProps = DetailsPageContent & {

@@ -1,4 +1,4 @@
-@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use '@sage-bionetworks/synapse-portal-framework/style/variables' as Portal;
 
 #header {
   height: fit-content;
@@ -39,10 +39,6 @@
       content: 'More Info';
     }
   }
-}
-
-.AboutPage {
-  margin-top: 25px !important;
 }
 
 /** 
