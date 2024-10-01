@@ -1,37 +1,17 @@
 import { Container, Typography } from '@mui/material'
-import {
-  ColumnType,
-  ColumnTypeEnum,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import { cloneDeep, Dictionary } from 'lodash'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import React from 'react'
-import { Outlet } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
-import type { LockedColumn } from 'synapse-react-client'
 import {
-  RegularExpressions,
   SynapseConstants,
   SynapseQueries,
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
-import { SynapseComponent } from '../../components/SynapseComponent'
-import { SynapseConfig } from '../../types/portal-config'
-import {
-  DetailsPageProps,
-  ResolveSynId,
-  RowSynapseConfig,
-} from '../../types/portal-util-types'
+import { DetailsPageProps } from '../../types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
-import injectPropsIntoConfig from '../injectPropsIntoConfig'
-import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import { DetailsPageContextProvider } from './DetailsPageContext'
-import DetailsPageTabs from './DetailsPageTabs'
-import { HeadlineWithLink } from './HeadlineWithLink'
-import { SideNavMenu } from './SideNavMenu'
-import { getComponentId, useScrollOnMount } from './utils'
+import { useScrollOnMount } from './utils'
 
 const goToExplorePage = () => {
   /*
@@ -64,12 +44,7 @@ const goToExplorePage = () => {
 export default function DetailsPage(
   props: React.PropsWithChildren<DetailsPageProps>,
 ) {
-  const {
-    sql,
-    sqlOperator,
-    showMenu = true,
-    additionalFiltersSessionStorageKey,
-  } = props
+  const { sql, sqlOperator, additionalFiltersSessionStorageKey } = props
 
   const searchParams = useGetPortalComponentSearchParams()
 
@@ -94,7 +69,7 @@ export default function DetailsPage(
       },
     }
     return queryBundleRequest
-  }, [searchParams, sql, sqlOperator])
+  }, [additionalFiltersSessionStorageKey, searchParams, sql, sqlOperator])
 
   const {
     data: asyncJobStatus,
@@ -136,296 +111,4 @@ export default function DetailsPage(
       </Container>
     </DetailsPageContextProvider>
   )
-}
-
-const SynapseObject: React.FC<{
-  el: RowSynapseConfig
-  queryResultBundle: QueryResultBundle
-}> = ({ el, queryResultBundle }) => {
-  const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
-  const deepCloneOfProps = cloneDeep(props)
-  const row = queryResultBundle.queryResult!.queryResults.rows[0].values
-  const rowVersionNumber =
-    queryResultBundle.queryResult!.queryResults.rows[0].versionNumber
-
-  // map column name to index
-  const mapColumnHeaderToRowIndex: Dictionary<{
-    index: number
-    columnType: ColumnType
-  }> = {}
-  queryResultBundle.queryResult!.queryResults.headers.forEach((el, index) => {
-    mapColumnHeaderToRowIndex[el.name] = { index, columnType: el.columnType }
-  })
-  const { index, columnType } = mapColumnHeaderToRowIndex[columnName] ?? {}
-  let rawValue: string | null = row[index]
-  if (!rawValue) {
-    console.error('No value mapped for ', columnName)
-    return <></>
-  } else if (
-    columnType === ColumnTypeEnum.STRING_LIST ||
-    columnType === ColumnTypeEnum.INTEGER_LIST ||
-    columnType === ColumnTypeEnum.ENTITYID_LIST
-  ) {
-    try {
-      rawValue = JSON.parse(rawValue)
-    } catch (e) {
-      console.error('Error on parsing value ', e)
-      return <></>
-    }
-  }
-
-  let split: string[] = ['']
-  if (rawValue === null) {
-    split = ['']
-  } else if (el.injectMarkdown) {
-    split = [rawValue]
-  } else if (typeof rawValue === 'object') {
-    split = rawValue
-  } else {
-    split = rawValue.split(',')
-  }
-  /*
-    There's a known ineffeciency here, we have components like CardContainer where it makes sense
-    to construct a sql statement with a chain of OR statements rather than having N different queries.
-
-    But this doesn't work for a component like MarkdownSynapse where there is a desire to have
-    N different markdown components.
-
-    For simplicity's sake this will be left as is, but this could be revisited if performance is an issue.
-  */
-  return (
-    <>
-      {split.map(splitString => (
-        <SplitStringToComponent
-          key={splitString}
-          splitString={splitString}
-          resolveSynId={resolveSynId}
-          columnName={columnName}
-          el={el}
-          deepCloneOfProps={deepCloneOfProps}
-          overrideSqlSourceTable={overrideSqlSourceTable}
-          rowVersionNumber={rowVersionNumber}
-        />
-      ))}
-    </>
-  )
-}
-
-export const SplitStringToComponent: React.FC<{
-  splitString: string
-  resolveSynId?: ResolveSynId
-  columnName: string
-  el: RowSynapseConfig
-  deepCloneOfProps: any
-  overrideSqlSourceTable?: boolean
-  rowVersionNumber?: number
-}> = ({
-  splitString,
-  resolveSynId,
-  columnName,
-  el,
-  deepCloneOfProps,
-  overrideSqlSourceTable,
-  rowVersionNumber,
-}) => {
-  let value = splitString.trim()
-  const valueIsSynId = React.useMemo(
-    () => !!RegularExpressions.SYNAPSE_ENTITY_ID_REGEX.exec(value),
-    [value],
-  )
-
-  let entityTitle = ''
-
-  // For explorer 2.0, construct an object to contain the locked facet name and facet value
-  const lockedColumn: LockedColumn = {
-    columnName: columnName,
-  }
-
-  const { data: entityHeaders } = SynapseQueries.useGetEntityHeaders(
-    [{ targetId: value }],
-    {
-      enabled: valueIsSynId,
-    },
-  )
-
-  if (resolveSynId) {
-    // use entity name as either title or value according to resolveSynId
-    const entity = entityHeaders?.results.find(el => el.id === value.trim())
-    const name = entity?.name ?? ''
-    if (!name) {
-      console.error('No value mapped for ', columnName)
-      return <></>
-    }
-    if (resolveSynId.title) {
-      entityTitle = name
-    }
-
-    // use entity name according to resolveSynId
-    if (resolveSynId.value) {
-      value = name
-      lockedColumn.value = name
-    }
-  }
-
-  // let searchParams: Dictionary<string> | undefined = undefined
-  // if (el.tableSqlKeys) {
-  //   // create component's query according to keys and value
-  //   searchParams = {}
-  //   el.tableSqlKeys.forEach((key: string) => {
-  //     searchParams![key] = value
-  //   })
-  // }
-  const injectedProps = injectPropsIntoConfig(value, el, {
-    ...deepCloneOfProps,
-  })
-  if (overrideSqlSourceTable) {
-    // use the search param value to override the sql param.
-    // TODO: Refactor to consider the the type of the original table
-    // For datasets and views, the rowVersionNumber corresponds to the actual version of the table. For TableEntities, the rowVersionNumber is meaningless. For now, just see if the columnName is `id`, which is always true for current view/dataset cases, and is never the case for current table cases.
-    //
-    injectedProps['sql'] = `SELECT  *  FROM  ${value}${
-      rowVersionNumber && columnName == 'id' ? `.${rowVersionNumber}` : ''
-    }`
-  }
-
-  // For explorer 2.0, cannot assign key `lockedColumn` to deepCloneOfProps due to type errors,
-  // assign lockedColumn value directly to injectedProps only if resolveSynId.value is true
-  // PORTALS-2060: Also for explorer 2.0, hide the query count if on a details page.
-  injectedProps['lockedColumn'] = lockedColumn
-  injectedProps['hideQueryCount'] = true
-  const synapseConfigWithInjectedProps: SynapseConfig = {
-    ...el,
-    props: injectedProps,
-  }
-  if (el.resolveSynId && entityTitle) {
-    const id = getComponentId(el, entityTitle)
-    return (
-      <>
-        {entityTitle && (
-          <div id={id}>
-            <HeadlineWithLink
-              id={id}
-              title={`${el.title}: ${entityTitle}`}
-              helpText={el.helpText}
-            />
-            <hr />
-          </div>
-        )}
-        <SynapseComponent
-          synapseConfig={synapseConfigWithInjectedProps}
-          searchParams={searchParams}
-        />
-      </>
-    )
-  }
-  return (
-    <SynapseComponent
-      synapseConfig={synapseConfigWithInjectedProps}
-      searchParams={searchParams}
-    />
-  )
-}
-
-function isReactFragment(variableToInspect: any): boolean {
-  if (variableToInspect.type) {
-    return variableToInspect.type === React.Fragment
-  }
-  return variableToInspect === React.Fragment
-}
-
-const getSynapseComponent = (
-  el: RowSynapseConfig,
-  queryResultBundle?: QueryResultBundle,
-) => {
-  return el.standalone ? (
-    <SynapseComponent synapseConfig={el} />
-  ) : queryResultBundle ? (
-    <SynapseObject el={el} queryResultBundle={queryResultBundle} />
-  ) : (
-    <></>
-  )
-}
-export const DetailsPageSynapseConfigArray: React.FC<{
-  showMenu?: boolean
-  synapseConfigArray: RowSynapseConfig[]
-  queryResultBundle?: QueryResultBundle
-}> = ({ showMenu = true, synapseConfigArray, queryResultBundle }) => {
-  const synapseConfigContent = (
-    <>
-      {synapseConfigArray.map((el: RowSynapseConfig, index) => {
-        const id = getComponentId(el)
-        const { resolveSynId, showTitleSeperator = true } = el
-        const key = JSON.stringify(el)
-        const hasTitleFromSynId = resolveSynId && resolveSynId.title
-        // don't show this title if component is rendering entity names adjacet to the title
-        let title: any = ''
-        if (!hasTitleFromSynId) {
-          title = (
-            <>
-              {el.title && (
-                <HeadlineWithLink
-                  title={el.title}
-                  id={id}
-                  helpText={el.helpText}
-                />
-              )}
-              {showTitleSeperator && el.title && <hr />}
-              {el.subtitle && (
-                <div>
-                  <Typography variant="subsectionHeader" role="heading">
-                    {el.subtitle}
-                  </Typography>
-                </div>
-              )}
-            </>
-          )
-        }
-
-        let component
-        // PORTALS-2229: If this is a Toggle, then get a ToggleSynapseObjects component
-        if (el.toggleConfigs) {
-          const tc = el.toggleConfigs
-          component = (
-            <ToggleSynapseObjects
-              icon1={tc.icon1}
-              synapseObject1={getSynapseComponent(
-                tc.config1,
-                queryResultBundle,
-              )}
-              icon2={tc.icon2}
-              synapseObject2={getSynapseComponent(
-                tc.config2,
-                queryResultBundle,
-              )}
-            />
-          )
-        } else {
-          component = getSynapseComponent(el, queryResultBundle)
-        }
-        if (isReactFragment(component)) {
-          return <React.Fragment key={index}></React.Fragment>
-        }
-
-        return (
-          <div id={id} key={key}>
-            {title}
-            {component}
-          </div>
-        )
-      })}
-    </>
-  )
-  if (showMenu && synapseConfigArray.length > 1) {
-    return (
-      <div className="DetailsPage">
-        <div className="button-container">
-          <SideNavMenu
-            synapseConfigArray={synapseConfigArray}
-            queryResultBundle={queryResultBundle}
-          />
-        </div>
-        <div className="component-container">{synapseConfigContent}</div>
-      </div>
-    )
-  } else return <>{synapseConfigContent}</>
 }

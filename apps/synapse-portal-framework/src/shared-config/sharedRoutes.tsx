@@ -1,19 +1,25 @@
 import React from 'react'
-import { Navigate, RouteObject } from 'react-router-dom'
-import { DownloadCartPage } from 'synapse-react-client'
-import Header from '../components/Header'
+import { RouteObject } from 'react-router-dom'
+import {
+  DownloadCartPage,
+  ErrorPage,
+  SynapseErrorType,
+} from 'synapse-react-client'
 import RedirectWithQuery from '../components/RedirectWithQuery'
 
-export const headerRoute: RouteObject = {
-  path: '/',
-  element: <Header />,
-}
-
 const routes: RouteObject[] = [
-  // {
-  //   path: '/',
-  //   element: <Header />,
-  // },
+  {
+    path: '*',
+    element: (
+      <ErrorPage
+        type={SynapseErrorType.NOT_FOUND}
+        message={''}
+        gotoPlace={() => {
+          // not necessary for NOT_FOUND page
+        }}
+      />
+    ),
+  },
   {
     // Handles redirecting '/Home' to '/'
     path: 'Home/',

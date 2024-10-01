@@ -1,20 +1,4 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
-import Dropdown from 'react-bootstrap/Dropdown'
-import {
-  AppUtils,
-  IconSvg,
-  StandaloneLoginForm,
-  SynapseComponents,
-  SynapseHookUtils,
-  SynapseQueries,
-  SystemUseNotification,
-  useSynapseContext,
-} from 'synapse-react-client'
-import { NavLink, useMatch } from 'react-router-dom'
-import NavUserLink from '../components/NavUserLink'
-import { ConfigRoute, GenericRoute } from '../types/portal-config'
 import {
   Accordion,
   AccordionDetails,
@@ -28,17 +12,33 @@ import {
   Menu,
   MenuItem,
   useMediaQuery,
+  useTheme,
 } from '@mui/material'
-import { useLogInDialogContext } from './LogInDialogContext'
-import { useNavigate } from 'react-router-dom'
-import { RESPONSIVE_SIDE_PADDING } from '../utils'
-import { usePortalContext } from './PortalContext'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
+import Dropdown from 'react-bootstrap/Dropdown'
+import { useMatch, useNavigate } from 'react-router-dom'
+import {
+  AppUtils,
+  IconSvg,
+  StandaloneLoginForm,
+  SynapseComponents,
+  SynapseHookUtils,
+  SynapseQueries,
+  SystemUseNotification,
+  useSynapseContext,
+} from 'synapse-react-client'
+import NavUserLink from '../components/NavUserLink'
+import { RESPONSIVE_SIDE_PADDING } from '../utils'
+import { useLogInDialogContext } from './LogInDialogContext'
+import NavLink from './NavLink'
+import { usePortalContext } from './PortalContext'
 
 function DropdownNavButton(props) {
   const { route } = props
   const match = useMatch({ path: route.path, end: route.path === '/' })
-  const isSmallView = useMediaQuery(theme => theme.breakpoints.down('lg'))
+  const theme = useTheme()
+  const isSmallView = useMediaQuery(theme.breakpoints.down('lg'))
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -85,6 +85,7 @@ function DropdownNavButton(props) {
             className={'nav-button-container nav-button center-content'}
             expandIcon={<ExpandMoreIcon />}
             sx={{
+              my: 0,
               '&.Mui-expanded': {
                 backgroundColor: 'secondary.main',
                 '.MuiAccordionSummary-content,.MuiSvgIcon-root': {
@@ -220,32 +221,8 @@ function Navbar() {
     }
   }, [])
 
-  // given the hash, decide if the link should have a bottom border
-  const getBorder = (name: string = '') => {
-    if (name === '') {
-      // special case the home page
-      return
-    }
-    const hash = window.location.hash.substring(2)
-    return hash.includes(name) ? 'bottom-border' : ''
-  }
-
   const goToTop = () => {
     window.scroll({ top: 0 })
-  }
-
-  const getLinkHref = (
-    route: GenericRoute,
-    topLevelTo?: string,
-    includeQueryParams?: boolean,
-  ) => {
-    const { path, link } = route
-    let href = link ?? `/${topLevelTo}/${path}`
-    const indexOfQuestionMark = href.indexOf('?')
-    if (!includeQueryParams && indexOfQuestionMark > -1) {
-      href = href.slice(0, indexOfQuestionMark)
-    }
-    return href
   }
 
   const { name, icon, hideLogin = false } = logoHeaderConfig
@@ -484,35 +461,20 @@ function Navbar() {
           {navbarConfig.routes.toReversed().map((route, index) => {
             if (route.children) {
               return (
-                <DropdownNavButton route={route}>
+                <DropdownNavButton route={route} key={route.path}>
                   {route.name}
                 </DropdownNavButton>
               )
             }
-            if (route.path) {
-              if (route.path.startsWith('http')) {
-                return (
-                  <Link
-                    href={route.path}
-                    key={route.name}
-                    className={'nav-button-container nav-button center-content'}
-                    target={'_blank'}
-                  >
-                    {route.name}
-                  </Link>
-                )
-              }
-              return (
-                <NavLink
-                  to={route.path}
-                  key={route.name}
-                  className={'nav-button-container nav-button center-content'}
-                >
-                  {route.name}
-                </NavLink>
-              )
-            }
-            return 'dropdown'
+            return (
+              <NavLink
+                to={route.path}
+                key={route.path}
+                className={'nav-button-container nav-button center-content'}
+              >
+                {route.name}
+              </NavLink>
+            )
           })}
         </div>
       </Box>

@@ -9,7 +9,6 @@ import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/compo
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/injectPropsIntoConfig'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/MarkdownSynapseFromColumnData'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
 import {
   PortalSearchParams,
@@ -21,7 +20,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
-import type { CardConfiguration } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import {
   CardContainerLogic,
   MarkdownCollapse,
@@ -77,28 +79,26 @@ const columnAliases = {
   Number_of_Individuals: 'Individuals',
   'Grant Number': 'Grant',
 }
-const studies: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    columnAliases,
-    sql: studiesSql,
-    name: 'Studies',
-    shouldDeepLink: true,
-    cardConfiguration: studyCardConfiguration,
-    searchConfiguration: {
-      searchable: [
-        'Study_Name',
-        'Study_Description',
-        'DataType_All',
-        'studyFocus',
-        'Data_Contributor',
-        'specimenType',
-        'Species',
-        'Grant Number',
-        'Program',
-      ],
-    },
+
+export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  columnAliases,
+  sql: studiesSql,
+  name: 'Studies',
+  shouldDeepLink: true,
+  cardConfiguration: studyCardConfiguration,
+  searchConfiguration: {
+    searchable: [
+      'Study_Name',
+      'Study_Description',
+      'DataType_All',
+      'studyFocus',
+      'Data_Contributor',
+      'specimenType',
+      'Species',
+      'Grant Number',
+      'Program',
+    ],
   },
 }
 
@@ -310,7 +310,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
                 }}
                 sql={dataSql}
                 shouldDeepLink={false}
-                searchParams={{ study: entityHeader.name }}
+                // searchParams={{ study: entityHeader.name }}
                 lockedColumn={{
                   columnName: 'study',
                   value: entityHeader.name,
@@ -352,5 +352,3 @@ export const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
 }
-
-export default studies

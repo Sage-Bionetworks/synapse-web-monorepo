@@ -88,6 +88,10 @@ export const TablePagination = () => {
   ) {
     return null
   }
+  // If there are no results and this is the first page, hide pagination
+  if (queryCount == 0 && currentPage == 1) {
+    return null
+  }
 
   return (
     <div>

@@ -1,29 +1,47 @@
 import React from 'react'
+import { scrollToWithOffset } from '../../utils'
 import {
   DetailsPageSectionLayout,
   DetailsPageSectionLayoutType,
 } from './DetailsPageSectionLayout'
-import { handleMenuClick } from './SideNavMenu'
 
 export type DetailsPageContentType = DetailsPageSectionLayoutType[]
 
-export function DetailsPageContent(props: { content: DetailsPageContentType }) {
-  const { content } = props
+export const handleMenuClick = (id: string) => {
+  window.history.pushState(null, '', `#${id}`)
+  // An ID may have spaces, so use [id="..."] style selector
+  // #... will treat spaces as a query for descendants
+  const query = `[id="${id}"]`
+  const wrapper = document.querySelector<HTMLElement>(query)
+  if (wrapper) {
+    scrollToWithOffset(wrapper)
+  } else {
+    console.error(`Could not find id ${id} in document (query: ${query})`)
+  }
+}
+
+export function DetailsPageContent(props: {
+  content: DetailsPageContentType
+  hideMenu?: boolean
+}) {
+  const { content, hideMenu = false } = props
   return (
     <div className={'tab-content-group'}>
-      <div className="button-container">
-        {content
-          .filter(option => option.title && option.id)
-          .map(option => (
-            <button
-              key={option.id}
-              className={'menu-row-button'}
-              onClick={() => handleMenuClick(option.id)}
-            >
-              {option.title}
-            </button>
-          ))}
-      </div>
+      {!hideMenu && (
+        <div className="button-container">
+          {content
+            .filter(option => option.title && option.id)
+            .map(option => (
+              <button
+                key={option.id}
+                className={'menu-row-button'}
+                onClick={() => handleMenuClick(option.id)}
+              >
+                {option.title}
+              </button>
+            ))}
+        </div>
+      )}
       <div className={'component-container'}>
         {content.map(option => (
           <DetailsPageSectionLayout key={option.id} {...option} />

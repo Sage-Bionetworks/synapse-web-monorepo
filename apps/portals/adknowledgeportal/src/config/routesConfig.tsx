@@ -1,9 +1,7 @@
-import { Container } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPage'
-import { HeadlineWithLink } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/HeadlineWithLink'
-import { getComponentId } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/utils'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
@@ -40,33 +38,37 @@ import {
   studiesSql,
   targetEnablingResourcesDetailsPageSql,
 } from './resources'
-import computationalTools, {
+import {
   computationalCardConfiguration,
+  computationalToolsQueryWrapperPlotNavProps,
 } from './synapseConfigs/computational_tools'
-import experimentalTools, {
+import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
+import {
   experimentalDetailsTableConfigurationColumnLinks,
   experimentalToolsCardConfiguration,
+  experimentalToolsQueryWrapperPlotNavProps,
 } from './synapseConfigs/experimental_tools'
-import {
-  data,
-  people,
-  programs,
-  projects,
-  publications,
-  studies,
-} from './synapseConfigs/index'
-import { programCardConfiguration } from './synapseConfigs/programs'
+import { peopleQueryWrapperPlotNavProps } from './synapseConfigs/people'
+import programs, { programCardConfiguration } from './synapseConfigs/programs'
 import { programsHomePageConfig } from './synapseConfigs/programsHomePage'
-import { projectCardConfiguration } from './synapseConfigs/projects'
-import { publicationCardProps } from './synapseConfigs/publications'
+import {
+  projectCardConfiguration,
+  projectsQueryWrapperPlotNavProps,
+} from './synapseConfigs/projects'
+import {
+  publicationCardProps,
+  publicationsQueryWrapperPlotNavProps,
+} from './synapseConfigs/publications'
 import { results } from './synapseConfigs/results'
 import {
   StudiesDetailsPage,
+  studiesQueryWrapperPlotNavProps,
   studyCardConfiguration,
   studyDetailsPageChildRoutes,
 } from './synapseConfigs/studies'
-import targetEnablingResources, {
+import {
   targetEnablingResourcesCardConfiguration,
+  targetEnablingResourcesQueryWrapperPlotNavProps,
 } from './synapseConfigs/target_enabling_resources'
 
 const routes: RouteObject[] = [
@@ -358,23 +360,31 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Projects',
-            element: <QueryWrapperPlotNav {...projects.props} />,
+            element: (
+              <QueryWrapperPlotNav {...projectsQueryWrapperPlotNavProps} />
+            ),
           },
           {
             path: 'Studies',
-            element: <QueryWrapperPlotNav {...studies.props} />,
+            element: (
+              <QueryWrapperPlotNav {...studiesQueryWrapperPlotNavProps} />
+            ),
           },
           {
             path: 'Data',
-            element: <QueryWrapperPlotNav {...data.props} />,
+            element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
           },
           {
             path: 'Publications',
-            element: <QueryWrapperPlotNav {...publications.props} />,
+            element: (
+              <QueryWrapperPlotNav {...publicationsQueryWrapperPlotNavProps} />
+            ),
           },
           {
             path: 'People',
-            element: <QueryWrapperPlotNav {...people.props} />,
+            element: (
+              <QueryWrapperPlotNav {...peopleQueryWrapperPlotNavProps} />
+            ),
           },
           {
             // PORTALS-2001 - we renamed "Experimental Tools" to "Experimental Models"
@@ -383,15 +393,27 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Experimental Models',
-            element: <QueryWrapperPlotNav {...experimentalTools.props} />,
+            element: (
+              <QueryWrapperPlotNav
+                {...experimentalToolsQueryWrapperPlotNavProps}
+              />
+            ),
           },
           {
             path: 'Computational Tools',
-            element: <QueryWrapperPlotNav {...computationalTools.props} />,
+            element: (
+              <QueryWrapperPlotNav
+                {...computationalToolsQueryWrapperPlotNavProps}
+              />
+            ),
           },
           {
             path: 'Target Enabling Resources',
-            element: <QueryWrapperPlotNav {...targetEnablingResources.props} />,
+            element: (
+              <QueryWrapperPlotNav
+                {...targetEnablingResourcesQueryWrapperPlotNavProps}
+              />
+            ),
           },
           {
             path: 'Results',
@@ -412,43 +434,53 @@ const routes: RouteObject[] = [
               toURL="https://eliteportal.synapse.org/"
               search="Program=ELITE"
             />
-            <DetailsPage showMenu={true} sql={programsSql}>
-              <PortalSearchParams keyFilter={['Program']}>
-                {searchParams => {
-                  // showTitleSeperator: false,
-                  return (
-                    <>
-                      <CardContainerLogic
-                        sql={programsSql}
-                        isHeader={true}
-                        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                        {...programCardConfiguration}
-                        genericCardSchema={{
-                          ...programCardConfiguration.genericCardSchema!,
-                          description: 'Long Description',
-                        }}
-                        searchParams={searchParams}
-                      />
-                      <Container maxWidth={'lg'}>
-                        <HeadlineWithLink
-                          title={'Projects'}
-                          id={getComponentId({
+            <PortalSearchParams keyFilter={['Program']}>
+              {searchParams => {
+                return (
+                  <>
+                    <CardContainerLogic
+                      sql={programsSql}
+                      isHeader={true}
+                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      {...programCardConfiguration}
+                      genericCardSchema={{
+                        ...programCardConfiguration.genericCardSchema!,
+                        description: 'Long Description',
+                      }}
+                      searchParams={searchParams}
+                    />
+                    <DetailsPage sql={programsSql}>
+                      <DetailsPageContent
+                        content={[
+                          {
                             title: 'Projects',
-                            name: 'CardContainerLogic',
-                          })}
-                        />
-
-                        <CardContainerLogic
-                          {...projectCardConfiguration}
-                          sql={projectsSql}
-                          searchParams={{ Program: 'AMP-AD' }}
-                        />
-                      </Container>
-                    </>
-                  )
-                }}
-              </PortalSearchParams>
-            </DetailsPage>
+                            id: 'Projects',
+                            element: (
+                              <CardContainerLogic
+                                {...projectCardConfiguration}
+                                sql={projectsSql}
+                                searchParams={searchParams}
+                              />
+                            ),
+                          },
+                          {
+                            title: 'Studies',
+                            id: 'Studies',
+                            element: (
+                              <CardContainerLogic
+                                {...studyCardConfiguration}
+                                sql={studiesSql}
+                                searchParams={searchParams}
+                              />
+                            ),
+                          },
+                        ]}
+                      ></DetailsPageContent>
+                    </DetailsPage>
+                  </>
+                )
+              }}
+            </PortalSearchParams>
           </>
         ),
       },
@@ -465,77 +497,108 @@ const routes: RouteObject[] = [
                   searchParams={searchParams}
                 />
                 <DetailsPage showMenu={true} sql={projectsSql}>
-                  <SectionLayout title="Studies">
-                    <CardContainerLogic
-                      {...studyCardConfiguration}
-                      sql={studiesSql}
-                      searchParams={searchParams}
-                    />
-                  </SectionLayout>
-                  <SectionLayout title={'Publications'}>
-                    <CardContainerLogic
-                      sql={publicationsSql}
-                      {...publicationCardProps}
-                      searchParams={{ grant: searchParams!['Grant Number'] }}
-                    />
-                  </SectionLayout>
-                  <SectionLayout title={'Experimental Models'}>
-                    <ToggleSynapseObjects
-                      icon1={'table'}
-                      synapseObject1={
-                        <StandaloneQueryWrapper
-                          sql={experimentalModelsSql}
-                          rgbIndex={4}
-                          sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                          columnLinks={
-                            experimentalDetailsTableConfigurationColumnLinks
-                          }
-                          searchParams={{
-                            grant: searchParams!['Grant Number'],
-                          }}
-                        />
-                      }
-                      icon2={'cards'}
-                      synapseObject2={
-                        <CardContainerLogic
-                          sql={experimentalModelsSql}
-                          {...experimentalToolsCardConfiguration}
-                          searchParams={{
-                            grant: searchParams!['Grant Number'],
-                          }}
-                        />
-                      }
-                    />
-                    <CardContainerLogic
-                      sql={experimentalModelsSql}
-                      {...experimentalToolsCardConfiguration}
-                      searchParams={{ grant: searchParams!['Grant Number'] }}
-                    />
-                  </SectionLayout>
-                  <SectionLayout title={'Computational Tools'}>
-                    <CardContainerLogic
-                      sql={computationalSql}
-                      {...computationalCardConfiguration}
-                      searchParams={{ grant: searchParams!['Grant Number'] }}
-                    />
-                  </SectionLayout>
-                  <SectionLayout title={'Target Enabling Resources'}>
-                    <CardContainerLogic
-                      sql={targetEnablingResourcesDetailsPageSql}
-                      {...targetEnablingResourcesCardConfiguration}
-                      searchParams={{ grant: searchParams!['Grant Number'] }}
-                    />
-                  </SectionLayout>
-                  <SectionLayout title={'People'}>
-                    <CardContainerLogic
-                      sql={peopleSql}
-                      limit={6}
-                      type={SynapseConstants.MEDIUM_USER_CARD}
-                      searchParams={{
-                        ['Grant Number']: searchParams!['Grant Number'],
-                      }}
-                    />
-                  </SectionLayout>
+                  <DetailsPageContent
+                    content={[
+                      {
+                        title: 'Studies',
+                        id: 'Studies',
+                        element: (
+                          <CardContainerLogic
+                            {...studyCardConfiguration}
+                            sql={studiesSql}
+                            searchParams={searchParams}
+                          />
+                        ),
+                      },
+                      {
+                        title: 'Publications',
+                        id: 'Publications',
+                        element: (
+                          <CardContainerLogic
+                            sql={publicationsSql}
+                            {...publicationCardProps}
+                            searchParams={{
+                              grant: searchParams['Grant Number'],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        title: 'Experimental Models',
+                        id: 'Experimental Models',
+                        element: (
+                          <ToggleSynapseObjects
+                            icon1={'table'}
+                            synapseObject1={
+                              <StandaloneQueryWrapper
+                                sql={experimentalModelsSql}
+                                rgbIndex={4}
+                                sqlOperator={
+                                  ColumnSingleValueFilterOperator.EQUAL
+                                }
+                                columnLinks={
+                                  experimentalDetailsTableConfigurationColumnLinks
+                                }
+                                searchParams={{
+                                  grant: searchParams['Grant Number'],
+                                }}
+                              />
+                            }
+                            icon2={'cards'}
+                            synapseObject2={
+                              <CardContainerLogic
+                                sql={experimentalModelsSql}
+                                {...experimentalToolsCardConfiguration}
+                                searchParams={{
+                                  grant: searchParams['Grant Number'],
+                                }}
+                              />
+                            }
+                          />
+                        ),
+                      },
+                      {
+                        title: 'Computational Tools',
+                        id: 'Computational Tools',
+                        element: (
+                          <CardContainerLogic
+                            sql={computationalSql}
+                            {...computationalCardConfiguration}
+                            searchParams={{
+                              grant: searchParams['Grant Number'],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        title: 'Target Enabling Resources',
+                        id: 'Target Enabling Resources',
+                        element: (
+                          <CardContainerLogic
+                            sql={targetEnablingResourcesDetailsPageSql}
+                            {...targetEnablingResourcesCardConfiguration}
+                            searchParams={{
+                              grant: searchParams['Grant Number'],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        title: 'People',
+                        id: 'People',
+                        element: (
+                          <CardContainerLogic
+                            sql={peopleSql}
+                            limit={6}
+                            type={SynapseConstants.MEDIUM_USER_CARD}
+                            searchParams={{
+                              ['Grant Number']: searchParams['Grant Number'],
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
                 </DetailsPage>
               </>
             )}

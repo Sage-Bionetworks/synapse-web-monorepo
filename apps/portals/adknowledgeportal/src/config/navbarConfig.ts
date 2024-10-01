@@ -3,29 +3,6 @@ import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/compone
 export const navbarConfig: NavbarConfig = {
   routes: [
     {
-      name: 'Home',
-      path: '/',
-      children: [
-        { name: 'Programs', path: '/#Programs' },
-        {
-          name: 'Featured Data',
-          path: '/#Featured Data',
-        },
-        {
-          name: 'Related Resources',
-          path: '/#Related Resources',
-        },
-        {
-          name: 'Our People and Institutions',
-          path: '/#Our People and Institutions',
-        },
-        {
-          name: "What's New",
-          path: "/#What's New",
-        },
-      ],
-    },
-    {
       name: 'Explore',
       path: '/Explore',
       children: [

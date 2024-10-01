@@ -1,6 +1,5 @@
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
-import React, { useContext, useState } from 'react'
-import { LogInDialogContextType } from '../LogInDialogContext'
+import React, { useContext } from 'react'
 import { getColumnIndex } from 'synapse-react-client'
 
 type DetailsPageContextType = {

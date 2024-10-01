@@ -1,3 +1,4 @@
+import ErrorPage, { SynapseErrorType } from './error/ErrorPage'
 export * from './AccessTokenPage'
 export * from './AccountLevelBadges'
 export * from './Authentication'
@@ -81,3 +82,4 @@ export * from './SageResourcesPopover'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'
+export { ErrorPage, SynapseErrorType }

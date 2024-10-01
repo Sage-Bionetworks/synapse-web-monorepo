@@ -37,7 +37,7 @@ import { ParticipantsBarPlotProps } from '../components/crc-researcher/Participa
 import { StatusLineChartProps } from '../components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../components/crc-researcher/SurveysCompletedPlots'
 import { ImageProps } from '../components/Image'
-import { RedirectProps } from 'react-router-dom'
+import { NavigateProps } from 'react-router-dom'
 import { ToggleSynapseObjectsProps } from '../components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
@@ -319,7 +319,7 @@ type TimelinePlot = {
 
 type RedirectWithQuery = {
   name: 'RedirectWithQuery'
-  props: RedirectProps
+  props: NavigateProps
 }
 
 type RedirectToURL = {
@@ -329,7 +329,7 @@ type RedirectToURL = {
 
 type Redirect = {
   name: 'Redirect'
-  props: RedirectProps
+  props: NavigateProps
 }
 
 type Header = {

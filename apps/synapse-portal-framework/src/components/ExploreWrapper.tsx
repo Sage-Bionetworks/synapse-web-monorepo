@@ -1,17 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import {
-  ExploreWrapperTabs,
-  ExploreWrapperTabsProps,
-} from './ExploreWrapperTabs'
-import { Route, useNavigate, useLocation, Outlet } from 'react-router-dom'
-import { SynapseComponent } from '../components/SynapseComponent'
-import { ConfigRoute, NestedRoute } from '../types/portal-config'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
+import React, { useState } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '../utils'
+import {
+  ExploreWrapperTabs,
+  ExploreWrapperTabsProps,
+} from './ExploreWrapperTabs'
 
 export type RouteControlWrapperProps = ExploreWrapperTabsProps
 

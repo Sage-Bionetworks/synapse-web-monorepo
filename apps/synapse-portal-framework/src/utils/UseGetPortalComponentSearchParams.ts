@@ -12,14 +12,12 @@ export function useGetPortalComponentSearchParams() {
   const { search } = useLocation()
   // If url has search params transform into key-value dictionary that can be passed into
   // the component which is rendered
-  let searchParamsProps: Record<string, string> | undefined = undefined
+  const searchParamsProps: Record<string, string> = {}
   if (search) {
-    searchParamsProps = {}
-    // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
     const searchParams = new URLSearchParams(search)
     searchParams.forEach((value, key) => {
       if (!ignoreSearchParamsSet.has(key)) {
-        searchParamsProps![key] = value
+        searchParamsProps[key] = value
       }
     })
   }
@@ -27,9 +25,7 @@ export function useGetPortalComponentSearchParams() {
 }
 
 type PortalSearchParamsProps = {
-  children: (
-    searchParams: Record<string, string> | undefined,
-  ) => React.ReactNode
+  children: (searchParams: Record<string, string>) => React.ReactNode
   keyFilter?: string[]
 }
 export function PortalSearchParams(props: PortalSearchParamsProps) {
