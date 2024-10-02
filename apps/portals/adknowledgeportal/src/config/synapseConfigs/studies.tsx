@@ -2,6 +2,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import {
+  DetailsPageTabConfig,
   DetailsPageTabUI,
   DetailsPageTabUIProps,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
@@ -102,10 +103,6 @@ export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
 }
 
-type DetailsPageTabConfig = DetailsPageTabUIProps & {
-  element: React.ReactNode
-}
-
 export function StudiesDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
@@ -123,14 +120,10 @@ export function StudiesDetailsPage() {
         }}
         searchParams={searchParams}
       />
-      <DetailsPage {...studiesDetailsPageProps}>
-        <div className="tab-groups">
-          {studyDetailsPageTabs.map(props => (
-            <DetailsPageTabUI key={props.uriValue} {...props} />
-          ))}
-        </div>
-        <Outlet />
-      </DetailsPage>
+      <DetailsPage
+        {...studiesDetailsPageProps}
+        tabRoutes={studyDetailsPageTabs}
+      />
     </>
   )
 }
@@ -327,14 +320,14 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
 const studyDetailsPageTabs: DetailsPageTabConfig[] = [
   {
     title: 'Study Details',
-    uriValue: 'StudyDetails',
+    path: 'StudyDetails',
     iconName: 'study',
     tooltip: 'Description, methods, acknowledgements and related studies',
     element: <DetailsPageContent content={studyDetailsTabContent} />,
   },
   {
     title: 'Study Data',
-    uriValue: 'StudyData',
+    path: 'StudyData',
     iconName: 'database',
     iconClassName: 'tab-database',
     tooltip: 'All of the Data generated within this study',
@@ -344,7 +337,7 @@ const studyDetailsPageTabs: DetailsPageTabConfig[] = [
 
 export const studyDetailsPageChildRoutes: RouteObject[] =
   studyDetailsPageTabs.map(tab => ({
-    path: tab.uriValue,
+    path: tab.path,
     element: tab.element,
   }))
 

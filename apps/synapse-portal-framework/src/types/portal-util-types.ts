@@ -1,10 +1,11 @@
 import { ContainerProps } from '@mui/material'
-import { SynapseConfig } from './portal-config'
-import { IconName } from 'synapse-react-client'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
+import { IconName } from 'synapse-react-client'
+import { DetailsPageTabConfig } from '../components/DetailsPage/DetailsPageTabs'
+import { SynapseConfig } from './portal-config'
 
 /* 
   These are types that come up frequently between portals but are an
@@ -39,12 +40,7 @@ type RowToPropTransform = {
 
 export type RowSynapseConfig = SynapseConfig & RowToPropTransform
 
-/**
- * The content of a DetailsPage is either a tab layout, or config array, but not both
- */
-export type DetailsPageContent = { tabLayout?: DetailsPageTabProps[] }
-
-export type DetailsPageProps = DetailsPageContent & {
+export type DetailsPageProps = React.PropsWithChildren<{
   showMenu?: boolean // default to true
   searchParams?: {
     [index: string]: string
@@ -53,17 +49,11 @@ export type DetailsPageProps = DetailsPageContent & {
   sqlOperator?: ColumnSingleValueFilterOperator | ColumnMultiValueFunction
   additionalFiltersSessionStorageKey?: string
   ContainerProps?: ContainerProps
-}
-
-export type DetailsPageTabProps = DetailsPageContent & {
-  /** The title of the tab shown in the UI */
-  title: string
-  /** The path string that will be used to route the content of the tab. Must be unique across a set of tabs */
-  uriValue: string
-  iconName?: string
-  cssClass?: string
-  toolTip?: string
-  /** Given this column name, if the assocated value in this column is not set, then this tab will be hidden */
-  hideIfColumnValueNull?: string
-  showMenu?: boolean
-}
+  /**
+   * If provided, the DetailsPage will render UI to navigate between tabs.
+   * The details page component itself will not render the tab content. To render the tab content,
+   * you must define child routes that will render in the DetailsPage's `Outlet`, and you may not
+   * pass your own children to the DetailsPage component
+   */
+  tabRoutes?: DetailsPageTabConfig[]
+}>

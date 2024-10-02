@@ -1,43 +1,52 @@
 import { Tooltip } from '@mui/material'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { SynapseComponents } from 'synapse-react-client'
-import { DetailsPageTabProps } from '../../types/portal-util-types'
-
-export type DetailsPageTabsProps = {
-  tabConfigs: DetailsPageTabProps[]
-  loading: boolean
-  queryResultBundle?: QueryResultBundle
-}
+import { useDetailsPageContext } from './DetailsPageContext'
 
 export type DetailsPageTabUIProps = {
-  uriValue: string
+  path: string
   title: string
   tooltip?: string
   iconName?: string
   iconClassName?: string
+  hideIfColumnValueNull?: string
+}
+
+export type DetailsPageTabConfig = DetailsPageTabUIProps & {
+  element: React.ReactNode
 }
 
 export function DetailsPageTabUI(props: DetailsPageTabUIProps) {
+  const {
+    path,
+    title,
+    tooltip,
+    iconName,
+    iconClassName,
+    hideIfColumnValueNull,
+  } = props
   const location = useLocation()
 
+  const { value } = useDetailsPageContext(hideIfColumnValueNull)
+
+  if (hideIfColumnValueNull && value == null) {
+    return null
+  }
+
   return (
-    <Tooltip key={props.uriValue} title={props.tooltip ?? ''} placement="top">
+    <Tooltip key={path} title={tooltip ?? ''} placement="top">
       <NavLink
         to={{
-          pathname: props.uriValue,
+          pathname: path,
           search: location.search,
         }}
         className={'tab-item ignoreLink'}
       >
-        {props.iconName && (
-          <SynapseComponents.Icon
-            type={props.iconName}
-            cssClass={props.iconClassName}
-          />
+        {iconName && (
+          <SynapseComponents.Icon type={iconName} cssClass={iconClassName} />
         )}
-        {props.title}
+        {title}
       </NavLink>
     </Tooltip>
   )

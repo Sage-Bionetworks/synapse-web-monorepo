@@ -1,5 +1,6 @@
 import React from 'react'
 import { HeadlineWithLink } from './HeadlineWithLink'
+import { SynapseErrorBoundary } from 'synapse-react-client'
 
 /**
  * Describes a section of a portals DetailsPage. Using this interface allows us to render
@@ -27,7 +28,7 @@ export function DetailsPageSectionLayout(props: DetailsPageSectionLayoutType) {
           <hr />
         </>
       )}
-      {element}
+      <SynapseErrorBoundary>{element}</SynapseErrorBoundary>
     </section>
   )
 }

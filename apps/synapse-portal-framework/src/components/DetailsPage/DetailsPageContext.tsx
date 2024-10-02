@@ -24,14 +24,45 @@ export function DetailsPageContextProvider(
   )
 }
 
-export function useDetailsPageContext(): DetailsPageContextType {
+function getValue(
+  context: DetailsPageContextType,
+  columnName: string | undefined,
+) {
+  let value: string | null | undefined = undefined
+  if (context.queryResultBundle && context.rowData && columnName) {
+    const columnIndex = getColumnIndex(
+      columnName,
+      context.queryResultBundle.selectColumns,
+      undefined,
+    )
+
+    if (columnIndex !== undefined) {
+      const columnModel = context.queryResultBundle.selectColumns![columnIndex]
+      value = context.rowData.values[columnIndex]
+      // Note: searchParams expects comma-separated values
+      // TODO: The downstream component has no idea if this is going to be comma-separated or not
+      //
+      if (columnModel.columnType.endsWith('_LIST') && !isEmpty(value)) {
+        value = (JSON.parse(value!) as string[]).join(',')
+      }
+    }
+  }
+  return value
+}
+
+export function useDetailsPageContext(columnName?: string): {
+  context: DetailsPageContextType
+  value: string | null | undefined
+} {
   const context = useContext(DetailsPageContext)
+
   if (context === undefined) {
     throw new Error(
       'DetailsPageContext must be used within an DetailsPageContextProvider',
     )
   }
-  return context
+
+  return { context, value: getValue(context, columnName) }
 }
 
 type DetailsPageContextConsumerProps = {
@@ -49,30 +80,7 @@ export function DetailsPageContextConsumer(
   return (
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
-        let value: string | null | undefined = undefined
-        if (context.queryResultBundle && context.rowData && columnName) {
-          // debugger
-          const columnIndex = getColumnIndex(
-            columnName,
-            context.queryResultBundle.selectColumns,
-            undefined,
-          )
-
-          if (columnIndex !== undefined) {
-            const columnModel =
-              context.queryResultBundle.selectColumns![columnIndex]
-            value = context.rowData.values[columnIndex]
-            // Note: searchParams expects comma-separated values
-            // TODO: The downstream component has no idea if this is going to be comma-separated or not
-            //
-            if (columnModel.columnType.endsWith('_LIST') && !isEmpty(value)) {
-              value = (JSON.parse(value!) as string[]).join(',')
-            }
-          }
-        }
-        console.log('context:', { context, value })
-
-        return children({ context, value })
+        return children({ context, value: getValue(context, columnName) })
       }}
     </DetailsPageContext.Consumer>
   )

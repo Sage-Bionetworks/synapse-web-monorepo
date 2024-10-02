@@ -9,7 +9,7 @@ import {
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import {
   SynapseConstants,
@@ -19,6 +19,7 @@ import {
 import { DetailsPageProps } from '../../types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
 import { DetailsPageContextProvider } from './DetailsPageContext'
+import { DetailsPageTabUI } from './DetailsPageTabs'
 import { useScrollOnMount } from './utils'
 
 const goToExplorePage = () => {
@@ -43,20 +44,15 @@ const goToExplorePage = () => {
  * 2. Resolving a column's value and joining it with another table
  * 3. Static data, data which is fixed across detail pages, the props for the component are
  * hardcoded in the config
- *
- *
- * @export
- * @class DetailsPage
- * @extends {React.Component<DetailsPageProps, State>}
  */
-export default function DetailsPage(
-  props: React.PropsWithChildren<DetailsPageProps>,
-) {
+export default function DetailsPage(props: DetailsPageProps) {
   const {
     sql,
     sqlOperator,
     additionalFiltersSessionStorageKey,
     ContainerProps,
+    tabRoutes,
+    children = <Outlet />,
   } = props
 
   const searchParams = useGetPortalComponentSearchParams()
@@ -125,6 +121,13 @@ export default function DetailsPage(
         className="DetailsPage tab-layout"
         {...ContainerProps}
       >
+        {tabRoutes && (
+          <div className="tab-groups">
+            {tabRoutes.map(props => (
+              <DetailsPageTabUI key={props.path} {...props} />
+            ))}
+          </div>
+        )}
         {isLoading && (
           <Box display={'flex'} justifyContent={'center'} my={10}>
             <BarLoader
@@ -135,7 +138,7 @@ export default function DetailsPage(
             />
           </Box>
         )}
-        {isSuccess && props.children}
+        {isSuccess && children}
       </Container>
     </DetailsPageContextProvider>
   )
