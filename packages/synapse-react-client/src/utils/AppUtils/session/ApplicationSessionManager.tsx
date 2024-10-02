@@ -143,6 +143,8 @@ export function ApplicationSessionManager(
 
   /** Call refreshSession on mount */
   useEffect(() => {
+    // restore last place if found (on mount)
+    restoreLastPlace() //if history is used, the Synapse sign-in app is not properly initialized on return
     if (forceRelogin) {
       clearSession()
     } else {
