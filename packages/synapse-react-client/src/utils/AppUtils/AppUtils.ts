@@ -1,24 +1,19 @@
 import { useHistory } from 'react-router-dom'
-import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from '../SynapseConstants'
+import { LAST_PLACE_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useEffect, useState } from 'react'
 
-export function preparePostSSORedirect() {
+export function storeLastPlace() {
   // save current route (so that we can go back here after SSO)
-  localStorage.setItem(
-    POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
-    window.location.href,
-  )
+  localStorage.setItem(LAST_PLACE_LOCALSTORAGE_KEY, window.location.href)
 }
 
-export function redirectAfterSSO(
+export function restoreLastPlace(
   history?: ReturnType<typeof useHistory>,
   fallbackRedirectUrl?: string,
 ) {
   // go back to original route after successful SSO login
-  const originalUrl = localStorage.getItem(
-    POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
-  )
-  localStorage.removeItem(POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY)
+  const originalUrl = localStorage.getItem(LAST_PLACE_LOCALSTORAGE_KEY)
+  localStorage.removeItem(LAST_PLACE_LOCALSTORAGE_KEY)
   const redirectUrl = originalUrl ?? fallbackRedirectUrl
   if (redirectUrl) {
     if (history) {

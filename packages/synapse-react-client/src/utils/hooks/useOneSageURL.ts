@@ -12,7 +12,7 @@ import {
  * @param hash an optional hash to append to the URL
  */
 export function useOneSageURL(
-  path: string,
+  path: string = '',
   search?: URLSearchParams,
   hash?: string,
 ) {

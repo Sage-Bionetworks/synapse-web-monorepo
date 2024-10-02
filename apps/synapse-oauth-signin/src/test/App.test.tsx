@@ -29,7 +29,7 @@ const overrideWaitForOptions: waitForOptions = {
   timeout: 5000,
 }
 
-const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
+const { ACCESS_TOKEN_COOKIE_KEY, LAST_PLACE_LOCALSTORAGE_KEY } =
   SynapseConstants
 
 type ParamOverrides = Partial<
@@ -402,7 +402,7 @@ describe('App integration tests', () => {
 
     // Note - don't use `renderApp` since it sets the URL and instead we want to simulate the redirect from Google
     localStorage.setItem(
-      POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+      LAST_PLACE_LOCALSTORAGE_KEY,
       `/?${createParams().toString()}`,
     )
     window.history.replaceState({}, '', `/?${paramsFromProvider.toString()}`)

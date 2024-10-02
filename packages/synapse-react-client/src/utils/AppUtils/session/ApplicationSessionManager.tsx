@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import SynapseClient from '../../../synapse-client'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
-import { redirectAfterSSO } from '../AppUtils'
+import { restoreLastPlace } from '../AppUtils'
 import { useHistory } from 'react-router-dom'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
@@ -160,7 +160,7 @@ export function ApplicationSessionManager(
 
   const { isLoading: isLoadingSSO } = useDetectSSOCode({
     onSignInComplete: () => {
-      redirectAfterSSO(history)
+      restoreLastPlace(history)
       refreshSession()
     },
     onTwoFactorAuthRequired: twoFactorAuthError => {
