@@ -20,7 +20,6 @@ import {
   elPortalPalette,
   mtbPalette,
   nfPortalPalette,
-  psychEncodePortalPalette,
   sageBionetworksPalette,
   stopAdPortalPalette,
   geniePalette,
@@ -148,9 +147,6 @@ export const decorators: Decorator[] = [
       }),
       ['BSMN Portal']: createTheme(defaultMuiThemeOptions, {
         palette: bsmnPortalPalette,
-      }),
-      ['PsychENCODE Portal']: createTheme(defaultMuiThemeOptions, {
-        palette: psychEncodePortalPalette,
       }),
       ['STOP AD Portal']: createTheme(defaultMuiThemeOptions, {
         palette: stopAdPortalPalette,

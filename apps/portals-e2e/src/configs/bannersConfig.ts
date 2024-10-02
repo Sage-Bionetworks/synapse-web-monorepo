@@ -15,7 +15,6 @@ const bannerConfig: BannerConfig = {
   digitalhealth: ['cookies'],
   elportal: ['cookies', 'beta'],
   nf: ['cookies', 'survey'],
-  psychencode: ['cookies'],
   stopadportal: ['cookies'],
   genie: ['cookies', 'survey'],
 }

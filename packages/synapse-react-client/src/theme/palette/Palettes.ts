@@ -131,12 +131,6 @@ export const bsmnPortalPalette: PaletteOptions = {
   secondary: generatePalette('#2699a7'),
 }
 
-export const psychEncodePortalPalette: PaletteOptions = {
-  ...palette,
-  primary: generatePalette('#00565e'),
-  secondary: generatePalette('#f7a700'),
-}
-
 export const stopAdPortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#4d5491'),
@@ -189,7 +183,6 @@ export default {
   elPortalPalette,
   nfPortalPalette,
   bsmnPortalPalette,
-  psychEncodePortalPalette,
   stopAdPortalPalette,
   digitalHealthPortalPalette,
   crcResearcherPortalPalette,
