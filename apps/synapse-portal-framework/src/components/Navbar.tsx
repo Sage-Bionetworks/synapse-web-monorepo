@@ -216,7 +216,7 @@ function Navbar() {
                   variant="contained"
                   onClick={() => {
                     storeLastPlace()
-                    window.location.assign(oneSageUrl)
+                    window.location.assign(oneSageUrl.toString())
                   }}
                 >
                   Sign&nbsp;In

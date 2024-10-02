@@ -8,9 +8,9 @@ import {
   SynapseConstants,
   useFramebuster,
   SynapseHookUtils,
+  storeLastPlace,
 } from 'synapse-react-client'
 import { useCookies } from 'react-cookie'
-import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
@@ -18,10 +18,10 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
-  const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
   const isFramed = useFramebuster()
   SynapseHookUtils.useGoogleAnalytics()
+  const oneSageURL = SynapseHookUtils.useOneSageURL()
   useEffect(() => {
     /**
      * PORTALS-490: Set Synapse callback cookie
@@ -57,9 +57,8 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       ) {
         const el = ev.target as HTMLElement
         if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          if (!showLoginDialog) {
-            setShowLoginDialog(true)
-          }
+          storeLastPlace()
+          window.location.assign(oneSageURL.toString())
         }
       }
       let name = ''
@@ -110,9 +109,6 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   return (
     <ApplicationSessionManager
       downloadCartPageUrl={'/DownloadCart'}
-      onResetSessionComplete={() => {
-        setShowLoginDialog(false)
-      }}
       appId={import.meta.env.VITE_PORTAL_KEY}
     >
       {!isFramed && props.children}

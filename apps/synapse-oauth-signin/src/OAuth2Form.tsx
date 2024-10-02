@@ -325,7 +325,7 @@ export function OAuth2Form() {
   ) {
     // Prompt for login
     storeLastPlace()
-    window.location.assign(oneSageURL)
+    window.location.assign(oneSageURL.toString())
   }
   return (
     <StyledOuterContainer>

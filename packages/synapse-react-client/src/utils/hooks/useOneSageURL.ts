@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import {
   ONE_SAGE_APPID_QUERY_PARAM_KEY,
   ONE_SAGE_PRODUCTION_URL,
+  ONE_SAGE_STAGING_URL,
 } from '../SynapseConstants'
 
 /**
@@ -19,7 +20,11 @@ export function useOneSageURL(
   const { appId } = useSynapseContext()
 
   return useMemo(() => {
-    const url = new URL(path, ONE_SAGE_PRODUCTION_URL)
+    const targetURL =
+      window.location.hostname != 'staging.synapse.org'
+        ? ONE_SAGE_PRODUCTION_URL
+        : ONE_SAGE_STAGING_URL
+    const url = new URL(path, targetURL)
     if (appId) {
       url.searchParams.append(ONE_SAGE_APPID_QUERY_PARAM_KEY, appId)
     }
