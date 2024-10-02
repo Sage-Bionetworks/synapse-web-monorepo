@@ -93,7 +93,8 @@ import SynapseChat from './components/SynapseChat/SynapseChat'
 import { version } from '../package.json'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
-import { MarkdownGithub } from './components/Markdown/MarkdownGithub'
+import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
+import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -188,7 +189,8 @@ const SynapseComponents = {
   EntityAclEditorModal,
   SynapseChat,
   RejectProfileValidationRequestModal,
-  MarkdownGithub,
+  GovernanceMarkdownGithub,
+  MarkdownGithubLatestTag,
 }
 
 // Include the version in the build

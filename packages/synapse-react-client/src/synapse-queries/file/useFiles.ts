@@ -216,3 +216,32 @@ export function useGetFileBatch(
     queryFn,
   })
 }
+
+export function useFileContent(
+  fileURL: string,
+  options?: Partial<UseQueryOptions<string>>,
+) {
+  const { keyFactory } = useSynapseContext()
+  const queryFn = async () => {
+    try {
+      if (!fileURL) {
+        throw new Error(`File URL must be set`)
+      }
+      // Fetch the raw file contents from the latest tag
+      const fileResponse = await fetch(fileURL)
+      if (!fileResponse.ok) {
+        throw new Error(`Error fetching file: ${fileResponse.statusText}`)
+      }
+
+      return await fileResponse.text()
+    } catch (error) {
+      console.error(error)
+    }
+    return ''
+  }
+  return useQuery<string>({
+    ...options,
+    queryKey: keyFactory.getFileContentKey(fileURL),
+    queryFn,
+  })
+}

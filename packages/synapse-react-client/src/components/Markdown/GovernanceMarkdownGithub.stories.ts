@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { MarkdownGithub } from './MarkdownGithub'
+import { GovernanceMarkdownGithub } from './MarkdownGithub'
 
 const meta = {
-  title: 'Markdown/MarkdownGithub',
-  component: MarkdownGithub,
+  title: 'Markdown/GovernanceMarkdownGithub',
+  component: GovernanceMarkdownGithub,
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
