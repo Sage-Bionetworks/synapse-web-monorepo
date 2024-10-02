@@ -36,7 +36,7 @@ export const MarkdownGithubLatestTag: React.FunctionComponent<
 }
 
 /**
- * Loads the latest tagged version of the (presumably MD) file from GitHub
+ * Load MD file content from GitHub (using the given tag)
  * @returns
  */
 const MarkdownGithub: React.FunctionComponent<
