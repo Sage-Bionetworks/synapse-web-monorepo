@@ -1,4 +1,5 @@
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import { isEmpty } from 'lodash'
 import React, { useContext } from 'react'
 import { getColumnIndex } from 'synapse-react-client'
 
@@ -50,14 +51,23 @@ export function DetailsPageContextConsumer(
       {(context: DetailsPageContextType) => {
         let value: string | null | undefined = undefined
         if (context.queryResultBundle && context.rowData && columnName) {
+          // debugger
           const columnIndex = getColumnIndex(
             columnName,
             context.queryResultBundle.selectColumns,
-            context.queryResultBundle.columnModels,
+            undefined,
           )
 
           if (columnIndex !== undefined) {
+            const columnModel =
+              context.queryResultBundle.selectColumns![columnIndex]
             value = context.rowData.values[columnIndex]
+            // Note: searchParams expects comma-separated values
+            // TODO: The downstream component has no idea if this is going to be comma-separated or not
+            //
+            if (columnModel.columnType.endsWith('_LIST') && !isEmpty(value)) {
+              value = (JSON.parse(value!) as string[]).join(',')
+            }
           }
         }
         console.log('context:', { context, value })

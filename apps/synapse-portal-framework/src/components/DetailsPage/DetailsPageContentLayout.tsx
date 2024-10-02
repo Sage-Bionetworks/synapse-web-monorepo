@@ -24,7 +24,10 @@ export function DetailsPageContent(props: {
   content: DetailsPageContentType
   hideMenu?: boolean
 }) {
-  const { content, hideMenu = false } = props
+  const { content } = props
+  const menuOptions = content.filter(option => option.title && option.id)
+  const hideMenu = props.hideMenu ?? menuOptions.length <= 1
+
   return (
     <div className={'tab-content-group'}>
       {!hideMenu && (

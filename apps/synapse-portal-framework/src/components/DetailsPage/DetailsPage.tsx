@@ -1,7 +1,15 @@
-import { Container, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import {
   SynapseConstants,
@@ -52,6 +60,8 @@ export default function DetailsPage(
   } = props
 
   const searchParams = useGetPortalComponentSearchParams()
+  const location = useLocation()
+  const { palette } = useTheme()
 
   useScrollOnMount()
 
@@ -79,28 +89,28 @@ export default function DetailsPage(
   const {
     data: asyncJobStatus,
     isLoading,
+    isSuccess,
     error: hasError,
   } = SynapseQueries.useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
 
   const queryResultBundle = asyncJobStatus?.responseBody
 
   if (hasError) {
-    const currentLocation = window.location.href.split('/')
-    const name = currentLocation[currentLocation.length - 2]
+    const currentLocation = location.pathname.split('/')
+    const name = decodeURI(currentLocation[currentLocation.length - 2])
     return (
-      <div className="DetailsPage__ComingSoon">
-        <Typography variant="headline1">Coming Soon! </Typography>
-        <p>
+      <Stack alignItems={'center'} gap={2} mt={5}>
+        <Typography variant="headline1" gutterBottom>
+          Coming Soon!
+        </Typography>
+        <Typography variant={'smallText1'} gutterBottom>
           This {pluralize.singular(name).toLowerCase()} is not yet available,
           please check back soon.
-        </p>
-        <button
-          onClick={goToExplorePage}
-          className="SRC-standard-button-shape SRC-primary-background-color SRC-whiteText"
-        >
+        </Typography>
+        <Button variant={'contained'} onClick={goToExplorePage}>
           Continue Exploring
-        </button>
-      </div>
+        </Button>
+      </Stack>
     )
   }
 
@@ -115,8 +125,17 @@ export default function DetailsPage(
         className="DetailsPage tab-layout"
         {...ContainerProps}
       >
-        {isLoading && <BarLoader color="#878787" loading={true} height={5} />}
-        {props.children}
+        {isLoading && (
+          <Box display={'flex'} justifyContent={'center'} my={10}>
+            <BarLoader
+              color={palette.primary.main}
+              loading={true}
+              height={5}
+              width={400}
+            />
+          </Box>
+        )}
+        {isSuccess && props.children}
       </Container>
     </DetailsPageContextProvider>
   )

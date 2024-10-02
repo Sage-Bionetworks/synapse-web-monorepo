@@ -14,15 +14,16 @@ export type DetailsPageSectionLayoutType = {
   id: string
   /** The contents of the section */
   element: React.ReactNode
+  helpText?: string
 }
 
 export function DetailsPageSectionLayout(props: DetailsPageSectionLayoutType) {
-  const { id, title, hideTitle = false, element } = props
+  const { id, title, hideTitle = false, element, helpText } = props
   return (
     <section id={id}>
       {title && !hideTitle && (
         <>
-          <HeadlineWithLink title={title} id={id} />
+          <HeadlineWithLink title={title} id={id} helpText={helpText} />
           <hr />
         </>
       )}

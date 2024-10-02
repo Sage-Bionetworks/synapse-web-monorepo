@@ -1,33 +1,30 @@
+import { datasetsQueryWrapperPlotNavProps } from './datasets'
+import { educationQueryWrapperPlotNavProps } from './education'
 import { files } from './files'
-import { datasets } from './datasets'
-import { grants } from './grants'
-import { publications } from './publications'
+import { grantQueryWrapperPlotNavProps } from './grants'
+import { peopleQueryWrapperPlotNavProps } from './people'
 import { projects } from './projects'
-import { tools } from './tools'
-import { people } from './people'
-import { education } from './education'
-import { mc2SupplementTable } from './mc2supplement'
+import { publicationsQueryWrapperPlotNavProps } from './publications'
+import { toolsQueryWrapperPlotNavProps } from './tools'
 
 export {
   files,
-  datasets,
-  grants,
-  publications,
+  datasetsQueryWrapperPlotNavProps,
+  grantQueryWrapperPlotNavProps,
+  publicationsQueryWrapperPlotNavProps,
   projects,
-  tools,
-  people,
-  education,
-  mc2SupplementTable,
+  toolsQueryWrapperPlotNavProps,
+  peopleQueryWrapperPlotNavProps,
+  educationQueryWrapperPlotNavProps,
 }
 
 export default {
   files,
-  datasets,
-  grants,
-  publications,
+  datasets: datasetsQueryWrapperPlotNavProps,
+  grants: grantQueryWrapperPlotNavProps,
+  publications: publicationsQueryWrapperPlotNavProps,
   projects,
-  tools,
-  people,
-  education,
-  mc2SupplementTable,
+  tools: toolsQueryWrapperPlotNavProps,
+  people: peopleQueryWrapperPlotNavProps,
+  education: educationQueryWrapperPlotNavProps,
 }
