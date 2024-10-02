@@ -11,12 +11,18 @@ type MarkdownSynapseFromColumnDataProps = {
    * @default false
    */
   showNoContentAvailable?: boolean
+  injectMarkdown?: boolean
 }
 
 export function MarkdownSynapseFromColumnData(
   props: MarkdownSynapseFromColumnDataProps,
 ) {
-  const { columnName, showEntityTitle, showNoContentAvailable = false } = props
+  const {
+    columnName,
+    showEntityTitle,
+    showNoContentAvailable = false,
+    injectMarkdown = false,
+  } = props
   return (
     <DetailsPageContextConsumer columnName={columnName}>
       {({ value }) => {
@@ -27,7 +33,7 @@ export function MarkdownSynapseFromColumnData(
         const propsArray = value
           .split(',')
           .map(s => s.trim())
-          .map(s => transformStringIntoMarkdownProps(s))
+          .map(s => transformStringIntoMarkdownProps(s, injectMarkdown))
 
         return propsArray.map(props => {
           return (

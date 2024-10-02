@@ -1,16 +1,15 @@
-import { SynapseConstants, TargetEnum } from 'synapse-react-client'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
+import { SynapseConstants, TargetEnum } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { dataDetailPageProps } from './data'
-import { toolsDetailPageProps } from './tools'
-import { publicationDetailPageProps } from './publications'
 import { studySql } from '../resources'
 import { iconOptions } from './iconOptions'
 
-const rgbIndex = 9
+export const studiesRgbIndex = 9
 
 export const studySchema: GenericCardSchema = {
   type: '',
@@ -56,89 +55,37 @@ export const studiesCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const studies: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    cardConfiguration: studiesCardConfiguration,
-    sql: studySql,
-    shouldDeepLink: true,
-    hideDownload: true,
-    name: 'Collections',
-    columnAliases,
-    facetsToPlot: [
-      'collectionType',
-      'deviceLocation',
-      'devicePlatform',
-      'deviceType',
+export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex: studiesRgbIndex,
+  cardConfiguration: studiesCardConfiguration,
+  sql: studySql,
+  shouldDeepLink: true,
+  hideDownload: true,
+  name: 'Collections',
+  columnAliases,
+  facetsToPlot: [
+    'collectionType',
+    'deviceLocation',
+    'devicePlatform',
+    'deviceType',
+    'diagnosis',
+    'digitalAssessmentCategory',
+    'intervention',
+    'reportedOutcome',
+    'sensorType',
+  ],
+  searchConfiguration: {
+    searchable: [
       'diagnosis',
       'digitalAssessmentCategory',
+      'digitalAssessmentDetails',
       'intervention',
+      'investigator',
+      'keywords',
       'reportedOutcome',
-      'sensorType',
+      'study',
     ],
-    searchConfiguration: {
-      searchable: [
-        'diagnosis',
-        'digitalAssessmentCategory',
-        'digitalAssessmentDetails',
-        'intervention',
-        'investigator',
-        'keywords',
-        'reportedOutcome',
-        'study',
-      ],
-    },
   },
-}
-
-export const details: DetailsPageProps = {
-  sql: studySql,
-  synapseConfigArray: [
-    {
-      name: 'Markdown',
-      props: {},
-      injectMarkdown: false,
-      columnName: 'studyDescriptionLocation',
-      title: 'Study Description',
-    },
-    {
-      name: 'Markdown',
-      props: {},
-      injectMarkdown: true,
-      columnName: 'dataAccessInstructions',
-      title: 'Data Access',
-      className: 'PORTALS-1365',
-    },
-    {
-      name: 'Markdown',
-      props: {},
-      injectMarkdown: false,
-      columnName: 'studyDataDescriptionLocation',
-      title: 'Data Description',
-    },
-    {
-      name: 'StandaloneQueryWrapper',
-      title: 'Data Files',
-      columnName: 'id',
-      tableSqlKeys: ['projectId'],
-      props: dataDetailPageProps,
-    },
-    {
-      name: 'CardContainerLogic',
-      title: 'Suggested Tools',
-      columnName: 'id',
-      tableSqlKeys: ['suggestedStudies'],
-      props: toolsDetailPageProps,
-    },
-    {
-      name: 'CardContainerLogic',
-      title: 'Publications',
-      columnName: 'id',
-      tableSqlKeys: ['synID'],
-      props: publicationDetailPageProps,
-    },
-  ],
 }
 
 export const studyDetailPage: SynapseConfig[] = [
@@ -149,7 +96,7 @@ export const studyDetailPage: SynapseConfig[] = [
       isHeader: true,
       isAlignToLeftNav: true,
       ...studiesCardConfiguration,
-      rgbIndex,
+      rgbIndex: studiesRgbIndex,
       columnAliases,
       genericCardSchema: {
         ...studySchema,
@@ -158,9 +105,5 @@ export const studyDetailPage: SynapseConfig[] = [
       },
       sql: studySql,
     },
-  },
-  {
-    name: 'DetailsPage',
-    props: details,
   },
 ]
