@@ -56,7 +56,13 @@ const MarkdownGithub: React.FunctionComponent<
     </Box>
   )
   return (
-    <Container>
+    <Container
+      sx={{
+        '> .markdown': {
+          px: '10px', //without this, numbered lists in the md overflow left (and are cut off)
+        },
+      }}
+    >
       {fileContent ? <MarkdownSynapse markdown={fileContent} /> : loadingUI}
     </Container>
   )
