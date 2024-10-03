@@ -18,9 +18,14 @@ export function storeRedirectURLForOneSageLogin() {
     .endsWith('.synapse.org')
     ? '.synapse.org'
     : undefined
+
+  const twoHoursFromNow = new Date()
+  twoHoursFromNow.setTime(twoHoursFromNow.getTime() + 60 * 60 * 1000)
+
   cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, window.location.href, {
     path: '/',
     domain: domainValue,
+    expires: twoHoursFromNow,
   })
 }
 
