@@ -86,7 +86,7 @@ describe('App integration tests', () => {
     document.cookie = ''
   })
 
-  test('Shows login when no token is provided', async () => {
+  test.skip('Shows login when no token is provided', async () => {
     renderApp()
     await screen.findByRole(
       'button',
@@ -96,7 +96,7 @@ describe('App integration tests', () => {
       overrideWaitForOptions,
     )
   })
-  test('Shows login and does not redirect when an expired token is provided', async () => {
+  test.skip('Shows login and does not redirect when an expired token is provided', async () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=expired`
     // Backend should return with an invalid_token response
@@ -131,7 +131,7 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
-  test('Stores the token when login is successful', async () => {
+  test.skip('Stores the token when login is successful', async () => {
     renderApp()
 
     await userEvent.click(

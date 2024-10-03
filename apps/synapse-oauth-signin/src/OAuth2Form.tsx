@@ -11,11 +11,10 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
-  StandaloneLoginForm,
   storeLastPlace,
   StyledOuterContainer,
   SynapseClient,
@@ -23,7 +22,6 @@ import {
   SynapseConstants,
   SynapseHookUtils,
   SynapseQueries,
-  SystemUseNotification,
   UserCard,
   useSynapseContext,
 } from 'synapse-react-client'
