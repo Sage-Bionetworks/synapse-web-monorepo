@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
-  storeLastPlace,
+  storeRedirectURLForOneSageLogin,
   StyledOuterContainer,
   SynapseClient,
   SynapseClientError,
@@ -322,7 +322,7 @@ export function OAuth2Form() {
     oidcRequestDescription
   ) {
     // Prompt for login
-    storeLastPlace()
+    storeRedirectURLForOneSageLogin()
     window.location.assign(oneSageURL.toString())
   }
   return (

@@ -6,7 +6,7 @@ import {
   SynapseHookUtils,
   SynapseQueries,
   useSynapseContext,
-  storeLastPlace,
+  storeRedirectURLForOneSageLogin,
 } from 'synapse-react-client'
 import NavLink from '../components/NavLink'
 import NavUserLink from '../components/NavUserLink'
@@ -215,7 +215,7 @@ function Navbar() {
                   color="secondary"
                   variant="contained"
                   onClick={() => {
-                    storeLastPlace()
+                    storeRedirectURLForOneSageLogin()
                     window.location.assign(oneSageUrl.toString())
                   }}
                 >

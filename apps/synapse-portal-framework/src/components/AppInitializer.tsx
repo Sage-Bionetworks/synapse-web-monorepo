@@ -8,7 +8,7 @@ import {
   SynapseConstants,
   useFramebuster,
   SynapseHookUtils,
-  storeLastPlace,
+  storeRedirectURLForOneSageLogin,
 } from 'synapse-react-client'
 import { useCookies } from 'react-cookie'
 
@@ -57,7 +57,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       ) {
         const el = ev.target as HTMLElement
         if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          storeLastPlace()
+          storeRedirectURLForOneSageLogin()
           window.location.assign(oneSageURL.toString())
         }
       }

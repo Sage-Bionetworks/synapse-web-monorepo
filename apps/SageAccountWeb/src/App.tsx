@@ -17,6 +17,7 @@ import {
   SynapseClient,
   SynapseContextConsumer,
   SynapseContextType,
+  processRedirectURLInOneSage,
 } from 'synapse-react-client'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { getSearchParam } from './URLUtils'
@@ -44,19 +45,22 @@ function App() {
                 return (
                   <AppContextConsumer>
                     {appContext => {
+                      // User is logged in and visiting the root, redirect (unless in the SSO Flow)
                       const isCodeSearchParam =
                         getSearchParam('code') !== undefined
                       const isProviderSearchParam =
                         getSearchParam('provider') !== undefined
                       const isInSSOFlow =
                         isCodeSearchParam && isProviderSearchParam
-                      return (
-                        <>
-                          {appContext?.redirectURL &&
-                            !isInSSOFlow &&
-                            window.location.replace(appContext?.redirectURL)}
-                        </>
-                      )
+                      if (!isInSSOFlow) {
+                        // take user back to page they came from in the source app, if stored in a cookie
+                        const isProcessed = processRedirectURLInOneSage()
+                        if (!isProcessed && appContext?.redirectURL) {
+                          // if not in the cookie, take them to
+                          window.location.replace(appContext?.redirectURL)
+                        }
+                      }
+                      return <></>
                     }}
                   </AppContextConsumer>
                 )
