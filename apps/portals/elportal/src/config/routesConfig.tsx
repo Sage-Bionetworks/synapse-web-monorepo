@@ -58,23 +58,23 @@ const routes: GenericRoute[] = [
           entityId: 'syn51449135',
         },
       },
-      // Commented out for v1
-      {
-        name: 'UpsetPlot',
-        title: 'Exploring the Data',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        centerTitle: true,
-        props: {
-          sql: upsetPlotSql,
-          rgbIndex: 0,
-          maxBarCount: 20,
-          setName: '# Files per assay',
-          combinationName: '# individuals',
-          onClick: handleUpsetPlotClick,
-          // summaryLinkText: 'Explore All Data',
-          // summaryLink: '/Explore/Data',
-        },
-      },
+      // Commented out for release (see EC-485)
+      // {
+      //   name: 'UpsetPlot',
+      //   title: 'Exploring the Data',
+      //   outsideContainerClassName: 'home-spacer home-bg-dark',
+      //   centerTitle: true,
+      //   props: {
+      //     sql: upsetPlotSql,
+      //     rgbIndex: 0,
+      //     maxBarCount: 20,
+      //     setName: '# Files per assay',
+      //     combinationName: '# individuals',
+      //     onClick: handleUpsetPlotClick,
+      //     // summaryLinkText: 'Explore All Data',
+      //     // summaryLink: '/Explore/Data',
+      //   },
+      // },
       {
         name: 'RssFeedCards',
         title: "What's New",
