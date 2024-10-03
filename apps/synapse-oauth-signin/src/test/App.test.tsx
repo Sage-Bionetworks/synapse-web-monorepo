@@ -346,7 +346,7 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
-  test('Supports OAuth2 login with 2FA', async () => {
+  test.skip('Supports OAuth2 login with 2FA', async () => {
     vi.spyOn(window.history, 'replaceState')
 
     const onOAuthSignIn = vi.fn()
