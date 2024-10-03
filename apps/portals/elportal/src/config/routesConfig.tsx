@@ -68,8 +68,8 @@ const routes: GenericRoute[] = [
           sql: upsetPlotSql,
           rgbIndex: 0,
           maxBarCount: 20,
-          setName: '# Files per data type',
-          combinationName: '# Files',
+          setName: '# Files per assay',
+          combinationName: '# individuals',
           onClick: handleUpsetPlotClick,
           // summaryLinkText: 'Explore All Data',
           // summaryLink: '/Explore/Data',
@@ -226,6 +226,7 @@ const routes: GenericRoute[] = [
   {
     path: 'Browse Tools',
     exact: true,
+    hideRouteFromNavbar: true, // EC-485: hide from nav bar for release
     synapseConfigArray: [
       {
         name: 'ELBrowseToolsPage',
