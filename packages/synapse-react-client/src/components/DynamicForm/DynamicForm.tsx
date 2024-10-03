@@ -94,7 +94,7 @@ function DynamicForm(props: DynamicFormProps) {
     return (
       <Box>
         <Typography variant="body1">Loading form...</Typography>
-        <SkeletonParagraph numRows={6} />
+        <SkeletonParagraph numRows={20} rowHeight="40px" />
       </Box>
     )
   }
