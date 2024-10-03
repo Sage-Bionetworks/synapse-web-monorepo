@@ -52,8 +52,14 @@ const routesConfig: RouteConfig = {
     ],
   },
   nf: {
-    buttons: ['Explore', 'Organizations', 'About', 'Sign In'],
-    links: ['Browse Tools', 'Contribute Data', 'News', 'Help'],
+    buttons: [
+      'Research Tools Central',
+      'Explore',
+      'Organizations',
+      'About',
+      'Sign In',
+    ],
+    links: ['Contribute Data', 'News', 'Help'],
   },
   psychencode: {
     buttons: ['Home', 'Explore', 'Sign In'],
