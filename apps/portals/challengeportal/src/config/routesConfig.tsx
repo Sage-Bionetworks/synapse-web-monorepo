@@ -1,5 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
@@ -76,7 +77,17 @@ const routes: RouteObject[] = [
       {
         path: 'Challenges/DetailsPage',
         element: <ChallengeDetailsPage />,
-        children: challengeDetailsPageConfig.tabRoutes,
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery
+                to={challengeDetailsPageConfig.tabRoutes![0].path!}
+              />
+            ),
+          },
+          ...challengeDetailsPageConfig.tabRoutes!,
+        ],
       },
     ],
   },

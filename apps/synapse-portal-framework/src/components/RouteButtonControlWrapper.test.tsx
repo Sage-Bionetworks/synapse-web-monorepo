@@ -1,5 +1,5 @@
 import React from 'react'
-import ExploreWrapper, { RouteControlWrapperProps } from './ExploreWrapper'
+import ExploreWrapper, { ExploreWrapperProps } from './Explore/ExploreWrapper'
 import { MemoryRouter } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import { FullContextProvider } from 'synapse-react-client'
@@ -7,7 +7,7 @@ import { describe, it } from 'vitest'
 
 describe('RouteControlWrapper works', () => {
   const routeName = 'custom route'
-  const props: RouteControlWrapperProps = {
+  const props: ExploreWrapperProps = {
     customRoutes: [
       {
         path: routeName,

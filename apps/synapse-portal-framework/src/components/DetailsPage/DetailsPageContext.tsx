@@ -36,12 +36,13 @@ function getValue(
       undefined,
     )
 
-    if (columnIndex !== undefined) {
+    if (columnIndex) {
       const columnModel = context.queryResultBundle.selectColumns![columnIndex]
       value = context.rowData.values[columnIndex]
       // Note: searchParams expects comma-separated values
       // TODO: The downstream component has no idea if this is going to be comma-separated or not
       //
+
       if (columnModel.columnType.endsWith('_LIST') && !isEmpty(value)) {
         value = (JSON.parse(value!) as string[]).join(',')
       }

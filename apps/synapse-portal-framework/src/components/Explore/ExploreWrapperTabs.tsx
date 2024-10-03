@@ -8,10 +8,7 @@ import {
 } from '@mui/material'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
-export type ExploreWrapperTabsProps = {
-  explorePaths: { path: string; displayName?: string }[]
-}
+import { ExploreWrapperProps } from './ExploreWrapperProps'
 
 function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
@@ -33,7 +30,7 @@ function CustomScrollButton(props: TabScrollButtonProps) {
   )
 }
 
-export function ExploreWrapperTabs(props: ExploreWrapperTabsProps) {
+export function ExploreWrapperTabs(props: ExploreWrapperProps) {
   const { explorePaths } = props
   const theme = useTheme()
   const { pathname } = useLocation()

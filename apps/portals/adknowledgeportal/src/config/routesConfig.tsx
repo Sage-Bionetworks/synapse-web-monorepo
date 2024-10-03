@@ -2,7 +2,7 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPage'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
+import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
@@ -65,6 +65,7 @@ import {
   studiesQueryWrapperPlotNavProps,
   studyCardConfiguration,
   studyDetailsPageChildRoutes,
+  studyDetailsPageTabs,
 } from './synapseConfigs/studies'
 import {
   targetEnablingResourcesCardConfiguration,
@@ -611,11 +612,9 @@ const routes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: (
-              <RedirectWithQuery to={studyDetailsPageChildRoutes[0].path!} />
-            ),
+            element: <RedirectWithQuery to={studyDetailsPageTabs[0].path!} />,
           },
-          ...studyDetailsPageChildRoutes,
+          ...studyDetailsPageTabs,
         ],
       },
       {

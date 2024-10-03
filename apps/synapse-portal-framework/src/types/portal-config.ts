@@ -1,7 +1,11 @@
+import { CSSProperties } from 'react'
+import { NavigateProps } from 'react-router-dom'
 import {
   CardContainerLogicProps,
   ChallengeDataDownloadProps,
+  DatasetJsonLdScriptProps,
   DownloadCartPageProps,
+  DynamicFormProps,
   ExternalFileHandleLinkProps,
   FeaturedDataTabsProps,
   GoalsProps,
@@ -13,6 +17,7 @@ import {
   QueryWrapperProps,
   ResourcesProps,
   RssFeedCardsProps,
+  SharePageLinkButtonProps,
   StandaloneQueryWrapperProps,
   SubsectionRowRendererProps,
   SynapseFormSubmissionGridProps,
@@ -21,33 +26,28 @@ import {
   TableFeedCardsProps,
   ThemesPlotProps,
   TimelinePlotProps,
-  DatasetJsonLdScriptProps,
   UpsetPlotProps,
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
-  DynamicFormProps,
-  SharePageLinkButtonProps,
 } from 'synapse-react-client'
-import { RouteControlWrapperProps } from '../components/ExploreWrapper'
-import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
-import { AboutPortalProps } from '../components/csbc-home-page/AboutPortal'
-import { DetailsPageProps } from './portal-util-types'
+import { ChallengeSubmissionWrapperProps } from '../components/challengeportal/ChallengeSubmissionWrapper'
 import { ParticipantsBarPlotProps } from '../components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../components/crc-researcher/SurveysCompletedPlots'
-import { ImageProps } from '../components/Image'
-import { NavigateProps } from 'react-router-dom'
-import { ToggleSynapseObjectsProps } from '../components/ToggleSynapseObjects'
-import { CSSProperties } from 'react'
-import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
-import { ChallengeSubmissionWrapperProps } from '../components/challengeportal/ChallengeSubmissionWrapper'
-import { RedirectToURLProps } from '../components/RedirectToURL'
-import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
-import { NFBrowseToolsPageProps } from '../components/nf/NFBrowseToolsPage'
-import { ELBrowseToolsPageProps } from '../components/elportal/ELBrowseToolsPage'
+import { AboutPortalProps } from '../components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../components/csbc-home-page/Ecosystem'
+import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
+import { ELBrowseToolsPageProps } from '../components/elportal/ELBrowseToolsPage'
+import { ExploreWrapperProps } from '../components/Explore/ExploreWrapperProps'
+import { ImageProps } from '../components/Image'
+import { NFBrowseToolsPageProps } from '../components/nf/NFBrowseToolsPage'
+import { RedirectToURLProps } from '../components/RedirectToURL'
 import { SurveyToastProps } from '../components/SurveyToast'
+import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
+import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
+import { ToggleSynapseObjectsProps } from '../components/ToggleSynapseObjects'
+import { DetailsPageProps } from './portal-util-types'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -116,7 +116,7 @@ type Resources = {
 
 type RouteControl = {
   name: 'RouteControlWrapper'
-  props: RouteControlWrapperProps
+  props: ExploreWrapperProps
 }
 
 type DetailsPage = {

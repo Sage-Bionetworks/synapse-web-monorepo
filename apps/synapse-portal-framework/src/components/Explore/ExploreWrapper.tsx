@@ -1,23 +1,30 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import React, { useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useMatch } from 'react-router-dom'
+import { OrientationBanner } from 'synapse-react-client'
 import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
-} from '../utils'
-import {
-  ExploreWrapperTabs,
-  ExploreWrapperTabsProps,
-} from './ExploreWrapperTabs'
+} from '../../utils'
+import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
+import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 
-export type RouteControlWrapperProps = ExploreWrapperTabsProps
+function RouteMatchedOrientationBanner(props: { route: ExplorePageRoute }) {
+  const { route } = props
+  const match = useMatch({ path: `/Explore/${route.path!}`, end: true })
+
+  if (!route.OrientationBannerProps || match == null) {
+    return null
+  }
+  return <OrientationBanner {...route.OrientationBannerProps} />
+}
 
 /**
  * RouteControl is the set of controls used on the /Explore page to navigate the
  * different keys.
  */
-export default function ExploreWrapper(props: RouteControlWrapperProps) {
+export default function ExploreWrapper(props: ExploreWrapperProps) {
   const { explorePaths } = props
 
   const theme = useTheme()
@@ -27,7 +34,7 @@ export default function ExploreWrapper(props: RouteControlWrapperProps) {
   const { pathname } = useLocation()
   const currentExploreRoute = pathname.substring('/Explore/'.length)
   const currentRoute = explorePaths.find(
-    route => encodeURI(route.path) === currentExploreRoute,
+    route => encodeURI(route.path!) === currentExploreRoute,
   )
   if (currentRoute) {
     const pageName =
@@ -41,6 +48,9 @@ export default function ExploreWrapper(props: RouteControlWrapperProps) {
 
   return (
     <>
+      {explorePaths.map(route => (
+        <RouteMatchedOrientationBanner key={route.path} route={route} />
+      ))}
       <Box
         sx={{
           ...RESPONSIVE_SIDE_PADDING,

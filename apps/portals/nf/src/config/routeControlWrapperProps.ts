@@ -1,4 +1,4 @@
-import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
+import { ExploreWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import {
   datasets,
   files,
@@ -9,7 +9,7 @@ import {
   tools,
 } from './synapseConfigs'
 
-const routeControlWrapperProps: RouteControlWrapperProps = {
+const routeControlWrapperProps: ExploreWrapperProps = {
   customRoutes: [
     { path: 'Initiatives', synapseConfigArray: [initiatives] },
     { path: 'Studies', synapseConfigArray: [studies] },

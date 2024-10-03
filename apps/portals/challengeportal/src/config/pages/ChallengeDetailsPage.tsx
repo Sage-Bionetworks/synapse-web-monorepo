@@ -8,7 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/MarkdownSynapseFromColumnData'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import ProjectDiscussionForum from '@sage-bionetworks/synapse-portal-framework/components/ProjectDiscussionForum'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'

@@ -1,6 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ARKWelcomePage from '@sage-bionetworks/synapse-portal-framework/components/arkportal/ARKWelcomePage'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
+import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import React from 'react'

@@ -1,4 +1,4 @@
-import { RouteControlWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
+import { ExploreWrapperProps } from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import {
   contributors,
   genieBPCData,
@@ -7,7 +7,7 @@ import {
   tools,
 } from './synapseConfigs'
 
-const routeButtonControlProps: RouteControlWrapperProps = {
+const routeButtonControlProps: ExploreWrapperProps = {
   customRoutes: [
     { path: 'GENIE', synapseConfigArray: [genieData] },
     { path: 'GENIE-BPC', synapseConfigArray: [genieBPCData] },

@@ -97,7 +97,10 @@ $svg-icon-height: 30px;
   }
 
   .tab-groups {
-    margin-top: -$study-page-tab-height;
+    position: relative;
+    width: 100%;
+    top: -$study-page-tab-height;
+    margin-bottom: -50px;
     display: flex;
     font-size: 16px;
     justify-content: center;

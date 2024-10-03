@@ -2,7 +2,7 @@ import React from 'react'
 import {
   ExploreWrapperTabs,
   ExploreWrapperTabsProps,
-} from './ExploreWrapperTabs'
+} from './Explore/ExploreWrapperTabs'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 

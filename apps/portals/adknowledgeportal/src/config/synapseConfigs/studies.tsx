@@ -9,7 +9,7 @@ import {
 import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/injectPropsIntoConfig'
-import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/MarkdownSynapseFromColumnData'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
 import {
   PortalSearchParams,
@@ -317,7 +317,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
   },
 ]
 
-const studyDetailsPageTabs: DetailsPageTabConfig[] = [
+export const studyDetailsPageTabs: DetailsPageTabConfig[] = [
   {
     title: 'Study Details',
     path: 'StudyDetails',
@@ -334,12 +334,6 @@ const studyDetailsPageTabs: DetailsPageTabConfig[] = [
     element: <DetailsPageContent content={studyDataTabContent} />,
   },
 ]
-
-export const studyDetailsPageChildRoutes: RouteObject[] =
-  studyDetailsPageTabs.map(tab => ({
-    path: tab.path,
-    element: tab.element,
-  }))
 
 export const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,

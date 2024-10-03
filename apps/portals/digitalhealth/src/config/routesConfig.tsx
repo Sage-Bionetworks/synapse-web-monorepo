@@ -1,5 +1,5 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/ExploreWrapper'
+import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import React from 'react'
@@ -21,13 +21,7 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: (
-          <ExploreWrapper
-            explorePaths={explorePageRoutes.map(route => ({
-              path: route.path!,
-            }))}
-          />
-        ),
+        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
         children: explorePageRoutes,
       },
       {
