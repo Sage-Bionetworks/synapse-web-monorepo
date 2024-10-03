@@ -183,37 +183,72 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    path: 'Browse Tools',
-    exact: true,
-    synapseConfigArray: [
+    path: 'Research Tools Central',
+    routes: [
       {
-        name: 'NFBrowseToolsPage',
-        props: {
-          popularSearchesSql: popularSearchesSql,
-          toolsSql,
-        },
-        isOutsideContainer: true,
+        path: 'Browse Tools',
+        synapseConfigArray: [
+          {
+            name: 'NFBrowseToolsPage',
+            props: {
+              popularSearchesSql: popularSearchesSql,
+              toolsSql,
+            },
+            isOutsideContainer: true,
+          },
+        ],
+      },
+      {
+        path: 'Submit Animal Models',
+        synapseConfigArray: [
+          {
+            name: 'DynamicForm',
+            props: {
+              schemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/animal-model/submitAnimalModel.json',
+              uiSchemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/animal-model/SubmitAnimalModelUiSchema.json',
+              postUrl: 'https://submit-form.com/KwZ46H4T',
+            },
+            isOutsideContainer: false,
+          },
+        ],
+      },
+      {
+        path: 'Submit Observations',
+        synapseConfigArray: [
+          {
+            name: 'DynamicForm',
+            props: {
+              schemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
+              uiSchemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
+              postUrl: 'https://submit-form.com/KwZ46H4T',
+            },
+            isOutsideContainer: false,
+          },
+        ],
+      },
+      {
+        path: 'Submit Genetic Reagents',
+        synapseConfigArray: [
+          {
+            name: 'DynamicForm',
+            props: {
+              schemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/genetic-reagent/submitGeneticReagent.json',
+              uiSchemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/genetic-reagent/submitGeneticReagentUiSchema.json',
+              postUrl: 'https://submit-form.com/KwZ46H4T',
+            },
+            isOutsideContainer: false,
+          },
+        ],
       },
     ],
   },
-  {
-    path: 'SubmissionForm1',
-    exact: true,
-    hideRouteFromNavbar: true,
-    synapseConfigArray: [
-      {
-        name: 'DynamicForm',
-        props: {
-          schemaUrl:
-            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationSchema.json',
-          uiSchemaUrl:
-            'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/main/NF-Tools-Schemas/SubmitObservationUiSchema.json',
-          postUrl: 'https://submit-form.com/KwZ46H4T',
-        },
-        isOutsideContainer: false,
-      },
-    ],
-  },
+
   {
     path: 'Explore',
     routes: [
