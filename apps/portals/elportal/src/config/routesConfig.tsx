@@ -12,9 +12,9 @@ import {
   partnersSql,
   peopleSql,
   projectsSql,
-  upsetPlotSql,
+//  upsetPlotSql,
 } from './resources'
-import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
+//import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
 const routes: GenericRoute[] = [
   {
