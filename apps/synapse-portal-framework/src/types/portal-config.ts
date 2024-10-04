@@ -44,7 +44,7 @@ import { ImageProps } from '../components/Image'
 import { NFBrowseToolsPageProps } from '../components/nf/NFBrowseToolsPage'
 import { RedirectToURLProps } from '../components/RedirectToURL'
 import { SurveyToastProps } from '../components/SurveyToast'
-import { SynapseComponentCollapseProps } from '../components/SynapseComponentCollapse'
+import { ComponentCollapseProps } from '../components/ComponentCollapse'
 import { TabbedSynapseObjectsProps } from '../components/TabbedSynapseObjects'
 import { ToggleSynapseObjectsProps } from '../components/ToggleSynapseObjects'
 import { DetailsPageProps } from './portal-util-types'
@@ -190,7 +190,7 @@ type SharePageLinkButton = {
 }
 type SynapseComponentCollapse = {
   name: 'SynapseComponentCollapse'
-  props: SynapseComponentCollapseProps
+  props: ComponentCollapseProps
 }
 type ExternalFileHandleLink = {
   name: 'ExternalFileHandleLink'

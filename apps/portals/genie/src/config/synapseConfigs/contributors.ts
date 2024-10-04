@@ -1,8 +1,10 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
 
 import { contributorsSql } from '../resources'
-import type { CardConfiguration } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
 
 const rgbIndex = 8
 
@@ -21,31 +23,28 @@ export const contributorCardConfiguration: CardConfiguration = {
   },
 }
 
-const contributors: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    defaultShowPlots: false,
-    shouldDeepLink: false,
-    sql: contributorsSql,
-    cardConfiguration: {
-      ...contributorCardConfiguration,
-      // titleLinkConfig: {
-      //   matchColumnName: 'initiative',
-      //   isMarkdown: false,
-      //   baseURL: 'Explore/Initiatives/DetailsPage',
-      //   URLColumnName: 'initiative',
-      // },
-      // ctaLinkConfig: {
-      //   text: 'Visit Website',
-      //   link: 'website',
-      // },
-    },
-    name: 'Contributors',
-    // searchConfiguration: {
-    //   searchable: ['initiative', 'summary'],
+const contributorsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  defaultShowPlots: false,
+  shouldDeepLink: false,
+  sql: contributorsSql,
+  cardConfiguration: {
+    ...contributorCardConfiguration,
+    // titleLinkConfig: {
+    //   matchColumnName: 'initiative',
+    //   isMarkdown: false,
+    //   baseURL: 'Explore/Initiatives/DetailsPage',
+    //   URLColumnName: 'initiative',
+    // },
+    // ctaLinkConfig: {
+    //   text: 'Visit Website',
+    //   link: 'website',
     // },
   },
+  name: 'Contributors',
+  // searchConfiguration: {
+  //   searchable: ['initiative', 'summary'],
+  // },
 }
 
-export default contributors
+export default contributorsQueryWrapperPlotNavProps

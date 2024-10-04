@@ -1,10 +1,10 @@
+import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import type {
+  CardConfiguration,
   CardContainerLogicProps,
   GenericCardSchema,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import type { CardConfiguration } from 'synapse-react-client'
 import { toolsSql } from '../resources'
 
 const schema: GenericCardSchema = {
@@ -21,7 +21,7 @@ export const cardConfiguration: CardConfiguration = {
   labelLinkConfig: [],
 }
 
-const toolProps: CardContainerLogicProps = {
+export const toolProps: CardContainerLogicProps = {
   sql: toolsSql,
   ...cardConfiguration,
 }

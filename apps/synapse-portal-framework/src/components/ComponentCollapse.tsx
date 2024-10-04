@@ -1,28 +1,25 @@
-import { SynapseConfig } from '../types/portal-config'
-import React, { useState } from 'react'
-import { Box, Collapse, SxProps, Typography } from '@mui/material'
 import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
-import { SynapseComponent } from '../components/SynapseComponent'
+import { Box, Collapse, SxProps, Typography } from '@mui/material'
+import React, { useState } from 'react'
 
-export type SynapseComponentCollapseProps = {
+export type ComponentCollapseProps = React.PropsWithChildren<{
   text: string
-  synapseConfig: SynapseConfig
   defaultVisible?: boolean // default to false (collapsed)
-}
+}>
 
 /**
  * Wrap any Synapse config object in a collapse
  * @param props
  * @returns
  */
-export default function SynapseComponentCollapse({
+export default function ComponentCollapse({
   text,
-  synapseConfig,
   defaultVisible,
-}: SynapseComponentCollapseProps) {
+  children,
+}: ComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
   const iconSx: SxProps = {
     color: 'grey.700',
@@ -62,9 +59,7 @@ export default function SynapseComponentCollapse({
 
       <Collapse in={show}>
         <Box sx={{ backgroundColor: 'grey.100', padding: '25px' }}>
-          <div id="collapse-text">
-            <SynapseComponent synapseConfig={synapseConfig} />
-          </div>
+          <div id="collapse-text">{children}</div>
         </Box>
       </Collapse>
     </div>

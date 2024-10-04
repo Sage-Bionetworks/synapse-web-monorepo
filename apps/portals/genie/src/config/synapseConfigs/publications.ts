@@ -1,10 +1,10 @@
-import { SynapseConstants } from 'synapse-react-client'
-import { publicationsSql } from '../resources'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import type {
-  CardContainerLogicProps,
   CardConfiguration,
+  CardContainerLogicProps,
 } from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
+import { publicationsSql } from '../resources'
 
 export const cardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -17,7 +17,7 @@ export const cardConfiguration: CardConfiguration = {
   },
 }
 
-const publicationsProps: CardContainerLogicProps = {
+export const publicationsProps: CardContainerLogicProps = {
   sql: publicationsSql,
   ...cardConfiguration,
 }

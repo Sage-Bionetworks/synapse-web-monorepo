@@ -1,15 +1,13 @@
-import contributors from './contributors'
-import genieBPCData from './genieBPCData'
-import genieData from './genieData'
+import contributorsQueryWrapperPlotNavProps from './contributors'
+import genieBPCDataQueryWrapperPlotNavProps from './genieBPCData'
+import genieDataQueryWrapperPlotNavProps from './genieData'
 import publications from './publications'
 import tools from './tools'
-import dataReleases from './dataReleases'
 
 export {
-  contributors,
-  genieBPCData,
-  genieData,
+  contributorsQueryWrapperPlotNavProps,
+  genieBPCDataQueryWrapperPlotNavProps,
+  genieDataQueryWrapperPlotNavProps,
   publications,
   tools,
-  dataReleases,
 }

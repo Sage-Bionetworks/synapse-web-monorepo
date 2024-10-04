@@ -24,7 +24,7 @@ import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWra
 import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWrapper'
 import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
-import SynapseComponentCollapse from './SynapseComponentCollapse'
+import ComponentCollapse from './ComponentCollapse'
 import SurveyToast from './SurveyToast'
 
 const PortalComponents = {
@@ -55,7 +55,7 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
-  SynapseComponentCollapse,
+  SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
 }
 
