@@ -45,7 +45,7 @@ const MarkdownGithub: React.FunctionComponent<
   }
 > = ({ repoOwner, repoName, filePath, tagName }) => {
   const { data: fileContent } = useFileContent(
-    `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${tagName}/${filePath}`,
+    `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${tagName}/${filePath}`,
     {
       enabled: !!tagName,
     },

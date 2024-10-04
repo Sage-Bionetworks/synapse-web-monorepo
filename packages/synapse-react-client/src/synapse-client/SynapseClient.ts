@@ -97,6 +97,7 @@ import {
   WIKI_PAGE,
   WIKI_PAGE_ID,
   TERMS_OF_USE_INFO,
+  TERMS_OF_USE_STATUS,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -329,6 +330,8 @@ import {
   UpdateAgentSessionRequest,
   TraceEventsRequest,
   TraceEventsResponse,
+  TermsOfServiceInfo,
+  TermsOfServiceStatus,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5569,9 +5572,21 @@ export const getChatAgentTraceEvents = (
 export const getTermsOfServiceInfo = (
   accessToken: string | undefined = undefined,
   signal?: AbortSignal,
-): Promise<TraceEventsResponse> => {
-  return doGet<TraceEventsResponse>(
+): Promise<TermsOfServiceInfo> => {
+  return doGet<TermsOfServiceInfo>(
     TERMS_OF_USE_INFO,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getTermsOfServiceStatus = (
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TermsOfServiceStatus> => {
+  return doGet<TermsOfServiceStatus>(
+    TERMS_OF_USE_STATUS,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },

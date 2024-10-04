@@ -878,8 +878,8 @@ export class KeyFactory {
     return this.getKey('termsOfServiceInfo')
   }
 
-  public getUserTermsOfServiceStatus() {
-    return this.getKey('userTermsOfServiceStatus')
+  public getTermsOfServiceStatus() {
+    return this.getKey('termsOfServiceStatus')
   }
   public getPaginatedDockerTagQueryKey(
     id: string,
