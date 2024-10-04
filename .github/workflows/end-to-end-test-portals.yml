@@ -51,7 +51,7 @@ jobs:
         env:
           PORTAL: ${{ matrix.PORTAL }}
       - name: Upload blob report to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}
@@ -77,7 +77,7 @@ jobs:
       - name: Merge into HTML Report
         run: cd ${{ env.PORTALS_E2E_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
       - name: Upload HTML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: '${{ env.PORTALS_E2E_SUBDIR }}/playwright-report'
