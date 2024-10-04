@@ -1,4 +1,9 @@
 import React from 'react'
+import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '../../utils/functions/EntityTypeUtils'
 import { EntityLink } from '../EntityLink'
 import { Link, Typography } from '@mui/material'
 
@@ -11,11 +16,25 @@ type InheritanceMessageProps = {
 
 export function InheritanceMessage(props: InheritanceMessageProps) {
   const { isProject, isInherited, isAfterUpload = false, benefactorId } = props
+  const { data: benefactorHeader } = useGetEntityHeader(
+    benefactorId,
+    undefined,
+    {
+      enabled: Boolean(benefactorId),
+    },
+  )
+
   if (isAfterUpload) {
     return (
       <>
         <Typography variant={'body1'}>
-          Currently, the sharing settings are inherited from the project named
+          Currently, the sharing settings are inherited from the{' '}
+          {benefactorHeader
+            ? entityTypeToFriendlyName(
+                convertToEntityType(benefactorHeader.type),
+              ).toLowerCase()
+            : 'container'}{' '}
+          named
           {benefactorId ? (
             <>
               {' '}

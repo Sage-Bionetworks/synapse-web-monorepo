@@ -113,7 +113,7 @@ function verifyInheritsSharingSettingsFromBenefactorMessage() {
 
 function verifyInheritsSharingSettingsPostUploadMessage() {
   screen.getByText(
-    /Currently, the sharing settings are inherited from the project named/,
+    /Currently, the sharing settings are inherited from the \w+ named/,
     { exact: false },
   )
 }
