@@ -6,14 +6,23 @@ export function useColumnDataMarkdownProps(
   columnName: string,
   injectMarkdown: boolean,
 ): MarkdownSynapseProps[] | null {
-  const { value } = useDetailsPageContext(columnName)
+  let { value } = useDetailsPageContext(columnName)
 
   if (!value) {
     return null
   }
 
-  return value
-    .split(',')
+  // TODO: Can we make this safer by checking if the columnType is a LIST?
+  // The column data may be a list of Markdown props to render, so split on commas
+  let splitValue: string[]
+  if (!injectMarkdown) {
+    splitValue = value.split(',')
+  } else {
+    // Do not split if the value is raw markdown
+    splitValue = [value]
+  }
+
+  return splitValue
     .map(s => s.trim())
     .map(s => transformStringIntoMarkdownProps(s, injectMarkdown))
 }

@@ -1,4 +1,7 @@
-import type { CardConfiguration } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { columnAliases } from './commonProps'
@@ -80,26 +83,23 @@ export const hackathonCardConfiguration: CardConfiguration = {
   },
 }
 
-const hackathons: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: hackathonsSql,
-    name: 'Hackathon Projects',
-    shouldDeepLink: true,
-    cardConfiguration: hackathonCardConfiguration,
-    columnAliases: { ...columnAliases, studyStatus: 'Status' },
-    searchConfiguration: {
-      searchable: [
-        'name',
-        'summary',
-        'studyStatus',
-        'institutions',
-        'diseaseFocus',
-        'fundingAgency',
-        'manifestation',
-      ],
-    },
+const hackathons: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: hackathonsSql,
+  name: 'Hackathon Projects',
+  shouldDeepLink: true,
+  cardConfiguration: hackathonCardConfiguration,
+  columnAliases: { ...columnAliases, studyStatus: 'Status' },
+  searchConfiguration: {
+    searchable: [
+      'name',
+      'summary',
+      'studyStatus',
+      'institutions',
+      'diseaseFocus',
+      'fundingAgency',
+      'manifestation',
+    ],
   },
 }
 

@@ -1,4 +1,8 @@
-import type { CardConfiguration, ColumnIconConfigs } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  ColumnIconConfigs,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import {
   NoContentPlaceholderType,
   SynapseConstants,
@@ -113,91 +117,33 @@ export const studyCardConfiguration: CardConfiguration = {
   columnIconOptions: studyColumnIconConfigs,
 }
 
-const studies: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: studiesSql,
-    name: 'Studies',
-    shouldDeepLink: true,
-    cardConfiguration: studyCardConfiguration,
-    columnAliases,
-    searchConfiguration: {
-      searchable: [
-        'studyName',
-        'summary',
-        'studyLeads',
-        'studyStatus',
-        'dataStatus',
-        'institutions',
-        'diseaseFocus',
-        'manifestation',
-        'fundingAgency',
-        'grantDOI',
-      ],
-    },
+const studies: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: studiesSql,
+  name: 'Studies',
+  shouldDeepLink: true,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases,
+  searchConfiguration: {
+    searchable: [
+      'studyName',
+      'summary',
+      'studyLeads',
+      'studyStatus',
+      'dataStatus',
+      'institutions',
+      'diseaseFocus',
+      'manifestation',
+      'fundingAgency',
+      'grantDOI',
+    ],
   },
 }
 
 export const studiesDetailPage: DetailsPageProps = {
   sql: studiesSql,
   tabLayout: [
-    {
-      title: 'Study Details',
-      uriValue: 'Details',
-      iconName: 'study',
-      toolTip: 'Description, methods, acknowledgements and related studies',
-      synapseConfigArray: [
-        {
-          name: 'Markdown',
-          columnName: 'accessRequirements',
-          title: 'Access Requirements',
-          injectMarkdown: true,
-          props: {},
-        },
-        {
-          name: 'Markdown',
-          columnName: 'acknowledgementStatements',
-          title: 'Acknowledgement Statements',
-          injectMarkdown: true,
-          props: {},
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Tools Used',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sql: toolStudySql,
-            initialLimit: 3,
-            ...toolsCardConfiguration,
-          },
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Publications',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sql: publicationsSql,
-            ...publicationsCardConfiguration,
-          },
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Related Studies',
-          columnName: 'relatedStudies',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-            sql: studiesSql,
-            columnAliases,
-            noContentPlaceholderType: NoContentPlaceholderType.HIDDEN,
-            ...studyCardConfiguration,
-          },
-        },
-      ],
-    },
+    {},
     {
       title: 'Study Datasets',
       uriValue: 'Datasets',

@@ -1,12 +1,16 @@
 import { datasetsSql } from '../resources'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { columnAliases as sharedColumnAliases } from './commonProps'
-import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
+import {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
-const rgbIndex = 8
+export const datasetsRgbIndex = 8
 
 const columnAliases = {
   ...sharedColumnAliases,
@@ -49,25 +53,22 @@ export const datasetCardConfiguration: CardConfiguration = {
     baseURL: 'Explore/Datasets/DetailsPage',
   },
 }
-const datasets: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    sql: datasetsSql,
-    cardConfiguration: datasetCardConfiguration,
-    name: 'Datasets',
-    columnAliases,
-    searchConfiguration: {
-      searchable: [
-        'title',
-        'description',
-        'studyName',
-        'diseaseFocus',
-        'manifestation',
-        'fundingAgency',
-      ],
-    },
+const datasets: QueryWrapperPlotNavProps = {
+  rgbIndex: datasetsRgbIndex,
+  shouldDeepLink: true,
+  sql: datasetsSql,
+  cardConfiguration: datasetCardConfiguration,
+  name: 'Datasets',
+  columnAliases,
+  searchConfiguration: {
+    searchable: [
+      'title',
+      'description',
+      'studyName',
+      'diseaseFocus',
+      'manifestation',
+      'fundingAgency',
+    ],
   },
 }
 
@@ -98,7 +99,7 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
       name: 'QueryWrapperPlotNav',
       // title: 'Files',
       props: {
-        rgbIndex,
+        rgbIndex: datasetsRgbIndex,
         sql: '',
         visibleColumnCount: 7,
         tableConfiguration: {

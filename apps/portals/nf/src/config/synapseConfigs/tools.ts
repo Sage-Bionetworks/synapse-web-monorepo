@@ -1,7 +1,10 @@
-import type { CardConfiguration } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { SharePageLinkButtonConfig } from '@sage-bionetworks/synapse-portal-framework/src/shared-config/SharePageLinkButtonConfig'
+import { SharePageLinkButtonConfig } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { columnAliases } from './commonProps'
 import {
   catalogNumberSql,
@@ -78,20 +81,17 @@ export const toolsCardConfiguration: CardConfiguration = {
   genericCardSchema: toolsSchema,
 }
 const rgbIndex = 6
-const tools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: toolsSql,
-    shouldDeepLink: true,
-    name: 'Tools',
-    cardConfiguration: toolsCardConfiguration,
-    columnAliases,
-    defaultShowSearchBox: true,
-    searchConfiguration: {
-      fullTextSearchHelpURL:
-        'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
-    },
+const tools: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: toolsSql,
+  shouldDeepLink: true,
+  name: 'Tools',
+  cardConfiguration: toolsCardConfiguration,
+  columnAliases,
+  defaultShowSearchBox: true,
+  searchConfiguration: {
+    fullTextSearchHelpURL:
+      'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
   },
 }
 

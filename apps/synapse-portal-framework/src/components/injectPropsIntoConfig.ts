@@ -15,14 +15,14 @@ export function transformStringIntoMarkdownProps(
   if (injectMarkdown) {
     newProps.markdown = value
   } else {
-    if (value.includes('wiki')) {
+    if (value.includes('/wiki/')) {
       // value looks like syn20681023/wiki/594680
       const split = value.split('/')
       const ownerId = split[0]
       const wikiId = split[2]
       newProps.ownerId = ownerId
       newProps.wikiId = wikiId
-    } else {
+    } else if (value) {
       // else assume its an ownerId
       newProps.ownerId = value
     }

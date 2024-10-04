@@ -36,7 +36,7 @@ function getValue(
       undefined,
     )
 
-    if (columnIndex) {
+    if (columnIndex != null) {
       const columnModel = context.queryResultBundle.selectColumns![columnIndex]
       value = context.rowData.values[columnIndex]
       // Note: searchParams expects comma-separated values
@@ -81,7 +81,9 @@ export function DetailsPageContextConsumer(
   return (
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
-        return children({ context, value: getValue(context, columnName) })
+        const value = getValue(context, columnName)
+        console.log(context, value)
+        return children({ context, value })
       }}
     </DetailsPageContext.Consumer>
   )
