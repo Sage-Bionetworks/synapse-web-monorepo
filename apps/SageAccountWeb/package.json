@@ -42,7 +42,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-tooltip": "^4.2.4",
     "@vitest/coverage-v8": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
+    "@vitest/ui": "^2.1.2",
     "@vitest/utils": "^1.6.0",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
