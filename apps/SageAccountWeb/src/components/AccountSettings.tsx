@@ -1,4 +1,3 @@
-import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
   AlertTitle,
@@ -12,30 +11,36 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { UserBundle, UserProfile } from '@sage-bionetworks/synapse-types'
+import {
+  FeatureFlagEnum,
+  UserBundle,
+  UserProfile,
+  VerificationState,
+  VerificationStateEnum,
+} from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useRef, useState } from 'react'
+import { Form } from 'react-bootstrap'
+import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import {
   ChangePassword,
+  CookiePreferencesDialog,
   displayToast,
   IconSvg,
   SynapseClient,
   SynapseConstants,
   SynapseHookUtils,
+  SynapseQueries,
   TwoFactorAuthSettingsPanel,
-  useSynapseContext,
-  CookiePreferencesDialog,
   useApplicationSessionContext,
+  useSynapseContext,
 } from 'synapse-react-client'
-import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
-import { Form } from 'react-bootstrap'
-import { ORCiDButton } from './ProfileValidation/ORCiDButton'
+import UniversalCookies from 'universal-cookie'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
-import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
-import UniversalCookies from 'universal-cookie'
-import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
-import { VerificationState } from '@sage-bionetworks/synapse-types'
+import { ORCiDButton } from './ProfileValidation/ORCiDButton'
+import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
+import { StyledFormControl } from './StyledComponents'
 
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
@@ -94,6 +99,10 @@ export const AccountSettings = () => {
     useState(false)
 
   const { clearSession } = useApplicationSessionContext()
+
+  const showWebhooks = SynapseQueries.useGetFeatureFlag(
+    FeatureFlagEnum.WEBHOOKS_UI,
+  )
 
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
@@ -238,9 +247,11 @@ export const AccountSettings = () => {
               >
                 OAuth Clients
               </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(webhooksRef)}>
-                Webhooks
-              </ListItemButton>
+              {showWebhooks && (
+                <ListItemButton onClick={() => handleScroll(webhooksRef)}>
+                  Webhooks
+                </ListItemButton>
+              )}
               <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
                 Privacy Preferences
               </ListItemButton>
@@ -713,31 +724,33 @@ export const AccountSettings = () => {
                   </Link>
                 </div>
               </Paper>
-              <Paper
-                ref={webhooksRef}
-                className="account-setting-panel main-panel"
-              >
-                <Typography variant={'headline2'}>Webhooks</Typography>
-                <Typography variant={'body1'} sx={{ my: 1 }}>
-                  Webhooks can be used to receive programmatic events triggered
-                  by actions in Synapse.
-                </Typography>
-                <div className="primary-button-container">
-                  <Button
-                    sx={credentialButtonSX}
-                    variant="outlined"
-                    onClick={() => handleChangesFn('webhook')}
-                  >
-                    Manage Webhooks
-                  </Button>
-                  <Link
-                    href="https://rest-docs.synapse.org/rest/index.html#org.sagebionetworks.repo.web.controller.WebhookController"
-                    target="_blank"
-                  >
-                    More information
-                  </Link>
-                </div>
-              </Paper>
+              {showWebhooks && (
+                <Paper
+                  ref={webhooksRef}
+                  className="account-setting-panel main-panel"
+                >
+                  <Typography variant={'headline2'}>Webhooks</Typography>
+                  <Typography variant={'body1'} sx={{ my: 1 }}>
+                    Webhooks can be used to receive programmatic events
+                    triggered by actions in Synapse.
+                  </Typography>
+                  <div className="primary-button-container">
+                    <Button
+                      sx={credentialButtonSX}
+                      variant="outlined"
+                      onClick={() => handleChangesFn('webhook')}
+                    >
+                      Manage Webhooks
+                    </Button>
+                    <Link
+                      href="https://rest-docs.synapse.org/rest/index.html#org.sagebionetworks.repo.web.controller.WebhookController"
+                      target="_blank"
+                    >
+                      More information
+                    </Link>
+                  </div>
+                </Paper>
+              )}
               <Paper
                 ref={cookieManagementRef}
                 className="account-setting-panel main-panel"
