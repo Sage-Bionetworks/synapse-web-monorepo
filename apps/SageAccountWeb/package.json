@@ -26,7 +26,7 @@
     "react-router-dom": "^5.3.4",
     "sass": "^1.71.1",
     "synapse-react-client": "workspace:*",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^7.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",
