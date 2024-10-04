@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetEntityHeader } from '../../synapse-queries/index'
+import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
