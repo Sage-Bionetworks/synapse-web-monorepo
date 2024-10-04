@@ -874,6 +874,13 @@ export class KeyFactory {
     return this.getKey('chatbotTraceEvents', request)
   }
 
+  public getTermsOfServiceInfoKey() {
+    return this.getKey('termsOfServiceInfo')
+  }
+
+  public getUserTermsOfServiceStatus() {
+    return this.getKey('userTermsOfServiceStatus')
+  }
   public getPaginatedDockerTagQueryKey(
     id: string,
     offset: string,
