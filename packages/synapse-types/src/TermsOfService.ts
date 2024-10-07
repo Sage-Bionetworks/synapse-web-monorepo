@@ -18,13 +18,8 @@ export type TermsOfServiceStatus = {
   usersCurrentTermsOfServiceState: TermsOfServiceState // Defines the user's current ToS state. Used to guide the UI in what the user needs to do with their ToS agreements.  This will always be provided.
 }
 
-export type ToSStateEnum = {
-  name: 'MUST_AGREE_NOW' | 'MUST_AGREE_SOON' | 'UP_TO_DATE'
-  description: string
-}
-
-export type TermsOfServiceState = {
-  type: string
-  description: string
-  enum: ToSStateEnum[]
+export enum TermsOfServiceState {
+  MUST_AGREE_NOW = 'MUST_AGREE_NOW',
+  MUST_AGREE_SOON = 'MUST_AGREE_SOON',
+  UP_TO_DATE = 'UP_TO_DATE',
 }

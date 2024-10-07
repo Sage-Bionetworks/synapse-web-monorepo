@@ -4,6 +4,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { Box, Container } from '@mui/material'
 import { useLatestTag } from '../../synapse-queries/github/useGithub'
 import { useFileContent } from '../../synapse-queries/file/useFiles'
+import { useTermsOfServiceInfo } from '../../synapse-queries/termsOfService/useTermsOfService'
 
 export type MarkdownGithubProps = {
   repoOwner: string
@@ -17,9 +18,9 @@ export type MarkdownGithubProps = {
 export const GovernanceMarkdownGithub: React.FunctionComponent<
   MarkdownGithubProps
 > = props => {
-  const { repoOwner, repoName } = props
-  //TODO: replace with call to get latest ToS tag (from Synapse backend)
-  const { data: tosTag } = useLatestTag(repoOwner, repoName)
+  //Get latest ToS tag (from Synapse backend)
+  const { data } = useTermsOfServiceInfo()
+  const tosTag = data?.latestTermsOfServiceVersion
   return <MarkdownGithub {...props} tagName={tosTag} />
 }
 
