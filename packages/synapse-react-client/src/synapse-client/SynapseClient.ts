@@ -332,6 +332,7 @@ import {
   TraceEventsResponse,
   TermsOfServiceInfo,
   TermsOfServiceStatus,
+  AccessToken,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -4304,10 +4305,10 @@ export const unbindOAuthProviderToAccount = async (
 }
 
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
-export const signSynapseTermsOfUse = (accessToken: string) => {
+export const signSynapseTermsOfUse = (accessToken: AccessToken) => {
   return doPost(
     TERMS_OF_USE,
-    { accessToken },
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

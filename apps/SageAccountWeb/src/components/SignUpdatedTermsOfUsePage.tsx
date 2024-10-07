@@ -6,20 +6,30 @@ import {
   IconSvg,
   SynapseContextUtils,
   SynapseQueries,
+  GovernanceMarkdownGithub,
 } from 'synapse-react-client'
 import { SourceAppLogo } from './SourceApp'
-import { Box, Button, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Paper,
+  useTheme,
+} from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
 import { useSourceApp } from './useSourceApp'
 
-export type TermsOfUsePageProps = {}
+export type SignUpdatedTermsOfUsePageProps = {}
 
-export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
-  const theme = useTheme()
+export const SignUpdatedTermsOfUsePage = (
+  props: SignUpdatedTermsOfUsePageProps,
+) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [isFormComplete, setIsFormComplete] = useState(false)
+  const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const sourceApp = useSourceApp()
@@ -59,7 +69,6 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   }
 
   if (isDone) {
-    // AppInitializer still thinks the ToU are not signed.
     if (sourceApp?.requestAffiliation) {
       window.location.assign('/authenticated/currentaffiliation')
     } else {
@@ -67,52 +76,34 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
     }
   }
   return (
-    <StyledOuterContainer className="TermsOfUsePage">
-      <StyledInnerContainer
-        sx={{
-          width: '1200px',
-          '& > div:nth-of-type(1)': {
-            paddingTop: theme.spacing(10),
-            width: '750px',
-          },
-          '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
-        }}
-      >
-        <Box
-          sx={{
-            height: '100%',
-            position: 'relative',
-          }}
-        >
-          <Box sx={{ minHeight: '530px' }}>
-            <div className={'panel-logo'}>
-              <SourceAppLogo />
-            </div>
-            <div className={'terms-of-use-panel'}>
-              <TermsAndConditions
-                onFormChange={(completed: boolean) => {
-                  setIsFormComplete(completed)
-                }}
-                hideLinkToFullTC={true}
-              />
-              <Button
-                sx={buttonSx}
-                variant="contained"
-                onClick={onSignTermsOfUse}
-                disabled={isLoading || !isFormComplete}
-              >
-                Agree and Continue <IconSvg icon="arrowForward" />
-              </Button>
-              <TermsAndConditionsLink sx={buttonSx} />
-            </div>
+    <StyledOuterContainer className="SignUpdatedTermsOfUsePage">
+      <Container>
+        <Paper>
+          <GovernanceMarkdownGithub
+            repoOwner="Sage-Bionetworks"
+            repoName="Sage-Governance-Documents"
+            filePath="Terms.md"
+          />
+          <FormControlLabel
+            control={<Checkbox />}
+            label="I agree to the terms of service"
+            checked={isCheckboxSelected}
+            onChange={() => {
+              setisCheckboxSelected(!isCheckboxSelected)
+            }}
+          />
+          <Box sx={{}}>
+            <Button
+              sx={buttonSx}
+              variant="contained"
+              onClick={onSignTermsOfUse}
+              disabled={isLoading}
+            >
+              Agree and Continue
+            </Button>
           </Box>
-        </Box>
-        <Box>
-          <Box sx={{ marginTop: '100px' }}>
-            <TermsOfUseRightPanelText />
-          </Box>
-        </Box>
-      </StyledInnerContainer>
+        </Paper>
+      </Container>
     </StyledOuterContainer>
   )
 }

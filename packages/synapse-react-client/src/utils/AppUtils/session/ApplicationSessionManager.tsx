@@ -7,6 +7,7 @@ import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/gen
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
+import { useTermsOfServiceStatus } from 'src/synapse-queries/termsOfService/useTermsOfService'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string
@@ -59,9 +60,6 @@ export function ApplicationSessionManager(
   const history = useHistory()
 
   const [token, setToken] = useState<string | undefined>()
-  const [acceptsTermsOfUse, setAcceptsTermsOfUse] = useState<
-    boolean | undefined
-  >()
   const [hasInitializedSession, setHasInitializedSession] = useState(false)
   const [twoFactorAuthSSOError, setTwoFactorAuthSSOError] = useState<
     TwoFactorAuthErrorResponse | undefined
@@ -73,10 +71,12 @@ export function ApplicationSessionManager(
     SynapseClient.signOut().then(() => {
       // reset token
       setToken(undefined)
-      setAcceptsTermsOfUse(undefined)
       setHasInitializedSession(true)
     })
   }, [onNoAccessTokenFound])
+  const { data: tosStatus } = useTermsOfServiceStatus({
+    enabled: !!token,
+  })
 
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
@@ -109,16 +109,11 @@ export function ApplicationSessionManager(
     }
     setToken(token)
     setHasInitializedSession(true)
-
     try {
-      // get the user profile just to check if the terms of use have been agreed to
-      // an error will be thrown if the terms of use have not been signed.
+      // get the user profile
       await SynapseClient.getUserProfile(token)
-      setAcceptsTermsOfUse(true)
     } catch (e) {
-      if (e && e.reason == 'Terms of use have not been signed.') {
-        setAcceptsTermsOfUse(false)
-      } else {
+      if (e && e.reason != 'Terms of use have not been signed.') {
         console.error('Error on refreshSession: ', e)
         // intentionally calling sign out because the token could be stale so we want
         // the stored session to be cleared out.
@@ -180,7 +175,7 @@ export function ApplicationSessionManager(
     <ApplicationSessionContextProvider
       context={{
         token,
-        acceptsTermsOfUse,
+        termsOfServiceStatus: tosStatus,
         refreshSession,
         clearSession,
         isLoadingSSO,

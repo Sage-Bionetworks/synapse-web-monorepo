@@ -153,7 +153,7 @@ export const AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY =
 
 /** URL constants */
 export const URL_TERMS_CONDITIONS_AGREEMENT =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5'
+  'https://www.synapse.org/TrustCenter:TermsOfService'
 
 /** Class names */
 export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
@@ -193,7 +193,7 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
 ]
 
 export const PRIVACY_POLICY_LINK =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf'
+  'https://www.synapse.org/TrustCenter:PrivacyPolicy'
 
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
 export const ONE_SAGE_STAGING_URL = 'https://staging.accounts.synapse.org'
