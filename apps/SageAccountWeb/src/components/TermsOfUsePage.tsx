@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
   displayToast,
-  SynapseClient,
   TermsAndConditions,
   IconSvg,
   SynapseContextUtils,
@@ -24,6 +23,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const sourceApp = useSourceApp()
 
+  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
 
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
@@ -31,16 +31,20 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
     setIsLoading(true)
     try {
       if (accessToken) {
-        SynapseClient.signSynapseTermsOfUse({
-          accessToken,
-          termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
-        })
-          .then(() => {
-            setIsDone(true)
-          })
-          .catch((err: any) => {
-            displayToast(err.reason as string, 'danger')
-          })
+        signTermsOfService(
+          {
+            accessToken,
+            termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
+          },
+          {
+            onSuccess: () => {
+              setIsDone(true)
+            },
+            onError: err => {
+              displayToast(err.reason as string, 'danger')
+            },
+          },
+        )
       }
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')

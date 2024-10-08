@@ -1,14 +1,10 @@
 import React, { useState } from 'react'
 import {
   displayToast,
-  SynapseClient,
-  TermsAndConditions,
-  IconSvg,
   SynapseContextUtils,
   SynapseQueries,
   GovernanceMarkdownGithub,
 } from 'synapse-react-client'
-import { SourceAppLogo } from './SourceApp'
 import {
   Box,
   Button,
@@ -16,12 +12,9 @@ import {
   Container,
   FormControlLabel,
   Paper,
-  useTheme,
 } from '@mui/material'
-import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
-import { TermsAndConditionsLink } from './TermsAndConditionsLink'
-import { useSourceApp } from './useSourceApp'
+import { StyledOuterContainer } from './StyledComponents'
+import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 
 export type SignUpdatedTermsOfUsePageProps = {}
 
@@ -30,27 +23,34 @@ export const SignUpdatedTermsOfUsePage = (
 ) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
-  const [isDone, setIsDone] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
-  const sourceApp = useSourceApp()
+  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
 
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
+  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus()
 
+  const isSkipAvailable =
+    tosStatus?.usersCurrentTermsOfServiceState ==
+    TermsOfServiceState.MUST_AGREE_SOON
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {
       if (accessToken) {
-        SynapseClient.signSynapseTermsOfUse({
-          accessToken,
-          termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
-        })
-          .then(() => {
-            setIsDone(true)
-          })
-          .catch((err: any) => {
-            displayToast(err.reason as string, 'danger')
-          })
+        signTermsOfService(
+          {
+            accessToken,
+            termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
+          },
+          {
+            onSuccess: () => {
+              window.location.assign('/')
+            },
+            onError: err => {
+              displayToast(err.reason as string, 'danger')
+            },
+          },
+        )
       }
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
@@ -59,25 +59,9 @@ export const SignUpdatedTermsOfUsePage = (
     }
   }
 
-  const buttonSx = {
-    width: '100%',
-    padding: '10px',
-    '&.MuiButton-contained': {
-      marginTop: '20px',
-      marginBottom: '10px',
-    },
-  }
-
-  if (isDone) {
-    if (sourceApp?.requestAffiliation) {
-      window.location.assign('/authenticated/currentaffiliation')
-    } else {
-      window.location.assign('/authenticated/accountcreated')
-    }
-  }
   return (
     <StyledOuterContainer className="SignUpdatedTermsOfUsePage">
-      <Container>
+      <Container sx={{ maxWidth: '800px' }}>
         <Paper>
           <GovernanceMarkdownGithub
             repoOwner="Sage-Bionetworks"
@@ -86,21 +70,41 @@ export const SignUpdatedTermsOfUsePage = (
           />
           <FormControlLabel
             control={<Checkbox />}
+            sx={{ p: '30px 45px' }}
             label="I agree to the terms of service"
             checked={isCheckboxSelected}
             onChange={() => {
-              setisCheckboxSelected(!isCheckboxSelected)
+              setIsCheckboxSelected(!isCheckboxSelected)
             }}
           />
-          <Box sx={{}}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: isSkipAvailable ? 'repeat(2, 1fr)' : '1fr', // either 2 fr (fraction unit) or 1
+              gap: '10px',
+              p: '0px 45px 45px 45px',
+            }}
+          >
             <Button
-              sx={buttonSx}
               variant="contained"
+              sx={{ width: '100%' }}
               onClick={onSignTermsOfUse}
-              disabled={isLoading}
+              disabled={isLoading || !isCheckboxSelected}
             >
               Agree and Continue
             </Button>
+            {isSkipAvailable && (
+              <Button
+                variant="outlined"
+                sx={{ width: '100%' }}
+                onClick={() => {
+                  window.location.assign('/?skippedSigningToS=true')
+                }}
+                disabled={isLoading}
+              >
+                Skip for Now
+              </Button>
+            )}
           </Box>
         </Paper>
       </Container>

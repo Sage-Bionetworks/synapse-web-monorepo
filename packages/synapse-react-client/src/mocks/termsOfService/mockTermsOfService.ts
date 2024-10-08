@@ -31,7 +31,7 @@ export const termsOfServiceUpdatedMustAgreeSoonStatus: TermsOfServiceStatus = {
   userId: '12345',
   lastAgreementDate: '2024-09-15T12:34:56Z',
   lastAgreementVersion: '2.0.0',
-  usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
 }
 
 export const termsOfServiceUpToDateStatus: TermsOfServiceStatus = {

@@ -30,6 +30,7 @@ import { OAuthClientManagementPage } from './components/OAuthClientManagementPag
 import { ResetTwoFactorAuth } from './components/TwoFactorAuth/ResetTwoFactorAuth'
 import { RESET_2FA_ROUTE } from './Constants'
 import { ChangePasswordPage } from './components/ChangePasswordPage'
+import { SignUpdatedTermsOfUsePage } from './components/SignUpdatedTermsOfUsePage'
 
 function App() {
   return (
@@ -107,6 +108,9 @@ function App() {
                     </Route>
                     <Route path={'/authenticated/signTermsOfUse'} exact>
                       <TermsOfUsePage />
+                    </Route>
+                    <Route path={'/authenticated/signUpdatedTermsOfUse'} exact>
+                      <SignUpdatedTermsOfUsePage />
                     </Route>
                     <Route path={'/authenticated/myaccount'} exact>
                       <AccountSettings />

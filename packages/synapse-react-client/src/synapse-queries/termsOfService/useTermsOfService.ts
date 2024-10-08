@@ -1,10 +1,17 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
+  AccessToken,
   TermsOfServiceInfo,
   TermsOfServiceStatus,
 } from '@sage-bionetworks/synapse-types'
@@ -30,5 +37,27 @@ export function useTermsOfServiceStatus(
     queryKey: keyFactory.getTermsOfServiceStatus(),
 
     queryFn: () => SynapseClient.getTermsOfServiceStatus(accessToken),
+  })
+}
+
+export function useSignTermsOfService(
+  options?: Partial<
+    UseMutationOptions<unknown, SynapseClientError, AccessToken>
+  >,
+) {
+  const { keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation<unknown, SynapseClientError, AccessToken>({
+    ...options,
+    mutationFn: (accessToken: AccessToken) =>
+      SynapseClient.signSynapseTermsOfUse(accessToken),
+    onSuccess: async (resp, variables, ctx) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getTermsOfServiceStatus(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(resp, variables, ctx)
+      }
+    },
   })
 }
