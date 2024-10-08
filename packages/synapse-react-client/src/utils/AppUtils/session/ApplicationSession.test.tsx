@@ -18,6 +18,7 @@ import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import {
   ErrorResponseCode,
+  TermsOfServiceState,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
@@ -43,7 +44,7 @@ const mockUseDetectSSOCode = jest
 
 const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
   token: undefined,
-  acceptsTermsOfUse: undefined,
+  termsOfServiceStatus: undefined,
   hasInitializedSession: true,
   twoFactorAuthSSOErrorResponse: undefined,
   isLoadingSSO: false,
@@ -51,14 +52,27 @@ const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
 
 const EXPECTED_AUTH_STATE: Partial<ApplicationSessionContextType> = {
   token: MOCK_ACCESS_TOKEN,
-  acceptsTermsOfUse: true,
+  termsOfServiceStatus: {
+    userId: `${MOCK_USER_ID}`,
+    usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+    lastAgreementDate: '',
+    lastAgreementVersion: '0.0.0',
+  },
   hasInitializedSession: true,
   twoFactorAuthSSOErrorResponse: undefined,
   isLoadingSSO: false,
 }
 
 const EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED: Partial<ApplicationSessionContextType> =
-  { ...EXPECTED_AUTH_STATE, acceptsTermsOfUse: false }
+  {
+    ...EXPECTED_AUTH_STATE,
+    termsOfServiceStatus: {
+      userId: `${MOCK_USER_ID}`,
+      usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+      lastAgreementDate: '',
+      lastAgreementVersion: '0.0.0',
+    },
+  }
 
 describe('ApplicationSessionManager tests', () => {
   beforeEach(() => {

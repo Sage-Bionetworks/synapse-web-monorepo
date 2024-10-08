@@ -1,12 +1,13 @@
 import React, { useContext } from 'react'
 import { UseDetectSSOCodeReturnType } from '../../hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { TermsOfServiceStatus } from '@sage-bionetworks/synapse-types'
 
 export type ApplicationSessionContextType = {
   /* The Synapse Authentication token. If undefined, the user is not signed in. */
   token?: string
   /* Whether the current user accepts the terms of use. May be undefined while status is fetched. Will always be undefined for the anonymous user. */
-  acceptsTermsOfUse?: boolean
+  termsOfServiceStatus?: TermsOfServiceStatus
   /* Whether the session has been initialized */
   hasInitializedSession: boolean
   /* Updates this context based on the current token cookie. Should typically be called when the user has signed in or signed out. */

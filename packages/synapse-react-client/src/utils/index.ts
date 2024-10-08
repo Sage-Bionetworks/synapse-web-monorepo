@@ -13,6 +13,6 @@ export {
 }
 export * from './context'
 export { ACCESS_TOKEN_COOKIE_KEY } from './SynapseConstants'
-export { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from './SynapseConstants'
+export { LAST_PLACE_LOCALSTORAGE_KEY } from './SynapseConstants'
 export { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 export { createTableUpdateTransactionRequest } from './functions'

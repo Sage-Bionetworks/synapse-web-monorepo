@@ -230,6 +230,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
     gotoPlace(`/Search:${encodeURI(JSON.stringify(projectSearchJson))}`)
   }
 
+  const oneSageURL = useOneSageURL()
   const accountSettingsURL = useOneSageURL('/authenticated/myaccount')
 
   return (
@@ -350,7 +351,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
               <NavDrawerListItem
                 tooltip="Sign in"
                 iconName="login"
-                onClickGoToPlace={() => gotoPlace('/LoginPlace:0')}
+                onClickGoToPlace={() =>
+                  window.location.assign(oneSageURL.toString())
+                }
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
               />

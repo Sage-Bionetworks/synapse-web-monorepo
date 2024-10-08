@@ -11,18 +11,17 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
-  StandaloneLoginForm,
+  storeRedirectURLForOneSageLogin,
   StyledOuterContainer,
   SynapseClient,
   SynapseClientError,
   SynapseConstants,
   SynapseHookUtils,
   SynapseQueries,
-  SystemUseNotification,
   UserCard,
   useSynapseContext,
 } from 'synapse-react-client'
@@ -47,12 +46,8 @@ function redirectToURL(redirectURL: string) {
 }
 
 export function OAuth2Form() {
-  const {
-    refreshSession,
-    twoFactorAuthSSOErrorResponse,
-    clearSession,
-    hasInitializedSession,
-  } = AppUtils.useApplicationSessionContext()
+  const { clearSession, hasInitializedSession } =
+    AppUtils.useApplicationSessionContext()
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
 
@@ -67,7 +62,7 @@ export function OAuth2Form() {
   // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
   const isHandlingSignInFromExternalIdP = Boolean(queryParams.get('provider'))
 
-  const accountRegistrationUrl = SynapseHookUtils.useOneSageURL('/register1')
+  const oneSageURL = SynapseHookUtils.useOneSageURL()
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
@@ -84,9 +79,6 @@ export function OAuth2Form() {
   )
 
   const clientId = useMemo(() => {
-    const code = queryParams.get('code')
-    if (code) return // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
-
     const clientId = queryParams.get('client_id')
     if (!clientId) {
       onError(new Error('Synapse OAuth client_id is required'))
@@ -99,8 +91,6 @@ export function OAuth2Form() {
     SynapseQueries.useGetOAuth2Client(clientId!, {
       enabled: Boolean(clientId),
     })
-
-  const history = useHistory()
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const {
@@ -293,10 +283,7 @@ export function OAuth2Form() {
     }
   }, [oidcRequestDescriptionError, onError])
 
-  const promptForTwoFactorAuth = !!twoFactorAuthSSOErrorResponse
-
-  const isLoading =
-    !promptForTwoFactorAuth && (isLoadingProfile || isLoadingClientInfo)
+  const isLoading = isLoadingProfile || isLoadingClientInfo
 
   const loadingSpinner = (
     <Paper
@@ -325,6 +312,19 @@ export function OAuth2Form() {
     </Paper>
   )
 
+  if (
+    !isLoading &&
+    !error &&
+    !isLoggedIn &&
+    oauthClientInfo &&
+    oauthClientInfo.verified &&
+    !showPendingRedirectUI &&
+    oidcRequestDescription
+  ) {
+    // Prompt for login
+    storeRedirectURLForOneSageLogin()
+    window.location.assign(oneSageURL.toString())
+  }
   return (
     <StyledOuterContainer>
       <Backdrop open={!hasInitializedSession} sx={{ zIndex: 5 }}>
@@ -413,30 +413,6 @@ export function OAuth2Form() {
           </StyledInnerContainer>
         )}
       {(isLoading || showPendingRedirectUI) && loadingSpinner}
-      {(!!twoFactorAuthSSOErrorResponse ||
-        (!error &&
-          !accessToken &&
-          oauthClientInfo &&
-          oauthClientInfo.verified &&
-          !showPendingRedirectUI &&
-          oidcRequestDescription)) && (
-        <Paper sx={{ width: '400px', py: 8, px: 4, margin: '0 auto' }}>
-          <StandaloneLoginForm
-            registerAccountUrl={accountRegistrationUrl.toString()}
-            onBeginOAuthSignIn={() => {
-              // save current route (so that we can go back here after SSO)
-              AppUtils.preparePostSSORedirect()
-            }}
-            sessionCallback={() => {
-              refreshSession().then(() => {
-                AppUtils.redirectAfterSSO(history)
-              })
-            }}
-            twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
-          />
-          <SystemUseNotification maxWidth={'325px'} />
-        </Paper>
-      )}
       {error && (
         <FullWidthAlert
           variant="danger"

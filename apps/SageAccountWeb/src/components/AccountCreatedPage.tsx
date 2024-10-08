@@ -6,7 +6,10 @@ import { Link as RouterLink } from 'react-router-dom'
 import { LeftRightPanel } from './LeftRightPanel'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
 import { useSourceApp } from './useSourceApp'
-import { SynapseHookUtils } from 'synapse-react-client'
+import {
+  SynapseHookUtils,
+  processRedirectURLInOneSage,
+} from 'synapse-react-client'
 import { sourceAppConfigTableID } from '../resources'
 
 export type AccountCreatedPageProps = {}
@@ -63,8 +66,13 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                     variant="contained"
                     sx={{ padding: '10px', height: '100%' }}
                     onClick={() => {
-                      appContext?.redirectURL &&
-                        window.location.assign(appContext.redirectURL)
+                      // take user back to page they came from in the source app, if stored in a cookie
+                      const isProcessed = processRedirectURLInOneSage()
+                      if (!isProcessed) {
+                        // if not processed, fall back to the source app config redirect URL
+                        appContext?.redirectURL &&
+                          window.location.assign(appContext.redirectURL)
+                      }
                     }}
                   >
                     Take me to {sourceApp?.friendlyName}

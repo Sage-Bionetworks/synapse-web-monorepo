@@ -26,12 +26,12 @@ export const onBindToORCiD = (
     // after binding, go to ???
     if (redirectAfter) {
       localStorage.setItem(
-        SynapseConstants.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+        SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
         redirectAfter,
       )
     } else {
       localStorage.setItem(
-        SynapseConstants.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+        SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
         `${SynapseClient.getRootURL()}authenticated/validate?step=${
           ValidationWizardStep.VERIFY_IDENTITY
         }`,

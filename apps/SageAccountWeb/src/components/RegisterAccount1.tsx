@@ -157,7 +157,7 @@ export const RegisterAccount1 = () => {
         // redirect to Google login, passing the username through via the state param.
         // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
         localStorage.setItem(
-          SynapseConstants.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+          SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
           `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
         )
         const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
