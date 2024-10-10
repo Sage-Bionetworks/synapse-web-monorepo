@@ -3,29 +3,13 @@ import type {
   ColumnIconConfigs,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import {
-  NoContentPlaceholderType,
-  SynapseConstants,
-} from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { columnAliases } from './commonProps'
+import { SynapseConstants } from 'synapse-react-client'
+import { studiesSql } from '../resources'
+import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
 import studyActiveSvg from '../style/study-active.svg?url'
 import studyCompleteSvg from '../style/study-complete.svg?url'
 import studyCompleteHeaderSvg from '../style/study-completed-header.svg?url'
-import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { toolsCardConfiguration } from './tools'
-import { publicationsCardConfiguration } from './publications'
-import { datasetCardConfiguration } from './datasets'
-import {
-  datasetsSql,
-  metadataFilesSql,
-  publicationsSql,
-  studiesSql,
-  toolStudySql,
-} from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { filesPlotNavProps } from './files'
+import { columnAliases } from './commonProps'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -138,81 +122,6 @@ const studies: QueryWrapperPlotNavProps = {
       'grantDOI',
     ],
   },
-}
-
-export const studiesDetailPage: DetailsPageProps = {
-  sql: studiesSql,
-  tabLayout: [
-    {},
-    {
-      title: 'Study Datasets',
-      uriValue: 'Datasets',
-      iconName: 'dataset',
-      toolTip: 'All of the Datasets generated within this study',
-      cssClass: 'tab-dataset',
-      showMenu: false,
-      synapseConfigArray: [
-        {
-          name: 'CardContainerLogic',
-          columnName: 'studyId',
-          title: 'Study Datasets',
-          tableSqlKeys: ['studyId'],
-          props: {
-            ...datasetCardConfiguration,
-            sql: datasetsSql,
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-          },
-        },
-      ],
-    },
-    {
-      title: 'Study Files',
-      uriValue: 'Files',
-      iconName: 'database',
-      toolTip: 'File data generated within this study',
-      cssClass: 'tab-database',
-      synapseConfigArray: [
-        {
-          name: 'QueryWrapperPlotNav',
-          title: 'Study Files',
-          props: {
-            ...filesPlotNavProps,
-            rgbIndex: 8,
-            shouldDeepLink: false,
-            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
-          },
-          tableSqlKeys: ['studyId'],
-          columnName: 'studyId',
-        },
-      ],
-    },
-    {
-      title: 'Additional Files',
-      uriValue: 'AdditionalFiles',
-      iconName: 'database',
-      toolTip: 'Additional file data generated within this study',
-      cssClass: 'tab-database',
-      synapseConfigArray: [
-        {
-          name: 'StandaloneQueryWrapper',
-          title: 'Additional Files',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            visibleColumnCount: 7,
-            sql: metadataFilesSql,
-            rgbIndex,
-            hideAddToDownloadListColumn: false,
-            showDownloadColumn: true,
-            fileIdColumnName: 'id',
-            fileNameColumnName: 'name',
-            fileVersionColumnName: 'currentVersion',
-          },
-          className: 'metadata-table',
-        },
-      ],
-    },
-  ],
 }
 
 export default studies

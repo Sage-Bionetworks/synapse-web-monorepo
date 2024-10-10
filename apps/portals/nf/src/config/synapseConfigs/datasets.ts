@@ -1,13 +1,10 @@
-import { datasetsSql } from '../resources'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { columnAliases as sharedColumnAliases } from './commonProps'
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
+import { datasetsSql } from '../resources'
+import { columnAliases as sharedColumnAliases } from './commonProps'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 export const datasetsRgbIndex = 8
@@ -71,75 +68,5 @@ const datasets: QueryWrapperPlotNavProps = {
     ],
   },
 }
-
-export const datasetDetailsPageConfig: DetailsPageProps = {
-  sql: datasetsSql,
-  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  showMenu: false,
-  synapseConfigArray: [
-    // {
-    //   name: 'Markdown',
-    //   columnName: 'datasetDescription',
-    //   title: 'Description',
-    //   props: {},
-    // },
-    // {
-    //   name: 'Markdown',
-    //   columnName: 'acknowledgmentStatement',
-    //   title: 'Acknowledgment',
-    //   props: {},
-    // },
-    {
-      name: 'DatasetJsonLdScript',
-      columnName: 'id',
-      tableSqlKeys: ['id'],
-      props: {},
-    },
-    {
-      name: 'QueryWrapperPlotNav',
-      // title: 'Files',
-      props: {
-        rgbIndex: datasetsRgbIndex,
-        sql: '',
-        visibleColumnCount: 7,
-        tableConfiguration: {
-          showAccessColumn: true,
-          showDownloadColumn: true,
-        },
-        shouldDeepLink: false,
-        columnAliases,
-        defaultShowPlots: false,
-        showExportToCavatica: true,
-        isRowSelectionVisible: true,
-        rowSelectionPrimaryKey: ['id'],
-        fileIdColumnName: 'id',
-        fileNameColumnName: 'name',
-        fileVersionColumnName: 'currentVersion',
-      },
-      // tableSqlKeys: ['id'],  // Do not modify the sql where condition based on search params
-      overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>).<rowVersionNumber>
-      columnName: 'id',
-    },
-  ],
-}
-
-export const datasetsDetailsPage: SynapseConfig[] = [
-  {
-    name: 'CardContainerLogic',
-    isOutsideContainer: true,
-    props: {
-      ...datasetCardConfiguration,
-      sql: datasetsSql,
-      isHeader: true,
-      columnAliases,
-    },
-  },
-  {
-    name: 'DetailsPage',
-    isOutsideContainer: false,
-    props: datasetDetailsPageConfig,
-    containerClassName: 'DatasetDetailPage container-full-width',
-  },
-]
 
 export default datasets

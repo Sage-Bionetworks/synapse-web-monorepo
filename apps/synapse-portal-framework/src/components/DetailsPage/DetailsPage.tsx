@@ -19,7 +19,6 @@ import {
 import { DetailsPageProps } from '../../types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
 import { DetailsPageContextProvider } from './DetailsPageContext'
-import { DetailsPageTabUI } from './DetailsPageTabs'
 import { useScrollOnMount } from './utils'
 
 const goToExplorePage = () => {
@@ -51,7 +50,6 @@ export default function DetailsPage(props: DetailsPageProps) {
     sqlOperator,
     additionalFiltersSessionStorageKey,
     ContainerProps,
-    tabRoutes,
     children = <Outlet />,
   } = props
 
@@ -121,13 +119,6 @@ export default function DetailsPage(props: DetailsPageProps) {
         className="DetailsPage tab-layout"
         {...ContainerProps}
       >
-        {tabRoutes && (
-          <div className="tab-groups">
-            {tabRoutes.map(props => (
-              <DetailsPageTabUI key={props.path} {...props} />
-            ))}
-          </div>
-        )}
         {isLoading && (
           <Box display={'flex'} justifyContent={'center'} my={10}>
             <BarLoader

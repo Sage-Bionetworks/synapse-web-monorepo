@@ -4,20 +4,21 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { SynapseComponents } from 'synapse-react-client'
 import { useDetailsPageContext } from './DetailsPageContext'
 
-export type DetailsPageTabUIProps = {
+export type DetailsPageTabConfig = {
   path: string
   title: string
   tooltip?: string
   iconName?: string
   iconClassName?: string
   hideIfColumnValueNull?: string
+  children?: DetailsPageTabConfig[]
 }
 
-export type DetailsPageTabConfig = DetailsPageTabUIProps & {
-  element: React.ReactNode
+export type DetailsPageTabUIProps = {
+  tabConfig: DetailsPageTabConfig[]
 }
 
-export function DetailsPageTabUI(props: DetailsPageTabUIProps) {
+function DetailsPageTab(props: DetailsPageTabConfig) {
   const {
     path,
     title,
@@ -49,5 +50,17 @@ export function DetailsPageTabUI(props: DetailsPageTabUIProps) {
         {title}
       </NavLink>
     </Tooltip>
+  )
+}
+
+export function DetailsPageTabs(props: DetailsPageTabUIProps) {
+  const { tabConfig } = props
+
+  return (
+    <div className="tab-groups">
+      {tabConfig.map(config => (
+        <DetailsPageTab key={config.path} {...config} />
+      ))}
+    </div>
   )
 }

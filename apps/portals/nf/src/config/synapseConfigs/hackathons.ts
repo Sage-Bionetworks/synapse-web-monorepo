@@ -3,13 +3,10 @@ import type {
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { columnAliases } from './commonProps'
+import { hackathonsSql } from '../resources'
 import hackathonActiveSvg from '../style/hackathon-active.svg?url'
 import hackathonCompleteSvg from '../style/hackathon-complete.svg?url'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { hackathonsSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { columnAliases } from './commonProps'
 
 const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5
@@ -101,49 +98,6 @@ const hackathons: QueryWrapperPlotNavProps = {
       'manifestation',
     ],
   },
-}
-
-export const hackathonsDetailPage: DetailsPageProps = {
-  sql: hackathonsSql,
-  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  tabLayout: [
-    {
-      title: 'Background & Results',
-      uriValue: 'Background%24Results',
-      iconName: 'chart',
-      synapseConfigArray: [
-        {
-          name: 'Markdown',
-          columnName: 'tab1wikipointer',
-          title: '',
-          injectMarkdown: false,
-          props: {},
-        },
-        {
-          name: 'Markdown',
-          columnName: 'acknowledgementStatements',
-          title: 'Acknowledgements',
-          injectMarkdown: true,
-          props: {},
-        },
-      ],
-    },
-    {
-      title: 'Methodology',
-      uriValue: 'Methodology',
-      iconName: 'database',
-      cssClass: 'tab-database',
-      synapseConfigArray: [
-        {
-          name: 'Markdown',
-          columnName: 'tab2wikipointer',
-          title: '',
-          injectMarkdown: false,
-          props: {},
-        },
-      ],
-    },
-  ],
 }
 
 export default hackathons

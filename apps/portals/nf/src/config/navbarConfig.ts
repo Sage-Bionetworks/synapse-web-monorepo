@@ -34,7 +34,7 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Files', path: '/Explore/Files' },
         { name: 'Publications', path: '/Explore/Publications' },
         { name: 'Tools', path: '/Explore/Tools' },
-        { name: 'Hackathon Projects', path: '/Explore/Hackathon Projects' },
+        { name: 'Hackathon Projects', path: '/Explore/Hackathon' },
       ],
     },
     {
