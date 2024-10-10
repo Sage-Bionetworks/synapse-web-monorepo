@@ -3,13 +3,12 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import {
   DetailsPageTabConfig,
-  DetailsPageTabUI,
-  DetailsPageTabUIProps,
+  DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/injectPropsIntoConfig'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/injectPropsIntoConfig'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
 import {
   PortalSearchParams,
@@ -20,7 +19,6 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { Outlet, RouteObject } from 'react-router-dom'
 import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
@@ -34,6 +32,8 @@ import {
 } from 'synapse-react-client'
 import { dataOnStudiesPageSql, dataSql, studiesSql } from '../resources'
 import studyHeaderSvg from '../style/study-header.svg?url'
+import { Outlet, RouteObject } from 'react-router-dom'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {
@@ -120,10 +120,10 @@ export function StudiesDetailsPage() {
         }}
         searchParams={searchParams}
       />
-      <DetailsPage
-        {...studiesDetailsPageProps}
-        tabRoutes={studyDetailsPageTabs}
-      />
+      <DetailsPage {...studiesDetailsPageProps}>
+        <DetailsPageTabs tabConfig={studyDetailsPageTabs} />
+        <Outlet />
+      </DetailsPage>
     </>
   )
 }
@@ -323,7 +323,6 @@ export const studyDetailsPageTabs: DetailsPageTabConfig[] = [
     path: 'StudyDetails',
     iconName: 'study',
     tooltip: 'Description, methods, acknowledgements and related studies',
-    element: <DetailsPageContent content={studyDetailsTabContent} />,
   },
   {
     title: 'Study Data',
@@ -331,6 +330,20 @@ export const studyDetailsPageTabs: DetailsPageTabConfig[] = [
     iconName: 'database',
     iconClassName: 'tab-database',
     tooltip: 'All of the Data generated within this study',
+  },
+]
+
+export const studyDetailsPageChildRoutes: RouteObject[] = [
+  {
+    index: true,
+    element: <RedirectWithQuery to={studyDetailsPageTabs[0].path} />,
+  },
+  {
+    path: studyDetailsPageTabs[0].path,
+    element: <DetailsPageContent content={studyDetailsTabContent} />,
+  },
+  {
+    path: studyDetailsPageTabs[1].path,
     element: <DetailsPageContent content={studyDataTabContent} />,
   },
 ]

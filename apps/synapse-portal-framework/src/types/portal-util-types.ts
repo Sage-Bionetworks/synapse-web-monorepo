@@ -4,7 +4,6 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { IconName } from 'synapse-react-client'
-import { DetailsPageTabConfig } from '../components/DetailsPage/DetailsPageTabs'
 import { SynapseConfig } from './portal-config'
 
 /* 
@@ -49,11 +48,4 @@ export type DetailsPageProps = React.PropsWithChildren<{
   sqlOperator?: ColumnSingleValueFilterOperator | ColumnMultiValueFunction
   additionalFiltersSessionStorageKey?: string
   ContainerProps?: ContainerProps
-  /**
-   * If provided, the DetailsPage will render UI to navigate between tabs.
-   * The details page component itself will not render the tab content. To render the tab content,
-   * you must define child routes that will render in the DetailsPage's `Outlet`, and you may not
-   * pass your own children to the DetailsPage component
-   */
-  tabRoutes?: DetailsPageTabConfig[]
 }>
