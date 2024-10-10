@@ -1,5 +1,5 @@
+import { Box } from '@mui/material'
 import React from 'react'
-import { Box, Typography } from '@mui/material'
 import { HelpPopover } from 'synapse-react-client'
 
 type SectionTitleProps = {

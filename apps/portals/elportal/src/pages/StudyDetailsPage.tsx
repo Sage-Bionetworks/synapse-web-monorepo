@@ -1,13 +1,17 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { DetailsPageTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import {
+  DetailsPageTabConfig,
+  DetailsPageTabs,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownCollapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownCollapseFromColumnData'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router-dom'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import {
   cavaticaConnectAccountURL,
@@ -28,6 +32,23 @@ export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
     path: 'StudyDetails',
     iconName: 'study',
     tooltip: 'Description, methods, acknowledgements and related studies',
+  },
+  {
+    title: 'Study Data',
+    path: 'StudyData',
+    iconName: 'database',
+    tooltip: 'All of the Data generated within this study',
+    iconClassName: 'tab-database',
+  },
+] satisfies DetailsPageTabConfig[]
+
+export const studyDetailsPageRoutes: RouteObject[] = [
+  {
+    index: true,
+    element: <RedirectWithQuery to={studyDetailsPageTabConfig[0].path} />,
+  },
+  {
+    path: studyDetailsPageTabConfig[0].path,
     element: (
       <DetailsPageContent
         content={[
@@ -89,11 +110,7 @@ export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
     ),
   },
   {
-    title: 'Study Data',
-    path: 'StudyData',
-    iconName: 'database',
-    tooltip: 'All of the Data generated within this study',
-    iconClassName: 'tab-database',
+    path: studyDetailsPageTabConfig[1].path,
     element: (
       <DetailsPageContent
         content={[
@@ -180,7 +197,7 @@ export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
       />
     ),
   },
-] satisfies DetailsPageTabConfig[]
+]
 
 export default function StudyDetailsPage() {
   const { studyKey } = useGetPortalComponentSearchParams()
@@ -200,11 +217,11 @@ export default function StudyDetailsPage() {
       <DetailsPage
         sql={studiesSql}
         sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-        tabRoutes={studyDetailsPageTabConfig}
         ContainerProps={{
           maxWidth: 'xl',
         }}
       >
+        <DetailsPageTabs tabConfig={studyDetailsPageTabConfig} />
         <Outlet />
       </DetailsPage>
     </>

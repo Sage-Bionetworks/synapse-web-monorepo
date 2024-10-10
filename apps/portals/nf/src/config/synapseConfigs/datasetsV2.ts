@@ -1,12 +1,9 @@
 import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { columnAliases } from './commonProps'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import type { CardConfiguration } from 'synapse-react-client'
 import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
+import { columnAliases } from './commonProps'
 
 const datasetsSql = 'SELECT * FROM syn31543490'
 export const datasetSchema: GenericCardSchema = {
@@ -46,34 +43,34 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   showMenu: false,
 
-  synapseConfigArray: [
-    {
-      name: 'Markdown',
-      props: {},
-      injectMarkdown: false,
-      columnName: 'id',
-      title: 'Data Notes',
-    },
-    {
-      name: 'QueryWrapperPlotNav',
-      props: {
-        sqlOperator: ColumnMultiValueFunction.HAS,
-        rgbIndex,
-        name: 'Files',
-        sql: '',
-        visibleColumnCount: 7,
-        tableConfiguration: {
-          showAccessColumn: true,
-          showDownloadColumn: true,
-        },
-        shouldDeepLink: false,
-        columnAliases,
-      },
-      // tableSqlKeys: ['id'],  // Do not modify the sql where condition based on search params
-      overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>)
-      columnName: 'id',
-    },
-  ],
+  // synapseConfigArray: [
+  //   {
+  //     name: 'Markdown',
+  //     props: {},
+  //     injectMarkdown: false,
+  //     columnName: 'id',
+  //     title: 'Data Notes',
+  //   },
+  //   {
+  //     name: 'QueryWrapperPlotNav',
+  //     props: {
+  //       sqlOperator: ColumnMultiValueFunction.HAS,
+  //       rgbIndex,
+  //       name: 'Files',
+  //       sql: '',
+  //       visibleColumnCount: 7,
+  //       tableConfiguration: {
+  //         showAccessColumn: true,
+  //         showDownloadColumn: true,
+  //       },
+  //       shouldDeepLink: false,
+  //       columnAliases,
+  //     },
+  //     // tableSqlKeys: ['id'],  // Do not modify the sql where condition based on search params
+  //     overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>)
+  //     columnName: 'id',
+  //   },
+  // ],
 }
 
 export const datasetsDetailsPage: SynapseConfig[] = [

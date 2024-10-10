@@ -65,7 +65,6 @@ import {
   studiesQueryWrapperPlotNavProps,
   studyCardConfiguration,
   studyDetailsPageChildRoutes,
-  studyDetailsPageTabs,
 } from './synapseConfigs/studies'
 import {
   targetEnablingResourcesCardConfiguration,
@@ -609,13 +608,7 @@ const routes: RouteObject[] = [
       {
         path: 'Explore/Studies/DetailsPage',
         element: <StudiesDetailsPage />,
-        children: [
-          {
-            index: true,
-            element: <RedirectWithQuery to={studyDetailsPageTabs[0].path!} />,
-          },
-          ...studyDetailsPageTabs,
-        ],
+        children: studyDetailsPageChildRoutes,
       },
       {
         path: 'Analysis Platforms',

@@ -1,33 +1,30 @@
 import { Typography } from '@mui/material'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  DetailsPageContextConsumer,
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import {
-  usageRequirementsSql,
-  vendorSql,
   catalogNumberSql,
-  investigatorSql,
   developmentPublicationSql,
   fundingAgencySql,
-  toolApplicationsSql,
+  investigatorSql,
   mutationsSql,
   publicationsV2Sql,
+  toolApplicationsSql,
+  usageRequirementsSql,
+  vendorSql,
 } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from 'src/config/synapseConfigs/datasets'
 import { publicationsV2CardConfiguration } from 'src/config/synapseConfigs/publications'
 import {
-  SubsectionRowRenderer,
-  UserCardListRotate,
-  SynapseConstants,
   CardContainerLogic,
-  StandaloneQueryWrapper,
   MarkdownSynapse,
+  StandaloneQueryWrapper,
+  SubsectionRowRenderer,
+  SynapseConstants,
+  UserCardListRotate,
 } from 'synapse-react-client'
 
 export default function ToolDetailsPageDetailsTab() {

@@ -13,6 +13,7 @@ export type TabbedSynapseObjectsProps = {
   centerTabs: boolean
 }
 
+// TODO: Pass tabbed components directly to the component
 export default function TabbedSynapseObjects(props: TabbedSynapseObjectsProps) {
   const { tabConfigs, centerTabs } = props
   const [selectedTabConfig, setSelectedTabConfig] = useState<TabConfig>(

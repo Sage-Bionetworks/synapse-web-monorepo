@@ -2,7 +2,6 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ELBetaLaunchBanner from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBetaLaunchBanner'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBrowseToolsPage'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import React from 'react'
@@ -11,7 +10,7 @@ import { Markdown } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
-  studyDetailsPageTabConfig,
+  studyDetailsPageRoutes,
 } from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
@@ -48,15 +47,7 @@ const routes: RouteObject[] = [
       {
         path: 'Explore/Studies/DetailsPage',
         element: <StudyDetailsPage />,
-        children: [
-          {
-            index: true,
-            element: (
-              <RedirectWithQuery to={studyDetailsPageTabConfig[0].path} />
-            ),
-          },
-          ...studyDetailsPageTabConfig,
-        ],
+        children: studyDetailsPageRoutes,
       },
       {
         path: 'Analysis Platforms',
