@@ -4,6 +4,7 @@ import {
   SynapseContextUtils,
   SynapseQueries,
   GovernanceMarkdownGithub,
+  restoreLastPlace,
 } from 'synapse-react-client'
 import {
   Box,
@@ -44,7 +45,7 @@ export const SignUpdatedTermsOfUsePage = (
           },
           {
             onSuccess: () => {
-              window.location.assign('/')
+              restoreLastPlace()
             },
             onError: err => {
               displayToast(err.reason as string, 'danger')
@@ -98,7 +99,8 @@ export const SignUpdatedTermsOfUsePage = (
                 variant="outlined"
                 sx={{ width: '100%' }}
                 onClick={() => {
-                  window.location.assign('/?skippedSigningToS=true')
+                  sessionStorage.setItem('skippedSigningToS', 'true')
+                  restoreLastPlace()
                 }}
                 disabled={isLoading}
               >

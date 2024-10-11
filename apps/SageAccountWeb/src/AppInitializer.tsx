@@ -6,6 +6,7 @@ import {
   TermsOfServiceState,
 } from '@sage-bionetworks/synapse-types'
 import {
+  storeLastPlace,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
   useFramebuster,
@@ -64,16 +65,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setSignedToken(localStorageParamToken)
     }
 
-    const searchParamSkippedToS = getSearchParam('skippedSigningToS')
+    // SignUpdatedTermsOfUsePage sets this session storage value if the user decided to skip
     const sessionStorageSkippedToS = sessionStorage.getItem('skippedSigningToS')
-    if (searchParamSkippedToS) {
-      sessionStorage.setItem('skippedSigningToS', searchParamSkippedToS)
-      setSkippedSigningUpdatedToS(searchParamSkippedToS == 'true')
-    } else if (sessionStorageSkippedToS) {
-      setSkippedSigningUpdatedToS(sessionStorageSkippedToS == 'true')
-    } else {
-      setSkippedSigningUpdatedToS(false)
-    }
+    setSkippedSigningUpdatedToS(sessionStorageSkippedToS === 'true')
   }, [])
 
   // Detect if terms of service are up to date.  If not, route to either the Pledge or a page where the user can sign the updated terms.
@@ -89,7 +83,10 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       if (termsOfServiceStatus.lastAgreementDate == undefined) {
         redirectRoute = '/authenticated/signTermsOfUse'
       } else {
-        redirectRoute = '/authenticated/signUpdatedTermsOfUse'
+        if (location.pathname != '/authenticated/signUpdatedTermsOfUse') {
+          redirectRoute = '/authenticated/signUpdatedTermsOfUse'
+          storeLastPlace()
+        }
       }
     }
   }
