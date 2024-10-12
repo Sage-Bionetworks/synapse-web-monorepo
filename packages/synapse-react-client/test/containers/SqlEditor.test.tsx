@@ -12,6 +12,7 @@ import {
 import SqlEditor from '../../src/components/SynapseTable/SqlEditor'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
+const mockResetErrorBoundary = jest.fn()
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
   queryVisualizationContext: Partial<QueryVisualizationContextType>,
@@ -21,7 +22,7 @@ const renderComponent = (
       <QueryVisualizationContextProvider
         queryVisualizationContext={queryVisualizationContext}
       >
-        <SqlEditor />
+        <SqlEditor resetErrorBoundary={mockResetErrorBoundary} />
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
@@ -74,6 +75,7 @@ describe('SqlEditor tests', () => {
     expect(mockExecuteQueryRequest).toHaveBeenCalled()
     const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
     expect(typeof queryTransformFn).toBe('function')
+    expect(mockResetErrorBoundary).toHaveBeenCalled()
     expect(
       queryTransformFn({
         query: {},
