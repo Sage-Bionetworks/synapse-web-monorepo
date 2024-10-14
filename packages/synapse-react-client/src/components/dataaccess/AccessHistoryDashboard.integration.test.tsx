@@ -1,33 +1,34 @@
-import React from 'react'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { UserHistoryDashboard } from './AccessHistoryDashboard'
-import { createMemoryHistory, MemoryHistory } from 'history'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { Router } from 'react-router-dom'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  ACCESS_REQUIREMENT_SEARCH,
-  ACCESS_REQUIREMENT_BY_ID,
-  USER_BUNDLE,
-} from '../../utils/APIConstants'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import selectEvent from 'react-select-event'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResultsPageOne as mockSearchResults,
 } from '../../mocks/accessRequirement/mockAccessRequirements'
-import userEvent from '@testing-library/user-event'
+import { rest, server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
-import selectEvent from 'react-select-event'
-import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+import { getLocationTracker } from '../../testutils/LocationTracker'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
+  USER_BUNDLE,
+} from '../../utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import * as AccessApprovalsTableModule from './AccessApprovalsTable'
+import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
-import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+
 const APPROVAL_TABLE_TEST_ID = 'AccessApprovalTableTestId'
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 
@@ -58,21 +59,29 @@ function getUserBundleHandler(isACTMember: boolean, isARReviewer: boolean) {
     },
   )
 }
+const { getLocation, LocationTracker } = getLocationTracker()
 
-function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
-  const history = createMemoryHistory()
-  if (modifyHistory) {
-    modifyHistory(history)
-  }
-  const renderResult = render(
-    <Router history={history}>
-      <UserHistoryDashboard />
-    </Router>,
+function renderComponent(initialEntries: string[] = ['/']) {
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/',
+        element: (
+          <>
+            <LocationTracker />
+            <UserHistoryDashboard />
+          </>
+        ),
+      },
+    ],
     {
-      wrapper: createWrapper(),
+      initialEntries: initialEntries,
     },
   )
-  return { ...renderResult, history }
+  const renderResult = render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
+  return { ...renderResult }
 }
 
 describe('AccessHistoryDashboard tests', () => {
@@ -193,7 +202,7 @@ describe('AccessHistoryDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating user/team name', async () => {
-    const { history } = renderComponent()
+    renderComponent()
 
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
@@ -204,7 +213,7 @@ describe('AccessHistoryDashboard tests', () => {
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('accessorId'),
+        new URLSearchParams(getLocation().search).get('accessorId'),
       ).toEqual(MOCK_USER_ID.toString())
 
       expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
@@ -228,7 +237,7 @@ describe('AccessHistoryDashboard tests', () => {
   })
 
   it('Filters the passed props and URLSearchParams when updating the AR Name', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
@@ -259,7 +268,7 @@ describe('AccessHistoryDashboard tests', () => {
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('accessRequirementId'),
+        new URLSearchParams(getLocation().search).get('accessRequirementId'),
       ).toEqual(mockAccessRequirement.id.toString())
 
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
@@ -283,15 +292,11 @@ describe('AccessHistoryDashboard tests', () => {
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
-    renderComponent(history => {
-      const searchParams = new URLSearchParams('')
-      searchParams.set(
-        'accessRequirementId',
-        mockAccessRequirement.id.toString(),
-      )
-      searchParams.set('accessorId', MOCK_USER_ID.toString())
-      history.push('?' + searchParams.toString())
-    })
+    const searchParams = new URLSearchParams('')
+    searchParams.set('accessRequirementId', mockAccessRequirement.id.toString())
+    searchParams.set('accessorId', MOCK_USER_ID.toString())
+    const initialEntries = ['/', `/?${searchParams.toString()}`]
+    renderComponent(initialEntries)
 
     await waitFor(() => {
       expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(

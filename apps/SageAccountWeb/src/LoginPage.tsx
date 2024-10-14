@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   LoginMethod,
   StandaloneLoginForm,
@@ -45,7 +45,7 @@ function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
-  const history = useHistory()
+  const navigate = useNavigate()
   const sourceApp = useSourceApp()
   const {
     lastLoginDateState,
@@ -83,7 +83,7 @@ function LoginPage(props: LoginPageProps) {
                     lastLoginSourceAppNameState.set(sourceApp?.friendlyName)
                     lastLoginSourceAppURLState.set(sourceApp?.appURL)
                   }
-                  redirectAfterSSO(history, returnToUrl)
+                  redirectAfterSSO(navigate, returnToUrl)
                   // If we didn't redirect, refresh the session
                   refreshSession()
                 }}

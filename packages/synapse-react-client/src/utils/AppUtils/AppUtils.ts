@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { NavigateFunction } from 'react-router-dom'
 import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useEffect, useState } from 'react'
 
@@ -11,7 +11,7 @@ export function preparePostSSORedirect() {
 }
 
 export function redirectAfterSSO(
-  history?: ReturnType<typeof useHistory>,
+  navigate?: NavigateFunction,
   fallbackRedirectUrl?: string,
 ) {
   // go back to original route after successful SSO login
@@ -21,11 +21,13 @@ export function redirectAfterSSO(
   localStorage.removeItem(POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY)
   const redirectUrl = originalUrl ?? fallbackRedirectUrl
   if (redirectUrl) {
-    if (history) {
+    if (navigate) {
       if (redirectUrl.startsWith(window.location.origin)) {
-        history.replace(redirectUrl.substring(window.location.origin.length))
+        navigate(redirectUrl.substring(window.location.origin.length), {
+          replace: true,
+        })
       } else {
-        history.replace(redirectUrl)
+        navigate(redirectUrl, { replace: true })
       }
     } else {
       window.location.replace(redirectUrl)
