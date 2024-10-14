@@ -2,9 +2,6 @@ import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
-import { ReactComponent as TotalDataPlot } from '../../assets/homepage/total-data-static-plot.svg'
-import { ReactComponent as TotalDownloadsPlot } from '../../assets/homepage/total-downloads-static-plot.svg'
-import { ReactComponent as ActiveUsersPlot } from '../../assets/homepage/active-users-static-plot.svg'
 import { SynapseByTheNumbersItem } from './SynapseByTheNumbersItem'
 
 export type SynapseByTheNumbersProps = {
@@ -19,8 +16,8 @@ export const SynapseByTheNumbers: React.FunctionComponent<
     entityId: metricsTable,
     query: {
       sql: `SELECT * FROM ${metricsTable}`,
-      limit: 1,
-      sort: [{ column: 'last_updated', direction: 'DESC' }],
+      limit: 12, // past year
+      sort: [{ column: 'export_date', direction: 'DESC' }],
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -28,6 +25,9 @@ export const SynapseByTheNumbers: React.FunctionComponent<
 
   const rowSet = data?.responseBody?.queryResult?.queryResults
   const headers = rowSet?.headers
+  const exportDateColIndex = headers?.findIndex(
+    selectColumn => selectColumn.name == 'export_date',
+  )!
   const totalSizeInPetaBytesColIndex = headers?.findIndex(
     selectColumn => selectColumn.name == 'total_data_size_in_pib',
   )!
@@ -38,7 +38,7 @@ export const SynapseByTheNumbers: React.FunctionComponent<
     selectColumn => selectColumn.name == 'total_downloads_last_month',
   )!
 
-  if (!rowSet || rowSet.rows.length != 1) {
+  if (!rowSet || rowSet.rows.length == 0) {
     return <></>
   }
   const values = rowSet.rows[0].values
@@ -62,17 +62,23 @@ export const SynapseByTheNumbers: React.FunctionComponent<
       <SynapseByTheNumbersItem
         title={`${totalSize} Petabytes`}
         description={'Total data'}
-        plot={<TotalDataPlot />}
+        rows={rowSet.rows}
+        plotXColIndex={exportDateColIndex}
+        plotYColIndex={totalSizeInPetaBytesColIndex}
       />
       <SynapseByTheNumbersItem
         title={values[activeUsersLastMonthColIndex] ?? '-'}
         description={'Active users per month'}
-        plot={<ActiveUsersPlot />}
+        rows={rowSet.rows}
+        plotXColIndex={exportDateColIndex}
+        plotYColIndex={activeUsersLastMonthColIndex}
       />
       <SynapseByTheNumbersItem
         title={totalDownloadsPerMonth}
         description={'Total downloads per month'}
-        plot={<TotalDownloadsPlot />}
+        rows={rowSet.rows}
+        plotXColIndex={exportDateColIndex}
+        plotYColIndex={totalDownloadsLastMonthColIndex}
       />
     </Box>
   )
