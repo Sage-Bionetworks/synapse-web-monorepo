@@ -132,10 +132,8 @@ export function StorybookComponentWrapper(props: {
           {storybookContext.globals.showReactQueryDevtools && (
             <ReactQueryDevtools />
           )}
-          <MemoryRouter>
-            <SynapseToastContainer />
-            <main>{props.children}</main>
-          </MemoryRouter>
+          <SynapseToastContainer />
+          <main>{props.children}</main>
         </SynapseContextProvider>
       </QueryClientProvider>
     </Suspense>

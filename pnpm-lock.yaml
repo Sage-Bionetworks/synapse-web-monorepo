@@ -136,8 +136,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -178,9 +178,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@types/react-tooltip':
         specifier: ^4.2.4
         version: 4.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -305,8 +302,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -354,8 +351,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -403,8 +400,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -452,8 +449,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -504,8 +501,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -556,8 +553,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -614,8 +611,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -663,8 +660,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -721,8 +718,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -773,8 +770,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -852,8 +849,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -894,9 +891,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@types/react-tooltip':
         specifier: ^4.2.4
         version: 4.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1048,8 +1042,8 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1090,9 +1084,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@vitest/coverage-v8':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))
@@ -1532,8 +1523,8 @@ importers:
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router-dom:
-        specifier: ^6.26.2
-        version: 6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-select:
         specifier: ^5.8.0
         version: 5.8.0(@types/react@18.2.64)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1766,9 +1757,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@types/react-transition-group':
         specifier: ^4.4.10
         version: 4.4.10
@@ -4441,8 +4429,8 @@ packages:
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0 || ^5.0.0
 
-  '@remix-run/router@1.19.2':
-    resolution: {integrity: sha512-baiMx18+IMuD1yyvOGaHM9QrVUPGGG0jC+z+IPHnRJWUAUvaKuWKyE8gjDj2rzv3sz9zOGoRSPgeBVHRhZnBlA==}
+  '@remix-run/router@1.20.0':
+    resolution: {integrity: sha512-mUnk8rPJBI9loFDZ+YzPGdeniYK+FTmRD1TMCz7ev2SNIozyKKpnGgsxO34u6Z4z/t0ITuu7voi/AshfsGsgFg==}
     engines: {node: '>=14.0.0'}
 
   '@restart/context@2.1.4':
@@ -5508,12 +5496,6 @@ packages:
 
   '@types/react-plotly.js@2.6.3':
     resolution: {integrity: sha512-HBQwyGuu/dGXDsWhnQrhH+xcJSsHvjkwfSRjP+YpOsCCWryIuXF78ZCBjpfgO3sCc0Jo8sYp4NOGtqT7Cn3epQ==}
-
-  '@types/react-router-dom@5.3.3':
-    resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
-
-  '@types/react-router@5.1.20':
-    resolution: {integrity: sha512-jGjmu/ZqS7FjSH6owMcD5qpq19+1RS9DeVRqfl1FeBMxTDQAGwlMWOcs52NDoXaNKyG3d1cYQFMs9rCrb88o9Q==}
 
   '@types/react-tooltip@4.2.4':
     resolution: {integrity: sha512-UzjzmgY/VH3Str6DcAGTLMA1mVVhGOyARNTANExrirtp+JgxhaIOVDxq4TIRmpSi4voLv+w4HA9CC5GvhhCA0A==}
@@ -8729,6 +8711,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -10046,15 +10029,15 @@ packages:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
-  react-router-dom@6.26.2:
-    resolution: {integrity: sha512-z7YkaEW0Dy35T3/QKPYB1LjMK2R1fxnHO8kWpUMTBdfVzZrWOiY9a7CtN8HqdWtDUWd5FY6Dl8HFsqVwH4uOtQ==}
+  react-router-dom@6.27.0:
+    resolution: {integrity: sha512-+bvtFWMC0DgAFrfKXKG9Fc+BcXWRUO1aJIihbB79xaeq0v5UzfvnM5houGUm1Y461WVRcgAQ+Clh5rdb1eCx4g==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  react-router@6.26.2:
-    resolution: {integrity: sha512-tvN1iuT03kHgOFnLPfLJ8V95eijteveqdOSk+srqfePtQvqCExB8eHOYnlilbOcyJyKnYkr1vJvf7YqotAJu1A==}
+  react-router@6.27.0:
+    resolution: {integrity: sha512-YA+HGZXz4jaAkVoYBE98VQl+nVzI+cVI2Oj/06F5ZM+0u3TgedN9Y9kmMRo2mnkSK2nCpNQn0DVob4HCsY/WLw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
@@ -14857,7 +14840,7 @@ snapshots:
       immutable: 4.3.5
       redux: 5.0.1
 
-  '@remix-run/router@1.19.2': {}
+  '@remix-run/router@1.20.0': {}
 
   '@restart/context@2.1.4(react@18.2.0)':
     dependencies:
@@ -16131,17 +16114,6 @@ snapshots:
   '@types/react-plotly.js@2.6.3':
     dependencies:
       '@types/plotly.js': 2.29.2
-      '@types/react': 18.2.64
-
-  '@types/react-router-dom@5.3.3':
-    dependencies:
-      '@types/history': 4.7.11
-      '@types/react': 18.2.64
-      '@types/react-router': 5.1.20
-
-  '@types/react-router@5.1.20':
-    dependencies:
-      '@types/history': 4.7.11
       '@types/react': 18.2.64
 
   '@types/react-tooltip@4.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
@@ -22049,16 +22021,16 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  react-router-dom@6.26.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-router-dom@6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@remix-run/router': 1.19.2
+      '@remix-run/router': 1.20.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.26.2(react@18.2.0)
+      react-router: 6.27.0(react@18.2.0)
 
-  react-router@6.26.2(react@18.2.0):
+  react-router@6.27.0(react@18.2.0):
     dependencies:
-      '@remix-run/router': 1.19.2
+      '@remix-run/router': 1.20.0
       react: 18.2.0
 
   react-select-event@5.5.1:

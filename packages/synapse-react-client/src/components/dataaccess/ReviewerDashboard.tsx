@@ -1,25 +1,24 @@
-import React, { useCallback } from 'react'
+import { Typography } from '@mui/material'
+import React, { useMemo } from 'react'
 import {
-  BrowserRouter,
-  BrowserRouterProps,
-  MemoryRouter,
-  MemoryRouterProps,
+  createBrowserRouter,
+  createMemoryRouter,
   Navigate,
   NavLink,
-  Route,
-  Routes,
+  Outlet,
+  RouteObject,
+  RouterProvider,
   useParams,
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
-import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import OrientationBanner from '../OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import SubmissionPage from './SubmissionPage'
-import OrientationBanner from '../OrientationBanner'
 
 function LinkTab(props: {
   href: string
@@ -49,7 +48,7 @@ type ReviewerDashboardProps = {
 
 export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const {
-    routerBaseName = 'DataAccessManagement:default',
+    routerBaseName = '/DataAccessManagement:default',
     useMemoryRouter = false,
   } = props
 
@@ -59,87 +58,89 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const hasReviewerPermissions =
     userBundle?.isACTMember || userBundle?.isARReviewer
 
-  const Router = useCallback(
-    (props: MemoryRouterProps | BrowserRouterProps) => {
-      if (useMemoryRouter) {
-        return <MemoryRouter {...props} />
-      } else {
-        return <BrowserRouter {...props} />
-      }
-    },
-    [useMemoryRouter],
+  const routes: RouteObject[] = useMemo(
+    () => [
+      {
+        path: '/',
+        element: (
+          <div className="ReviewerDashboard">
+            <div className="Tabs" role="tablist">
+              {hasActPermissions && (
+                <LinkTab href="/AccessRequirements" icon="accessClosed">
+                  Access Requirements
+                </LinkTab>
+              )}
+              {hasReviewerPermissions && (
+                <LinkTab href="/Submissions" icon="discussion">
+                  Submissions
+                </LinkTab>
+              )}
+              {hasReviewerPermissions && (
+                <LinkTab href="/UserAccessHistory" icon="history">
+                  User Access History
+                </LinkTab>
+              )}
+            </div>
+            <div className="TabContentContainer">
+              <SynapseErrorBoundary>
+                <Outlet />
+              </SynapseErrorBoundary>
+            </div>
+          </div>
+        ),
+        children: [
+          {
+            path: 'AccessRequirements',
+            element: hasActPermissions ? <AccessRequirementDashboard /> : null,
+          },
+          {
+            path: 'Submissions',
+            element: hasReviewerPermissions ? (
+              <>
+                {!hasActPermissions && (
+                  <OrientationBanner
+                    name="DataAccessManagement"
+                    title="Getting Started With Data Access Management"
+                    text="When someone requests access to data, that request will show up here. Clicking on the Request ID will take you to a page where you can review the request."
+                    sx={{
+                      margin: '-20px -30px 20px -30px',
+                      width: 'auto',
+                    }}
+                  />
+                )}
+                <DataAccessSubmissionDashboard />
+              </>
+            ) : null,
+          },
+          {
+            path: 'Submissions/:id',
+            element: hasReviewerPermissions ? (
+              <SubmissionPageRouteRenderer />
+            ) : null,
+          },
+          {
+            path: 'UserAccessHistory',
+            element: <UserHistoryDashboard />,
+          },
+        ],
+      },
+    ],
+    [hasActPermissions, hasReviewerPermissions],
   )
+
+  const router = useMemo(() => {
+    if (useMemoryRouter) {
+      return createMemoryRouter(routes, { basename: routerBaseName })
+    } else {
+      return createBrowserRouter(routes, { basename: routerBaseName })
+    }
+  }, [useMemoryRouter, routes, routerBaseName])
 
   if (isLoading) {
     return <SynapseSpinner size={50} />
   }
 
-  return (
-    <Router basename={routerBaseName}>
-      <div className="ReviewerDashboard">
-        <div className="Tabs" role="tablist">
-          {hasActPermissions && (
-            <LinkTab href="/AccessRequirements" icon="accessClosed">
-              Access Requirements
-            </LinkTab>
-          )}
-          {hasReviewerPermissions && (
-            <LinkTab href="/Submissions" icon="discussion">
-              Submissions
-            </LinkTab>
-          )}
-          {hasReviewerPermissions && (
-            <LinkTab href="/UserAccessHistory" icon="history">
-              User Access History
-            </LinkTab>
-          )}
-        </div>
-        <div className="TabContentContainer">
-          <SynapseErrorBoundary>
-            <Routes>
-              {hasActPermissions && (
-                <Route
-                  path="AccessRequirements/"
-                  element={<AccessRequirementDashboard />}
-                />
-              )}
-              {hasReviewerPermissions && [
-                <Route
-                  key="Submissions/"
-                  path="Submissions/"
-                  element={
-                    <>
-                      {!hasActPermissions && (
-                        <OrientationBanner
-                          name="DataAccessManagement"
-                          title="Getting Started With Data Access Management"
-                          text="When someone requests access to data, that request will show up here. Clicking on the Request ID will take you to a page where you can review the request."
-                          sx={{
-                            margin: '-20px -30px 20px -30px',
-                            width: 'auto',
-                          }}
-                        />
-                      )}
-                      <DataAccessSubmissionDashboard />
-                    </>
-                  }
-                ></Route>,
-                <Route
-                  key="Submissions/:id"
-                  path="Submissions/:id"
-                  element={<SubmissionPageRouteRenderer />}
-                />,
-              ]}
-              <Route
-                path="UserAccessHistory/"
-                element={<UserHistoryDashboard />}
-              />
-            </Routes>
-          </SynapseErrorBoundary>
-        </div>
-      </div>
-    </Router>
-  )
+  return <RouterProvider router={router} />
 }
 
 function SubmissionPageRouteRenderer() {
