@@ -1,4 +1,3 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import type {
   CardConfiguration,
   CardContainerLogicProps,
@@ -21,10 +20,3 @@ export const publicationsProps: CardContainerLogicProps = {
   sql: publicationsSql,
   ...cardConfiguration,
 }
-
-const publications: SynapseConfig = {
-  name: 'CardContainerLogic',
-  props: publicationsProps,
-}
-
-export default publications

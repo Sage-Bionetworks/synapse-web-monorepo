@@ -8,7 +8,7 @@ import {
 import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/injectPropsIntoConfig'
+import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
 import {
   PortalSearchParams,

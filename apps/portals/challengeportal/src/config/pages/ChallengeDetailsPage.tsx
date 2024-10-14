@@ -12,7 +12,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import ProjectDiscussionForum from '@sage-bionetworks/synapse-portal-framework/components/ProjectDiscussionForum'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import {
   PortalSearchParams,
   useGetPortalComponentSearchParams,
@@ -35,8 +34,6 @@ import {
 } from 'synapse-react-client'
 import { challengeProjectsSql } from '../resources'
 
-const rgbIndex = 3
-
 export const challengesSchema: GenericCardSchema = {
   type: 'challenge',
   title: 'name',
@@ -55,19 +52,6 @@ export const challengeCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: challengesSchema,
   secondaryLabelLimit: 5,
-}
-
-export const challenges: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    cardConfiguration: challengeCardConfiguration,
-    sql: challengeProjectsSql,
-    hideDownload: true,
-    shouldDeepLink: true,
-    defaultColumn: 'name',
-    name: 'Challenges',
-  },
 }
 
 function getTaskTabConfig(taskID: string): DetailsPageContentType {

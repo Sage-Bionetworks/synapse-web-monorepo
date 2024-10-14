@@ -1,5 +1,5 @@
 import { MarkdownSynapseProps } from 'synapse-react-client'
-import { transformStringIntoMarkdownProps } from '../../injectPropsIntoConfig'
+import { transformStringIntoMarkdownProps } from '../../transformStringIntoMarkdownProps'
 import { useDetailsPageContext } from '../DetailsPageContext'
 
 export function useColumnDataMarkdownProps(

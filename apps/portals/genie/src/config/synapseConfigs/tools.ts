@@ -1,4 +1,3 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import type {
   CardConfiguration,
   CardContainerLogicProps,
@@ -25,9 +24,3 @@ export const toolProps: CardContainerLogicProps = {
   sql: toolsSql,
   ...cardConfiguration,
 }
-const tools: SynapseConfig = {
-  name: 'CardContainerLogic',
-  props: toolProps,
-}
-
-export default tools

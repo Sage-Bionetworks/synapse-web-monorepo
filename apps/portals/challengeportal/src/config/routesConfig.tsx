@@ -12,6 +12,7 @@ import {
   challengeTitleLinkConfig,
 } from './pages/ChallengeDetailsPage'
 import { challengeProjectsSql } from './resources'
+import { CardContainerLogic } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {
@@ -36,36 +37,33 @@ const routes: RouteObject[] = [
                   // Add list of challenge project cards
                   {
                     label: 'Active',
-                    synapseObject: {
-                      name: 'CardContainerLogic',
-                      props: {
-                        sql: `${challengeProjectsSql} where Status='Active'`,
-                        ...challengeCardConfiguration,
-                        titleLinkConfig: challengeTitleLinkConfig,
-                      },
-                    },
+                    element: (
+                      <CardContainerLogic
+                        sql={`${challengeProjectsSql} where Status='Active'`}
+                        {...challengeCardConfiguration}
+                        titleLinkConfig={challengeTitleLinkConfig}
+                      />
+                    ),
                   },
                   {
                     label: 'Upcoming',
-                    synapseObject: {
-                      name: 'CardContainerLogic',
-                      props: {
-                        sql: `${challengeProjectsSql} where Status='Upcoming'`,
-                        ...challengeCardConfiguration,
-                        titleLinkConfig: challengeTitleLinkConfig,
-                      },
-                    },
+                    element: (
+                      <CardContainerLogic
+                        sql={`${challengeProjectsSql} where Status='Upcoming'`}
+                        {...challengeCardConfiguration}
+                        titleLinkConfig={challengeTitleLinkConfig}
+                      />
+                    ),
                   },
                   {
                     label: 'Completed',
-                    synapseObject: {
-                      name: 'CardContainerLogic',
-                      props: {
-                        sql: `${challengeProjectsSql} where Status='Closed'`,
-                        ...challengeCardConfiguration,
-                        titleLinkConfig: challengeTitleLinkConfig,
-                      },
-                    },
+                    element: (
+                      <CardContainerLogic
+                        sql={`${challengeProjectsSql} where Status='Closed'`}
+                        {...challengeCardConfiguration}
+                        titleLinkConfig={challengeTitleLinkConfig}
+                      />
+                    ),
                   },
                 ]}
               />

@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
 import { Box, Tab, Tabs } from '@mui/material'
-import { RowSynapseConfig } from '../types/portal-util-types'
-import { SynapseComponent } from '../components/SynapseComponent'
+import React, { useState } from 'react'
 
 export type TabConfig = {
   label: string
-  synapseObject: RowSynapseConfig
+  element: React.ReactNode
 }
 
 export type TabbedSynapseObjectsProps = {
@@ -13,7 +11,6 @@ export type TabbedSynapseObjectsProps = {
   centerTabs: boolean
 }
 
-// TODO: Pass tabbed components directly to the component
 export default function TabbedSynapseObjects(props: TabbedSynapseObjectsProps) {
   const { tabConfigs, centerTabs } = props
   const [selectedTabConfig, setSelectedTabConfig] = useState<TabConfig>(
@@ -35,7 +32,7 @@ export default function TabbedSynapseObjects(props: TabbedSynapseObjectsProps) {
           )
         })}
       </Tabs>
-      {<SynapseComponent synapseConfig={selectedTabConfig.synapseObject} />}
+      {selectedTabConfig.element}
     </Box>
   )
 }

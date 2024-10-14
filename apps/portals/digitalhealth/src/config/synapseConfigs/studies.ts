@@ -1,4 +1,3 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import type {
   CardConfiguration,
   GenericCardSchema,
@@ -87,23 +86,3 @@ export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ],
   },
 }
-
-export const studyDetailPage: SynapseConfig[] = [
-  {
-    name: 'CardContainerLogic',
-    isOutsideContainer: true,
-    props: {
-      isHeader: true,
-      isAlignToLeftNav: true,
-      ...studiesCardConfiguration,
-      rgbIndex: studiesRgbIndex,
-      columnAliases,
-      genericCardSchema: {
-        ...studySchema,
-        title: 'study',
-        link: 'id',
-      },
-      sql: studySql,
-    },
-  },
-]
