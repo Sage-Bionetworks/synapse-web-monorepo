@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
 import { Box, Tab, Tabs } from '@mui/material'
-import { RowSynapseConfig } from '../types/portal-util-types'
-import { SynapseComponent } from '../components/SynapseComponent'
+import React, { useState } from 'react'
 
 export type TabConfig = {
   label: string
-  synapseObject: RowSynapseConfig
+  element: React.ReactNode
 }
 
 export type TabbedSynapseObjectsProps = {
@@ -34,7 +32,7 @@ export default function TabbedSynapseObjects(props: TabbedSynapseObjectsProps) {
           )
         })}
       </Tabs>
-      {<SynapseComponent synapseConfig={selectedTabConfig.synapseObject} />}
+      {selectedTabConfig.element}
     </Box>
   )
 }

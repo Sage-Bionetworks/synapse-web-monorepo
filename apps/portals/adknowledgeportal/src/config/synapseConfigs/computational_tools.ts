@@ -1,6 +1,9 @@
-import type { CardConfiguration, GenericCardSchema } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { computationalSql } from '../resources'
 
 const computationalSchema: GenericCardSchema = {
@@ -27,9 +30,8 @@ export const computationalCardConfiguration: CardConfiguration = {
 
 const rgbIndex = 7
 
-const computationalTools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
+export const computationalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
+  {
     rgbIndex,
     sql: computationalSql,
     cardConfiguration: computationalCardConfiguration,
@@ -46,7 +48,4 @@ const computationalTools: SynapseConfig = {
         'summary',
       ],
     },
-  },
-}
-
-export default computationalTools
+  }

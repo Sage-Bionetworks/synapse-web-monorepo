@@ -28,16 +28,19 @@ export const TablePagination = () => {
     data: { queryCount, maxRowsPerPage },
   } = useSuspenseQuery(queryMetadataQueryOptions)
 
-  const maxPageSize = maxRowsPerPage ?? pageSize
-
-  const pageSizeOptions = [10, 25, 100, 500]
-  const pageSizeOptionsBasedOnData = pageSizeOptions.filter(
-    value => value < maxPageSize,
+  const maxPageSize = Math.min(
+    queryCount ?? Infinity,
+    maxRowsPerPage ?? Infinity,
   )
-  if (pageSizeOptionsBasedOnData.length == 0) {
-    pageSizeOptionsBasedOnData.push(maxPageSize)
-    if (maxRowsPerPage && pageSize > maxRowsPerPage) {
-      setPageSize(maxRowsPerPage)
+
+  let pageSizeOptions = [10, 25, 100, 500]
+  if (Number.isFinite(maxPageSize)) {
+    pageSizeOptions = pageSizeOptions.filter(value => value < maxPageSize)
+  }
+  if (pageSizeOptions.length == 0) {
+    pageSizeOptions.push(pageSize)
+    if (Number.isFinite(maxPageSize) && pageSize > maxPageSize) {
+      setPageSize(maxPageSize)
     }
   }
   const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
@@ -88,6 +91,10 @@ export const TablePagination = () => {
   ) {
     return null
   }
+  // If there are no results and this is the first page, hide pagination
+  if (queryCount == 0 && currentPage == 1) {
+    return null
+  }
 
   return (
     <div>
@@ -114,7 +121,7 @@ export const TablePagination = () => {
         onChange={handlePageSize}
         sx={{ ml: 0.5 }}
       >
-        {pageSizeOptionsBasedOnData.map(pageSize => {
+        {pageSizeOptions.map(pageSize => {
           return (
             <MenuItem key={pageSize} value={pageSize}>
               {pageSize} per page

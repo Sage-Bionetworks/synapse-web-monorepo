@@ -1,1 +1,0 @@
-export S3_STAGING_BUCKET_LOCATION=s3://staging.covidrecoverycorpsresearcher.synapse.org

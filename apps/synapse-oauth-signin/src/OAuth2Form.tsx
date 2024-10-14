@@ -11,7 +11,7 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
@@ -100,7 +100,7 @@ export function OAuth2Form() {
       enabled: Boolean(clientId),
     })
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const {
@@ -429,7 +429,7 @@ export function OAuth2Form() {
             }}
             sessionCallback={() => {
               refreshSession().then(() => {
-                AppUtils.redirectAfterSSO(history)
+                AppUtils.redirectAfterSSO(navigate)
               })
             }}
             twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}

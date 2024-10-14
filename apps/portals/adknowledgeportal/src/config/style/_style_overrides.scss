@@ -1,4 +1,4 @@
-@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use '@sage-bionetworks/synapse-portal-framework/style/variables' as Portal;
 
 #header,
 #footer {
@@ -18,10 +18,6 @@ footer {
   img.nav-logo {
     width: 250px;
   }
-}
-
-.amp-project-component {
-  margin-top: 30px;
 }
 
 .ProgramCardList {

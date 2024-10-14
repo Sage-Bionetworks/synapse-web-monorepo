@@ -1,17 +1,17 @@
 import React from 'react'
-import { Redirect, RedirectProps, useLocation } from 'react-router-dom'
+import { Navigate, NavigateProps, useLocation } from 'react-router-dom'
 
 /**
  * Allows us to use react-router's Redirect as a portal component without losing the query params.
  * @param props
  * @returns
  */
-export default function RedirectWithQuery(props: RedirectProps) {
+export default function RedirectWithQuery(props: NavigateProps) {
   const { search } = useLocation()
   const hash = window.location.hash
 
   return (
-    <Redirect
+    <Navigate
       {...props}
       to={{
         pathname: props.to as string,

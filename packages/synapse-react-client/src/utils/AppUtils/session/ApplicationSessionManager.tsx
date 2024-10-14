@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import SynapseClient from '../../../synapse-client'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { redirectAfterSSO } from '../AppUtils'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
@@ -56,7 +56,7 @@ export function ApplicationSessionManager(
     onTwoFactorAuthResetThroughSSO,
     appId,
   } = props
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [token, setToken] = useState<string | undefined>()
   const [acceptsTermsOfUse, setAcceptsTermsOfUse] = useState<
@@ -138,7 +138,7 @@ export function ApplicationSessionManager(
       onResetSessionComplete()
     }
     //in all cases when the session is cleared we should refresh the page to ensure private data is not being shown
-    history.go(0)
+    navigate(0)
   }, [refreshSession, onResetSessionComplete])
 
   /** Call refreshSession on mount */
@@ -160,7 +160,7 @@ export function ApplicationSessionManager(
 
   const { isLoading: isLoadingSSO } = useDetectSSOCode({
     onSignInComplete: () => {
-      redirectAfterSSO(history)
+      redirectAfterSSO(navigate)
       refreshSession()
     },
     onTwoFactorAuthRequired: twoFactorAuthError => {

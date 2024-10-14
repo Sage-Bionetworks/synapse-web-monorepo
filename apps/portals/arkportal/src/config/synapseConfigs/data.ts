@@ -1,11 +1,11 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import columnAliases from '../columnAliases'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   LabelLinkConfig,
+  QueryWrapperPlotNavProps,
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
+import columnAliases from '../columnAliases'
 import { dataSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -29,21 +29,18 @@ export const dataColumnLinks: LabelLinkConfig = [
   },
 ]
 
-const data: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    sql: dataSql,
-    name: 'Data',
-    columnAliases,
-    tableConfiguration: {
-      columnLinks: dataColumnLinks,
-    },
-    facetsToPlot: ['program', 'project'],
-    searchConfiguration: {
-      searchable: ['name', 'program', 'project', 'id'],
-    },
+export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  shouldDeepLink: true,
+  sql: dataSql,
+  name: 'Data',
+  columnAliases,
+  tableConfiguration: {
+    columnLinks: dataColumnLinks,
+  },
+  facetsToPlot: ['program', 'project'],
+  searchConfiguration: {
+    searchable: ['name', 'program', 'project', 'id'],
   },
 }
 
@@ -54,5 +51,3 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   hideDownload: true,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
-
-export default data

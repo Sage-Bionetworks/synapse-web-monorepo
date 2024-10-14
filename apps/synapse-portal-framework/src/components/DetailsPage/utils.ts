@@ -1,10 +1,9 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { RowSynapseConfig } from '../../types/portal-util-types'
 import { scrollToWithOffset } from '../../utils'
 
 export function getComponentId(
-  rowSynapseConfig: RowSynapseConfig,
+  rowSynapseConfig: { title: string; name: string },
   entityTitle: string = '',
 ) {
   // The ID should consist of the title and entity title

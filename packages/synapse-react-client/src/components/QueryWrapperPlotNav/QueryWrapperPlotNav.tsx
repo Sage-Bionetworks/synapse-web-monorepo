@@ -107,9 +107,7 @@ type QueryWrapperPlotNavOwnProps = {
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
 export type SearchParams = {
-  searchParams?: {
-    facetValue: string
-  }
+  searchParams?: Record<string, string>
 }
 export type Operator = {
   sqlOperator?: SQLOperator

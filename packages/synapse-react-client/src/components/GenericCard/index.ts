@@ -13,6 +13,7 @@ export {
   getLinkParams,
   getFileHandleAssociation,
   getValueOrMultiValue,
+  getColumnIndex,
 } from './GenericCard'
 export {
   LongDescription,

@@ -23,7 +23,7 @@
     "react-cookie": "4.0.0",
     "react-dom": "18.2.0",
     "react-easy-crop": "^5.0.7",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.27.0",
     "sass": "^1.71.1",
     "synapse-react-client": "workspace:*",
     "universal-cookie": "^4.0.4"
@@ -39,7 +39,6 @@
     "@types/react-dom": "18.0.6",
     "@types/react-easy-crop": "^2.0.0",
     "@types/react-plotly.js": "^2.6.3",
-    "@types/react-router-dom": "^5.3.3",
     "@types/react-tooltip": "^4.2.4",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",

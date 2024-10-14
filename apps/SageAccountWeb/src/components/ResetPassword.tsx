@@ -1,6 +1,6 @@
 import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
 import React, { useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   ChangePasswordWithToken,
   displayToast,
@@ -36,7 +36,7 @@ export const SetPasswordInstructions = (
 )
 
 export const ResetPassword = (props: ResetPasswordProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const [userName, setUserName] = useState('')
 
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
@@ -94,10 +94,10 @@ export const ResetPassword = (props: ResetPasswordProps) => {
             </>
           ) : (
             <Box>
-              {history.length > 1 && (
+              {navigate.length > 1 && (
                 <BackButton
                   onClick={() => {
-                    history.goBack()
+                    navigate(-1)
                   }}
                 />
               )}

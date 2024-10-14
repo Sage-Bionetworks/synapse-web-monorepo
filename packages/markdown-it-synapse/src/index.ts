@@ -346,11 +346,11 @@ function init_markdown_it(
         // if it has no href OR it is neither a synapse link or internal page link
         if (hrefIndex < 0 || !(isInternalPageLink || isInternalSynapseLink)) {
           tokens[idx].attrPush(['target', '_blank']) // add new attribute
-          tokens[idx].attrPush(['ref', 'noopener noreferrer']) // add new attribute
+          tokens[idx].attrPush(['rel', 'noopener noreferrer']) // add new attribute
         }
       } else {
         tokens[idx].attrs[aIndex][1] = '_blank' // replace value of existing attr
-        tokens[idx].attrPush(['ref', 'noopener noreferrer']) // add ref
+        tokens[idx].attrPush(['rel', 'noopener noreferrer']) // add ref
       }
 
       // pass token to default renderer.
