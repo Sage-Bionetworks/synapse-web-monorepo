@@ -121,7 +121,7 @@ export const SynapseByTheNumbersItem: React.FunctionComponent<
         sx={{
           //add a linear gradient (fades out near the bottom)
           maskImage:
-            'linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%)',
+            'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)',
         }}
       >
         <Plot layout={layout} data={plotData} config={config} />
