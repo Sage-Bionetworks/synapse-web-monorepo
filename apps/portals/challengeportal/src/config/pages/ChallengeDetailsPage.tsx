@@ -407,10 +407,6 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
   },
   {
     path: challengeDetailsPageTabConfig[7].path,
-    element: <DetailsPageContent content={getTaskTabConfig('Task_5')} />,
-  },
-  {
-    path: challengeDetailsPageTabConfig[8].path,
     element: (
       <DetailsPageContent
         content={[
@@ -426,7 +422,7 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
     ),
   },
   {
-    path: challengeDetailsPageTabConfig[9].path,
+    path: challengeDetailsPageTabConfig[8].path,
     element: (
       <DetailsPageContent
         content={[
