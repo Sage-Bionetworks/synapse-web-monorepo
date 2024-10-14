@@ -61,12 +61,6 @@ const exploreConfig: ExploreConfig = {
     cards: ['Initiatives'],
     cards_charts: ['Studies', 'Datasets', 'Publications', 'Tools', 'Hackathon'],
   },
-  psychencode: {
-    table_charts: ['Data'],
-    cards: ['Publications'],
-    cards_charts: ['Studies', 'Grants'],
-    people_charts: ['People'],
-  },
   stopadportal: {},
   genie: {
     // getByRole('tab', { name: 'GENIE' }) resolves to 2 elements (the GENIE tab and GENIE-BPC tab)

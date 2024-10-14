@@ -529,55 +529,6 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
 
-  apps/portals/crc-researcher:
-    dependencies:
-      '@sage-bionetworks/synapse-portal-framework':
-        specifier: workspace:*
-        version: link:../../synapse-portal-framework
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../../../packages/synapse-types
-      katex:
-        specifier: ^0.16.10
-        version: 0.16.10
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^5.3.4
-        version: 5.3.4(react@18.2.0)
-      synapse-react-client:
-        specifier: workspace:*
-        version: link:../../../packages/synapse-react-client
-      vite:
-        specifier: ^5.4.3
-        version: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-    devDependencies:
-      '@types/react':
-        specifier: 18.2.64
-        version: 18.2.64
-      '@types/react-dom':
-        specifier: 18.0.6
-        version: 18.0.6
-      sass:
-        specifier: ^1.72.0
-        version: 1.77.6
-      tslib:
-        specifier: ^2.6.2
-        version: 2.6.3
-      typescript:
-        specifier: ^5.5.2
-        version: 5.5.2
-      vite-config:
-        specifier: workspace:*
-        version: link:../../../packages/vite-config
-      vitest:
-        specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
-
   apps/portals/digitalhealth:
     dependencies:
       '@sage-bionetworks/synapse-portal-framework':
@@ -763,58 +714,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      synapse-react-client:
-        specifier: workspace:*
-        version: link:../../../packages/synapse-react-client
-      vite:
-        specifier: ^5.4.3
-        version: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-    devDependencies:
-      '@types/react':
-        specifier: 18.2.64
-        version: 18.2.64
-      '@types/react-dom':
-        specifier: 18.0.6
-        version: 18.0.6
-      sass:
-        specifier: ^1.72.0
-        version: 1.77.6
-      tslib:
-        specifier: ^2.6.2
-        version: 2.6.3
-      typescript:
-        specifier: ^5.5.2
-        version: 5.5.2
-      vite-config:
-        specifier: workspace:*
-        version: link:../../../packages/vite-config
-      vitest:
-        specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
-
-  apps/portals/psychencode:
-    dependencies:
-      '@sage-bionetworks/synapse-portal-framework':
-        specifier: workspace:*
-        version: link:../../synapse-portal-framework
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../../../packages/synapse-types
-      katex:
-        specifier: ^0.16.10
-        version: 0.16.10
-      pluralize:
-        specifier: ^8.0.0
-        version: 8.0.0
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^5.3.4
-        version: 5.3.4(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
