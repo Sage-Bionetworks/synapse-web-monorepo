@@ -29,7 +29,6 @@ jobs:
             elportal,
             genie,
             nf,
-            psychencode,
             stopadportal,
           ]
     runs-on: ubuntu-latest
