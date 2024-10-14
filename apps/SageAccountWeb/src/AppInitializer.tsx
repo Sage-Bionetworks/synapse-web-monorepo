@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { getSearchParam } from './URLUtils'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import {
@@ -71,7 +71,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     >
       {acceptsTermsOfUse === false &&
         location.pathname != '/authenticated/signTermsOfUse' && (
-          <Redirect to="/authenticated/signTermsOfUse" />
+          <Navigate to="/authenticated/signTermsOfUse" />
         )}
       {!isFramed && props.children}
     </AppContextProvider>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Alert, Button, Link, TextField } from '@mui/material'
-import { Redirect, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, Navigate } from 'react-router-dom'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
@@ -61,7 +61,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
   if (successfullyChangedPassword) {
     if (redirectToRoute) {
       displayToast(PASSWORD_CHANGED_SUCCESS_MESSAGE, 'success')
-      return <Redirect to={redirectToRoute} />
+      return <Navigate to={redirectToRoute} />
     } else {
       return (
         <Alert severity={'success'}>{PASSWORD_CHANGED_SUCCESS_MESSAGE}</Alert>
