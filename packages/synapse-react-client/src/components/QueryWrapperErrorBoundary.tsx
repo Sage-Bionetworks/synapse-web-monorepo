@@ -7,6 +7,7 @@ import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
 } from 'react-error-boundary'
+import SqlEditor from './SynapseTable/SqlEditor'
 
 /**
  * Error boundary that automatically pulls the error from QueryContext.  If 403, shows entity actions required
@@ -42,6 +43,7 @@ export function QueryWrapperErrorBoundary({
         }
         return (
           <div className={`ErrorBannerWrapper`}>
+            <SqlEditor resetErrorBoundary={props.resetErrorBoundary} />
             <ErrorBanner {...props} />
           </div>
         )

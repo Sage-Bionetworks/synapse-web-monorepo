@@ -19,7 +19,7 @@
     "playwright:update": "pnpm add -D @playwright/test@latest; pnpm playwright install"
   },
   "devDependencies": {
-    "@playwright/test": "^1.42.1",
+    "@playwright/test": "^1.48.0",
     "@types/node": "^20.14.10",
     "dotenv": "^16.4.5",
     "tslib": "^2.6.2",
