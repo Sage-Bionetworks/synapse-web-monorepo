@@ -1,7 +1,13 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Link, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  InputAdornment,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
@@ -162,7 +168,14 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           <div className="searchToolsRow">
             <div className="searchInputWithIcon">
               <TextField
-                sx={{ width: '100%' }}
+                sx={{
+                  width: '100%',
+                  '& .MuiInputBase-root': {
+                    backgroundColor: '#dddddd;',
+                    boxShadow: '2px 2px 4px rgba(118, 118, 118, 0.395)',
+                    padding: '0px',
+                  },
+                }}
                 type="search"
                 placeholder=""
                 value={searchText}
@@ -174,16 +187,27 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                     gotoExploreToolsWithFullTextSearch(searchText)
                   }
                 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        variant="contained"
+                        sx={{
+                          px: '25px',
+                          py: '8.5px',
+                          borderRadius: '0px 3px 3px 0px',
+                          boxShadow: 'none',
+                        }}
+                        onClick={() =>
+                          gotoExploreToolsWithFullTextSearch(searchText)
+                        }
+                      >
+                        Search
+                      </Button>
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </div>
-            <div className="search-button-container">
-              <Button
-                variant="contained"
-                sx={{ px: '25px', py: '8px' }}
-                onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
-              >
-                Search
-              </Button>
             </div>
           </div>
         </div>
