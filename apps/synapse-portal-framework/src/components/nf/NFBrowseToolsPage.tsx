@@ -171,8 +171,8 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                 sx={{
                   width: '100%',
                   '& .MuiInputBase-root': {
-                    backgroundColor: '#dddddd;',
-                    boxShadow: '2px 2px 4px rgba(118, 118, 118, 0.395)',
+                    backgroundColor: '#FFFF',
+                    outline: '1.5px rgba(118, 118, 118, 0.395) solid',
                     padding: '0px',
                   },
                 }}
@@ -194,9 +194,8 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                         variant="contained"
                         sx={{
                           px: '25px',
-                          py: '8.5px',
-                          borderRadius: '0px 3px 3px 0px',
-                          boxShadow: 'none',
+                          py: '9px',
+                          borderRadius: '0px 4px 4px 0px',
                         }}
                         onClick={() =>
                           gotoExploreToolsWithFullTextSearch(searchText)
