@@ -1,4 +1,5 @@
 import { Row, SelectColumn } from '@sage-bionetworks/synapse-types'
+import { isEmpty } from 'lodash-es'
 import { SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
 import {
   ColumnMultiValueFunction,
@@ -17,7 +18,7 @@ export const QUERY_FILTERS_SESSION_STORAGE_KEY = (key: string) =>
   `${key}-temp-QueryFilter-array`
 
 export function removePrefixIfSynId(value: string) {
-  if (value.match(SYNAPSE_ENTITY_ID_REGEX)) {
+  if (!isEmpty(value) && value.match(SYNAPSE_ENTITY_ID_REGEX)) {
     return value.substring(WITHOUT_SYN_PREFIX)
   }
   return value
