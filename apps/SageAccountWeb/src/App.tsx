@@ -1,4 +1,5 @@
 import { AppContextConsumer } from './AppContext'
+import Footer from './components/Footer'
 import { SageResourcesPage } from './components/SageResourcesPage'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
 import { AccountSettings } from './components/AccountSettings'
@@ -149,6 +150,7 @@ function App() {
                       exact
                       render={() => <WebhookManagementPage />}
                     />
+                    <Footer />
                   </>
                 )}
               </>

@@ -8,6 +8,8 @@ import IconSvg from '../IconSvg'
 export type SqlEditorProps = {
   helpMessage?: string
   helpUrl?: string
+  // SWC-7094: many errors occur due to experimenting with the query. Provide the SqlEditor (if shown) in the QueryWrapperErrorBoundary, and on search reset the error boundary.
+  resetErrorBoundary?: (...args: Array<unknown>) => void
 }
 
 const helpMessageCopy =
@@ -18,6 +20,7 @@ const helpLink =
 export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   helpMessage = helpMessageCopy,
   helpUrl = helpLink,
+  resetErrorBoundary,
 }: SqlEditorProps) => {
   const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
   const { showSqlEditor } = useQueryVisualizationContext()
@@ -41,6 +44,9 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (resetErrorBoundary) {
+      resetErrorBoundary()
+    }
     executeQueryRequest(request => {
       request.query.sql = sql
       request.query.offset = 0

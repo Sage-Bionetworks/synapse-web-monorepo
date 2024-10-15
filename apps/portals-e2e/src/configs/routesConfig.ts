@@ -8,7 +8,6 @@ export type Portal =
   | 'elportal'
   | 'genie'
   | 'nf'
-  | 'psychencode'
   | 'stopadportal'
 
 type RouteButtonsLinks = { buttons: string[]; links: string[] }
@@ -52,12 +51,14 @@ const routesConfig: RouteConfig = {
     ],
   },
   nf: {
-    buttons: ['Explore', 'Organizations', 'About', 'Sign In'],
-    links: ['Browse Tools', 'Contribute Data', 'News', 'Help'],
-  },
-  psychencode: {
-    buttons: ['Home', 'Explore', 'Sign In'],
-    links: ['Data Access', 'News', 'About', 'Help'],
+    buttons: [
+      'Research Tools Central',
+      'Explore',
+      'Organizations',
+      'About',
+      'Sign In',
+    ],
+    links: ['Contribute Data', 'News', 'Help'],
   },
   stopadportal: {
     buttons: ['Help', 'Sign In'],

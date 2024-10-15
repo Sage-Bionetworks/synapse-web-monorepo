@@ -67,37 +67,37 @@ And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with pr
 .
 What if I mention @jay in a comment?
 .
-<p>What if I mention <span data-widgetparams="badge?alias=jay" data-widget-type="badge" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay" target="_blank" ref="noopener noreferrer">@jay</a></span> in a comment?</p>
+<p>What if I mention <span data-widgetparams="badge?alias=jay" data-widget-type="badge" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay" target="_blank" rel="noopener noreferrer">@jay</a></span> in a comment?</p>
 .
 
 .
 @Beginning of line mention
 .
-<p><span data-widgetparams="badge?alias=Beginning" data-widget-type="badge" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning" target="_blank" ref="noopener noreferrer">@Beginning</a></span> of line mention</p>
+<p><span data-widgetparams="badge?alias=Beginning" data-widget-type="badge" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning" target="_blank" rel="noopener noreferrer">@Beginning</a></span> of line mention</p>
 .
 
 .
 Mention at the @end
 .
-<p>Mention at the <span data-widgetparams="badge?alias=end" data-widget-type="badge" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end" target="_blank" ref="noopener noreferrer">@end</a></span></p>
+<p>Mention at the <span data-widgetparams="badge?alias=end" data-widget-type="badge" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end" target="_blank" rel="noopener noreferrer">@end</a></span></p>
 .
 
 .
 Mention @xschildw, @withSupportedSpecialCharacters-._, @test! Expectation that it will not eat the comma or exclamation point.
 .
-<p>Mention <span data-widgetparams="badge?alias=xschildw" data-widget-type="badge" class="widgetContainer" id="widget-10undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=xschildw" target="_blank" ref="noopener noreferrer">@xschildw</a></span>, <span data-widgetparams="badge?alias=withSupportedSpecialCharacters-._" data-widget-type="badge" class="widgetContainer" id="widget-11undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=withSupportedSpecialCharacters-._" target="_blank" ref="noopener noreferrer">@withSupportedSpecialCharacters-._</a></span>, <span data-widgetparams="badge?alias=test" data-widget-type="badge" class="widgetContainer" id="widget-12undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=test" target="_blank" ref="noopener noreferrer">@test</a></span>! Expectation that it will not eat the comma or exclamation point.</p>
+<p>Mention <span data-widgetparams="badge?alias=xschildw" data-widget-type="badge" class="widgetContainer" id="widget-10undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=xschildw" target="_blank" rel="noopener noreferrer">@xschildw</a></span>, <span data-widgetparams="badge?alias=withSupportedSpecialCharacters-._" data-widget-type="badge" class="widgetContainer" id="widget-11undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=withSupportedSpecialCharacters-._" target="_blank" rel="noopener noreferrer">@withSupportedSpecialCharacters-._</a></span>, <span data-widgetparams="badge?alias=test" data-widget-type="badge" class="widgetContainer" id="widget-12undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=test" target="_blank" rel="noopener noreferrer">@test</a></span>! Expectation that it will not eat the comma or exclamation point.</p>
 .
 
 .
 An email@address.com is not a mention
 .
-<p>An <a href="mailto:email@address.com" target="_blank" ref="noopener noreferrer">email@address.com</a> is not a mention</p>
+<p>An <a href="mailto:email@address.com" target="_blank" rel="noopener noreferrer">email@address.com</a> is not a mention</p>
 .
 
 .
 testing standard [link](http://link.com)
 .
-<p>testing standard <a href="http://link.com" target="_blank" ref="noopener noreferrer">link</a></p>
+<p>testing standard <a href="http://link.com" target="_blank" rel="noopener noreferrer">link</a></p>
 .
 
 .
@@ -109,7 +109,7 @@ testing standard linkify syn123 auto-link
 .
 testing standard https://www.google.com auto-link
 .
-<p>testing standard <a href="https://www.google.com" target="_blank" ref="noopener noreferrer">https://www.google.com</a> auto-link</p>
+<p>testing standard <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">https://www.google.com</a> auto-link</p>
 .
 
 .
