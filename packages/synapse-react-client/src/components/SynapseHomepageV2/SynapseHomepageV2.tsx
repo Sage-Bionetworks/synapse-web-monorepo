@@ -27,7 +27,7 @@ import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
-export const generalStatsMetricsTable = 'syn61588163'
+export const generalStatsMetricsTable = 'syn61588123'
 export const featuredDatasetsTable = 'syn61609402'
 export const searchAutocompleteTable = 'syn61670515'
 
