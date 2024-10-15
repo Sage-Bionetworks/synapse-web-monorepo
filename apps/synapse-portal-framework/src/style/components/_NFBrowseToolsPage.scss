@@ -28,7 +28,7 @@
     width: 100%;
     margin: 0px 5px 0px 10px;
     & .Mui-focused {
-      outline: 1.5px solid #125e81;
+      outline-color: Portal.$primary-action-color;
     }
     input {
       height: 41px;
