@@ -54,17 +54,14 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-    .category-content {
-      position: relative;
-      p {
-        color: #fff !important;
-        border-bottom: 1px transparent;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 18px;
-      }
+    p {
+      color: #fff !important;
+      border-bottom: 1px transparent;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
     }
   }
   .highlightSubmitToolContainer {

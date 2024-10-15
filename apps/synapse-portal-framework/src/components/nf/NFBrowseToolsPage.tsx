@@ -1,7 +1,7 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Link, TextField, Typography } from '@mui/material'
+import { Button, Link, TextField, Typography, Box } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
@@ -111,12 +111,12 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                   gotoExploreToolsWithSelectedResource(category.resourceName)
                 }
               >
-                <div className="category-content">
+                <Box sx={{ position: 'relative' }}>
                   {category.image}
                   <Typography variant="headline3">
                     {pluralize(category.resourceName)}
                   </Typography>
-                </div>
+                </Box>
               </button>
             )
           })}
