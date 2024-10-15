@@ -11,7 +11,7 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
@@ -28,7 +28,7 @@ import {
 } from 'synapse-react-client'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
-import { getStateParam, handleErrorRedirect } from './URLUtils'
+import { handleErrorRedirect } from './URLUtils'
 
 const sendGTagEvent = (event: string) => {
   // send event to Google Analytics
@@ -56,8 +56,8 @@ export function OAuth2Form() {
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
 
-  const { search } = useLocation()
-  const queryParams = useMemo(() => new URLSearchParams(search), [search])
+  const [searchParams] = useSearchParams()
+
   const [error, setError] = useState<
     Error | SynapseClientError | OAuthClientError
   >()
@@ -65,7 +65,7 @@ export function OAuth2Form() {
   const [showPendingRedirectUI, setShowPendingRedirectUI] = useState(false)
 
   // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
-  const isHandlingSignInFromExternalIdP = Boolean(queryParams.get('provider'))
+  const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
 
   const accountRegistrationUrl = SynapseHookUtils.useOneSageURL('/register1')
 
@@ -75,7 +75,7 @@ export function OAuth2Form() {
         // invalid token, so clear it
         clearSession()
       } else {
-        const isRedirecting = handleErrorRedirect(error)
+        const isRedirecting = handleErrorRedirect(searchParams, error)
         setShowPendingRedirectUI(isRedirecting)
         setError(error)
       }
@@ -84,16 +84,16 @@ export function OAuth2Form() {
   )
 
   const clientId = useMemo(() => {
-    const code = queryParams.get('code')
+    const code = searchParams.get('code')
     if (code) return // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
-    const clientId = queryParams.get('client_id')
+    const clientId = searchParams.get('client_id')
     if (!clientId) {
       onError(new Error('Synapse OAuth client_id is required'))
       return
     }
     return clientId
-  }, [onError, queryParams])
+  }, [onError, searchParams])
 
   const { data: oauthClientInfo, isLoading: isLoadingClientInfo } =
     SynapseQueries.useGetOAuth2Client(clientId!, {
@@ -142,19 +142,19 @@ export function OAuth2Form() {
     }
     const missingParams: string[] = []
 
-    const clientId = queryParams.get('client_id')
+    const clientId = searchParams.get('client_id')
     if (clientId == null) {
       missingParams.push('client_id')
     }
-    const scope = queryParams.get('scope')
+    const scope = searchParams.get('scope')
     if (scope == null) {
       missingParams.push('scope')
     }
-    const responseType = queryParams.get('response_type')
+    const responseType = searchParams.get('response_type')
     if (responseType == null) {
       missingParams.push('response_type')
     }
-    const redirectUri = queryParams.get('redirect_uri')
+    const redirectUri = searchParams.get('redirect_uri')
     if (redirectUri == null) {
       missingParams.push('redirect_uri')
     }
@@ -176,14 +176,14 @@ export function OAuth2Form() {
       scope: scope!,
       responseType: responseType!,
       redirectUri: redirectUri!,
-      nonce: queryParams.get('nonce') || undefined,
+      nonce: searchParams.get('nonce') || undefined,
     }
-    const claimsString = queryParams.get('claims')
+    const claimsString = searchParams.get('claims')
     if (claimsString) {
       authRequest.claims = JSON.parse(claimsString)
     }
     return authRequest
-  }, [isHandlingSignInFromExternalIdP, onError, queryParams])
+  }, [isHandlingSignInFromExternalIdP, onError, searchParams])
 
   const { data: hasUserAuthorizedOAuthClient } =
     SynapseQueries.useGetHasUserAuthorizedOAuthClient(
@@ -206,12 +206,19 @@ export function OAuth2Form() {
         }
         // done!  redirect with access code.
         setShowPendingRedirectUI(true)
-        const redirectUri = queryParams.get('redirect_uri')!
-        redirectToURL(
-          `${redirectUri}?${getStateParam()}code=${encodeURIComponent(
-            accessCode.access_code,
-          )}`,
+        const redirectUri = searchParams.get('redirect_uri')!
+
+        const redirectSearchParams = new URLSearchParams()
+        const state = searchParams.get('state')
+        if (state) {
+          redirectSearchParams.set('state', encodeURIComponent(state))
+        }
+        redirectSearchParams.set(
+          'code',
+          encodeURIComponent(accessCode.access_code),
         )
+
+        redirectToURL(`${redirectUri}?${redirectSearchParams.toString()}`)
       },
       onError: e => {
         onError(e)
@@ -229,7 +236,7 @@ export function OAuth2Form() {
   // Handle auto-consent when the user has already consented
   useEffect(() => {
     if (hasUserAuthorizedOAuthClient) {
-      const prompt = queryParams.get('prompt')
+      const prompt = searchParams.get('prompt')
       if (hasUserAuthorizedOAuthClient.granted) {
         // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.
         // Only allow if prompt is undefined or set to none.
@@ -247,7 +254,7 @@ export function OAuth2Form() {
         )
       }
     }
-  }, [hasUserAuthorizedOAuthClient, onConsent, onError, queryParams])
+  }, [hasUserAuthorizedOAuthClient, onConsent, onError, searchParams])
 
   const onDeny = () => {
     sendGTagEvent('UserDeniedConsent')
@@ -270,8 +277,8 @@ export function OAuth2Form() {
       // if we were able to get the oidc request description, also check for params that this web app does not support
       // sorry, we don't support JWT in the url query params today
       // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
-      const requestObject = queryParams.get('request')
-      const requestUri = queryParams.get('request_uri')
+      const requestObject = searchParams.get('request')
+      const requestUri = searchParams.get('request_uri')
       if (requestObject) {
         onError(new OAuthClientError('request_not_supported'))
       }
@@ -280,12 +287,12 @@ export function OAuth2Form() {
       }
       // sorry, we don't support registration (yet?)
       // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
-      const registration = queryParams.get('registration')
+      const registration = searchParams.get('registration')
       if (registration) {
         onError(new OAuthClientError('registration_not_supported'))
       }
     }
-  }, [oidcRequestDescription, queryParams])
+  }, [oidcRequestDescription, searchParams])
 
   useEffect(() => {
     if (oidcRequestDescriptionError) {
