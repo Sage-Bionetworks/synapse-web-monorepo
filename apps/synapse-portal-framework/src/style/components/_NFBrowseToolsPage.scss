@@ -26,8 +26,10 @@
     display: grid;
     max-width: 750px;
     width: 100%;
-    grid-template-columns: auto 100px 25px;
-    margin-left: 10px;
+    margin: 0px 5px 0px 10px;
+    & .Mui-focused {
+      outline-color: Portal.$primary-action-color;
+    }
     input {
       height: 41px;
     }

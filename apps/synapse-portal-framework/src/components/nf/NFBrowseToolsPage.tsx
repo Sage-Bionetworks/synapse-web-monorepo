@@ -1,7 +1,7 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Link, TextField, Typography, Box } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
@@ -11,6 +11,7 @@ import { ReactComponent as PlasmidsReagents } from '../assets/plasmids-reagents.
 import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
+import Search from '../Search'
 
 type Category = {
   resourceName: string
@@ -32,7 +33,6 @@ export type NFBrowseToolsPageProps = {
 
 const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
   const { popularSearchesSql, toolsSql } = props
-  const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Tools')
   }
@@ -160,35 +160,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
-        <div className="center-content">
-          <div className="searchToolsRow">
-            <div className="searchInputWithIcon">
-              <TextField
-                sx={{ width: '100%' }}
-                type="search"
-                placeholder=""
-                value={searchText}
-                onChange={event => {
-                  setSearchText(event.target.value)
-                }}
-                onKeyPress={evt => {
-                  if (evt.key === 'Enter') {
-                    gotoExploreToolsWithFullTextSearch(searchText)
-                  }
-                }}
-              />
-            </div>
-            <div className="search-button-container">
-              <Button
-                variant="contained"
-                sx={{ px: '25px', py: '8px' }}
-                onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Search onSearch={gotoExploreToolsWithFullTextSearch} />
         <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>
