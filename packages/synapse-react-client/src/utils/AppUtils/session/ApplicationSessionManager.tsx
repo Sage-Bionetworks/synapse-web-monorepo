@@ -7,7 +7,7 @@ import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/gen
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
-import { useTermsOfServiceStatus } from 'src/synapse-queries/termsOfService/useTermsOfService'
+import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string
