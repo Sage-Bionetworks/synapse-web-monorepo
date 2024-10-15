@@ -170,7 +170,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
               <TextField
                 sx={{
                   width: '100%',
-                  '& .MuiInputBase-root': {
+                  '.MuiInputBase-root': {
                     backgroundColor: '#FFFF',
                     outline: '1.5px rgba(118, 118, 118, 0.395) solid',
                     padding: '0px',
