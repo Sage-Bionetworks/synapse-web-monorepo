@@ -1,18 +1,20 @@
 import React, { useContext } from 'react'
+import { RouteObject } from 'react-router-dom'
 import {
   FooterConfig,
-  GenericRoute,
   HomePageHeaderConfig,
   LogoConfig,
 } from '../types/portal-config'
+import { NavbarConfig } from './navbar/Navbar'
 
 export type PortalContextType = {
   portalName: string
-  routeConfig: GenericRoute[]
+  routeConfig: RouteObject[]
   headerConfig: HomePageHeaderConfig
   footerConfig: FooterConfig
   logoHeaderConfig: LogoConfig
   logoFooterConfig: LogoConfig
+  navbarConfig: NavbarConfig
 }
 
 export const PortalContext = React.createContext<PortalContextType | undefined>(
