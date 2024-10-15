@@ -111,10 +111,12 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                   gotoExploreToolsWithSelectedResource(category.resourceName)
                 }
               >
-                {category.image}
-                <Typography variant="headline3">
-                  {pluralize(category.resourceName)}
-                </Typography>
+                <div className="category-content">
+                  {category.image}
+                  <Typography variant="headline3">
+                    {pluralize(category.resourceName)}
+                  </Typography>
+                </div>
               </button>
             )
           })}
