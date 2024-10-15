@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TextField, Button, InputAdornment } from '@mui/material'
 
 type SearchProps = {
-  searchText: string
-  setSearchText: (value: string) => void
   onSearch: (searchText: string) => void
 }
 
-const Search = ({ searchText, setSearchText, onSearch }: SearchProps) => {
+const Search = ({ onSearch }: SearchProps) => {
+  const [searchText, setSearchText] = useState<string>('')
+
   return (
     <div className="center-content">
       <div className="searchToolsRow">

@@ -27,7 +27,6 @@ export type ELBrowseToolsPageProps = {
 const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
   const { toolsSql } = props
   // const { popularSearchesSql } = props
-  const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Computational%20Tools')
   }
@@ -171,11 +170,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
-        <Search
-          searchText={searchText}
-          setSearchText={setSearchText}
-          onSearch={gotoExploreToolsWithFullTextSearch}
-        />
+        <Search onSearch={gotoExploreToolsWithFullTextSearch} />
         {/* <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>
