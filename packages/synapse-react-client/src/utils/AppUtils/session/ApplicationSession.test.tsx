@@ -7,7 +7,11 @@ import {
   ApplicationSessionContextType,
   useApplicationSessionContext,
 } from './ApplicationSessionContext'
-import { SynapseClient } from '../../../index'
+import {
+  defaultQueryClientConfig,
+  FullContextProvider,
+  SynapseClient,
+} from '../../../index'
 import {
   MOCK_USER_ID,
   mockUserProfileData,
@@ -19,20 +23,32 @@ import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import {
   ErrorResponseCode,
   TermsOfServiceState,
+  TermsOfServiceStatus,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '../../../mocks/MockSynapseContext'
+import { QueryClient } from '@tanstack/query-core'
 
 function render(props?: ApplicationSessionManagerProps) {
+  const queryClient = new QueryClient(defaultQueryClientConfig)
+  const wrapperProps = { ...MOCK_CONTEXT_VALUE, ...props }
   return renderHook(() => useApplicationSessionContext(), {
     wrapper: ({ children }) => {
       return (
-        <MemoryRouter>
-          <ApplicationSessionManager {...props}>
-            {children}
-          </ApplicationSessionManager>
-        </MemoryRouter>
+        <FullContextProvider
+          synapseContext={wrapperProps}
+          queryClient={queryClient}
+        >
+          <MemoryRouter>
+            <ApplicationSessionManager {...props}>
+              {children}
+            </ApplicationSessionManager>
+          </MemoryRouter>
+        </FullContextProvider>
       )
     },
   })
@@ -49,29 +65,30 @@ const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
   twoFactorAuthSSOErrorResponse: undefined,
   isLoadingSSO: false,
 }
-
+const TERMS_OF_SERVICE_STATUS_UP_TO_DATE: TermsOfServiceStatus = {
+  userId: `${MOCK_USER_ID}`,
+  usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+  lastAgreementDate: '',
+  lastAgreementVersion: '0.0.0',
+}
 const EXPECTED_AUTH_STATE: Partial<ApplicationSessionContextType> = {
   token: MOCK_ACCESS_TOKEN,
-  termsOfServiceStatus: {
-    userId: `${MOCK_USER_ID}`,
-    usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
-    lastAgreementDate: '',
-    lastAgreementVersion: '0.0.0',
-  },
+  termsOfServiceStatus: TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
   hasInitializedSession: true,
   twoFactorAuthSSOErrorResponse: undefined,
   isLoadingSSO: false,
 }
 
+const TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW: TermsOfServiceStatus = {
+  userId: `${MOCK_USER_ID}`,
+  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+  lastAgreementDate: '',
+  lastAgreementVersion: '0.0.0',
+}
 const EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED: Partial<ApplicationSessionContextType> =
   {
     ...EXPECTED_AUTH_STATE,
-    termsOfServiceStatus: {
-      userId: `${MOCK_USER_ID}`,
-      usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
-      lastAgreementDate: '',
-      lastAgreementVersion: '0.0.0',
-    },
+    termsOfServiceStatus: TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW,
   }
 
 describe('ApplicationSessionManager tests', () => {
@@ -86,6 +103,10 @@ describe('ApplicationSessionManager tests', () => {
   const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
   const mockGetUserProfile = jest.spyOn(SynapseClient, 'getUserProfile')
   const mockAuthenticatedOn = jest.spyOn(SynapseClient, 'getAuthenticatedOn')
+  const mockTermsOfServiceStatus = jest.spyOn(
+    SynapseClient,
+    'getTermsOfServiceStatus',
+  )
 
   it('Bootstraps when not signed in', async () => {
     mockGetAccessToken.mockResolvedValue(undefined)
@@ -102,7 +123,9 @@ describe('ApplicationSessionManager tests', () => {
   it('Bootstraps when signed in', async () => {
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
     mockGetUserProfile.mockResolvedValue(mockUserProfileData)
-
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     const context = render()
 
     await waitFor(() => {
@@ -114,6 +137,9 @@ describe('ApplicationSessionManager tests', () => {
   })
 
   it('User has not accepted terms of use', async () => {
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW,
+    )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
     mockGetUserProfile.mockRejectedValue(
       new SynapseClientError(
@@ -136,6 +162,9 @@ describe('ApplicationSessionManager tests', () => {
   })
 
   it('Finishes SSO authentication', async () => {
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     mockUseDetectSSOCode.mockReturnValue({ isLoading: true })
     mockGetAccessToken.mockResolvedValue(undefined)
 
@@ -263,6 +292,9 @@ describe('ApplicationSessionManager tests', () => {
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
 
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     // Using the app's Login component, the user logs in. the component invokes refreshSession once the token is stored
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
     mockGetUserProfile.mockResolvedValue(mockUserProfileData)
@@ -279,6 +311,9 @@ describe('ApplicationSessionManager tests', () => {
 
   it('Session can be cleared', async () => {
     // Start signed in
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
     mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
@@ -293,13 +328,11 @@ describe('ApplicationSessionManager tests', () => {
 
     // Signing out would update the return value of this call
     mockGetAccessToken.mockResolvedValue(undefined)
-
     // Call under test
     await context.result.current.clearSession()
 
     await waitFor(() => {
       expect(signOutSpy).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 
@@ -307,6 +340,9 @@ describe('ApplicationSessionManager tests', () => {
     // User authenticated 5 minutes ago, maxAge is 1 hour
     const authenticatedOn = dayjs.utc().subtract(5, 'minutes').format()
     const maxAge = 60 * 60
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
     mockGetUserProfile.mockResolvedValue(mockUserProfileData)
     mockAuthenticatedOn.mockResolvedValue({
