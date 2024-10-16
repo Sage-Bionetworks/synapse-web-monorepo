@@ -1,9 +1,15 @@
 import { Box } from '@mui/material'
 import * as React from 'react'
-import { AppUtils, SynapseQueries, Map } from 'synapse-react-client'
+import { SynapseQueries, Map } from 'synapse-react-client'
 
-const ChallengeParticipantGoogleMap = () => {
-  const projectId = AppUtils.useQuerySearchParam('id') ?? ''
+type ChallengeParticipantGoogleMapProps = {
+  projectId: string
+}
+function ChallengeParticipantGoogleMap(
+  props: ChallengeParticipantGoogleMapProps,
+) {
+  const { projectId } = props
+
   const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId)
   if (challenge && challenge.participantTeamId) {
     return (
