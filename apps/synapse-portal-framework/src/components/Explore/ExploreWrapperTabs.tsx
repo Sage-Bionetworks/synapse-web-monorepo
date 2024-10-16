@@ -1,4 +1,3 @@
-import React, { useLayoutEffect, useRef } from 'react'
 import {
   Tab,
   Tabs,
@@ -7,12 +6,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-
-export type RouteControlProps = {
-  handleChanges: (text: string, index: number) => void
-  isSelected: (name: string) => boolean
-  customRoutes: { name: string; hide: boolean }[]
-}
+import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ExploreWrapperProps } from './ExploreWrapperProps'
 
 function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
@@ -34,26 +30,19 @@ function CustomScrollButton(props: TabScrollButtonProps) {
   )
 }
 
-export function RouteControl(props: RouteControlProps) {
-  const { handleChanges, isSelected, customRoutes } = props
+export function ExploreWrapperTabs(props: ExploreWrapperProps) {
+  const { explorePaths } = props
   const theme = useTheme()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-
-  const selectedRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    // setTimeout is necessary or else it only scrolls to reveal half of the button
-    setTimeout(() => {
-      selectedRef.current?.scrollIntoView(false)
-    }, 100)
-  }, [])
 
   /**
    * In the desktop view, we use Material UI tabs
    */
   return (
     <Tabs
-      value={customRoutes.find(({ name }) => isSelected(name))?.name!}
+      value={pathname}
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"
@@ -69,17 +58,16 @@ export function RouteControl(props: RouteControlProps) {
         style: { background: 'transparent' },
       }}
     >
-      {customRoutes.map((route, index) => {
-        const { name, hide } = route
+      {explorePaths.map(({ path, displayName = path }) => {
+        path = `/Explore/${path}`
+        console.log('path', path, pathname)
         return (
           <Tab
-            key={name}
-            value={name}
-            ref={isSelected(name) ? selectedRef : undefined}
-            label={name}
-            onClick={() => handleChanges(name, index)}
+            key={path}
+            value={encodeURI(path)}
+            label={displayName}
+            onClick={() => navigate(path)}
             sx={{
-              display: hide && !isSelected(name) ? 'none' : undefined,
               transition: 'all 400ms',
               fontSize: '16px',
               fontWeight: 700,
