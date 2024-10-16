@@ -1,6 +1,8 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
 import { peopleSql } from '../resources'
 
 const rgbIndex = 3
@@ -23,18 +25,13 @@ export const peopleCardConfiguration: CardConfiguration = {
   ],
 }
 
-const individuals: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    hideDownload: true,
-    name: 'People',
-    sql: peopleSql,
-    cardConfiguration: {
-      type: SynapseConstants.MEDIUM_USER_CARD,
-    },
+export const individualsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  shouldDeepLink: true,
+  hideDownload: true,
+  name: 'People',
+  sql: peopleSql,
+  cardConfiguration: {
+    type: SynapseConstants.MEDIUM_USER_CARD,
   },
 }
-
-export default individuals
