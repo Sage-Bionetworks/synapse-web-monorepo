@@ -2,11 +2,11 @@ import {
   CardConfiguration,
   GenericCardSchema,
   IconOptions,
+  QueryWrapperPlotNavProps,
   SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
 import { grantsSql } from '../resources'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 
 const rgbIndex = 3
 
@@ -50,23 +50,20 @@ export const grantsCardConfiguration: CardConfiguration = {
   iconOptions,
 }
 
-export const grants: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: grantsSql,
-    cardConfiguration: grantsCardConfiguration,
-    shouldDeepLink: true,
-    name: 'Grants',
-    facetsToPlot: ['consortium', 'grantType'],
-    searchConfiguration: {
-      searchable: [
-        'grantName',
-        'abstract',
-        'grantInstitution',
-        'investigator',
-        'grantNumber',
-      ],
-    },
+export const grantQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: grantsSql,
+  cardConfiguration: grantsCardConfiguration,
+  shouldDeepLink: true,
+  name: 'Grants',
+  facetsToPlot: ['consortium', 'grantType'],
+  searchConfiguration: {
+    searchable: [
+      'grantName',
+      'abstract',
+      'grantInstitution',
+      'investigator',
+      'grantNumber',
+    ],
   },
 }
