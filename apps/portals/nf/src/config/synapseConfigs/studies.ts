@@ -1,27 +1,15 @@
-import type { CardConfiguration, ColumnIconConfigs } from 'synapse-react-client'
-import {
-  NoContentPlaceholderType,
-  SynapseConstants,
+import type {
+  CardConfiguration,
+  ColumnIconConfigs,
+  QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { columnAliases } from './commonProps'
+import { SynapseConstants } from 'synapse-react-client'
+import { studiesSql } from '../resources'
+import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
 import studyActiveSvg from '../style/study-active.svg?url'
 import studyCompleteSvg from '../style/study-complete.svg?url'
 import studyCompleteHeaderSvg from '../style/study-completed-header.svg?url'
-import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { toolsCardConfiguration } from './tools'
-import { publicationsCardConfiguration } from './publications'
-import { datasetCardConfiguration } from './datasets'
-import {
-  datasetsSql,
-  metadataFilesSql,
-  publicationsSql,
-  studiesSql,
-  toolStudySql,
-} from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { filesPlotNavProps } from './files'
+import { columnAliases } from './commonProps'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -113,160 +101,27 @@ export const studyCardConfiguration: CardConfiguration = {
   columnIconOptions: studyColumnIconConfigs,
 }
 
-const studies: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: studiesSql,
-    name: 'Studies',
-    shouldDeepLink: true,
-    cardConfiguration: studyCardConfiguration,
-    columnAliases,
-    searchConfiguration: {
-      searchable: [
-        'studyName',
-        'summary',
-        'studyLeads',
-        'studyStatus',
-        'dataStatus',
-        'institutions',
-        'diseaseFocus',
-        'manifestation',
-        'fundingAgency',
-        'grantDOI',
-      ],
-    },
-  },
-}
-
-export const studiesDetailPage: DetailsPageProps = {
+const studies: QueryWrapperPlotNavProps = {
+  rgbIndex,
   sql: studiesSql,
-  tabLayout: [
-    {
-      title: 'Study Details',
-      uriValue: 'Details',
-      iconName: 'study',
-      toolTip: 'Description, methods, acknowledgements and related studies',
-      synapseConfigArray: [
-        {
-          name: 'Markdown',
-          columnName: 'accessRequirements',
-          title: 'Access Requirements',
-          injectMarkdown: true,
-          props: {},
-        },
-        {
-          name: 'Markdown',
-          columnName: 'acknowledgementStatements',
-          title: 'Acknowledgement Statements',
-          injectMarkdown: true,
-          props: {},
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Tools Used',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sql: toolStudySql,
-            initialLimit: 3,
-            ...toolsCardConfiguration,
-          },
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Publications',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sql: publicationsSql,
-            ...publicationsCardConfiguration,
-          },
-        },
-        {
-          name: 'CardContainerLogic',
-          title: 'Related Studies',
-          columnName: 'relatedStudies',
-          tableSqlKeys: ['studyId'],
-          props: {
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-            sql: studiesSql,
-            columnAliases,
-            noContentPlaceholderType: NoContentPlaceholderType.HIDDEN,
-            ...studyCardConfiguration,
-          },
-        },
-      ],
-    },
-    {
-      title: 'Study Datasets',
-      uriValue: 'Datasets',
-      iconName: 'dataset',
-      toolTip: 'All of the Datasets generated within this study',
-      cssClass: 'tab-dataset',
-      showMenu: false,
-      synapseConfigArray: [
-        {
-          name: 'CardContainerLogic',
-          columnName: 'studyId',
-          title: 'Study Datasets',
-          tableSqlKeys: ['studyId'],
-          props: {
-            ...datasetCardConfiguration,
-            sql: datasetsSql,
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-          },
-        },
-      ],
-    },
-    {
-      title: 'Study Files',
-      uriValue: 'Files',
-      iconName: 'database',
-      toolTip: 'File data generated within this study',
-      cssClass: 'tab-database',
-      synapseConfigArray: [
-        {
-          name: 'QueryWrapperPlotNav',
-          title: 'Study Files',
-          props: {
-            ...filesPlotNavProps,
-            rgbIndex: 8,
-            shouldDeepLink: false,
-            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
-          },
-          tableSqlKeys: ['studyId'],
-          columnName: 'studyId',
-        },
-      ],
-    },
-    {
-      title: 'Additional Files',
-      uriValue: 'AdditionalFiles',
-      iconName: 'database',
-      toolTip: 'Additional file data generated within this study',
-      cssClass: 'tab-database',
-      synapseConfigArray: [
-        {
-          name: 'StandaloneQueryWrapper',
-          title: 'Additional Files',
-          columnName: 'studyId',
-          tableSqlKeys: ['studyId'],
-          props: {
-            visibleColumnCount: 7,
-            sql: metadataFilesSql,
-            rgbIndex,
-            hideAddToDownloadListColumn: false,
-            showDownloadColumn: true,
-            fileIdColumnName: 'id',
-            fileNameColumnName: 'name',
-            fileVersionColumnName: 'currentVersion',
-          },
-          className: 'metadata-table',
-        },
-      ],
-    },
-  ],
+  name: 'Studies',
+  shouldDeepLink: true,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases,
+  searchConfiguration: {
+    searchable: [
+      'studyName',
+      'summary',
+      'studyLeads',
+      'studyStatus',
+      'dataStatus',
+      'institutions',
+      'diseaseFocus',
+      'manifestation',
+      'fundingAgency',
+      'grantDOI',
+    ],
+  },
 }
 
 export default studies
