@@ -1,6 +1,8 @@
+import type {
+  CardConfiguration,
+  CardContainerLogicProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { datasetCollectionsSql } from '../resources'
 
 const datasetCollectionsCardConfiguration: CardConfiguration = {
@@ -21,16 +23,11 @@ const datasetCollectionsCardConfiguration: CardConfiguration = {
   },
 }
 
-const datasetCollections: SynapseConfig = {
-  name: 'CardContainerLogic',
-  isOutsideContainer: true,
-  props: {
+export const datasetCollectionsCardContainerLogicProps: CardContainerLogicProps =
+  {
     sql: datasetCollectionsSql,
     ...datasetCollectionsCardConfiguration,
     genericCardSchema: {
       ...datasetCollectionsCardConfiguration.genericCardSchema!,
     },
-  },
-}
-
-export default datasetCollections
+  }
