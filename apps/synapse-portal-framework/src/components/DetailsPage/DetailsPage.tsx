@@ -69,9 +69,7 @@ export default function DetailsPage(props: DetailsPageProps) {
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
         sql,
         additionalFilters,
@@ -113,7 +111,12 @@ export default function DetailsPage(props: DetailsPageProps) {
     row = queryResultBundle?.queryResult!.queryResults.rows[0]
   }
   return (
-    <DetailsPageContextProvider value={{ queryResultBundle, rowData: row }}>
+    <DetailsPageContextProvider
+      value={{
+        rowSet: queryResultBundle?.queryResult?.queryResults,
+        rowData: row,
+      }}
+    >
       <Container
         maxWidth={'lg'}
         className="DetailsPage tab-layout"

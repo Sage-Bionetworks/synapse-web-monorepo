@@ -1,10 +1,10 @@
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash'
 import React, { useContext } from 'react'
 import { getColumnIndex } from 'synapse-react-client'
 
 type DetailsPageContextType = {
-  queryResultBundle?: QueryResultBundle
+  rowSet?: RowSet
   rowData?: Row
 }
 
@@ -29,15 +29,15 @@ function getValue(
   columnName: string | undefined,
 ) {
   let value: string | null | undefined = undefined
-  if (context.queryResultBundle && context.rowData && columnName) {
+  if (context.rowSet && context.rowData && columnName) {
     const columnIndex = getColumnIndex(
       columnName,
-      context.queryResultBundle.selectColumns,
+      context.rowSet.headers,
       undefined,
     )
 
     if (columnIndex != null) {
-      const columnModel = context.queryResultBundle.selectColumns![columnIndex]
+      const columnModel = context.rowSet.headers[columnIndex]
       value = context.rowData.values[columnIndex]
       // Note: searchParams expects comma-separated values
       // TODO: The downstream component has no idea if this is going to be comma-separated or not

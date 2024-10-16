@@ -821,9 +821,6 @@ importers:
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.2.0)
-      history:
-        specifier: ^4.10.1
-        version: 4.10.1
       katex:
         specifier: ^0.16.10
         version: 0.16.10
@@ -849,8 +846,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router-dom:
-        specifier: ^5.3.4
-        version: 5.3.4(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -891,9 +888,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@types/react-tooltip':
         specifier: ^4.2.4
         version: 4.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1039,8 +1033,8 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.2.0)
       react-router-dom:
-        specifier: ^5.3.4
-        version: 5.3.4(react@18.2.0)
+        specifier: ^6.27.0
+        version: 6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1081,9 +1075,6 @@ importers:
       '@types/react-plotly.js':
         specifier: ^2.6.3
         version: 2.6.3
-      '@types/react-router-dom':
-        specifier: ^5.3.3
-        version: 5.3.3
       '@vitest/coverage-v8':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))
@@ -5485,12 +5476,6 @@ packages:
   '@types/react-plotly.js@2.6.3':
     resolution: {integrity: sha512-HBQwyGuu/dGXDsWhnQrhH+xcJSsHvjkwfSRjP+YpOsCCWryIuXF78ZCBjpfgO3sCc0Jo8sYp4NOGtqT7Cn3epQ==}
 
-  '@types/react-router-dom@5.3.3':
-    resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
-
-  '@types/react-router@5.1.20':
-    resolution: {integrity: sha512-jGjmu/ZqS7FjSH6owMcD5qpq19+1RS9DeVRqfl1FeBMxTDQAGwlMWOcs52NDoXaNKyG3d1cYQFMs9rCrb88o9Q==}
-
   '@types/react-tooltip@4.2.4':
     resolution: {integrity: sha512-UzjzmgY/VH3Str6DcAGTLMA1mVVhGOyARNTANExrirtp+JgxhaIOVDxq4TIRmpSi4voLv+w4HA9CC5GvhhCA0A==}
     deprecated: This is a stub types definition. react-tooltip provides its own type definitions, so you do not need this installed.
@@ -8006,9 +7991,6 @@ packages:
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
 
-  history@4.10.1:
-    resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
-
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
@@ -9559,9 +9541,6 @@ packages:
   path-to-regexp@0.1.7:
     resolution: {integrity: sha512-5DFkuoqlv1uYQKxy8omFBeJPQcdoE07Kv2sferDCrAq1ohOU+MSDswDIbnx3YAM60qIOnYa53wBhXW0EbMonrQ==}
 
-  path-to-regexp@1.8.0:
-    resolution: {integrity: sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==}
-
   path-to-regexp@3.3.0:
     resolution: {integrity: sha512-qyCH421YQPS2WFDxDjftfc1ZR5WKQzVzqsp4n9M2kQhVOo/ByahFoUNJfl58kOcEGfQ//7weFTDhm+ss8Ecxgw==}
 
@@ -10029,22 +10008,12 @@ packages:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
-  react-router-dom@5.3.4:
-    resolution: {integrity: sha512-m4EqFMHv/Ih4kpcBCONHbkT68KoAeHN4p3lAGoNryfHi0dMy0kCzEZakiKRsvg5wHZ/JLrLW8o8KomWiz/qbYQ==}
-    peerDependencies:
-      react: '>=15'
-
   react-router-dom@6.27.0:
     resolution: {integrity: sha512-+bvtFWMC0DgAFrfKXKG9Fc+BcXWRUO1aJIihbB79xaeq0v5UzfvnM5houGUm1Y461WVRcgAQ+Clh5rdb1eCx4g==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
-
-  react-router@5.3.4:
-    resolution: {integrity: sha512-Ys9K+ppnJah3QuaRiLxk+jDWOR1MekYQrlytiXxC1RyfbdsZkS5pvKAzCCr031xHixZwpnsYNT5xysdFHQaYsA==}
-    peerDependencies:
-      react: '>=15'
 
   react-router@6.27.0:
     resolution: {integrity: sha512-YA+HGZXz4jaAkVoYBE98VQl+nVzI+cVI2Oj/06F5ZM+0u3TgedN9Y9kmMRo2mnkSK2nCpNQn0DVob4HCsY/WLw==}
@@ -10271,9 +10240,6 @@ packages:
   resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
-
-  resolve-pathname@3.0.0:
-    resolution: {integrity: sha512-C7rARubxI8bXFNB/hqcp/4iUeIXJhJZvFPFPiSPRnhU5UPxzMFIl+2E6yY6c4k9giDJAhtV+enfA+G89N6Csng==}
 
   resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
@@ -10883,9 +10849,6 @@ packages:
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
 
-  tiny-warning@1.0.3:
-    resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
-
   tinybench@2.8.0:
     resolution: {integrity: sha512-1/eK7zUnIklz4JUUlL+658n58XO2hHLQfSk1Zf2LKieUjxidN16eKFEoDEfjHc3ohofSSqK3X5yO6VGb6iW8Lw==}
 
@@ -11327,9 +11290,6 @@ packages:
 
   validate.io-number@1.0.3:
     resolution: {integrity: sha512-kRAyotcbNaSYoDnXvb4MHg/0a1egJdLwS6oJ38TJY7aw9n93Fl/3blIXdyYvPOp55CNxywooG/3BcrwNrBpcSg==}
-
-  value-equal@1.0.1:
-    resolution: {integrity: sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==}
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -16120,17 +16080,6 @@ snapshots:
       '@types/plotly.js': 2.29.2
       '@types/react': 18.2.64
 
-  '@types/react-router-dom@5.3.3':
-    dependencies:
-      '@types/history': 4.7.11
-      '@types/react': 18.2.64
-      '@types/react-router': 5.1.20
-
-  '@types/react-router@5.1.20':
-    dependencies:
-      '@types/history': 4.7.11
-      '@types/react': 18.2.64
-
   '@types/react-tooltip@4.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       react-tooltip: 5.26.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -19291,15 +19240,6 @@ snapshots:
 
   headers-polyfill@4.0.3: {}
 
-  history@4.10.1:
-    dependencies:
-      '@babel/runtime': 7.24.7
-      loose-envify: 1.4.0
-      resolve-pathname: 3.0.0
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
-      value-equal: 1.0.1
-
   hmac-drbg@1.0.1:
     dependencies:
       hash.js: 1.1.7
@@ -21397,10 +21337,6 @@ snapshots:
 
   path-to-regexp@0.1.7: {}
 
-  path-to-regexp@1.8.0:
-    dependencies:
-      isarray: 0.0.1
-
   path-to-regexp@3.3.0: {}
 
   path-to-regexp@6.2.1: {}
@@ -22014,36 +21950,12 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  react-router-dom@5.3.4(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.24.7
-      history: 4.10.1
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-router: 5.3.4(react@18.2.0)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
-
   react-router-dom@6.27.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@remix-run/router': 1.20.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-router: 6.27.0(react@18.2.0)
-
-  react-router@5.3.4(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.24.7
-      history: 4.10.1
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      path-to-regexp: 1.8.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-is: 16.13.1
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
 
   react-router@6.27.0(react@18.2.0):
     dependencies:
@@ -22363,8 +22275,6 @@ snapshots:
   resolve-from@4.0.0: {}
 
   resolve-from@5.0.0: {}
-
-  resolve-pathname@3.0.0: {}
 
   resolve-pkg-maps@1.0.0: {}
 
@@ -23121,8 +23031,6 @@ snapshots:
 
   tiny-invariant@1.3.3: {}
 
-  tiny-warning@1.0.3: {}
-
   tinybench@2.8.0: {}
 
   tinycolor2@1.6.0: {}
@@ -23568,8 +23476,6 @@ snapshots:
       validate.io-number: 1.0.3
 
   validate.io-number@1.0.3: {}
-
-  value-equal@1.0.1: {}
 
   vary@1.1.2: {}
 
