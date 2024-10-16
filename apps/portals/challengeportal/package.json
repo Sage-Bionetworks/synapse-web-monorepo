@@ -27,7 +27,7 @@
     "start": "vite",
     "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap challengeportal",
     "preview": "vite preview",
-    "type-check": "tsc",
+    "type-check": "tsc --build",
     "lint": "eslint src",
     "_generate-sitemap": "node ../../synapse-portal-framework/sitemap/generate-sitemap.cjs \\\"$VITE_PORTAL_KEY\\\"",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
