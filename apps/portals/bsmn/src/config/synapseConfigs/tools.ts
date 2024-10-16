@@ -1,6 +1,8 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
 import { toolsSql } from '../resources'
 
 const rgbIndex = 8
@@ -26,20 +28,15 @@ export const toolCardConfiguration: CardConfiguration = {
   ],
 }
 
-const tools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: toolsSql,
-    shouldDeepLink: true,
-    hideDownload: true,
-    facetsToPlot: ['contributor', 'institutions', 'projectTitle'],
-    name: 'Tools',
-    cardConfiguration: toolCardConfiguration,
-    searchConfiguration: {
-      searchable: ['title', 'toolDescription', 'contributor', 'institutions'],
-    },
+export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: toolsSql,
+  shouldDeepLink: true,
+  hideDownload: true,
+  facetsToPlot: ['contributor', 'institutions', 'projectTitle'],
+  name: 'Tools',
+  cardConfiguration: toolCardConfiguration,
+  searchConfiguration: {
+    searchable: ['title', 'toolDescription', 'contributor', 'institutions'],
   },
 }
-
-export default tools
