@@ -10,7 +10,6 @@ import {
   SynapseToastContainer,
   defaultQueryClientConfig,
 } from 'synapse-react-client'
-import { LogInDialogContextProvider } from './components/LogInDialogContext'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PortalProps } from './components/PortalProps'
@@ -29,26 +28,24 @@ function Portal(props: PortalProps) {
     <PortalContextProvider value={context}>
       <CookiesProvider>
         <BrowserRouter>
-          <LogInDialogContextProvider>
-            <ThemeProvider theme={theme}>
-              <QueryClientProvider client={queryClient}>
-                <AppInitializer>
-                  <SynapseToastContainer />
-                  <Navbar />
-                  <CookiesNotification />
-                  <main className="main">
-                    {/* all the content below */}
-                    <React.Suspense fallback={<div />}>
-                      <Switch>
-                        <RouteResolver />
-                      </Switch>
-                    </React.Suspense>
-                  </main>
-                  <Footer />
-                </AppInitializer>
-              </QueryClientProvider>
-            </ThemeProvider>
-          </LogInDialogContextProvider>
+          <ThemeProvider theme={theme}>
+            <QueryClientProvider client={queryClient}>
+              <AppInitializer>
+                <SynapseToastContainer />
+                <Navbar />
+                <CookiesNotification />
+                <main className="main">
+                  {/* all the content below */}
+                  <React.Suspense fallback={<div />}>
+                    <Switch>
+                      <RouteResolver />
+                    </Switch>
+                  </React.Suspense>
+                </main>
+                <Footer />
+              </AppInitializer>
+            </QueryClientProvider>
+          </ThemeProvider>
         </BrowserRouter>
       </CookiesProvider>
     </PortalContextProvider>

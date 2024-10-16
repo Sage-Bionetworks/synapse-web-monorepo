@@ -23,7 +23,6 @@ import { HelpPopover } from './components/HelpPopover/HelpPopover'
 import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
-import LoginPage from './components/Authentication/LoginPage'
 import PageProgress from './components/PageProgress/PageProgress'
 import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
 import PlotlyWrapper from './components/PlotlyWrapper'
@@ -112,7 +111,6 @@ const SynapseContext = {
 
 const SynapseComponents = {
   Login: StandaloneLoginForm,
-  LoginPage,
   EntityForm,
   UserCard,
   StatisticsPlot,

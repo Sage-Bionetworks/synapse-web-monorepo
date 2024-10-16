@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { getSearchParam } from './URLUtils'
-import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import {
+  SignedTokenInterface,
+  TermsOfServiceState,
+} from '@sage-bionetworks/synapse-types'
+import {
+  storeLastPlace,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
   useFramebuster,
@@ -13,6 +17,9 @@ import { useSourceApp } from './components/useSourceApp'
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
+  >()
+  const [skippedSigningUpdatedToS, setSkippedSigningUpdatedToS] = useState<
+    boolean | undefined
   >()
   const isFramed = useFramebuster()
   const { appId, appURL } = useSourceApp()
@@ -57,10 +64,32 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       ) as SignedTokenInterface
       setSignedToken(localStorageParamToken)
     }
+
+    // SignUpdatedTermsOfUsePage sets this session storage value if the user decided to skip
+    const sessionStorageSkippedToS = sessionStorage.getItem('skippedSigningToS')
+    setSkippedSigningUpdatedToS(sessionStorageSkippedToS === 'true')
   }, [])
 
-  const { acceptsTermsOfUse } = useApplicationSessionContext()
-
+  // Detect if terms of service are up to date.  If not, route to either the Pledge or a page where the user can sign the updated terms.
+  // Note, if the status is "MUST_AGREE_SOON", then the new page will offer a "Skip" button
+  const { termsOfServiceStatus } = useApplicationSessionContext()
+  let redirectRoute = undefined
+  if (termsOfServiceStatus) {
+    if (
+      termsOfServiceStatus.usersCurrentTermsOfServiceState !=
+        TermsOfServiceState.UP_TO_DATE &&
+      skippedSigningUpdatedToS === false
+    ) {
+      if (termsOfServiceStatus.lastAgreementDate == undefined) {
+        redirectRoute = '/authenticated/signTermsOfUse'
+      } else {
+        if (location.pathname != '/authenticated/signUpdatedTermsOfUse') {
+          redirectRoute = '/authenticated/signUpdatedTermsOfUse'
+          storeLastPlace()
+        }
+      }
+    }
+  }
   return (
     <AppContextProvider
       appContext={{
@@ -69,10 +98,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         signedToken,
       }}
     >
-      {acceptsTermsOfUse === false &&
-        location.pathname != '/authenticated/signTermsOfUse' && (
-          <Redirect to="/authenticated/signTermsOfUse" />
-        )}
+      {!!redirectRoute && location.pathname != redirectRoute && (
+        <Redirect to={redirectRoute} />
+      )}
       {!isFramed && props.children}
     </AppContextProvider>
   )
