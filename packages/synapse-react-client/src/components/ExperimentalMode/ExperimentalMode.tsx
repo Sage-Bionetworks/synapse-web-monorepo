@@ -43,7 +43,6 @@ const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
   }
 
   const deleteExperimentalModeCookie = () => {
-    // cookie.remove requires to re-calculate date obj each time, this is more straightforward
     cookies.remove(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     setIsExperimentalModeOn(false)
     if (onExperimentalModeToggle) {
