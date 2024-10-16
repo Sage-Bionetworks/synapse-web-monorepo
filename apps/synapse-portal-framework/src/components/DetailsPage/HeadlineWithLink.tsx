@@ -3,10 +3,12 @@ import React, { useState } from 'react'
 import { HelpPopover, IconSvg, SynapseQueries } from 'synapse-react-client'
 
 export function HeadlineWithLinkDerivedFromEntityId(props: {
-  title: string
   id: string
+  entityTitlePrepend?: string
   helpText?: string
 }) {
+  const { entityTitlePrepend = '', ...rest } = props
+
   const { data: entityHeader, isLoading } = SynapseQueries.useGetEntityHeader(
     props.id,
   )
@@ -16,8 +18,8 @@ export function HeadlineWithLinkDerivedFromEntityId(props: {
   }
   return (
     <HeadlineWithLink
-      {...props}
-      title={`${props.title}: ${entityHeader?.name}`}
+      {...rest}
+      title={`${props.entityTitlePrepend}${entityHeader?.name}`}
     />
   )
 }
