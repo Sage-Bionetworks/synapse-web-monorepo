@@ -230,8 +230,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           title: 'Submit an Observation',
           standalone: true,
           props: {
-            ownerId: 'syn26338068',
-            wikiId: '613438',
+            ownerId: 'syn63814796',
+            wikiId: '629871',
           },
         },
       ],
