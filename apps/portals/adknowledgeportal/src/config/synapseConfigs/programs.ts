@@ -1,6 +1,11 @@
 import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 
+export const PROGRAM_TABLE_COLUMN_NAMES = {
+  PROGRAM: 'Program',
+  GRANT_NUMBER: 'Grant Number',
+}
+
 export const programCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {

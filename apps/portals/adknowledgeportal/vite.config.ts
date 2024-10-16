@@ -20,7 +20,10 @@ export default mergeConfig(portalsViteConfig, {
       },
       {
         find: /@sage-bionetworks\/synapse-portal-framework/,
-        replacement: resolve(projectRootDir, '../../synapse-portal-framework'),
+        replacement: resolve(
+          projectRootDir,
+          '../../synapse-portal-framework/src',
+        ),
       },
     ],
   },
