@@ -14,27 +14,9 @@ import {
   StudyDetailsPage,
   studyDetailsPageChildRoutes,
 } from 'src/pages/StudyDetailsPage'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-  SynapseFormWrapper,
-} from 'synapse-react-client'
-import {
-  experimentalModelsSql,
-  modelADStrainsSelectedFacet,
-  programsSql,
-} from './resources'
-import { computationalToolsQueryWrapperPlotNavProps } from './synapseConfigs/computational_tools'
-import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
-import { experimentalToolsQueryWrapperPlotNavProps } from './synapseConfigs/experimental_tools'
-import { peopleQueryWrapperPlotNavProps } from './synapseConfigs/people'
-import programs from './synapseConfigs/programs'
-import { projectsQueryWrapperPlotNavProps } from './synapseConfigs/projects'
-import { publicationsQueryWrapperPlotNavProps } from './synapseConfigs/publications'
-import { results } from './synapseConfigs/results'
-import { studiesQueryWrapperPlotNavProps } from './synapseConfigs/studies'
-import { targetEnablingResourcesQueryWrapperPlotNavProps } from './synapseConfigs/target_enabling_resources'
+import { MarkdownSynapse, SynapseFormWrapper } from 'synapse-react-client'
+import { explorePageRoutes } from './explorePageRoutes'
+import { experimentalModelsSql, modelADStrainsSelectedFacet } from './resources'
 
 const routes: RouteObject[] = [
   {
@@ -91,111 +73,13 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: (
-          <ExploreWrapper
-            explorePaths={[
-              {
-                path: 'Programs',
-              },
-              {
-                path: 'Projects',
-              },
-              {
-                path: 'Studies',
-              },
-              {
-                path: 'Data',
-              },
-              {
-                path: 'Publications',
-              },
-              {
-                path: 'People',
-              },
-              {
-                path: 'Experimental Models',
-              },
-              {
-                path: 'Computational Tools',
-              },
-              {
-                path: 'Target Enabling Resources',
-              },
-              {
-                path: 'Results',
-              },
-            ]}
-          />
-        ),
+        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
         children: [
-          {
-            path: 'Programs',
-            element: <CardContainerLogic {...programs} sql={programsSql} />,
-          },
-          {
-            path: 'Projects',
-            element: (
-              <QueryWrapperPlotNav {...projectsQueryWrapperPlotNavProps} />
-            ),
-          },
-          {
-            path: 'Studies',
-            element: (
-              <QueryWrapperPlotNav {...studiesQueryWrapperPlotNavProps} />
-            ),
-          },
-          {
-            path: 'Data',
-            element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
-          },
-          {
-            path: 'Publications',
-            element: (
-              <QueryWrapperPlotNav {...publicationsQueryWrapperPlotNavProps} />
-            ),
-          },
-          {
-            path: 'People',
-            element: (
-              <QueryWrapperPlotNav {...peopleQueryWrapperPlotNavProps} />
-            ),
-          },
+          ...explorePageRoutes,
           {
             // PORTALS-2001 - we renamed "Experimental Tools" to "Experimental Models"
             path: 'Experimental Tools',
             element: <RedirectWithQuery to={'/Explore/Experimental Models'} />,
-          },
-          {
-            path: 'Experimental Models',
-            element: (
-              <QueryWrapperPlotNav
-                {...experimentalToolsQueryWrapperPlotNavProps}
-              />
-            ),
-          },
-          {
-            path: 'Computational Tools',
-            element: (
-              <QueryWrapperPlotNav
-                {...computationalToolsQueryWrapperPlotNavProps}
-              />
-            ),
-          },
-          {
-            path: 'Target Enabling Resources',
-            element: (
-              <QueryWrapperPlotNav
-                {...targetEnablingResourcesQueryWrapperPlotNavProps}
-              />
-            ),
-          },
-          {
-            path: 'Results',
-            element: (
-              <div style={results.style}>
-                <MarkdownSynapse {...results.props} />
-              </div>
-            ),
           },
         ],
       },
