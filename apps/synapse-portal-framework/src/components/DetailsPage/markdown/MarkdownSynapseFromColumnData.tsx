@@ -28,7 +28,7 @@ type MarkdownSynapseFromColumnDataProps = {
   /** If true, treat the content as raw markdown
    * @default false
    */
-  injectMarkdown?: boolean
+  isRawMarkdown?: boolean
   /** If provided, will render a MarkdownCollapse instead */
   MarkdownCollapseProps?: MarkdownCollapseProps
 }
@@ -42,7 +42,7 @@ type MarkdownSynapseFromColumnDataProps = {
  * - An arbitrary wiki owned by an entity ID (e.g. syn1234/wiki/9876)
  * - Any comma-separated list combination of the above
  *     (e.g. syn1234,syn5678,syn1234/wiki/9876)
- * - Table data as raw markdown, if the `injectMarkdown` prop is true.
+ * - Table data as raw markdown, if the `isRawMarkdown` prop is true.
  *
  * @param props
  * @constructor
@@ -54,11 +54,11 @@ export function MarkdownSynapseFromColumnData(
     columnName,
     showEntityTitle,
     showNoContentAvailable = false,
-    injectMarkdown = false,
+    isRawMarkdown = false,
     MarkdownCollapseProps,
   } = props
 
-  const propsArray = useColumnDataMarkdownProps(columnName, injectMarkdown)
+  const propsArray = useColumnDataMarkdownProps(columnName, isRawMarkdown)
 
   if (!propsArray) {
     return showNoContentAvailable ? <NoContentAvailable /> : null

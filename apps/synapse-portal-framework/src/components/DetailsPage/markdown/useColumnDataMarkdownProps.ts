@@ -4,7 +4,7 @@ import { useDetailsPageContext } from '../DetailsPageContext'
 
 export function useColumnDataMarkdownProps(
   columnName: string,
-  injectMarkdown: boolean,
+  isRawMarkdown: boolean,
 ): MarkdownSynapseProps[] | null {
   let { value } = useDetailsPageContext(columnName)
 
@@ -15,7 +15,7 @@ export function useColumnDataMarkdownProps(
   // TODO: Can we make this safer by checking if the columnType is a LIST?
   // The column data may be a list of Markdown props to render, so split on commas
   let splitValue: string[]
-  if (!injectMarkdown) {
+  if (!isRawMarkdown) {
     splitValue = value.split(',')
   } else {
     // Do not split if the value is raw markdown
@@ -24,5 +24,5 @@ export function useColumnDataMarkdownProps(
 
   return splitValue
     .map(s => s.trim())
-    .map(s => transformStringIntoMarkdownProps(s, injectMarkdown))
+    .map(s => transformStringIntoMarkdownProps(s, isRawMarkdown))
 }
