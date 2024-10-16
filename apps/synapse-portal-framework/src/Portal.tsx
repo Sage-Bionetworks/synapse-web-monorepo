@@ -7,8 +7,17 @@ import { defaultQueryClientConfig, SynapseTheme } from 'synapse-react-client'
 import { LogInDialogContextProvider } from './components/LogInDialogContext'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
+const localStoragePersister = createSyncStoragePersister({
+  storage: window.localStorage,
+})
+persistQueryClient({
+  queryClient,
+  persister: localStoragePersister,
+})
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props

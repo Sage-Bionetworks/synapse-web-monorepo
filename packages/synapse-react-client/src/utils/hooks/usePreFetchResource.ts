@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 
 export async function fetchBlob(url: string): Promise<Blob> {
   const response = await fetch(url)
@@ -51,7 +51,7 @@ export function useCreateUrlForData(blob: Blob | null | undefined) {
   const [resourceUrl, setResourceURL] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    if (blob) {
+    if (blob && blob instanceof Blob) {
       const objectUrl = URL.createObjectURL(blob)
       setResourceURL(objectUrl)
     } else {

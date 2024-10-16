@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "apps/synapse-portal-framework"
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "jest.virtualFolders": [
+      {
+        "name": "synapse-react-client",
+        "rootPath": "packages/synapse-react-client",
+        "runMode": {
+          "type": "on-demand"
+        }
+      }
+    ]
+  }
+}
