@@ -1,29 +1,30 @@
-import React from 'react'
-import _ from 'lodash-es'
-import { Engine, EngineResult } from 'json-rules-engine'
 import Form from '@rjsf/core'
+import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
-import { UiSchema, ErrorListProps, RJSFValidationError } from '@rjsf/utils'
+import { Engine, EngineResult } from 'json-rules-engine'
+import _ from 'lodash-es'
+import React from 'react'
+import Switch from 'react-switch'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import Blocker from '../utils/Blocker'
+import DataDebug from './DataDebug'
+import Header from './Header'
+import { NavButtons, NextStepLink } from './NavButtons'
+import StepsSideNav from './StepsSideNav'
+import SummaryTable from './SummaryTable'
+import SynapseFormCheckboxesWidget from './SynapseFormCheckboxesWidget'
+import SynapseFormCheckboxWidget from './SynapseFormCheckboxWidget'
+import SynapseFormRadioWidget from './SynapseFormRadioWidget'
 import {
-  Step,
-  StepStateEnum,
+  FormSchema,
+  IRulesNavigationEvent,
+  IRulesValidationEvent,
   NavActionEnum,
   StatusEnum,
-  FormSchema,
-  IRulesValidationEvent,
-  IRulesNavigationEvent,
+  Step,
+  StepStateEnum,
 } from './types'
-import Header from './Header'
-import StepsSideNav from './StepsSideNav'
-import { NavButtons, NextStepLink } from './NavButtons'
-import DataDebug from './DataDebug'
-import SummaryTable from './SummaryTable'
 import WarningDialog from './WarningDialog'
-import Switch from 'react-switch'
-import { Prompt } from 'react-router-dom'
-import SynapseFormRadioWidget from './SynapseFormRadioWidget'
-import SynapseFormCheckboxWidget from './SynapseFormCheckboxWidget'
-import SynapseFormCheckboxesWidget from './SynapseFormCheckboxesWidget'
 
 export interface IFormData {
   [key: string]: {
@@ -827,10 +828,30 @@ export default class SynapseForm extends React.Component<
   render() {
     return (
       <div className="outter-wrap">
-        <Prompt
-          when={this.state.hasUnsavedChanges}
-          message={this.unsavedDataWarning}
-        />
+        <Blocker
+          shouldBlock={({ currentLocation, nextLocation }) =>
+            this.state.hasUnsavedChanges &&
+            currentLocation.pathname !== nextLocation.pathname
+          }
+        >
+          {blocker => (
+            <ConfirmationDialog
+              open={blocker.state == 'blocked'}
+              title="Unsaved Changes"
+              content={this.unsavedDataWarning}
+              onConfirm={() => {
+                if (blocker.proceed) {
+                  blocker.proceed()
+                }
+              }}
+              onCancel={() => {
+                if (blocker.reset) {
+                  blocker.reset()
+                }
+              }}
+            />
+          )}
+        </Blocker>
         <Header
           isSubmitted={this.state.isSubmitted}
           bodyText={this.state.currentStep.description}

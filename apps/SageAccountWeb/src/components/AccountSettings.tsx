@@ -20,7 +20,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
-import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   ChangePassword,
   CookiePreferencesDialog,
@@ -82,7 +82,7 @@ export const AccountSettings = () => {
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
-  const history = useHistory()
+  const navigate = useNavigate()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
   const timezoneRef = useRef<HTMLDivElement>(null)
@@ -110,7 +110,7 @@ export const AccountSettings = () => {
   )
   const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {
-    history.push(`/authenticated/${val}`)
+    navigate(`/authenticated/${val}`)
   }
   useEffect(() => {
     const current = new Date()
@@ -663,10 +663,10 @@ export const AccountSettings = () => {
               >
                 <TwoFactorAuthSettingsPanel
                   onRegenerateBackupCodes={() => {
-                    history.push('/authenticated/2fa/generatecodes')
+                    navigate('/authenticated/2fa/generatecodes')
                   }}
                   onBeginTwoFactorEnrollment={() => {
-                    history.push('/authenticated/2fa/enroll')
+                    navigate('/authenticated/2fa/enroll')
                   }}
                 />
               </Paper>

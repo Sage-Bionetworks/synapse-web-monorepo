@@ -1,8 +1,7 @@
 import { Query } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import { Router } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCard, ReleaseCardProps, ReleaseCardSchema } from './ReleaseCard'
@@ -111,14 +110,16 @@ const defaultReleaseCardLargeProps: ReleaseCardLargeProps = {
 }
 
 function renderComponent(props: ReleaseCardProps) {
-  return render(
-    <Router history={createMemoryHistory()}>
-      <ReleaseCard {...props} />
-    </Router>,
+  const router = createMemoryRouter([
     {
-      wrapper: createWrapper(),
+      path: '/',
+      element: <ReleaseCard {...props} />,
     },
-  )
+  ])
+
+  return render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
 }
 
 function setUp(props: ReleaseCardProps) {

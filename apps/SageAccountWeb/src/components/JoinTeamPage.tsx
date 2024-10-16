@@ -6,7 +6,7 @@ import {
   SynapseClient,
   UserOrTeamBadge,
 } from 'synapse-react-client'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import {
   isJoinTeamSignedToken,
   isMembershipInvtnSignedToken,
@@ -17,9 +17,7 @@ import {
 import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
 import { StyledOuterContainer } from './StyledComponents'
 
-export type JoinTeamPageProps = {}
-
-export const JoinTeamPage = (props: JoinTeamPageProps) => {
+export function JoinTeamPage() {
   const context = useAppContext()
   const theme = useTheme()
   const [joinTeamToken, setJoinTeamToken] = useState<JoinTeamSignedToken>()
@@ -66,7 +64,7 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
 
   return (
     <StyledOuterContainer>
-      {redirectToRegistration && <Redirect to="/register1" />}
+      {redirectToRegistration && <Navigate to="/register1" />}
       <Box
         sx={{
           width: '700px',

@@ -6,7 +6,7 @@ import {
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Box, IconButton } from '@mui/material'
 
 const ProjectDiscussionForum = () => {
@@ -19,7 +19,7 @@ const ProjectDiscussionForum = () => {
     )
   const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { data: forum } = SynapseQueries.useGetEntityForum(entityId)
   const updateThreadId = (threadId?: string) => {
     const searchParams = new URLSearchParams(location.search)
@@ -28,10 +28,13 @@ const ProjectDiscussionForum = () => {
     } else {
       searchParams.delete(threadIdSearchParamKey)
     }
-    history.replace({
-      pathname: location.pathname,
-      search: searchParams.toString(),
-    })
+    navigate(
+      {
+        pathname: location.pathname,
+        search: searchParams.toString(),
+      },
+      { replace: true },
+    )
   }
   if (threadId) {
     return (

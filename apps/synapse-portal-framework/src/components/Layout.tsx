@@ -1,3 +1,4 @@
+import { Container } from '@mui/material'
 import React from 'react'
 
 type LayoutProps = React.PropsWithChildren<{
@@ -5,18 +6,16 @@ type LayoutProps = React.PropsWithChildren<{
   outsideContainerClassName?: string
 }>
 
-const Layout = (props: LayoutProps) => {
+function Layout(props: LayoutProps) {
   const {
     children,
     containerClassName = '',
     outsideContainerClassName = '',
   } = props
   const content = (
-    <div className={`container-fluid ${containerClassName}`}>
-      <div className="row">
-        <div className="col-md-offset-1 col-md-10">{children}</div>
-      </div>
-    </div>
+    <Container maxWidth={'lg'} className={containerClassName}>
+      {children}
+    </Container>
   )
   if (outsideContainerClassName) {
     return <div className={outsideContainerClassName}>{content}</div>

@@ -1,6 +1,6 @@
 import { Alert, Box, Button, Typography } from '@mui/material'
 import React, { useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   displayToast,
   PasswordField,
@@ -18,7 +18,7 @@ import { SourceAppLogo } from '../SourceApp'
 import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 
 export function ResetTwoFactorAuth() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
 
@@ -56,7 +56,7 @@ export function ResetTwoFactorAuth() {
   } = SynapseQueries.useDisableTwoFactorAuthWithResetToken({
     onSuccess: () => {
       displayToast('2FA has been successfully disabled on your account.')
-      history.push('/authenticated/myaccount')
+      navigate('/authenticated/myaccount')
       // We must refresh the session to clear previous 2FA error responses and allow the user to log in.
       refreshSession()
     },
@@ -141,10 +141,10 @@ export function ResetTwoFactorAuth() {
               )}
               {!token && (
                 <Box>
-                  {history.length > 1 && (
+                  {navigate.length > 1 && (
                     <BackButton
                       onClick={() => {
-                        history.goBack()
+                        navigate(-1)
                       }}
                     />
                   )}

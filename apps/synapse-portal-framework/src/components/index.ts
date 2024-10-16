@@ -17,18 +17,18 @@ import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import Image from './Image'
 import RedirectWithQuery from './RedirectWithQuery'
 import RedirectToURL from './RedirectToURL'
-import { Redirect } from 'react-router-dom'
+import { Navigate as Redirect } from 'react-router-dom'
 import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
 import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
 import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWrapper'
 import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
-import SynapseComponentCollapse from './SynapseComponentCollapse'
+import ComponentCollapse from './ComponentCollapse'
 import SurveyToast from './SurveyToast'
 
 const PortalComponents = {
-  RouteControlWrapper,
+  RouteControlWrapper: ExploreWrapper,
   DetailsPage,
   ConsortiaGoals,
   HomePageCardContainer,
@@ -54,7 +54,7 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
-  SynapseComponentCollapse,
+  SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
 }
 

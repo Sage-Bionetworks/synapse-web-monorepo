@@ -156,7 +156,9 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
         event.preventDefault()
         // handle table of contents widget
         const idOfContent = anchor.getAttribute('data-anchor')
-        const goTo = this.markupRef.current!.querySelector(`#${idOfContent}`)
+        const goTo = this.markupRef.current!.querySelector(
+          `[id="${idOfContent}"]`,
+        )
         try {
           goTo!.scrollIntoView({
             behavior: 'smooth',

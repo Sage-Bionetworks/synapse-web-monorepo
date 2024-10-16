@@ -1,115 +1,66 @@
-import React from 'react'
-import {
-  NavLink,
-  Route,
-  Switch,
-  useLocation,
-  useRouteMatch,
-} from 'react-router-dom'
-import { BarLoader } from 'react-spinners'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
-import { DetailsPageTabProps } from '../../types/portal-util-types'
-import RedirectWithQuery from '../RedirectWithQuery'
-import { DetailsPageSynapseConfigArray } from './DetailsPage'
+import React from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import { SynapseComponents } from 'synapse-react-client'
+import { useDetailsPageContext } from './DetailsPageContext'
 
-export type DetailsPageTabsProps = {
-  tabConfigs: DetailsPageTabProps[]
-  loading: boolean
-  queryResultBundle?: QueryResultBundle
+export type DetailsPageTabConfig = {
+  path: string
+  title: string
+  tooltip?: string
+  iconName?: string
+  iconClassName?: string
+  hideIfColumnValueNull?: string
+  children?: DetailsPageTabConfig[]
 }
 
-const DetailsPageTabs: React.FunctionComponent<
-  DetailsPageTabsProps
-> = props => {
-  const { tabConfigs, loading, queryResultBundle } = props
-  const { url } = useRouteMatch()
-  const rowValues = queryResultBundle?.queryResult?.queryResults.rows[0].values
-  const headers = queryResultBundle?.queryResult?.queryResults.headers
-  const urlWithTrailingSlash = `${url}${url.endsWith('/') ? '' : '/'}`
-  const { search } = useLocation()
+export type DetailsPageTabUIProps = {
+  tabConfig: DetailsPageTabConfig[]
+}
+
+function DetailsPageTab(props: DetailsPageTabConfig) {
+  const {
+    path,
+    title,
+    tooltip,
+    iconName,
+    iconClassName,
+    hideIfColumnValueNull,
+  } = props
+  const location = useLocation()
+
+  const { value } = useDetailsPageContext(hideIfColumnValueNull)
+
+  if (hideIfColumnValueNull && value == null) {
+    return null
+  }
+
   return (
-    <>
-      <Switch>
-        {/* Note -- `exact` in Redirect doesn't work without a Switch */}
-        <RedirectWithQuery
-          exact={true}
-          from={urlWithTrailingSlash}
-          to={`${urlWithTrailingSlash}${tabConfigs[0].uriValue}`}
-        />
-      </Switch>
-      <div className="tab-groups">
-        {tabConfigs.map((tab, index) => {
-          if (tab.hideIfColumnValueNull) {
-            if (rowValues && headers) {
-              const colIndex = headers.findIndex(
-                h => h.name == tab.hideIfColumnValueNull,
-              )
-              if (!rowValues[colIndex]) {
-                return <></>
-              }
-            } else {
-              return <></>
-            }
-          }
-          return (
-            <Tooltip
-              key={tab.uriValue}
-              title={tab.toolTip ?? ''}
-              placement="top"
-            >
-              <NavLink
-                to={`${urlWithTrailingSlash}${tab.uriValue + search}`}
-                key={`detailPage-tab-${index}`}
-                className={'tab-item ignoreLink'}
-                aria-current="true"
-              >
-                {tab.iconName && (
-                  <SynapseComponents.Icon
-                    type={tab.iconName}
-                  ></SynapseComponents.Icon>
-                )}
-                {tab.title}
-              </NavLink>
-            </Tooltip>
-          )
-        })}
-      </div>
-      {loading ? (
-        <BarLoader color="#878787" loading={true} height={5} />
-      ) : (
-        <div className="tab-content-group">
-          <div className="tab-content">
-            {tabConfigs.map((tabConfig, index) => {
-              return (
-                <Route
-                  key={tabConfig.uriValue}
-                  path={`${urlWithTrailingSlash}${tabConfig.uriValue}`}
-                >
-                  {'tabLayout' in tabConfig && tabConfig.tabLayout && (
-                    <DetailsPageTabs
-                      tabConfigs={tabConfig.tabLayout}
-                      loading={loading}
-                      queryResultBundle={queryResultBundle}
-                    ></DetailsPageTabs>
-                  )}
-                  {'synapseConfigArray' in tabConfig &&
-                    tabConfig.synapseConfigArray && (
-                      <DetailsPageSynapseConfigArray
-                        showMenu={tabConfig.showMenu}
-                        synapseConfigArray={tabConfig.synapseConfigArray}
-                        queryResultBundle={queryResultBundle}
-                      />
-                    )}
-                </Route>
-              )
-            })}
-          </div>
-        </div>
-      )}
-    </>
+    <Tooltip key={path} title={tooltip ?? ''} placement="top">
+      <NavLink
+        to={{
+          pathname: path,
+          search: location.search,
+        }}
+        className={'tab-item ignoreLink'}
+      >
+        {iconName && (
+          <SynapseComponents.Icon type={iconName} cssClass={iconClassName} />
+        )}
+        {title}
+      </NavLink>
+    </Tooltip>
   )
 }
 
-export default DetailsPageTabs
+export function DetailsPageTabs(props: DetailsPageTabUIProps) {
+  const { tabConfig } = props
+
+  return (
+    <div className="tab-groups">
+      {tabConfig.map(config => (
+        <DetailsPageTab key={config.path} {...config} />
+      ))}
+    </div>
+  )
+}
