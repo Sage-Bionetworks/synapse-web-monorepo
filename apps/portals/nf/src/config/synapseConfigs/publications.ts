@@ -1,10 +1,12 @@
-import type { CardConfiguration } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { columnAliases } from './commonProps'
 
-import { publicationsSql } from '../resources'
 import { Direction } from '@sage-bionetworks/synapse-types'
+import { publicationsSql } from '../resources'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -42,29 +44,26 @@ export const publicationsCardConfiguration: CardConfiguration = {
   },
 }
 
-const publications: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: publicationsSql,
-    shouldDeepLink: true,
-    name: 'Publications',
-    cardConfiguration: publicationsCardConfiguration,
-    columnAliases,
-    facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
-    searchConfiguration: {
-      searchable: [
-        'title',
-        'author',
-        'journal',
-        'pmid',
-        'year',
-        'fundingAgency',
-        'studyName',
-        'diseaseFocus',
-        'manifestation',
-      ],
-    },
+const publications: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: publicationsSql,
+  shouldDeepLink: true,
+  name: 'Publications',
+  cardConfiguration: publicationsCardConfiguration,
+  columnAliases,
+  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
+  searchConfiguration: {
+    searchable: [
+      'title',
+      'author',
+      'journal',
+      'pmid',
+      'year',
+      'fundingAgency',
+      'studyName',
+      'diseaseFocus',
+      'manifestation',
+    ],
   },
 }
 
