@@ -1,12 +1,12 @@
-import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import type {
   CardConfiguration,
   CardContainerLogicProps,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
 import { publicationSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 7
 
@@ -50,29 +50,26 @@ export const publicationCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const publications: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    hideDownload: true,
-    sql: publicationSql,
-    name: 'Publications',
-    cardConfiguration: publicationCardConfiguration,
-    visibleColumnCount: Infinity,
-    searchConfiguration: {
-      searchable: [
-        'Author',
-        'Diagnosis',
-        'Journal',
-        'Title',
-        'Year',
-        'digitalAssessmentCategory',
-        'sensorType',
-        'Tools',
-        'Study',
-      ],
-    },
+export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  shouldDeepLink: true,
+  hideDownload: true,
+  sql: publicationSql,
+  name: 'Publications',
+  cardConfiguration: publicationCardConfiguration,
+  visibleColumnCount: Infinity,
+  searchConfiguration: {
+    searchable: [
+      'Author',
+      'Diagnosis',
+      'Journal',
+      'Title',
+      'Year',
+      'digitalAssessmentCategory',
+      'sensorType',
+      'Tools',
+      'Study',
+    ],
   },
 }
 
