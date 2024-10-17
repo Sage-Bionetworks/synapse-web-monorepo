@@ -2,10 +2,10 @@ import {
   CardConfiguration,
   GenericCardSchema,
   IconOptions,
+  QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import educationalResourceSvg from '../style/EducationalResource.svg?url'
 
 const rgbIndex = 8
@@ -47,18 +47,15 @@ export const educationCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const education: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: educationSql,
-    cardConfiguration: educationCardConfiguration,
-    shouldDeepLink: true,
-    name: 'Educational Resources',
-    facetsToPlot: ['topic', 'activityType'],
-    searchConfiguration: {
-      searchable: ['title', 'description'],
-    },
+export const educationQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: educationSql,
+  cardConfiguration: educationCardConfiguration,
+  shouldDeepLink: true,
+  name: 'Educational Resources',
+  facetsToPlot: ['topic', 'activityType'],
+  searchConfiguration: {
+    searchable: ['title', 'description'],
   },
 }
 

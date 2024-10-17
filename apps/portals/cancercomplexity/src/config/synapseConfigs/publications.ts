@@ -1,10 +1,12 @@
+import { Direction } from '@sage-bionetworks/synapse-types'
+import type {
+  CardConfiguration,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
-import { Direction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 1
 
@@ -60,33 +62,30 @@ export const publicationsCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const publications: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    cardConfiguration: publicationsCardConfiguration,
-    sql: publicationSql,
-    shouldDeepLink: true,
-    name: 'Publications',
-    columnAliases,
-    facetValueSortConfigs: [
-      { columnName: 'publicationYear', direction: Direction.DESC },
+export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  cardConfiguration: publicationsCardConfiguration,
+  sql: publicationSql,
+  shouldDeepLink: true,
+  name: 'Publications',
+  columnAliases,
+  facetValueSortConfigs: [
+    { columnName: 'publicationYear', direction: Direction.DESC },
+  ],
+  searchConfiguration: {
+    searchable: [
+      'publicationTitle',
+      'authors',
+      'journal',
+      'doi',
+      'pubMedId',
+      'keywords',
+      'tummorType',
+      'tissue',
+      'assay',
+      'grantName',
+      'grantNumber',
+      'dataset',
     ],
-    searchConfiguration: {
-      searchable: [
-        'publicationTitle',
-        'authors',
-        'journal',
-        'doi',
-        'pubMedId',
-        'keywords',
-        'tummorType',
-        'tissue',
-        'assay',
-        'grantName',
-        'grantNumber',
-        'dataset',
-      ],
-    },
   },
 }
