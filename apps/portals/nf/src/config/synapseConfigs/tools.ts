@@ -177,7 +177,6 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'SubsectionRowRenderer',
-          subtitle: 'Funding Agency',
           outsideContainerClassName: 'home-spacer',
           props: {
             sql: fundingAgencySql,
