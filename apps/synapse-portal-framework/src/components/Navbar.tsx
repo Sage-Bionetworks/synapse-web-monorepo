@@ -2,19 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
   AppUtils,
-  IconSvg,
-  StandaloneLoginForm,
   SynapseComponents,
   SynapseHookUtils,
   SynapseQueries,
-  SystemUseNotification,
   useSynapseContext,
+  storeRedirectURLForOneSageLogin,
 } from 'synapse-react-client'
 import NavLink from '../components/NavLink'
 import NavUserLink from '../components/NavUserLink'
 import { ConfigRoute, GenericRoute } from '../types/portal-config'
-import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
-import { useLogInDialogContext } from './LogInDialogContext'
+import { Box, Button } from '@mui/material'
 import { useHistory } from 'react-router-dom'
 import { RESPONSIVE_SIDE_PADDING } from '../utils'
 import { usePortalContext } from './PortalContext'
@@ -56,14 +53,7 @@ function Navbar() {
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = React.useRef<HTMLDivElement>(null)
 
-  const { refreshSession, clearSession, twoFactorAuthSSOErrorResponse } =
-    AppUtils.useApplicationSessionContext()
-
-  const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
-
-  if (twoFactorAuthSSOErrorResponse) {
-    setShowLoginDialog(true)
-  }
+  const { clearSession } = AppUtils.useApplicationSessionContext()
 
   useEffect(() => {
     function handleClickOutside(e: Event) {
@@ -150,7 +140,7 @@ function Navbar() {
     config => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
-  const registrationPageUrl = SynapseHookUtils.useOneSageURL('/register1')
+  const oneSageUrl = SynapseHookUtils.useOneSageURL()
   const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
     '/authenticated/myaccount',
   )
@@ -225,48 +215,12 @@ function Navbar() {
                   color="secondary"
                   variant="contained"
                   onClick={() => {
-                    setShowLoginDialog(true)
+                    storeRedirectURLForOneSageLogin()
+                    window.location.assign(oneSageUrl.toString())
                   }}
                 >
                   Sign&nbsp;In
                 </Button>
-                <Dialog
-                  onClose={() => {
-                    setShowLoginDialog(false)
-                  }}
-                  open={showLoginDialog}
-                >
-                  <IconButton
-                    aria-label={'Close'}
-                    onClick={() => {
-                      setShowLoginDialog(false)
-                    }}
-                    sx={{ marginLeft: 'auto' }}
-                  >
-                    <IconSvg
-                      icon={'close'}
-                      wrap={false}
-                      sx={{ color: 'grey.700' }}
-                    />
-                  </IconButton>
-                  <DialogContent dividers={false}>
-                    <StandaloneLoginForm
-                      registerAccountUrl={registrationPageUrl.toString()}
-                      twoFactorAuthenticationRequired={
-                        twoFactorAuthSSOErrorResponse
-                      }
-                      onBeginOAuthSignIn={() => {
-                        AppUtils.preparePostSSORedirect()
-                      }}
-                      sessionCallback={() => {
-                        refreshSession().then(() => {
-                          AppUtils.redirectAfterSSO(history)
-                        })
-                      }}
-                    />
-                    <SystemUseNotification maxWidth={'325px'} />
-                  </DialogContent>
-                </Dialog>
               </div>
             )}
 
