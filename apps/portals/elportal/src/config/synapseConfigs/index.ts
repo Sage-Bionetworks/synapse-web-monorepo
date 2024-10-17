@@ -1,16 +1,26 @@
-import projects from './projects'
-import studies from './studies'
-import people from './people'
+import {
+  filesViewQueryWrapperPlotNavProps,
+  individualsViewQueryWrapperPlotNavProps,
+} from './cohortbuilder'
+import peopleQueryWrapperPlotNavProps from './people'
+import projectsQueryWrapperPlotNavProps from './projects'
 import publications from './publications'
-import { individualsView, filesView } from './cohortbuilder'
+import studiesQueryWrapperPlotNavProps from './studies'
 
-export { projects, studies, people, publications, individualsView, filesView }
+export {
+  projectsQueryWrapperPlotNavProps,
+  studiesQueryWrapperPlotNavProps,
+  peopleQueryWrapperPlotNavProps,
+  publications,
+  individualsViewQueryWrapperPlotNavProps,
+  filesViewQueryWrapperPlotNavProps,
+}
 
 export default {
-  projects,
-  studies,
-  people,
+  projects: projectsQueryWrapperPlotNavProps,
+  studies: studiesQueryWrapperPlotNavProps,
+  people: peopleQueryWrapperPlotNavProps,
   publications,
-  individualsView,
-  filesView,
+  individualsView: individualsViewQueryWrapperPlotNavProps,
+  filesView: filesViewQueryWrapperPlotNavProps,
 }
