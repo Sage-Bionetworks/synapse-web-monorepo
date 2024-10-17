@@ -59,7 +59,6 @@ const SubsectionRowRenderer: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
-  let mounted = true
   useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
@@ -88,18 +87,12 @@ const SubsectionRowRenderer: React.FunctionComponent<
       setIsLoading(false)
       const queryResults = queryResultBundle?.queryResult?.queryResults
       if (queryResults) {
-        if (mounted) {
-          setRowSet(queryResults)
-        }
+        setRowSet(queryResults)
       } else {
         console.log('SubsectionRowRenderer: Error getting data')
       }
     }
     fetchData()
-
-    return () => {
-      mounted = false
-    }
   }, [sql, accessToken, searchParams, sqlOperator])
 
   /**
@@ -115,7 +108,6 @@ const SubsectionRowRenderer: React.FunctionComponent<
     const friendlyValue = friendlyValuesMap[rawValue]
     return friendlyValue ? friendlyValue : rawValue
   }
-
   return (
     <div className="SubsectionRowRenderer bootstrap-4-backport">
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
