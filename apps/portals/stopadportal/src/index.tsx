@@ -12,6 +12,7 @@ import 'katex/dist/katex.css'
 
 import './App.scss'
 import headerConfig from './config/headerConfig'
+import { navbarConfig } from './config/navbarConfig'
 
 const container = document.getElementById('root')
 
@@ -27,6 +28,7 @@ root.render(
       footerConfig={footerConfig}
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
+      navbarConfig={navbarConfig}
     />
   </React.StrictMode>,
 )
