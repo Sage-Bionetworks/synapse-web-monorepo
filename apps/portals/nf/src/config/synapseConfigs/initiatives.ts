@@ -1,9 +1,10 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+  SynapseConstants,
+} from 'synapse-react-client'
+import { initiativesSql } from '../resources'
 import { columnAliases } from './commonProps'
-import { initiativesSql, studiesSql } from '../resources'
-import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { studyCardConfiguration } from './studies'
 
 export const newSql = `${initiativesSql} order by ROW_ID desc limit 3`
 const rgbIndex = 8
@@ -19,51 +20,29 @@ export const initiativeCardConfiguration: CardConfiguration = {
   },
 }
 
-const initiatives: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  className: 'InitiativeCardList',
-  props: {
-    rgbIndex,
-    defaultShowPlots: false,
-    shouldDeepLink: true,
-    sql: initiativesSql,
-    cardConfiguration: {
-      ...initiativeCardConfiguration,
-      titleLinkConfig: {
-        matchColumnName: 'initiative',
-        isMarkdown: false,
-        baseURL: 'Explore/Initiatives/DetailsPage',
-        URLColumnName: 'initiative',
-      },
-      ctaLinkConfig: {
-        text: 'Visit Website',
-        link: 'website',
-      },
+const initiatives: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  defaultShowPlots: false,
+  shouldDeepLink: true,
+  sql: initiativesSql,
+  cardConfiguration: {
+    ...initiativeCardConfiguration,
+    titleLinkConfig: {
+      matchColumnName: 'initiative',
+      isMarkdown: false,
+      baseURL: 'Explore/Initiatives/DetailsPage',
+      URLColumnName: 'initiative',
     },
-    name: 'Initiatives',
-    columnAliases,
-    searchConfiguration: {
-      searchable: ['initiative', 'summary'],
+    ctaLinkConfig: {
+      text: 'Visit Website',
+      link: 'website',
     },
   },
-}
-
-export const initiativeDetailsPageConfiguration: DetailsPageProps = {
-  showMenu: false,
-  sql: initiativesSql,
-  synapseConfigArray: [
-    {
-      name: 'CardContainerLogic',
-      columnName: 'initiative',
-      title: 'Studies',
-      showTitleSeperator: false,
-      tableSqlKeys: ['initiative'],
-      props: {
-        sql: studiesSql,
-        ...studyCardConfiguration,
-      },
-    },
-  ],
+  name: 'Initiatives',
+  columnAliases,
+  searchConfiguration: {
+    searchable: ['initiative', 'summary'],
+  },
 }
 
 export default initiatives
