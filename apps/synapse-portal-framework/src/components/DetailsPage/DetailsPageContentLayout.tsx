@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { scrollToWithOffset } from '../../utils'
 import {
   DetailsPageSectionLayout,
@@ -7,19 +8,6 @@ import {
 
 export type DetailsPageContentType = DetailsPageSectionLayoutType[]
 
-export const handleMenuClick = (id: string) => {
-  window.history.pushState(null, '', `#${id}`)
-  // An ID may have spaces, so use [id="..."] style selector
-  // #... will treat spaces as a query for descendants
-  const query = `[id="${id}"]`
-  const wrapper = document.querySelector<HTMLElement>(query)
-  if (wrapper) {
-    scrollToWithOffset(wrapper)
-  } else {
-    console.error(`Could not find id ${id} in document (query: ${query})`)
-  }
-}
-
 export function DetailsPageContent(props: {
   content: DetailsPageContentType
   hideMenu?: boolean
@@ -27,6 +15,22 @@ export function DetailsPageContent(props: {
   const { content } = props
   const menuOptions = content.filter(option => option.title && option.id)
   const hideMenu = props.hideMenu ?? menuOptions.length <= 1
+
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleMenuClick = (id: string) => {
+    navigate(`${location.search}#${id}`)
+    // An ID may have spaces, so use [id="..."] style selector
+    // Using a hash will treat spaces as a query for descendants
+    const query = `[id="${id}"]`
+    const wrapper = document.querySelector<HTMLElement>(query)
+    if (wrapper) {
+      scrollToWithOffset(wrapper)
+    } else {
+      console.error(`Could not find id ${id} in document (query: ${query})`)
+    }
+  }
 
   return (
     <div className={'tab-content-group'}>

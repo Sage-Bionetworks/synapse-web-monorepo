@@ -2,10 +2,10 @@ import { MarkdownSynapseProps } from 'synapse-react-client'
 
 export function transformStringIntoMarkdownProps(
   value: string,
-  injectMarkdown?: boolean,
+  isRawMarkdown?: boolean,
 ) {
   const newProps: MarkdownSynapseProps = {}
-  if (injectMarkdown) {
+  if (isRawMarkdown) {
     newProps.markdown = value
   } else {
     if (value.includes('/wiki/')) {

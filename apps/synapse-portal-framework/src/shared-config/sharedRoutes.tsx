@@ -22,11 +22,11 @@ const routes: RouteObject[] = [
   },
   {
     // Handles redirecting '/Home' to '/'
-    path: 'Home/',
+    path: 'Home',
     element: <RedirectWithQuery to="/" />,
   },
   {
-    path: 'DownloadCart/',
+    path: 'DownloadCart',
     element: (
       <DownloadCartPage
         onViewSharingSettingsClicked={benefactorEntityId => {
