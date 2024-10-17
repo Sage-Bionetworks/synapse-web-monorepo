@@ -94,7 +94,9 @@ export const ALIAS_AVAILABLE = `${REPO}/principal/available`
 export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
   `${REPO}/account/emailValidation?portalEndpoint=${portalEndpoint}`
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
-export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
+export const TERMS_OF_USE = `${AUTH}/termsOfUse2`
+export const TERMS_OF_USE_INFO = `${TERMS_OF_USE}/info`
+export const TERMS_OF_USE_STATUS = `${TERMS_OF_USE}/status`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
 export const VERIFICATION_SUBMISSION_STATE = (id: string) =>
   `${VERIFICATION_SUBMISSION}/${id}/state`

@@ -87,6 +87,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
   const handleClosePortalResources = () => {
     setPortalResourcesAnchorEl(null)
   }
+  const oneSageURL = useOneSageURL()
   return (
     <Box
       sx={{
@@ -139,9 +140,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               variant="outlined"
               color="secondary"
               sx={navButtonSx}
-              onClick={() => {
-                gotoPlace(LOGIN_LINK)
-              }}
+              href={oneSageURL.toString()}
             >
               Login
             </Button>

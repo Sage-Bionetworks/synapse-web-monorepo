@@ -17,7 +17,7 @@ export type TermsAndConditionsProps = {
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   termsAndConditionsTableID = 'syn51718002',
-  termsAndConditionsTableVersion = '4',
+  termsAndConditionsTableVersion = '5',
   onFormChange,
   hideLinkToFullTC = false,
 }) => {

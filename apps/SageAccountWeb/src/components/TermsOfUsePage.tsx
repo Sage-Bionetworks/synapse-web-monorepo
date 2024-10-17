@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import {
   displayToast,
-  SynapseClient,
   TermsAndConditions,
   IconSvg,
   SynapseContextUtils,
+  SynapseQueries,
 } from 'synapse-react-client'
 import { SourceAppLogo } from './SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
@@ -23,18 +23,28 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const sourceApp = useSourceApp()
 
+  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
+  const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
+
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {
       if (accessToken) {
-        SynapseClient.signSynapseTermsOfUse(accessToken)
-          .then(() => {
-            setIsDone(true)
-          })
-          .catch((err: any) => {
-            displayToast(err.reason as string, 'danger')
-          })
+        signTermsOfService(
+          {
+            accessToken,
+            termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
+          },
+          {
+            onSuccess: () => {
+              setIsDone(true)
+            },
+            onError: err => {
+              displayToast(err.reason as string, 'danger')
+            },
+          },
+        )
       }
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
@@ -95,7 +105,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
                 onClick={onSignTermsOfUse}
                 disabled={isLoading || !isFormComplete}
               >
-                Accept and Continue <IconSvg icon="arrowForward" />
+                Agree and Continue <IconSvg icon="arrowForward" />
               </Button>
               <TermsAndConditionsLink sx={buttonSx} />
             </div>
