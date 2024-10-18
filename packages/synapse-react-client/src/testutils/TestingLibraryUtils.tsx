@@ -5,6 +5,7 @@ import { SynapseContextType } from '../utils/context/SynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
 } from '../utils/context/FullContextProvider'
+import { ApplicationSessionTestContext } from '../mocks/MockApplicationSessionContext'
 
 type RtlWrapperProps = {
   children?: ReactNode
@@ -26,12 +27,14 @@ export const createWrapperAndQueryClient = (
   return {
     wrapperFn: function RtlWrapper({ children }: RtlWrapperProps) {
       return (
-        <FullContextProvider
-          synapseContext={wrapperProps}
-          queryClient={queryClient}
-        >
-          {children}
-        </FullContextProvider>
+        <ApplicationSessionTestContext>
+          <FullContextProvider
+            synapseContext={wrapperProps}
+            queryClient={queryClient}
+          >
+            {children}
+          </FullContextProvider>
+        </ApplicationSessionTestContext>
       )
     },
     queryClient: queryClient,

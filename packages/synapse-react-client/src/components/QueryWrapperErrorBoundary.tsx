@@ -2,7 +2,11 @@ import React, { useCallback, useMemo } from 'react'
 import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { EntityActionsRequired } from './AccessRequirement/EntityActionsRequired'
-import { SynapseClientError, useSynapseContext } from '../utils'
+import {
+  SynapseClientError,
+  useApplicationSessionContext,
+  useSynapseContext,
+} from '../utils'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
@@ -22,8 +26,8 @@ export function QueryWrapperErrorBoundary({
     [getCurrentQueryRequest],
   )
   const { accessToken } = useSynapseContext()
+  const { clearSession } = useApplicationSessionContext()
   const isSignedIn = Boolean(accessToken)
-
   const FallbackComponent: ErrorBoundaryPropsWithComponent['FallbackComponent'] =
     useCallback(
       props => {
@@ -40,6 +44,12 @@ export function QueryWrapperErrorBoundary({
               />
             </div>
           )
+        }
+        if (
+          props.error instanceof SynapseClientError &&
+          props.error.reason.startsWith('invalid_token')
+        ) {
+          clearSession()
         }
         return (
           <div className={`ErrorBannerWrapper`}>
