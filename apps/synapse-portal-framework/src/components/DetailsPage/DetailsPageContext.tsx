@@ -11,7 +11,7 @@ type DetailsPageContextType = {
 export const DetailsPageContext = React.createContext({})
 
 /*
- * Stores global state for the "Sign in" dialog in the portals
+ * Stores query data for the object specified on a DetailsPage
  */
 export function DetailsPageContextProvider(
   props: React.PropsWithChildren<{ value: DetailsPageContextType }>,
@@ -50,6 +50,12 @@ function getValue(
   return value
 }
 
+/**
+ * Retrieve the DetailsPageContext. Optionally specify the `columnName` argument for
+ * the returned `value` property to be populated with the row's value for that column.
+ * @param props
+ * @constructor
+ */
 export function useDetailsPageContext(columnName?: string): {
   context: DetailsPageContextType
   value: string | null | undefined
@@ -73,6 +79,12 @@ type DetailsPageContextConsumerProps = {
   columnName?: string
 }
 
+/**
+ * Retrieve the DetailsPageContext. Optionally specify the `columnName` prop for
+ * the value render prop to be populated with the row's value for that column.
+ * @param props
+ * @constructor
+ */
 export function DetailsPageContextConsumer(
   props: DetailsPageContextConsumerProps,
 ) {
