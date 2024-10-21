@@ -277,13 +277,11 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           columnName: 'resourceId',
         },
         {
-          name: 'Markdown',
-          title: 'Submit an Observation',
-          standalone: true,
-          props: {
-            ownerId: 'syn26338068',
-            wikiId: '613438',
-          },
+          name: 'FormModal',
+          outsideContainerClassName: 'home-spacer',
+          props: undefined,
+          tableSqlKeys: ['resourceId'],
+          columnName: 'resourceId',
         },
       ],
     },
