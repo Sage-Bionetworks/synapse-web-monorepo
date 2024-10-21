@@ -99,7 +99,6 @@ import {
   TERMS_OF_USE_INFO,
   TERMS_OF_USE_STATUS,
   PROJECT_STORAGE_USAGE,
-  PROJECT_STORAGE_LIMIT,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -336,7 +335,6 @@ import {
   TermsOfServiceStatus,
   AccessToken,
   ProjectStorageUsage,
-  ProjectStorageLocationLimit,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5605,20 +5603,6 @@ export const getProjectStorageUsage = (
 ): Promise<ProjectStorageUsage> => {
   return doGet<ProjectStorageUsage>(
     PROJECT_STORAGE_USAGE(projectId),
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
-    { signal },
-  )
-}
-
-export const getProjectStorageLocationLimit = (
-  request: ProjectStorageLocationLimit,
-  accessToken: string | undefined = undefined,
-  signal?: AbortSignal,
-): Promise<ProjectStorageLocationLimit> => {
-  return doPost<ProjectStorageLocationLimit>(
-    PROJECT_STORAGE_LIMIT(request.projectId),
-    request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },
