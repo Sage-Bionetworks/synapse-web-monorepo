@@ -20,10 +20,16 @@ export function useOneSageURL(
   const { appId } = useSynapseContext()
 
   return useMemo(() => {
-    const targetURL =
-      window.location.hostname != 'staging.synapse.org'
-        ? ONE_SAGE_PRODUCTION_URL
-        : ONE_SAGE_STAGING_URL
+    let targetURL = ONE_SAGE_PRODUCTION_URL
+    if (window.location.hostname == 'staging.synapse.org') {
+      targetURL = ONE_SAGE_STAGING_URL
+    } else if (
+      window.location.hostname == 'localhost' ||
+      window.location.hostname == '127.0.0.1'
+    ) {
+      targetURL = `http://${window.location.hostname}:3000/`
+    }
+
     const url = new URL(path, targetURL)
     if (appId) {
       url.searchParams.append(ONE_SAGE_APPID_QUERY_PARAM_KEY, appId)
