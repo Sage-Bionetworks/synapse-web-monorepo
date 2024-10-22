@@ -550,7 +550,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
             <p
               class="MuiTypography-root MuiTypography-headline2 css-1nmmd39-MuiTypography-root"
             >
-              Projects trending this month
+              Projects trending last month
             </p>
           </div>
         </div>
