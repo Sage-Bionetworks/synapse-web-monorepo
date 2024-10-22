@@ -10,6 +10,7 @@ import {
   SynapseUtilityFunctions,
   useApplicationSessionContext,
   useFramebuster,
+  SynapseConstants,
 } from 'synapse-react-client'
 import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
@@ -30,12 +31,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     const isDev: boolean = window.location.hostname.includes('dev')
 
     const stagingConfig = {
-      REPO: 'https://repo-staging.prod.sagebase.org',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_STAGING_URL,
       PORTAL: 'https://staging.synapse.org/',
     }
 
     const devConfig = {
-      REPO: 'https://repo-dev.dev.sagebase.org',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
       PORTAL: 'https://portal-dev.dev.sagebase.org/',
     }
 
