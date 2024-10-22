@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import { DynamicForm, SynapseComponents } from 'synapse-react-client'
+import {
+  ConfirmationDialog,
+  DynamicForm,
+  SynapseComponents,
+} from 'synapse-react-client'
 import { Box } from '@mui/material'
 
 const FormModal = () => {
@@ -26,24 +25,30 @@ const FormModal = () => {
   }
 
   return (
-    <Box sx={{ margin: '15px 0px' }}>
-      <SynapseComponents.WideButton
-        variant="contained"
-        onClick={handleClickOpen}
-      >
-        Submit Observation
-      </SynapseComponents.WideButton>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogContent>
-          <DialogContentText>{form}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    <div className="browse-tools-page">
+      <Box sx={{ margin: '10px 0px 50px 0px' }}>
+        <SynapseComponents.WideButton
+          className="highlightSubmitToolButton"
+          variant="contained"
+          onClick={handleClickOpen}
+        >
+          Submit Observation
+        </SynapseComponents.WideButton>
+        <ConfirmationDialog
+          open={open}
+          title=""
+          content={form}
+          onCancel={handleClose}
+          onConfirm={() => {}}
+          confirmButtonProps={{
+            sx: { display: 'none' },
+          }}
+          cancelButtonProps={{
+            children: 'cancel',
+          }}
+        />
+      </Box>
+    </div>
   )
 }
 

@@ -66,7 +66,6 @@ type WideButton = {
 
 type FormModal = {
   name: 'FormModal'
-  props: undefined
 }
 
 // Generic SynapseConfigArray Representation -- maps each component to its props
