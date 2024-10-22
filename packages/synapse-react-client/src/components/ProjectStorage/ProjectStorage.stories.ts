@@ -12,9 +12,6 @@ import {
 const meta = {
   title: 'Synapse/ProjectStorage',
   component: ProjectDataAvailability,
-  parameters: {
-    chromatic: { viewports: [600, 1200] },
-  },
   argTypes: {
     isAuthenticated: {
       type: 'boolean',
