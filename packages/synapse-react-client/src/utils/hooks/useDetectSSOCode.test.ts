@@ -326,7 +326,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
         expect(window.location.replace).toHaveBeenCalledWith(
-          'https://accounts.synapse.org/register1',
+          'http://localhost:3000/register1',
         )
         expect(hookReturn.result.current.isLoading).toBe(false)
       })

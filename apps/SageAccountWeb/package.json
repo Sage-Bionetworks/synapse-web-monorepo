@@ -72,6 +72,7 @@
   "scripts": {
     "clean": "rimraf build coverage",
     "start": "vite",
+    "preview": "vite preview",
     "build": "vite build",
     "test": "vitest",
     "type-check": "tsc --noEmit"
