@@ -1,6 +1,6 @@
 export const dataSql = 'SELECT * FROM syn52234677'
 export const dataOnStudiesPageSql =
-  "SELECT * FROM syn52234677 WHERE `ResourceType` = 'metadata'"
+  "SELECT * FROM syn52234677 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn51209684'
 export const projectsSql = 'SELECT * FROM syn51209786'
 export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'

@@ -98,6 +98,7 @@ import {
   WIKI_PAGE_ID,
   TERMS_OF_USE_INFO,
   TERMS_OF_USE_STATUS,
+  PROJECT_STORAGE_USAGE,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -333,6 +334,7 @@ import {
   TermsOfServiceInfo,
   TermsOfServiceStatus,
   AccessToken,
+  ProjectStorageUsage,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -5588,6 +5590,19 @@ export const getTermsOfServiceStatus = (
 ): Promise<TermsOfServiceStatus> => {
   return doGet<TermsOfServiceStatus>(
     TERMS_OF_USE_STATUS,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getProjectStorageUsage = (
+  projectId: string,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<ProjectStorageUsage> => {
+  return doGet<ProjectStorageUsage>(
+    PROJECT_STORAGE_USAGE(projectId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },
