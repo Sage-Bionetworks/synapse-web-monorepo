@@ -35,7 +35,7 @@ export const mockProjectStorageUsageUnderLimit: ProjectStorageUsage = {
       storageLocationId: 'location-2',
       sumFileBytes: 1000,
       maxAllowedFileBytes: 1073741824,
-      isOverLimit: true,
+      isOverLimit: false,
     },
   ],
 }
