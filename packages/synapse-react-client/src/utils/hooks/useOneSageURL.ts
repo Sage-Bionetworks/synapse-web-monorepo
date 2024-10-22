@@ -85,7 +85,7 @@ export function useOneSageURL(
   return useMemo(
     () =>
       getOneSageUrl(
-        window.location.host.toLowerCase(),
+        window.location.hostname.toLowerCase(),
         currentBackendEndpoint,
         appId,
         path,
