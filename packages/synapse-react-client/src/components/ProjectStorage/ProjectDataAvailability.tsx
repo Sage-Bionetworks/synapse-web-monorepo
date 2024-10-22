@@ -1,11 +1,10 @@
 import React from 'react'
 import { Box, SxProps, Tooltip, Typography } from '@mui/material'
-import { useTheme } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import { useProjectStorageUsage } from '../../synapse-queries'
-import { SYNAPSE_STORAGE_LOCATION_ID } from 'src/synapse-client'
+import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
 import HelpPopover from '../HelpPopover'
-import { calculateFriendlyFileSize } from 'src/utils/functions/calculateFriendlyFileSize'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
 export type ProjectDataAvailabilityProps = {
   projectId?: string
