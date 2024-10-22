@@ -29,9 +29,10 @@ export function useTermsOfServiceInfo(
 }
 
 export function useTermsOfServiceStatus(
+  accessToken?: string, //usually we can fetch the access token from the context, but this hook is used by ApplicationSessionManager which sets the access token in the context (ApplicationSessionContextProvider)!
   options?: Partial<UseQueryOptions<TermsOfServiceStatus, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: keyFactory.getTermsOfServiceStatus(),

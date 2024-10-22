@@ -77,7 +77,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   let redirectRoute = undefined
   if (termsOfServiceStatus) {
     if (
-      termsOfServiceStatus.usersCurrentTermsOfServiceState !=
+      termsOfServiceStatus.userCurrentTermsOfServiceState !=
         TermsOfServiceState.UP_TO_DATE &&
       skippedSigningUpdatedToS === false
     ) {

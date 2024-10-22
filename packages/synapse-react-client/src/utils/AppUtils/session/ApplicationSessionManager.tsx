@@ -74,10 +74,9 @@ export function ApplicationSessionManager(
       setHasInitializedSession(true)
     })
   }, [onNoAccessTokenFound])
-  const { data: tosStatus } = useTermsOfServiceStatus({
+  const { data: tosStatus } = useTermsOfServiceStatus(token, {
     enabled: !!token,
   })
-
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
     let token
