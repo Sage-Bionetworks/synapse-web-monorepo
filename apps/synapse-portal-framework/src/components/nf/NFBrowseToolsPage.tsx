@@ -12,7 +12,6 @@ import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
 import Search from '../Search'
-import { DynamicForm } from 'synapse-react-client'
 
 type Category = {
   resourceName: string
@@ -28,8 +27,10 @@ const categories: Category[] = [
 ]
 
 const host = window.location.host
-const base = 'Research%20Tools%20Central/Submit%20'
-const createHref = path => `http://${host}/${base}${path}`
+const baseUrl = 'Research%20Tools%20Central/Submit%20'
+const postUrl = 'https://submit-form.com/KwZ46H4T'
+
+const createHref = path => `http://${host}/${baseUrl}${path}`
 
 const submitToolButtons = [
   {
@@ -39,7 +40,7 @@ const submitToolButtons = [
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/submitAnimalModel.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/SubmitAnimalModelUiSchema.json',
-    postUrl: 'https://submit-form.com/KwZ46H4T',
+    postUrl: postUrl,
   },
   {
     label: 'Submit Observation',
@@ -48,7 +49,7 @@ const submitToolButtons = [
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
-    postUrl: 'https://submit-form.com/KwZ46H4T',
+    postUrl: postUrl,
   },
   {
     label: 'Submit Cell Line',
@@ -57,7 +58,7 @@ const submitToolButtons = [
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLine.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLineUiSchema.json',
-    postUrl: 'https://submit-form.com/KwZ46H4T',
+    postUrl: postUrl,
   },
   {
     label: 'Submit Genetic Reagents',
@@ -66,7 +67,7 @@ const submitToolButtons = [
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagent.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagentUiSchema.json',
-    postUrl: 'https://submit-form.com/KwZ46H4T',
+    postUrl: postUrl,
   },
   {
     label: 'Submit Antibody',
@@ -75,7 +76,7 @@ const submitToolButtons = [
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/submitAntibody.json',
     uiSchemaUrl:
       'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/SubmitAntibodyUiSchema.json',
-    postUrl: 'https://submit-form.com/KwZ46H4T',
+    postUrl: postUrl,
   },
 ]
 
@@ -291,32 +292,31 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           </div>
         </div>
         <div className="center-content">
-          {/* <SynapseComponents.WideButton
-            sx={wideButtonSx}
-            href="https://forms.gle/htFkH5yewLzP1RAu7"
-            className="highlightSubmitToolButton"
-            variant="contained"
-            // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
-            target="_blank"
+          <Box
+            sx={{
+              display: 'flex',
+              marginTop: '50px',
+              gap: '16px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
           >
-            Submit A Tool
-          </SynapseComponents.WideButton> */}
-
-          {/*  new */}
-          {submitToolButtons.map(button => (
-            <SynapseComponents.WideButton
-              // sx={wideButtonSx}
-              sx={{ ...wideButtonSx, marginLeft: '10px', marginRight: '10px' }}
-              href={button.href}
-              className="highlightSubmitToolButton"
-              variant="contained"
-              // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
-              target="_blank"
-            >
-              {button.label}
-            </SynapseComponents.WideButton>
-          ))}
-          {/* new */}
+            {submitToolButtons.map(button => (
+              <SynapseComponents.WideButton
+                sx={{
+                  ...wideButtonSx,
+                  margin: '0px',
+                }}
+                href={button.href}
+                className="highlightSubmitToolButton"
+                variant="contained"
+                // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
+                target="_blank"
+              >
+                {button.label}
+              </SynapseComponents.WideButton>
+            ))}
+          </Box>
         </div>
       </Layout>
     </div>
