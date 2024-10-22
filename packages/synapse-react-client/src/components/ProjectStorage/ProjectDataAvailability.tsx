@@ -30,6 +30,9 @@ export const ProjectDataAvailability: React.FunctionComponent<
     return <></>
   }
   const { sumFileBytes = 0, maxAllowedFileBytes = 1 } = synapseStorageUsage
+  if (maxAllowedFileBytes == 0) {
+    return <></>
+  }
   const usageBarFilledPx = Math.min(
     Math.round((sumFileBytes / maxAllowedFileBytes) * usageBarWidth),
     usageBarWidth,
