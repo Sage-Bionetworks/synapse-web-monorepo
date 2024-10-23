@@ -1,11 +1,3 @@
-import React, { useState } from 'react'
-import {
-  displayToast,
-  SynapseContextUtils,
-  SynapseQueries,
-  GovernanceMarkdownGithub,
-  restoreLastPlace,
-} from 'synapse-react-client'
 import {
   Box,
   Button,
@@ -14,8 +6,17 @@ import {
   FormControlLabel,
   Paper,
 } from '@mui/material'
-import { StyledOuterContainer } from './StyledComponents'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import {
+  displayToast,
+  GovernanceMarkdownGithub,
+  restoreLastPlace,
+  SynapseContextUtils,
+  SynapseQueries,
+} from 'synapse-react-client'
+import { StyledOuterContainer } from './StyledComponents'
 
 export type SignUpdatedTermsOfUsePageProps = {}
 
@@ -26,6 +27,7 @@ export const SignUpdatedTermsOfUsePage = (
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
+  const history = useHistory()
 
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
   const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
@@ -50,7 +52,7 @@ export const SignUpdatedTermsOfUsePage = (
           },
           {
             onSuccess: () => {
-              restoreLastPlace()
+              restoreLastPlace(history)
             },
             onError: err => {
               displayToast(err.reason as string, 'danger')
@@ -105,7 +107,7 @@ export const SignUpdatedTermsOfUsePage = (
                 sx={{ width: '100%' }}
                 onClick={() => {
                   sessionStorage.setItem('skippedSigningToS', 'true')
-                  restoreLastPlace()
+                  restoreLastPlace(history)
                 }}
                 disabled={isLoading}
               >
