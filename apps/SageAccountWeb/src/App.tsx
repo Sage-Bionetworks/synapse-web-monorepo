@@ -1,13 +1,11 @@
-import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import React, { useEffect } from 'react'
-import { Route, Switch, useHistory } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import {
   CookiesNotification,
   processRedirectURLInOneSage,
   SynapseClient,
   SynapseContextConsumer,
   SynapseContextType,
-  SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
 import { useAppContext } from './AppContext'
@@ -32,6 +30,7 @@ import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAu
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { RESET_2FA_ROUTE } from './Constants'
+import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
 import LoginPage from './LoginPage'
 import { getSearchParam } from './URLUtils'
 import './App.scss'
@@ -39,37 +38,26 @@ import './App.scss'
 function LoggedInRedirector() {
   const { accessToken } = useSynapseContext()
   const appContext = useAppContext()
-  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
-    accessToken,
-    {
-      enabled: !!accessToken,
-    },
-  )
 
   const isCodeSearchParam = getSearchParam('code') !== undefined
   const isProviderSearchParam = getSearchParam('provider') !== undefined
   const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
-  const history = useHistory()
+
+  const { mayRedirect: mayRedirectToSignToS } =
+    useMaybeRedirectToSignTermsOfService()
 
   useEffect(() => {
-    // User is logged in and visiting the root, redirect (unless in the SSO Flow)
-    if (!isInSSOFlow && accessToken) {
-      if (
-        tosStatus &&
-        tosStatus.userCurrentTermsOfServiceState ===
-          TermsOfServiceState.MUST_AGREE_NOW
-      ) {
-        history.push('/authenticated/signUpdatedTermsOfUse')
-      } else if (tosStatus) {
-        // take user back to page they came from in the source app, if stored in a cookie
-        const isProcessed = processRedirectURLInOneSage()
-        if (!isProcessed && appContext?.redirectURL) {
-          // if not in the cookie, take them to
-          window.location.replace(appContext?.redirectURL)
-        }
+    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
+    // then redirect!
+    if (accessToken && !isInSSOFlow && !mayRedirectToSignToS) {
+      // take user back to page they came from in the source app, if stored in a cookie
+      const isProcessed = processRedirectURLInOneSage()
+      if (!isProcessed && appContext?.redirectURL) {
+        // if not in the cookie, take them to
+        window.location.replace(appContext?.redirectURL)
       }
     }
-  }, [accessToken, appContext?.redirectURL, history, isInSSOFlow, tosStatus])
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayRedirectToSignToS])
   return <></>
 }
 

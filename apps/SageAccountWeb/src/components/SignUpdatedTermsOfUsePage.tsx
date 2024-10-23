@@ -12,7 +12,6 @@ import { useHistory } from 'react-router-dom'
 import {
   displayToast,
   GovernanceMarkdownGithub,
-  processRedirectURLInOneSage,
   restoreLastPlace,
   SynapseContextUtils,
   SynapseQueries,
@@ -53,11 +52,7 @@ export const SignUpdatedTermsOfUsePage = (
           },
           {
             onSuccess: () => {
-              // take user back to page they came from in the source app, if stored in a cookie
-              const isProcessed = processRedirectURLInOneSage()
-              if (!isProcessed) {
-                restoreLastPlace(history)
-              }
+              restoreLastPlace(history)
             },
             onError: err => {
               displayToast(err.reason as string, 'danger')
@@ -112,11 +107,7 @@ export const SignUpdatedTermsOfUsePage = (
                 sx={{ width: '100%' }}
                 onClick={() => {
                   sessionStorage.setItem('skippedSigningToS', 'true')
-                  // take user back to page they came from in the source app, if stored in a cookie
-                  const isProcessed = processRedirectURLInOneSage()
-                  if (!isProcessed) {
-                    restoreLastPlace(history)
-                  }
+                  restoreLastPlace(history)
                 }}
                 disabled={isLoading}
               >
