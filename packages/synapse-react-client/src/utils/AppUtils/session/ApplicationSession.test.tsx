@@ -67,7 +67,7 @@ const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
 }
 const TERMS_OF_SERVICE_STATUS_UP_TO_DATE: TermsOfServiceStatus = {
   userId: `${MOCK_USER_ID}`,
-  usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+  userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
   lastAgreementDate: '',
   lastAgreementVersion: '0.0.0',
 }
@@ -81,7 +81,7 @@ const EXPECTED_AUTH_STATE: Partial<ApplicationSessionContextType> = {
 
 const TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW: TermsOfServiceStatus = {
   userId: `${MOCK_USER_ID}`,
-  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+  userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
   lastAgreementDate: '',
   lastAgreementVersion: '0.0.0',
 }

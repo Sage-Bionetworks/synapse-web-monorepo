@@ -28,10 +28,15 @@ export const SignUpdatedTermsOfUsePage = (
   const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
 
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
-  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus()
+  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
+    accessToken,
+    {
+      enabled: !!accessToken,
+    },
+  )
 
   const isSkipAvailable =
-    tosStatus?.usersCurrentTermsOfServiceState ==
+    tosStatus?.userCurrentTermsOfServiceState ==
     TermsOfServiceState.MUST_AGREE_SOON
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
