@@ -14,14 +14,19 @@ export function getOneSageBaseUrl(
   currentBackendEndpoint: string,
 ) {
   // If we're on synapse.org, then go to the accounts site that matches the current backend stack.
+  //backend endpoint may contain a trailing slash, so let's remove it if present:
+  const currentBackendEndpointWithoutSlash = currentBackendEndpoint.replace(
+    /\/$/,
+    '',
+  )
   if (
     currentHostname === 'synapse.org' ||
     currentHostname.endsWith('.synapse.org')
   ) {
-    if (currentBackendEndpoint === SYNAPSE_BACKEND_PRODUCTION_URL) {
+    if (currentBackendEndpointWithoutSlash === SYNAPSE_BACKEND_PRODUCTION_URL) {
       return ONE_SAGE_PRODUCTION_URL
     }
-    if (currentBackendEndpoint === SYNAPSE_BACKEND_STAGING_URL) {
+    if (currentBackendEndpointWithoutSlash === SYNAPSE_BACKEND_STAGING_URL) {
       return ONE_SAGE_STAGING_URL
     }
   }
@@ -31,11 +36,11 @@ export function getOneSageBaseUrl(
   }
 
   if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
-    return `http://${currentHostname}:3000/`
+    return `http://${currentHostname}:3000`
   }
 
   console.warn(
-    `No accounts URL found for host: ${currentHostname} with backend endpoint: ${currentBackendEndpoint}`,
+    `No accounts URL found for host: ${currentHostname} with backend endpoint: ${currentBackendEndpointWithoutSlash}`,
   )
   return ONE_SAGE_PRODUCTION_URL
 }
