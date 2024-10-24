@@ -23,6 +23,14 @@ describe('OneSage URL tests', () => {
           appId,
         ).toString(),
       ).toEqual('https://accounts.synapse.org/?appId=synapse.org')
+      //SWC-7128: with trailing slash
+      expect(
+        getOneSageUrl(
+          'synapse.org',
+          `${SYNAPSE_BACKEND_PRODUCTION_URL}/`,
+          appId,
+        ).toString(),
+      ).toEqual('https://accounts.synapse.org/?appId=synapse.org')
     })
     test('staging', () => {
       const appId = 'staging.synapse.org'
@@ -32,6 +40,16 @@ describe('OneSage URL tests', () => {
         appId,
       )
       expect(url.toString()).toEqual(
+        'https://staging.accounts.synapse.org/?appId=staging.synapse.org',
+      )
+      //SWC-7128: with trailing slash
+      expect(
+        getOneSageUrl(
+          'staging.synapse.org',
+          `${SYNAPSE_BACKEND_STAGING_URL}/`,
+          appId,
+        ).toString(),
+      ).toEqual(
         'https://staging.accounts.synapse.org/?appId=staging.synapse.org',
       )
     })
