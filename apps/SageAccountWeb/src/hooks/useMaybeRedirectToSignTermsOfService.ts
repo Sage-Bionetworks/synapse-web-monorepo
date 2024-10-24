@@ -1,5 +1,5 @@
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import {
   storeLastPlace,
@@ -23,7 +23,7 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
   const location = useLocation()
 
   // true until we confirm we will not redirect
-  const mayRedirect = useRef(true)
+  const [mayRedirect, setMayRedirect] = useState(true)
 
   useEffect(() => {
     if (termsOfServiceStatus) {
@@ -45,7 +45,7 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
           history.push('/authenticated/signUpdatedTermsOfUse')
         }
       }
-      mayRedirect.current = false
+      setMayRedirect(false)
     }
   }, [
     termsOfServiceStatus,
@@ -54,5 +54,5 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
     history,
   ])
 
-  return { mayRedirect: mayRedirect.current }
+  return { mayRedirect: mayRedirect }
 }
