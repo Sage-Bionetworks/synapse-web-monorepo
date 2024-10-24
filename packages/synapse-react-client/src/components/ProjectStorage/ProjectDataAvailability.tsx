@@ -29,7 +29,7 @@ export const ProjectDataAvailability: React.FunctionComponent<
   if (!synapseStorageUsage) {
     return <></>
   }
-  const { sumFileBytes = 0, maxAllowedFileBytes = 1 } = synapseStorageUsage
+  const { sumFileBytes = 0, maxAllowedFileBytes = 0 } = synapseStorageUsage
   if (maxAllowedFileBytes == 0) {
     return <></>
   }
