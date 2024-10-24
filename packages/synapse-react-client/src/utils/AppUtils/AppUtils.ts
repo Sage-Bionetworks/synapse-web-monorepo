@@ -40,15 +40,26 @@ export function processRedirectURLInOneSage() {
   return false
 }
 
+/**
+ * Returns to the route in localStorage saved when `storeLastPlace` was called,
+ * typically before jumping from an app to OneSage for authentication, or before
+ * jumping from OneSage to an external IdP (e.g. Google) for authentication.
+ *
+ * @return boolean indicating if a redirect occurred
+ */
 export function restoreLastPlace(
   history?: ReturnType<typeof useHistory>,
   fallbackRedirectUrl?: string,
-) {
+): boolean {
   // go back to original route after successful SSO login
   const originalUrl = localStorage.getItem(LAST_PLACE_LOCALSTORAGE_KEY)
   localStorage.removeItem(LAST_PLACE_LOCALSTORAGE_KEY)
   const redirectUrl = originalUrl ?? fallbackRedirectUrl
-  if (redirectUrl) {
+  if (
+    redirectUrl &&
+    window.location.href != redirectUrl &&
+    window.location.href.substring(window.location.origin.length) != redirectUrl
+  ) {
     if (history) {
       if (redirectUrl.startsWith(window.location.origin)) {
         history.replace(redirectUrl.substring(window.location.origin.length))
@@ -58,7 +69,9 @@ export function restoreLastPlace(
     } else {
       window.location.replace(redirectUrl)
     }
+    return true
   }
+  return false
 }
 
 /**

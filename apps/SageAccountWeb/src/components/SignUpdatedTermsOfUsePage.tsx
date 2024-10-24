@@ -19,11 +19,7 @@ import {
 } from 'synapse-react-client'
 import { StyledOuterContainer } from './StyledComponents'
 
-export type SignUpdatedTermsOfUsePageProps = {}
-
-export const SignUpdatedTermsOfUsePage = (
-  props: SignUpdatedTermsOfUsePageProps,
-) => {
+export function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
@@ -36,6 +32,14 @@ export const SignUpdatedTermsOfUsePage = (
       enabled: !!accessToken,
     },
   )
+
+  const redirectAfterSignOrSkip = () => {
+    const didRedirect = restoreLastPlace(history)
+    if (!didRedirect) {
+      // if we did not redirect to a page in this app, then look for the redirect cookie
+      processRedirectURLInOneSage()
+    }
+  }
 
   const isSkipAvailable =
     tosStatus?.userCurrentTermsOfServiceState ==
@@ -52,9 +56,7 @@ export const SignUpdatedTermsOfUsePage = (
           },
           {
             onSuccess: () => {
-              restoreLastPlace(history)
-              //if we did not redirect to a page in this app, then look for the redirect cookie
-              processRedirectURLInOneSage()
+              redirectAfterSignOrSkip()
             },
             onError: err => {
               displayToast(err.reason as string, 'danger')
@@ -109,9 +111,7 @@ export const SignUpdatedTermsOfUsePage = (
                 sx={{ width: '100%' }}
                 onClick={() => {
                   sessionStorage.setItem('skippedSigningToS', 'true')
-                  restoreLastPlace(history)
-                  //if we did not redirect to a page in this app, then look for the redirect cookie
-                  processRedirectURLInOneSage()
+                  redirectAfterSignOrSkip()
                 }}
                 disabled={isLoading}
               >
