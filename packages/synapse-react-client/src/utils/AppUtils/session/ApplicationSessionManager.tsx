@@ -8,6 +8,8 @@ import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
 import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
+import { PresentToAll } from '@mui/icons-material'
+import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string
@@ -109,18 +111,23 @@ export function ApplicationSessionManager(
     setToken(token)
     setHasInitializedSession(true)
     try {
-      // get the user profile
-      await SynapseClient.getUserProfile(token)
+      // get the user terms of service status
+      await SynapseClient.getTermsOfServiceStatus(token)
     } catch (e) {
-      if (e && e.reason != 'Terms of use have not been signed.') {
-        console.error('Error on refreshSession: ', e)
-        // intentionally calling sign out because the token could be stale so we want
-        // the stored session to be cleared out.
-        SynapseClient.signOut().then(() => {
-          // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
-          // are loading as the anonymous user
-          window.location.reload()
-        })
+      console.error('Error on refreshSession: ', e)
+      // if status number field is present, then
+      //if 400 level, then clear
+      if ('status' in e && typeof e['status'] === 'number') {
+        const status = e['status']
+        if (status >= 400 && status < 500) {
+          // intentionally calling sign out because the token could be stale so we want
+          // the stored session to be cleared out.
+          SynapseClient.signOut().then(() => {
+            // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
+            // are loading as the anonymous user
+            window.location.reload()
+          })
+        }
       }
     }
   }, [initAnonymousUserState, maxAge])
