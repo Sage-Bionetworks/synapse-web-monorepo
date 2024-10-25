@@ -11,7 +11,7 @@ const cookies = new UniversalCookies()
 export const ONE_SAGE_REDIRECT_COOKIE_KEY =
   'org.sagebionetworks.cookies.redirect-after-login'
 
-export function storeRedirectURLForOneSageLogin() {
+export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
   // save current URL in a cookie that One Sage will use to send you back to the correct page
   const domainValue = window.location.hostname
     .toLowerCase()
@@ -27,6 +27,9 @@ export function storeRedirectURLForOneSageLogin() {
     domain: domainValue,
     expires: twoHoursFromNow,
   })
+  setTimeout(() => {
+    window.location.assign(href)
+  }, 10)
 }
 
 export function processRedirectURLInOneSage() {

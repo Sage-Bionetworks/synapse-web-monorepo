@@ -6,7 +6,7 @@ import {
   SynapseHookUtils,
   SynapseQueries,
   useSynapseContext,
-  storeRedirectURLForOneSageLogin,
+  storeRedirectURLForOneSageLoginAndGotoURL,
 } from 'synapse-react-client'
 import NavLink from '../components/NavLink'
 import NavUserLink from '../components/NavUserLink'
@@ -215,8 +215,9 @@ function Navbar() {
                   color="secondary"
                   variant="contained"
                   onClick={() => {
-                    storeRedirectURLForOneSageLogin()
-                    window.location.assign(oneSageUrl.toString())
+                    storeRedirectURLForOneSageLoginAndGotoURL(
+                      oneSageUrl.toString(),
+                    )
                   }}
                 >
                   Sign&nbsp;In
