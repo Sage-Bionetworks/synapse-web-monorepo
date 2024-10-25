@@ -8,8 +8,6 @@ import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
 import dayjs from 'dayjs'
 import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
-import { PresentToAll } from '@mui/icons-material'
-import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string
