@@ -33,7 +33,10 @@ export function processRedirectURLInOneSage() {
   if (cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
     const href = cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
     cookies.remove(ONE_SAGE_REDIRECT_COOKIE_KEY)
-    window.location.assign(href)
+    // SWC-7133: Last minute fix for ToS update release. Ideally I think we would wait for the useLogin loginIsPending to be false
+    setTimeout(() => {
+      window.location.assign(href)
+    }, 300)
     return true
   }
   //else
