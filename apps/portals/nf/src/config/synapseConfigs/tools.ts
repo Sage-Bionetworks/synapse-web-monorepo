@@ -287,6 +287,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'FormModal',
+          props: undefined,
           outsideContainerClassName: 'home-spacer',
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',

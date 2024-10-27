@@ -295,6 +295,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           >
             {submitToolButtons.map(button => (
               <SynapseComponents.WideButton
+                key={button.label}
                 sx={{
                   ...wideButtonSx,
                   margin: '0px',
