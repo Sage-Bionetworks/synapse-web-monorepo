@@ -48,7 +48,6 @@ import { NFBrowseToolsPageProps } from '../components/nf/NFBrowseToolsPage'
 import { ELBrowseToolsPageProps } from '../components/elportal/ELBrowseToolsPage'
 import { EcosystemProps } from '../components/csbc-home-page/Ecosystem'
 import { SurveyToastProps } from '../components/SurveyToast'
-import { ButtonProps } from '@mui/material'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -57,11 +56,6 @@ export type HomePageHeaderConfig = {
   showBlur?: boolean
   centerText?: boolean
   HeaderSvg?: any
-}
-
-type WideButton = {
-  name: 'WideButton'
-  props: ButtonProps
 }
 
 type FormModal = {
@@ -411,7 +405,6 @@ export type SynapseConfig = (
   | DatasetJsonLdScript
   | DynamicForm
   | SharePageLinkButton
-  | WideButton
   | FormModal
 ) &
   Metadata
