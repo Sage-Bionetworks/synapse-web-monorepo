@@ -69,6 +69,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
 
   const dropdownMenuId = useId()
   const [open, setOpen] = React.useState(false)
+  const [selectedItems, setSelectedItems] = React.useState<DropdownMenuItem[]>(
+    [],
+  )
   const anchorRef = React.useRef<HTMLButtonElement>(null)
 
   const numberOfMenuItems = items.flat().length
@@ -121,6 +124,26 @@ export function DropdownMenu(props: DropdownMenuProps) {
     }
   }
 
+  const handleMenuItemClick = (item: DropdownMenuItem) => {
+    setSelectedItems(prevSelectedItems => {
+      const isAlreadySelected = prevSelectedItems.some(
+        selectedItem => selectedItem.text === item.text,
+      )
+      if (item.text.toLowerCase() === 'clear filters') {
+        setSelectedItems([])
+        return []
+      } else if (isAlreadySelected) {
+        return prevSelectedItems.filter(
+          selectedItem => selectedItem.text !== item.text,
+        )
+      } else {
+        return [...prevSelectedItems, item]
+      }
+    })
+
+    setOpen(false)
+  }
+
   return (
     <React.Fragment>
       <Tooltip
@@ -156,7 +179,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
         transition
         style={{
           // Fixes issue where react-flow (provenance) would appear above the menu
-          zIndex: 10,
+          zIndex: 2000,
         }}
       >
         {({ TransitionProps }) => (
@@ -179,6 +202,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
                             placement={'left'}
                           >
                             <MenuItem
+                              selected={selectedItems.some(
+                                selectedItem => selectedItem.text === item.text,
+                              )}
                               // Always make the component an anchor in case href is defined.
                               component="a"
                               sx={{
@@ -190,6 +216,12 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                   color: 'unset',
                                   textDecoration: 'unset',
                                 },
+                                backgroundColor: selectedItems.some(
+                                  selectedItem =>
+                                    selectedItem.text === item.text,
+                                )
+                                  ? 'rgba(0, 0, 0, 0.07)'
+                                  : '',
                               }}
                               disabled={item.disabled}
                               href={'href' in item ? item.href : undefined}
@@ -210,6 +242,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                   'onClick' in item &&
                                   item.onClick
                                 ) {
+                                  handleMenuItemClick(item)
                                   setOpen(false)
                                   item.onClick(e)
                                 }

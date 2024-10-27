@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -27,8 +27,10 @@ import {
 } from '../row_renderers/ObservationCard'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { DropdownMenu } from '../menu/DropdownMenu'
+import IconSvg from '../IconSvg'
 
 const defaultListSx = { display: 'block' }
 const releaseCardMediumListSx = {
@@ -82,6 +84,10 @@ function _CardContainer(props: CardContainerProps) {
   const { queryMetadataQueryOptions } = queryContext
   const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const queryVisualizationContext = useQueryVisualizationContext()
+  const [filteredRows, setFilteredRows] = useState<Row[]>(rowSet.rows)
+  const [selectedObservationTypes, setSelectedObservationTypes] = useState<
+    string[]
+  >([])
 
   const dataRows: Row[] = rowSet.rows
 
@@ -90,65 +96,116 @@ function _CardContainer(props: CardContainerProps) {
     ids,
     type: 'ENTITY_HEADER',
   })
+
+  const observationColIndex = rowSet?.headers?.findIndex(
+    selectColumn => selectColumn.name == 'observationType',
+  )!
+
+  const types = rowSet.rows.map(row => row.values[observationColIndex])
+
+  const isValidJSONString = (str: string | null | undefined): str is string => {
+    if (typeof str !== 'string') return false
+    try {
+      JSON.parse(str)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const flattenedData: string[] = Array.from(
+    new Set(
+      types
+        .filter(isValidJSONString)
+        .map(item => JSON.parse(item))
+        .flat(),
+    ),
+  )
+
+  useEffect(() => {
+    if (selectedObservationTypes.length > 0) {
+      const filteredRowsByType = dataRows.filter(row => {
+        const typeData = row.values[observationColIndex]
+        if (isValidJSONString(typeData)) {
+          const typeArray = JSON.parse(typeData)
+          return selectedObservationTypes.every(type =>
+            typeArray.includes(type),
+          )
+        }
+        return false
+      })
+      setFilteredRows(filteredRowsByType)
+    } else {
+      setFilteredRows(dataRows)
+    }
+  }, [selectedObservationTypes, dataRows])
+
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (dataRows.length === 0) {
     // Show "no results" UI (see PORTALS-1497)
     return <NoContentPlaceholder />
   }
+
   const schema: Record<string, number> = {}
   rowSet.headers.forEach((element, index) => {
     schema[element.name] = index
   })
 
-  let cards
-  if (type === MEDIUM_USER_CARD) {
-    // Hard coding ownerId as a column name containing the user profile ownerId
-    // for each row, grab the column with the ownerId
-    const userIdColumnIndex = rowSet.headers.findIndex(
-      el => el.columnType === ColumnTypeEnum.USERID,
-    )
-    if (userIdColumnIndex === -1) {
-      throw Error(
-        'Type MEDIUM_USER_CARD specified but no columnType USERID found',
-      )
-    }
-    const listIds = dataRows.map(el => el.values[userIdColumnIndex])
-    cards = (
-      <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
-    )
-  } else {
-    // render the cards
-    cards = dataRows.length ? (
-      dataRows.map((rowData: Row, index) => {
-        const key = JSON.stringify(rowData.values)
-        const propsForCard = {
-          key,
-          type,
-          schema,
-          isHeader,
-          secondaryLabelLimit,
-          rowId: rowData.rowId,
-          data: rowData.values,
-          selectColumns: rowSet.headers,
-          columnModels: queryMetadata.columnModels,
-          tableEntityConcreteType:
-            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-          tableId: rowSet.tableId,
-          queryContext: queryContext,
-          queryVisualizationContext,
-          ...rest,
-        }
-        return (
-          <Card
-            key={rowData.rowId ?? index}
-            propsToPass={propsForCard}
-            type={type}
-          />
-        )
-      })
+  const getPropsForCard = (rowData: Row, index: number) => ({
+    key: JSON.stringify(rowData.values),
+    type,
+    schema,
+    isHeader,
+    secondaryLabelLimit,
+    rowId: rowData.rowId ?? index,
+    data: rowData.values,
+    selectColumns: rowSet.headers,
+    columnModels: queryMetadata.columnModels,
+    tableEntityConcreteType: tableEntityConcreteType[0]?.type,
+    tableId: rowSet.tableId,
+    queryContext,
+    queryVisualizationContext,
+    ...rest,
+  })
+
+  const renderCards = (rows: any) =>
+    rows.length ? (
+      rows.map((rowData: any, index: number) => (
+        <Card
+          key={rowData.rowId ?? index}
+          propsToPass={getPropsForCard(rowData, index)}
+          type={type}
+        />
+      ))
     ) : (
       <></>
     )
+
+  let cards
+  switch (type) {
+    case MEDIUM_USER_CARD: {
+      // Hard coding ownerId as a column name containing the user profile ownerId
+      // for each row, grab the column with the ownerId
+      const userIdColumnIndex = rowSet.headers.findIndex(
+        el => el.columnType === ColumnTypeEnum.USERID,
+      )
+      if (userIdColumnIndex === -1) {
+        throw Error(
+          'Type MEDIUM_USER_CARD specified but no columnType USERID found',
+        )
+      }
+      const listIds = dataRows.map(el => el.values[userIdColumnIndex])
+      cards = (
+        <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
+      )
+      break
+    }
+    case OBSERVATION_CARD:
+      cards = renderCards(filteredRows)
+      break
+    default:
+      cards = renderCards(dataRows)
+      break
   }
 
   const isReleaseCardMediumList =
@@ -156,6 +213,51 @@ function _CardContainer(props: CardContainerProps) {
 
   return (
     <>
+      {type === OBSERVATION_CARD && (
+        <Box>
+          <DropdownMenu
+            dropdownButtonText="Observation Type"
+            items={[
+              flattenedData.map(type => ({
+                text: type || '',
+                onClick: () => {
+                  setSelectedObservationTypes(prev => {
+                    if (prev.includes(type)) {
+                      return prev.filter(t => t !== type)
+                    } else {
+                      return [...prev, type]
+                    }
+                  })
+                },
+              })),
+              [
+                {
+                  text: 'Clear filters',
+                  onClick: () => {
+                    setSelectedObservationTypes([])
+                    setFilteredRows(dataRows)
+                  },
+                },
+              ],
+            ]}
+            buttonProps={{
+              endIcon: <IconSvg icon="arrowDropDown" wrap={false} />,
+            }}
+          />
+          {!filteredRows.length && (
+            <Box sx={{ padding: '16px' }}>
+              <Typography variant="body1" className="sectionSubtitle">
+                {`No results for the selected filters: ${selectedObservationTypes.join(
+                  ', ',
+                )}.`}
+                <br />
+                <br />
+                Try adjusting or clearing your filters to see more options.
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      )}
       <Box
         role="list"
         sx={isReleaseCardMediumList ? releaseCardMediumListSx : defaultListSx}
@@ -164,7 +266,6 @@ function _CardContainer(props: CardContainerProps) {
         {!title && unitDescription && (
           <TotalQueryResults frontText={'Displaying'} />
         )}
-        {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
       </Box>
     </>

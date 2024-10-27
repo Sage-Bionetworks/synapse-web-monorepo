@@ -1,13 +1,15 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
-import { Dialog } from '@mui/material'
+import { Box, Dialog, DialogContent, Typography } from '@mui/material'
 import {
   ObservationCard,
   ObservationCardSchema,
 } from '../row_renderers/ObservationCard'
 import { Row } from '@sage-bionetworks/synapse-types'
+import IconSvg from '../IconSvg'
+import { DropdownMenu } from '../menu/DropdownMenu'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -205,7 +207,10 @@ const TimelinePhase = ({
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)
   const start = dayjs()
-
+  const [selectedObservationTypes, setSelectedObservationTypes] = useState<
+    string[]
+  >([])
+  const [isOpen, setIsOpen] = useState(false)
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
   const rowIds = clickEvent?.points[0].customdata as unknown as (
@@ -215,10 +220,70 @@ const TimelinePhase = ({
   const selectedRows = rowData?.filter(row => {
     return rowIds?.includes(row.rowId)
   })
+  const [filteredRows, setFilteredRows] = useState<Row[]>(selectedRows)
+  const [isFirstOpen, setIsFirstOpen] = useState(false)
+
   const hoverEventRowIds = hoverEvent?.points[0].customdata as unknown as (
     | number
     | undefined
   )[]
+
+  const types = selectedRows.map(row => row.values[schema.observationType])
+
+  const isValidJSONString = (str: string | null | undefined): str is string => {
+    if (typeof str !== 'string') return false
+    try {
+      JSON.parse(str)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const flattenedData: string[] = Array.from(
+    new Set(
+      types
+        .filter(isValidJSONString)
+        .map(item => JSON.parse(item))
+        .flat(),
+    ),
+  )
+
+  const items = [
+    ...flattenedData.map(type => ({
+      text: type || '',
+      onClick: () => {
+        setSelectedObservationTypes(prev => {
+          if (prev.includes(type)) {
+            return prev.filter(t => t !== type)
+          } else {
+            return [...prev, type]
+          }
+        })
+      },
+    })),
+    {
+      text: 'Clear filters',
+      onClick: () => {
+        setSelectedObservationTypes([])
+        setFilteredRows(selectedRows)
+      },
+    },
+  ]
+
+  useEffect(() => {
+    if (selectedRows && selectedRows.length > 0) {
+      setIsOpen(true)
+      if (!isFirstOpen) {
+        setFilteredRows(selectedRows)
+        setIsFirstOpen(true)
+      }
+    } else {
+      setIsOpen(false)
+      setIsFirstOpen(false)
+      return
+    }
+  }, [selectedRows])
 
   const timepointData = useMemo(() => {
     return getTimepointData(
@@ -234,6 +299,24 @@ const TimelinePhase = ({
   const timelineData = useMemo(() => {
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
+
+  useEffect(() => {
+    if (selectedObservationTypes.length > 0) {
+      const filteredRowsByType = selectedRows.filter(row => {
+        const typeData = row.values[schema.observationType]
+        if (isValidJSONString(typeData)) {
+          const typeArray = JSON.parse(typeData)
+          return selectedObservationTypes.every(type =>
+            typeArray.includes(type),
+          )
+        }
+        return false
+      })
+      setFilteredRows(filteredRowsByType)
+    } else if (selectedRows.length > 0) {
+      setFilteredRows(selectedRows)
+    }
+  }, [selectedObservationTypes])
 
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
@@ -260,23 +343,56 @@ const TimelinePhase = ({
           setHoverEvent(undefined)
         }}
       />
-      {selectedRows && (
-        <Dialog
-          onClose={() => setClickEvent(undefined)}
-          open={!!selectedRows && selectedRows.length > 0}
-        >
-          {selectedRows.map(row => {
-            return (
-              <ObservationCard
-                key={row.rowId}
-                data={row.values}
-                schema={schema}
-                includePortalCardClass={false}
-              />
-            )
-          })}
-        </Dialog>
-      )}
+      <Dialog
+        onClose={() => setClickEvent(undefined)}
+        open={selectedRows && selectedRows.length > 0}
+      >
+        <DialogContent>
+          <Box sx={{ marginBottom: '16px' }}>
+            <DropdownMenu
+              dropdownButtonText="Observation Type"
+              items={[
+                items,
+                [
+                  {
+                    text: 'Clear filters',
+                    onClick: () => {
+                      setSelectedObservationTypes([])
+                      setFilteredRows(selectedRows)
+                    },
+                  },
+                ],
+              ]}
+              buttonProps={{
+                endIcon: <IconSvg icon="arrowDropDown" wrap={false} />,
+              }}
+            />
+          </Box>
+          {filteredRows.length > 0 ? (
+            filteredRows.map(row => {
+              return (
+                <ObservationCard
+                  key={row.rowId}
+                  data={row.values}
+                  schema={schema}
+                  includePortalCardClass={false}
+                />
+              )
+            })
+          ) : (
+            <Box sx={{ padding: '16px' }}>
+              <Typography variant="body1" className="sectionSubtitle">
+                {`No results for the selected filters: ${selectedObservationTypes.join(
+                  ', ',
+                )}.`}
+                <br />
+                <br />
+                Try adjusting or clearing your filters to see more options.
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
