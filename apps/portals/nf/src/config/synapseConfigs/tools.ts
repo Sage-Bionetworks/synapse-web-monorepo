@@ -281,8 +281,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           title: 'Share Your Observation',
           standalone: true,
           props: {
-            ownerId: 'syn63814796',
-            wikiId: '629919',
+            ownerId: 'syn26338068',
+            wikiId: '629946',
           },
         },
         {

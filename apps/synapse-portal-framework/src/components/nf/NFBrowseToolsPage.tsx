@@ -28,6 +28,8 @@ const categories: Category[] = [
 
 const host = window.location.host
 const baseUrl = 'Research%20Tools%20Central/Submit%20'
+const baseSchemaUrl =
+  'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/'
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
 const createHref = path => `http://${host}/${baseUrl}${path}`
@@ -36,46 +38,36 @@ const submitToolButtons = [
   {
     label: 'Submit Animal Model',
     href: createHref('Animal%20Model'),
-    schemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/submitAnimalModel.json',
-    uiSchemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/SubmitAnimalModelUiSchema.json',
+    schemaUrl: `${baseSchemaUrl}animal-model/submitAnimalModel.json`,
+    uiSchemaUrl: `${baseSchemaUrl}animal-model/SubmitAnimalModelUiSchema.json`,
     postUrl: postUrl,
   },
   {
     label: 'Submit Observation',
     href: createHref('Observation'),
-    schemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
-    uiSchemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
+    schemaUrl: `${baseSchemaUrl}observations/SubmitObservationSchema.json`,
+    uiSchemaUrl: `${baseSchemaUrl}observations/SubmitObservationUiSchema.json`,
     postUrl: postUrl,
   },
   {
     label: 'Submit Cell Line',
     href: createHref('Cell%20Line'),
-    schemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLine.json',
-    uiSchemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLineUiSchema.json',
+    schemaUrl: `${baseSchemaUrl}cell-line/submitCellLine.json`,
+    uiSchemaUrl: `${baseSchemaUrl}cell-line/submitCellLineUiSchema.json`,
     postUrl: postUrl,
   },
   {
     label: 'Submit Genetic Reagents',
     href: createHref('Genetic%20Reagent'),
-    schemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagent.json',
-    uiSchemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagentUiSchema.json',
+    schemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagent.json`,
+    uiSchemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagentUiSchema.json`,
     postUrl: postUrl,
   },
   {
     label: 'Submit Antibody',
     href: createHref('Antibody'),
-    schemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/submitAntibody.json',
-    uiSchemaUrl:
-      'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/SubmitAntibodyUiSchema.json',
+    schemaUrl: `${baseSchemaUrl}antibody/submitAntibody.json`,
+    uiSchemaUrl: `${baseSchemaUrl}antibody/SubmitAntibodyUiSchema.json`,
     postUrl: postUrl,
   },
 ]
