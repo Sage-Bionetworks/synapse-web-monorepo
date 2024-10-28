@@ -1,11 +1,3 @@
-import React, { useState } from 'react'
-import {
-  displayToast,
-  SynapseContextUtils,
-  SynapseQueries,
-  GovernanceMarkdownGithub,
-  restoreLastPlace,
-} from 'synapse-react-client'
 import {
   Box,
   Button,
@@ -14,24 +6,43 @@ import {
   FormControlLabel,
   Paper,
 } from '@mui/material'
-import { StyledOuterContainer } from './StyledComponents'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import {
+  displayToast,
+  GovernanceMarkdownGithub,
+  processRedirectURLInOneSage,
+  restoreLastPlace,
+  SynapseContextUtils,
+  SynapseQueries,
+} from 'synapse-react-client'
+import { StyledOuterContainer } from './StyledComponents'
 
-export type SignUpdatedTermsOfUsePageProps = {}
-
-export const SignUpdatedTermsOfUsePage = (
-  props: SignUpdatedTermsOfUsePageProps,
-) => {
+export function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
-
+  const history = useHistory()
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
-  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus()
+  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
+    accessToken,
+    {
+      enabled: !!accessToken,
+    },
+  )
+
+  const redirectAfterSignOrSkip = () => {
+    const didRedirect = restoreLastPlace(history)
+    if (!didRedirect) {
+      // if we did not redirect to a page in this app, then look for the redirect cookie
+      processRedirectURLInOneSage()
+    }
+  }
 
   const isSkipAvailable =
-    tosStatus?.usersCurrentTermsOfServiceState ==
+    tosStatus?.userCurrentTermsOfServiceState ==
     TermsOfServiceState.MUST_AGREE_SOON
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -45,7 +56,7 @@ export const SignUpdatedTermsOfUsePage = (
           },
           {
             onSuccess: () => {
-              restoreLastPlace()
+              redirectAfterSignOrSkip()
             },
             onError: err => {
               displayToast(err.reason as string, 'danger')
@@ -100,7 +111,7 @@ export const SignUpdatedTermsOfUsePage = (
                 sx={{ width: '100%' }}
                 onClick={() => {
                   sessionStorage.setItem('skippedSigningToS', 'true')
-                  restoreLastPlace()
+                  redirectAfterSignOrSkip()
                 }}
                 disabled={isLoading}
               >

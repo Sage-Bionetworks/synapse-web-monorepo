@@ -17,26 +17,26 @@ export const termsOfServiceNewUserStatus: TermsOfServiceStatus = {
   userId: '12345',
   lastAgreementDate: null,
   lastAgreementVersion: null,
-  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+  userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
 }
 
 export const termsOfServiceUpdatedMustAgreeNowStatus: TermsOfServiceStatus = {
   userId: '12345',
   lastAgreementDate: '2024-09-15T12:34:56Z',
   lastAgreementVersion: '2.0.0',
-  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+  userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
 }
 
 export const termsOfServiceUpdatedMustAgreeSoonStatus: TermsOfServiceStatus = {
   userId: '12345',
   lastAgreementDate: '2024-09-15T12:34:56Z',
   lastAgreementVersion: '2.0.0',
-  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
+  userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
 }
 
 export const termsOfServiceUpToDateStatus: TermsOfServiceStatus = {
   userId: '12345',
   lastAgreementDate: '2024-09-15T12:34:56Z',
   lastAgreementVersion: '2.0.0',
-  usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+  userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
 }
