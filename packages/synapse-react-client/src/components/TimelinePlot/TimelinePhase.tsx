@@ -210,7 +210,6 @@ const TimelinePhase = ({
   const [selectedObservationTypes, setSelectedObservationTypes] = useState<
     string[]
   >([])
-  const [isOpen, setIsOpen] = useState(false)
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
   const rowIds = clickEvent?.points[0].customdata as unknown as (
@@ -262,24 +261,15 @@ const TimelinePhase = ({
         })
       },
     })),
-    {
-      text: 'Clear filters',
-      onClick: () => {
-        setSelectedObservationTypes([])
-        setFilteredRows(selectedRows)
-      },
-    },
   ]
 
   useEffect(() => {
     if (selectedRows && selectedRows.length > 0) {
-      setIsOpen(true)
       if (!isFirstOpen) {
         setFilteredRows(selectedRows)
         setIsFirstOpen(true)
       }
     } else {
-      setIsOpen(false)
       setIsFirstOpen(false)
       return
     }
