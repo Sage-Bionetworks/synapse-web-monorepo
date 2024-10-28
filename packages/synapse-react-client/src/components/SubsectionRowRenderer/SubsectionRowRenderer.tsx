@@ -129,7 +129,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                 variant={
                   columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'
                 }
-                role="heading"
+                role="subHeading"
               >
                 {selectColumn.name}
               </Typography>

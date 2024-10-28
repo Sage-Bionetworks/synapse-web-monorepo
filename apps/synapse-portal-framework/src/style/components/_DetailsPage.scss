@@ -82,6 +82,10 @@ $svg-icon-height: 30px;
     [role='heading'] {
       padding-top: 30px;
     }
+    [role='subHeading'] {
+      padding-top: 10px;
+      margin-bottom: 5px;
+    }
   }
 
   &.tab-layout {
