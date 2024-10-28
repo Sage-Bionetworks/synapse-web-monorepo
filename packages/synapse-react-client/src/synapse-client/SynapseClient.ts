@@ -70,7 +70,7 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
-  SIGN_TERMS_OF_USE,
+  TERMS_OF_USE,
   START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -96,6 +96,9 @@ import {
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
   WIKI_PAGE_ID,
+  TERMS_OF_USE_INFO,
+  TERMS_OF_USE_STATUS,
+  PROJECT_STORAGE_USAGE,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -328,6 +331,10 @@ import {
   UpdateAgentSessionRequest,
   TraceEventsRequest,
   TraceEventsResponse,
+  TermsOfServiceInfo,
+  TermsOfServiceStatus,
+  AccessToken,
+  ProjectStorageUsage,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -4300,10 +4307,10 @@ export const unbindOAuthProviderToAccount = async (
 }
 
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
-export const signSynapseTermsOfUse = (accessToken: string) => {
+export const signSynapseTermsOfUse = (accessToken: AccessToken) => {
   return doPost(
-    SIGN_TERMS_OF_USE,
-    { accessToken },
+    TERMS_OF_USE,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -5559,6 +5566,43 @@ export const getChatAgentTraceEvents = (
   return doPost<TraceEventsResponse>(
     AGENT_CHAT_TRACE(request.jobId),
     request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getTermsOfServiceInfo = (
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TermsOfServiceInfo> => {
+  return doGet<TermsOfServiceInfo>(
+    TERMS_OF_USE_INFO,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getTermsOfServiceStatus = (
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TermsOfServiceStatus> => {
+  return doGet<TermsOfServiceStatus>(
+    TERMS_OF_USE_STATUS,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getProjectStorageUsage = (
+  projectId: string,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<ProjectStorageUsage> => {
+  return doGet<ProjectStorageUsage>(
+    PROJECT_STORAGE_USAGE(projectId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },

@@ -153,7 +153,7 @@ export const AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY =
 
 /** URL constants */
 export const URL_TERMS_CONDITIONS_AGREEMENT =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5'
+  'https://www.synapse.org/TrustCenter:TermsOfService'
 
 /** Class names */
 export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
@@ -184,7 +184,7 @@ export const LAST_LOGIN_DATE_LOCALSTORAGE_KEY = 'last_login_date'
 export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
-export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
+export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
 
 /* Persistent localStorage keys on SWC logout */
 export const PERSISTENT_LOCAL_STORAGE_KEYS = [
@@ -193,7 +193,14 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
 ]
 
 export const PRIVACY_POLICY_LINK =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf'
+  'https://www.synapse.org/TrustCenter:PrivacyPolicy'
+
+export const SYNAPSE_BACKEND_PRODUCTION_URL =
+  'https://repo-prod.prod.sagebase.org'
+export const SYNAPSE_BACKEND_STAGING_URL =
+  'https://repo-staging.prod.sagebase.org'
+export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-dev.dev.sagebase.org'
 
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
+export const ONE_SAGE_STAGING_URL = 'https://staging.accounts.synapse.org'
 export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'

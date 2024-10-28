@@ -1,6 +1,10 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect } from 'react'
-import { ApplicationSessionManager, useFramebuster } from 'synapse-react-client'
+import {
+  ApplicationSessionManager,
+  useFramebuster,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
 
 function AppInitializer(
@@ -26,12 +30,12 @@ function AppInitializer(
     const isDev: boolean = window.location.hostname.includes('dev')
 
     const stagingConfig = {
-      REPO: 'https://repo-staging.prod.sagebase.org/',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_STAGING_URL,
       PORTAL: 'https://staging.synapse.org/',
     }
 
     const devConfig = {
-      REPO: 'https://repo-dev.dev.sagebase.org/',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
       PORTAL: 'https://portal-dev.dev.sagebase.org/',
     }
 

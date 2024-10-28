@@ -199,15 +199,15 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Submit Animal Models',
+        path: 'Submit Animal Model',
         synapseConfigArray: [
           {
             name: 'DynamicForm',
             props: {
               schemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/animal-model/submitAnimalModel.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/submitAnimalModel.json',
               uiSchemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/animal-model/SubmitAnimalModelUiSchema.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/animal-model/SubmitAnimalModelUiSchema.json',
               postUrl: 'https://submit-form.com/KwZ46H4T',
             },
             isOutsideContainer: false,
@@ -215,15 +215,15 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Submit Observations',
+        path: 'Submit Observation',
         synapseConfigArray: [
           {
             name: 'DynamicForm',
             props: {
               schemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
               uiSchemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
               postUrl: 'https://submit-form.com/KwZ46H4T',
             },
             isOutsideContainer: false,
@@ -231,15 +231,47 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Submit Genetic Reagents',
+        path: 'Submit Cell Line',
         synapseConfigArray: [
           {
             name: 'DynamicForm',
             props: {
               schemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/genetic-reagent/submitGeneticReagent.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLine.json',
               uiSchemaUrl:
-                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/additional-models/NF-Tools-Schemas/genetic-reagent/submitGeneticReagentUiSchema.json',
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/cell-line/submitCellLineUiSchema.json',
+              postUrl: 'https://submit-form.com/KwZ46H4T',
+            },
+            isOutsideContainer: false,
+          },
+        ],
+      },
+      {
+        path: 'Submit Antibody',
+        synapseConfigArray: [
+          {
+            name: 'DynamicForm',
+            props: {
+              schemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/submitAntibody.json',
+              uiSchemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/antibody/SubmitAntibodyUiSchema.json',
+              postUrl: 'https://submit-form.com/KwZ46H4T',
+            },
+            isOutsideContainer: false,
+          },
+        ],
+      },
+      {
+        path: 'Submit Genetic Reagent',
+        synapseConfigArray: [
+          {
+            name: 'DynamicForm',
+            props: {
+              schemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagent.json',
+              uiSchemaUrl:
+                'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/genetic-reagent/submitGeneticReagentUiSchema.json',
               postUrl: 'https://submit-form.com/KwZ46H4T',
             },
             isOutsideContainer: false,

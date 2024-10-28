@@ -1,35 +1,65 @@
-import { AppContextConsumer } from './AppContext'
-import Footer from './components/Footer'
-import { SageResourcesPage } from './components/SageResourcesPage'
+import React, { useEffect } from 'react'
+import { Route, Switch } from 'react-router-dom'
+import {
+  CookiesNotification,
+  processRedirectURLInOneSage,
+  SynapseClient,
+  SynapseContextConsumer,
+  SynapseContextType,
+  useSynapseContext,
+} from 'synapse-react-client'
+import { useAppContext } from './AppContext'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
 import { AccountSettings } from './components/AccountSettings'
 import { CertificationQuiz } from './components/CertificationQuiz'
+import { ChangePasswordPage } from './components/ChangePasswordPage'
 import { CurrentAffiliationPage } from './components/CurrentAffiliationPage'
+import Footer from './components/Footer'
 import { JoinTeamPage } from './components/JoinTeamPage'
+import { OAuthClientManagementPage } from './components/OAuthClientManagementPage'
+import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
 import { ProfileValidation } from './components/ProfileValidation/ProfileValidation'
 import { RegisterAccount1 } from './components/RegisterAccount1'
 import { RegisterAccount2 } from './components/RegisterAccount2'
 import { ResetPassword } from './components/ResetPassword'
+import { SageResourcesPage } from './components/SageResourcesPage'
+import { SignUpdatedTermsOfUsePage } from './components/SignUpdatedTermsOfUsePage'
 import { TermsOfUsePage } from './components/TermsOfUsePage'
-import React from 'react'
-import { Route, Switch } from 'react-router-dom'
-import {
-  CookiesNotification,
-  SynapseClient,
-  SynapseContextConsumer,
-  SynapseContextType,
-} from 'synapse-react-client'
+import { ResetTwoFactorAuth } from './components/TwoFactorAuth/ResetTwoFactorAuth'
+import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
+import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
+import { RESET_2FA_ROUTE } from './Constants'
+import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
+import LoginPage from './LoginPage'
 import { getSearchParam } from './URLUtils'
 import './App.scss'
-import LoginPage from './LoginPage'
-import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
-import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
-import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
-import { OAuthClientManagementPage } from './components/OAuthClientManagementPage'
-import { ResetTwoFactorAuth } from './components/TwoFactorAuth/ResetTwoFactorAuth'
-import { RESET_2FA_ROUTE } from './Constants'
-import { ChangePasswordPage } from './components/ChangePasswordPage'
+
+function LoggedInRedirector() {
+  const { accessToken } = useSynapseContext()
+  const appContext = useAppContext()
+
+  const isCodeSearchParam = getSearchParam('code') !== undefined
+  const isProviderSearchParam = getSearchParam('provider') !== undefined
+  const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
+
+  const { mayRedirect: mayRedirectToSignToS } =
+    useMaybeRedirectToSignTermsOfService()
+
+  useEffect(() => {
+    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
+    // then redirect!
+    if (accessToken && !isInSSOFlow && !mayRedirectToSignToS) {
+      // take user back to page they came from in the source app, if stored in a cookie
+      const isProcessed = processRedirectURLInOneSage()
+      if (!isProcessed && appContext?.redirectURL) {
+        // if not in the cookie, take them to
+        window.location.replace(appContext?.redirectURL)
+      }
+    }
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayRedirectToSignToS])
+  return <></>
+}
 
 function App() {
   return (
@@ -42,25 +72,7 @@ function App() {
               if (!ctx?.accessToken) {
                 return <LoginPage returnToUrl={'/'} />
               } else {
-                return (
-                  <AppContextConsumer>
-                    {appContext => {
-                      const isCodeSearchParam =
-                        getSearchParam('code') !== undefined
-                      const isProviderSearchParam =
-                        getSearchParam('provider') !== undefined
-                      const isInSSOFlow =
-                        isCodeSearchParam && isProviderSearchParam
-                      return (
-                        <>
-                          {appContext?.redirectURL &&
-                            !isInSSOFlow &&
-                            window.location.replace(appContext?.redirectURL)}
-                        </>
-                      )
-                    }}
-                  </AppContextConsumer>
-                )
+                return <LoggedInRedirector />
               }
             }}
           </SynapseContextConsumer>
@@ -104,6 +116,9 @@ function App() {
                     </Route>
                     <Route path={'/authenticated/signTermsOfUse'} exact>
                       <TermsOfUsePage />
+                    </Route>
+                    <Route path={'/authenticated/signUpdatedTermsOfUse'} exact>
+                      <SignUpdatedTermsOfUsePage />
                     </Route>
                     <Route path={'/authenticated/myaccount'} exact>
                       <AccountSettings />
