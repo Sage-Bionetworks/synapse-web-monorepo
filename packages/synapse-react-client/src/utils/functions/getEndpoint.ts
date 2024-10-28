@@ -1,3 +1,9 @@
+import {
+  SYNAPSE_BACKEND_DEV_URL,
+  SYNAPSE_BACKEND_PRODUCTION_URL,
+  SYNAPSE_BACKEND_STAGING_URL,
+} from '../SynapseConstants'
+
 export enum BackendDestinationEnum {
   REPO_ENDPOINT,
   PORTAL_ENDPOINT,
@@ -27,7 +33,7 @@ const DEFAULT_SYNAPSE_PORTAL = getSynapsePortalEndpoint(
 )
 
 export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
-  REPO: 'https://repo-prod.prod.sagebase.org',
+  REPO: SYNAPSE_BACKEND_PRODUCTION_URL,
   PORTAL: DEFAULT_SYNAPSE_PORTAL,
 }
 
@@ -57,15 +63,15 @@ const MOCK_PORTAL_ORIGIN = 'https://mock-portal.sagebase.org/' satisfies string
 
 export const STACK_MAP: Record<SynapseStack, EndpointObject> = {
   production: {
-    REPO: 'https://repo-prod.prod.sagebase.org',
+    REPO: SYNAPSE_BACKEND_PRODUCTION_URL,
     PORTAL: 'https://www.synapse.org/',
   },
   staging: {
-    REPO: 'https://repo-staging.prod.sagebase.org',
+    REPO: SYNAPSE_BACKEND_STAGING_URL,
     PORTAL: 'https://staging.synapse.org/',
   },
   development: {
-    REPO: 'https://repo-dev.dev.sagebase.org',
+    REPO: SYNAPSE_BACKEND_DEV_URL,
     PORTAL: 'https://portal-dev.dev.sagebase.org/',
   },
   mock: {

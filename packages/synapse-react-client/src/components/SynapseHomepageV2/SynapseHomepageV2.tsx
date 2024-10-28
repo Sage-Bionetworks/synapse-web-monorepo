@@ -382,7 +382,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                     fontWeight: 400,
                   }}
                 >
-                  Projects trending this month
+                  Projects trending last month
                 </Typography>
                 <SynapseTrendingProjects
                   past30DaysDownloadMetricsTable={

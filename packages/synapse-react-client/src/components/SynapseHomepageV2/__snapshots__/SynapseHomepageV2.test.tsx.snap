@@ -550,7 +550,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
             <p
               class="MuiTypography-root MuiTypography-headline2 css-1nmmd39-MuiTypography-root"
             >
-              Projects trending this month
+              Projects trending last month
             </p>
           </div>
         </div>
@@ -743,7 +743,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 />
                 <a
                   class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-n52da1-MuiButtonBase-root-MuiButton-root"
-                  href="https://accounts.synapse.org/sageresources"
+                  href="http://localhost:3000/sageresources"
                   tabindex="0"
                   target="_blank"
                 >
@@ -913,7 +913,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 </div>
                 <a
                   class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-34fra2-MuiButtonBase-root-MuiButton-root"
-                  href="https://accounts.synapse.org/register1"
+                  href="http://localhost:3000/register1"
                   tabindex="0"
                 >
                   Register Now
