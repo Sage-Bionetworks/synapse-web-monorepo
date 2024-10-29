@@ -145,8 +145,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.1
+        version: 7.2.1
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.4.6
@@ -855,8 +855,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.1
+        version: 7.2.1
     devDependencies:
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
@@ -1580,8 +1580,8 @@ importers:
         specifier: ^1.0.37
         version: 1.0.37
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.1
+        version: 7.2.1
       use-deep-compare-effect:
         specifier: ^1.8.1
         version: 1.8.1(react@18.2.0)
@@ -6671,6 +6671,10 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
+  cookie@0.7.2:
+    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
+    engines: {node: '>= 0.6'}
+
   copyfiles@2.4.1:
     resolution: {integrity: sha512-fereAvAvxDrQDOXybk3Qu3dPbOoKoysFMWtkY3mv5BsL8//OSZVL5DCLYqgRfY5cWirgRzlC+WSrxp6Bo3eNZg==}
     hasBin: true
@@ -8710,7 +8714,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -11175,6 +11178,9 @@ packages:
 
   universal-cookie@4.0.4:
     resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
+
+  universal-cookie@7.2.1:
+    resolution: {integrity: sha512-GEKneQ0sz8qbobkYM5s9elAx6l7GQDNVl3Siqmc7bt/YccyyXWDPn+fht3J1qMcaLwPrzkty3i+dNfPGP2/9hA==}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -17522,6 +17528,8 @@ snapshots:
 
   cookie@0.6.0: {}
 
+  cookie@0.7.2: {}
+
   copyfiles@2.4.1:
     dependencies:
       glob: 7.2.3
@@ -23410,6 +23418,11 @@ snapshots:
     dependencies:
       '@types/cookie': 0.3.3
       cookie: 0.4.2
+
+  universal-cookie@7.2.1:
+    dependencies:
+      '@types/cookie': 0.6.0
+      cookie: 0.7.2
 
   universalify@0.1.2: {}
 
