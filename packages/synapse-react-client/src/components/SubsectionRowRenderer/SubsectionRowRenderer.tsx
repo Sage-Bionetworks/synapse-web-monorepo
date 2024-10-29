@@ -121,7 +121,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
           }
           return (
             <div
-              key={`${colIndex}`}
+              key={`header-${colIndex}`}
               className="SubsectionRowRenderer__item"
               role="table"
             >
@@ -148,7 +148,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     values = jsonData.map((val: string, index: number) => {
                       return (
                         <div
-                          key={index}
+                          key={`row-${rowIndex}-col-${colIndex}`}
                           className="SubsectionRowRenderer__item__value"
                           role="row"
                         >
