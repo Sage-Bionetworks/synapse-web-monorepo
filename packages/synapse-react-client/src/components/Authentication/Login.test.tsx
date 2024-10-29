@@ -255,7 +255,7 @@ describe('StandaloneLoginForm', () => {
     )
     expect(callback).not.toHaveBeenCalled()
     expect(window.location.assign).toHaveBeenCalledWith(
-      'http://localhost:3000/changePassword?errorCode=PASSWORD_RESET_VIA_EMAIL_REQUIRED',
+      'http://localhost:3000/changePassword',
     )
   })
 })

@@ -186,6 +186,9 @@ export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
 
+export const ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY =
+  'org.sagebionetworks.account.promptedforlogin'
+
 /* Persistent localStorage keys on SWC logout */
 export const PERSISTENT_LOCAL_STORAGE_KEYS = [
   ...ORIENTATION_BANNER_KEYS,
