@@ -1,5 +1,8 @@
 import { useHistory } from 'react-router-dom'
-import { LAST_PLACE_LOCALSTORAGE_KEY } from '../SynapseConstants'
+import {
+  ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+  LAST_PLACE_LOCALSTORAGE_KEY,
+} from '../SynapseConstants'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 
@@ -33,10 +36,22 @@ export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
 }
 
 export function processRedirectURLInOneSage() {
+  // PORTALS-3299 : Indicate that we have completed the login workflow (cookie expires in a minute) to break out of a cycle
+  const expireDate = new Date()
+  expireDate.setMinutes(expireDate.getMinutes() + 1)
+  const hostname = window.location.hostname.toLowerCase()
+  cookies.set(ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY, 'true', {
+    path: '/',
+    expires: expireDate,
+    domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
+  })
+
   if (cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
     const href = cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
     cookies.remove(ONE_SAGE_REDIRECT_COOKIE_KEY)
-    window.location.assign(href)
+    setTimeout(() => {
+      window.location.assign(href)
+    }, 10)
     return true
   }
   //else
