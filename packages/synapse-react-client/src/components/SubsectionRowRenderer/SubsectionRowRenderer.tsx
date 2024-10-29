@@ -148,7 +148,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     values = jsonData.map((val: string, index: number) => {
                       return (
                         <div
-                          key={`row-${rowIndex}-col-${colIndex}-index-${index}`}
+                          key={`row-${rowIndex}-col-${colIndex}-multi-value`}
                           className="SubsectionRowRenderer__item__value"
                           role="row"
                         >
@@ -200,7 +200,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     }
                     values = (
                       <div
-                        key={`row-${rowIndex}-col-${colIndex}`}
+                        key={`row-${rowIndex}-col-${colIndex}-single`}
                         className="SubsectionRowRenderer__item__value"
                         role="row"
                       >
