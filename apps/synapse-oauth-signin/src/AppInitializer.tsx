@@ -17,7 +17,7 @@ function AppInitializer(
   ) == 'true' // short-lived cookie
   const urlSearchParams = new URLSearchParams(window.location.search)
   const prompt =
-    accountSitePrompted == 'true' ? 'none' : urlSearchParams.get('prompt')
+    accountSitePrompted ? 'none' : urlSearchParams.get('prompt')
 
   let maxAge = undefined
   // check max age when re-establishing the session, not to auto-consent.
