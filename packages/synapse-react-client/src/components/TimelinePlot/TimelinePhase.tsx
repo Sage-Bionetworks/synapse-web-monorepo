@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
@@ -219,8 +219,6 @@ const TimelinePhase = ({
   const selectedRows = rowData?.filter(row => {
     return rowIds?.includes(row.rowId)
   })
-  const [filteredRows, setFilteredRows] = useState<Row[]>(selectedRows)
-  const [isFirstOpen, setIsFirstOpen] = useState(false)
 
   const hoverEventRowIds = hoverEvent?.points[0].customdata as unknown as (
     | number
@@ -263,17 +261,11 @@ const TimelinePhase = ({
     })),
   ]
 
-  useEffect(() => {
-    if (selectedRows && selectedRows.length > 0) {
-      if (!isFirstOpen) {
-        setFilteredRows(selectedRows)
-        setIsFirstOpen(true)
-      }
-    } else {
-      setIsFirstOpen(false)
-      return
-    }
-  }, [selectedRows])
+  const filteredRows = rowData.filter(row =>
+    selectedObservationTypes.every(type =>
+      JSON.parse(row.values[schema.observationType] ?? '[]').includes(type),
+    ),
+  )
 
   const timepointData = useMemo(() => {
     return getTimepointData(
@@ -289,24 +281,6 @@ const TimelinePhase = ({
   const timelineData = useMemo(() => {
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
-
-  useEffect(() => {
-    if (selectedObservationTypes.length > 0) {
-      const filteredRowsByType = selectedRows.filter(row => {
-        const typeData = row.values[schema.observationType]
-        if (isValidJSONString(typeData)) {
-          const typeArray = JSON.parse(typeData)
-          return selectedObservationTypes.every(type =>
-            typeArray.includes(type),
-          )
-        }
-        return false
-      })
-      setFilteredRows(filteredRowsByType)
-    } else if (selectedRows.length > 0) {
-      setFilteredRows(selectedRows)
-    }
-  }, [selectedObservationTypes])
 
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
@@ -348,7 +322,6 @@ const TimelinePhase = ({
                     text: 'Clear filters',
                     onClick: () => {
                       setSelectedObservationTypes([])
-                      setFilteredRows(selectedRows)
                     },
                   },
                 ],
@@ -358,23 +331,23 @@ const TimelinePhase = ({
               }}
             />
           </Box>
-          {filteredRows.length > 0 ? (
-            filteredRows.map(row => {
-              return (
-                <ObservationCard
-                  key={row.rowId}
-                  data={row.values}
-                  schema={schema}
-                  includePortalCardClass={false}
-                />
-              )
-            })
-          ) : (
+
+          {selectedRows.map(row => {
+            return (
+              <ObservationCard
+                selectedObservationTypes={selectedObservationTypes}
+                key={row.rowId}
+                data={row.values}
+                schema={schema}
+                includePortalCardClass={false}
+              />
+            )
+          })}
+          {!filteredRows.length && (
             <Box sx={{ padding: '16px' }}>
               <Typography variant="body1" className="sectionSubtitle">
-                {`No results for the selected filters: ${selectedObservationTypes.join(
-                  ', ',
-                )}.`}
+                No results match the selected filters:{' '}
+                {selectedObservationTypes.join(', ')}.
                 <br />
                 <br />
                 Try adjusting or clearing your filters to see more options.

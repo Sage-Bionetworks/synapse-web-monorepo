@@ -84,7 +84,6 @@ function _CardContainer(props: CardContainerProps) {
   const { queryMetadataQueryOptions } = queryContext
   const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const queryVisualizationContext = useQueryVisualizationContext()
-  const [filteredRows, setFilteredRows] = useState<Row[]>(rowSet.rows)
   const [selectedObservationTypes, setSelectedObservationTypes] = useState<
     string[]
   >([])
@@ -122,24 +121,6 @@ function _CardContainer(props: CardContainerProps) {
     ),
   )
 
-  useEffect(() => {
-    if (selectedObservationTypes.length > 0) {
-      const filteredRowsByType = dataRows.filter(row => {
-        const typeData = row.values[observationColIndex]
-        if (isValidJSONString(typeData)) {
-          const typeArray = JSON.parse(typeData)
-          return selectedObservationTypes.every(type =>
-            typeArray.includes(type),
-          )
-        }
-        return false
-      })
-      setFilteredRows(filteredRowsByType)
-    } else {
-      setFilteredRows(dataRows)
-    }
-  }, [selectedObservationTypes, dataRows])
-
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (dataRows.length === 0) {
     // Show "no results" UI (see PORTALS-1497)
@@ -173,7 +154,10 @@ function _CardContainer(props: CardContainerProps) {
       rows.map((rowData: any, index: number) => (
         <Card
           key={rowData.rowId ?? index}
-          propsToPass={getPropsForCard(rowData, index)}
+          propsToPass={{
+            ...getPropsForCard(rowData, index),
+            selectedObservationTypes: selectedObservationTypes,
+          }}
           type={type}
         />
       ))
@@ -200,9 +184,7 @@ function _CardContainer(props: CardContainerProps) {
       )
       break
     }
-    case OBSERVATION_CARD:
-      cards = renderCards(filteredRows)
-      break
+
     default:
       cards = renderCards(dataRows)
       break
@@ -210,6 +192,12 @@ function _CardContainer(props: CardContainerProps) {
 
   const isReleaseCardMediumList =
     type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
+
+  const filteredRows = dataRows.filter(row =>
+    selectedObservationTypes.every(type =>
+      JSON.parse(row.values[schema.observationType] ?? '[]').includes(type),
+    ),
+  )
 
   return (
     <>
@@ -235,7 +223,6 @@ function _CardContainer(props: CardContainerProps) {
                   text: 'Clear filters',
                   onClick: () => {
                     setSelectedObservationTypes([])
-                    setFilteredRows(dataRows)
                   },
                 },
               ],
