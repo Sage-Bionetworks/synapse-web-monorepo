@@ -49,9 +49,7 @@ export function processRedirectURLInOneSage() {
   if (cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
     const href = cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
     cookies.remove(ONE_SAGE_REDIRECT_COOKIE_KEY)
-    setTimeout(() => {
-      window.location.assign(href)
-    }, 10)
+    window.location.assign(href)
     return true
   }
   //else
