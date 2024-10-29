@@ -854,6 +854,9 @@ importers:
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
+      universal-cookie:
+        specifier: ^4.0.4
+        version: 4.0.4
     devDependencies:
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
