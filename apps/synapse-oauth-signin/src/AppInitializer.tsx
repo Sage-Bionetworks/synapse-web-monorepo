@@ -14,7 +14,7 @@ function AppInitializer(
 ) {
   const accountSitePrompted = cookies.get(
     SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
-  ) // short-lived cookie
+  ) == 'true' // short-lived cookie
   const urlSearchParams = new URLSearchParams(window.location.search)
   const prompt =
     accountSitePrompted == 'true' ? 'none' : urlSearchParams.get('prompt')
