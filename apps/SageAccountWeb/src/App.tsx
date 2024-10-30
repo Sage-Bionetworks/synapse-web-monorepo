@@ -53,7 +53,7 @@ function LoggedInRedirector() {
       // take user back to page they came from in the source app, if stored in a cookie
       const isProcessed = processRedirectURLInOneSage()
       if (!isProcessed && appContext?.redirectURL) {
-        // if not in the cookie, take them to
+        // if not in the cookie, take them to the app redirect URL
         window.location.replace(appContext?.redirectURL)
       }
     }

@@ -91,7 +91,7 @@ export function ApplicationSessionManager(
       initAnonymousUserState()
       return
     }
-    if (maxAge) {
+    if (maxAge !== undefined && !!token) {
       // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
       const authenticatedOnResponse = await SynapseClient.getAuthenticatedOn(
         token,
@@ -101,8 +101,8 @@ export function ApplicationSessionManager(
       )
       const now = dayjs.utc()
       if (now.diff(lastAuthenticatedOn, 'seconds') > maxAge) {
-        // Don't set the token so the user must re-authenticate to use this app
-        setHasInitializedSession(true)
+        // Invalidate the token (if present) so the user must re-authenticate to use this app
+        initAnonymousUserState()
         return
       }
     }
