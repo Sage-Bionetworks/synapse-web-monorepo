@@ -14,7 +14,7 @@ const cookies = new UniversalCookies()
 export const ONE_SAGE_REDIRECT_COOKIE_KEY =
   'org.sagebionetworks.cookies.redirect-after-login'
 
-const getCookieDomain = () => {
+export const getCookieDomain = () => {
   return window.location.hostname.toLowerCase().endsWith('.synapse.org')
     ? '.synapse.org'
     : undefined
