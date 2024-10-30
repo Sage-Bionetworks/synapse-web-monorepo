@@ -16,8 +16,6 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   /* Called when the session is reset, i.e. the user has signed out.*/
   onResetSessionComplete?: () => void
   onNoAccessTokenFound?: () => void
-  /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
-  forceRelogin?: boolean
   /*
    * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
    * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
@@ -53,7 +51,6 @@ export function ApplicationSessionManager(
     onResetSessionComplete,
     maxAge,
     onNoAccessTokenFound,
-    forceRelogin,
     onTwoFactorAuthResetThroughSSO,
     appId,
   } = props
@@ -142,11 +139,7 @@ export function ApplicationSessionManager(
 
   /** Call refreshSession on mount */
   useEffect(() => {
-    if (forceRelogin) {
-      clearSession()
-    } else {
-      refreshSession()
-    }
+    refreshSession()
     // PORTALS-3249: Set up an interval to call refreshSession every 60 seconds (60000 milliseconds)
     const intervalId = setInterval(() => {
       refreshSession()

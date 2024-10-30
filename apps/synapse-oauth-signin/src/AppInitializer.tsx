@@ -67,12 +67,13 @@ function AppInitializer(
   }, [prompt])
 
   const isFramed = useFramebuster()
-  const forceRelogin = prompt === 'login'
+  if (prompt === 'login') {
+    maxAge = 0
+  }
   return (
     <ApplicationSessionManager
       maxAge={maxAge}
       onNoAccessTokenFound={onNoAccessTokenFound}
-      forceRelogin={forceRelogin}
       appId={clientId}
     >
       {!isFramed && props.children}
