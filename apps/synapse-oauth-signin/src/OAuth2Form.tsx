@@ -201,6 +201,10 @@ export function OAuth2Form() {
         const redirectUri = queryParams.get('redirect_uri')!
         cookies.remove(
           SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+          {
+            path: '/',
+            domain: AppUtils.getCookieDomain(),
+          },
         )
         redirectToURL(
           `${redirectUri}?${getStateParam()}code=${encodeURIComponent(
