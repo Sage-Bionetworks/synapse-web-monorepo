@@ -3,16 +3,10 @@ import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
 import { SetPasswordInstructions } from './ResetPassword'
 import { ChangePassword } from 'synapse-react-client'
-import { useLocation } from 'react-router-dom'
 
 export const ChangePasswordPage = () => {
-  const { search } = useLocation()
-  const urlSearchParams = new URLSearchParams(search)
-  const errorCode = urlSearchParams.get('errorCode') ?? ''
-  const instructions =
-    errorCode == 'PASSWORD_RESET_VIA_EMAIL_REQUIRED'
-      ? 'Your current password does not meet Synapse security requirements'
-      : 'Set a new password'
+  // previously, if the errorCode was PASSWORD_RESET_VIA_EMAIL_REQUIRED then this page would tell the user that their current password does not meet Synapse security requirements.  But this is not necessarily true.
+  const instructions = 'Set a new password'
   return (
     <>
       <LeftRightPanel

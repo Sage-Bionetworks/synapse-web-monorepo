@@ -43,7 +43,11 @@ export const synapseRedirectInstructions = (
 
 const isSynapseURL = (url: string) => {
   if (!url) return false
-  return new URL(url).hostname.toLowerCase() === 'www.synapse.org'
+  const parsedURL = new URL(url)
+  return (
+    parsedURL.hostname.toLowerCase() === 'www.synapse.org' &&
+    parsedURL.pathname.startsWith('/Synapse')
+  )
 }
 
 const getInitialCountdownSeconds = (redirectURL: string) => {
@@ -106,7 +110,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
           className="RedirectDialog"
           PaperProps={{ sx: { padding: 0 } }}
         >
-          <DialogContent>
+          <DialogContent sx={{ p: 0, ml: 0, mr: 0 }}>
             <div className="redirect-dialog-body">
               <Typography
                 variant="headline1"

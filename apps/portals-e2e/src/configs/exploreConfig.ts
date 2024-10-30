@@ -52,7 +52,7 @@ const exploreConfig: ExploreConfig = {
       'Projects',
       'Studies',
       'Publications',
-      'Computational Tools',
+      // 'Computational Tools', // empty - known data curation issue
     ],
     people_charts: ['People'],
   },
