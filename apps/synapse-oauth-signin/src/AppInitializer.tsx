@@ -25,7 +25,6 @@ function AppInitializer(
   if (!accountSitePrompted && maxAgeURLParam && parseInt(maxAgeURLParam)) {
     maxAge = parseInt(maxAgeURLParam)
   }
-
   const clientId = urlSearchParams.get('client_id') ?? undefined
 
   useEffect(() => {
