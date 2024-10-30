@@ -324,7 +324,8 @@ export function OAuth2Form() {
     oauthClientInfo &&
     oauthClientInfo.verified &&
     !showPendingRedirectUI &&
-    oidcRequestDescription
+    oidcRequestDescription &&
+    hasInitializedSession // wait for session to be initialized (may be anonymous) before jumping to One Sage
   ) {
     // Prompt for login
     storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
