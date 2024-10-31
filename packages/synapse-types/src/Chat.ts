@@ -12,10 +12,9 @@ export type CreateAgentSessionRequest = {
    */
   agentAccessLevel: AgentAccessLevel
   /**
-   * Optional. Most users will not use this parameter. If you are authorized to test experimental agents,
-   * provide the ID of the agent you wish to test.
+   * Optional. When provided, the registered agent will be used for this session. When excluded the default 'baseline' agent will be used.
    */
-  agentId?: string
+  agentRegistrationId?: string
 }
 export type UpdateAgentSessionRequest = {
   /**
@@ -50,7 +49,7 @@ export type AgentSession = {
    * Identifies the agent that will be used for this session. The default value is null, which indicates
    * that the default agent will be used.
    */
-  agentId?: string
+  agentRegistrationId?: string
 }
 
 // Type for ListAgentSessionsRequest
