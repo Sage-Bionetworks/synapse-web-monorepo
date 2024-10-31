@@ -23,7 +23,6 @@ export type ObservationCardProps = {
   schema: ObservationCardSchema
   data: (string | null)[]
   includePortalCardClass?: boolean
-  selectedObservationTypes?: string[]
 }
 
 /**
@@ -34,7 +33,6 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   data,
   schema,
   includePortalCardClass = true,
-  selectedObservationTypes = [],
 }: ObservationCardProps) => {
   const submitterName = data[schema.observationSubmitterName]
   const submitterUserId = data[schema.synapseId]
@@ -44,13 +42,6 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const tag = data[schema.observationType]
   const tags: string[] = JSON.parse(tag ?? '')
   const doi = data[schema.doi]
-
-  if (
-    selectedObservationTypes.length > 0 &&
-    !selectedObservationTypes.every(type => tags.includes(type))
-  ) {
-    return <></>
-  }
 
   return (
     <div

@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import React, { Suspense } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -82,9 +82,6 @@ function _CardContainer(props: CardContainerProps) {
   const { queryMetadataQueryOptions } = queryContext
   const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
   const queryVisualizationContext = useQueryVisualizationContext()
-  const [selectedObservationTypes, setSelectedObservationTypes] = useState<
-    string[]
-  >([])
 
   const dataRows: Row[] = rowSet.rows
 
@@ -127,10 +124,7 @@ function _CardContainer(props: CardContainerProps) {
       rows.map((rowData: any, index: number) => (
         <Card
           key={rowData.rowId ?? index}
-          propsToPass={{
-            ...getPropsForCard(rowData, index),
-            selectedObservationTypes: selectedObservationTypes,
-          }}
+          propsToPass={getPropsForCard(rowData, index)}
           type={type}
         />
       ))
