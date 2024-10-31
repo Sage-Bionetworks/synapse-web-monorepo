@@ -28,7 +28,7 @@ import { TransitionGroup } from 'react-transition-group'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
-  agentId?: string // if provided, use this agent
+  agentRegistrationId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
@@ -46,7 +46,7 @@ type TraceEventWithFriendlyMessage = {
 
 export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
   initialMessage,
-  agentId,
+  agentRegistrationId,
   chatbotName = 'SynapseChat',
   hideTitle = false,
   textboxPositionOffset = '0px',
@@ -177,7 +177,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
     if (createAgentSession && !agentSession) {
       createAgentSession({
         agentAccessLevel,
-        agentId,
+        agentRegistrationId,
       })
     }
   }, [createAgentSession, agentSession, accessToken])

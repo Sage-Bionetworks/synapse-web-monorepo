@@ -13,19 +13,19 @@ import {
 export const mockChatSessionId = 'session-456'
 export const mockCreateAgentSessionRequest: CreateAgentSessionRequest = {
   agentAccessLevel: AgentAccessLevel.READ_YOUR_PRIVATE_DATA,
-  agentId: 'experimental-agent-123',
+  agentRegistrationId: 'experimental-agent-123',
 }
 export const mockAgentSession: AgentSession = {
   sessionId: mockChatSessionId,
   agentAccessLevel: AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   startedOn: '2024-09-01T12:00:00Z',
-  agentId: 'default-agent',
+  agentRegistrationId: 'default-agent',
 }
 export const mockAgentSession2: AgentSession = {
   sessionId: 'session-789',
   agentAccessLevel: AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA,
   startedOn: '2024-09-01T12:00:00Z',
-  agentId: 'default-agent',
+  agentRegistrationId: 'default-agent',
 }
 export const mockListAgentSessionsRequest: ListAgentSessionsRequest = {
   nextPageToken: 'token-789',
