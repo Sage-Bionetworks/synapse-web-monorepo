@@ -42,7 +42,6 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const tag = data[schema.observationType]
   const tags: string[] = JSON.parse(tag ?? '')
   const doi = data[schema.doi]
-
   return (
     <div
       className={`ObservationCard ${
