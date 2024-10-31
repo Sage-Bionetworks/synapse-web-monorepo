@@ -27,17 +27,20 @@ const categories: Category[] = [
 ]
 
 const host = window.location.host
-const baseUrl = 'Research%20Tools%20Central/Submit%20'
+const baseUrl = `${encodeURIComponent(
+  'Research Tools Central',
+)}/${encodeURIComponent('Submit ')}`
 const baseSchemaUrl =
   'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/'
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
-const createHref = path => `http://${host}/${baseUrl}${path}`
+const createHref = path =>
+  `http://${host}/${baseUrl}${encodeURIComponent(path)}`
 
 const submitToolButtons = [
   {
     label: 'Submit Animal Model',
-    href: createHref('Animal%20Model'),
+    href: createHref('Animal Model'),
     schemaUrl: `${baseSchemaUrl}animal-model/submitAnimalModel.json`,
     uiSchemaUrl: `${baseSchemaUrl}animal-model/SubmitAnimalModelUiSchema.json`,
     postUrl: postUrl,
@@ -51,14 +54,14 @@ const submitToolButtons = [
   },
   {
     label: 'Submit Cell Line',
-    href: createHref('Cell%20Line'),
+    href: createHref('Cell Line'),
     schemaUrl: `${baseSchemaUrl}cell-line/submitCellLine.json`,
     uiSchemaUrl: `${baseSchemaUrl}cell-line/submitCellLineUiSchema.json`,
     postUrl: postUrl,
   },
   {
     label: 'Submit Genetic Reagents',
-    href: createHref('Genetic%20Reagent'),
+    href: createHref('Genetic Reagent'),
     schemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagent.json`,
     uiSchemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagentUiSchema.json`,
     postUrl: postUrl,

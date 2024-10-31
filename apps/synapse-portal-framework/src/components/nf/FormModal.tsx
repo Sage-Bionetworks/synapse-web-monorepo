@@ -8,13 +8,6 @@ import { Box } from '@mui/material'
 
 const FormModal = () => {
   const [open, setOpen] = useState(false)
-  const form = (
-    <DynamicForm
-      schemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json"
-      uiSchemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json"
-      postUrl="https://submit-form.com/KwZ46H4T"
-    />
-  )
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -23,6 +16,15 @@ const FormModal = () => {
   const handleClose = () => {
     setOpen(false)
   }
+
+  const form = (
+    <DynamicForm
+      schemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json"
+      uiSchemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json"
+      postUrl="https://submit-form.com/KwZ46H4T"
+      onCustomSuccess={handleClose}
+    />
+  )
 
   return (
     <div className="browse-tools-page">
