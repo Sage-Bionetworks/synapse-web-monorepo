@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
-  storeRedirectURLForOneSageLogin,
+  storeRedirectURLForOneSageLoginAndGotoURL,
   StyledOuterContainer,
   SynapseClient,
   SynapseClientError,
@@ -28,7 +28,9 @@ import {
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
 import { getStateParam, handleErrorRedirect } from './URLUtils'
+import UniversalCookies from 'universal-cookie'
 
+const cookies = new UniversalCookies()
 const sendGTagEvent = (event: string) => {
   // send event to Google Analytics
   // (casting to 'any' type to get compile-time access to gtag())
@@ -197,6 +199,13 @@ export function OAuth2Form() {
         // done!  redirect with access code.
         setShowPendingRedirectUI(true)
         const redirectUri = queryParams.get('redirect_uri')!
+        cookies.remove(
+          SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+          {
+            path: '/',
+            domain: AppUtils.getCookieDomain(),
+          },
+        )
         redirectToURL(
           `${redirectUri}?${getStateParam()}code=${encodeURIComponent(
             accessCode.access_code,
@@ -319,11 +328,11 @@ export function OAuth2Form() {
     oauthClientInfo &&
     oauthClientInfo.verified &&
     !showPendingRedirectUI &&
-    oidcRequestDescription
+    oidcRequestDescription &&
+    hasInitializedSession // wait for session to be initialized (may be anonymous) before jumping to One Sage
   ) {
     // Prompt for login
-    storeRedirectURLForOneSageLogin()
-    window.location.assign(oneSageURL.toString())
+    storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
   }
   return (
     <StyledOuterContainer>

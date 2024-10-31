@@ -15,7 +15,7 @@ export type TermsOfServiceStatus = {
   userId: string // The ID of the user
   lastAgreementDate?: string | null // The date/time when the user last agreed to the ToS, or null if never agreed
   lastAgreementVersion?: string | null // The version of ToS the user last agreed to, or null if never agreed
-  usersCurrentTermsOfServiceState: TermsOfServiceState // Defines the user's current ToS state. Used to guide the UI in what the user needs to do with their ToS agreements.  This will always be provided.
+  userCurrentTermsOfServiceState: TermsOfServiceState // Defines the user's current ToS state. Used to guide the UI in what the user needs to do with their ToS agreements.  This will always be provided.
 }
 
 export enum TermsOfServiceState {

@@ -8,7 +8,7 @@ import {
   SynapseConstants,
   useFramebuster,
   SynapseHookUtils,
-  storeRedirectURLForOneSageLogin,
+  storeRedirectURLForOneSageLoginAndGotoURL,
 } from 'synapse-react-client'
 import { useCookies } from 'react-cookie'
 
@@ -29,6 +29,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
      * back to this portal after visiting www.synapse.org.
      */
     function updateSynapseCallbackCookie(ev: MouseEvent) {
+      debugger
       if (!cookies || !cookiePreferences.functionalAllowed) {
         return
       }
@@ -57,8 +58,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       ) {
         const el = ev.target as HTMLElement
         if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          storeRedirectURLForOneSageLogin()
-          window.location.assign(oneSageURL.toString())
+          storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
         }
       }
       let name = ''
@@ -96,7 +96,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
         maxAge: 20,
       })
     }
-
+    debugger
     window.addEventListener('click', updateSynapseCallbackCookie)
 
     // Clean up the global listener on component unmount.

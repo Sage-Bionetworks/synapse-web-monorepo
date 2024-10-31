@@ -162,7 +162,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          title: 'Development Publication',
+          subtitle: 'Development Publication',
           helpText:
             'The first report providing a detailed characterization of a tool.',
           props: {
@@ -200,8 +200,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'StandaloneQueryWrapper',
+          title: 'Mutations',
           props: {
-            name: 'Mutations',
             unitDescription: 'Mutations',
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
@@ -231,7 +231,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           standalone: true,
           props: {
             ownerId: 'syn26338068',
-            wikiId: '613438',
+            wikiId: '629918',
           },
         },
       ],

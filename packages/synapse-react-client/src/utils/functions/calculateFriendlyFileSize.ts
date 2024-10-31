@@ -10,7 +10,10 @@ const sufixes: string[] = [
   'YB',
 ]
 
-export function calculateFriendlyFileSize(bytes: number) {
+export function calculateFriendlyFileSize(
+  bytes: number,
+  fractionDigits?: number,
+) {
   if (!bytes) {
     return ''
   }
@@ -19,6 +22,6 @@ export function calculateFriendlyFileSize(bytes: number) {
   // tslint:disable-next-line
   return (
     (!bytes && '0 Bytes') ||
-    (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sufixes[i]
+    (bytes / Math.pow(1024, i)).toFixed(fractionDigits ?? 2) + ' ' + sufixes[i]
   )
 }

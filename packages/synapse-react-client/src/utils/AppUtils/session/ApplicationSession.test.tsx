@@ -12,10 +12,7 @@ import {
   FullContextProvider,
   SynapseClient,
 } from '../../../index'
-import {
-  MOCK_USER_ID,
-  mockUserProfileData,
-} from '../../../mocks/user/mock_user_profile'
+import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { MemoryRouter } from 'react-router-dom'
 import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
@@ -67,7 +64,7 @@ const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
 }
 const TERMS_OF_SERVICE_STATUS_UP_TO_DATE: TermsOfServiceStatus = {
   userId: `${MOCK_USER_ID}`,
-  usersCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+  userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
   lastAgreementDate: '',
   lastAgreementVersion: '0.0.0',
 }
@@ -81,7 +78,7 @@ const EXPECTED_AUTH_STATE: Partial<ApplicationSessionContextType> = {
 
 const TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW: TermsOfServiceStatus = {
   userId: `${MOCK_USER_ID}`,
-  usersCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
+  userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
   lastAgreementDate: '',
   lastAgreementVersion: '0.0.0',
 }
@@ -101,7 +98,6 @@ describe('ApplicationSessionManager tests', () => {
     'getAccessTokenFromCookie',
   )
   const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
-  const mockGetUserProfile = jest.spyOn(SynapseClient, 'getUserProfile')
   const mockAuthenticatedOn = jest.spyOn(SynapseClient, 'getAuthenticatedOn')
   const mockTermsOfServiceStatus = jest.spyOn(
     SynapseClient,
@@ -122,7 +118,6 @@ describe('ApplicationSessionManager tests', () => {
 
   it('Bootstraps when signed in', async () => {
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
     mockTermsOfServiceStatus.mockResolvedValue(
       TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
     )
@@ -130,7 +125,7 @@ describe('ApplicationSessionManager tests', () => {
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
-      expect(mockGetUserProfile).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
@@ -141,19 +136,12 @@ describe('ApplicationSessionManager tests', () => {
       TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW,
     )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockRejectedValue(
-      new SynapseClientError(
-        403,
-        'Terms of use have not been signed.',
-        expect.getState().currentTestName!,
-      ),
-    )
 
     const context = render()
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
-      expect(mockGetUserProfile).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(
         EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED,
@@ -179,7 +167,9 @@ describe('ApplicationSessionManager tests', () => {
 
     // At this point, useDetectSSOCode would use the URL query parameters to finish sign in
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
     mockUseDetectSSOCode.mockReturnValue({ isLoading: false })
 
     // useDetectSSOCode will then invoke onSignInComplete to refresh the session
@@ -297,14 +287,13 @@ describe('ApplicationSessionManager tests', () => {
     )
     // Using the app's Login component, the user logs in. the component invokes refreshSession once the token is stored
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     // Call under test
     await context.result.current.refreshSession()
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
-      expect(mockGetUserProfile).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
   })
@@ -315,13 +304,12 @@ describe('ApplicationSessionManager tests', () => {
       TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
     )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     const context = render()
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
-      expect(mockGetUserProfile).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
@@ -344,7 +332,6 @@ describe('ApplicationSessionManager tests', () => {
       TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
     )
     mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
     mockAuthenticatedOn.mockResolvedValue({
       authenticatedOn,
     })
@@ -355,7 +342,7 @@ describe('ApplicationSessionManager tests', () => {
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
-      expect(mockGetUserProfile).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).toHaveBeenCalled()
       expect(mockAuthenticatedOn).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
@@ -368,7 +355,9 @@ describe('ApplicationSessionManager tests', () => {
     const maxAge = 60 * 60
     const token = 'asdf'
     mockGetAccessToken.mockResolvedValue(token)
-    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
+    mockTermsOfServiceStatus.mockResolvedValue(
+      TERMS_OF_SERVICE_STATUS_UP_TO_DATE,
+    )
 
     console.log(dayjs.utc().subtract(24, 'hours').format())
     mockAuthenticatedOn.mockResolvedValue({
@@ -382,8 +371,8 @@ describe('ApplicationSessionManager tests', () => {
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockAuthenticatedOn).toHaveBeenCalled()
-      expect(mockGetUserProfile).not.toHaveBeenCalled()
-      expect(signOutSpy).not.toHaveBeenCalled()
+      expect(signOutSpy).toHaveBeenCalled()
+      expect(mockTermsOfServiceStatus).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })

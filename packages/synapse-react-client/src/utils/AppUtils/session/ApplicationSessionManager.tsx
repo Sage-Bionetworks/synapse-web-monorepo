@@ -16,8 +16,6 @@ export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   /* Called when the session is reset, i.e. the user has signed out.*/
   onResetSessionComplete?: () => void
   onNoAccessTokenFound?: () => void
-  /* If defined, the session will be cleared and the user will have to re-authenticate (if logged in) */
-  forceRelogin?: boolean
   /*
    * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
    * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
@@ -53,7 +51,6 @@ export function ApplicationSessionManager(
     onResetSessionComplete,
     maxAge,
     onNoAccessTokenFound,
-    forceRelogin,
     onTwoFactorAuthResetThroughSSO,
     appId,
   } = props
@@ -74,10 +71,9 @@ export function ApplicationSessionManager(
       setHasInitializedSession(true)
     })
   }, [onNoAccessTokenFound])
-  const { data: tosStatus } = useTermsOfServiceStatus({
+  const { data: tosStatus } = useTermsOfServiceStatus(token, {
     enabled: !!token,
   })
-
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
     let token
@@ -92,7 +88,7 @@ export function ApplicationSessionManager(
       initAnonymousUserState()
       return
     }
-    if (maxAge) {
+    if (maxAge !== undefined && !!token) {
       // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
       const authenticatedOnResponse = await SynapseClient.getAuthenticatedOn(
         token,
@@ -102,26 +98,31 @@ export function ApplicationSessionManager(
       )
       const now = dayjs.utc()
       if (now.diff(lastAuthenticatedOn, 'seconds') > maxAge) {
-        // Don't set the token so the user must re-authenticate to use this app
-        setHasInitializedSession(true)
+        // Invalidate the token (if present) so the user must re-authenticate to use this app
+        initAnonymousUserState()
         return
       }
     }
     setToken(token)
     setHasInitializedSession(true)
     try {
-      // get the user profile
-      await SynapseClient.getUserProfile(token)
+      // get the user terms of service status
+      await SynapseClient.getTermsOfServiceStatus(token)
     } catch (e) {
-      if (e && e.reason != 'Terms of use have not been signed.') {
-        console.error('Error on refreshSession: ', e)
-        // intentionally calling sign out because the token could be stale so we want
-        // the stored session to be cleared out.
-        SynapseClient.signOut().then(() => {
-          // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
-          // are loading as the anonymous user
-          window.location.reload()
-        })
+      console.error('Error on refreshSession: ', e)
+      // if status number field is present, then
+      //if 400 level, then clear
+      if ('status' in e && typeof e['status'] === 'number') {
+        const status = e['status']
+        if (status >= 400 && status < 500) {
+          // intentionally calling sign out because the token could be stale so we want
+          // the stored session to be cleared out.
+          SynapseClient.signOut().then(() => {
+            // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
+            // are loading as the anonymous user
+            window.location.reload()
+          })
+        }
       }
     }
   }, [initAnonymousUserState, maxAge])
@@ -138,11 +139,7 @@ export function ApplicationSessionManager(
 
   /** Call refreshSession on mount */
   useEffect(() => {
-    if (forceRelogin) {
-      clearSession()
-    } else {
-      refreshSession()
-    }
+    refreshSession()
     // PORTALS-3249: Set up an interval to call refreshSession every 60 seconds (60000 milliseconds)
     const intervalId = setInterval(() => {
       refreshSession()
