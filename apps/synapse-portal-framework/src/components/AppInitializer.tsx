@@ -29,6 +29,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
      * back to this portal after visiting www.synapse.org.
      */
     function updateSynapseCallbackCookie(ev: MouseEvent) {
+      debugger
       if (!cookies || !cookiePreferences.functionalAllowed) {
         return
       }
@@ -95,7 +96,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
         maxAge: 20,
       })
     }
-
+    debugger
     window.addEventListener('click', updateSynapseCallbackCookie)
 
     // Clean up the global listener on component unmount.
