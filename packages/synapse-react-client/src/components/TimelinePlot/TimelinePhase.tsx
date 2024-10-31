@@ -2,14 +2,17 @@ import React, { useMemo, useRef, useState } from 'react'
 import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
-import { Box, Dialog, DialogContent, Typography } from '@mui/material'
+import { Dialog, DialogContent } from '@mui/material'
+import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
-  ObservationCard,
-  ObservationCardSchema,
-} from '../row_renderers/ObservationCard'
-import { Row } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../IconSvg'
-import { DropdownMenu } from '../menu/DropdownMenu'
+  ColumnSingleValueFilterOperator,
+  Row,
+} from '@sage-bionetworks/synapse-types'
+import QueryWrapper from '../QueryWrapper'
+import QueryVisualizationWrapper from '../QueryVisualizationWrapper'
+import CardContainerLogic from '../CardContainerLogic'
+import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
+import { SynapseConstants } from '../../utils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -207,9 +210,6 @@ const TimelinePhase = ({
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)
   const start = dayjs()
-  const [selectedObservationTypes, setSelectedObservationTypes] = useState<
-    string[]
-  >([])
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
   const rowIds = clickEvent?.points[0].customdata as unknown as (
@@ -225,48 +225,6 @@ const TimelinePhase = ({
     | undefined
   )[]
 
-  const types = selectedRows.map(row => row.values[schema.observationType])
-
-  const isValidJSONString = (str: string | null | undefined): str is string => {
-    if (typeof str !== 'string') return false
-    try {
-      JSON.parse(str)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  const flattenedData: string[] = Array.from(
-    new Set(
-      types
-        .filter(isValidJSONString)
-        .map(item => JSON.parse(item))
-        .flat(),
-    ),
-  )
-
-  const items = [
-    ...flattenedData.map(type => ({
-      text: type || '',
-      onClick: () => {
-        setSelectedObservationTypes(prev => {
-          if (prev.includes(type)) {
-            return prev.filter(t => t !== type)
-          } else {
-            return [...prev, type]
-          }
-        })
-      },
-    })),
-  ]
-
-  const filteredRows = rowData.filter(row =>
-    selectedObservationTypes.every(type =>
-      JSON.parse(row.values[schema.observationType] ?? '[]').includes(type),
-    ),
-  )
-
   const timepointData = useMemo(() => {
     return getTimepointData(
       start,
@@ -281,6 +239,34 @@ const TimelinePhase = ({
   const timelineData = useMemo(() => {
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
+
+  const url =
+    new URLSearchParams(window.location.search).get('resourceId') || ''
+
+  const observationIds = selectedRows
+    .map(row => row.values[0]) // Get observationId - identifier but not all rows have this
+    .filter(observationId => observationId)
+    .map(observationId => `'${observationId}'`)
+
+  const observationTexts = selectedRows
+    .filter(row => !row.values[0]) // Only take rows without observationId
+    .map(row => row.values[4]) // Get observationText - all rows have this
+    .filter(text => text)
+    .map(text => `'${text}'`)
+
+  let sql = ''
+
+  if (!observationIds.length) {
+    sql = `SELECT * FROM syn51735464
+    WHERE observationText IN (${observationTexts.join(', ')})`
+  } else {
+    sql = `SELECT * FROM syn51735464
+    WHERE observationId IN (${observationIds.join(', ')})${
+      observationTexts.length > 0
+        ? ` OR observationText IN (${observationTexts.join(', ')})`
+        : ''
+    }`
+  }
 
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
@@ -312,48 +298,36 @@ const TimelinePhase = ({
         open={selectedRows && selectedRows.length > 0}
       >
         <DialogContent>
-          <Box sx={{ marginBottom: '16px' }}>
-            <DropdownMenu
-              dropdownButtonText="Observation Type"
-              items={[
-                items,
-                [
+          <QueryWrapper
+            initQueryRequest={{
+              concreteType:
+                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+              entityId: 'syn51735464',
+              partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+              query: {
+                additionalFilters: [
                   {
-                    text: 'Clear filters',
-                    onClick: () => {
-                      setSelectedObservationTypes([])
-                    },
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'resourceId',
+                    operator: ColumnSingleValueFilterOperator.LIKE,
+                    values: [`%${url}%`],
                   },
                 ],
-              ]}
-              buttonProps={{
-                endIcon: <IconSvg icon="arrowDropDown" wrap={false} />,
-              }}
-            />
-          </Box>
-
-          {selectedRows.map(row => {
-            return (
-              <ObservationCard
-                selectedObservationTypes={selectedObservationTypes}
-                key={row.rowId}
-                data={row.values}
-                schema={schema}
-                includePortalCardClass={false}
+                limit: 25,
+                sql: sql,
+              },
+            }}
+          >
+            <QueryVisualizationWrapper>
+              <CardContainerLogic
+                filterColumnName="observationType"
+                sql={sql}
+                type={OBSERVATION_CARD}
+                initialLimit={3}
               />
-            )
-          })}
-          {!filteredRows.length && (
-            <Box sx={{ padding: '16px' }}>
-              <Typography variant="body1" className="sectionSubtitle">
-                No results match the selected filters:{' '}
-                {selectedObservationTypes.join(', ')}.
-                <br />
-                <br />
-                Try adjusting or clearing your filters to see more options.
-              </Typography>
-            </Box>
-          )}
+            </QueryVisualizationWrapper>
+          </QueryWrapper>
         </DialogContent>
       </Dialog>
     </div>

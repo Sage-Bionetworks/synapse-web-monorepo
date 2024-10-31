@@ -23,6 +23,7 @@ import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { ReleaseCardConfig } from '../ReleaseCard'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
+import ColumnFilter from '../ColumnFilter'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -157,6 +158,7 @@ export type CardContainerLogicProps = {
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
+  filterColumnName?: string
   initialLimit?: number
 } & CardConfiguration &
   Pick<
@@ -178,7 +180,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
     props.searchParams,
     props.sqlOperator,
   )
-  const { sortConfig, columnAliases } = props
+  const { sortConfig, columnAliases, filterColumnName } = props
   const defaultSortItems = sortConfig
     ? [
         {
@@ -219,6 +221,9 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
       >
         <QueryWrapperErrorBoundary>
           {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
+          {filterColumnName && (
+            <ColumnFilter filterColumnName={props.filterColumnName} />
+          )}
           <RowSetView
             cardConfiguration={props}
             initialLimit={props.initialLimit}

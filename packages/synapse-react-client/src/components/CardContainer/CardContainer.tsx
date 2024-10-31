@@ -27,10 +27,8 @@ import {
 } from '../row_renderers/ObservationCard'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { DropdownMenu } from '../menu/DropdownMenu'
-import IconSvg from '../IconSvg'
 
 const defaultListSx = { display: 'block' }
 const releaseCardMediumListSx = {
@@ -95,31 +93,6 @@ function _CardContainer(props: CardContainerProps) {
     ids,
     type: 'ENTITY_HEADER',
   })
-
-  const observationColIndex = rowSet?.headers?.findIndex(
-    selectColumn => selectColumn.name == 'observationType',
-  )!
-
-  const types = rowSet.rows.map(row => row.values[observationColIndex])
-
-  const isValidJSONString = (str: string | null | undefined): str is string => {
-    if (typeof str !== 'string') return false
-    try {
-      JSON.parse(str)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  const flattenedData: string[] = Array.from(
-    new Set(
-      types
-        .filter(isValidJSONString)
-        .map(item => JSON.parse(item))
-        .flat(),
-    ),
-  )
 
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (dataRows.length === 0) {
@@ -193,58 +166,8 @@ function _CardContainer(props: CardContainerProps) {
   const isReleaseCardMediumList =
     type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
 
-  const filteredRows = dataRows.filter(row =>
-    selectedObservationTypes.every(type =>
-      JSON.parse(row.values[schema.observationType] ?? '[]').includes(type),
-    ),
-  )
-
   return (
     <>
-      {type === OBSERVATION_CARD && (
-        <Box>
-          <DropdownMenu
-            dropdownButtonText="Observation Type"
-            items={[
-              flattenedData.map(type => ({
-                text: type || '',
-                onClick: () => {
-                  setSelectedObservationTypes(prev => {
-                    if (prev.includes(type)) {
-                      return prev.filter(t => t !== type)
-                    } else {
-                      return [...prev, type]
-                    }
-                  })
-                },
-              })),
-              [
-                {
-                  text: 'Clear filters',
-                  onClick: () => {
-                    setSelectedObservationTypes([])
-                  },
-                },
-              ],
-            ]}
-            buttonProps={{
-              endIcon: <IconSvg icon="arrowDropDown" wrap={false} />,
-            }}
-          />
-          {!filteredRows.length && (
-            <Box sx={{ padding: '16px' }}>
-              <Typography variant="body1" className="sectionSubtitle">
-                {`No results for the selected filters: ${selectedObservationTypes.join(
-                  ', ',
-                )}.`}
-                <br />
-                <br />
-                Try adjusting or clearing your filters to see more options.
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      )}
       <Box
         role="list"
         sx={isReleaseCardMediumList ? releaseCardMediumListSx : defaultListSx}
