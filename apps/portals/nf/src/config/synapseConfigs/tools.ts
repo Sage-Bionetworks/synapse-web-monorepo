@@ -162,7 +162,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          title: 'Development Publication',
+          subtitle: 'Development Publication',
           helpText:
             'The first report providing a detailed characterization of a tool.',
           props: {

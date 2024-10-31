@@ -14,7 +14,10 @@ import {
   useGetDownloadListStatistics,
   useSearchAccessSubmissionsInfinite,
 } from '../../synapse-queries'
-import { useSynapseContext } from '../../utils'
+import {
+  storeRedirectURLForOneSageLoginAndGotoURL,
+  useSynapseContext,
+} from '../../utils'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
@@ -352,7 +355,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 tooltip="Sign in"
                 iconName="login"
                 onClickGoToPlace={() =>
-                  window.location.assign(oneSageURL.toString())
+                  storeRedirectURLForOneSageLoginAndGotoURL(
+                    oneSageURL.toString(),
+                  )
                 }
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}

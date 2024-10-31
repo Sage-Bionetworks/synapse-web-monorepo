@@ -1,5 +1,8 @@
 import { useHistory } from 'react-router-dom'
-import { LAST_PLACE_LOCALSTORAGE_KEY } from '../SynapseConstants'
+import {
+  ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+  LAST_PLACE_LOCALSTORAGE_KEY,
+} from '../SynapseConstants'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 
@@ -11,7 +14,7 @@ const cookies = new UniversalCookies()
 export const ONE_SAGE_REDIRECT_COOKIE_KEY =
   'org.sagebionetworks.cookies.redirect-after-login'
 
-export function storeRedirectURLForOneSageLogin() {
+export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
   // save current URL in a cookie that One Sage will use to send you back to the correct page
   const domainValue = window.location.hostname
     .toLowerCase()
@@ -27,9 +30,22 @@ export function storeRedirectURLForOneSageLogin() {
     domain: domainValue,
     expires: twoHoursFromNow,
   })
+  setTimeout(() => {
+    window.location.assign(href)
+  }, 10)
 }
 
 export function processRedirectURLInOneSage() {
+  // PORTALS-3299 : Indicate that we have completed the login workflow (cookie expires in a minute) to break out of a cycle
+  const expireDate = new Date()
+  expireDate.setMinutes(expireDate.getMinutes() + 1)
+  const hostname = window.location.hostname.toLowerCase()
+  cookies.set(ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY, 'true', {
+    path: '/',
+    expires: expireDate,
+    domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
+  })
+
   if (cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
     const href = cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
     cookies.remove(ONE_SAGE_REDIRECT_COOKIE_KEY)
@@ -40,15 +56,26 @@ export function processRedirectURLInOneSage() {
   return false
 }
 
+/**
+ * Returns to the route in localStorage saved when `storeLastPlace` was called,
+ * typically before jumping from an app to OneSage for authentication, or before
+ * jumping from OneSage to an external IdP (e.g. Google) for authentication.
+ *
+ * @return boolean indicating if a redirect occurred
+ */
 export function restoreLastPlace(
   history?: ReturnType<typeof useHistory>,
   fallbackRedirectUrl?: string,
-) {
+): boolean {
   // go back to original route after successful SSO login
   const originalUrl = localStorage.getItem(LAST_PLACE_LOCALSTORAGE_KEY)
   localStorage.removeItem(LAST_PLACE_LOCALSTORAGE_KEY)
   const redirectUrl = originalUrl ?? fallbackRedirectUrl
-  if (redirectUrl) {
+  if (
+    redirectUrl &&
+    window.location.href != redirectUrl &&
+    window.location.href.substring(window.location.origin.length) != redirectUrl
+  ) {
     if (history) {
       if (redirectUrl.startsWith(window.location.origin)) {
         history.replace(redirectUrl.substring(window.location.origin.length))
@@ -58,7 +85,9 @@ export function restoreLastPlace(
     } else {
       window.location.replace(redirectUrl)
     }
+    return true
   }
+  return false
 }
 
 /**

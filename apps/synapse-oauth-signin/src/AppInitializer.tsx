@@ -1,19 +1,28 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect } from 'react'
-import { ApplicationSessionManager, useFramebuster } from 'synapse-react-client'
+import {
+  ApplicationSessionManager,
+  useFramebuster,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
+import UniversalCookies from 'universal-cookie'
 
+const cookies = new UniversalCookies()
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,
 ) {
+  const accountSitePrompted =
+    cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==
+    'true' // short-lived cookie
   const urlSearchParams = new URLSearchParams(window.location.search)
-  const prompt = urlSearchParams.get('prompt')
+  const prompt = accountSitePrompted ? 'none' : urlSearchParams.get('prompt')
 
   let maxAge = undefined
   // check max age when re-establishing the session, not to auto-consent.
   const maxAgeURLParam = urlSearchParams.get('max_age')
   // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
-  if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
+  if (!accountSitePrompted && maxAgeURLParam && parseInt(maxAgeURLParam)) {
     maxAge = parseInt(maxAgeURLParam)
   }
 
@@ -26,12 +35,12 @@ function AppInitializer(
     const isDev: boolean = window.location.hostname.includes('dev')
 
     const stagingConfig = {
-      REPO: 'https://repo-staging.prod.sagebase.org/',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_STAGING_URL,
       PORTAL: 'https://staging.synapse.org/',
     }
 
     const devConfig = {
-      REPO: 'https://repo-dev.dev.sagebase.org/',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
       PORTAL: 'https://portal-dev.dev.sagebase.org/',
     }
 
