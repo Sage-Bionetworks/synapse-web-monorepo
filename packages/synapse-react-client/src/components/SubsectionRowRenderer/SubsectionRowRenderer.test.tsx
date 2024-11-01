@@ -48,8 +48,8 @@ describe('SubsectionRowRenderer rendering tests', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getAllByRole('subHeading').length).toBe(1)
-      expect(screen.getAllByRole('subHeading')[0].textContent).toBe(
+      expect(screen.getAllByRole('heading').length).toBe(1)
+      expect(screen.getAllByRole('heading')[0].textContent).toBe(
         'Catalog Number',
       )
 
@@ -75,8 +75,8 @@ describe('SubsectionRowRenderer rendering tests', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getAllByRole('subHeading').length).toBe(1)
-      expect(screen.getAllByRole('subHeading')[0].textContent).toBe(
+      expect(screen.getAllByRole('heading').length).toBe(1)
+      expect(screen.getAllByRole('heading')[0].textContent).toBe(
         'fundingAgency',
       )
 
