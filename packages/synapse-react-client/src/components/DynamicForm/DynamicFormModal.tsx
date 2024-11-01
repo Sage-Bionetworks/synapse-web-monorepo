@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
-import {
-  ConfirmationDialog,
-  DynamicForm,
-  SynapseComponents,
-} from 'synapse-react-client'
+import ConfirmationDialog from '../ConfirmationDialog'
+import { SynapseComponents } from '../..'
 import { Box } from '@mui/material'
+import DynamicForm, { DynamicFormProps } from '.'
 
-const FormModal = () => {
+type ModalProps = {
+  submitButtonText?: string
+}
+
+export type DynamicFormModalProps = DynamicFormProps & ModalProps
+
+const DynamicFormModal = ({
+  schemaUrl,
+  uiSchemaUrl,
+  postUrl,
+  submitButtonText,
+}: DynamicFormModalProps) => {
   const [open, setOpen] = useState(false)
 
   const handleClickOpen = () => {
@@ -19,10 +28,12 @@ const FormModal = () => {
 
   const form = (
     <DynamicForm
-      schemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json"
-      uiSchemaUrl="https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json"
-      postUrl="https://submit-form.com/KwZ46H4T"
-      onCustomSuccess={handleClose}
+      schemaUrl={schemaUrl}
+      uiSchemaUrl={uiSchemaUrl}
+      postUrl={postUrl}
+      onSubmit={() => {
+        handleClose()
+      }}
     />
   )
 
@@ -34,7 +45,7 @@ const FormModal = () => {
           variant="contained"
           onClick={handleClickOpen}
         >
-          Submit Observation
+          {submitButtonText}
         </SynapseComponents.WideButton>
         <ConfirmationDialog
           open={open}
@@ -54,4 +65,4 @@ const FormModal = () => {
   )
 }
 
-export default FormModal
+export default DynamicFormModal

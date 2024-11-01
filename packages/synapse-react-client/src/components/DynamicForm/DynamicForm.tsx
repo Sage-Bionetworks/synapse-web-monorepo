@@ -12,7 +12,7 @@ export type DynamicFormProps = {
   postUrl: string
   mutateFormDataBeforePost?: (formData: any) => any // allow caller to embed formdata into custom request body object
   onCancel?: () => void
-  onCustomSuccess?: () => void
+  onSubmit?: () => void
 }
 
 function DynamicForm(props: DynamicFormProps) {
@@ -22,7 +22,7 @@ function DynamicForm(props: DynamicFormProps) {
     postUrl,
     mutateFormDataBeforePost,
     onCancel,
-    onCustomSuccess,
+    onSubmit,
   } = props
   const [formData, setFormData] = useState({})
 
@@ -82,8 +82,8 @@ function DynamicForm(props: DynamicFormProps) {
     },
     onSuccess: () => {
       displayToast('Form submitted successfully!', 'success')
-      if (onCustomSuccess) {
-        onCustomSuccess()
+      if (onSubmit) {
+        onSubmit()
       }
     },
     onError: error => {

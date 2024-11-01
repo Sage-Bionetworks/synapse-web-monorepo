@@ -27,6 +27,8 @@ import {
   UserCardListRotateProps,
   UserCardProps,
   DynamicFormProps,
+  DynamicFormModalProps,
+  DynamicFormModal,
   SharePageLinkButtonProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
@@ -58,11 +60,6 @@ export type HomePageHeaderConfig = {
   HeaderSvg?: any
 }
 
-type FormModal = {
-  name: 'FormModal'
-  props: undefined
-}
-
 // Generic SynapseConfigArray Representation -- maps each component to its props
 type CardContainerLogic = {
   props: CardContainerLogicProps
@@ -87,6 +84,11 @@ type UserCard = {
 type DynamicForm = {
   name: 'DynamicForm'
   props: DynamicFormProps
+}
+
+type DynamicFormModal = {
+  name: 'DynamicFormModal'
+  props: DynamicFormModalProps
 }
 
 type Markdown = {
@@ -406,7 +408,7 @@ export type SynapseConfig = (
   | DatasetJsonLdScript
   | DynamicForm
   | SharePageLinkButton
-  | FormModal
+  | DynamicFormModal
 ) &
   Metadata
 
