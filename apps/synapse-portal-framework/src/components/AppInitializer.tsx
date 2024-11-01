@@ -24,12 +24,22 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   const oneSageURL = SynapseHookUtils.useOneSageURL()
   useEffect(() => {
     /**
-     * PORTALS-490: Set Synapse callback cookie
+     * If this is an anchor with the SRC-SIGN-IN-CLASS CSS class, then go to One Sage to sign in.
+     * In addition...
+     * PORTALS-490: Set Synapse callback cookie if the user allowed the creation of functional cookies
      * Will attempt to set a .synapse.org domain cookie that has enough information to lead the user
      * back to this portal after visiting www.synapse.org.
      */
-    function updateSynapseCallbackCookie(ev: MouseEvent) {
-      debugger
+    function globalClickHandler(ev: MouseEvent) {
+      if (
+        ev.target instanceof HTMLButtonElement ||
+        ev.target instanceof HTMLAnchorElement
+      ) {
+        const el = ev.target as HTMLElement
+        if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
+          storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
+        }
+      }
       if (!cookies || !cookiePreferences.functionalAllowed) {
         return
       }
@@ -52,15 +62,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
           }
         }
       }
-      if (
-        ev.target instanceof HTMLButtonElement ||
-        ev.target instanceof HTMLAnchorElement
-      ) {
-        const el = ev.target as HTMLElement
-        if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
-        }
-      }
+
       let name = ''
       let icon = ''
       const logoImgElement = document.querySelector('#header-logo-image')
@@ -96,12 +98,11 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
         maxAge: 20,
       })
     }
-    debugger
-    window.addEventListener('click', updateSynapseCallbackCookie)
+    window.addEventListener('click', globalClickHandler)
 
     // Clean up the global listener on component unmount.
     return () => {
-      window.removeEventListener('click', updateSynapseCallbackCookie)
+      window.removeEventListener('click', globalClickHandler)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [cookiePreferences])
