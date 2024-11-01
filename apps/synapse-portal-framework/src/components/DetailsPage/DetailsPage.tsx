@@ -59,17 +59,27 @@ function HeadlineWithLink(props: {
         setShowLink(false)
       }}
     >
-      <Typography variant="sectionTitle" role="heading">
+      <Typography
+        variant="sectionTitle"
+        role="heading"
+        sx={{ display: 'flex' }}
+      >
         {title}
         {helpText && (
-          <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
+          <Box
+            sx={{
+              fontSize: '14px',
+              display: 'inline-block',
+              ml: '5px',
+              mt: '1px',
+            }}
+          >
             <SynapseComponents.HelpPopover markdownText={helpText} />
           </Box>
         )}
         <span
           style={{
-            position: 'absolute',
-            marginTop: '-1px',
+            marginTop: '-2px',
             ...(showLink ? { display: 'inline' } : { display: 'none' }),
           }}
         >
