@@ -222,7 +222,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
         <QueryWrapperErrorBoundary>
           {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
           {filterColumnName && (
-            <ColumnFilter filterColumnName={props.filterColumnName} />
+            <ColumnFilter filterColumnName={filterColumnName} />
           )}
           <RowSetView
             cardConfiguration={props}
