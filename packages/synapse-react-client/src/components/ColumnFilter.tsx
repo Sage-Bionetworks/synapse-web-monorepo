@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useQueryContext } from './QueryContext/QueryContext'
 import Select, {
   components,
@@ -57,16 +57,6 @@ const ColumnFilter: React.FC<FilterProps> = props => {
       value,
       label: value,
     })) ?? []
-
-  useEffect(() => {
-    executeQueryRequest(request => {
-      const currentFilters = currentQuery.query.additionalFilters || []
-
-      request.query.additionalFilters = currentFilters
-
-      return request
-    })
-  }, [])
 
   const onChange = (values: MultiValue<{ value: string; label: string }>) => {
     const selectedValues = values.map(option => option.value)

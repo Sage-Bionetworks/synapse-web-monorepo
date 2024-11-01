@@ -4,15 +4,9 @@ import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
 import { Dialog, DialogContent } from '@mui/material'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
-import {
-  ColumnSingleValueFilterOperator,
-  Row,
-} from '@sage-bionetworks/synapse-types'
-import QueryWrapper from '../QueryWrapper'
-import QueryVisualizationWrapper from '../QueryVisualizationWrapper'
+import { Row } from '@sage-bionetworks/synapse-types'
 import CardContainerLogic from '../CardContainerLogic'
 import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
-import { SynapseConstants } from '../../utils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -240,9 +234,6 @@ const TimelinePhase = ({
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
 
-  const url =
-    new URLSearchParams(window.location.search).get('resourceId') || ''
-
   const observationIds = selectedRows
     .map(row => row.values[0]) // Get observationId - identifier but not all rows have this
     .filter(observationId => observationId)
@@ -298,36 +289,12 @@ const TimelinePhase = ({
         open={selectedRows && selectedRows.length > 0}
       >
         <DialogContent>
-          <QueryWrapper
-            initQueryRequest={{
-              concreteType:
-                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-              entityId: 'syn51735464',
-              partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-              query: {
-                additionalFilters: [
-                  {
-                    concreteType:
-                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-                    columnName: 'resourceId',
-                    operator: ColumnSingleValueFilterOperator.LIKE,
-                    values: [`%${url}%`],
-                  },
-                ],
-                limit: 25,
-                sql: sql,
-              },
-            }}
-          >
-            <QueryVisualizationWrapper>
-              <CardContainerLogic
-                filterColumnName="observationType"
-                sql={sql}
-                type={OBSERVATION_CARD}
-                initialLimit={3}
-              />
-            </QueryVisualizationWrapper>
-          </QueryWrapper>
+          <CardContainerLogic
+            filterColumnName="observationType"
+            sql={sql}
+            type={OBSERVATION_CARD}
+            initialLimit={3}
+          />
         </DialogContent>
       </Dialog>
     </div>
