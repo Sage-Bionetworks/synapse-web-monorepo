@@ -170,6 +170,7 @@ function _CardContainer(props: CardContainerProps) {
         {!title && unitDescription && (
           <TotalQueryResults frontText={'Displaying'} />
         )}
+        {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
       </Box>
     </>
