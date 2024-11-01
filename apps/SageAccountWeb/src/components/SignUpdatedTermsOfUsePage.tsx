@@ -74,15 +74,24 @@ export function SignUpdatedTermsOfUsePage() {
   return (
     <StyledOuterContainer className="SignUpdatedTermsOfUsePage">
       <Container sx={{ maxWidth: '800px' }}>
-        <Paper>
-          <GovernanceMarkdownGithub
-            repoOwner="Sage-Bionetworks"
-            repoName="Sage-Governance-Documents"
-            filePath="Terms.md"
-          />
+        <Paper sx={{ p: '30px' }}>
+          <Box
+            sx={{
+              height: '65vh',
+              p: '10px',
+              overflowY: 'auto',
+            }}
+          >
+            <GovernanceMarkdownGithub
+              repoOwner="Sage-Bionetworks"
+              repoName="Sage-Governance-Documents"
+              filePath="Terms.md"
+            />
+          </Box>
+
           <FormControlLabel
             control={<Checkbox />}
-            sx={{ p: '30px 45px' }}
+            sx={{ p: '30px 45px 0px 45px' }}
             label="I agree to the terms of service"
             checked={isCheckboxSelected}
             onChange={() => {
