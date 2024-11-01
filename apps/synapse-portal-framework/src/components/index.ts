@@ -26,7 +26,6 @@ import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloa
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 import SynapseComponentCollapse from './SynapseComponentCollapse'
 import SurveyToast from './SurveyToast'
-import { WideButton } from 'synapse-react-client'
 
 const PortalComponents = {
   RouteControlWrapper,
@@ -57,7 +56,6 @@ const PortalComponents = {
   ChallengeDataDownloadWrapper,
   SynapseComponentCollapse,
   SurveyToast,
-  WideButton,
 }
 
 export default PortalComponents
