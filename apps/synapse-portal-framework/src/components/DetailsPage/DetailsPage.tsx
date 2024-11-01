@@ -71,7 +71,6 @@ function HeadlineWithLink(props: {
               fontSize: '14px',
               display: 'inline-block',
               ml: '5px',
-              mt: '1px',
             }}
           >
             <SynapseComponents.HelpPopover markdownText={helpText} />
@@ -79,7 +78,7 @@ function HeadlineWithLink(props: {
         )}
         <span
           style={{
-            marginTop: '-2px',
+            marginTop: '-3px',
             ...(showLink ? { display: 'inline' } : { display: 'none' }),
           }}
         >
