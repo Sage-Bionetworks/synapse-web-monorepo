@@ -1,4 +1,3 @@
-import { SynapseClient } from '@sage-bionetworks/synapse-client'
 import { useMutation } from '@tanstack/react-query'
 import { allowNotFoundError } from '../../../synapse-client/SynapseClientUtils'
 import { useCreateEntity } from '../../../synapse-queries/index'
