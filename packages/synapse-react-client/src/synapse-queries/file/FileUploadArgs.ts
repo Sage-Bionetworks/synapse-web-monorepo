@@ -1,3 +1,5 @@
+import { ProgressCallback } from '../../synapse-client/SynapseClient'
+
 export type FileUploadArgs = {
   readonly blob: Blob
   readonly fileName: string
