@@ -156,7 +156,6 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
           columnGap: '80px',
           flexDirection: { xs: 'column', lg: undefined },
           gridTemplateColumns: { lg: '40% 60%' },
-          height: '100vh',
         }}
       >
         <Box
