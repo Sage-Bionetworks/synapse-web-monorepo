@@ -1,5 +1,5 @@
 import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
-import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook as _renderHook } from '@testing-library/react'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   s3UploadErrorHandler,
