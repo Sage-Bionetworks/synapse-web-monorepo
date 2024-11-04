@@ -2105,7 +2105,7 @@ export const uploadFile = (
   )
 }
 
-export const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
+const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
   // code taken from md5 example from library
   return new Promise((resolve, reject) => {
     const blobSlice = File.prototype.slice,

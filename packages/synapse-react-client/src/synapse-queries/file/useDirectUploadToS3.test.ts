@@ -3,7 +3,6 @@ import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
 import { act, renderHook as _renderHook } from '@testing-library/react'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import * as UploadToS3Module from './UploadToS3'
 import { useDirectUploadToS3 } from './useDirectUploadToS3'
@@ -20,9 +19,6 @@ jest.mock('@aws-sdk/lib-storage', () => {
 })
 
 const mockUpload = jest.mocked(Upload)
-
-// calculateMd5 results in an error trying to read the Blob data, likely an issue with Jest/JSDOM
-jest.spyOn(SynapseClient, 'calculateMd5').mockResolvedValue('fakeMd5')
 
 const uploadToS3Spy = jest.spyOn(UploadToS3Module, 'uploadToS3')
 const createExternalFileHandleSpy = jest.spyOn(
