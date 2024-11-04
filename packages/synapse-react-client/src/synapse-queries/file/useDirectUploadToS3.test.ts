@@ -52,11 +52,6 @@ describe('useDirectUploadToS3', () => {
     jest.clearAllMocks()
   })
 
-  // Note: This test is skipped because it fails with the following error:
-  // TypeError: Failed to execute 'readAsArrayBuffer' on 'FileReader': parameter 1 is not of type 'Blob'.
-  // The reason for this is because:
-  //    1. We have to polyfill Blob for the AWS SDK to work in JSDOM.
-  //    2. Our whatwg-fetch polyfill .
   it('uploads a file to s3 and creates a file handle', async () => {
     const storageEndpoint = 'https://my-fake.endpoint.synapse/storage/v1'
     const blob = new Blob(['test'], { type: 'text/plain' })
