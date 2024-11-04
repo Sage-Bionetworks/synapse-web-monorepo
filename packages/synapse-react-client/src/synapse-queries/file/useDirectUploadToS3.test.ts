@@ -1,16 +1,25 @@
+import { Upload } from '@aws-sdk/lib-storage'
 import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
 import { act, renderHook as _renderHook } from '@testing-library/react'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import {
-  s3UploadErrorHandler,
-  s3UploadSuccessHandler,
-  storageEndpoint,
-} from '../../mocks/msw/handlers/aws/s3Mock'
 import { server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { useDirectUploadToS3 } from './useDirectUploadToS3'
 import * as UploadToS3Module from './UploadToS3'
+import { useDirectUploadToS3 } from './useDirectUploadToS3'
+
+jest.mock('@aws-sdk/lib-storage', () => {
+  return {
+    Upload: jest.fn().mockImplementation(() => {
+      return {
+        on: jest.fn(),
+        done: jest.fn(),
+      }
+    }),
+  }
+})
+
+const mockUpload = jest.mocked(Upload)
 
 // calculateMd5 results in an error trying to read the Blob data, likely an issue with Jest/JSDOM
 jest.spyOn(SynapseClient, 'calculateMd5').mockResolvedValue('fakeMd5')
@@ -45,11 +54,15 @@ describe('useDirectUploadToS3', () => {
   afterAll(() => server.close())
   beforeEach(() => {
     jest.clearAllMocks()
-
-    server.use(s3UploadSuccessHandler)
   })
 
+  // Note: This test is skipped because it fails with the following error:
+  // TypeError: Failed to execute 'readAsArrayBuffer' on 'FileReader': parameter 1 is not of type 'Blob'.
+  // The reason for this is because:
+  //    1. We have to polyfill Blob for the AWS SDK to work in JSDOM.
+  //    2. Our whatwg-fetch polyfill .
   it('uploads a file to s3 and creates a file handle', async () => {
+    const storageEndpoint = 'https://my-fake.endpoint.synapse/storage/v1'
     const blob = new Blob(['test'], { type: 'text/plain' })
     const fileName = 'test.json'
     const contentType = 'application/json'
@@ -95,8 +108,15 @@ describe('useDirectUploadToS3', () => {
   })
 
   it('does not create a file handle when s3 upload fails', async () => {
-    server.use(s3UploadErrorHandler)
+    // @ts-expect-error - Only implement required properties
+    mockUpload.mockImplementation(() => {
+      return {
+        on: jest.fn(),
+        done: jest.fn().mockRejectedValue(new Error('Access Denied')),
+      }
+    })
 
+    const storageEndpoint = 'https://my-fake.endpoint.synapse/storage/v1'
     const blob = new Blob(['test'], { type: 'text/plain' })
     const fileName = 'test.json'
     const contentType = 'application/json'

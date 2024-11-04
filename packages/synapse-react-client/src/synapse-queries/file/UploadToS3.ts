@@ -27,7 +27,7 @@ export async function uploadToS3(
     forcePathStyle: true,
   })
 
-  const parallelUploads3 = new Upload({
+  const upload = new Upload({
     client: s3Client,
     params: {
       Bucket: bucketName,
@@ -36,10 +36,10 @@ export async function uploadToS3(
       Body: blob,
     },
     abortController,
-    leavePartsOnError: false, // optional manually handle dropped parts
+    leavePartsOnError: true,
   })
 
-  parallelUploads3.on('httpUploadProgress', progress => {
+  upload.on('httpUploadProgress', progress => {
     if (progressCallback) {
       progressCallback({
         value: progress.loaded || 0,
@@ -48,5 +48,5 @@ export async function uploadToS3(
     }
   })
 
-  await parallelUploads3.done()
+  await upload.done()
 }
