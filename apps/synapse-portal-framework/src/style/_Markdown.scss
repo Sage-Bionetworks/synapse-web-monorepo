@@ -77,6 +77,10 @@
   line-height: 23px;
 }
 
+.SubsectionRowRenderer .markdown p {
+  padding-bottom: 0;
+}
+
 .markdown p a {
   font-weight: 700;
 }
