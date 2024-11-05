@@ -112,7 +112,7 @@ export function getUseMutationMock<TData, TError, TVariables>(
     isPaused: false,
     isSuccess: false,
     mutate: jest.fn(),
-    mutateAsync: jest.fn(),
+    mutateAsync: jest.fn().mockResolvedValue(data),
     reset: jest.fn(),
     status: 'idle',
     variables: undefined,
