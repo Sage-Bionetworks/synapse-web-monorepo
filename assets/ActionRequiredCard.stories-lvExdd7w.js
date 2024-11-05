@@ -1,0 +1,14 @@
+import{j as t}from"./jsx-runtime-DoxjgJx5.js";import{A as s}from"./ActionRequiredCard-CRDNAY88.js";import{W as d}from"./WideButton-QuIFsaHo.js";import{E as c}from"./SynapseConstants-xMHIvvjg.js";import{T as u}from"./Typography-BmBIKDjf.js";import{B as g}from"./Button-BfexmcsD.js";import"./index-Cu9bd8lq.js";import"./Icon-DCMV92Jf.js";import"./SortDown-BcrMxdhq.js";import"./createSvgIcon-WkAWHJz7.js";import"./createTheme-BJ_1npSs.js";import"./index-GEGPABih.js";import"./styled-D9q5EqxT.js";import"./IconSvg-Crqavfxo.js";import"./Tooltip-DkphrB3H.js";import"./index-BBhqBz5p.js";import"./utils-Dbx_liB_.js";import"./TransitionGroupContext-C4KIfRep.js";import"./useForkRef-Bm_QQ74L.js";import"./index-BlO3JfGB.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DXf4-ciu.js";import"./mergeSlotProps-CPIGGwa7.js";import"./isHostComponent-DVu5iVWx.js";import"./useControlled-JEQ1v-P8.js";import"./useId-g68bhPgm.js";import"./useIsFocusVisible-Lp1_y5xp.js";import"./LayersTwoTone-BhMk6WF3.js";import"./ErrorOutlined-pfr0v5ro.js";import"./GetAppTwoTone-BNLhvj0K.js";import"./InfoOutlined-oEfvb45W.js";import"./CheckCircleTwoTone-4o0y_0yc.js";import"./Paper-B-RKd0p3.js";import"./Box-BXEUN41W.js";import"./Skeleton-Bkch6hEL.js";import"./OrientationBanner-CRHvrKf4.js";import"./FullWidthAlert-D_YBTMJr.js";import"./Alert-B_MCCiJI.js";import"./IconButton-CLlNv19f.js";import"./ButtonBase-BH4d2aSg.js";import"./Stack-ERnuki-b.js";import"./AlertTitle-BMewjDNd.js";import"./ClickAwayListener-Ba-YFlDA.js";const it={title:"Download/ActionRequiredCard",component:s,tags:["autodocs"],argTypes:{actionNode:{options:["Button","Button with text (Sharing Settings)"],mapping:{Button:t.jsx(d,{variant:"contained",children:"Start"}),"Button with text (Sharing Settings)":t.jsxs(t.Fragment,{children:[t.jsx(u,{variant:"smallText1",sx:{color:"grey.700"},children:"Contact an administrator to request download permission"}),t.jsx(g,{variant:"outlined",children:"View Sharing Settings"})]})}}}},o={args:{isLoading:!0}},r={args:{isLoading:!1,title:"The title of the card",description:"The description of the card",actionNode:"Button",iconType:c,count:42}};var i,e,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    isLoading: true
+  }
+}`,...(a=(e=o.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var n,p,m;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isLoading: false,
+    title: 'The title of the card',
+    description: 'The description of the card',
+    actionNode: 'Button',
+    iconType: EASY_DIFFICULTY,
+    count: 42
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const et=["Loading","Card"];export{r as Card,o as Loading,et as __namedExportsOrder,it as default};
