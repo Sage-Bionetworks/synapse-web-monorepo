@@ -99,9 +99,7 @@ export function getUseQueryErrorMock<TError>(
   }
 }
 
-export function getUseMutationMock<TData, TError, TVariables>(
-  data: TData,
-): UseMutationResult<TData, TError, TVariables> {
+export function getUseMutationMock<TData, TError, TVariables>(data: TData) {
   return {
     context: undefined,
     data: undefined,
@@ -119,5 +117,5 @@ export function getUseMutationMock<TData, TError, TVariables>(
     failureReason: null,
     isPending: false,
     submittedAt: 0,
-  }
+  } satisfies UseMutationResult<TData, TError, TVariables>
 }
