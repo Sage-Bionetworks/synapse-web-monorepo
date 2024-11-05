@@ -1,4 +1,11 @@
 import DynamicForm from './DynamicForm'
+import DynamicFormModal from './DynamicFormModal'
 import type { DynamicFormProps } from './DynamicForm'
-export { DynamicForm, DynamicFormProps }
+import type { DynamicFormModalProps } from './DynamicFormModal'
+export {
+  DynamicForm,
+  DynamicFormModal,
+  DynamicFormProps,
+  DynamicFormModalProps,
+}
 export default DynamicForm
