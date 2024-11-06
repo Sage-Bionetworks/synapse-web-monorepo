@@ -131,6 +131,9 @@ export function useTrackFileUploads() {
     setStatus(file, 'PAUSED')
   }
 
+  /**
+   * Removes the file from the list if the upload state is CANCELED_BY_USER or FAILED. Otherwise, a noop.
+   */
   function removeUpload(file: File) {
     setTrackedUploadProgress(prev => {
       const newMap = new Map(prev.entries())
