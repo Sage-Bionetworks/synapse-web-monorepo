@@ -94,6 +94,7 @@ import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
 import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
+import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -189,6 +190,7 @@ const SynapseComponents = {
   RejectProfileValidationRequestModal,
   GovernanceMarkdownGithub,
   MarkdownGithubLatestTag,
+  ProjectDataAvailability,
 }
 
 // Include the version in the build
