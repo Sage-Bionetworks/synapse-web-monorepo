@@ -3,20 +3,21 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ColumnFilter from './ColumnFilter'
 import syn20337467Json from '../../../src/mocks/query/syn20337467.json'
-import { useQuery } from '@tanstack/react-query'
-import { useQueryContext } from '../QueryContext/QueryContext'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
+
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
+}))
 
 jest.mock('../QueryContext/QueryContext', () => ({
   useQueryContext: jest.fn(),
 }))
-jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(),
-  QueryClient: jest.fn().mockImplementation(() => ({
-    queryCache: { clear: jest.fn() },
-    setQueryData: jest.fn(),
-    getQueryData: jest.fn(),
-  })),
-}))
+
+const mockUseQueryContext = useQueryContext as jest.MockedFunction<
+  () => Partial<QueryContextType>
+>
+const mockUseQuery = jest.mocked(useQuery)
 
 const data = syn20337467Json as QueryResultBundle
 
@@ -26,19 +27,24 @@ describe('ColumnFilter tests', () => {
   const removeSelectedFacet = jest.fn()
 
   beforeEach(() => {
-    ;(useQueryContext as jest.Mock).mockReturnValue({
+    mockUseQueryContext.mockReturnValue({
       executeQueryRequest,
       addValueToSelectedFacet,
       removeSelectedFacet,
+      queryMetadataQueryOptions: {
+        queryKey: ['queryMetadataQueryOptions'],
+        queryFn: jest.fn().mockResolvedValue(data),
+      },
       getCurrentQueryRequest: jest.fn().mockReturnValue({
         query: {
           selectedFacets: [{ columnName: 'program', facetValues: ['AMP-AD'] }],
         },
       }),
     })
-    ;(useQuery as jest.Mock).mockReturnValue({
+
+    mockUseQuery.mockReturnValue({
       data: data,
-    })
+    } as UseQueryResult<QueryResultBundle>)
   })
 
   const openDropdown = () => {
@@ -46,22 +52,14 @@ describe('ColumnFilter tests', () => {
     fireEvent.click(openIcon)
   }
 
-  const ColumnFilterComponent = (
-    <ColumnFilter
-      filterColumnName="program"
-      removeSelectedFacet={removeSelectedFacet}
-      addValueToSelectedFacet={addValueToSelectedFacet}
-    />
-  )
-
-  it('renders the ColumnFilter component correctly', () => {
-    render(ColumnFilterComponent)
-
-    expect(screen.getByTestId('column-filter')).toBeInTheDocument()
-  })
+  const props = {
+    filterColumnName: 'program',
+    removeSelectedFacet: removeSelectedFacet,
+    addValueToSelectedFacet: addValueToSelectedFacet,
+  }
 
   it('displays the correct filter options based on query metadata', () => {
-    render(ColumnFilterComponent)
+    render(<ColumnFilter {...props} />)
 
     openDropdown()
 
@@ -71,7 +69,7 @@ describe('ColumnFilter tests', () => {
   })
 
   it('calls addValueToSelectedFacet on filter value change', async () => {
-    render(ColumnFilterComponent)
+    render(<ColumnFilter {...props} />)
 
     openDropdown()
 
@@ -89,7 +87,7 @@ describe('ColumnFilter tests', () => {
   })
 
   it('calls removeSelectedFacet when a selected option is deselected', async () => {
-    render(ColumnFilterComponent)
+    render(<ColumnFilter {...props} />)
 
     openDropdown()
 
@@ -104,20 +102,17 @@ describe('ColumnFilter tests', () => {
   })
 
   it('no facets available', () => {
-    ;(useQuery as jest.Mock).mockReturnValueOnce({
+    mockUseQuery.mockReturnValueOnce({
       data: { facets: [] },
-    })
+    } as UseQueryResult<unknown, unknown>)
 
     render(<ColumnFilter filterColumnName="dataType" />)
-
-    const columnFilterDiv = screen.getByTestId('column-filter')
-    expect(columnFilterDiv).toBeInTheDocument()
 
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
   })
 
   it('selected value is a chip', () => {
-    render(ColumnFilterComponent)
+    render(<ColumnFilter {...props} />)
 
     const chipLabel = screen.getByText('AMP-AD')
     expect(chipLabel).toHaveClass('MuiChip-label')

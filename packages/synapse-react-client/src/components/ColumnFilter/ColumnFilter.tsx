@@ -5,16 +5,11 @@ import {
   FacetColumnValuesRequest,
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
-import { Autocomplete, TextField, Box } from '@mui/material'
+import { Autocomplete, TextField } from '@mui/material'
 import { getCorrespondingSelectedFacet } from '../../utils/functions/queryUtils'
 
 export type FilterProps = {
-  filterColumnName?: string
-  addValueToSelectedFacet?: (
-    facet: { columnName: string },
-    value: string,
-  ) => void
-  removeSelectedFacet?: (facet: { columnName: string }) => void
+  filterColumnName: string
 }
 
 function ColumnFilter(props: FilterProps) {
@@ -29,9 +24,6 @@ function ColumnFilter(props: FilterProps) {
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const { filterColumnName } = props
 
-  // const addValueToSelectedFacet = queryContext.addValueToSelectedFacet
-  // const addValueToSelectedFacet = queryContext.removeSelectedFacet
-
   const currentQuery = getCurrentQueryRequest()
 
   const activeFacet = (queryMetadata?.facets ?? []).find(
@@ -42,7 +34,7 @@ function ColumnFilter(props: FilterProps) {
   const filterOptions = activeFacet?.facetValues.map(({ value }) => value) ?? []
 
   const selectedFacetFromQuery = getCorrespondingSelectedFacet(
-    { columnName: filterColumnName || '' },
+    { columnName: filterColumnName },
     currentQuery.query.selectedFacets,
   ) as FacetColumnValuesRequest | undefined
 
@@ -52,7 +44,7 @@ function ColumnFilter(props: FilterProps) {
     event: React.SyntheticEvent,
     values: string[], // New value for the selected options
   ) => {
-    const facetIdentifier = { columnName: filterColumnName || '' }
+    const facetIdentifier = { columnName: filterColumnName }
 
     removeSelectedFacet(facetIdentifier)
 
@@ -62,7 +54,7 @@ function ColumnFilter(props: FilterProps) {
   }
 
   return (
-    <Box data-testid="column-filter">
+    <div>
       {filterOptions.length > 0 && (
         <Autocomplete
           multiple
@@ -74,7 +66,7 @@ function ColumnFilter(props: FilterProps) {
           )}
         />
       )}
-    </Box>
+    </div>
   )
 }
 
