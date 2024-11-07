@@ -4,7 +4,10 @@ import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
 import { Dialog, DialogContent } from '@mui/material'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
-import { Row } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import CardContainerLogic from '../CardContainerLogic'
 import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
 
@@ -200,6 +203,7 @@ const TimelinePhase = ({
   schema,
   widthPx,
 }: TimelinePhaseProps) => {
+  const observationsSql = 'SELECT * FROM syn51735464'
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)
@@ -234,30 +238,7 @@ const TimelinePhase = ({
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
 
-  const observationIds = selectedRows
-    .map(row => row.values[0]) // Get observationId - identifier but not all rows have this
-    .filter(observationId => observationId)
-    .map(observationId => `'${observationId}'`)
-
-  const observationTexts = selectedRows
-    .filter(row => !row.values[0]) // Only take rows without observationId
-    .map(row => row.values[4]) // Get observationText - all rows have this
-    .filter(text => text)
-    .map(text => `'${text}'`)
-
-  let sql = ''
-
-  if (!observationIds.length) {
-    sql = `SELECT * FROM syn51735464
-    WHERE observationText IN (${observationTexts.join(', ')})`
-  } else {
-    sql = `SELECT * FROM syn51735464
-    WHERE observationId IN (${observationIds.join(', ')})${
-      observationTexts.length > 0
-        ? ` OR observationText IN (${observationTexts.join(', ')})`
-        : ''
-    }`
-  }
+  const selectedRowIds = selectedRows.map(row => row.rowId!)
 
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
@@ -291,7 +272,10 @@ const TimelinePhase = ({
         <DialogContent>
           <CardContainerLogic
             filterColumnName="observationType"
-            sql={sql}
+            sql={observationsSql}
+            searchParams={{ ['ROW_ID']: selectedRowIds.map(String).join(',') }}
+            sqlOperator={ColumnSingleValueFilterOperator.IN}
+            lockedColumn={{ columnName: 'ROW_ID' }}
             type={OBSERVATION_CARD}
             initialLimit={3}
           />

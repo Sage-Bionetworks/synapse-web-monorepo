@@ -23,7 +23,8 @@ import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { ReleaseCardConfig } from '../ReleaseCard'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import ColumnFilter from '../ColumnFilter'
+import ColumnFilter from '../ColumnFilter/ColumnFilter'
+import { LockedColumn } from '../../utils'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -159,6 +160,7 @@ export type CardContainerLogicProps = {
   sql: string
   sortConfig?: SortConfiguration
   filterColumnName?: string
+  lockedColumn?: LockedColumn
   initialLimit?: number
 } & CardConfiguration &
   Pick<

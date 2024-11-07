@@ -102,59 +102,55 @@ function _CardContainer(props: CardContainerProps) {
     schema[element.name] = index
   })
 
-  const getPropsForCard = (rowData: Row, index: number) => ({
-    key: JSON.stringify(rowData.values),
-    type,
-    schema,
-    isHeader,
-    secondaryLabelLimit,
-    rowId: rowData.rowId ?? index,
-    data: rowData.values,
-    selectColumns: rowSet.headers,
-    columnModels: queryMetadata.columnModels,
-    tableEntityConcreteType: tableEntityConcreteType[0]?.type,
-    tableId: rowSet.tableId,
-    queryContext,
-    queryVisualizationContext,
-    ...rest,
-  })
-
-  const renderCards = (rows: any) =>
-    rows.length ? (
-      rows.map((rowData: any, index: number) => (
-        <Card
-          key={rowData.rowId ?? index}
-          propsToPass={getPropsForCard(rowData, index)}
-          type={type}
-        />
-      ))
+  let cards
+  if (type === MEDIUM_USER_CARD) {
+    // Hard coding ownerId as a column name containing the user profile ownerId
+    // for each row, grab the column with the ownerId
+    const userIdColumnIndex = rowSet.headers.findIndex(
+      el => el.columnType === ColumnTypeEnum.USERID,
+    )
+    if (userIdColumnIndex === -1) {
+      throw Error(
+        'Type MEDIUM_USER_CARD specified but no columnType USERID found',
+      )
+    }
+    const listIds = dataRows.map(el => el.values[userIdColumnIndex])
+    cards = (
+      <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
+    )
+  } else {
+    // render the cards
+    cards = dataRows.length ? (
+      dataRows.map((rowData: Row, index) => {
+        const key = JSON.stringify(rowData.values)
+        const propsForCard = {
+          key,
+          type,
+          schema,
+          isHeader,
+          secondaryLabelLimit,
+          rowId: rowData.rowId,
+          data: rowData.values,
+          selectColumns: rowSet.headers,
+          columnModels: queryMetadata.columnModels,
+          tableEntityConcreteType:
+            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+          tableId: rowSet.tableId,
+          queryContext: queryContext,
+          queryVisualizationContext,
+          ...rest,
+        }
+        return (
+          <Card
+            key={rowData.rowId ?? index}
+            propsToPass={propsForCard}
+            type={type}
+          />
+        )
+      })
     ) : (
       <></>
     )
-
-  let cards
-  switch (type) {
-    case MEDIUM_USER_CARD: {
-      // Hard coding ownerId as a column name containing the user profile ownerId
-      // for each row, grab the column with the ownerId
-      const userIdColumnIndex = rowSet.headers.findIndex(
-        el => el.columnType === ColumnTypeEnum.USERID,
-      )
-      if (userIdColumnIndex === -1) {
-        throw Error(
-          'Type MEDIUM_USER_CARD specified but no columnType USERID found',
-        )
-      }
-      const listIds = dataRows.map(el => el.values[userIdColumnIndex])
-      cards = (
-        <UserCardList rowSet={rowSet} list={listIds} size={MEDIUM_USER_CARD} />
-      )
-      break
-    }
-
-    default:
-      cards = renderCards(dataRows)
-      break
   }
 
   const isReleaseCardMediumList =

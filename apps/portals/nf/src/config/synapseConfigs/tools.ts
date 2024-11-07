@@ -254,6 +254,17 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
         },
+        // {
+        //   name: 'CardContainerLogic',
+        //   props: {
+        //     sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,
+        //     type: SynapseConstants.OBSERVATION_CARD,
+        //     limit: 3,
+        //   },
+        //   title: 'Natural History Observations',
+        //   tableSqlKeys: ['resourceId'],
+        //   columnName: 'resourceId',
+        // },
         {
           name: 'CardContainerLogic',
           props: {
