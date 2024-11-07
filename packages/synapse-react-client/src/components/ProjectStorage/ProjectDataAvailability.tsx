@@ -20,7 +20,6 @@ export const ProjectDataAvailability: React.FunctionComponent<
   const { data } = useProjectStorageUsage(projectId!, {
     enabled: !!projectId && isLoggedIn,
   })
-
   const projectDataUsageArray = data?.locations.filter(
     v => parseInt(v.storageLocationId) == SYNAPSE_STORAGE_LOCATION_ID,
   )
@@ -90,7 +89,11 @@ export const ProjectDataAvailability: React.FunctionComponent<
                 sx={{ backgroundColor: '#EDC766', borderRadius: '50px' }}
               ></Box>
             </Box>
-            <Typography variant="body1" fontSize="12px">
+            <Typography
+              variant="body1"
+              fontSize="12px"
+              sx={{ whiteSpace: 'nowrap' }}
+            >
               {friendlyMaxAllowedFileBytes}
             </Typography>
           </Box>
