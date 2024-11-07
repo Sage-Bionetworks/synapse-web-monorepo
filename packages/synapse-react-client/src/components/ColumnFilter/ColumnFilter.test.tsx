@@ -60,7 +60,7 @@ describe('ColumnFilter tests', () => {
     expect(screen.getByTestId('column-filter')).toBeInTheDocument()
   })
 
-  it('displays the correct filter options based on query metadata', async () => {
+  it('displays the correct filter options based on query metadata', () => {
     render(ColumnFilterComponent)
 
     openDropdown()
@@ -103,7 +103,7 @@ describe('ColumnFilter tests', () => {
     })
   })
 
-  it('no facets available', async () => {
+  it('no facets available', () => {
     ;(useQuery as jest.Mock).mockReturnValueOnce({
       data: { facets: [] },
     })
