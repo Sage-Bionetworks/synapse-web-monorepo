@@ -402,6 +402,7 @@ const routes: GenericRoute[] = [
         synapseConfigArray: [
           {
             name: 'ELContributeYourData',
+            props: undefined,
           },
         ],
       },
