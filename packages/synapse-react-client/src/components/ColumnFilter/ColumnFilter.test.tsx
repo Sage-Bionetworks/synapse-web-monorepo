@@ -41,7 +41,7 @@ describe('ColumnFilter tests', () => {
     })
   })
 
-  const openDropdown = async () => {
+  const openDropdown = () => {
     const openIcon = screen.getByTitle('Open')
     fireEvent.click(openIcon)
   }
