@@ -62,6 +62,9 @@ export const ProjectDataAvailability: React.FunctionComponent<
           Data Availability{' '}
         </Typography>{' '}
         <HelpPopover
+          containerSx={{
+            fontSize: '12px',
+          }}
           markdownText="Hosting Plan Options:
 - Basic Plan: Free, for sharing small datasets (<100GB) with self-service setup. No direct support.
 - Self-Managed Plan: Ideal for data longevity, FAIR principles, and NIH compliance. Includes consultation services and data access management tools.
