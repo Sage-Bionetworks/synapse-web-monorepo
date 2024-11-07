@@ -8,13 +8,12 @@ const ELContributeYourData: React.FC = () => {
     <Box
       sx={{
         backgroundColor: '#5BA998',
-        height: '300px',
+        height: '250px',
         textAlign: 'left',
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        padding: 2,
       }}
     >
       <Box
@@ -24,9 +23,8 @@ const ELContributeYourData: React.FC = () => {
           height: '100%',
           backgroundImage: `url(${backgroundSpotsLeft})`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'upper left',
-          backgroundSize: '125%',
-          opacity: 0.5,
+          backgroundPosition: 'top left',
+          backgroundSize: '100%',
           zIndex: 0,
           overflow: 'clip',
         }}
@@ -34,22 +32,25 @@ const ELContributeYourData: React.FC = () => {
       <Box
         sx={{
           flex: '1 1 auto',
-          paddingLeft: 2,
           zIndex: 1,
           textAlign: 'center',
+          paddingTop: '100px',
+          paddingBottom: '100px',
         }}
       >
         <Box
           sx={{
             width: '90%',
-            height: '5px',
+            height: '3px',
             backgroundColor: 'white',
             opacity: 0.5,
             marginBottom: 2,
             margin: '0 auto',
           }}
         />
-        <h1 style={{ color: 'white' }}>Contribute Your Data</h1>
+        <h1 style={{ color: 'white', fontFamily: 'serif' }}>
+          Contribute Your Data
+        </h1>
         <p style={{ color: 'white' }}>
           If you are a funded portal contributor and ready to upload data to the
           ELITE Portal, you can begin the data submission process by contacting
@@ -60,7 +61,20 @@ const ELContributeYourData: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button variant="contained">Start Contributing</Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#5BA998',
+              border: '1px solid white',
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: '#5BA998',
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Start Contributing
+          </Button>
         </Link>
       </Box>
       <Box
@@ -71,8 +85,7 @@ const ELContributeYourData: React.FC = () => {
           backgroundImage: `url(${backgroundSpotsRight})`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'bottom right',
-          backgroundSize: '125%',
-          opacity: 0.5,
+          backgroundSize: '100%',
           zIndex: 0,
           overflow: 'clip',
         }}
