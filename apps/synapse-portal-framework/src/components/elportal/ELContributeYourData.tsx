@@ -48,10 +48,23 @@ const ELContributeYourData: React.FC = () => {
             margin: '0 auto',
           }}
         />
-        <h1 style={{ color: 'white', fontFamily: 'serif' }}>
+        <h1
+          style={{
+            color: 'white',
+            fontFamily: 'Merriweather serif',
+            fontSize: '24',
+          }}
+        >
           Contribute Your Data
         </h1>
-        <p style={{ color: 'white' }}>
+        <p
+          style={{
+            color: 'white',
+            fontFamily: 'DMSans',
+            fontStyle: 'italic',
+            fontSize: '16',
+          }}
+        >
           If you are a funded portal contributor and ready to upload data to the
           ELITE Portal, you can begin the data submission process by contacting
           our data curation team through our service desk.
@@ -60,6 +73,9 @@ const ELContributeYourData: React.FC = () => {
           href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
           target="_blank"
           rel="noopener noreferrer"
+          fontFamily="Lato"
+          fontSize="18"
+          fontStyle="semi-bold"
         >
           <Button
             variant="contained"
