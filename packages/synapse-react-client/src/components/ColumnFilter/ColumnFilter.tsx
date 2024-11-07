@@ -23,12 +23,14 @@ function ColumnFilter(props: FilterProps) {
     executeQueryRequest,
     queryMetadataQueryOptions,
     getCurrentQueryRequest,
+    addValueToSelectedFacet,
+    removeSelectedFacet,
   } = queryContext
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const { filterColumnName } = props
 
-  const addValueToSelectedFacet = queryContext.addValueToSelectedFacet
-  const removeSelectedFacet = queryContext.removeSelectedFacet
+  // const addValueToSelectedFacet = queryContext.addValueToSelectedFacet
+  // const addValueToSelectedFacet = queryContext.removeSelectedFacet
 
   const currentQuery = getCurrentQueryRequest()
 
