@@ -1,7 +1,7 @@
 import { Box, Link, Button } from '@mui/material'
 import React from 'react'
-import backgroundSpotsLeft from './assets/dot_blob_2.png'
-import backgroundSpotsRight from './assets/dot_blob_1.png'
+import backgroundSpotsLeft from './assets/dot_blob_top_left.png'
+import backgroundSpotsRight from './assets/dot_blob_bottom_right.png'
 
 const ELContributeYourData: React.FC = () => {
   return (
