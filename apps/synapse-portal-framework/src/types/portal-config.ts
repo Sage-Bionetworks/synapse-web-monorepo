@@ -183,6 +183,10 @@ type ELBetaLaunchBanner = {
   name: 'ELBetaLaunchBanner'
   props: undefined
 }
+type ELContributeYourData = {
+  name: 'ELContributeYourData'
+  props: undefined
+}
 type ARKWelcomePage = {
   name: 'ARKWelcomePage'
   props: undefined
@@ -389,6 +393,7 @@ export type SynapseConfig = (
   | DownloadCartPage
   | NFBrowseToolsPage
   | ELBrowseToolsPage
+  | ELContributeYourData
   | SurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage
