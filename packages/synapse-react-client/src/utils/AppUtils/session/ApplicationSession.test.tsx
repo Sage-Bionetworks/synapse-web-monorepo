@@ -371,8 +371,8 @@ describe('ApplicationSessionManager tests', () => {
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockAuthenticatedOn).toHaveBeenCalled()
+      expect(signOutSpy).toHaveBeenCalled()
       expect(mockTermsOfServiceStatus).not.toHaveBeenCalled()
-      expect(signOutSpy).not.toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })

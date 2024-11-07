@@ -200,8 +200,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'StandaloneQueryWrapper',
+          title: 'Mutations',
           props: {
-            name: 'Mutations',
             unitDescription: 'Mutations',
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
@@ -231,7 +231,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           standalone: true,
           props: {
             ownerId: 'syn26338068',
-            wikiId: '613438',
+            wikiId: '629918',
           },
         },
       ],
@@ -279,12 +279,26 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'Markdown',
-          title: 'Submit an Observation',
+          title: 'Share Your Observation',
           standalone: true,
           props: {
             ownerId: 'syn26338068',
-            wikiId: '613438',
+            wikiId: '629946',
           },
+        },
+        {
+          name: 'DynamicFormModal',
+          props: {
+            schemaUrl:
+              'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
+            uiSchemaUrl:
+              'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
+            postUrl: 'https://submit-form.com/KwZ46H4T',
+            submitButtonText: 'Submit Observation',
+          },
+          outsideContainerClassName: 'home-spacer',
+          tableSqlKeys: ['resourceId'],
+          columnName: 'resourceId',
         },
       ],
     },

@@ -121,7 +121,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
           }
           return (
             <div
-              key={`${colIndex}`}
+              key={`header-${colIndex}`}
               className="SubsectionRowRenderer__item"
               role="table"
             >
@@ -130,6 +130,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                   columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'
                 }
                 role="heading"
+                style={{ paddingTop: '10px', marginBottom: '5px' }}
               >
                 {selectColumn.name}
               </Typography>
@@ -148,7 +149,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     values = jsonData.map((val: string, index: number) => {
                       return (
                         <div
-                          key={index}
+                          key={`row-${rowIndex}-col-${colIndex}-multi-value`}
                           className="SubsectionRowRenderer__item__value"
                           role="row"
                         >
@@ -200,7 +201,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     }
                     values = (
                       <div
-                        key={rowIndex}
+                        key={`row-${rowIndex}-col-${colIndex}-single`}
                         className="SubsectionRowRenderer__item__value"
                         role="row"
                       >

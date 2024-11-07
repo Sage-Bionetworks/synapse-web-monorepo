@@ -38,7 +38,7 @@ export const SynapsePlans: React.FunctionComponent = () => {
         />
       </SynapsePlan>
       <SynapsePlan
-        title="Managed"
+        title="Self-Managed Plan"
         description="Our upgraded plan"
         ctaText="Find out more"
         ctaLink="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
