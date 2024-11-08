@@ -2245,6 +2245,8 @@ const processFilePart = async (
       fileUploadResolve,
       fileUploadReject,
       updateProgress,
+      getIsCancelled,
+      abortController,
     )
   }
 }
