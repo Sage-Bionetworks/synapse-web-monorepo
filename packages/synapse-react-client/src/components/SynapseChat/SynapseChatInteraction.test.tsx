@@ -32,5 +32,18 @@ describe('SynapseChatInteraction tests', () => {
     expect(screen.queryByText('tool-name')).not.toBeInTheDocument()
     // html should be removed in 2 ways (by the DOMParser cleanup in SynapseChatInteraction as well as the xss html sanitizer in MarkdownSynapse)
     expect(screen.queryByText('<result>')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('Error is shown in an alert', async () => {
+    const errorMessage =
+      'Sorry, AI has become uncontrollable and superintelligent leading to human existential risk'
+    renderComponent({
+      chatErrorReason: errorMessage,
+    })
+
+    const alertElement = await screen.findByRole('alert')
+    expect(alertElement).toBeInTheDocument()
+    expect(screen.queryByText(errorMessage)).toBeInTheDocument()
   })
 })
