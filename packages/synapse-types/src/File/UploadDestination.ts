@@ -14,7 +14,7 @@ export interface UploadDestination {
   /* The enumeration of possible upload types. */
   uploadType: UploadType
   /* If set, the client should show this banner every time an upload is initiated */
-  banner: string
+  banner?: string
 }
 
 /**

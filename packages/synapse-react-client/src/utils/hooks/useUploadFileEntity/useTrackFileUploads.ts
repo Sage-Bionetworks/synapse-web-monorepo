@@ -126,7 +126,7 @@ export function useTrackFileUploads() {
   function pauseUpload(file: File) {
     const entry = trackedUploadProgress.get(file)
     if (entry != null) {
-      entry.abortController.abort()
+      entry.abortController.abort('Paused by user')
     }
     setStatus(file, 'PAUSED')
   }

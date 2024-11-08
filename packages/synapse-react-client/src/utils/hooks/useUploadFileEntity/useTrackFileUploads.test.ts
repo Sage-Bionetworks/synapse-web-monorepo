@@ -2,7 +2,7 @@ import { act, renderHook as _renderHook } from '@testing-library/react'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { useTrackFileUploads } from './useTrackFileUploads'
 
-describe('useTrackUploads', () => {
+describe('useTrackFileUploads', () => {
   function renderHook() {
     return _renderHook(() => useTrackFileUploads(), {
       wrapper: createWrapper(),
