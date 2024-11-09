@@ -60,6 +60,10 @@ describe('ColumnFilter tests', () => {
 
   it('displays the correct filter options based on query metadata', () => {
     render(<ColumnFilter {...props} />)
+    expect(mockUseQuery).toHaveBeenCalledWith({
+      queryKey: ['queryMetadataQueryOptions'],
+      queryFn: expect.any(Function),
+    })
 
     openDropdown()
 
