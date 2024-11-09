@@ -172,12 +172,13 @@ function _CardContainer(props: CardContainerProps) {
     <>
       <Box
         role="list"
-        sx={{
-          ...(isReleaseCardMediumList
+        sx={
+          isReleaseCardMediumList
             ? releaseCardMediumListSx
-            : defaultListSx),
-          ...(multiCardList && isMultipleCards ? multiCardListSx : {}),
-        }}
+            : multiCardList && isMultipleCards
+            ? multiCardListSx
+            : defaultListSx
+        }
       >
         {title && <h2 className="SRC-card-overview-title">{title}</h2>}
         {!title && unitDescription && (
