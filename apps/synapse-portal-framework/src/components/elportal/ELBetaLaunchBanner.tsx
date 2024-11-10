@@ -24,12 +24,10 @@ const ELBetaLaunchBanner = () => {
       title="Welcome to the beta version of the ELITE Portal!"
       description={
         <>
-          This version of the portal is open to members of the National
-          Institute on Aging (NIA)-funded exceptional longevity translational
-          research projects. We will be launching the ELITE Portal to the
-          general research community and public in 2024, with more data and
-          features to be added. Get updates and stay connected with us by
-          signing up for the{' '}
+          This version of the portal is currently under development. We will be
+          launching the ELITE Portal to the general research community in 2025,
+          with more data and site features to be added. Stay updated by signing
+          up for the{' '}
           <Link
             href="https://news.eliteportal.org/elite-portal-newsletter/"
             target="_blank"
