@@ -52,22 +52,24 @@ type UploaderState =
   | 'COMPLETE'
   | 'ERROR'
 
+type FileUploadProgress = {
+  file: File
+  progress: ProgressCallback
+  status: UploadFileStatus
+  cancel: () => void
+  pause: () => void
+  resume: () => void
+  remove: () => void
+  failureReason?: string
+}
+
 type UseUploadFileEntitiesReturn = {
   state: UploaderState
   isPrecheckingUpload: boolean
   activePrompts: Prompt[]
   initiateUpload: (files: File[]) => void
   activeUploadCount: number
-  uploadProgress: {
-    file: File
-    progress: ProgressCallback
-    status: UploadFileStatus
-    cancel: () => void
-    pause: () => void
-    resume: () => void
-    remove: () => void
-    failureReason?: string
-  }[]
+  uploadProgress: FileUploadProgress[]
 }
 
 // Limit the number of concurrent uploads to avoid overwhelming the browser
