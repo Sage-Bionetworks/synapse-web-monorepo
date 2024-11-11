@@ -1,5 +1,5 @@
 import React from 'react'
-import { SynapseConstants } from '../../utils'
+import { SynapseConstants, UniqueFacetIdentifier } from '../../utils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -159,7 +159,7 @@ export type CardContainerLogicProps = {
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
-  filterColumnName?: string
+  topLevelEnumeratedFacetToFilter?: UniqueFacetIdentifier
   lockedColumn?: LockedColumn
   initialLimit?: number
 } & CardConfiguration &
@@ -182,7 +182,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
     props.searchParams,
     props.sqlOperator,
   )
-  const { sortConfig, columnAliases, filterColumnName } = props
+  const { sortConfig, columnAliases, topLevelEnumeratedFacetToFilter } = props
   const defaultSortItems = sortConfig
     ? [
         {
@@ -223,8 +223,10 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
       >
         <QueryWrapperErrorBoundary>
           {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
-          {filterColumnName && (
-            <ColumnFilter filterColumnName={filterColumnName} />
+          {topLevelEnumeratedFacetToFilter && (
+            <ColumnFilter
+              topLevelEnumeratedFacetToFilter={topLevelEnumeratedFacetToFilter}
+            />
           )}
           <RowSetView
             cardConfiguration={props}

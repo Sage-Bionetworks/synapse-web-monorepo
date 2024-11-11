@@ -53,7 +53,7 @@ describe('ColumnFilter tests', () => {
   }
 
   const props = {
-    filterColumnName: 'program',
+    topLevelEnumeratedFacetToFilter: { columnName: 'program' },
     removeSelectedFacet: removeSelectedFacet,
     addValueToSelectedFacet: addValueToSelectedFacet,
   }
@@ -110,7 +110,7 @@ describe('ColumnFilter tests', () => {
       data: { facets: [] },
     } as UseQueryResult<unknown, unknown>)
 
-    render(<ColumnFilter filterColumnName="dataType" />)
+    render(<ColumnFilter {...props} />)
 
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
   })

@@ -195,6 +195,7 @@ type TimelinePhaseProps = {
   rowData: Row[]
   schema: ObservationCardSchema
   widthPx: number
+  sql: string
 }
 
 const TimelinePhase = ({
@@ -202,8 +203,8 @@ const TimelinePhase = ({
   rowData,
   schema,
   widthPx,
+  sql,
 }: TimelinePhaseProps) => {
-  const observationsSql = 'SELECT * FROM syn51735464'
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)
@@ -271,8 +272,8 @@ const TimelinePhase = ({
       >
         <DialogContent>
           <CardContainerLogic
-            filterColumnName="observationType"
-            sql={observationsSql}
+            topLevelEnumeratedFacetToFilter={{ columnName: 'observationType' }}
+            sql={sql}
             searchParams={{ ['ROW_ID']: selectedRowIds.map(String).join(',') }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
             lockedColumn={{ columnName: 'ROW_ID' }}

@@ -6,10 +6,14 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { Autocomplete, TextField } from '@mui/material'
-import { getCorrespondingSelectedFacet } from '../../utils/functions/queryUtils'
+import {
+  facetObjectMatchesDefinition,
+  getCorrespondingSelectedFacet,
+} from '../../utils/functions/queryUtils'
+import { UniqueFacetIdentifier } from '../../utils'
 
 export type FilterProps = {
-  filterColumnName: string
+  topLevelEnumeratedFacetToFilter: UniqueFacetIdentifier
 }
 
 function ColumnFilter(props: FilterProps) {
@@ -22,19 +26,19 @@ function ColumnFilter(props: FilterProps) {
     removeSelectedFacet,
   } = queryContext
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
-  const { filterColumnName } = props
+  const { topLevelEnumeratedFacetToFilter } = props
 
   const currentQuery = getCurrentQueryRequest()
 
-  const activeFacet = (queryMetadata?.facets ?? []).find(
-    facet => facet.columnName === `${filterColumnName}`,
+  const activeFacet = (queryMetadata?.facets ?? []).find(facet =>
+    facetObjectMatchesDefinition(facet, topLevelEnumeratedFacetToFilter),
   ) as FacetColumnResultValues | undefined
 
   // Map the facet values to format for MUI Autocomplete options
   const filterOptions = activeFacet?.facetValues.map(({ value }) => value) ?? []
 
   const selectedFacetFromQuery = getCorrespondingSelectedFacet(
-    { columnName: filterColumnName },
+    { columnName: topLevelEnumeratedFacetToFilter.columnName },
     currentQuery.query.selectedFacets,
   ) as FacetColumnValuesRequest | undefined
 
@@ -44,7 +48,9 @@ function ColumnFilter(props: FilterProps) {
     event: React.SyntheticEvent,
     values: string[], // New value for the selected options
   ) => {
-    const facetIdentifier = { columnName: filterColumnName }
+    const facetIdentifier = {
+      columnName: topLevelEnumeratedFacetToFilter.columnName,
+    }
 
     removeSelectedFacet(facetIdentifier)
 
