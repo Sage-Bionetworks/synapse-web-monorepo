@@ -65,6 +65,7 @@ type FileUploadProgress = {
 
 type UseUploadFileEntitiesReturn = {
   state: UploaderState
+  errorMessage?: string
   isPrecheckingUpload: boolean
   activePrompts: Prompt[]
   initiateUpload: (files: File[]) => void
@@ -86,10 +87,15 @@ export function useUploadFileEntities(
 ): UseUploadFileEntitiesReturn {
   const { synapseClient } = useSynapseContext()
 
-  const { data: uploadDestination, isLoading: isLoadingUploadDestination } =
-    useGetDefaultUploadDestination(parentId)
+  const {
+    data: uploadDestination,
+    isLoading: isLoadingUploadDestination,
+    error: getUploadDestinationError,
+  } = useGetDefaultUploadDestination(parentId)
   const storageLocationId =
     uploadDestination?.storageLocationId || SYNAPSE_STORAGE_LOCATION_ID
+
+  const errorMessage = getUploadDestinationError?.message
 
   const {
     pendingItems: filesToConfirmNewVersion,
@@ -119,6 +125,9 @@ export function useUploadFileEntities(
   } = useTrackFileUploads()
 
   const state: UploaderState = useMemo(() => {
+    if (getUploadDestinationError) {
+      return 'ERROR'
+    }
     if (isLoadingUploadDestination) {
       return 'LOADING'
     }
@@ -134,6 +143,7 @@ export function useUploadFileEntities(
     return 'WAITING'
   }, [
     filesToConfirmNewVersion.length,
+    getUploadDestinationError,
     isLoadingUploadDestination,
     isUploadComplete,
     isUploading,
@@ -238,6 +248,9 @@ export function useUploadFileEntities(
     ],
   )
 
+  /**
+   * Upload the list of prepared files to Synapse.
+   */
   const startUpload = useCallback(
     (...preparedFiles: FilePreparedForUpload[]) => {
       clearPendingFiles()
@@ -255,18 +268,19 @@ export function useUploadFileEntities(
     [clearPendingFiles, trackNewFiles, uploadPreparedFile],
   )
 
+  /**
+   * After all files have been prepared for upload, process them to determine if the upload can automatically continue.
+   * If all files can be uploaded without user intervention, start the upload. Otherwise, prompt the user to make required
+   * decisions to continue the upload.
+   */
   const postPrepareUpload = useCallback(
     (
       preparedFiles: PrepareDirsForUploadReturn,
-      /** If true, skip checking upload limits and prompting the user before creating a new version.
+      /** If true, skip checks such as prompting the user before creating a new version.
        * This is useful when resuming an upload that has already been pre-checked. */
       skipChecks = false,
     ) => {
       const { newFileEntities, updatedFileEntities } = preparedFiles
-      if (newFileEntities.length == 0 && updatedFileEntities.length == 0) {
-        // Is this possible?
-        throw new Error('No files were provided to upload.')
-      }
 
       if (skipChecks) {
         startUpload(...newFileEntities, ...updatedFileEntities)
@@ -307,94 +321,103 @@ export function useUploadFileEntities(
     [parentId, postPrepareUpload, prepareUpload],
   )
 
-  return useMemo(() => {
-    let activePrompts: Prompt[] = []
-    if (filesToConfirmNewVersion.length > 0) {
-      activePrompts = filesToConfirmNewVersion.map(fileToPrompt => {
-        return {
-          title: 'Update existing file?',
-          message: `A file named "${
-            fileToPrompt.file.name
-          }" (${fileToPrompt.existingEntityId!}) already exists in this location. Do you want to update the existing file and create a new version?`,
-          onConfirm: () => {
-            const { confirmedItems, pendingItems } =
-              confirmUploadFileWithNewVersion(fileToPrompt)
+  const activePrompts = useMemo(() => {
+    return filesToConfirmNewVersion.map(fileToPrompt => {
+      return {
+        title: 'Update existing file?',
+        message: `A file named "${
+          fileToPrompt.file.name
+        }" (${fileToPrompt.existingEntityId!}) already exists in this location. Do you want to update the existing file and create a new version?`,
+        onConfirm: () => {
+          const { confirmedItems, pendingItems } =
+            confirmUploadFileWithNewVersion(fileToPrompt)
 
-            if (confirmedItems.length > 0 && pendingItems.length == 0) {
-              void startUpload(...confirmedItems)
-            }
-          },
-          onConfirmAll: () => {
-            const { confirmedItems } = confirmUploadFileWithNewVersion(
-              ...filesToConfirmNewVersion,
-            )
-
+          if (confirmedItems.length > 0 && pendingItems.length == 0) {
             void startUpload(...confirmedItems)
-          },
-          onSkip: () => {
-            const { confirmedItems, pendingItems } =
-              skipFileRequiringNewVersion(fileToPrompt)
+          }
+        },
+        onConfirmAll: () => {
+          const { confirmedItems } = confirmUploadFileWithNewVersion(
+            ...filesToConfirmNewVersion,
+          )
 
-            if (confirmedItems.length > 0 && pendingItems.length == 0) {
-              void startUpload(...confirmedItems)
-            }
-          },
-          onCancelAll: () => {
-            clearPendingFiles()
-          },
-        }
-      })
-    }
+          void startUpload(...confirmedItems)
+        },
+        onSkip: () => {
+          const { confirmedItems, pendingItems } =
+            skipFileRequiringNewVersion(fileToPrompt)
 
-    return {
-      state,
-      isPrecheckingUpload,
-      activeUploadCount,
-      initiateUpload: initiateUpload,
-      activePrompts: activePrompts,
-      uploadProgress: [...trackedUploadProgress].map(([file, progress]) => {
-        return {
-          file: file,
-          progress: progress.progress,
-          status: progress.status,
-          failureReason: progress.failureReason,
-          cancel: () => {
-            cancelUpload(file)
-          },
-          pause: () => {
-            pauseUpload(file)
-          },
-          resume: () => {
-            prepareUpload(
-              { files: [file], parentId: progress.parentId },
-              {
-                onSuccess: result => {
-                  postPrepareUpload(result, true)
-                },
-              },
-            )
-          },
-          remove() {
-            removeUpload(file)
-          },
-        }
-      }),
-    }
+          if (confirmedItems.length > 0 && pendingItems.length == 0) {
+            void startUpload(...confirmedItems)
+          }
+        },
+        onCancelAll: () => {
+          clearPendingFiles()
+        },
+      }
+    })
   }, [
-    activeUploadCount,
-    cancelUpload,
     clearPendingFiles,
     confirmUploadFileWithNewVersion,
     filesToConfirmNewVersion,
-    initiateUpload,
+    skipFileRequiringNewVersion,
+    startUpload,
+  ])
+
+  const uploadProgress: FileUploadProgress[] = useMemo(() => {
+    return [...trackedUploadProgress].map(([file, progress]) => {
+      return {
+        file: file,
+        progress: progress.progress,
+        status: progress.status,
+        failureReason: progress.failureReason,
+        cancel: () => {
+          cancelUpload(file)
+        },
+        pause: () => {
+          pauseUpload(file)
+        },
+        resume: () => {
+          prepareUpload(
+            { files: [file], parentId: progress.parentId },
+            {
+              onSuccess: result => {
+                postPrepareUpload(result, true)
+              },
+            },
+          )
+        },
+        remove() {
+          removeUpload(file)
+        },
+      }
+    })
+  }, [
+    cancelUpload,
     pauseUpload,
     postPrepareUpload,
     prepareUpload,
     removeUpload,
-    skipFileRequiringNewVersion,
-    startUpload,
-    state,
     trackedUploadProgress,
+  ])
+
+  return useMemo(() => {
+    return {
+      state,
+      errorMessage,
+      isPrecheckingUpload,
+      activeUploadCount,
+      initiateUpload: initiateUpload,
+      activePrompts: activePrompts,
+      uploadProgress: uploadProgress,
+    }
+  }, [
+    state,
+    errorMessage,
     isPrecheckingUpload,
+    activeUploadCount,
+    initiateUpload,
+    activePrompts,
+    uploadProgress,
   ])
 }
