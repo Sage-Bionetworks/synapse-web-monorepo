@@ -382,6 +382,7 @@ export function useUploadFileEntities(
             { files: [file], parentId: progress.parentId },
             {
               onSuccess: result => {
+                // the file was already checked before it was paused, so we can skipChecks
                 postPrepareUpload(result, true)
               },
             },
