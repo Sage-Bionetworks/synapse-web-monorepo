@@ -85,6 +85,16 @@ export function useUploadFileEntities(
   /** Optional secretKey for a direct S3 upload */
   secretKey = '',
 ): UseUploadFileEntitiesReturn {
+  /**
+   * General flow for how the functions in this hook are used is
+   *
+   * 1. `initiateUpload(files)` - called by the caller of the hook
+   * 2. `prepareUpload(files)` - sets up the folder paths, checks for existing entities with the same name
+   * 3. `postPrepareUpload(files)` - may prompt the user to confirm uploading new versions of files, based on the results of `prepareUpload`
+   * 4. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
+   * 5. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
+   */
+
   const { synapseClient } = useSynapseContext()
 
   const {
