@@ -18,7 +18,7 @@ export const getCookieDomain = () => {
   if (window.location.hostname.toLowerCase().endsWith('.synapse.org')) {
     return '.synapse.org'
   }
-  if (window.location.hostname.toLowerCase().endsWith('dev.sagebase.org')) {
+  if (window.location.hostname.toLowerCase().endsWith('.dev.sagebase.org')) {
     return '.dev.sagebase.org'
   }
   return undefined
