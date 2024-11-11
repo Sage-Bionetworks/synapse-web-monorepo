@@ -2291,8 +2291,8 @@ const uploadFilePart = async (
   getIsCancelled?: () => boolean,
   abortController?: AbortController,
 ) => {
-  const controller = new AbortController()
-  const signal = abortController?.signal || controller.signal
+  const controller = abortController || new AbortController()
+  const signal = controller.signal
 
   const checkIsCancelled = () => {
     if (getIsCancelled) {
