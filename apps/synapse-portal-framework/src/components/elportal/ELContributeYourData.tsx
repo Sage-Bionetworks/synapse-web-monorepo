@@ -1,4 +1,4 @@
-import { Box, Link, Button } from '@mui/material'
+import { Box, Link, Button, Typography, darken } from '@mui/material'
 import React from 'react'
 import backgroundSpotsLeft from './assets/dot_blob_top_left.png'
 import backgroundSpotsRight from './assets/dot_blob_bottom_right.png'
@@ -17,7 +17,7 @@ const ELContributeYourData: React.FC = () => {
       <Box
         sx={{
           flex: '0 0 auto',
-          width: '33%',
+          width: '100%',
           height: '100%',
           backgroundImage: `url(${backgroundSpotsLeft})`,
           backgroundRepeat: 'no-repeat',
@@ -36,17 +36,16 @@ const ELContributeYourData: React.FC = () => {
           paddingBottom: '100px',
         }}
       >
-        <Box
+        <Typography
+          variant="headline1"
+          style={{ color: 'white' }}
           sx={{
-            width: '90%',
-            height: '3px',
-            backgroundColor: 'white',
-            opacity: 0.5,
-            marginBottom: 2,
-            margin: '0 auto',
+            pt: 2,
+            mx: 'auto',
+            width: 'max-content',
+            borderTop: '6px solid #ffffff88',
           }}
-        />
-        <Typography variant="headline1" style={{ color: 'white' }}>
+        >
           Contribute Your Data
         </Typography>
         <Typography variant="body1" style={{ color: 'white' }}>
@@ -81,7 +80,7 @@ const ELContributeYourData: React.FC = () => {
       <Box
         sx={{
           flex: '0 0 auto',
-          width: '33%',
+          width: '100%',
           height: '100%',
           backgroundImage: `url(${backgroundSpotsRight})`,
           backgroundRepeat: 'no-repeat',
