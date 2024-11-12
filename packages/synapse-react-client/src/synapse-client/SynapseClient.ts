@@ -4,6 +4,7 @@ import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import {
   ACCESS_TOKEN_COOKIE_KEY,
+  getCookieDomain,
   OAuth2State,
   SynapseConstants,
 } from '../utils'
@@ -1975,6 +1976,7 @@ export const setAccessTokenCookie = async (
         // expires in 10 days (see SWC-6190)
         maxAge: 60 * 60 * 24 * 10,
         path: '/',
+        domain: getCookieDomain(),
       })
     }
   } else {
