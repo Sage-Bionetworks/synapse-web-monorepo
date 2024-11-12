@@ -168,18 +168,16 @@ function _CardContainer(props: CardContainerProps) {
   const isReleaseCardMediumList =
     type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
 
+  let cardListSx = defaultListSx
+  if (isReleaseCardMediumList) {
+    cardListSx = releaseCardMediumListSx
+  } else if (multiCardList && isMultipleCards) {
+    cardListSx = multiCardListSx
+  }
+
   return (
     <>
-      <Box
-        role="list"
-        sx={
-          isReleaseCardMediumList
-            ? releaseCardMediumListSx
-            : multiCardList && isMultipleCards
-            ? multiCardListSx
-            : defaultListSx
-        }
-      >
+      <Box role="list" sx={cardListSx}>
         {title && <h2 className="SRC-card-overview-title">{title}</h2>}
         {!title && unitDescription && (
           <TotalQueryResults frontText={'Displaying'} />
