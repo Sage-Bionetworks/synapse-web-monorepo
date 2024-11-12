@@ -51,11 +51,11 @@ const ELContributeYourData: React.FC = () => {
         <Typography variant="headline1" style={{ color: 'white' }}>
           Contribute Your Data
         </Typography>
-        <p style={{ color: 'white' }}>
+        <Typography variant="body1" style={{ color: 'white' }}>
           If you are a funded portal contributor and ready to upload data to the
           ELITE Portal, you can begin the data submission process by contacting
           our data curation team through our service desk.
-        </p>
+        </Typography>
         <Link
           href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
           target="_blank"
