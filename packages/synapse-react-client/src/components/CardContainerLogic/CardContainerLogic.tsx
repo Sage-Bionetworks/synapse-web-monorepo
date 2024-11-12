@@ -162,6 +162,7 @@ export type CardContainerLogicProps = {
   topLevelEnumeratedFacetToFilter?: UniqueFacetIdentifier
   lockedColumn?: LockedColumn
   initialLimit?: number
+  multiCardList?: boolean
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
@@ -231,6 +232,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
           <RowSetView
             cardConfiguration={props}
             initialLimit={props.initialLimit}
+            multiCardList={props.multiCardList}
           />
         </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>

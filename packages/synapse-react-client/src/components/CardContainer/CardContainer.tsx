@@ -39,6 +39,17 @@ const releaseCardMediumListSx = {
   gap: '10px',
   mb: '30px',
 }
+const multiCardListSx = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gridColumnGap: '20px',
+  marginBottom: '20px',
+  marginTop: '20px',
+
+  '& .SRC-portalCard': {
+    margin: '10px 0px',
+  },
+}
 
 export type CardContainerProps = {
   rowSet: RowSet
@@ -47,6 +58,7 @@ export type CardContainerProps = {
   title?: string
   isLoading?: boolean
   unitDescription?: string
+  multiCardList?: boolean
 } & CardConfiguration
 
 function Card(props: { propsToPass: any; type: string }) {
@@ -75,6 +87,7 @@ function _CardContainer(props: CardContainerProps) {
     secondaryLabelLimit = 3,
     title,
     rowSet,
+    multiCardList,
     ...rest
   } = props
   const { NoContentPlaceholder } = useQueryVisualizationContext()
@@ -84,6 +97,7 @@ function _CardContainer(props: CardContainerProps) {
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const dataRows: Row[] = rowSet.rows
+  const isMultipleCards = dataRows.length > 1
 
   const ids = [rowSet.tableId]
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
@@ -156,12 +170,16 @@ function _CardContainer(props: CardContainerProps) {
   const isReleaseCardMediumList =
     type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
 
+  let cardListSx = defaultListSx
+  if (isReleaseCardMediumList) {
+    cardListSx = releaseCardMediumListSx
+  } else if (multiCardList && isMultipleCards) {
+    cardListSx = multiCardListSx
+  }
+
   return (
     <>
-      <Box
-        role="list"
-        sx={isReleaseCardMediumList ? releaseCardMediumListSx : defaultListSx}
-      >
+      <Box role="list" sx={cardListSx}>
         {title && <h2 className="SRC-card-overview-title">{title}</h2>}
         {!title && unitDescription && (
           <TotalQueryResults frontText={'Displaying'} />
