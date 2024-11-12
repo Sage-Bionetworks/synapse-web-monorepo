@@ -4,6 +4,8 @@ const esModules = [
   'lodash-es',
   'nanoid',
   'mui-one-time-password-input',
+  'p-limit',
+  'yocto-queue',
 ]
 
 /** @type {import('jest').Config} */
