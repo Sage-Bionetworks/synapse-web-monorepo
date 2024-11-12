@@ -71,7 +71,10 @@ export function usePrepareFileEntityUpload(
             // Create the directories serially; if multiple files are uploaded, they may share new directories
             // Creating folders in parallel could cause race conditions
             fileAndParentIds.push(
-              await createDirsForFileList({ file, parentId: rootContainerId }),
+              await createDirsForFileList({
+                file,
+                rootContainerId: rootContainerId,
+              }),
             )
           }
         } catch (e) {
