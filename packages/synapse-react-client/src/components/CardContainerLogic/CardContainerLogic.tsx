@@ -158,6 +158,7 @@ export type CardContainerLogicProps = {
   sql: string
   sortConfig?: SortConfiguration
   initialLimit?: number
+  multiCardList?: boolean
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
@@ -222,6 +223,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
           <RowSetView
             cardConfiguration={props}
             initialLimit={props.initialLimit}
+            multiCardList={props.multiCardList}
           />
         </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
