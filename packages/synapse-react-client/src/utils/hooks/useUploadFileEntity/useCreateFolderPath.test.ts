@@ -38,7 +38,7 @@ describe('useCreateFolderPath', () => {
     const { result: hook } = renderHook()
 
     const result = await hook.current.mutateAsync({
-      parentId: 'syn123',
+      rootContainerId: 'syn123',
       path: ['folder'],
     })
 
@@ -62,7 +62,7 @@ describe('useCreateFolderPath', () => {
     const { result: hook } = renderHook()
 
     const result = await hook.current.mutateAsync({
-      parentId: 'syn123',
+      rootContainerId: 'syn123',
       path: ['folder'],
     })
 
@@ -85,7 +85,7 @@ describe('useCreateFolderPath', () => {
     const { result: hook } = renderHook()
 
     const result = await hook.current.mutateAsync({
-      parentId: 'syn123',
+      rootContainerId: 'syn123',
       path: [],
     })
 
@@ -115,7 +115,7 @@ describe('useCreateFolderPath', () => {
     const { result: hook } = renderHook()
 
     const result = await hook.current.mutateAsync({
-      parentId: 'syn123',
+      rootContainerId: 'syn123',
       path: ['parentFolder', 'childFolder'],
     })
 
@@ -142,7 +142,7 @@ describe('useCreateFolderPath', () => {
 
     await expect(
       hook.current.mutateAsync({
-        parentId: 'syn123',
+        rootContainerId: 'syn123',
         path: ['some_name'],
       }),
     ).rejects.toThrow(
@@ -173,7 +173,7 @@ describe('useCreateFolderPath', () => {
     const { result: hook } = renderHook()
     await expect(
       hook.current.mutateAsync({
-        parentId: 'syn123',
+        rootContainerId: 'syn123',
         path: ['folder'],
       }),
     ).rejects.toThrow(`Forbidden`)
