@@ -68,7 +68,7 @@ const ELContributeYourData: React.FC = () => {
               border: '1px solid white',
               boxShadow: 'none',
               '&:hover': {
-                backgroundColor: '#5BA998',
+                backgroundColor: darken('#5BA998', 0.05),
                 boxShadow: 'none',
               },
             }}
