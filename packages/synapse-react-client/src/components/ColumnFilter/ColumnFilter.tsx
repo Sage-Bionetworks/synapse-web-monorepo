@@ -19,7 +19,6 @@ export type FilterProps = {
 function ColumnFilter(props: FilterProps) {
   const queryContext = useQueryContext()
   const {
-    executeQueryRequest,
     queryMetadataQueryOptions,
     getCurrentQueryRequest,
     addValueToSelectedFacet,
@@ -38,7 +37,7 @@ function ColumnFilter(props: FilterProps) {
   const filterOptions = activeFacet?.facetValues.map(({ value }) => value) ?? []
 
   const selectedFacetFromQuery = getCorrespondingSelectedFacet(
-    { columnName: topLevelEnumeratedFacetToFilter.columnName },
+    topLevelEnumeratedFacetToFilter,
     currentQuery.query.selectedFacets,
   ) as FacetColumnValuesRequest | undefined
 
@@ -48,15 +47,11 @@ function ColumnFilter(props: FilterProps) {
     event: React.SyntheticEvent,
     values: string[], // New value for the selected options
   ) => {
-    const facetIdentifier = {
-      columnName: topLevelEnumeratedFacetToFilter.columnName,
-    }
+    removeSelectedFacet(topLevelEnumeratedFacetToFilter)
 
-    removeSelectedFacet(facetIdentifier)
-
-    values.forEach(value => addValueToSelectedFacet(facetIdentifier, value))
-
-    executeQueryRequest(request => request)
+    values.forEach(value =>
+      addValueToSelectedFacet(topLevelEnumeratedFacetToFilter, value),
+    )
   }
 
   return (
