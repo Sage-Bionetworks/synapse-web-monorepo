@@ -230,6 +230,7 @@ export const TimelinePlot = ({
                     rowData={phaseEventRows}
                     schema={schema}
                     widthPx={widthPx}
+                    sql={sql}
                   />
                 ) : (
                   <></>

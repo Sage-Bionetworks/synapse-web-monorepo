@@ -104,11 +104,13 @@ function _CardContainer(props: CardContainerProps) {
     ids,
     type: 'ENTITY_HEADER',
   })
+
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (dataRows.length === 0) {
     // Show "no results" UI (see PORTALS-1497)
     return <NoContentPlaceholder />
   }
+
   const schema: Record<string, number> = {}
   rowSet.headers.forEach((element, index) => {
     schema[element.name] = index

@@ -1,5 +1,5 @@
 import React from 'react'
-import { SynapseConstants } from '../../utils'
+import { SynapseConstants, UniqueFacetIdentifier } from '../../utils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -23,6 +23,8 @@ import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { ReleaseCardConfig } from '../ReleaseCard'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
+import ColumnFilter from '../ColumnFilter/ColumnFilter'
+import { LockedColumn } from '../../utils'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -157,6 +159,8 @@ export type CardContainerLogicProps = {
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration
+  topLevelEnumeratedFacetToFilter?: UniqueFacetIdentifier
+  lockedColumn?: LockedColumn
   initialLimit?: number
   multiCardList?: boolean
 } & CardConfiguration &
@@ -179,7 +183,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
     props.searchParams,
     props.sqlOperator,
   )
-  const { sortConfig, columnAliases } = props
+  const { sortConfig, columnAliases, topLevelEnumeratedFacetToFilter } = props
   const defaultSortItems = sortConfig
     ? [
         {
@@ -220,6 +224,11 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
       >
         <QueryWrapperErrorBoundary>
           {sortConfig && <QuerySortSelector sortConfig={sortConfig} />}
+          {topLevelEnumeratedFacetToFilter && (
+            <ColumnFilter
+              topLevelEnumeratedFacetToFilter={topLevelEnumeratedFacetToFilter}
+            />
+          )}
           <RowSetView
             cardConfiguration={props}
             initialLimit={props.initialLimit}
