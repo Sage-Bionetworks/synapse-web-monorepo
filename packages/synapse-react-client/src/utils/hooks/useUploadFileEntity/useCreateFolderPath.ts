@@ -17,9 +17,9 @@ export function useCreateFolderPath() {
   const { mutateAsync: createEntity } = useCreateEntity()
 
   return useMutation({
-    mutationFn: async (args: { parentId: string; path: string[] }) => {
-      const { parentId: initialParentId, path } = args
-      let parentId = initialParentId
+    mutationFn: async (args: { rootContainerId: string; path: string[] }) => {
+      const { rootContainerId: rootContainerId, path } = args
+      let parentId = rootContainerId
       for (const pathElement of path) {
         const foundEntityIdResult = await allowNotFoundError(() =>
           synapseClient.entityServicesClient.postRepoV1EntityChild({

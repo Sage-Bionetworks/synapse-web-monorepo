@@ -20,6 +20,8 @@ import useConfirmItems from '../useConfirmItems'
 import {
   FilePreparedForUpload,
   PrepareDirsForUploadReturn,
+  PrepareFileEntityUploadArgs,
+  UpdateEntityFileUpload,
   usePrepareFileEntityUpload,
 } from './usePrepareFileEntityUpload'
 import {
@@ -44,7 +46,7 @@ type Prompt = {
   onCancelAll: () => void
 }
 
-type UploaderState =
+export type UploaderState =
   | 'LOADING'
   | 'WAITING'
   | 'PROMPT_USER'
@@ -63,12 +65,28 @@ type FileUploadProgress = {
   failureReason?: string
 }
 
+export type InitiateUploadArgs = PrepareFileEntityUploadArgs
+
 type UseUploadFileEntitiesReturn = {
   state: UploaderState
   errorMessage?: string
   isPrecheckingUpload: boolean
+  /**
+   * Prompts that require user input before the upload can proceed. Typically, these are prompts to confirm uploading a new version
+   * of an existing FileEntity.
+   *
+   * If prompts are present, `state` will always be 'PROMPT_USER'.
+   */
   activePrompts: Prompt[]
-  initiateUpload: (files: File[]) => void
+  /**
+   * Arguments used to initialize an upload operation. In addition to providing a file, the caller must also provide one of
+   * the following:
+   *   - rootContainerId: The ID of the parent Project or Folder to upload files to. If the File objects include a webkitRelativePath,
+   *       then the Files will be uploaded into created sub-folders to match the relative path. Any files that match on path and file name
+   *       will trigger a prompt to confirm updating a new version in the `activePrompts` field, which must be resolved before the upload can proceed.
+   *   - existingEntityId: The ID of the FileEntity for which a new version should be uploaded. No prompts will be triggered by this option.
+   */
+  initiateUpload: (args: InitiateUploadArgs) => void
   activeUploadCount: number
   uploadProgress: FileUploadProgress[]
 }
@@ -77,9 +95,14 @@ type UseUploadFileEntitiesReturn = {
 // Note that within one upload operation, multiple parts could be uploaded in parallel
 const limitConcurrentUploads = pLimit(8)
 
+/**
+ * Hook to start and track the progress of files uploads in Synapse, creating/updating a FileEntity for each uploaded file.
+ *
+ * To start an upload, see `initiateUpload` returned by this hook.
+ */
 export function useUploadFileEntities(
-  /** The ID of the parent entity to upload files to */
-  parentId: string,
+  /** The ID of the parent entity to upload files to, or the FileEntity for which a new version should be uploaded */
+  containerOrEntityId: string,
   /** Optional accessKey for a direct S3 upload */
   accessKey = '',
   /** Optional secretKey for a direct S3 upload */
@@ -101,7 +124,7 @@ export function useUploadFileEntities(
     data: uploadDestination,
     isLoading: isLoadingUploadDestination,
     error: getUploadDestinationError,
-  } = useGetDefaultUploadDestination(parentId)
+  } = useGetDefaultUploadDestination(containerOrEntityId)
   const storageLocationId =
     uploadDestination?.storageLocationId || SYNAPSE_STORAGE_LOCATION_ID
 
@@ -113,11 +136,7 @@ export function useUploadFileEntities(
     addItemsPendingConfirmation: addFileToConfirmUploadNewVersion,
     removePendingItems: skipFileRequiringNewVersion,
     clear: clearPendingFiles,
-  } = useConfirmItems<{
-    file: File
-    parentId: string
-    existingEntityId: string | null
-  }>()
+  } = useConfirmItems<FilePreparedForUpload>()
 
   const {
     trackedUploadProgress,
@@ -212,7 +231,10 @@ export function useUploadFileEntities(
           newFileHandleId = fileUploadComplete.fileHandleId
         }
 
-        if (preparedFile.existingEntityId) {
+        if (
+          'existingEntityId' in preparedFile &&
+          preparedFile.existingEntityId
+        ) {
           // Update the existing entity
           const entity =
             await synapseClient.entityServicesClient.getRepoV1EntityId({
@@ -224,7 +246,7 @@ export function useUploadFileEntities(
           } as FileEntity)
           // Mark file as done!
           setComplete(preparedFile.file)
-        } else {
+        } else if ('parentId' in preparedFile) {
           // else, it's a new file entity
           const newFileEntity: FileEntity = {
             parentId: preparedFile.parentId,
@@ -235,6 +257,13 @@ export function useUploadFileEntities(
           await createEntityWithNewFile(newFileEntity)
           // Mark file as done!
           setComplete(preparedFile.file)
+        } else {
+          // this should never happen
+          throw new Error(
+            `Can't upload file without a parent ID or existing entity ID. File was: ${JSON.stringify(
+              preparedFile,
+            )}`,
+          )
         }
       } catch (e) {
         console.error('File upload failed: ', e)
@@ -284,27 +313,20 @@ export function useUploadFileEntities(
    * decisions to continue the upload.
    */
   const postPrepareUpload = useCallback(
-    (
-      preparedFiles: PrepareDirsForUploadReturn,
-      /** If true, skip checks such as prompting the user before creating a new version.
-       * This is useful when resuming an upload that has already been pre-checked. */
-      skipChecks = false,
-    ) => {
-      const { newFileEntities, updatedFileEntities } = preparedFiles
+    (preparedFiles: PrepareDirsForUploadReturn) => {
+      const { filesReadyForUpload, filesToPromptForNewVersion } = preparedFiles
+      if (
+        filesReadyForUpload.length > 0 &&
+        filesToPromptForNewVersion.length == 0
+      ) {
+        // No need to prompt the user, just go ahead and upload!
+        startUpload(...filesReadyForUpload)
+      }
 
-      if (skipChecks) {
-        startUpload(...newFileEntities, ...updatedFileEntities)
-      } else {
-        if (newFileEntities.length > 0 && updatedFileEntities.length == 0) {
-          // No need to prompt the user, just go ahead and upload!
-          startUpload(...newFileEntities)
-        }
-
-        if (updatedFileEntities.length > 0) {
-          // Set up state to ask the user to confirm that they want to upload new versions.
-          confirmUploadFileWithNewVersion(...newFileEntities)
-          addFileToConfirmUploadNewVersion(...updatedFileEntities)
-        }
+      if (filesToPromptForNewVersion.length > 0) {
+        // Set up state to ask the user to confirm that they want to upload new versions.
+        confirmUploadFileWithNewVersion(...filesReadyForUpload)
+        addFileToConfirmUploadNewVersion(...filesToPromptForNewVersion)
       }
     },
     [
@@ -318,26 +340,23 @@ export function useUploadFileEntities(
     usePrepareFileEntityUpload()
 
   const initiateUpload = useCallback(
-    (files: File[]) => {
-      prepareUpload(
-        { files, parentId },
-        {
-          onSuccess: result => {
-            postPrepareUpload(result, false)
-          },
+    (args: InitiateUploadArgs) => {
+      prepareUpload(args, {
+        onSuccess: result => {
+          postPrepareUpload(result)
         },
-      )
+      })
     },
-    [parentId, postPrepareUpload, prepareUpload],
+    [postPrepareUpload, prepareUpload],
   )
 
   const activePrompts = useMemo(() => {
     return filesToConfirmNewVersion.map(fileToPrompt => {
       return {
         title: 'Update existing file?',
-        message: `A file named "${
-          fileToPrompt.file.name
-        }" (${fileToPrompt.existingEntityId!}) already exists in this location. Do you want to update the existing file and create a new version?`,
+        message: `A file named "${fileToPrompt.file.name}" (${
+          (fileToPrompt as UpdateEntityFileUpload).existingEntityId
+        }) already exists in this location. Do you want to update the existing file and create a new version?`,
         onConfirm: () => {
           const { confirmedItems, pendingItems } =
             confirmUploadFileWithNewVersion(fileToPrompt)
@@ -375,12 +394,12 @@ export function useUploadFileEntities(
   ])
 
   const uploadProgress: FileUploadProgress[] = useMemo(() => {
-    return [...trackedUploadProgress].map(([file, progress]) => {
+    return [...trackedUploadProgress].map(([file, trackedProgress]) => {
       return {
         file: file,
-        progress: progress.progress,
-        status: progress.status,
-        failureReason: progress.failureReason,
+        progress: trackedProgress.progress,
+        status: trackedProgress.status,
+        failureReason: trackedProgress.failureReason,
         cancel: () => {
           cancelUpload(file)
         },
@@ -388,15 +407,7 @@ export function useUploadFileEntities(
           pauseUpload(file)
         },
         resume: () => {
-          prepareUpload(
-            { files: [file], parentId: progress.parentId },
-            {
-              onSuccess: result => {
-                // the file was already checked before it was paused, so we can skipChecks
-                postPrepareUpload(result, true)
-              },
-            },
-          )
+          startUpload(trackedProgress.filePreparedForUpload)
         },
         remove() {
           removeUpload(file)

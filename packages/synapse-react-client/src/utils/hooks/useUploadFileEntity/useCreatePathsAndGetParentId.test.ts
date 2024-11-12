@@ -38,7 +38,7 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const result = await hook.current.mutateAsync({
       file,
-      parentId: 'syn123',
+      rootContainerId: 'syn123',
     })
 
     expect(result).toEqual({ file, parentId: 'syn123' })
@@ -51,7 +51,7 @@ describe('useCreatePathsAndGetParentId', () => {
       webkitRelativePath: 'folder1/file.txt',
     }
 
-    const parentId = 'syn123'
+    const rootContainerId = 'syn123'
     const folderId = 'syn456'
     const mockUseCreateFolderPathResult = getUseMutationMock<
       string,
@@ -64,12 +64,12 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const result = await hook.current.mutateAsync({
       file,
-      parentId: 'syn123',
+      rootContainerId: rootContainerId,
     })
 
     expect(result).toEqual({ file, parentId: folderId })
     expect(mockUseCreateFolderPathResult.mutateAsync).toHaveBeenCalledWith({
-      parentId,
+      rootContainerId,
       path: ['folder1'],
     })
   })
@@ -80,7 +80,7 @@ describe('useCreatePathsAndGetParentId', () => {
       webkitRelativePath: 'folder1/folder2/file.txt',
     }
 
-    const parentId = 'syn123'
+    const rootContainerId = 'syn123'
     const finalFolderId = 'syn456'
     const mockUseCreateFolderPathResult = getUseMutationMock<
       string,
@@ -93,12 +93,12 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const result = await hook.current.mutateAsync({
       file,
-      parentId: 'syn123',
+      rootContainerId,
     })
 
     expect(result).toEqual({ file, parentId: finalFolderId })
     expect(mockUseCreateFolderPathResult.mutateAsync).toHaveBeenCalledWith({
-      parentId,
+      rootContainerId,
       path: ['folder1', 'folder2'],
     })
   })

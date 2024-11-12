@@ -9,8 +9,8 @@ export function useCreatePathsAndGetParentId() {
   const { mutateAsync: createFolderPath } = useCreateFolderPath()
 
   return useMutation({
-    mutationFn: (args: { file: File; parentId: string }) => {
-      const { file, parentId } = args
+    mutationFn: (args: { file: File; rootContainerId: string }) => {
+      const { file, rootContainerId } = args
       const relativePath = file.webkitRelativePath
       // Create folders as necessary based on the path
       if (relativePath) {
@@ -18,15 +18,15 @@ export function useCreatePathsAndGetParentId() {
           .split('/')
           // remove the file name
           .slice(0, -1)
-        return createFolderPath({ parentId, path }).then(parentId => ({
+        return createFolderPath({ rootContainerId, path }).then(parentId => ({
           file,
           parentId,
         }))
       } else {
-        // There is no relative path, so just use the passed parentId
+        // There is no relative path, so just use the passed rootContainerId
         return Promise.resolve({
           file,
-          parentId,
+          parentId: rootContainerId,
         })
       }
     },

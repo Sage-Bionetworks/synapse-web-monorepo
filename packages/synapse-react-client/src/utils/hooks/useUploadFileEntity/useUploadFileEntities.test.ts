@@ -24,7 +24,10 @@ import {
   PrepareDirsForUploadReturn,
   usePrepareFileEntityUpload,
 } from './usePrepareFileEntityUpload'
-import { useUploadFileEntities } from './useUploadFileEntities'
+import {
+  InitiateUploadArgs,
+  useUploadFileEntities,
+} from './useUploadFileEntities'
 
 jest.mock('../../../synapse-queries/file/useUploadDestination', () => {
   return {
@@ -135,13 +138,15 @@ describe('useUploadFileEntities', () => {
   })
 
   test('upload one file into Synapse Storage via Synapse multipart upload', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
+
     setupUploadDestinationMock(mockSynapseUploadDestination)
 
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-      ],
-      updatedFileEntities: [],
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -172,15 +177,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload([file1])
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: [file1],
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -188,10 +190,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
+        initiateUploadArgs,
         null,
       )
     })
@@ -226,15 +225,18 @@ describe('useUploadFileEntities', () => {
   })
 
   test('upload multiple files into Synapse Storage via Synapse multipart upload', async () => {
-    const files = [file1, file2]
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+      { file: file2, rootContainerId: 'syn123' },
+    ]
 
     setupUploadDestinationMock(mockSynapseUploadDestination)
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-        { file: file2, parentId: 'syn123', existingEntityId: null },
+      filesReadyForUpload: [
+        { file: file1, parentId: 'syn123' },
+        { file: file2, parentId: 'syn123' },
       ],
-      updatedFileEntities: [],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -273,15 +275,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload(files)
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: files,
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -289,10 +288,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: files,
-        },
+        initiateUploadArgs,
         null,
       )
     })
@@ -344,9 +340,105 @@ describe('useUploadFileEntities', () => {
     expect(hook.current.state).toBe('COMPLETE')
   })
 
+  test('upload a new version of a specified FileEntity', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, existingEntityId: createdEntity1.id! },
+    ]
+
+    setupUploadDestinationMock(mockSynapseUploadDestination)
+
+    const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
+      // The user explicitly specified updating this entity (e.g. from that entity page), so no need to prompt
+      filesReadyForUpload: [
+        { file: file1, existingEntityId: createdEntity1.id! },
+      ],
+      filesToPromptForNewVersion: [],
+    }
+    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
+      prepareDirsForUploadReturn,
+    )
+
+    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+      fileHandleId: createdFileHandleId1,
+      fileName: file1.name,
+    })
+    mockUseSynapseMultipartUpload.mockReturnValue(
+      useSynapseMultipartUploadMockReturn,
+    )
+
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+
+    mockGetEntityById.mockResolvedValueOnce(createdEntity1)
+
+    const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
+
+    const useUpdateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
+
+    const { result: hook } = renderHook()
+
+    await waitFor(() => {
+      expect(hook.current.state).toBe('WAITING')
+      expect(hook.current.activePrompts.length).toBe(0)
+      expect(hook.current.initiateUpload).toBeDefined()
+    })
+
+    act(() => {
+      hook.current.initiateUpload(initiateUploadArgs)
+    })
+
+    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
+    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
+      initiateUploadArgs,
+      { onSuccess: expect.any(Function) },
+    )
+
+    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
+    act(() => {
+      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
+        prepareDirsForUploadReturn,
+        initiateUploadArgs,
+        null,
+      )
+    })
+
+    await waitFor(() => {
+      expect(
+        useSynapseMultipartUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        useSynapseMultipartUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledWith({
+        fileName: file1.name,
+        blob: file1,
+        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+        contentType: 'text/plain',
+        progressCallback: expect.any(Function),
+        abortController: expect.any(AbortController),
+        onMd5Computed: expect.any(Function),
+      })
+
+      expect(useUpdateEntityReturn.mutateAsync).toHaveBeenCalledTimes(1)
+      expect(useUpdateEntityReturn.mutateAsync).toHaveBeenCalledWith({
+        id: createdEntity1.id,
+        parentId,
+        name: file1.name,
+        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+        dataFileHandleId: createdFileHandleId1,
+      })
+      expect(useCreateEntityReturn.mutateAsync).not.toHaveBeenCalled()
+    })
+
+    expect(hook.current.state).toBe('COMPLETE')
+  })
+
   describe('prompt user to create new FileEntity version', () => {
     test('confirm new version', async () => {
-      const files = [file1, file2]
+      const initiateUploadArgs: InitiateUploadArgs = [
+        { file: file1, rootContainerId: 'syn123' },
+        { file: file2, rootContainerId: 'syn123' },
+      ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
         getUseQuerySuccessMock({
@@ -358,8 +450,8 @@ describe('useUploadFileEntities', () => {
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-        newFileEntities: [],
-        updatedFileEntities: [
+        filesReadyForUpload: [],
+        filesToPromptForNewVersion: [
           { file: file1, parentId: 'syn123', existingEntityId: 'syn456' },
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
@@ -407,31 +499,21 @@ describe('useUploadFileEntities', () => {
       })
 
       act(() => {
-        hook.current.initiateUpload(files)
+        hook.current.initiateUpload(initiateUploadArgs)
       })
 
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
         1,
       )
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        {
-          parentId,
-          files: files,
-        },
+        initiateUploadArgs,
         { onSuccess: expect.any(Function) },
       )
 
       // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
       act(() => {
         usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(
-          prepareDirsForUploadReturn,
-          {
-            parentId,
-            files: files,
-          },
-          null,
-        )
+          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
       })
 
       await waitFor(() => {
@@ -522,7 +604,10 @@ describe('useUploadFileEntities', () => {
     })
 
     test('confirm all versions', async () => {
-      const files = [file1, file2]
+      const initiateUploadArgs: InitiateUploadArgs = [
+        { file: file1, rootContainerId: 'syn123' },
+        { file: file2, rootContainerId: 'syn123' },
+      ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
         getUseQuerySuccessMock({
@@ -534,8 +619,8 @@ describe('useUploadFileEntities', () => {
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-        newFileEntities: [],
-        updatedFileEntities: [
+        filesReadyForUpload: [],
+        filesToPromptForNewVersion: [
           { file: file1, parentId: 'syn123', existingEntityId: 'syn456' },
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
@@ -583,31 +668,21 @@ describe('useUploadFileEntities', () => {
       })
 
       act(() => {
-        hook.current.initiateUpload(files)
+        hook.current.initiateUpload(initiateUploadArgs)
       })
 
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
         1,
       )
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        {
-          parentId,
-          files: files,
-        },
+        initiateUploadArgs,
         { onSuccess: expect.any(Function) },
       )
 
       // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
       act(() => {
         usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(
-          prepareDirsForUploadReturn,
-          {
-            parentId,
-            files: files,
-          },
-          null,
-        )
+          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
       })
 
       await waitFor(() => {
@@ -676,7 +751,10 @@ describe('useUploadFileEntities', () => {
     })
 
     test('skip new version', async () => {
-      const files = [file1, file2]
+      const initiateUploadArgs: InitiateUploadArgs = [
+        { file: file1, rootContainerId: 'syn123' },
+        { file: file2, rootContainerId: 'syn123' },
+      ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
         getUseQuerySuccessMock({
@@ -688,8 +766,8 @@ describe('useUploadFileEntities', () => {
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-        newFileEntities: [],
-        updatedFileEntities: [
+        filesReadyForUpload: [],
+        filesToPromptForNewVersion: [
           { file: file1, parentId: 'syn123', existingEntityId: 'syn456' },
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
@@ -730,31 +808,21 @@ describe('useUploadFileEntities', () => {
       })
 
       act(() => {
-        hook.current.initiateUpload(files)
+        hook.current.initiateUpload(initiateUploadArgs)
       })
 
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
         1,
       )
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        {
-          parentId,
-          files: files,
-        },
+        initiateUploadArgs,
         { onSuccess: expect.any(Function) },
       )
 
       // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
       act(() => {
         usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(
-          prepareDirsForUploadReturn,
-          {
-            parentId,
-            files: files,
-          },
-          null,
-        )
+          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
       })
 
       await waitFor(() => {
@@ -831,7 +899,10 @@ describe('useUploadFileEntities', () => {
     })
 
     test('cancel all uploads', async () => {
-      const files = [file1, file2]
+      const initiateUploadArgs: InitiateUploadArgs = [
+        { file: file1, rootContainerId: 'syn123' },
+        { file: file2, rootContainerId: 'syn123' },
+      ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
         getUseQuerySuccessMock({
@@ -843,8 +914,8 @@ describe('useUploadFileEntities', () => {
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-        newFileEntities: [],
-        updatedFileEntities: [
+        filesReadyForUpload: [],
+        filesToPromptForNewVersion: [
           { file: file1, parentId: 'syn123', existingEntityId: 'syn456' },
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
@@ -892,31 +963,21 @@ describe('useUploadFileEntities', () => {
       })
 
       act(() => {
-        hook.current.initiateUpload(files)
+        hook.current.initiateUpload(initiateUploadArgs)
       })
 
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
         1,
       )
       expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        {
-          parentId,
-          files: files,
-        },
+        initiateUploadArgs,
         { onSuccess: expect.any(Function) },
       )
 
       // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
       act(() => {
         usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(
-          prepareDirsForUploadReturn,
-          {
-            parentId,
-            files: files,
-          },
-          null,
-        )
+          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
       })
 
       await waitFor(() => {
@@ -959,12 +1020,14 @@ describe('useUploadFileEntities', () => {
   })
 
   test('pause and resume an upload', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
+
     setupUploadDestinationMock(mockSynapseUploadDestination)
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-      ],
-      updatedFileEntities: [],
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -997,15 +1060,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload([file1])
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: [file1],
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -1013,10 +1073,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
+        initiateUploadArgs,
         null,
       )
     })
@@ -1051,20 +1108,6 @@ describe('useUploadFileEntities', () => {
       hook.current.uploadProgress[0].resume()
     })
 
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(2)
-
-    act(() => {
-      // Invoke the `onSuccess` callback once more
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
-        null,
-      )
-    })
-
     await waitFor(() => {
       expect(
         useSynapseMultipartUploadMockReturn.mutateAsync,
@@ -1095,12 +1138,13 @@ describe('useUploadFileEntities', () => {
   })
 
   test('cancel and remove an upload', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
     setupUploadDestinationMock(mockSynapseUploadDestination)
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-      ],
-      updatedFileEntities: [],
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -1133,15 +1177,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload([file1])
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: [file1],
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -1149,10 +1190,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
+        initiateUploadArgs,
         null,
       )
     })
@@ -1199,12 +1237,13 @@ describe('useUploadFileEntities', () => {
   })
 
   test('upload fails, and user removes it', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
     setupUploadDestinationMock(mockSynapseUploadDestination)
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-      ],
-      updatedFileEntities: [],
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -1236,15 +1275,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload([file1])
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: [file1],
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -1252,10 +1288,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
+        initiateUploadArgs,
         null,
       )
     })
@@ -1289,13 +1322,14 @@ describe('useUploadFileEntities', () => {
   })
 
   test('upload file via direct S3 upload', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
     setupUploadDestinationMock(mockExternalObjectStoreUploadDestination)
 
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      newFileEntities: [
-        { file: file1, parentId: 'syn123', existingEntityId: null },
-      ],
-      updatedFileEntities: [],
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
     }
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
       prepareDirsForUploadReturn,
@@ -1323,15 +1357,12 @@ describe('useUploadFileEntities', () => {
     })
 
     act(() => {
-      hook.current.initiateUpload([file1])
+      hook.current.initiateUpload(initiateUploadArgs)
     })
 
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
     expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      {
-        parentId,
-        files: [file1],
-      },
+      initiateUploadArgs,
       { onSuccess: expect.any(Function) },
     )
 
@@ -1339,10 +1370,7 @@ describe('useUploadFileEntities', () => {
     act(() => {
       usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
         prepareDirsForUploadReturn,
-        {
-          parentId,
-          files: [file1],
-        },
+        initiateUploadArgs,
         null,
       )
     })
