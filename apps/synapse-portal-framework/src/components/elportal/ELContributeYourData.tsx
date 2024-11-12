@@ -48,9 +48,9 @@ const ELContributeYourData: React.FC = () => {
             margin: '0 auto',
           }}
         />
-        <h1 style={{ color: 'white', fontFamily: 'serif' }}>
+        <Typography variant="headline1" style={{ color: 'white' }}>
           Contribute Your Data
-        </h1>
+        </Typography>
         <p style={{ color: 'white' }}>
           If you are a funded portal contributor and ready to upload data to the
           ELITE Portal, you can begin the data submission process by contacting
