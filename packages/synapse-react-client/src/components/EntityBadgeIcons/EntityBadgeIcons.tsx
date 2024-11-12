@@ -28,6 +28,7 @@ import {
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { Tooltip } from '@mui/material'
+import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {
@@ -107,7 +108,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
 
   const { data: entityData } = useGetJson(entityId, versionNumber, true, {
     enabled: inView,
-    staleTime: 60 * 1000, // 60 seconds
   })
   const annotations = entityData?.annotations
   const { data: bundle } = useGetEntityBundle(
@@ -116,7 +116,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     ALL_ENTITY_BUNDLE_FIELDS,
     {
       enabled: inView,
-      staleTime: 60 * 1000, // 60 seconds
     },
   )
   const [showModal, setShowModal] = useState(false)
@@ -124,25 +123,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
-  const getAnnotationDisplayValue = (
-    value:
-      | string
-      | number
-      | boolean
-      | string[]
-      | number[]
-      | boolean[]
-      | undefined,
-  ) => {
-    if (typeof value === 'string') {
-      return value
-    } else if (Array.isArray(value)) {
-      return value.join(', ')
-    } else {
-      // Handle number and boolean cases if needed
-      return value?.toString()
-    }
-  }
   const isFeatureEnabled = useGetFeatureFlag(
     FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
   )
@@ -211,7 +191,15 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                       <td>
                         <b>{current[0]}</b>
                       </td>
-                      <td>{getAnnotationDisplayValue(current[1])}</td>
+                      <td>
+                        {Array.isArray(current[1])
+                          ? (current[1] as string[] | number[] | boolean[])
+                              .map(getDisplayedAnnotation)
+                              .join(', ')
+                          : getDisplayedAnnotation(
+                              current[1] as string | number | boolean,
+                            )}
+                      </td>
                     </tr>
                   </>
                 )
