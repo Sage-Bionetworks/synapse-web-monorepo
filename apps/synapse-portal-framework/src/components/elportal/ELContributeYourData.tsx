@@ -8,10 +8,8 @@ const ELContributeYourData: React.FC = () => {
     <Box
       sx={{
         backgroundColor: '#5BA998',
-        height: '250px',
-        textAlign: 'left',
-        display: 'flex',
-        alignItems: 'center',
+        display: 'grid',
+        gridTemplateColumns: '33% 33% 33%',
         position: 'relative',
         overflow: 'hidden',
       }}
