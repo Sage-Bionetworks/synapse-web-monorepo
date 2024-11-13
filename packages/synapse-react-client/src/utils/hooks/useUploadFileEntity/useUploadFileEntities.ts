@@ -67,7 +67,7 @@ type FileUploadProgress = {
 
 export type InitiateUploadArgs = PrepareFileEntityUploadArgs
 
-type UseUploadFileEntitiesReturn = {
+export type UseUploadFileEntitiesReturn = {
   state: UploaderState
   errorMessage?: string
   isPrecheckingUpload: boolean
