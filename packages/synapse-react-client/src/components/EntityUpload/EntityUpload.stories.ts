@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import mockProjectEntityData from '../../mocks/entity/mockProject'
 import { EntityUpload } from './EntityUpload'
 
 const meta = {
@@ -10,18 +11,9 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    containerId: 'syn23567475',
+    entityId: mockProjectEntityData.entity.id,
   },
-}
-
-export const Dev: Story = {
-  args: {
-    containerId: 'syn12554559',
-  },
-}
-
-export const ExternalS3Bucket: Story = {
-  args: {
-    containerId: 'syn63917361',
+  parameters: {
+    stack: 'mock',
   },
 }
