@@ -283,7 +283,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
                   totalSizeInBytes * fractionOfPartsUploaded
 
                 return (
-                  <Box
+                  <div
                     key={
                       // File path + name should be unique
                       fileNameWithPath
@@ -309,7 +309,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
                       onRemove={fileProgress.remove}
                       errorMessage={fileProgress.failureReason}
                     />
-                  </Box>
+                  </div>
                 )
               }}
             </FixedSizeList>
