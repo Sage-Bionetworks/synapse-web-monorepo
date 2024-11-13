@@ -40,7 +40,8 @@ export function EntityUploadPromptDialog(props: EntityUploadPromptDialogProps) {
     return null
   }
 
-  const numberOfOtherPrompts = activePrompts.length - 1
+  const numberOfOtherConfirmVersionPrompts =
+    activePrompts.filter(p => p.info.type === 'CONFIRM_NEW_VERSION').length - 1
 
   return (
     <DialogBase
@@ -52,15 +53,17 @@ export function EntityUploadPromptDialog(props: EntityUploadPromptDialogProps) {
             {getMessage(activePrompts[0].info)}
           </Typography>
           {activePrompts[0].info.type == 'CONFIRM_NEW_VERSION' &&
-            numberOfOtherPrompts > 0 && (
+            numberOfOtherConfirmVersionPrompts > 0 && (
               <FormControlLabel
                 control={<Checkbox />}
                 value={yesToAllChecked}
                 onChange={(_e, value) => setYesToAllChecked(value)}
-                label={`Also update ${numberOfOtherPrompts.toLocaleString()} other uploaded ${pluralize(
+                label={`Also update ${numberOfOtherConfirmVersionPrompts.toLocaleString()} other uploaded ${pluralize(
                   'file',
-                  numberOfOtherPrompts,
-                )} that already exist${numberOfOtherPrompts == 1 ? 's' : ''}`}
+                  numberOfOtherConfirmVersionPrompts,
+                )} that already exist${
+                  numberOfOtherConfirmVersionPrompts == 1 ? 's' : ''
+                }`}
               />
             )}
         </>

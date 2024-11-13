@@ -17,10 +17,12 @@ import {
   useGetDefaultUploadDestination,
   useGetEntity,
 } from '../../synapse-queries'
+import { getUploadDestinationString } from '../../utils/functions/FileHandleUtils'
 import {
   UploaderState,
   useUploadFileEntities,
 } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { EntityUploadPromptDialog } from './EntityUploadPromptDialog'
 import { ExternalObjectStoreCredentialsForm } from './ExternalObjectStoreCredentialsForm'
@@ -125,11 +127,12 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
       <Stack
         sx={{
           width: '100%',
-          height: '235px',
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
           textAlign: 'center',
         }}
+        py={3}
+        gap={1}
         justifyContent={'center'}
         alignItems={'center'}
       >
@@ -218,14 +221,26 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
               All uploaded files will be stored in
               {uploadDestination?.storageLocationId ===
                 SYNAPSE_STORAGE_LOCATION_ID && ' Synapse storage'}
-              {uploadDestination?.storageLocationId !==
-                SYNAPSE_STORAGE_LOCATION_ID && (
-                <>
-                  :<br />
-                  {uploadDestination?.banner}
-                </>
-              )}
+              {uploadDestination &&
+                uploadDestination?.storageLocationId !==
+                  SYNAPSE_STORAGE_LOCATION_ID && (
+                  <>
+                    :<br />
+                    {getUploadDestinationString(uploadDestination)}
+                  </>
+                )}
             </Typography>
+            {uploadDestination && uploadDestination.banner && (
+              <FullWidthAlert
+                sx={{
+                  textAlign: 'left',
+                }}
+                isGlobal={false}
+                title={'Storage Location Message'}
+                description={uploadDestination.banner}
+                variant={'info'}
+              />
+            )}
           </>
         )}
       </Stack>

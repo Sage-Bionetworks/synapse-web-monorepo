@@ -246,17 +246,25 @@ describe('EntityUpload', () => {
       'A file named "file1.txt" (syn123) already exists in this location. Do you want to update the existing file and create a new version?',
     )
 
+    expect(hookReturnValue.activePrompts[0].onConfirm).toHaveBeenCalledTimes(0)
     await user.click(screen.getByRole('button', { name: 'Yes' }))
     expect(hookReturnValue.activePrompts[0].onConfirm).toHaveBeenCalledTimes(1)
 
+    expect(hookReturnValue.activePrompts[0].onSkip).toHaveBeenCalledTimes(0)
     await user.click(screen.getByRole('button', { name: 'No' }))
     expect(hookReturnValue.activePrompts[0].onSkip).toHaveBeenCalledTimes(1)
 
+    expect(hookReturnValue.activePrompts[0].onCancelAll).toHaveBeenCalledTimes(
+      0,
+    )
     await user.click(screen.getByRole('button', { name: 'Cancel All Uploads' }))
     expect(hookReturnValue.activePrompts[0].onCancelAll).toHaveBeenCalledTimes(
       1,
     )
 
+    expect(hookReturnValue.activePrompts[0].onConfirmAll).toHaveBeenCalledTimes(
+      0,
+    )
     await user.click(
       screen.getByLabelText(
         'Also update 1 other uploaded file that already exists',
