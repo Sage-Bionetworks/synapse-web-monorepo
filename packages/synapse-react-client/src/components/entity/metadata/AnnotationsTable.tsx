@@ -26,7 +26,9 @@ export type AnnotationsTableProps = {
   readonly versionNumber?: number
 }
 
-function getDisplayedAnnotation(value: string | number | boolean): string {
+export function getDisplayedAnnotation(
+  value: string | number | boolean,
+): string {
   if (typeof value === 'number' || typeof value === 'boolean') {
     return value.toString()
   } else if (isISOTimestamp(value)) {

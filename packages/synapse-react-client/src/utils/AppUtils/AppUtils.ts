@@ -15,9 +15,13 @@ export const ONE_SAGE_REDIRECT_COOKIE_KEY =
   'org.sagebionetworks.cookies.redirect-after-login'
 
 export const getCookieDomain = () => {
-  return window.location.hostname.toLowerCase().endsWith('.synapse.org')
-    ? '.synapse.org'
-    : undefined
+  if (window.location.hostname.toLowerCase().endsWith('.synapse.org')) {
+    return '.synapse.org'
+  }
+  if (window.location.hostname.toLowerCase().endsWith('.dev.sagebase.org')) {
+    return '.dev.sagebase.org'
+  }
+  return undefined
 }
 
 export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {

@@ -73,6 +73,20 @@ export function getEntityBundleHandler(
   )
 }
 
+export function getEntityJsonHandler(
+  backendOrigin: string,
+  entityJson?: Partial<EntityJson>,
+) {
+  return rest.get(
+    `${backendOrigin}${ENTITY_JSON(':entityId')}`,
+
+    async (req, res, ctx) => {
+      const response = entityJson
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+}
+
 export function getVersionedEntityBundleHandler(
   backendOrigin: string,
   bundle?: Partial<EntityBundle>,

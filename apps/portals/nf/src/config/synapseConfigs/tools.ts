@@ -271,6 +271,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             sql: `${observationsSql} WHERE observationTime IS NULL`,
             type: SynapseConstants.OBSERVATION_CARD,
             initialLimit: 3,
+            multiCardList: true,
+            topLevelEnumeratedFacetToFilter: { columnName: 'observationType' },
           },
           title: 'Community Observations',
           tableSqlKeys: ['resourceId'],

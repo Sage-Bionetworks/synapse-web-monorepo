@@ -3,7 +3,7 @@ import { ProgressCallback } from '../../../synapse-client/index'
 import { FilePreparedForUpload } from './usePrepareFileEntityUpload'
 
 export type TrackedUploadProgress = {
-  parentId: string
+  filePreparedForUpload: FilePreparedForUpload
   progress: ProgressCallback
   abortController: AbortController
   status:
@@ -54,7 +54,7 @@ export function useTrackFileUploads() {
 
     preparedFiles.forEach(preparedFile => {
       newTrackedUploadProgress.set(preparedFile.file, {
-        parentId: preparedFile.parentId,
+        filePreparedForUpload: preparedFile,
         abortController: new AbortController(),
         // Note that this is number of parts uploaded, not file size or %
         progress: { value: 0, total: 1 },
@@ -126,7 +126,7 @@ export function useTrackFileUploads() {
   function pauseUpload(file: File) {
     const entry = trackedUploadProgress.get(file)
     if (entry != null) {
-      entry.abortController.abort()
+      entry.abortController.abort('Paused by user')
     }
     setStatus(file, 'PAUSED')
   }
