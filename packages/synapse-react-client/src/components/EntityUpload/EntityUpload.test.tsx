@@ -292,7 +292,7 @@ describe('EntityUpload', () => {
     })
   })
 
-  it('supports upload via programmatic handle', async () => {
+  it('supports upload via programmatic handle', () => {
     const { ref } = renderComponent()
 
     const filesToUpload = [
