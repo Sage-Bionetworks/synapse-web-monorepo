@@ -211,8 +211,22 @@ describe('EntityUpload', () => {
       state: 'PROMPT_USER',
       activePrompts: [
         {
-          title: 'This is the prompt title',
-          message: 'This is the prompt message',
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: 'file1.txt',
+            existingEntityId: 'syn123',
+          },
+          onConfirmAll: jest.fn(),
+          onConfirm: jest.fn(),
+          onSkip: jest.fn(),
+          onCancelAll: jest.fn(),
+        },
+        {
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: 'file2.txt',
+            existingEntityId: 'syn456',
+          },
           onConfirmAll: jest.fn(),
           onConfirm: jest.fn(),
           onSkip: jest.fn(),
@@ -227,22 +241,29 @@ describe('EntityUpload', () => {
     })
 
     const dialog = await screen.findByRole('dialog')
-    within(dialog).getByText('This is the prompt title')
-    within(dialog).getByText('This is the prompt message')
+    within(dialog).getByText('Update existing file?')
+    within(dialog).getByText(
+      'A file named "file1.txt" (syn123) already exists in this location. Do you want to update the existing file and create a new version?',
+    )
 
     await user.click(screen.getByRole('button', { name: 'Yes' }))
     expect(hookReturnValue.activePrompts[0].onConfirm).toHaveBeenCalledTimes(1)
 
-    await user.click(screen.getByRole('button', { name: 'Skip' }))
+    await user.click(screen.getByRole('button', { name: 'No' }))
     expect(hookReturnValue.activePrompts[0].onSkip).toHaveBeenCalledTimes(1)
-
-    await user.click(screen.getByRole('button', { name: 'Yes to All' }))
-    expect(hookReturnValue.activePrompts[0].onConfirmAll).toHaveBeenCalledTimes(
-      1,
-    )
 
     await user.click(screen.getByRole('button', { name: 'Cancel All Uploads' }))
     expect(hookReturnValue.activePrompts[0].onCancelAll).toHaveBeenCalledTimes(
+      1,
+    )
+
+    await user.click(
+      screen.getByLabelText(
+        'Also update 1 other uploaded file that already exists',
+      ),
+    )
+    await user.click(screen.getByRole('button', { name: 'Yes' }))
+    expect(hookReturnValue.activePrompts[0].onConfirmAll).toHaveBeenCalledTimes(
       1,
     )
   })

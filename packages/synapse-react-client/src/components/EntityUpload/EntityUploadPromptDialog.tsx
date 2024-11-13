@@ -1,30 +1,75 @@
-import { Button, DialogActions } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from '@mui/material'
 import { noop } from 'lodash-es'
-import React from 'react'
-import { UseUploadFileEntitiesReturn } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import pluralize from 'pluralize'
+import React, { useState } from 'react'
+import {
+  PromptInfo,
+  UseUploadFileEntitiesReturn,
+} from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
 
 type EntityUploadPromptDialogProps = {
   activePrompts: UseUploadFileEntitiesReturn['activePrompts']
 }
 
+function getTitle(promptInfo: PromptInfo) {
+  if (promptInfo.type === 'CONFIRM_NEW_VERSION') {
+    return 'Update existing file?'
+  }
+  return ''
+}
+
+function getMessage(promptInfo: PromptInfo) {
+  if (promptInfo.type === 'CONFIRM_NEW_VERSION') {
+    return `A file named "${promptInfo.fileName}" (${promptInfo.existingEntityId}) already exists in this location. Do you want to update the existing file and create a new version?`
+  }
+  return ''
+}
+
 export function EntityUploadPromptDialog(props: EntityUploadPromptDialogProps) {
   const { activePrompts } = props
+  const [yesToAllChecked, setYesToAllChecked] = useState(false)
 
   if (activePrompts.length === 0) {
     return null
   }
 
+  const numberOfOtherPrompts = activePrompts.length - 1
+
   return (
     <DialogBase
-      title={activePrompts[0].title}
+      title={getTitle(activePrompts[0].info)}
       open={true}
-      content={activePrompts[0].message}
+      content={
+        <>
+          <Typography variant={'body1'} gutterBottom>
+            {getMessage(activePrompts[0].info)}
+          </Typography>
+          {activePrompts[0].info.type == 'CONFIRM_NEW_VERSION' &&
+            numberOfOtherPrompts > 0 && (
+              <FormControlLabel
+                control={<Checkbox />}
+                value={yesToAllChecked}
+                onChange={(_e, value) => setYesToAllChecked(value)}
+                label={`Also update ${numberOfOtherPrompts.toLocaleString()} other uploaded ${pluralize(
+                  'file',
+                  numberOfOtherPrompts,
+                )} that already exist${numberOfOtherPrompts == 1 ? 's' : ''}`}
+              />
+            )}
+        </>
+      }
       // Force the user to make a decision
       onCancel={noop}
       hasCloseButton={false}
       actions={
-        <DialogActions>
+        <>
           {activePrompts[0].onCancelAll && (
             <Button
               variant={'text'}
@@ -34,28 +79,26 @@ export function EntityUploadPromptDialog(props: EntityUploadPromptDialogProps) {
               Cancel All Uploads
             </Button>
           )}
+          <Box sx={{ flexGrow: 1 }} />
           {activePrompts[0].onSkip && (
-            <Button onClick={activePrompts[0].onSkip}>Skip</Button>
-          )}
-          {activePrompts[0].onConfirmAll && (
-            <Button
-              variant={'outlined'}
-              color={'primary'}
-              onClick={activePrompts[0].onConfirmAll}
-            >
-              Yes to All
-            </Button>
+            <Button onClick={activePrompts[0].onSkip}>No</Button>
           )}
           {activePrompts[0].onConfirm && (
             <Button
               variant={'contained'}
               color={'primary'}
-              onClick={activePrompts[0].onConfirm}
+              onClick={() => {
+                if (yesToAllChecked) {
+                  activePrompts[0].onConfirmAll()
+                } else {
+                  activePrompts[0].onConfirm()
+                }
+              }}
             >
               Yes
             </Button>
           )}
-        </DialogActions>
+        </>
       }
     />
   )
