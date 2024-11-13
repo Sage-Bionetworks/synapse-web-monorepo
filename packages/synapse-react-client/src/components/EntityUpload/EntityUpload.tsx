@@ -1,17 +1,13 @@
 import {
   Box,
-  Button,
-  DialogActions,
   Fade,
   Link,
   Menu,
   MenuItem,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
-import { instanceOfExternalObjectStoreUploadDestination } from '@sage-bionetworks/synapse-client'
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -25,8 +21,9 @@ import {
   UploaderState,
   useUploadFileEntities,
 } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
-import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { EntityUploadPromptDialog } from './EntityUploadPromptDialog'
+import { ExternalObjectStoreCredentialsForm } from './ExternalObjectStoreCredentialsForm'
 import { FileUploadProgress } from './FileUploadProgress'
 
 export type EntityUploadProps = {
@@ -114,81 +111,14 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
 
   return (
     <div>
-      {activePrompts.length > 0 && (
-        <DialogBase
-          title={activePrompts[0].title}
-          open={true}
-          content={activePrompts[0].message}
-          // Force the user to make a decision
-          onCancel={noop}
-          hasCloseButton={false}
-          actions={
-            <DialogActions>
-              {activePrompts[0].onCancelAll && (
-                <Button
-                  variant={'text'}
-                  color={'error'}
-                  onClick={activePrompts[0].onCancelAll}
-                >
-                  Cancel All Uploads
-                </Button>
-              )}
-              {activePrompts[0].onSkip && (
-                <Button onClick={activePrompts[0].onSkip}>Skip</Button>
-              )}
-              {activePrompts[0].onConfirmAll && (
-                <Button
-                  variant={'outlined'}
-                  color={'primary'}
-                  onClick={activePrompts[0].onConfirmAll}
-                >
-                  Yes to All
-                </Button>
-              )}
-              {activePrompts[0].onConfirm && (
-                <Button
-                  variant={'contained'}
-                  color={'primary'}
-                  onClick={activePrompts[0].onConfirm}
-                >
-                  Yes
-                </Button>
-              )}
-            </DialogActions>
-          }
-        />
-      )}
-      {uploadDestination &&
-        instanceOfExternalObjectStoreUploadDestination(uploadDestination) &&
-        uploadDestination.endpointUrl && (
-          <Stack gap={1.5} mb={3}>
-            <Typography>
-              Authorization is required to access{' '}
-              <strong>{uploadDestination.endpointUrl}</strong>
-            </Typography>
-            <TextField
-              label={'Access Key'}
-              fullWidth
-              value={accessKey}
-              onChange={e => {
-                setAccessKey(e.target.value)
-              }}
-            />
-            <TextField
-              label={'Secret Key'}
-              type={'password'}
-              fullWidth
-              value={secretKey}
-              onChange={e => {
-                setSecretKey(e.target.value)
-              }}
-            />
-            <Typography variant={'smallText1'} fontStyle={'italic'}>
-              Keys are used to locally sign a web request. They are not
-              transmitted or stored by Synapse.
-            </Typography>
-          </Stack>
-        )}
+      <EntityUploadPromptDialog activePrompts={activePrompts} />
+      <ExternalObjectStoreCredentialsForm
+        uploadDestination={uploadDestination}
+        accessKey={accessKey}
+        setAccessKey={setAccessKey}
+        secretKey={secretKey}
+        setSecretKey={setSecretKey}
+      />
       <Stack
         sx={{
           width: '100%',
