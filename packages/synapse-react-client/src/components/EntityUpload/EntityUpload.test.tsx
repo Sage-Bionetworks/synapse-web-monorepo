@@ -41,6 +41,7 @@ jest.mock('../../synapse-queries/file/useUploadDestination.ts', () => ({
 }))
 
 jest.mock('./FileUploadProgress', () => ({
+  FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX: 100,
   FileUploadProgress: jest.fn(() => <div data-testid={'FileUploadProgress'} />),
 }))
 

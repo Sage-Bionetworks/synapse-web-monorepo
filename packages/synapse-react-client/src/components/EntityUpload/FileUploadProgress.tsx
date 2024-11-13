@@ -43,6 +43,8 @@ export type FileUploadProgressProps = {
   errorMessage?: string
 }
 
+export const FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX = 92
+
 /**
  * Component that displays the upload progress of a file, with controls to pause or cancel the upload.
  */
@@ -76,7 +78,7 @@ export function FileUploadProgress(props: FileUploadProgressProps) {
   }
 
   return (
-    <Box py={2} height={'92px'}>
+    <Box py={2} height={`${FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX}px`}>
       <Box
         display={'flex'}
         flexWrap={'nowrap'}

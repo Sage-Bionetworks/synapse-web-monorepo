@@ -24,7 +24,10 @@ import {
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { EntityUploadPromptDialog } from './EntityUploadPromptDialog'
 import { ExternalObjectStoreCredentialsForm } from './ExternalObjectStoreCredentialsForm'
-import { FileUploadProgress } from './FileUploadProgress'
+import {
+  FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX,
+  FileUploadProgress,
+} from './FileUploadProgress'
 
 export type EntityUploadProps = {
   /** The ID of the entity to upload to. If this is a container, file(s) will be added as children. If this is a
@@ -124,7 +127,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
           width: '100%',
           height: '235px',
           border: '1px dashed #D9D9D9',
-          background: '#FBFBFC',
+          backgroundColor: 'grey.100',
           textAlign: 'center',
         }}
         justifyContent={'center'}
@@ -263,7 +266,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
             mx={`${UPLOAD_CONTAINER_PADDING_X_PX * -1}px`}
           >
             <FixedSizeList
-              itemSize={92}
+              itemSize={FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX}
               height={205}
               itemCount={uploadProgress.length}
               width={'100%'}
@@ -271,7 +274,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
               {({ index, style }) => {
                 const fileProgress = uploadProgress[index]
                 const fileNameWithPath =
-                  fileProgress.file.webkitRelativePath ?? fileProgress.file.name
+                  fileProgress.file.webkitRelativePath || fileProgress.file.name
 
                 const totalSizeInBytes = fileProgress.file.size
                 const fractionOfPartsUploaded =
