@@ -15,6 +15,7 @@ import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { Box, Link, Typography, Button, darken } from '@mui/material'
 
 export type GoalsV2Props = {
   entityId: string
@@ -125,42 +126,97 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
   return (
-    <div className={`GoalsV2${showDesktop ? '__Desktop' : ''}`}>
+    <Box
+      sx={{
+        flex: '1 1 auto',
+        borderTop: '6px solid #5BA998',
+        backgroundColor: '#5BA998',
+        backgroundOpacity: 0.1,
+      }}
+    >
+      <Box
+        sx={{
+          flex: '1 1 auto',
+          zIndex: 1,
+          textAlign: 'center',
+          paddingTop: '100px',
+          paddingBottom: '100px',
+        }}
+      >
+        <Typography
+          variant="headline1"
+          style={{ color: 'black' }}
+          sx={{
+            pt: 4,
+            mb: 2,
+            mx: 'auto',
+            width: 'max-content',
+            borderTop: '6px solid #ffffff88',
+          }}
+        >
+          What's in the Portal?
+        </Typography>
+        <Link
+          href="https://example.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          fontFamily="Lato"
+          fontSize="18"
+          fontStyle="semi-bold"
+        >
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#5BA998',
+              border: '1px solid white',
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: darken('#5BA998', 0.05),
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Start Exploring Data
+          </Button>
+        </Link>
+      </Box>
       {error && <ErrorBanner error={error} />}
-      {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
-        const values = el.values as string[]
-        if (values.some(value => value === null)) {
-          // We cast values above assuming there are no null values, emit a warning just in case.
-          console.warn('Row has null value(s) when no nulls expected')
-        }
-        const tableId =
-          tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
-        let countSql
-        if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
-          countSql = values[countSqlColumnIndex]
-        } else if (tableId) {
-          countSql = `SELECT * FROM ${tableId}`
-        }
-        const title = values[titleColumnIndex]
-        const summary = values[summaryColumnIndex]
-        const link = values[linkColumnIndex]
-        // assume that we recieve assets in order of rows and there is an asset for each item
-        // can revisit if this isn't the case.
-        const asset = assets?.[index] ?? ''
-        const goalsV2DataProps: GoalsV2DataProps = {
-          countSql,
-          title,
-          summary,
-          link,
-          asset,
-        }
-        return showDesktop ? (
-          <GoalsV2Desktop {...goalsV2DataProps} />
-        ) : (
-          <GoalsV2Mobile {...goalsV2DataProps} />
-        )
-      })}
-    </div>
+      <div className={`GoalsV2${showDesktop ? '__Desktop' : ''}`}>
+        {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
+          const values = el.values as string[]
+          if (values.some(value => value === null)) {
+            // We cast values above assuming there are no null values, emit a warning just in case.
+            console.warn('Row has null value(s) when no nulls expected')
+          }
+          const tableId =
+            tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+          let countSql
+          if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
+            countSql = values[countSqlColumnIndex]
+          } else if (tableId) {
+            countSql = `SELECT * FROM ${tableId}`
+          }
+          const title = values[titleColumnIndex]
+          const summary = values[summaryColumnIndex]
+          const link = values[linkColumnIndex]
+          // assume that we recieve assets in order of rows and there is an asset for each item
+          // can revisit if this isn't the case.
+          const asset = assets?.[index] ?? ''
+          const goalsV2DataProps: GoalsV2DataProps = {
+            countSql,
+            title,
+            summary,
+            link,
+            asset,
+          }
+          return showDesktop ? (
+            <GoalsV2Desktop {...goalsV2DataProps} />
+          ) : (
+            <GoalsV2Mobile {...goalsV2DataProps} />
+          )
+        })}
+      </div>
+    </Box>
   )
 }
 
