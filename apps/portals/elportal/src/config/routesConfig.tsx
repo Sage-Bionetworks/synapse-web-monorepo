@@ -12,7 +12,7 @@ import {
   partnersSql,
   peopleSql,
   projectsSql,
-//  upsetPlotSql,
+  //  upsetPlotSql,
 } from './resources'
 //import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
@@ -52,7 +52,7 @@ const routes: GenericRoute[] = [
         },
       },
       {
-        name: 'Goals',
+        name: 'GoalsV2',
         outsideContainerClassName: 'home-spacer',
         props: {
           entityId: 'syn51449135',

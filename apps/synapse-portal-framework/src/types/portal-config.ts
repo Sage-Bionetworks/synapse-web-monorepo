@@ -5,6 +5,7 @@ import {
   ExternalFileHandleLinkProps,
   FeaturedDataTabsProps,
   GoalsProps,
+  GoalsV2Props,
   MarkdownCollapseProps,
   MarkdownSynapseProps,
   OrientationBannerProps,
@@ -109,6 +110,11 @@ type ThemesPlot = {
 type Goals = {
   name: 'Goals'
   props: GoalsProps
+}
+
+type GoalsV2 = {
+  name: 'GoalsV2'
+  props: GoalsV2Props
 }
 
 type Programs = {
@@ -376,6 +382,7 @@ export type SynapseConfig = (
   | SurveysCompletedPlots
   | ExternalFileHandleLink
   | Goals
+  | GoalsV2
   | Programs
   | Resources
   | UpsetPlot
