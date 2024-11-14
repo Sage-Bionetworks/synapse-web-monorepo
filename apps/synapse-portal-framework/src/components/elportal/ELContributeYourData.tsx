@@ -40,7 +40,8 @@ const ELContributeYourData: React.FC = () => {
           variant="headline1"
           style={{ color: 'white' }}
           sx={{
-            pt: 2,
+            pt: 4,
+            mb: 2,
             mx: 'auto',
             width: 'max-content',
             borderTop: '6px solid #ffffff88',
