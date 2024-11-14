@@ -12,7 +12,7 @@ const suffixes: string[] = [
 
 export function calculateFriendlyFileSize(
   bytes: number | null | undefined,
-  fractionDigits?: number,
+  fractionDigits: number = 2,
 ) {
   if (bytes == null) {
     return ''
@@ -22,6 +22,6 @@ export function calculateFriendlyFileSize(
   // tslint:disable-next-line
   return (
     (bytes == 0 && '0 Bytes') ||
-    (bytes / Math.pow(1024, i)).toFixed(fractionDigits ?? 2) + ' ' + suffixes[i]
+    (bytes / Math.pow(1024, i)).toFixed(fractionDigits) + ' ' + suffixes[i]
   )
 }
