@@ -65,10 +65,6 @@ const config: StorybookConfig = {
 
     return mergeConfig(config, customStorybookConfig)
   },
-
-  docs: {
-    autodocs: false,
-  },
 }
 
 export default config

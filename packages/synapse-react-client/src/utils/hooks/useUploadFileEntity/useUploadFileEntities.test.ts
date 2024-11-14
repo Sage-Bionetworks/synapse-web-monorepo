@@ -520,16 +520,22 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(2)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file1.txt" (syn456) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file1.name,
+            existingEntityId: 'syn456',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
           onCancelAll: expect.any(Function),
         })
         expect(hook.current.activePrompts[1]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
@@ -545,8 +551,11 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(1)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
@@ -689,16 +698,22 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(2)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file1.txt" (syn456) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file1.name,
+            existingEntityId: 'syn456',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
           onCancelAll: expect.any(Function),
         })
         expect(hook.current.activePrompts[1]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
@@ -829,16 +844,22 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(2)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file1.txt" (syn456) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file1.name,
+            existingEntityId: 'syn456',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
           onCancelAll: expect.any(Function),
         })
         expect(hook.current.activePrompts[1]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
@@ -854,8 +875,11 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(1)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
@@ -984,16 +1008,22 @@ describe('useUploadFileEntities', () => {
         expect(hook.current.state).toBe('PROMPT_USER')
         expect(hook.current.activePrompts.length).toBe(2)
         expect(hook.current.activePrompts[0]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file1.txt" (syn456) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file1.name,
+            existingEntityId: 'syn456',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
           onCancelAll: expect.any(Function),
         })
         expect(hook.current.activePrompts[1]).toEqual({
-          title: 'Update existing file?',
-          message: `A file named "file2.txt" (syn457) already exists in this location. Do you want to update the existing file and create a new version?`,
+          info: {
+            type: 'CONFIRM_NEW_VERSION',
+            fileName: file2.name,
+            existingEntityId: 'syn457',
+          },
           onConfirm: expect.any(Function),
           onSkip: expect.any(Function),
           onConfirmAll: expect.any(Function),
