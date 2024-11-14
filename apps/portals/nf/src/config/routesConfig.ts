@@ -67,7 +67,7 @@ const routes: GenericRoute[] = [
     synapseConfigArray: [
       {
         name: 'Goals',
-        title: 'Portal Programs and Goals',
+        title: 'Resource Overview',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
