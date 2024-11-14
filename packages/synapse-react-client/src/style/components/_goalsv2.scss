@@ -29,7 +29,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    box-shadow: SRC.$box-shadow-soft;
+    //box-shadow: SRC.$box-shadow-soft;
     background: #ffffff;
     margin: 10px;
     &:first-child {
@@ -42,7 +42,7 @@
     &__header {
       min-height: 75px;
       @extend %side-padding;
-      background: SRC.$primary-action-color;
+      //background: SRC.$primary-action-color;
       background-size: cover !important;
       background-repeat: no-repeat !important;
       display: flex;
@@ -55,15 +55,16 @@
       }
       &__title {
         font-size: 18px;
-        font-weight: bold;
       }
       &__count {
-        border: 1px solid white;
-        border-radius: 50%;
+        //border: 1px solid white;
+        //border-radius: 50%;
         @extend %hv-center;
         min-height: 50px;
         min-width: 50px;
         padding: 5px;
+        font-size: 18px;
+        font-weight: bold;
       }
     }
     &__summary {
