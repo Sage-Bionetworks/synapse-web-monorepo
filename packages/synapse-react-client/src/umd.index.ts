@@ -1,3 +1,4 @@
+import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
 import ChangePassword from './components/ChangePassword/ChangePassword'
@@ -191,6 +192,7 @@ const SynapseComponents = {
   GovernanceMarkdownGithub,
   MarkdownGithubLatestTag,
   ProjectDataAvailability,
+  EntityUploadModal,
 }
 
 // Include the version in the build

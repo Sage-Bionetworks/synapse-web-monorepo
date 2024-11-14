@@ -37,9 +37,14 @@ type UploadFileStatus =
   | 'FAILED'
   | 'COMPLETE'
 
-type Prompt = {
-  title: string
-  message: string
+export type PromptInfo = {
+  type: 'CONFIRM_NEW_VERSION'
+  fileName: string
+  existingEntityId: string
+}
+
+export type Prompt = {
+  info: PromptInfo
   onConfirmAll: () => void
   onConfirm: () => void
   onSkip: () => void
@@ -67,7 +72,7 @@ type FileUploadProgress = {
 
 export type InitiateUploadArgs = PrepareFileEntityUploadArgs
 
-type UseUploadFileEntitiesReturn = {
+export type UseUploadFileEntitiesReturn = {
   state: UploaderState
   errorMessage?: string
   isPrecheckingUpload: boolean
@@ -350,13 +355,15 @@ export function useUploadFileEntities(
     [postPrepareUpload, prepareUpload],
   )
 
-  const activePrompts = useMemo(() => {
+  const activePrompts: Prompt[] = useMemo(() => {
     return filesToConfirmNewVersion.map(fileToPrompt => {
       return {
-        title: 'Update existing file?',
-        message: `A file named "${fileToPrompt.file.name}" (${
-          (fileToPrompt as UpdateEntityFileUpload).existingEntityId
-        }) already exists in this location. Do you want to update the existing file and create a new version?`,
+        info: {
+          type: 'CONFIRM_NEW_VERSION',
+          fileName: fileToPrompt.file.name,
+          existingEntityId: (fileToPrompt as UpdateEntityFileUpload)
+            .existingEntityId,
+        },
         onConfirm: () => {
           const { confirmedItems, pendingItems } =
             confirmUploadFileWithNewVersion(fileToPrompt)
