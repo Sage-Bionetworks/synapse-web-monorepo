@@ -6,9 +6,6 @@ import { Box } from '@mui/material'
 import { Select } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { useGetFeatureFlag } from '../../synapse-queries'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { Search } from '../../assets/themed_icons'
 
 export type SynapseHomepageChatSearchProps = {
   gotoPlace: (href: string) => void
@@ -30,9 +27,6 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
   const [searchValue, setSearchValue] = useState('')
   const [chatValue, setChatValue] = useState('')
   const [mode, setMode] = useState(SearchMode.SEARCH)
-  const isChatbotFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.HOMEPAGE_CHATBOT,
-  )
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
       gotoPlace(`/Search:${encodeURIComponent(searchValue)}`)
@@ -58,39 +52,30 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
         <OutlinedInput
           value={mode == SearchMode.SEARCH ? searchValue : chatValue}
           startAdornment={
-            isChatbotFeatureEnabled ? (
-              <InputAdornment
-                position="start"
-                sx={{ p: '0px', ml: '7px', mr: '13px' }}
+            <InputAdornment
+              position="start"
+              sx={{ p: '0px', ml: '7px', mr: '13px' }}
+            >
+              <Select
+                value={mode}
+                sx={{
+                  fontSize: '24px',
+                  fontWeight: 400,
+                  minWidth: '125px',
+                  color: (theme.palette.secondary as ColorPartial)[600],
+                  '& div[role="combobox"]': {
+                    p: '14px 12px',
+                  },
+                }}
+                onChange={v => {
+                  setMode(v.target.value as SearchMode)
+                  //restore search or chat value
+                }}
               >
-                <Select
-                  value={mode}
-                  sx={{
-                    fontSize: '24px',
-                    fontWeight: 400,
-                    minWidth: '125px',
-                    color: (theme.palette.secondary as ColorPartial)[600],
-                    '& div[role="combobox"]': {
-                      p: '14px 12px',
-                    },
-                  }}
-                  onChange={v => {
-                    setMode(v.target.value as SearchMode)
-                    //restore search or chat value
-                  }}
-                >
-                  <MenuItem value={SearchMode.SEARCH}>Search</MenuItem>
-                  <MenuItem value={SearchMode.CHAT}>Chat</MenuItem>
-                </Select>
-              </InputAdornment>
-            ) : (
-              <InputAdornment position="start" sx={{ ml: '7px', mr: '13px' }}>
-                <Search
-                  size={32}
-                  fill={(theme.palette.secondary as ColorPartial)[600]}
-                />
-              </InputAdornment>
-            )
+                <MenuItem value={SearchMode.SEARCH}>Search</MenuItem>
+                <MenuItem value={SearchMode.CHAT}>Chat</MenuItem>
+              </Select>
+            </InputAdornment>
           }
           placeholder={
             mode == SearchMode.SEARCH ? 'Search Synapse' : 'Ask a question'
