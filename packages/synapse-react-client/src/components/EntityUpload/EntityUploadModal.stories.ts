@@ -1,10 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
-import { EntityUpload } from './EntityUpload'
+import { EntityUploadModal } from './EntityUploadModal'
 
 const meta = {
-  title: 'Synapse/Upload/EntityUpload',
-  component: EntityUpload,
+  title: 'Synapse/Upload/EntityUploadModal',
+  component: EntityUploadModal,
+  args: {
+    open: true,
+    onClose: fn(),
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
