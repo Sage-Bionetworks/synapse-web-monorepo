@@ -22,6 +22,7 @@ import {
   ThemesPlotProps,
   TimelinePlotProps,
   DatasetJsonLdScriptProps,
+  JsonLdScriptProps,
   UpsetPlotProps,
   UserCardListGroupsProps,
   UserCardListRotateProps,
@@ -353,6 +354,11 @@ type DatasetJsonLdScript = {
   props: DatasetJsonLdScriptProps
 }
 
+type JsonLdScript = {
+  name: 'JsonLdScript'
+  props: JsonLdScriptProps
+}
+
 export type SynapseConfig = (
   | RedirectToURL
   | RedirectWithQuery
@@ -410,6 +416,7 @@ export type SynapseConfig = (
   | ChallengeDataDownloadWrapper
   | ChallengeSubmissionWrapper
   | TimelinePlot
+  | JsonLdScript
   | DatasetJsonLdScript
   | DynamicForm
   | SharePageLinkButton
