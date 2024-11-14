@@ -39,15 +39,24 @@ export const EntityUploadModal = React.forwardRef(function EntityUploadModal(
       : !isLinkFormValid
 
   function onFinish() {
-    if (tabValue === UploadTab.UploadFile) {
-      onClose()
-    } else {
-      linkToUrlFormRef.current!.submit()
+    if (!disableFinish) {
+      if (tabValue === UploadTab.UploadFile) {
+        onClose()
+      } else {
+        linkToUrlFormRef.current!.submit()
+      }
     }
   }
 
   return (
     <DialogBase
+      DialogProps={{
+        onKeyUp: (e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            onFinish()
+          }
+        },
+      }}
       title={'Upload or Link to File'}
       open={open}
       maxWidth={'md'}
