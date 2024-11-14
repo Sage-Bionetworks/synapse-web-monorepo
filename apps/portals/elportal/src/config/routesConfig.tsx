@@ -12,7 +12,7 @@ import {
   partnersSql,
   peopleSql,
   projectsSql,
-//  upsetPlotSql,
+  //  upsetPlotSql,
 } from './resources'
 //import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
@@ -401,13 +401,9 @@ const routes: GenericRoute[] = [
         hideRouteFromNavbar: true,
         synapseConfigArray: [
           {
-            name: 'Markdown',
-            title: 'Contribute Data',
-            props: {
-              ownerId: 'syn27229419',
-              wikiId: '621277',
-              loadingSkeletonRowCount: 15,
-            },
+            name: 'ELContributeYourData',
+            props: undefined,
+            isOutsideContainer: true,
           },
         ],
       },
