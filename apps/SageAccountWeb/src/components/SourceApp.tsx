@@ -47,7 +47,11 @@ export function SourceAppLogo(props: Omit<BoxProps, 'children' | 'className'>) {
 export const SourceAppDescription = () => {
   const sourceAppConfig = useSourceApp()
   return sourceAppConfig ? (
-    <Typography className="description" variant="subtitle1">
+    <Typography
+      className="description"
+      variant="subtitle1"
+      sx={{ maxHeight: '180px', overflow: 'auto' }}
+    >
       {sourceAppConfig?.description}
     </Typography>
   ) : (
