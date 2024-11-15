@@ -6,6 +6,7 @@ import {
   MenuItem,
   Paper,
   Stack,
+  SxProps,
   Typography,
 } from '@mui/material'
 import { noop } from 'lodash-es'
@@ -24,12 +25,14 @@ import {
 } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import { EntityUploadPromptDialog } from './EntityUploadPromptDialog'
 import { ExternalObjectStoreCredentialsForm } from './ExternalObjectStoreCredentialsForm'
 import {
   FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX,
   FileUploadProgress,
 } from './FileUploadProgress'
+import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
 export type EntityUploadProps = {
   /** The ID of the entity to upload to. If this is a container, file(s) will be added as children. If this is a
@@ -45,6 +48,11 @@ const UPLOAD_CONTAINER_PADDING_X_PX = 24
 export type EntityUploadHandle = {
   /** Programmatically add files to the upload (e.g. on drag & drop) */
   handleUploads: (fileList: ArrayLike<File>) => void
+}
+
+const disabledUploadPaneSx: SxProps = {
+  pointerEvents: 'none',
+  filter: 'opacity(33%)',
 }
 
 export const EntityUpload = React.forwardRef(function EntityUpload(
@@ -65,6 +73,9 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   const [accessKey, setAccessKey] = useState('')
   const [secretKey, setSecretKey] = useState('')
 
+  const [didUploadsExceedStorageLimit, setDidUploadsExceedStorageLimit] =
+    useState(false)
+
   const {
     initiateUpload,
     state,
@@ -72,7 +83,9 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
     activePrompts,
     activeUploadCount,
     isPrecheckingUpload,
-  } = useUploadFileEntities(entityId, accessKey, secretKey)
+  } = useUploadFileEntities(entityId, accessKey, secretKey, () =>
+    setDidUploadsExceedStorageLimit(true),
+  )
 
   useEffect(() => {
     onStateChange(state)
@@ -98,6 +111,13 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   ).length
 
   function uploadFileList(fileList: ArrayLike<File>) {
+    if (uploadDestination?.projectStorageLocationUsage.isOverLimit) {
+      displayToast(
+        'Cannot upload files because the storage limit has been exceeded.',
+        'danger',
+      )
+      return
+    }
     const args = Array.from(fileList).map(file => {
       if (isFileEntity) {
         return { file, existingEntityId: entityId }
@@ -117,6 +137,12 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   return (
     <div>
       <EntityUploadPromptDialog activePrompts={activePrompts} />
+      {uploadDestination && (
+        <ProjectStorageLimitAlert
+          usage={uploadDestination.projectStorageLocationUsage}
+          didUploadsExceedLimit={didUploadsExceedStorageLimit}
+        />
+      )}
       <ExternalObjectStoreCredentialsForm
         uploadDestination={uploadDestination}
         accessKey={accessKey}
@@ -130,6 +156,9 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
           textAlign: 'center',
+          ...(uploadDestination?.projectStorageLocationUsage.isOverLimit
+            ? disabledUploadPaneSx
+            : {}),
         }}
         py={3}
         gap={1}

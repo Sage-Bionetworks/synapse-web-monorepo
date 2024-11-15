@@ -24,6 +24,7 @@ import {
   EntityUploadProps,
 } from './EntityUpload'
 import { FileUploadProgress } from './FileUploadProgress'
+import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
 jest.mock(
   '../../utils/hooks/useUploadFileEntity/useUploadFileEntities',
@@ -45,7 +46,14 @@ jest.mock('./FileUploadProgress', () => ({
   FileUploadProgress: jest.fn(() => <div data-testid={'FileUploadProgress'} />),
 }))
 
+jest.mock('./ProjectStorageLimitAlert', () => ({
+  ProjectStorageLimitAlert: jest.fn(() => (
+    <div data-testid={'ProjectStorageLimitAlert'} />
+  )),
+}))
+
 const mockFileUploadProgress = jest.mocked(FileUploadProgress)
+const mockProjectStorageLimitAlert = jest.mocked(ProjectStorageLimitAlert)
 const mockUseUploadFileEntities = jest.mocked(useUploadFileEntities)
 const mockUseGetEntity = jest.mocked(useGetEntity)
 const mockUseGetDefaultUploadDestination = jest.mocked(
@@ -317,6 +325,7 @@ describe('EntityUpload', () => {
         mockProject.entity.id,
         accessKeyValue,
         secretKeyValue,
+        expect.any(Function),
       )
     })
   })
@@ -338,6 +347,38 @@ describe('EntityUpload', () => {
         { file: filesToUpload[0], rootContainerId: mockProject.entity.id },
         { file: filesToUpload[1], rootContainerId: mockProject.entity.id },
       ],
+    )
+  })
+
+  it('passes didUploadsExceedStorageLimit = true to ProjectStorageLimitAlert when onStorageLimitExceeded is invoked', async () => {
+    renderComponent()
+
+    await waitFor(() => {
+      expect(mockProjectStorageLimitAlert).toHaveBeenCalledWith(
+        {
+          didUploadsExceedLimit: false,
+          usage:
+            mockSynapseStorageUploadDestination.projectStorageLocationUsage,
+        },
+        expect.anything(),
+      )
+
+      expect(mockUseUploadFileEntities).toHaveBeenCalled()
+    })
+
+    const onStorageLimitExceeded = mockUseUploadFileEntities.mock.lastCall![3]!
+    expect(onStorageLimitExceeded).toBeDefined()
+
+    act(() => {
+      onStorageLimitExceeded()
+    })
+
+    expect(mockProjectStorageLimitAlert).toHaveBeenCalledWith(
+      {
+        didUploadsExceedLimit: true,
+        usage: mockSynapseStorageUploadDestination.projectStorageLocationUsage,
+      },
+      expect.anything(),
     )
   })
 })

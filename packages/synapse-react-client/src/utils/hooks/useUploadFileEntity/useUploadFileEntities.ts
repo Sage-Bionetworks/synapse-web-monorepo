@@ -1,5 +1,6 @@
 import { instanceOfExternalObjectStoreUploadDestination } from '@sage-bionetworks/synapse-client'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
+import { noop } from 'lodash-es'
 import pLimit from 'p-limit'
 import { useCallback, useMemo } from 'react'
 import {
@@ -28,6 +29,7 @@ import {
   TrackedUploadProgress,
   useTrackFileUploads,
 } from './useTrackFileUploads'
+import { willUploadsExceedStorageLimit } from './willUploadsExceedStorageLimit'
 
 type UploadFileStatus =
   | 'PREPARING'
@@ -112,15 +114,18 @@ export function useUploadFileEntities(
   accessKey = '',
   /** Optional secretKey for a direct S3 upload */
   secretKey = '',
+  /** Invoked if chosen files will exceed storage limits based on a client-side check. */
+  onStorageLimitExceeded: () => void = noop,
 ): UseUploadFileEntitiesReturn {
   /**
    * General flow for how the functions in this hook are used is
    *
    * 1. `initiateUpload(files)` - called by the caller of the hook
-   * 2. `prepareUpload(files)` - sets up the folder paths, checks for existing entities with the same name
-   * 3. `postPrepareUpload(files)` - may prompt the user to confirm uploading new versions of files, based on the results of `prepareUpload`
-   * 4. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
-   * 5. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
+   * 2. `willUploadsExceedLimit(files, usage)` - client-side check if the uploads will exceed the storage limit
+   * 3. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
+   * 4. `postPrepareUpload(files)` - may prompt the user to confirm uploading new versions of files, based on the results of `prepareUpload`
+   * 5. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
+   * 6. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
    */
 
   const { synapseClient } = useSynapseContext()
@@ -129,7 +134,13 @@ export function useUploadFileEntities(
     data: uploadDestination,
     isLoading: isLoadingUploadDestination,
     error: getUploadDestinationError,
-  } = useGetDefaultUploadDestination(containerOrEntityId)
+  } = useGetDefaultUploadDestination(containerOrEntityId, {
+    // Storage location usage is eventually consistent. We will keep track of the sum of uploaded files client-side
+    // to determine if subsequent uploads will exceed the storage limit.
+    // Do not refetch the storage location usage to avoid double-counting the size of new uploads against the limit.
+    staleTime: Infinity,
+  })
+
   const storageLocationId =
     uploadDestination?.storageLocationId || SYNAPSE_STORAGE_LOCATION_ID
 
@@ -156,6 +167,7 @@ export function useUploadFileEntities(
     isUploading,
     isUploadComplete,
     activeUploadCount,
+    bytesPendingUpload,
   } = useTrackFileUploads()
 
   const state: UploaderState = useMemo(() => {
@@ -341,18 +353,34 @@ export function useUploadFileEntities(
     ],
   )
 
-  const { mutate: prepareUpload, isPending: isPrecheckingUpload } =
+  const { mutate: prepareDirsForUpload, isPending: isPrecheckingUpload } =
     usePrepareFileEntityUpload()
 
   const initiateUpload = useCallback(
     (args: InitiateUploadArgs) => {
-      prepareUpload(args, {
-        onSuccess: result => {
-          postPrepareUpload(result)
-        },
-      })
+      if (
+        willUploadsExceedStorageLimit(
+          args.map(arg => arg.file),
+          uploadDestination!.projectStorageLocationUsage,
+          bytesPendingUpload,
+        )
+      ) {
+        onStorageLimitExceeded()
+      } else {
+        prepareDirsForUpload(args, {
+          onSuccess: result => {
+            postPrepareUpload(result)
+          },
+        })
+      }
     },
-    [postPrepareUpload, prepareUpload],
+    [
+      bytesPendingUpload,
+      onStorageLimitExceeded,
+      postPrepareUpload,
+      prepareDirsForUpload,
+      uploadDestination,
+    ],
   )
 
   const activePrompts: Prompt[] = useMemo(() => {
@@ -424,9 +452,8 @@ export function useUploadFileEntities(
   }, [
     cancelUpload,
     pauseUpload,
-    postPrepareUpload,
-    prepareUpload,
     removeUpload,
+    startUpload,
     trackedUploadProgress,
   ])
 

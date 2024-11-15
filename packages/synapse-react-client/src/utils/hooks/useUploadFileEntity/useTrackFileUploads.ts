@@ -22,6 +22,13 @@ const PENDING_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
   'PAUSED',
 ]
 
+const UNTRACKED_BYTE_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
+  ...PENDING_UPLOAD_STATES,
+  // The project storage limits are eventually consistent, so complete uploads may not count against the limit immediately.
+  // So we include those in our estimation.
+  'COMPLETE',
+]
+
 /**
  * Hook used to track the state of multiple file uploads, providing methods that can be used to interact with the upload state.
  */
@@ -155,6 +162,19 @@ export function useTrackFileUploads() {
     })
   }
 
+  // The total number of bytes that are being uploaded, but do not yet count against the project storage limits.
+  // Used to prevent the uploader from exceeding storage limits before uploading the file (the backend won't provide an error response until after the file is uploaded)
+  const bytesPendingUpload = [...trackedUploadProgress].reduce(
+    (acc, [file, progress]) => {
+      if (UNTRACKED_BYTE_UPLOAD_STATES.includes(progress.status)) {
+        return acc + file.size
+      }
+
+      return acc
+    },
+    0,
+  )
+
   const activeUploadCount = [...trackedUploadProgress].filter(
     ([_file, progress]) => PENDING_UPLOAD_STATES.includes(progress.status),
   ).length
@@ -173,6 +193,7 @@ export function useTrackFileUploads() {
     setProgress,
     setIsUploading,
     trackNewFiles,
+    bytesPendingUpload,
     pauseUpload,
     cancelUpload,
     removeUpload,

@@ -19,6 +19,12 @@ export const mockSynapseStorageUploadDestination: UploadDestination = {
   uploadType: UploadType.S3,
   banner: '',
   concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
+  projectStorageLocationUsage: {
+    maxAllowedFileBytes: 1024 * 1024 * 1024 * 100,
+    sumFileBytes: 0,
+    storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+    isOverLimit: false,
+  },
 }
 
 export const mockS3UploadDestination: S3UploadDestination = {
