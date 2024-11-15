@@ -1,4 +1,4 @@
-const sufixes: string[] = [
+const suffixes: string[] = [
   'Bytes',
   'KB',
   'MB',
