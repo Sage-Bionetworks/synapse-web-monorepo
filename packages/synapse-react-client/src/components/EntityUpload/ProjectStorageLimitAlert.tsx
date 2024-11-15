@@ -37,7 +37,7 @@ export function ProjectStorageLimitAlert(props: ProjectStorageLimitAlertProps) {
         isGlobal={false}
         title={'You have no data availability'}
         description={
-          'You do not have any remaining of data within this project. In order to upload more files, you must edit your file list or upgrade your plan.'
+          'You do not have any remaining data within this project. In order to upload more files, you must edit your file list or upgrade your plan.'
         }
         primaryButtonConfig={{
           text: 'Learn more',
