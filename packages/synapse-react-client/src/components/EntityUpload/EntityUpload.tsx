@@ -30,6 +30,7 @@ import {
   FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX,
   FileUploadProgress,
 } from './FileUploadProgress'
+import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
 export type EntityUploadProps = {
   /** The ID of the entity to upload to. If this is a container, file(s) will be added as children. If this is a
@@ -65,6 +66,9 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   const [accessKey, setAccessKey] = useState('')
   const [secretKey, setSecretKey] = useState('')
 
+  const [didUploadsExceedStorageLimit, setDidUploadsExceedStorageLimit] =
+    useState(false)
+
   const {
     initiateUpload,
     state,
@@ -72,7 +76,9 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
     activePrompts,
     activeUploadCount,
     isPrecheckingUpload,
-  } = useUploadFileEntities(entityId, accessKey, secretKey)
+  } = useUploadFileEntities(entityId, accessKey, secretKey, () =>
+    setDidUploadsExceedStorageLimit(true),
+  )
 
   useEffect(() => {
     onStateChange(state)
@@ -117,6 +123,12 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   return (
     <div>
       <EntityUploadPromptDialog activePrompts={activePrompts} />
+      {uploadDestination && (
+        <ProjectStorageLimitAlert
+          usage={uploadDestination.projectStorageLocationUsage}
+          didUploadsExceedLimit={didUploadsExceedStorageLimit}
+        />
+      )}
       <ExternalObjectStoreCredentialsForm
         uploadDestination={uploadDestination}
         accessKey={accessKey}

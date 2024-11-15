@@ -1,8 +1,7 @@
-import {} from '@sage-bionetworks/synapse-client'
 import {
   FileEntity,
-  UploadType,
   UploadDestination,
+  UploadType,
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
 import { mockExternalObjectStoreUploadDestination } from '../../../mocks/mock_upload_destination'
@@ -78,6 +77,12 @@ const mockSynapseUploadDestination: UploadDestination = {
   concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
   storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
   uploadType: UploadType.S3,
+  projectStorageLocationUsage: {
+    maxAllowedFileBytes: 1024 * 1024 * 100,
+    sumFileBytes: 0,
+    isOverLimit: false,
+    storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+  },
 }
 
 function setupUploadDestinationMock(uploadDestination: UploadDestination) {
@@ -87,7 +92,7 @@ function setupUploadDestinationMock(uploadDestination: UploadDestination) {
 }
 
 function setupPrepareDirsForUploadMock(
-  prepareDirsForUploadReturn: PrepareDirsForUploadReturn,
+  prepareDirsForUploadReturn?: PrepareDirsForUploadReturn,
 ) {
   const usePrepareFileEntityUploadMockReturn =
     getUseMutationMock<PrepareDirsForUploadReturn>(prepareDirsForUploadReturn)
@@ -123,10 +128,17 @@ describe('useUploadFileEntities', () => {
     dataFileHandleId: createdFileHandleId2,
   }
 
+  const mockOnStorageLimitSucceeded = jest.fn()
+
   function renderHook() {
     return _renderHook(
       () =>
-        useUploadFileEntities(parentId, s3DirectAccessKey, s3DirectSecretKey),
+        useUploadFileEntities(
+          parentId,
+          s3DirectAccessKey,
+          s3DirectSecretKey,
+          mockOnStorageLimitSucceeded,
+        ),
       {
         wrapper: createWrapper(),
       },
@@ -441,12 +453,7 @@ describe('useUploadFileEntities', () => {
       ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
-        getUseQuerySuccessMock({
-          concreteType:
-            'org.sagebionetworks.repo.model.file.S3UploadDestination',
-          storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-          uploadType: UploadType.S3,
-        }),
+        getUseQuerySuccessMock(mockSynapseUploadDestination),
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
@@ -619,12 +626,7 @@ describe('useUploadFileEntities', () => {
       ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
-        getUseQuerySuccessMock({
-          concreteType:
-            'org.sagebionetworks.repo.model.file.S3UploadDestination',
-          storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-          uploadType: UploadType.S3,
-        }),
+        getUseQuerySuccessMock(mockSynapseUploadDestination),
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
@@ -772,12 +774,7 @@ describe('useUploadFileEntities', () => {
       ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
-        getUseQuerySuccessMock({
-          concreteType:
-            'org.sagebionetworks.repo.model.file.S3UploadDestination',
-          storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-          uploadType: UploadType.S3,
-        }),
+        getUseQuerySuccessMock(mockSynapseUploadDestination),
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
@@ -929,12 +926,7 @@ describe('useUploadFileEntities', () => {
       ]
 
       mockUseGetDefaultUploadDestination.mockReturnValue(
-        getUseQuerySuccessMock({
-          concreteType:
-            'org.sagebionetworks.repo.model.file.S3UploadDestination',
-          storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-          uploadType: UploadType.S3,
-        }),
+        getUseQuerySuccessMock(mockSynapseUploadDestination),
       )
 
       const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
@@ -1434,5 +1426,143 @@ describe('useUploadFileEntities', () => {
     })
 
     expect(hook.current.state).toBe('COMPLETE')
+  })
+
+  it('does not permit uploading a file that exceeds the storage limits', async () => {
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
+
+    setupUploadDestinationMock({
+      ...mockSynapseUploadDestination,
+      projectStorageLocationUsage: {
+        maxAllowedFileBytes: 1,
+        sumFileBytes: 0,
+        storageLocationId: mockSynapseUploadDestination.storageLocationId,
+        isOverLimit: false,
+      },
+    })
+
+    // sanity check
+    expect(file1.size).toBeGreaterThan(1)
+
+    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock()
+
+    const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+    mockUseSynapseMultipartUpload.mockReturnValue(
+      useSynapseMultipartUploadMockReturn,
+    )
+
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+
+    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
+
+    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
+
+    const { result: hook } = renderHook()
+
+    await waitFor(() => {
+      expect(hook.current.state).toBe('WAITING')
+      expect(hook.current.activePrompts.length).toBe(0)
+      expect(hook.current.initiateUpload).toBeDefined()
+    })
+
+    act(() => {
+      hook.current.initiateUpload(initiateUploadArgs)
+    })
+
+    expect(mockOnStorageLimitSucceeded).toHaveBeenCalled()
+    expect(usePrepareFileEntityUploadMockReturn.mutate).not.toHaveBeenCalled()
+    expect(
+      useSynapseMultipartUploadMockReturn.mutateAsync,
+    ).not.toHaveBeenCalled()
+    expect(hook.current.state).toBe('WAITING')
+  })
+
+  it('uses pending uploads to determine the storage limits', async () => {
+    // We will upload file1 first, then try to upload file2, when the combination exceeds the limit
+    // `projectStorageLocationUsage.sumFileBytes` will not increase by file1.size immediately after upload
+    // because it is eventually consistent.
+    const maxAllowedFileBytes = file1.size + file2.size - 1
+
+    setupUploadDestinationMock({
+      ...mockSynapseUploadDestination,
+      projectStorageLocationUsage: {
+        maxAllowedFileBytes: maxAllowedFileBytes,
+        sumFileBytes: 0,
+        storageLocationId: mockSynapseUploadDestination.storageLocationId,
+        isOverLimit: false,
+      },
+    })
+
+    const initiateUploadArgs: InitiateUploadArgs = [
+      { file: file1, rootContainerId: 'syn123' },
+    ]
+    const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
+      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
+      filesToPromptForNewVersion: [],
+    }
+    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
+      prepareDirsForUploadReturn,
+    )
+
+    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+      fileHandleId: createdFileHandleId1,
+      fileName: file1.name,
+    })
+    mockUseSynapseMultipartUpload.mockReturnValue(
+      useSynapseMultipartUploadMockReturn,
+    )
+
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+
+    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
+
+    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
+
+    const { result: hook } = renderHook()
+
+    await waitFor(() => {
+      expect(hook.current.state).toBe('WAITING')
+      expect(hook.current.activePrompts.length).toBe(0)
+      expect(hook.current.initiateUpload).toBeDefined()
+    })
+
+    act(() => {
+      hook.current.initiateUpload(initiateUploadArgs)
+    })
+    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
+    act(() => {
+      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
+        prepareDirsForUploadReturn,
+        initiateUploadArgs,
+        null,
+      )
+    })
+
+    await waitFor(() => {
+      expect(
+        useSynapseMultipartUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+
+      expect(useCreateEntityReturn.mutateAsync).toHaveBeenCalledTimes(1)
+      expect(hook.current.state).toBe('COMPLETE')
+    })
+
+    // Now try to upload file 2
+    act(() => {
+      hook.current.initiateUpload([{ file: file2, rootContainerId: 'syn123' }])
+    })
+
+    await waitFor(() => {
+      expect(mockOnStorageLimitSucceeded).toHaveBeenCalled()
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutate,
+      ).not.toHaveBeenCalledTimes(2)
+    })
   })
 })
