@@ -337,7 +337,7 @@ describe('useTrackFileUploads', () => {
 
     expect(hook.current.activeUploadCount).toBe(0)
     expect(hook.current.isUploading).toBe(false)
-    // bytesPendingUpload should now only count completed uploads
+    // only the completed upload remains
     expect(hook.current.bytesPendingUpload).toBe(completedFile.size)
   })
 
