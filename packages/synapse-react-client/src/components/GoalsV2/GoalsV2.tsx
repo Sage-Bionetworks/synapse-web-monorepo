@@ -130,7 +130,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       sx={{
         flex: '1 1 auto',
         borderTop: '6px solid #5BA998',
-        backgroundColor: '#5BA998',
+        backgroundColor: '#689E90',
         backgroundOpacity: 0.1,
       }}
     >
@@ -210,7 +210,15 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
             asset,
           }
           return showDesktop ? (
-            <GoalsV2Desktop {...goalsV2DataProps} />
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 2,
+              }}
+            >
+              <GoalsV2Desktop {...goalsV2DataProps} />
+            </Box>
           ) : (
             <GoalsV2Mobile {...goalsV2DataProps} />
           )
