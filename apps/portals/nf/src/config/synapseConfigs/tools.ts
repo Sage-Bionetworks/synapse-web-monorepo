@@ -35,7 +35,6 @@ export const toolsSchema: GenericCardSchema = {
   secondaryLabels: [
     'investigatorName',
     'institution',
-    'investigatorWebsite',
     'rrid',
     'synonyms',
     'cellLineCategory',
@@ -69,12 +68,6 @@ export const toolsCardConfiguration: CardConfiguration = {
     overrideLinkURLColumnName: 'biobankURL',
   },
   secondaryLabelLimit: 4,
-  labelLinkConfig: [
-    {
-      isMarkdown: true,
-      matchColumnName: 'investigatorWebsite',
-    },
-  ],
   genericCardSchema: toolsSchema,
 }
 const rgbIndex = 6
@@ -169,7 +162,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          title: 'Development Publication',
+          subtitle: 'Development Publication',
           helpText:
             'The first report providing a detailed characterization of a tool.',
           props: {
@@ -207,8 +200,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'StandaloneQueryWrapper',
+          title: 'Mutations',
           props: {
-            name: 'Mutations',
             unitDescription: 'Mutations',
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
@@ -238,7 +231,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           standalone: true,
           props: {
             ownerId: 'syn26338068',
-            wikiId: '613438',
+            wikiId: '629918',
           },
         },
       ],
@@ -278,6 +271,8 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             sql: `${observationsSql} WHERE observationTime IS NULL`,
             type: SynapseConstants.OBSERVATION_CARD,
             initialLimit: 3,
+            multiCardList: true,
+            topLevelEnumeratedFacetToFilter: { columnName: 'observationType' },
           },
           title: 'Community Observations',
           tableSqlKeys: ['resourceId'],
@@ -285,12 +280,26 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'Markdown',
-          title: 'Submit an Observation',
+          title: 'Share Your Observation',
           standalone: true,
           props: {
             ownerId: 'syn26338068',
-            wikiId: '613438',
+            wikiId: '629946',
           },
+        },
+        {
+          name: 'DynamicFormModal',
+          props: {
+            schemaUrl:
+              'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationSchema.json',
+            uiSchemaUrl:
+              'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/observations/SubmitObservationUiSchema.json',
+            postUrl: 'https://submit-form.com/KwZ46H4T',
+            submitButtonText: 'Submit Observation',
+          },
+          outsideContainerClassName: 'home-spacer',
+          tableSqlKeys: ['resourceId'],
+          columnName: 'resourceId',
         },
       ],
     },
@@ -369,12 +378,6 @@ export const toolsDetailsPage: SynapseConfig[] = [
       genericCardSchema: toolsSchema,
       secondaryLabelLimit: 6,
       isHeader: true,
-      labelLinkConfig: [
-        {
-          isMarkdown: true,
-          matchColumnName: 'investigatorWebsite',
-        },
-      ],
     },
   },
   {

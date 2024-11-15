@@ -59,7 +59,6 @@ const SubsectionRowRenderer: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
-  let mounted = true
   useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
@@ -88,18 +87,12 @@ const SubsectionRowRenderer: React.FunctionComponent<
       setIsLoading(false)
       const queryResults = queryResultBundle?.queryResult?.queryResults
       if (queryResults) {
-        if (mounted) {
-          setRowSet(queryResults)
-        }
+        setRowSet(queryResults)
       } else {
         console.log('SubsectionRowRenderer: Error getting data')
       }
     }
     fetchData()
-
-    return () => {
-      mounted = false
-    }
   }, [sql, accessToken, searchParams, sqlOperator])
 
   /**
@@ -115,7 +108,6 @@ const SubsectionRowRenderer: React.FunctionComponent<
     const friendlyValue = friendlyValuesMap[rawValue]
     return friendlyValue ? friendlyValue : rawValue
   }
-
   return (
     <div className="SubsectionRowRenderer bootstrap-4-backport">
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
@@ -129,7 +121,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
           }
           return (
             <div
-              key={`${colIndex}`}
+              key={`header-${colIndex}`}
               className="SubsectionRowRenderer__item"
               role="table"
             >
@@ -138,6 +130,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                   columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'
                 }
                 role="heading"
+                style={{ paddingTop: '10px', marginBottom: '5px' }}
               >
                 {selectColumn.name}
               </Typography>
@@ -156,7 +149,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     values = jsonData.map((val: string, index: number) => {
                       return (
                         <div
-                          key={index}
+                          key={`row-${rowIndex}-col-${colIndex}-multi-value`}
                           className="SubsectionRowRenderer__item__value"
                           role="row"
                         >
@@ -208,7 +201,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
                     }
                     values = (
                       <div
-                        key={rowIndex}
+                        key={`row-${rowIndex}-col-${colIndex}-single`}
                         className="SubsectionRowRenderer__item__value"
                         role="row"
                       >

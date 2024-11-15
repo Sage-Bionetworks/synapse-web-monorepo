@@ -145,6 +145,7 @@ export function canHaveMaxListLength(
     case ColumnTypeEnum.BOOLEAN_LIST:
     case ColumnTypeEnum.DATE_LIST:
     case ColumnTypeEnum.INTEGER_LIST:
+    case ColumnTypeEnum.ENTITYID_LIST:
       return true
     default:
       // all others are false

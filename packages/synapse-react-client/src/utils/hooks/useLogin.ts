@@ -71,15 +71,8 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
   const [twoFaErrorResponse, setTwoFaErrorResponse] = useState<
     TwoFactorAuthErrorResponse | undefined
   >()
-  const changePasswordSearchParams = new URLSearchParams()
-  changePasswordSearchParams.set(
-    'errorCode',
-    ErrorResponseCode.PASSWORD_RESET_VIA_EMAIL_REQUIRED,
-  )
-  const changePasswordUrl = useOneSageURL(
-    '/changePassword',
-    changePasswordSearchParams,
-  )
+
+  const changePasswordUrl = useOneSageURL('/changePassword')
   /**
    * Update state variable if optional prop changes
    */
@@ -156,7 +149,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     await SynapseClient.setAccessTokenCookie(loginResponse.accessToken)
     localStorage.setItem(
       AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
-      loginResponse.authenticationReceipt,
+      loginResponse.authenticationReceipt ?? '',
     )
     setStep('LOGGED_IN')
 

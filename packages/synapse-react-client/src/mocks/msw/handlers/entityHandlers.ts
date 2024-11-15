@@ -1,14 +1,3 @@
-import { rest } from 'msw'
-import {
-  ENTITY,
-  ENTITY_BUNDLE_V2,
-  ENTITY_HEADERS,
-  ENTITY_ID,
-  ENTITY_ID_VERSION,
-  ENTITY_ID_VERSIONS,
-  ENTITY_JSON,
-  ENTITY_SCHEMA_BINDING,
-} from '../../../utils/APIConstants'
 import {
   AccessControlList,
   Entity,
@@ -20,18 +9,31 @@ import {
   ProjectHeaderList,
   Reference,
   UploadDestination,
-  UploadType,
   VersionableEntity,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
+import { uniqueId } from 'lodash-es'
+import { rest } from 'msw'
+import {
+  ENTITY,
+  ENTITY_BUNDLE_V2,
+  ENTITY_HEADERS,
+  ENTITY_ID,
+  ENTITY_ID_VERSION,
+  ENTITY_ID_VERSIONS,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+} from '../../../utils/APIConstants'
+import { normalizeSynPrefix } from '../../../utils/functions/EntityTypeUtils'
 import mockEntities, { mockProjectsEntityData } from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
+import { MockEntityData } from '../../entity/MockEntityData'
+import {
+  mockSynapseStorageUploadDestination,
+  mockUploadDestinations,
+} from '../../mock_upload_destination'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
-import { uniqueId } from 'lodash-es'
-import { mockUploadDestinations } from '../../mock_upload_destination'
-import { normalizeSynPrefix } from '../../../utils/functions/EntityTypeUtils'
-import { MockEntityData } from '../../entity/MockEntityData'
 
 function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
   const normalizedPassedIds = entityIds.map(normalizeSynPrefix)
@@ -69,6 +71,20 @@ export function getEntityBundleHandler(
         }
       }
       return res(ctx.status(status), ctx.json(response))
+    },
+  )
+}
+
+export function getEntityJsonHandler(
+  backendOrigin: string,
+  entityJson?: Partial<EntityJson>,
+) {
+  return rest.get(
+    `${backendOrigin}${ENTITY_JSON(':entityId')}`,
+
+    async (req, res, ctx) => {
+      const response = entityJson
+      return res(ctx.status(200), ctx.json(response))
     },
   )
 }
@@ -282,12 +298,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
   rest.get(
     `${backendOrigin}/file/v1/entity/:id/uploadDestination`,
     async (req, res, ctx) => {
-      const response: UploadDestination = {
-        banner: '',
-        storageLocationId: 1,
-        uploadType: UploadType.S3,
-        concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
-      }
+      const response: UploadDestination = mockSynapseStorageUploadDestination
       return res(ctx.status(200), ctx.json(response))
     },
   ),

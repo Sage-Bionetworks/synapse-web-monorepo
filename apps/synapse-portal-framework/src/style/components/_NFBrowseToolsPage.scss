@@ -26,8 +26,10 @@
     display: grid;
     max-width: 750px;
     width: 100%;
-    grid-template-columns: auto 100px 25px;
-    margin-left: 10px;
+    margin: 0px 5px 0px 10px;
+    & .Mui-focused {
+      outline-color: Portal.$primary-action-color;
+    }
     input {
       height: 41px;
     }
@@ -57,10 +59,12 @@
     p {
       color: #fff !important;
       border-bottom: 1px transparent;
-      position: relative;
-      top: -84px;
-      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-size: 18px;
+      white-space: nowrap;
     }
   }
   .highlightSubmitToolContainer {

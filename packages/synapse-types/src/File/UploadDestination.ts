@@ -1,3 +1,5 @@
+import { ProjectStorageLocationUsage } from '../ProjectStorage'
+
 /**
  * The upload destination contains information to start an upload of a file generated according to the underlying StorageLocationSetting.
  *
@@ -14,7 +16,8 @@ export interface UploadDestination {
   /* The enumeration of possible upload types. */
   uploadType: UploadType
   /* If set, the client should show this banner every time an upload is initiated */
-  banner: string
+  banner?: string
+  projectStorageLocationUsage: ProjectStorageLocationUsage
 }
 
 /**

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/material'
+import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import { SynapsePlan } from './SynapsePlan'
 import { SynapsePlanContent } from './SynapsePlanContent'
 import { useOneSageURL } from '../../utils/hooks'
@@ -38,10 +39,10 @@ export const SynapsePlans: React.FunctionComponent = () => {
         />
       </SynapsePlan>
       <SynapsePlan
-        title="Managed"
+        title="Self-Managed Plan"
         description="Our upgraded plan"
         ctaText="Find out more"
-        ctaLink="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
+        ctaLink={SAGE_OFFERINGS_HELP_URL}
         backgroundColor="#e9f2f1"
       >
         <SynapsePlanContent

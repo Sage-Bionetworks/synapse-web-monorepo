@@ -1,11 +1,12 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Box, Button, Link, TextField, Typography } from '@mui/material'
+import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 // import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
+import Search from '../Search'
 
 type Category = {
   resourceName: string
@@ -26,7 +27,6 @@ export type ELBrowseToolsPageProps = {
 const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
   const { toolsSql } = props
   // const { popularSearchesSql } = props
-  const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Computational%20Tools')
   }
@@ -170,35 +170,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
-        <div className="center-content">
-          <div className="searchToolsRow">
-            <div className="searchInputWithIcon">
-              <SynapseComponents.IconSvg icon="searchOutlined" />
-              <TextField
-                sx={{ width: '100%' }}
-                type="search"
-                placeholder=""
-                value={searchText}
-                onChange={event => {
-                  setSearchText(event.target.value)
-                }}
-                onKeyPress={evt => {
-                  if (evt.key === 'Enter') {
-                    gotoExploreToolsWithFullTextSearch(searchText)
-                  }
-                }}
-              />
-            </div>
-            <div className="search-button-container">
-              <Button
-                variant="contained"
-                onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Search onSearch={gotoExploreToolsWithFullTextSearch} />
         {/* <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>

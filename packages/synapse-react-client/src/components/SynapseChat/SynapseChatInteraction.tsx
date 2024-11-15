@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { Alert, Box, ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
@@ -31,6 +31,14 @@ export const SynapseChatInteraction: React.FunctionComponent<
     }
   }, [ref])
 
+  const textContent = useMemo(() => {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
+    const elementsToRemove = doc.querySelectorAll('tool_name')
+    elementsToRemove.forEach(element => element.remove())
+    return doc.body.textContent ?? ''
+  }, [chatResponseText])
+
   return (
     <>
       <ListItem
@@ -49,7 +57,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
       >
         <ListItemText primary={userMessage} />
       </ListItem>
-      {chatResponseText && (
+      {textContent && (
         <ListItem
           sx={{
             display: 'grid',
@@ -80,7 +88,7 @@ export const SynapseChatInteraction: React.FunctionComponent<
               maxWidth: '100%',
             }}
           >
-            <MarkdownSynapse markdown={chatResponseText} />
+            <MarkdownSynapse markdown={textContent} />
           </Box>
         </ListItem>
       )}

@@ -17,7 +17,6 @@ export default function RedirectToURL(props: RedirectToURLProps) {
   const { toURL, search } = props
   const isSearchMatch =
     search == undefined ? true : `?${search}` == currentSearch
-
   if (isSearchMatch) {
     window.location.replace(toURL)
   }

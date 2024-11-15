@@ -6,8 +6,8 @@ import {
   StandaloneLoginForm,
   SynapseConstants,
   SystemUseNotification,
-  preparePostSSORedirect,
-  redirectAfterSSO,
+  storeLastPlace,
+  restoreLastPlace,
   useLastLoginInfoState,
   useApplicationSessionContext,
 } from 'synapse-react-client'
@@ -83,7 +83,7 @@ function LoginPage(props: LoginPageProps) {
                     lastLoginSourceAppNameState.set(sourceApp?.friendlyName)
                     lastLoginSourceAppURLState.set(sourceApp?.appURL)
                   }
-                  redirectAfterSSO(navigate, returnToUrl)
+                  restoreLastPlace(navigate, returnToUrl)
                   // If we didn't redirect, refresh the session
                   refreshSession()
                 }}
@@ -91,7 +91,7 @@ function LoginPage(props: LoginPageProps) {
                 resetPasswordUrl={'/resetPassword'}
                 onBeginOAuthSignIn={() => {
                   // save current route (so that we can go back here after SSO)
-                  preparePostSSORedirect()
+                  storeLastPlace()
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
                 twoFactorAuthResetUri={`${window.location.origin}${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}

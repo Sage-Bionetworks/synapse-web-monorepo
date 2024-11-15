@@ -6,6 +6,7 @@ import { ApplicationSessionManager } from '../../utils'
 import { MemoryRouter } from 'react-router-dom'
 import SynapseClient from '../../synapse-client'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const defaultProps: LoginAwareButtonProps = {
   children: 'Register for this Challenge',
@@ -18,15 +19,16 @@ const toProps: LoginAwareButtonProps = {
 }
 
 function renderComponent(props: LoginAwareButtonProps = defaultProps) {
-  return render(<LoginAwareButton {...props} />, {
-    wrapper: ({ children }) => {
-      return (
-        <MemoryRouter>
-          <ApplicationSessionManager>{children}</ApplicationSessionManager>
-        </MemoryRouter>
-      )
+  return render(
+    <MemoryRouter>
+      <ApplicationSessionManager>
+        <LoginAwareButton {...props} />
+      </ApplicationSessionManager>
+    </MemoryRouter>,
+    {
+      wrapper: createWrapper(),
     },
-  })
+  )
 }
 
 describe('LoginAwareButton tests', () => {

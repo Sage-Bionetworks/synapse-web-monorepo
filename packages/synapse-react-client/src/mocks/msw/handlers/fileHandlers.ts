@@ -1,13 +1,15 @@
+import { ExternalFileHandleInterface } from '@sage-bionetworks/synapse-client'
 import {
   BatchFileRequest,
   BatchFileResult,
   MultipartUploadStatus,
 } from '@sage-bionetworks/synapse-types'
+import { uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import { FILE, FILE_HANDLE_BATCH } from '../../../utils/APIConstants'
 import { MOCK_FILE_HANDLE_ID, mockFileHandles } from '../../mock_file_handle'
-import { SynapseApiResponse } from '../handlers'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../handlers'
 
 export function getFileHandlers(backendOrigin: string) {
   return [
@@ -60,6 +62,24 @@ export function getFileHandlers(backendOrigin: string) {
           startedOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
           partsState: '1',
+        }
+
+        return res(ctx.status(201), ctx.json(response))
+      },
+    ),
+
+    rest.post(
+      `${backendOrigin}${FILE}/externalFileHandle`,
+      async (req, res, ctx) => {
+        const request = await req.json<ExternalFileHandleInterface>()
+
+        const response: SynapseApiResponse<ExternalFileHandleInterface> = {
+          ...request,
+          id: uniqueId(),
+          etag: 'fake-etag',
+          createdBy: MOCK_USER_ID.toString(),
+          createdOn: new Date().toISOString(),
+          modifiedOn: new Date().toISOString(),
         }
 
         return res(ctx.status(201), ctx.json(response))

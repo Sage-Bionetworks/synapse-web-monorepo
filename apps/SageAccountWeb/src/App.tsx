@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import {
   CookiesNotification,
+  processRedirectURLInOneSage,
   SynapseContextConsumer,
   SynapseContextType,
   useSynapseContext,
 } from 'synapse-react-client'
 import './App.scss'
-import { AppContextConsumer } from './AppContext'
+import { useAppContext } from './AppContext'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
 import { AccountSettings } from './components/AccountSettings'
 import { CertificationQuiz } from './components/CertificationQuiz'
@@ -29,8 +30,35 @@ import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAu
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { RESET_2FA_ROUTE } from './Constants'
+import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
 import LoginPage from './LoginPage'
 import { getSearchParam } from './URLUtils'
+
+function LoggedInRedirector() {
+  const { accessToken } = useSynapseContext()
+  const appContext = useAppContext()
+
+  const isCodeSearchParam = getSearchParam('code') !== undefined
+  const isProviderSearchParam = getSearchParam('provider') !== undefined
+  const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
+
+  const { mayRedirect: mayRedirectToSignToS } =
+    useMaybeRedirectToSignTermsOfService()
+
+  useEffect(() => {
+    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
+    // then redirect!
+    if (accessToken && !isInSSOFlow && !mayRedirectToSignToS) {
+      // take user back to page they came from in the source app, if stored in a cookie
+      const isProcessed = processRedirectURLInOneSage()
+      if (!isProcessed && appContext?.redirectURL) {
+        // if not in the cookie, take them to the app redirect URL
+        window.location.replace(appContext?.redirectURL)
+      }
+    }
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayRedirectToSignToS])
+  return <></>
+}
 
 function AuthenticatedRoutes() {
   const { accessToken } = useSynapseContext()
@@ -78,29 +106,15 @@ function App() {
                 if (!ctx?.accessToken) {
                   return <LoginPage returnToUrl={'/'} />
                 } else {
-                  return (
-                    <AppContextConsumer>
-                      {appContext => {
-                        const isCodeSearchParam =
-                          getSearchParam('code') !== undefined
-                        const isProviderSearchParam =
-                          getSearchParam('provider') !== undefined
-                        const isInSSOFlow =
-                          isCodeSearchParam && isProviderSearchParam
-                        return (
-                          <>
-                            {appContext?.redirectURL &&
-                              !isInSSOFlow &&
-                              window.location.replace(appContext?.redirectURL)}
-                          </>
-                        )
-                      }}
-                    </AppContextConsumer>
-                  )
+                  return <LoggedInRedirector />
                 }
               }}
             </SynapseContextConsumer>
           }
+        />
+        <Route
+          path="resetPassword"
+          element={<ResetPassword returnToUrl="/authenticated/myaccount" />}
         />
         <Route path="logout" element={<LogoutPage />} />
         <Route path="register1" element={<RegisterAccount1 />} />
