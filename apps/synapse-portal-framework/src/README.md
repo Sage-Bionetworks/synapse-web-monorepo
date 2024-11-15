@@ -67,3 +67,11 @@ Note - if exposing a component from the portal side, you will need to make sure 
 
 The detail pages ([e.g.](https://staging.adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn5550404])) give
 a deeper dive into a particular portal section. Read more in the [component](components/DetailsPage/DetailsPage.tsx).
+
+# How to Log In to a Portal Running on Localhost
+
+To log in to the portal running on localhost, follow these steps:
+
+1. Start the SageAccountWeb application locally by navigating to the app directory and running pnpm start (located in apps/SageAccountWeb).
+2. Once the application is running, log in to the local Accounts site.
+3. After successfully logging in, refresh the portal page to complete the process.

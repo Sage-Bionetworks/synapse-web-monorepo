@@ -1,7 +1,7 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Link, TextField, Typography } from '@mui/material'
+import { Link, Typography, Box } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
@@ -11,6 +11,7 @@ import { ReactComponent as PlasmidsReagents } from '../assets/plasmids-reagents.
 import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
+import Search from '../Search'
 
 type Category = {
   resourceName: string
@@ -25,6 +26,55 @@ const categories: Category[] = [
   { resourceName: 'Biobank', image: <Biobanks /> },
 ]
 
+const host = window.location.host
+const baseUrl = `${encodeURIComponent(
+  'Research Tools Central',
+)}/${encodeURIComponent('Submit ')}`
+const baseSchemaUrl =
+  'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/'
+const postUrl = 'https://submit-form.com/KwZ46H4T'
+
+const createHref = path =>
+  `http://${host}/${baseUrl}${encodeURIComponent(path)}`
+
+const submitToolButtons = [
+  {
+    label: 'Submit Animal Model',
+    href: createHref('Animal Model'),
+    schemaUrl: `${baseSchemaUrl}animal-model/submitAnimalModel.json`,
+    uiSchemaUrl: `${baseSchemaUrl}animal-model/SubmitAnimalModelUiSchema.json`,
+    postUrl: postUrl,
+  },
+  {
+    label: 'Submit Observation',
+    href: createHref('Observation'),
+    schemaUrl: `${baseSchemaUrl}observations/SubmitObservationSchema.json`,
+    uiSchemaUrl: `${baseSchemaUrl}observations/SubmitObservationUiSchema.json`,
+    postUrl: postUrl,
+  },
+  {
+    label: 'Submit Cell Line',
+    href: createHref('Cell Line'),
+    schemaUrl: `${baseSchemaUrl}cell-line/submitCellLine.json`,
+    uiSchemaUrl: `${baseSchemaUrl}cell-line/submitCellLineUiSchema.json`,
+    postUrl: postUrl,
+  },
+  {
+    label: 'Submit Genetic Reagents',
+    href: createHref('Genetic Reagent'),
+    schemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagent.json`,
+    uiSchemaUrl: `${baseSchemaUrl}genetic-reagent/submitGeneticReagentUiSchema.json`,
+    postUrl: postUrl,
+  },
+  {
+    label: 'Submit Antibody',
+    href: createHref('Antibody'),
+    schemaUrl: `${baseSchemaUrl}antibody/submitAntibody.json`,
+    uiSchemaUrl: `${baseSchemaUrl}antibody/SubmitAntibodyUiSchema.json`,
+    postUrl: postUrl,
+  },
+]
+
 export type NFBrowseToolsPageProps = {
   popularSearchesSql: string
   toolsSql: string
@@ -32,7 +82,6 @@ export type NFBrowseToolsPageProps = {
 
 const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
   const { popularSearchesSql, toolsSql } = props
-  const [searchText, setSearchText] = React.useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Tools')
   }
@@ -111,10 +160,12 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                   gotoExploreToolsWithSelectedResource(category.resourceName)
                 }
               >
-                {category.image}
-                <Typography variant="headline3">
-                  {pluralize(category.resourceName)}
-                </Typography>
+                <Box sx={{ position: 'relative' }}>
+                  {category.image}
+                  <Typography variant="headline3">
+                    {pluralize(category.resourceName)}
+                  </Typography>
+                </Box>
               </button>
             )
           })}
@@ -158,35 +209,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
-        <div className="center-content">
-          <div className="searchToolsRow">
-            <div className="searchInputWithIcon">
-              <TextField
-                sx={{ width: '100%' }}
-                type="search"
-                placeholder=""
-                value={searchText}
-                onChange={event => {
-                  setSearchText(event.target.value)
-                }}
-                onKeyPress={evt => {
-                  if (evt.key === 'Enter') {
-                    gotoExploreToolsWithFullTextSearch(searchText)
-                  }
-                }}
-              />
-            </div>
-            <div className="search-button-container">
-              <Button
-                variant="contained"
-                sx={{ px: '25px', py: '8px' }}
-                onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Search onSearch={gotoExploreToolsWithFullTextSearch} />
         <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>
@@ -264,16 +287,32 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           </div>
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
-            sx={wideButtonSx}
-            href="https://forms.gle/htFkH5yewLzP1RAu7"
-            className="highlightSubmitToolButton"
-            variant="contained"
-            // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
-            target="_blank"
+          <Box
+            sx={{
+              display: 'flex',
+              marginTop: '50px',
+              gap: '16px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
           >
-            Submit A Tool
-          </SynapseComponents.WideButton>
+            {submitToolButtons.map(button => (
+              <SynapseComponents.WideButton
+                key={button.label}
+                sx={{
+                  ...wideButtonSx,
+                  margin: '0px',
+                }}
+                href={button.href}
+                className="highlightSubmitToolButton"
+                variant="contained"
+                // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
+                target="_blank"
+              >
+                {button.label}
+              </SynapseComponents.WideButton>
+            ))}
+          </Box>
         </div>
       </Layout>
     </div>

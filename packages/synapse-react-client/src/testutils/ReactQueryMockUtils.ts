@@ -99,9 +99,9 @@ export function getUseQueryErrorMock<TError>(
   }
 }
 
-export function getUseMutationMock<TData, TError, TVariables>(
-  data: TData,
-): UseMutationResult<TData, TError, TVariables> {
+export function getUseMutationMock<TData = any, TError = any, TVariables = any>(
+  data?: TData,
+) {
   return {
     context: undefined,
     data: undefined,
@@ -112,12 +112,12 @@ export function getUseMutationMock<TData, TError, TVariables>(
     isPaused: false,
     isSuccess: false,
     mutate: jest.fn(),
-    mutateAsync: jest.fn(),
+    mutateAsync: jest.fn().mockResolvedValue(data),
     reset: jest.fn(),
     status: 'idle',
     variables: undefined,
     failureReason: null,
     isPending: false,
     submittedAt: 0,
-  }
+  } satisfies UseMutationResult<TData, TError, TVariables>
 }

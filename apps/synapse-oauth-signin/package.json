@@ -21,11 +21,12 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.27.0",
     "sass": "^1.71.1",
+    "universal-cookie": "^4.0.4",
     "synapse-react-client": "workspace:*"
   },
   "devDependencies": {
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "@testing-library/react": "16.0.0",
+    "@testing-library/react": "16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/isomorphic-fetch": "^0.0.36",
     "@types/jest": "^29.5.12",

@@ -1,8 +1,10 @@
 import { JSONSchema7 } from 'json-schema'
+import { memoize } from 'lodash-es'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import {
   ACCESS_TOKEN_COOKIE_KEY,
+  getCookieDomain,
   OAuth2State,
   SynapseConstants,
 } from '../utils'
@@ -70,7 +72,7 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
-  SIGN_TERMS_OF_USE,
+  TERMS_OF_USE,
   START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -96,6 +98,9 @@ import {
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
   WIKI_PAGE_ID,
+  TERMS_OF_USE_INFO,
+  TERMS_OF_USE_STATUS,
+  PROJECT_STORAGE_USAGE,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -328,6 +333,10 @@ import {
   UpdateAgentSessionRequest,
   TraceEventsRequest,
   TraceEventsResponse,
+  TermsOfServiceInfo,
+  TermsOfServiceStatus,
+  AccessToken,
+  ProjectStorageUsage,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import {
@@ -1967,6 +1976,7 @@ export const setAccessTokenCookie = async (
         // expires in 10 days (see SWC-6190)
         maxAge: 60 * 60 * 24 * 10,
         path: '/',
+        domain: getCookieDomain(),
       })
     }
   } else {
@@ -2067,6 +2077,8 @@ export const uploadFile = (
   contentType: string = file.type,
   progressCallback?: (progress: ProgressCallback) => void,
   getIsCancelled?: () => boolean,
+  onMd5Computed?: () => void,
+  abortController?: AbortController,
 ) => {
   return new Promise<FileUploadComplete>(
     (fileUploadResolve, fileUploadReject) => {
@@ -2082,6 +2094,9 @@ export const uploadFile = (
         storageLocationId,
       }
       calculateMd5(file).then((md5: string) => {
+        if (onMd5Computed) {
+          onMd5Computed()
+        }
         request.contentMD5Hex = md5
         startMultipartUpload(
           accessToken,
@@ -2092,54 +2107,57 @@ export const uploadFile = (
           fileUploadReject,
           progressCallback,
           getIsCancelled,
+          abortController,
         )
       })
     },
   )
 }
 
-const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
+/**
+ * Calculate the MD5 of the data in a Blob. This function is memoized, so if the same {@link Blob} object is
+ * passed after the MD5 is computed, no computation will occur.
+ */
+export const calculateMd5: (blob: Blob) => Promise<string> = memoize(blob => {
   // code taken from md5 example from library
   return new Promise((resolve, reject) => {
-    const blobSlice = File.prototype.slice,
-      file = fileBlob,
-      chunkSize = 2097152, // Read in chunks of 2MB
-      chunks = Math.ceil(file.size / chunkSize),
-      spark = new SparkMD5.ArrayBuffer(),
-      fileReader = new FileReader()
+    const chunkSize = 2097152 // Read in chunks of 2M
+    const chunks = Math.ceil(blob.size / chunkSize)
+    const spark = new SparkMD5.ArrayBuffer()
+    const fileReader = new FileReader()
     let currentChunk = 0
 
     fileReader.onload = function (e) {
-      console.log('read chunk nr', currentChunk + 1, 'of', chunks)
+      console.debug('read chunk nr', currentChunk + 1, 'of', chunks)
       spark.append(fileReader.result as ArrayBuffer) // Append array buffer
       currentChunk++
 
       if (currentChunk < chunks) {
         loadNext()
       } else {
-        console.log('finished loading')
+        console.debug('finished loading')
         const md5: string = spark.end()
-        console.info('computed hash', md5) // Compute hash
+        console.debug('computed hash', md5) // Compute hash
         resolve(md5)
       }
     }
 
     fileReader.onerror = function () {
-      console.warn('oops, something went wrong.')
+      console.warn('oops, something went wrong.', fileReader.error)
       reject(fileReader.error)
     }
 
     const loadNext = () => {
       const start = currentChunk * chunkSize,
-        end = start + chunkSize >= file.size ? file.size : start + chunkSize
+        end = start + chunkSize >= blob.size ? blob.size : start + chunkSize
 
-      fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
+      fileReader.readAsArrayBuffer(blob.slice(start, end))
     }
     loadNext()
   })
-}
+})
 
-const processFilePart = (
+const processFilePart = async (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
   clientSidePartsState: boolean[],
@@ -2151,6 +2169,7 @@ const processFilePart = (
   fileUploadReject: (reason: any) => void,
   updateProgress: () => void,
   getIsCancelled?: () => boolean,
+  abortController?: AbortController,
 ) => {
   if (clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
@@ -2165,73 +2184,75 @@ const processFilePart = (
     partNumbers: [partNumber],
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
-  doPost<BatchPresignedUploadUrlResponse>(
+
+  const presignedUrlResponse = await doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ).then(async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
-    const presignedUrl =
-      presignedUrlResponse.partPresignedUrls[0].uploadPresignedUrl
-    // calculate the byte range
-    const startByte = (partNumber - 1) * request.partSizeBytes
-    let endByte = partNumber * request.partSizeBytes - 1
-    if (endByte >= request.fileSizeBytes) {
-      endByte = request.fileSizeBytes - 1
-    }
-    const fileSlice = file.slice(
-      startByte,
-      endByte + 1,
-      presignedUploadUrlRequest.contentType,
+  )
+  const presignedUrl =
+    presignedUrlResponse.partPresignedUrls[0].uploadPresignedUrl
+  // calculate the byte range
+  const startByte = (partNumber - 1) * request.partSizeBytes
+  let endByte = partNumber * request.partSizeBytes - 1
+  if (endByte >= request.fileSizeBytes) {
+    endByte = request.fileSizeBytes - 1
+  }
+  const fileSlice = file.slice(
+    startByte,
+    endByte + 1,
+    presignedUploadUrlRequest.contentType,
+  )
+  await uploadFilePart(
+    presignedUrl,
+    fileSlice,
+    presignedUploadUrlRequest.contentType,
+    getIsCancelled,
+    abortController,
+  )
+
+  // uploaded the part.  calculate md5 of the part and add the part to the upload
+  const md5 = await calculateMd5(fileSlice)
+  const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
+  const addPartResponse = await doPut<AddPartResponse>(
+    addPartUrl,
+    undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  if (addPartResponse.addPartState === 'ADD_SUCCESS') {
+    // done with this part!
+    clientSidePartsState![partNumber - 1] = true
+    updateProgress()
+    checkUploadComplete(
+      multipartUploadStatus,
+      clientSidePartsState,
+      fileName,
+      accessToken,
+      fileUploadResolve,
+      fileUploadReject,
     )
-    await uploadFilePart(
-      presignedUrl,
-      fileSlice,
-      presignedUploadUrlRequest.contentType,
+  } else {
+    // retry after a brief delay
+    await delay(1000)
+    await processFilePart(
+      partNumber,
+      multipartUploadStatus,
+      clientSidePartsState,
+      accessToken,
+      fileName,
+      file,
+      request,
+      fileUploadResolve,
+      fileUploadReject,
+      updateProgress,
       getIsCancelled,
+      abortController,
     )
-    // uploaded the part.  calculate md5 of the part and add the part to the upload
-    calculateMd5(fileSlice).then((md5: string) => {
-      const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
-      doPut<AddPartResponse>(
-        addPartUrl,
-        undefined,
-        accessToken,
-        BackendDestinationEnum.REPO_ENDPOINT,
-      ).then((addPartResponse: AddPartResponse) => {
-        if (addPartResponse.addPartState === 'ADD_SUCCESS') {
-          // done with this part!
-          clientSidePartsState![partNumber - 1] = true
-          updateProgress()
-          checkUploadComplete(
-            multipartUploadStatus,
-            clientSidePartsState,
-            fileName,
-            accessToken,
-            fileUploadResolve,
-            fileUploadReject,
-          )
-        } else {
-          // retry after a brief delay
-          delay(1000).then(() => {
-            processFilePart(
-              partNumber,
-              multipartUploadStatus,
-              clientSidePartsState,
-              accessToken,
-              fileName,
-              file,
-              request,
-              fileUploadResolve,
-              fileUploadReject,
-              updateProgress,
-            )
-          })
-        }
-      })
-    })
-  })
+  }
 }
+
 export const checkUploadComplete = (
   status: MultipartUploadStatus,
   clientSidePartsState: boolean[],
@@ -2270,14 +2291,15 @@ const uploadFilePart = async (
   file: Blob,
   contentType: string,
   getIsCancelled?: () => boolean,
+  abortController?: AbortController,
 ) => {
-  const controller = new AbortController()
+  const controller = abortController || new AbortController()
   const signal = controller.signal
 
   const checkIsCancelled = () => {
     if (getIsCancelled) {
       const isCancelled = getIsCancelled()
-      if (isCancelled) {
+      if (isCancelled && !controller.signal.aborted) {
         controller.abort()
       }
     }
@@ -2307,6 +2329,7 @@ export const startMultipartUpload = (
   fileUploadReject: (reason: any) => void,
   progressCallback?: (progress: ProgressCallback) => void,
   getIsCancelled?: () => boolean,
+  abortController?: AbortController,
 ) => {
   const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
@@ -2346,6 +2369,7 @@ export const startMultipartUpload = (
             fileUploadReject,
             updateProgress,
             getIsCancelled,
+            abortController,
           )
         } else {
           updateProgress()
@@ -4300,10 +4324,10 @@ export const unbindOAuthProviderToAccount = async (
 }
 
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
-export const signSynapseTermsOfUse = (accessToken: string) => {
+export const signSynapseTermsOfUse = (accessToken: AccessToken) => {
   return doPost(
-    SIGN_TERMS_OF_USE,
-    { accessToken },
+    TERMS_OF_USE,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -5559,6 +5583,43 @@ export const getChatAgentTraceEvents = (
   return doPost<TraceEventsResponse>(
     AGENT_CHAT_TRACE(request.jobId),
     request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getTermsOfServiceInfo = (
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TermsOfServiceInfo> => {
+  return doGet<TermsOfServiceInfo>(
+    TERMS_OF_USE_INFO,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getTermsOfServiceStatus = (
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<TermsOfServiceStatus> => {
+  return doGet<TermsOfServiceStatus>(
+    TERMS_OF_USE_STATUS,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
+  )
+}
+
+export const getProjectStorageUsage = (
+  projectId: string,
+  accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
+): Promise<ProjectStorageUsage> => {
+  return doGet<ProjectStorageUsage>(
+    PROJECT_STORAGE_USAGE(projectId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },

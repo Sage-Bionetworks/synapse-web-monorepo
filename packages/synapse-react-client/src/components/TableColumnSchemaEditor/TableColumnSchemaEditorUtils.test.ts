@@ -126,6 +126,7 @@ describe('TableColumnSchemaEditorUtils', () => {
       ColumnTypeEnum.BOOLEAN_LIST,
       ColumnTypeEnum.DATE_LIST,
       ColumnTypeEnum.INTEGER_LIST,
+      ColumnTypeEnum.ENTITYID_LIST,
     ]
 
     Object.values(ColumnTypeEnum).forEach((key: ColumnType) => {

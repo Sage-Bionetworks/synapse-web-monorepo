@@ -255,7 +255,7 @@ describe('StandaloneLoginForm', () => {
     )
     expect(callback).not.toHaveBeenCalled()
     expect(window.location.assign).toHaveBeenCalledWith(
-      'https://accounts.synapse.org/changePassword?errorCode=PASSWORD_RESET_VIA_EMAIL_REQUIRED',
+      'http://localhost:3000/changePassword',
     )
   })
 })

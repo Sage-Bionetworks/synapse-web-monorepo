@@ -87,6 +87,12 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
   const handleClosePortalResources = () => {
     setPortalResourcesAnchorEl(null)
   }
+
+  const onLoginClicked = () => {
+    // Navigate to the LoginPlace, which will set a cookie that will be used to redirect back from OneSage
+    gotoPlace(LOGIN_LINK)
+  }
+
   return (
     <Box
       sx={{
@@ -139,9 +145,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
               variant="outlined"
               color="secondary"
               sx={navButtonSx}
-              onClick={() => {
-                gotoPlace(LOGIN_LINK)
-              }}
+              onClick={onLoginClicked}
             >
               Login
             </Button>
@@ -274,7 +278,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
                 sx={{ mb: '40px' }}
                 onClick={() => {
                   handleCloseMobileMenu()
-                  gotoPlace(LOGIN_LINK)
+                  onLoginClicked()
                 }}
               >
                 Log In

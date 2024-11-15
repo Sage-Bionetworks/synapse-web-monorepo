@@ -4,7 +4,6 @@ import React, { useMemo } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { defaultQueryClientConfig, SynapseTheme } from 'synapse-react-client'
-import { LogInDialogContextProvider } from './components/LogInDialogContext'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
 
@@ -21,13 +20,11 @@ function Portal(props: PortalProps) {
   return (
     <PortalContextProvider value={context}>
       <CookiesProvider>
-        <LogInDialogContextProvider>
-          <ThemeProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} />
-            </QueryClientProvider>
-          </ThemeProvider>
-        </LogInDialogContextProvider>
+        <ThemeProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ThemeProvider>
       </CookiesProvider>
     </PortalContextProvider>
   )

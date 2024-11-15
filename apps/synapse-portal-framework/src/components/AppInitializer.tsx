@@ -8,9 +8,9 @@ import {
   SynapseConstants,
   useFramebuster,
   SynapseHookUtils,
+  storeRedirectURLForOneSageLoginAndGotoURL,
 } from 'synapse-react-client'
 import { useCookies } from 'react-cookie'
-import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
@@ -18,17 +18,28 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
-  const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
   const isFramed = useFramebuster()
   SynapseHookUtils.useGoogleAnalytics()
+  const oneSageURL = SynapseHookUtils.useOneSageURL()
   useEffect(() => {
     /**
-     * PORTALS-490: Set Synapse callback cookie
+     * If this is an anchor with the SRC-SIGN-IN-CLASS CSS class, then go to One Sage to sign in.
+     * In addition...
+     * PORTALS-490: Set Synapse callback cookie if the user allowed the creation of functional cookies
      * Will attempt to set a .synapse.org domain cookie that has enough information to lead the user
      * back to this portal after visiting www.synapse.org.
      */
-    function updateSynapseCallbackCookie(ev: MouseEvent) {
+    function globalClickHandler(ev: MouseEvent) {
+      if (
+        ev.target instanceof HTMLButtonElement ||
+        ev.target instanceof HTMLAnchorElement
+      ) {
+        const el = ev.target as HTMLElement
+        if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
+          storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
+        }
+      }
       if (!cookies || !cookiePreferences.functionalAllowed) {
         return
       }
@@ -51,17 +62,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
           }
         }
       }
-      if (
-        ev.target instanceof HTMLButtonElement ||
-        ev.target instanceof HTMLAnchorElement
-      ) {
-        const el = ev.target as HTMLElement
-        if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          if (!showLoginDialog) {
-            setShowLoginDialog(true)
-          }
-        }
-      }
+
       let name = ''
       let icon = ''
       const logoImgElement = document.querySelector('#header-logo-image')
@@ -97,12 +98,11 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
         maxAge: 20,
       })
     }
-
-    window.addEventListener('click', updateSynapseCallbackCookie)
+    window.addEventListener('click', globalClickHandler)
 
     // Clean up the global listener on component unmount.
     return () => {
-      window.removeEventListener('click', updateSynapseCallbackCookie)
+      window.removeEventListener('click', globalClickHandler)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [cookiePreferences])
@@ -110,9 +110,6 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   return (
     <ApplicationSessionManager
       downloadCartPageUrl={'/DownloadCart'}
-      onResetSessionComplete={() => {
-        setShowLoginDialog(false)
-      }}
       appId={import.meta.env.VITE_PORTAL_KEY}
     >
       {!isFramed && props.children}

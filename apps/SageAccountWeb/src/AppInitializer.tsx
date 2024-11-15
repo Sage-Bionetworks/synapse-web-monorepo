@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import { getSearchParam } from './URLUtils'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
 import {
+  SynapseConstants,
   SynapseUtilityFunctions,
-  useApplicationSessionContext,
   useFramebuster,
 } from 'synapse-react-client'
 import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
+import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
+import { getSearchParam } from './URLUtils'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
+
   const isFramed = useFramebuster()
   const { appId, appURL } = useSourceApp()
 
@@ -23,12 +24,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     const isDev: boolean = window.location.hostname.includes('dev')
 
     const stagingConfig = {
-      REPO: 'https://repo-staging.prod.sagebase.org',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_STAGING_URL,
       PORTAL: 'https://staging.synapse.org/',
     }
 
     const devConfig = {
-      REPO: 'https://repo-dev.dev.sagebase.org',
+      REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
       PORTAL: 'https://portal-dev.dev.sagebase.org/',
     }
 
@@ -59,7 +60,8 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     }
   }, [])
 
-  const { acceptsTermsOfUse } = useApplicationSessionContext()
+  // Anywhere in the app, redirect the user to sign the ToS if required
+  useMaybeRedirectToSignTermsOfService()
 
   return (
     <AppContextProvider
@@ -69,10 +71,6 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         signedToken,
       }}
     >
-      {acceptsTermsOfUse === false &&
-        location.pathname != '/authenticated/signTermsOfUse' && (
-          <Navigate to="/authenticated/signTermsOfUse" />
-        )}
       {!isFramed && props.children}
     </AppContextProvider>
   )

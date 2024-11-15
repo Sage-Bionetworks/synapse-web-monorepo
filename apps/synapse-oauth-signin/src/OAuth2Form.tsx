@@ -11,25 +11,26 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import {
   AppUtils,
   FullWidthAlert,
-  StandaloneLoginForm,
+  storeRedirectURLForOneSageLoginAndGotoURL,
   StyledOuterContainer,
   SynapseClient,
   SynapseClientError,
   SynapseConstants,
   SynapseHookUtils,
   SynapseQueries,
-  SystemUseNotification,
   UserCard,
   useSynapseContext,
 } from 'synapse-react-client'
+import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
 import { handleErrorRedirect } from './URLUtils'
 
+const cookies = new UniversalCookies()
 const sendGTagEvent = (event: string) => {
   // send event to Google Analytics
   // (casting to 'any' type to get compile-time access to gtag())
@@ -47,12 +48,8 @@ function redirectToURL(redirectURL: string) {
 }
 
 export function OAuth2Form() {
-  const {
-    refreshSession,
-    twoFactorAuthSSOErrorResponse,
-    clearSession,
-    hasInitializedSession,
-  } = AppUtils.useApplicationSessionContext()
+  const { clearSession, hasInitializedSession } =
+    AppUtils.useApplicationSessionContext()
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
 
@@ -67,7 +64,7 @@ export function OAuth2Form() {
   // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
   const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
 
-  const accountRegistrationUrl = SynapseHookUtils.useOneSageURL('/register1')
+  const oneSageURL = SynapseHookUtils.useOneSageURL()
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
@@ -84,9 +81,6 @@ export function OAuth2Form() {
   )
 
   const clientId = useMemo(() => {
-    const code = searchParams.get('code')
-    if (code) return // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
-
     const clientId = searchParams.get('client_id')
     if (!clientId) {
       onError(new Error('Synapse OAuth client_id is required'))
@@ -99,8 +93,6 @@ export function OAuth2Form() {
     SynapseQueries.useGetOAuth2Client(clientId!, {
       enabled: Boolean(clientId),
     })
-
-  const navigate = useNavigate()
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const {
@@ -207,6 +199,13 @@ export function OAuth2Form() {
         // done!  redirect with access code.
         setShowPendingRedirectUI(true)
         const redirectUri = searchParams.get('redirect_uri')!
+        cookies.remove(
+          SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+          {
+            path: '/',
+            domain: AppUtils.getCookieDomain(),
+          },
+        )
 
         const redirectSearchParams = new URLSearchParams()
         const state = searchParams.get('state')
@@ -300,10 +299,7 @@ export function OAuth2Form() {
     }
   }, [oidcRequestDescriptionError, onError])
 
-  const promptForTwoFactorAuth = !!twoFactorAuthSSOErrorResponse
-
-  const isLoading =
-    !promptForTwoFactorAuth && (isLoadingProfile || isLoadingClientInfo)
+  const isLoading = isLoadingProfile || isLoadingClientInfo
 
   const loadingSpinner = (
     <Paper
@@ -332,6 +328,19 @@ export function OAuth2Form() {
     </Paper>
   )
 
+  if (
+    !isLoading &&
+    !error &&
+    !isLoggedIn &&
+    oauthClientInfo &&
+    oauthClientInfo.verified &&
+    !showPendingRedirectUI &&
+    oidcRequestDescription &&
+    hasInitializedSession // wait for session to be initialized (may be anonymous) before jumping to One Sage
+  ) {
+    // Prompt for login
+    storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
+  }
   return (
     <StyledOuterContainer>
       <Backdrop open={!hasInitializedSession} sx={{ zIndex: 5 }}>
@@ -420,30 +429,6 @@ export function OAuth2Form() {
           </StyledInnerContainer>
         )}
       {(isLoading || showPendingRedirectUI) && loadingSpinner}
-      {(!!twoFactorAuthSSOErrorResponse ||
-        (!error &&
-          !accessToken &&
-          oauthClientInfo &&
-          oauthClientInfo.verified &&
-          !showPendingRedirectUI &&
-          oidcRequestDescription)) && (
-        <Paper sx={{ width: '400px', py: 8, px: 4, margin: '0 auto' }}>
-          <StandaloneLoginForm
-            registerAccountUrl={accountRegistrationUrl.toString()}
-            onBeginOAuthSignIn={() => {
-              // save current route (so that we can go back here after SSO)
-              AppUtils.preparePostSSORedirect()
-            }}
-            sessionCallback={() => {
-              refreshSession().then(() => {
-                AppUtils.redirectAfterSSO(navigate)
-              })
-            }}
-            twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
-          />
-          <SystemUseNotification maxWidth={'325px'} />
-        </Paper>
-      )}
       {error && (
         <FullWidthAlert
           variant="danger"

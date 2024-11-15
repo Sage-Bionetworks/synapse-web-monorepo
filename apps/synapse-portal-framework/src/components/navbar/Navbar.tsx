@@ -1,20 +1,17 @@
-import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import React, { useEffect, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { useNavigate } from 'react-router-dom'
 import {
   AppUtils,
-  IconSvg,
-  StandaloneLoginForm,
+  storeRedirectURLForOneSageLoginAndGotoURL,
   SynapseComponents,
   SynapseHookUtils,
   SynapseQueries,
-  SystemUseNotification,
   useSynapseContext,
 } from 'synapse-react-client'
 import { RESPONSIVE_SIDE_PADDING } from '../../utils'
-import { useLogInDialogContext } from '../LogInDialogContext'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
@@ -65,14 +62,7 @@ function Navbar() {
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = React.useRef<HTMLDivElement>(null)
 
-  const { refreshSession, clearSession, twoFactorAuthSSOErrorResponse } =
-    AppUtils.useApplicationSessionContext()
-
-  const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
-
-  if (twoFactorAuthSSOErrorResponse) {
-    setShowLoginDialog(true)
-  }
+  const { clearSession } = AppUtils.useApplicationSessionContext()
 
   useEffect(() => {
     function handleClickOutside(e: Event) {
@@ -119,7 +109,7 @@ function Navbar() {
       hostname.includes('localhost')) &&
     !hideLogin
 
-  const registrationPageUrl = SynapseHookUtils.useOneSageURL('/register1')
+  const oneSageUrl = SynapseHookUtils.useOneSageURL()
   const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
     '/authenticated/myaccount',
   )
@@ -193,48 +183,13 @@ function Navbar() {
                   color="secondary"
                   variant="contained"
                   onClick={() => {
-                    setShowLoginDialog(true)
+                    storeRedirectURLForOneSageLoginAndGotoURL(
+                      oneSageUrl.toString(),
+                    )
                   }}
                 >
                   Sign&nbsp;In
                 </Button>
-                <Dialog
-                  onClose={() => {
-                    setShowLoginDialog(false)
-                  }}
-                  open={showLoginDialog}
-                >
-                  <IconButton
-                    aria-label={'Close'}
-                    onClick={() => {
-                      setShowLoginDialog(false)
-                    }}
-                    sx={{ marginLeft: 'auto' }}
-                  >
-                    <IconSvg
-                      icon={'close'}
-                      wrap={false}
-                      sx={{ color: 'grey.700' }}
-                    />
-                  </IconButton>
-                  <DialogContent dividers={false}>
-                    <StandaloneLoginForm
-                      registerAccountUrl={registrationPageUrl.toString()}
-                      twoFactorAuthenticationRequired={
-                        twoFactorAuthSSOErrorResponse
-                      }
-                      onBeginOAuthSignIn={() => {
-                        AppUtils.preparePostSSORedirect()
-                      }}
-                      sessionCallback={() => {
-                        refreshSession().then(() => {
-                          AppUtils.redirectAfterSSO(navigate)
-                        })
-                      }}
-                    />
-                    <SystemUseNotification maxWidth={'325px'} />
-                  </DialogContent>
-                </Dialog>
               </div>
             )}
 

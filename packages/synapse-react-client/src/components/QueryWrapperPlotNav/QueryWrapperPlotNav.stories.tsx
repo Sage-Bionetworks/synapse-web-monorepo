@@ -90,12 +90,6 @@ export const Cards: Story = {
         overrideLinkURLColumnName: 'biobankURL',
       },
       secondaryLabelLimit: 4,
-      labelLinkConfig: [
-        {
-          isMarkdown: true,
-          matchColumnName: 'investigatorWebsite',
-        },
-      ],
       genericCardSchema: {
         type: EXPERIMENTAL_TOOL,
         title: 'resourceName',
@@ -104,7 +98,6 @@ export const Cards: Story = {
         secondaryLabels: [
           'investigatorName',
           'institution',
-          'investigatorWebsite',
           'rrid',
           'synonyms',
           'cellLineCategory',

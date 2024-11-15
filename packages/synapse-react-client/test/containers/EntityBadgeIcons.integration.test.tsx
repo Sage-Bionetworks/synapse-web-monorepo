@@ -24,7 +24,9 @@ import {
 } from '../../src/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
+  Annotations,
   EntityBundle,
+  EntityJson,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -32,7 +34,10 @@ import {
   mockSchemaValidationResults,
 } from '../../src/mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { getEntityBundleHandler } from '../../src/mocks/msw/handlers/entityHandlers'
+import {
+  getEntityBundleHandler,
+  getEntityJsonHandler,
+} from '../../src/mocks/msw/handlers/entityHandlers'
 import { getFeatureFlagsOverride } from '../../src/mocks/msw/handlers/featureFlagHandlers'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
@@ -44,6 +49,18 @@ const defaultProps: EntityBadgeIconsProps = {
   onUnlinkError: jest.fn(),
   canOpenModal: true,
   renderTooltipComponent: true,
+}
+
+const convertAnnotationsToEntityJson = (
+  annotations: Annotations['annotations'],
+): Partial<EntityJson> => {
+  const entityJson: Partial<EntityJson> = {}
+  for (const key in annotations) {
+    if (annotations.hasOwnProperty(key)) {
+      entityJson[key] = annotations[key].value
+    }
+  }
+  return entityJson
 }
 
 async function renderComponent(wrapperProps?: SynapseContextType) {
@@ -64,6 +81,15 @@ describe('EntityBadgeIcons tests', () => {
   afterAll(() => server.close())
 
   it('Renders annotations in a table', async () => {
+    const bundleAnnotations = mockFileEntityBundle.annotations.annotations
+    const annotations: Partial<EntityJson> =
+      convertAnnotationsToEntityJson(bundleAnnotations)
+    server.use(
+      getEntityJsonHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        annotations,
+      ),
+    )
     await renderComponent()
     const icon = await screen.findByTestId('annotations-icon')
     await userEvent.hover(icon)
@@ -357,6 +383,12 @@ describe('EntityBadgeIcons tests', () => {
 
     it('Missing annotations with schema', async () => {
       // The entity must have no annotations
+      server.use(
+        getEntityJsonHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          {},
+        ),
+      )
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
         annotations: {

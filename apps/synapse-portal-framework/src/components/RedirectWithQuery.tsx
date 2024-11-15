@@ -9,7 +9,6 @@ import { Navigate, NavigateProps, useLocation } from 'react-router-dom'
 export default function RedirectWithQuery(props: NavigateProps) {
   const { search } = useLocation()
   const hash = window.location.hash
-
   return (
     <Navigate
       {...props}

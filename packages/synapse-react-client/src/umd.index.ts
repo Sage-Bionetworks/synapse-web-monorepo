@@ -1,3 +1,4 @@
+import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
 import ChangePassword from './components/ChangePassword/ChangePassword'
@@ -23,7 +24,6 @@ import { HelpPopover } from './components/HelpPopover/HelpPopover'
 import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
-import LoginPage from './components/Authentication/LoginPage'
 import PageProgress from './components/PageProgress/PageProgress'
 import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
 import PlotlyWrapper from './components/PlotlyWrapper'
@@ -95,6 +95,7 @@ import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
 import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
+import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -112,7 +113,6 @@ const SynapseContext = {
 
 const SynapseComponents = {
   Login: StandaloneLoginForm,
-  LoginPage,
   EntityForm,
   UserCard,
   StatisticsPlot,
@@ -191,6 +191,8 @@ const SynapseComponents = {
   RejectProfileValidationRequestModal,
   GovernanceMarkdownGithub,
   MarkdownGithubLatestTag,
+  ProjectDataAvailability,
+  EntityUploadModal,
 }
 
 // Include the version in the build
