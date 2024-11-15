@@ -23,7 +23,7 @@ export const Warning: Story = {
   },
 }
 
-export const UploadsExeededLimit: Story = {
+export const UploadsExceededLimit: Story = {
   args: {
     didUploadsExceedLimit: true,
     usage: {
