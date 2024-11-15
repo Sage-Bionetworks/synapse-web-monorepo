@@ -1,5 +1,18 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.MuiTypography-headline1,
+.MuiTypography-headline2,
+.MuiTypography-headline3,
+.nav-link-container {
+  font-family: 'Merriweather', serif;
+}
+
 #header,
 #footer {
   background-color: Portal.$primary-action-color;

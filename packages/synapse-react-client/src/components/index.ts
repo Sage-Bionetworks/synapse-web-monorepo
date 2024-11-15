@@ -79,6 +79,7 @@ export * from './MuiContainer'
 export * from './DatasetJsonLdScript'
 export * from './SharePageLinkButton'
 export * from './SageResourcesPopover'
+export * from './RecentPublicationsGrid'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'

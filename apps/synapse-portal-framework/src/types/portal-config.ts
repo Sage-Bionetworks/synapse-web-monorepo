@@ -30,6 +30,7 @@ import {
   DynamicFormModalProps,
   DynamicFormModal,
   SharePageLinkButtonProps,
+  RecentPublicationsGridProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
@@ -349,6 +350,11 @@ type DatasetJsonLdScript = {
   props: DatasetJsonLdScriptProps
 }
 
+type RecentPublicationsGrid = {
+  name: 'RecentPublicationsGrid'
+  props: RecentPublicationsGridProps
+}
+
 export type SynapseConfig = (
   | RedirectToURL
   | RedirectWithQuery
@@ -409,6 +415,7 @@ export type SynapseConfig = (
   | DynamicForm
   | SharePageLinkButton
   | DynamicFormModal
+  | RecentPublicationsGrid
 ) &
   Metadata
 

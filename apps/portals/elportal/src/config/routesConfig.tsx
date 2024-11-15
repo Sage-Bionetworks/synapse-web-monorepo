@@ -12,7 +12,8 @@ import {
   partnersSql,
   peopleSql,
   projectsSql,
-//  upsetPlotSql,
+  topPublicationsSql,
+  //  upsetPlotSql,
 } from './resources'
 //import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
 
@@ -219,6 +220,15 @@ const routes: GenericRoute[] = [
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
           summaryLinkText: 'View All People',
+        },
+      },
+      {
+        name: 'RecentPublicationsGrid',
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          sql: topPublicationsSql,
+          buttonLink: 'Explore/People',
+          buttonLinkText: 'See More Publications',
         },
       },
     ],
