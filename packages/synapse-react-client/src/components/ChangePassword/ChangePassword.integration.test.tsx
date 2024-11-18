@@ -37,7 +37,7 @@ const mockDisplayToast = jest
 
 jest.mock('react-router-dom', () => {
   return {
-    Redirect: jest.fn(({ to }) => `Redirected to ${to}`),
+    Navigate: jest.fn(({ to }) => `Redirected to ${to}`),
   }
 })
 
