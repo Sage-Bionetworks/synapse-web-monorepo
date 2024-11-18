@@ -27,8 +27,8 @@ export const mockProjectStorageUsageUnderLimit: ProjectStorageUsage = {
   locations: [
     {
       storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-      sumFileBytes: 500000000,
-      maxAllowedFileBytes: 1073741824,
+      sumFileBytes: 5420135,
+      maxAllowedFileBytes: 5571138,
       isOverLimit: false, // Under the limit
     },
     {
