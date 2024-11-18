@@ -14,7 +14,8 @@ import {
   StudyDetailsPage,
   studyDetailsPageChildRoutes,
 } from 'src/pages/StudyDetailsPage'
-import { MarkdownSynapse, SynapseFormWrapper } from 'synapse-react-client'
+import { SynapseFormWrapper } from 'synapse-react-client'
+import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { explorePageRoutes } from './explorePageRoutes'
 import { experimentalModelsSql, modelADStrainsSelectedFacet } from './resources'
 
