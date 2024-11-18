@@ -104,7 +104,7 @@ function DynamicForm(props: DynamicFormProps) {
     )
   }
 
-  const errorMessages = []
+  const errorMessages: string[] = []
   if (isSchemaError) {
     errorMessages.push(`Unable to retrieve schema: ${schemaError.message}`)
   }

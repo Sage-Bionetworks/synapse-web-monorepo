@@ -15,6 +15,10 @@
       "import": "./dist/*",
       "require": "./dist/*"
     },
+    "./*": {
+      "import": "./dist/*",
+      "require": "./dist/*"
+    },
     "./package.json": "./package.json",
     "./ThemeTypes": "./src/types/ThemeTypes.d.ts"
   },
@@ -244,7 +248,7 @@
     "build:js": "vite build",
     "build:umd": "vite build -c vite.config.umd.ts",
     "storybook:build": "pnpm storybook build",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --build",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
     "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
     "lint": "eslint src",

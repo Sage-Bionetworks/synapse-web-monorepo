@@ -36,7 +36,7 @@
     "lint": "eslint src",
     "test": "vitest",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --build"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

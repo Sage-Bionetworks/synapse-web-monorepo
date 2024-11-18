@@ -2040,7 +2040,7 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
 }
 
 export const signOut = async () => {
-  let accessToken = undefined
+  let accessToken: string | undefined = undefined
   try {
     accessToken = await getAccessTokenFromCookie()
   } catch (e) {

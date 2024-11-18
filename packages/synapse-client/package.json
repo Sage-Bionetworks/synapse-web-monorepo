@@ -38,8 +38,7 @@
     "get-spec": "pnpm get-spec:production",
     "configure": "openapi-generator-cli version-manager set 7.8.0",
     "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS",
-    "typecheck": "pnpm tsc",
-    "build": "rimraf ./dist && pnpm tsc -p tsconfig.build.json",
+    "build": "pnpm tsc --build",
     "test": "vitest",
     "lint": "eslint src"
   },

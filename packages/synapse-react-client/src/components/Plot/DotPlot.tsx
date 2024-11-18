@@ -115,7 +115,7 @@ function createArrayOfGroupValues(
  * @param n
  */
 export function generateCenteredSequence(n: number): number[] {
-  const sequence = []
+  const sequence: number[] = []
   const half = (n - 1) / 2
   for (let i = 0; i < n; i++) {
     sequence.push(i - half)
