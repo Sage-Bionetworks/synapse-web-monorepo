@@ -1,4 +1,4 @@
-import RouteControlWrapper from './RouteControlWrapper'
+import ExploreWrapper from './Explore/ExploreWrapper'
 import DetailsPage from './DetailsPage'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
 import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'

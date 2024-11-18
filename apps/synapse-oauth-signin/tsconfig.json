@@ -9,7 +9,26 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@sage-bionetworks/synapse-types": [
+        "../../../packages/synapse-types/src"
+      ],
+      "@sage-bionetworks/synapse-types/*": [
+        "../../../packages/synapse-types/src/*"
+      ],
+      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
+      "synapse-react-client/*": [
+        "../../../packages/synapse-react-client/src/*"
+      ],
+      "vite-config": ["../../../packages/vite-config/src"],
+      "vite-config/*": ["../../../packages/vite-config/src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/synapse-client" },
+    { "path": "../../packages/synapse-react-client" },
+    { "path": "../../packages/synapse-types" }
+  ]
 }

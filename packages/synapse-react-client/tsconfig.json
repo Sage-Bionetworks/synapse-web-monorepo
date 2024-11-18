@@ -1,15 +1,44 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "rootDir": "./src",
-    "outDir": "./dist/types",
+    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-react-client",
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
     "allowJs": false,
-    "noEmit": true,
+    "noEmit": false,
     "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      // HMR will work if we uncomment these, but doing so causes various build/typecheck errors
+      //  "@sage-bionetworks/synapse-client": ["../synapse-client/src"],
+      //  "@sage-bionetworks/synapse-client/*": ["../synapse-client/src/*"],
+      //  "@sage-bionetworks/synapse-types": ["../synapse-types/src"],
+      //  "@sage-bionetworks/synapse-types/*": ["../synapse-types/src/*"],
+      //  "markdown-it-synapse": ["../markdown-it-synapse/src"],
+      //  "markdown-it-synapse/*": ["../markdown-it-synapse/src/*"],
+      //  "markdown-it-synapse-table": ["../markdown-it-synapse-table/src"],
+      //  "markdown-it-synapse-table/*": ["../markdown-it-synapse-table/src/*"],
+      "vite-config": ["../vite-config/src/index.ts"],
+      "vite-config/*": ["../vite-config/src/*"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "references": [
+    //    {
+    //      "path": "../synapse-client"
+    //    },
+    //    {
+    //      "path": "../synapse-types"
+    //    },
+    //    {
+    //      "path": "../markdown-it-synapse"
+    //    },
+    //    {
+    //      "path": "../markdown-it-synapse-table"
+    //    },
+    { "path": "../vite-config" }
+  ]
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -334,7 +334,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
 }
 
 const CertificationQuizSkeleton: React.FunctionComponent = () => {
-  const questions = []
+  const questions: ReactNode[] = []
   for (let i = 0; i < 20; i++) {
     questions.push(
       <li key={i}>
