@@ -1,7 +1,9 @@
+import type {
+  CardConfiguration,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 
@@ -43,23 +45,20 @@ export const toolsConfiguration: CardConfiguration = {
   ],
 }
 
-export const tools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: toolsSql,
-    cardConfiguration: toolsConfiguration,
-    shouldDeepLink: true,
-    name: 'Tools',
-    columnAliases,
-    searchConfiguration: {
-      searchable: [
-        'toolName',
-        'description',
-        'publicationTitle',
-        'inputData',
-        'outputData',
-      ],
-    },
+export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: toolsSql,
+  cardConfiguration: toolsConfiguration,
+  shouldDeepLink: true,
+  name: 'Tools',
+  columnAliases,
+  searchConfiguration: {
+    searchable: [
+      'toolName',
+      'description',
+      'publicationTitle',
+      'inputData',
+      'outputData',
+    ],
   },
 }
