@@ -1,7 +1,15 @@
-import type { CardConfiguration, GenericCardSchema } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { computationalSql } from '../resources'
+import { PROGRAM_TABLE_COLUMN_NAMES } from './programs'
+
+export const COMPUTATIONAL_TOOLS_COLUMN_NAMES = {
+  GRANT: 'grant',
+}
 
 const computationalSchema: GenericCardSchema = {
   type: SynapseConstants.COMPUTATIONAL,
@@ -18,8 +26,8 @@ export const computationalCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'grant',
-      URLColumnName: 'Grant Number',
+      matchColumnName: COMPUTATIONAL_TOOLS_COLUMN_NAMES.GRANT,
+      URLColumnName: PROGRAM_TABLE_COLUMN_NAMES.GRANT_NUMBER,
       baseURL: 'Explore/Projects/DetailsPage',
     },
   ],
@@ -27,9 +35,8 @@ export const computationalCardConfiguration: CardConfiguration = {
 
 const rgbIndex = 7
 
-const computationalTools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
+export const computationalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
+  {
     rgbIndex,
     sql: computationalSql,
     cardConfiguration: computationalCardConfiguration,
@@ -46,7 +53,4 @@ const computationalTools: SynapseConfig = {
         'summary',
       ],
     },
-  },
-}
-
-export default computationalTools
+  }
