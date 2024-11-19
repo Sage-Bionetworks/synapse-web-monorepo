@@ -24,7 +24,7 @@ describe('HTML Santization', () => {
   })
   test('Prevents XSS through href', () => {
     const script = 'javascript:alert(1)'
-    const sanitized = xss(`<a href="${script}">foo</span>`, xssOptions)
+    const sanitized = xss(`<a href="${script}">foo</a>`, xssOptions)
     const html = createHTML(sanitized)
     const anchor = html.querySelector('a')!
     expect(anchor).not.toBeNull()
@@ -33,11 +33,21 @@ describe('HTML Santization', () => {
   })
   test('Allows valid link href', () => {
     const validHref = 'https://synapse.org'
-    const sanitized = xss(`<a href="${validHref}">foo</span>`, xssOptions)
+    const sanitized = xss(`<a href="${validHref}">foo</a>`, xssOptions)
     const html = createHTML(sanitized)
     const anchor = html.querySelector('a')!
     expect(anchor).not.toBeNull()
     expect(anchor.getAttribute('href')).toEqual(validHref)
+  })
+  test('Allows link rel property', () => {
+    const href = 'https://synapse.org'
+    const rel = 'noopener noreferrer'
+    const sanitized = xss(`<a href="${href}" rel="${rel}">foo</a>`, xssOptions)
+    const html = createHTML(sanitized)
+    const anchor = html.querySelector('a')!
+    expect(anchor).not.toBeNull()
+    expect(anchor.getAttribute('href')).toEqual(href)
+    expect(anchor.getAttribute('rel')).toEqual(rel)
   })
 
   describe.each(['td', 'th'])('%s cell text alignment', tag => {
