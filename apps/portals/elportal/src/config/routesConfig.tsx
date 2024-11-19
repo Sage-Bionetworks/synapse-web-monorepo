@@ -227,8 +227,10 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer',
         props: {
           sql: topPublicationsSql,
-          buttonLink: 'Explore/People',
+          buttonLink: 'Explore/Publications',
           buttonLinkText: 'See More Publications',
+          summaryText:
+            'Never miss a new finding from the frontiers of aging research.',
         },
       },
     ],

@@ -10,10 +10,11 @@ export type RecentPublicationsGridProps = {
   sql: string
   buttonLink?: string
   buttonLinkText?: string
+  summaryText?: string
 }
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
-  const { sql, buttonLink, buttonLinkText } = props
+  const { sql, buttonLink, buttonLinkText, summaryText } = props
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -47,6 +48,10 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     ExpectedColumns.PUBLICATION_DATE,
     queryResultBundle,
   )
+
+  console.log('result', queryResultBundle)
+  console.log('index', tagColIndex, journalColIndex, publicationDateColIndex)
+  console.log('drows', dataRows)
 
   return (
     <Box sx={{ display: 'flex', gap: '80px' }}>
@@ -113,7 +118,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           variant="body1"
           sx={{ fontStyle: 'italic', color: '#4A5056' }}
         >
-          Never miss a new finding from the frontiers of aging research.
+          {summaryText && summaryText}
         </Typography>
         {buttonLink && buttonLinkText && (
           <Button
