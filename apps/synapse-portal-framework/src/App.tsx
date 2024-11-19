@@ -7,8 +7,11 @@ import {
 import AppInitializer from './components/AppInitializer'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
+import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
 export default function App(props: PropsWithChildren) {
+  useDocumentTitleFromRoutes()
+
   return (
     <AppInitializer>
       <SynapseToastContainer />
