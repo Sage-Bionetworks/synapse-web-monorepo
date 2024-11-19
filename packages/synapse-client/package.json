@@ -32,6 +32,7 @@
     "vitest": "^1.6.0"
   },
   "scripts": {
+    "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "format-spec": "prettier --write src/spec/openapispecification.json",
     "get-spec:staging": "npx tsx src/codegen/downloadSpec.ts --stack staging && pnpm format-spec",
     "get-spec:production": "npx tsx src/codegen/downloadSpec.ts --stack production && pnpm format-spec",

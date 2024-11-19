@@ -238,7 +238,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "scripts": {
-    "clean": "rimraf dist storybook-static coverage",
+    "clean": "rimraf dist storybook-static coverage *.tsbuildinfo",
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start": "storybook dev -p 6060",
     "test": "jest",

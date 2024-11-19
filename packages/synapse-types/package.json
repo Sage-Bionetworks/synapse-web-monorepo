@@ -20,6 +20,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
+    "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "tsc --build",
     "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },

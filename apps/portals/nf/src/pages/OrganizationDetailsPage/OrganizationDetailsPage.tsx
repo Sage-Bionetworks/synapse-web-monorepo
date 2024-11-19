@@ -29,7 +29,7 @@ const tabConfig: DetailsPageTabConfig[] = [
 ]
 
 function OrganizationDetailsPage() {
-  const { abbreviation } = useGetPortalComponentSearchParams()
+  const searchParams = useGetPortalComponentSearchParams()
   return (
     <>
       <CardContainerLogic
@@ -40,7 +40,7 @@ function OrganizationDetailsPage() {
           imageFileHandleColumnName: 'headerLogo',
         }}
         isHeader={true}
-        searchParams={{ abbreviation }}
+        searchParams={searchParams}
       />
       <DetailsPage sql={fundersSql} ContainerProps={{ maxWidth: 'xl' }}>
         <DetailsPageTabs tabConfig={tabConfig} />

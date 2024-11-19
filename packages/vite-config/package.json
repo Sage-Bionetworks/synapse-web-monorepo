@@ -5,6 +5,7 @@
   "type": "module",
   "types": "dist/index.ts",
   "scripts": {
+    "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "tsc --build"
   },
   "exports": [
