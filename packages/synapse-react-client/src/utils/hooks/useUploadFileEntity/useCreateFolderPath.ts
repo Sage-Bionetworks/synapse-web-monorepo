@@ -1,7 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
-import { allowNotFoundError } from '../../../synapse-client/SynapseClientUtils'
-import { useCreateEntity } from '../../../synapse-queries/index'
-import { useSynapseContext } from '../../context/index'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useCreateEntity,
+  useGetEntityLookupQueryOptions,
+  useGetEntityQueryOptions,
+} from '../../../synapse-queries/entity/useEntity'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
@@ -12,32 +14,29 @@ import {
  * @returns The ID of the final folder in the path.
  */
 export function useCreateFolderPath() {
-  const { synapseClient } = useSynapseContext()
-
   const { mutateAsync: createEntity } = useCreateEntity()
+
+  const queryClient = useQueryClient()
+  const getEntityLookupQueryOptions = useGetEntityLookupQueryOptions()
+  const getEntityQueryOptions = useGetEntityQueryOptions()
 
   return useMutation({
     mutationFn: async (args: { rootContainerId: string; path: string[] }) => {
       const { rootContainerId: rootContainerId, path } = args
       let parentId = rootContainerId
       for (const pathElement of path) {
-        const foundEntityIdResult = await allowNotFoundError(() =>
-          synapseClient.entityServicesClient.postRepoV1EntityChild({
-            entityLookupRequest: {
-              parentId: parentId,
-              entityName: pathElement,
-            },
+        const foundEntityId = await queryClient.fetchQuery(
+          getEntityLookupQueryOptions({
+            parentId: parentId,
+            entityName: pathElement,
           }),
         )
 
-        const foundEntityId = foundEntityIdResult?.id ?? null
-
         if (foundEntityId) {
           // Verify that this entity is a folder
-          const entity =
-            await synapseClient.entityServicesClient.getRepoV1EntityId({
-              id: foundEntityId,
-            })
+          const entity = await queryClient.fetchQuery(
+            getEntityQueryOptions(foundEntityId),
+          )
 
           if (entity.concreteType != 'org.sagebionetworks.repo.model.Folder') {
             const typeOfExistingEntity = convertToEntityType(

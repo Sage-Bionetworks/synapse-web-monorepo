@@ -1,3 +1,4 @@
+import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
 import {
   AccessApprovalSearchRequest,
   AccessRequirementSearchRequest,
@@ -257,6 +258,14 @@ export class KeyFactory {
 
   public getEntityVersionQueryKey(id: string, versionNumber?: string | number) {
     return this.getKey(entityQueryKeyObjects.entity(id, versionNumber))
+  }
+
+  public getEntityLookupQueryKey(entityLookupRequest: EntityLookupRequest) {
+    return this.getKey(
+      entityQueryKeyObjects.all,
+      'entityLookup',
+      entityLookupRequest,
+    )
   }
 
   public getPaginatedEntityVersionsQueryKey(
