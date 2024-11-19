@@ -27,7 +27,7 @@ export default function HomePage() {
     <>
       <Header />
       <SectionLayout
-        title={'Portal Programs and Goals'}
+        title={'Resource Overview'}
         centerTitle
         ContainerProps={{ className: 'home-spacer' }}
       >
