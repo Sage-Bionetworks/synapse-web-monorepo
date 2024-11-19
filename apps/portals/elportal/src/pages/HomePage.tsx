@@ -42,7 +42,7 @@ export default function HomePage() {
       {/*    sql={upsetPlotSql}*/}
       {/*    rgbIndex={0}*/}
       {/*    maxBarCount={20}*/}
-      {/*    setName="# Files per data type"*/}
+      {/*    setName="# Files per assay"*/}
       {/*    combinationName="# individuals"*/}
       {/*    onClick={handleUpsetPlotClick}*/}
       {/*    // summaryLinkText='Explore All Data'*/}
