@@ -40,8 +40,8 @@ export const ProjectDataAvailability: React.FunctionComponent<
   const friendlySumFileBytes = calculateFriendlyFileSize(sumFileBytes, 1)
   const friendlyMaxAllowedFileBytes = calculateFriendlyFileSize(
     maxAllowedFileBytes,
-    0,
-  )
+    1,
+  ).replace(/\.0\s/, ' ') // SWC-7183: remove '.0 ' from the string if it exists
   return (
     <Box
       display="flex"
