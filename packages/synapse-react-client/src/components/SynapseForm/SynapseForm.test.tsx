@@ -2,7 +2,7 @@ import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { MemoryRouter } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import SynapseForm, { SynapseFormProps } from './SynapseForm'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
@@ -27,14 +27,15 @@ const newFormData = {
 const renderComponent = async (props: SynapseFormProps) => {
   const schema = await $RefParser.dereference(props.schema)
   const _props = { ...props, ...{ schema } }
-  return render(
-    <MemoryRouter>
-      <SynapseForm {..._props} />
-    </MemoryRouter>,
+  const router = createMemoryRouter([
     {
-      wrapper: createWrapper(),
+      path: '/',
+      element: <SynapseForm {..._props} />,
     },
-  )
+  ])
+  return render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
 }
 
 const mock = {
