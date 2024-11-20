@@ -1,40 +1,42 @@
-import { render, screen, within } from '@testing-library/react'
-import React from 'react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { CardLink, TargetEnum } from '../CardContainerLogic'
-import GenericCard, {
-  CARD_SHORT_DESCRIPTION_CSS,
-  GenericCardSchema,
-  getLinkParams,
-  LongDescription,
-  ShortDescription,
-} from './index'
-import * as IconSvg from '../IconSvg/IconSvg'
-import * as FileHandleLinkModule from '../widgets/FileHandleLink'
-import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
+  ColumnModel,
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, within } from '@testing-library/react'
+import { cloneDeep } from 'lodash-es'
+import React from 'react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import mockTableEntityData, {
+  mockTableEntity,
+} from '../../mocks/entity/mockTableEntity'
+import {
+  mockQueryBundleRequest,
+  mockQueryResultBundle,
+} from '../../mocks/mockFileViewQuery'
+import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import { server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
-import mockTableEntityData, {
-  mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
-import { GenericCardProps } from './GenericCard'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { CardLink, TargetEnum } from '../CardContainerLogic'
+import * as IconSvg from '../IconSvg/IconSvg'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
-import {
-  mockQueryBundleRequest,
-  mockQueryResultBundle,
-} from '../../mocks/mockFileViewQuery'
-import { cloneDeep } from 'lodash-es'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import * as FileHandleLinkModule from '../widgets/FileHandleLink'
+import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { GenericCardProps } from './GenericCard'
+import GenericCard, {
+  CARD_SHORT_DESCRIPTION_CSS,
+  GenericCardSchema,
+  getColumnIndex,
+  getLinkParams,
+  LongDescription,
+  ShortDescription,
+} from './index'
 
 const renderComponent = (
   props: GenericCardProps,
@@ -550,6 +552,26 @@ describe('GenericCard tests', () => {
       )
       const markdown = container.querySelector<HTMLElement>('.markdown')!
       within(markdown).getByText('header', { exact: false })
+    })
+  })
+
+  describe('getColumnIndex', () => {
+    const columnModels: ColumnModel[] = [
+      { id: '1', name: 'foo', columnType: ColumnTypeEnum.STRING },
+      { id: '2', name: 'bar', columnType: ColumnTypeEnum.DOUBLE },
+    ]
+
+    it('finds the column in the selectColumns', () => {
+      expect(getColumnIndex('bar', columnModels, undefined)).toBe(1)
+    })
+    it('finds the column in the columnModels', () => {
+      expect(getColumnIndex('bar', undefined, columnModels)).toBe(1)
+    })
+    it('does not include the column', () => {
+      expect(getColumnIndex('baz', columnModels, undefined)).toBe(undefined)
+    })
+    it('the found column index is 0 (falsy)', () => {
+      expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
     })
   })
 })

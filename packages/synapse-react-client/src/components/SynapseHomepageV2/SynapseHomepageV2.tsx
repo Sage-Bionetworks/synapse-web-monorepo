@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
+import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import { SynapseTrendingProjects } from './SynapseTrendingProjects'
 import { SynapseByTheNumbers } from './SynapseByTheNumbers'
 import { SynapseFeatures } from './SynapseFeatures'
@@ -561,7 +562,7 @@ export const SynapseHomepageV2: React.FunctionComponent<
                 data management.
               </Typography>
               <Link
-                href="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
+                href={SAGE_OFFERINGS_HELP_URL}
                 target="_blank"
                 sx={{
                   color: 'white !important',

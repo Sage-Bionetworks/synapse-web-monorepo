@@ -202,8 +202,11 @@ export const SYNAPSE_BACKEND_PRODUCTION_URL =
   'https://repo-prod.prod.sagebase.org'
 export const SYNAPSE_BACKEND_STAGING_URL =
   'https://repo-staging.prod.sagebase.org'
-export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-dev.dev.sagebase.org'
+export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-prod.dev.sagebase.org'
 
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
 export const ONE_SAGE_STAGING_URL = 'https://staging.accounts.synapse.org'
 export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
+
+export const SAGE_OFFERINGS_HELP_URL =
+  'https://help.synapse.org/docs/Sage-Offerings.2965078125.html'

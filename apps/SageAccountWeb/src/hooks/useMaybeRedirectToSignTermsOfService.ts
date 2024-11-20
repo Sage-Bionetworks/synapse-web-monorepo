@@ -1,6 +1,6 @@
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   storeLastPlace,
   useApplicationSessionContext,
@@ -19,7 +19,7 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
     sessionStorage.getItem('skippedSigningToS') === 'true'
   const { termsOfServiceStatus } = useApplicationSessionContext()
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   // true until we confirm we will not redirect
@@ -36,13 +36,13 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
           termsOfServiceStatus.lastAgreementDate == undefined &&
           location.pathname != '/authenticated/signTermsOfUse'
         ) {
-          history.push('/authenticated/signTermsOfUse')
+          navigate('/authenticated/signTermsOfUse')
         } else if (
           termsOfServiceStatus.lastAgreementDate != null &&
           location.pathname != '/authenticated/signUpdatedTermsOfUse'
         ) {
           storeLastPlace()
-          history.push('/authenticated/signUpdatedTermsOfUse')
+          navigate('/authenticated/signUpdatedTermsOfUse')
         }
       }
       setMayRedirect(false)
@@ -51,7 +51,7 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
     termsOfServiceStatus,
     skippedSigningUpdatedToS,
     location.pathname,
-    history,
+    navigate,
   ])
 
   return { mayRedirect: mayRedirect }

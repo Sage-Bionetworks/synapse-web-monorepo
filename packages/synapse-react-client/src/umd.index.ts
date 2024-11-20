@@ -1,3 +1,4 @@
+import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
 import ChangePassword from './components/ChangePassword/ChangePassword'
@@ -94,6 +95,7 @@ import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
 import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
+import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -189,6 +191,8 @@ const SynapseComponents = {
   RejectProfileValidationRequestModal,
   GovernanceMarkdownGithub,
   MarkdownGithubLatestTag,
+  ProjectDataAvailability,
+  EntityUploadModal,
 }
 
 // Include the version in the build

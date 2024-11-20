@@ -73,6 +73,7 @@ export type DialogBaseProps = DialogBaseTitleProps & {
   fullWidth?: boolean
   sx?: DialogProps['sx']
   contentProps?: DialogContentProps
+  DialogProps?: Partial<DialogProps>
 }
 
 /**
@@ -91,6 +92,7 @@ export const DialogBase = ({
   fullWidth = true,
   sx,
   contentProps = EMPTY_OBJECT,
+  DialogProps,
 }: DialogBaseProps) => {
   return (
     <Dialog
@@ -100,6 +102,7 @@ export const DialogBase = ({
       className={className}
       onClose={() => onCancel()}
       sx={sx}
+      {...DialogProps}
     >
       <DialogBaseTitle
         title={title}

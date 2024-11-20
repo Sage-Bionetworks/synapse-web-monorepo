@@ -9,7 +9,7 @@ import {
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { ContinueButton } from './ProfileValidation/ContinueButton'
 import { useSourceApp } from './useSourceApp'
 
@@ -27,7 +27,7 @@ export const CurrentAffiliationPage = () => {
   }, [currentUserProfile])
 
   if (isGoToAccountCreatedPage) {
-    return <Redirect to="/authenticated/accountcreated" />
+    return <Navigate to="/authenticated/accountcreated" />
   }
   return (
     <>

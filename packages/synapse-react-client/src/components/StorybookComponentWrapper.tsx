@@ -1,23 +1,22 @@
-import React, { Suspense, useEffect, useMemo } from 'react'
-import { MemoryRouter } from 'react-router-dom'
-import {
-  defaultQueryClientConfig,
-  SynapseClientError,
-  SynapseContextProvider,
-  SynapseContextType,
-} from '../utils'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import dayjs from 'dayjs'
+import React, { Suspense, useEffect, useMemo } from 'react'
 import SynapseClient, {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
   getUserProfile,
   signOut,
 } from '../synapse-client'
-import { SynapseToastContainer } from './ToastMessage'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import dayjs from 'dayjs'
+import {
+  defaultQueryClientConfig,
+  SynapseClientError,
+  SynapseContextProvider,
+  SynapseContextType,
+} from '../utils'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
 import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
+import { SynapseToastContainer } from './ToastMessage'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
@@ -132,10 +131,8 @@ export function StorybookComponentWrapper(props: {
           {storybookContext.globals.showReactQueryDevtools && (
             <ReactQueryDevtools />
           )}
-          <MemoryRouter>
-            <SynapseToastContainer />
-            <main>{props.children}</main>
-          </MemoryRouter>
+          <SynapseToastContainer />
+          <main>{props.children}</main>
         </SynapseContextProvider>
       </QueryClientProvider>
     </Suspense>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { TwoFactorBackupCodes } from 'synapse-react-client'
 
 /**
@@ -8,13 +8,13 @@ import { TwoFactorBackupCodes } from 'synapse-react-client'
  * The page will show a warning unless the query parameter 'warn' is set to false
  */
 export default function TwoFactorAuthBackupCodesPage() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search } = useLocation()
   const warn = new URLSearchParams(search).get('warn')
   return (
     <TwoFactorBackupCodes
       showReplaceOldCodesWarning={warn !== 'false'}
-      onClose={() => history.push('/authenticated/myaccount')}
+      onClose={() => navigate('/authenticated/myaccount')}
     />
   )
 }

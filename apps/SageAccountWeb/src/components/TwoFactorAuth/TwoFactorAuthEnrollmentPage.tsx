@@ -1,17 +1,17 @@
 import React from 'react'
 import { TwoFactorEnrollmentForm } from 'synapse-react-client'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function TwoFactorAuthEnrollmentPage() {
-  const history = useHistory()
+  const navigate = useNavigate()
   return (
     <TwoFactorEnrollmentForm
       onTwoFactorEnrollmentSuccess={() =>
         // explicitly skip the backup code overwrite warning and generate new codes
-        history.push('/authenticated/2fa/generatecodes?warn=false')
+        navigate('/authenticated/2fa/generatecodes?warn=false')
       }
       onBackClicked={() => {
-        history.goBack()
+        navigate(-1)
       }}
     />
   )

@@ -1,13 +1,14 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "declaration": true,
-    "rootDir": "src",
-    "outDir": "dist",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
     "noEmit": false
   },
-  "files": ["src/index.ts"]
+  "include": ["./src/*.ts", "./src/**/*.ts"]
 }

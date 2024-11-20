@@ -14,6 +14,7 @@ import {
   useDeleteEntity,
   useGetEntityBundle,
   useGetFeatureFlag,
+  useGetJson,
   useGetSchemaBinding,
   useGetValidationResults,
 } from '../../synapse-queries'
@@ -27,6 +28,7 @@ import {
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { Tooltip } from '@mui/material'
+import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {
@@ -104,13 +106,16 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
 
   const { ref, inView } = useInView()
 
+  const { data: entityData } = useGetJson(entityId, versionNumber, true, {
+    enabled: inView,
+  })
+  const annotations = entityData?.annotations
   const { data: bundle } = useGetEntityBundle(
     entityId,
     versionNumber,
     ALL_ENTITY_BUNDLE_FIELDS,
     {
       enabled: inView,
-      staleTime: 60 * 1000, // 60 seconds
     },
   )
   const [showModal, setShowModal] = useState(false)
@@ -118,7 +123,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
-
   const isFeatureEnabled = useGetFeatureFlag(
     FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
   )
@@ -136,10 +140,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   // The maximum number of annotations to show in the popover
   const maxAnnosToShow = 10
   const annotationsCount =
-    bundle?.annotations && !isEmpty(bundle.annotations.annotations)
-      ? Object.keys(bundle.annotations.annotations).length
-      : 0
-
+    annotations && !isEmpty(annotations) ? Object.keys(annotations).length : 0
   useEffect(() => {
     if (isFeatureEnabled && schemaValidationResults) {
       if (schemaValidationResults.isValid) {
@@ -156,7 +157,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     schemaValidationResults,
     isFeatureEnabled,
     annotationsCount,
-    bundle,
+    annotations,
     SchemaConformanceState.VALID,
     SchemaConformanceState.INVALID,
     SchemaConformanceState.ANNOTATIONS_MISSING,
@@ -175,8 +176,8 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
    */
   const annotationsTableRows = (
     <>
-      {bundle
-        ? Object.entries(bundle.annotations?.annotations ?? []).reduce(
+      {annotations
+        ? Object.entries(annotations ?? []).reduce(
             (previous, current, index) => {
               if (
                 index < maxAnnosToShow ||
@@ -190,7 +191,15 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                       <td>
                         <b>{current[0]}</b>
                       </td>
-                      <td>{current[1].value.join(', ')}</td>
+                      <td>
+                        {Array.isArray(current[1])
+                          ? (current[1] as string[] | number[] | boolean[])
+                              .map(getDisplayedAnnotation)
+                              .join(', ')
+                          : getDisplayedAnnotation(
+                              current[1] as string | number | boolean,
+                            )}
+                      </td>
                     </tr>
                   </>
                 )

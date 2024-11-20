@@ -1,4 +1,4 @@
-const sufixes: string[] = [
+const suffixes: string[] = [
   'Bytes',
   'KB',
   'MB',
@@ -11,17 +11,17 @@ const sufixes: string[] = [
 ]
 
 export function calculateFriendlyFileSize(
-  bytes: number,
-  fractionDigits?: number,
+  bytes: number | null | undefined,
+  fractionDigits: number = 2,
 ) {
-  if (!bytes) {
+  if (bytes == null) {
     return ''
   }
   // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
   // tslint:disable-next-line
   return (
-    (!bytes && '0 Bytes') ||
-    (bytes / Math.pow(1024, i)).toFixed(fractionDigits ?? 2) + ' ' + sufixes[i]
+    (bytes == 0 && '0 Bytes') ||
+    (bytes / Math.pow(1024, i)).toFixed(fractionDigits) + ' ' + suffixes[i]
   )
 }

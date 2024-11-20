@@ -20,4 +20,5 @@ export default function RedirectToURL(props: RedirectToURLProps) {
   if (isSearchMatch) {
     window.location.replace(toURL)
   }
+  return null
 }

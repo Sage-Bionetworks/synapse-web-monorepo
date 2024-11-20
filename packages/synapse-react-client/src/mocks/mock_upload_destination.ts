@@ -14,15 +14,21 @@ export const MOCK_EXTERNAL_GOOGLE_CLOUD_STORAGE_LOCATION_ID = 2222
 export const MOCK_EXTERNAL_STORAGE_LOCATION_ID = 3333
 export const MOCK_EXTERNAL_OBJECT_STORE_STORAGE_LOCATION_ID = 4444
 
-const baseUploadDestination: UploadDestination = {
+export const mockSynapseStorageUploadDestination: UploadDestination = {
   storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
   uploadType: UploadType.S3,
   banner: '',
   concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
+  projectStorageLocationUsage: {
+    maxAllowedFileBytes: 1024 * 1024 * 1024 * 100,
+    sumFileBytes: 0,
+    storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+    isOverLimit: false,
+  },
 }
 
 export const mockS3UploadDestination: S3UploadDestination = {
-  ...baseUploadDestination,
+  ...mockSynapseStorageUploadDestination,
   baseKey: 'exampleS3BaseKey',
   stsEnabled: true,
   concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
@@ -39,7 +45,7 @@ export const mockExternalS3UploadDestination: ExternalS3UploadDestination = {
 
 export const mockExternalGoogleCloudUploadDestination: ExternalGoogleCloudUploadDestination =
   {
-    ...baseUploadDestination,
+    ...mockSynapseStorageUploadDestination,
     baseKey: 'exampleGCPBaseKey',
     storageLocationId: MOCK_EXTERNAL_GOOGLE_CLOUD_STORAGE_LOCATION_ID,
     uploadType: UploadType.GOOGLECLOUDSTORAGE,
@@ -49,7 +55,7 @@ export const mockExternalGoogleCloudUploadDestination: ExternalGoogleCloudUpload
   }
 
 export const mockExternalUploadDestination: ExternalUploadDestination = {
-  ...baseUploadDestination,
+  ...mockSynapseStorageUploadDestination,
   storageLocationId: MOCK_EXTERNAL_STORAGE_LOCATION_ID,
   uploadType: UploadType.HTTPS,
   url: 'https://myurl.fake',
@@ -58,7 +64,7 @@ export const mockExternalUploadDestination: ExternalUploadDestination = {
 
 export const mockExternalObjectStoreUploadDestination: ExternalObjectStoreUploadDestination =
   {
-    ...baseUploadDestination,
+    ...mockSynapseStorageUploadDestination,
     storageLocationId: MOCK_EXTERNAL_OBJECT_STORE_STORAGE_LOCATION_ID,
     uploadType: UploadType.HTTPS,
     endpointUrl: 'https://my-endpoint.fake',

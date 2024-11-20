@@ -2,12 +2,14 @@ import React, { useMemo, useRef, useState } from 'react'
 import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
-import { Dialog } from '@mui/material'
+import { Dialog, DialogContent } from '@mui/material'
+import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
-  ObservationCard,
-  ObservationCardSchema,
-} from '../row_renderers/ObservationCard'
-import { Row } from '@sage-bionetworks/synapse-types'
+  ColumnSingleValueFilterOperator,
+  Row,
+} from '@sage-bionetworks/synapse-types'
+import CardContainerLogic from '../CardContainerLogic'
+import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -193,6 +195,7 @@ type TimelinePhaseProps = {
   rowData: Row[]
   schema: ObservationCardSchema
   widthPx: number
+  sql: string
 }
 
 const TimelinePhase = ({
@@ -200,12 +203,12 @@ const TimelinePhase = ({
   rowData,
   schema,
   widthPx,
+  sql,
 }: TimelinePhaseProps) => {
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)
   const start = dayjs()
-
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
   const rowIds = clickEvent?.points[0].customdata as unknown as (
@@ -215,6 +218,7 @@ const TimelinePhase = ({
   const selectedRows = rowData?.filter(row => {
     return rowIds?.includes(row.rowId)
   })
+
   const hoverEventRowIds = hoverEvent?.points[0].customdata as unknown as (
     | number
     | undefined
@@ -234,6 +238,8 @@ const TimelinePhase = ({
   const timelineData = useMemo(() => {
     return getTimelineData(timepointData, rowData)
   }, [timepointData, rowData])
+
+  const selectedRowIds = selectedRows.map(row => row.rowId!)
 
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
@@ -260,23 +266,22 @@ const TimelinePhase = ({
           setHoverEvent(undefined)
         }}
       />
-      {selectedRows && (
-        <Dialog
-          onClose={() => setClickEvent(undefined)}
-          open={!!selectedRows && selectedRows.length > 0}
-        >
-          {selectedRows.map(row => {
-            return (
-              <ObservationCard
-                key={row.rowId}
-                data={row.values}
-                schema={schema}
-                includePortalCardClass={false}
-              />
-            )
-          })}
-        </Dialog>
-      )}
+      <Dialog
+        onClose={() => setClickEvent(undefined)}
+        open={selectedRows && selectedRows.length > 0}
+      >
+        <DialogContent>
+          <CardContainerLogic
+            topLevelEnumeratedFacetToFilter={{ columnName: 'observationType' }}
+            sql={sql}
+            searchParams={{ ['ROW_ID']: selectedRowIds.map(String).join(',') }}
+            sqlOperator={ColumnSingleValueFilterOperator.IN}
+            lockedColumn={{ columnName: 'ROW_ID' }}
+            type={OBSERVATION_CARD}
+            initialLimit={3}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

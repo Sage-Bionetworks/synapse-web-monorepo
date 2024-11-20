@@ -4,16 +4,23 @@ import { useSynapseContext } from '../../context/index'
 import { getFileEntityIdWithSameName } from './getFileEntityIdWithSameName'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 
-export type FilePreparedForUpload = {
-  file: File
-  parentId: string
-  existingEntityId: string | null
-}
+export type NewEntityFileUploadArgs = { file: File; rootContainerId: string }
+export type NewEntityFileUploadReturn = { file: File; parentId: string }
+export type UpdateEntityFileUpload = { file: File; existingEntityId: string }
+
+export type FilePreparedForUpload =
+  | NewEntityFileUploadReturn
+  | UpdateEntityFileUpload
 
 export type PrepareDirsForUploadReturn = {
-  newFileEntities: FilePreparedForUpload[]
-  updatedFileEntities: FilePreparedForUpload[]
+  filesReadyForUpload: FilePreparedForUpload[]
+  filesToPromptForNewVersion: FilePreparedForUpload[]
 }
+
+export type PrepareFileEntityUploadArgs = (
+  | NewEntityFileUploadArgs
+  | UpdateEntityFileUpload
+)[]
 
 /**
  * Mutation used to check and prepare the entity tree just before uploading a list of files.
@@ -24,8 +31,9 @@ export type PrepareDirsForUploadReturn = {
  * 2. Check if any of the files to be uploaded already exist in the target parent folder
  *
  * The mutation will return two lists of files and their destination parentIds:
- *    - newFileEntities: New files that do not have corresponding file entities in the target parent folder
- *    - updatedFileEntities: Files that have corresponding file entities in the target parent folder. The user
+ *    - filesReadyForUpload: New files that do not have corresponding file entities in the target parent folder, or a file
+ *        that should be updated without a prompt.
+ *    - filesToPromptForNewVersion: Files that have corresponding file entities in the target parent folder. The user
  *        should be prompted to accept or reject the creation of a new version of the file.
  *
  * In the future, this sequence could be amended to check if the storage location has enough space to accommodate all the
@@ -38,7 +46,7 @@ export function usePrepareFileEntityUpload(
     UseMutationOptions<
       PrepareDirsForUploadReturn,
       SynapseClientError,
-      { files: File[]; parentId: string }
+      PrepareFileEntityUploadArgs
     >
   >,
 ) {
@@ -47,21 +55,33 @@ export function usePrepareFileEntityUpload(
 
   return useMutation({
     ...options,
-    mutationFn: async (args: { files: File[]; parentId: string }) => {
-      const { files, parentId } = args
+    mutationFn: async (args: PrepareFileEntityUploadArgs) => {
+      // If `existingEntityId` is defined, the file will be used to update a chosen FileEntity
+      // we don't need to create dirs or prompt the user to confirm an update.
+      const updatedFileEntitiesNoPrompt: FilePreparedForUpload[] = args.filter(
+        arg => 'existingEntityId' in arg,
+      )
 
-      // 1. Create directories for the files as needed
+      // 1. Create directories for the files uploaded to a container as needed
       const fileAndParentIds: { file: File; parentId: string }[] = []
-      for (const file of files) {
+      for (const arg of args) {
         try {
-          // Create the directories serially; if multiple files are uploaded, they may share new directories
-          // Creating folders in parallel could cause race conditions
-          fileAndParentIds.push(await createDirsForFileList({ file, parentId }))
+          if ('rootContainerId' in arg) {
+            const { file, rootContainerId } = arg
+            // Create the directories serially; if multiple files are uploaded, they may share new directories
+            // Creating folders in parallel could cause race conditions
+            fileAndParentIds.push(
+              await createDirsForFileList({
+                file,
+                rootContainerId: rootContainerId,
+              }),
+            )
+          }
         } catch (e) {
           throw new Error(
-            `Unable to create target folder structure for file ${file.name}${
-              Object.hasOwn(e, 'message') ? `: ${e.message}` : null
-            }`,
+            `Unable to create target folder structure for file ${
+              arg.file.name
+            }${Object.hasOwn(e, 'message') ? `: ${e.message}` : null}`,
             { cause: e },
           )
         }
@@ -103,11 +123,19 @@ export function usePrepareFileEntityUpload(
         f => f.existingEntityId == null,
       )
 
-      const updatedFileEntities = filesPreparedForUpload.filter(
+      const filesReadyForUpload = [
+        ...newFileEntities,
+        ...updatedFileEntitiesNoPrompt,
+      ]
+
+      const filesToPromptForNewVersion = filesPreparedForUpload.filter(
         f => f.existingEntityId != null,
       )
 
-      return { newFileEntities, updatedFileEntities }
+      return {
+        filesReadyForUpload,
+        filesToPromptForNewVersion,
+      }
     },
   })
 }

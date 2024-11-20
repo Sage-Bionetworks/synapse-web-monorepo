@@ -2,7 +2,7 @@ import { act, renderHook as _renderHook } from '@testing-library/react'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { useTrackFileUploads } from './useTrackFileUploads'
 
-describe('useTrackUploads', () => {
+describe('useTrackFileUploads', () => {
   function renderHook() {
     return _renderHook(() => useTrackFileUploads(), {
       wrapper: createWrapper(),
@@ -17,13 +17,12 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'PREPARING',
@@ -43,7 +42,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
 
@@ -54,13 +52,12 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn456',
-        existingEntityId: null,
       })
     })
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn456',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn456' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'PREPARING',
@@ -77,7 +74,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
 
       hook.current.setProgress(file, { value: 10, total: 20 })
@@ -85,7 +81,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 10, total: 20 },
       status: 'PREPARING',
@@ -101,7 +97,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
 
       hook.current.setIsUploading(file)
@@ -109,7 +104,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'UPLOADING',
@@ -124,7 +119,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
 
       hook.current.setComplete(file)
@@ -132,7 +126,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'COMPLETE',
@@ -147,7 +141,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
 
       hook.current.setFailed(file, 'some reason')
@@ -155,7 +148,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'FAILED',
@@ -172,7 +165,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
 
@@ -182,7 +174,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'CANCELED_BY_USER',
@@ -202,7 +194,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
 
@@ -212,7 +203,7 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'PAUSED',
@@ -238,17 +229,14 @@ describe('useTrackUploads', () => {
         {
           file: file1,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: file2,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: file3,
           parentId: 'syn123',
-          existingEntityId: null,
         },
       )
 
@@ -264,7 +252,7 @@ describe('useTrackUploads', () => {
     // File 3 remains uncancelled
     expect(hook.current.trackedUploadProgress.size).toBe(1)
     expect(hook.current.trackedUploadProgress.get(file3)).toMatchObject({
-      parentId: 'syn123',
+      filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
       abortController: expect.any(AbortController),
       progress: { value: 0, total: 1 },
       status: 'PREPARING',
@@ -277,7 +265,7 @@ describe('useTrackUploads', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       `Attempted to remove tracked upload progress before it was canceled.`,
       {
-        parentId: 'syn123',
+        filePreparedForUpload: { file: expect.any(File), parentId: 'syn123' },
         abortController: expect.any(AbortController),
         progress: { value: 0, total: 1 },
         status: 'PREPARING',
@@ -285,13 +273,13 @@ describe('useTrackUploads', () => {
     )
   })
 
-  test('isUploading, activeUploadCount', () => {
-    const preparingFile = new File([''], 'file.txt')
-    const uploadingFile = new File([''], 'file.txt')
-    const pausedFile = new File([''], 'file.txt')
-    const canceledFile = new File([''], 'file.txt')
-    const failedFile = new File([''], 'file.txt')
-    const completedFile = new File([''], 'file.txt')
+  test('isUploading, activeUploadCount, bytesPendingUpload', () => {
+    const preparingFile = new File(['.'], 'file.txt')
+    const uploadingFile = new File(['.'], 'file.txt')
+    const pausedFile = new File(['.'], 'file.txt')
+    const canceledFile = new File(['.'], 'file.txt')
+    const failedFile = new File(['.'], 'file.txt')
+    const completedFile = new File(['.'], 'file.txt')
 
     const { result: hook } = renderHook()
 
@@ -300,32 +288,26 @@ describe('useTrackUploads', () => {
         {
           file: preparingFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: uploadingFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: pausedFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: canceledFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: failedFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
         {
           file: completedFile,
           parentId: 'syn123',
-          existingEntityId: null,
         },
       )
 
@@ -339,6 +321,13 @@ describe('useTrackUploads', () => {
     // Should count PREPARING, UPLOADING, and PAUSED
     expect(hook.current.activeUploadCount).toBe(3)
     expect(hook.current.isUploading).toBe(true)
+    // bytesPendingUpload should also count COMPLETED
+    expect(hook.current.bytesPendingUpload).toBe(
+      preparingFile.size +
+        uploadingFile.size +
+        pausedFile.size +
+        completedFile.size,
+    )
 
     act(() => {
       hook.current.cancelUpload(uploadingFile)
@@ -348,6 +337,8 @@ describe('useTrackUploads', () => {
 
     expect(hook.current.activeUploadCount).toBe(0)
     expect(hook.current.isUploading).toBe(false)
+    // only the completed upload remains
+    expect(hook.current.bytesPendingUpload).toBe(completedFile.size)
   })
 
   test('isUploadComplete', () => {
@@ -364,7 +355,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file1,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
 
@@ -400,7 +390,6 @@ describe('useTrackUploads', () => {
       hook.current.trackNewFiles({
         file: file2,
         parentId: 'syn123',
-        existingEntityId: null,
       })
     })
     expect(hook.current.isUploadComplete).toBe(false)

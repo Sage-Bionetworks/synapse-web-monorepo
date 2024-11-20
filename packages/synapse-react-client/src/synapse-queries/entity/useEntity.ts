@@ -2,12 +2,14 @@
  * Hooks to access Entity Services in Synapse
  */
 
+import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
 import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
 import {
   InfiniteData,
   QueryClient,
   QueryKey,
+  queryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -19,6 +21,7 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
+import { allowNotFoundError } from '../../synapse-client/SynapseClientUtils'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import {
   createTableUpdateTransactionRequest,
@@ -46,21 +49,32 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { KeyFactory } from '../KeyFactory'
 import { useGetEntityBundleQueryOptions } from './useEntityBundle'
 
+export function useGetEntityQueryOptions<T extends Entity>() {
+  const { keyFactory, accessToken } = useSynapseContext()
+  return (
+    entityId: string,
+    versionNumber?: string | number,
+  ): UseQueryOptions<T, SynapseClientError> =>
+    queryOptions<T, SynapseClientError>({
+      queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
+      queryFn: () =>
+        SynapseClient.getEntity<T>(
+          accessToken,
+          entityId,
+          versionNumber?.toString(),
+        ),
+    })
+}
+
 export function useGetEntity<T extends Entity>(
   entityId: string,
   versionNumber?: string | number,
   options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const getEntityQueryOptions = useGetEntityQueryOptions<T>()
   return useQuery({
     ...options,
-    queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
-    queryFn: () =>
-      SynapseClient.getEntity<T>(
-        accessToken,
-        entityId,
-        versionNumber?.toString(),
-      ),
+    ...getEntityQueryOptions(entityId, versionNumber),
   })
 }
 
@@ -112,6 +126,13 @@ export function useCreateEntity(
     onSuccess: async (newEntity, variables, ctx) => {
       const entityDataQueryKey = keyFactory.getEntityQueryKey(newEntity.id!)
       queryClient.setQueryData(entityDataQueryKey, newEntity)
+      queryClient.setQueryData<EntityLookupQueryData>(
+        keyFactory.getEntityLookupQueryKey({
+          parentId: newEntity.parentId,
+          entityName: newEntity.name,
+        }),
+        newEntity.id,
+      )
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
@@ -565,4 +586,23 @@ export function useUpdateTableColumns(
       }
     },
   })
+}
+
+type EntityLookupQueryData = string | null
+export function useGetEntityLookupQueryOptions() {
+  const { keyFactory, synapseClient } = useSynapseContext()
+  return (
+    entityLookupRequest: EntityLookupRequest,
+  ): UseQueryOptions<EntityLookupQueryData, SynapseClientError> =>
+    queryOptions<EntityLookupQueryData, SynapseClientError>({
+      queryKey: keyFactory.getEntityLookupQueryKey(entityLookupRequest),
+      queryFn: async () =>
+        (
+          await allowNotFoundError(() =>
+            synapseClient.entityServicesClient.postRepoV1EntityChild({
+              entityLookupRequest: entityLookupRequest,
+            }),
+          )
+        )?.id ?? null,
+    })
 }

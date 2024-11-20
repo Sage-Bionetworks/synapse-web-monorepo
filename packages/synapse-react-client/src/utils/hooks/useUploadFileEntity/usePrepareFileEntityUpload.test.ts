@@ -5,7 +5,10 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as GetFileEntityIdWithSameNameModule from './getFileEntityIdWithSameName'
 import * as UseCreatePathsAndGetParentIdModule from './useCreatePathsAndGetParentId'
 
-import { usePrepareFileEntityUpload } from './usePrepareFileEntityUpload'
+import {
+  PrepareFileEntityUploadArgs,
+  usePrepareFileEntityUpload,
+} from './usePrepareFileEntityUpload'
 
 const mockUseCreatePathsAndGetParentId = jest.spyOn(
   UseCreatePathsAndGetParentIdModule,
@@ -28,14 +31,17 @@ describe('usePrepareFileEntityUpload', () => {
   }
   const newFile = new File([''], 'newFile.txt')
   const updatedFile = new File([''], 'existingFile.txt')
-  const files = [newFile, updatedFile]
-  const parentId = 'syn123'
+  const rootContainerId = 'syn123'
   const updatedEntityId = 'syn456'
+  const args: PrepareFileEntityUploadArgs = [
+    { file: newFile, rootContainerId: rootContainerId },
+    { file: updatedFile, rootContainerId: rootContainerId },
+  ]
 
   test('prepares a new file entity for upload and an existing file entity for update', async () => {
     const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
-      ({ file }) => ({ file, parentId }),
+      ({ file }) => ({ file, parentId: rootContainerId }),
     )
     mockUseCreatePathsAndGetParentId.mockReturnValue(
       useCreatePathsAndGetParentIdMockResult,
@@ -48,19 +54,15 @@ describe('usePrepareFileEntityUpload', () => {
     })
 
     const { result: hook } = renderHook()
-    const result = await hook.current.mutateAsync({
-      files: files,
-      parentId: parentId,
-    })
+    const result = await hook.current.mutateAsync(args)
 
-    expect(result).toEqual({
-      newFileEntities: [
-        { file: newFile, parentId: parentId, existingEntityId: null },
+    expect(result).toMatchObject({
+      filesReadyForUpload: [
+        { file: expect.any(File), parentId: rootContainerId },
       ],
-      updatedFileEntities: [
+      filesToPromptForNewVersion: [
         {
-          file: updatedFile,
-          parentId: parentId,
+          file: expect.any(File),
           existingEntityId: updatedEntityId,
         },
       ],
@@ -71,24 +73,55 @@ describe('usePrepareFileEntityUpload', () => {
     ).toHaveBeenCalledTimes(2)
     expect(
       useCreatePathsAndGetParentIdMockResult.mutateAsync,
-    ).toHaveBeenNthCalledWith(1, { file: newFile, parentId })
+    ).toHaveBeenNthCalledWith(1, {
+      file: newFile,
+      rootContainerId: rootContainerId,
+    })
     expect(
       useCreatePathsAndGetParentIdMockResult.mutateAsync,
-    ).toHaveBeenNthCalledWith(2, { file: updatedFile, parentId })
+    ).toHaveBeenNthCalledWith(2, {
+      file: updatedFile,
+      rootContainerId: rootContainerId,
+    })
 
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledTimes(2)
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledWith(
       'newFile.txt',
-      parentId,
+      rootContainerId,
       MOCK_CONTEXT_VALUE.synapseClient,
       'The file could not be uploaded.',
     )
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledWith(
       'existingFile.txt',
-      parentId,
+      rootContainerId,
       MOCK_CONTEXT_VALUE.synapseClient,
       'The file could not be uploaded.',
     )
+  })
+
+  test('directly update FileEntity', async () => {
+    const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
+    mockUseCreatePathsAndGetParentId.mockReturnValue(
+      useCreatePathsAndGetParentIdMockResult,
+    )
+
+    const { result: hook } = renderHook()
+    const result = await hook.current.mutateAsync([
+      { file: updatedFile, existingEntityId: updatedEntityId },
+    ])
+
+    expect(result).toMatchObject({
+      filesReadyForUpload: [
+        { file: expect.any(File), existingEntityId: updatedEntityId },
+      ],
+      filesToPromptForNewVersion: [],
+    })
+
+    expect(
+      useCreatePathsAndGetParentIdMockResult.mutateAsync,
+    ).not.toHaveBeenCalled()
+
+    expect(mockGetFileEntityIdWithSameName).not.toHaveBeenCalled()
   })
 
   test('creating directory fails', async () => {
@@ -101,12 +134,7 @@ describe('usePrepareFileEntityUpload', () => {
     )
 
     const { result: hook } = renderHook()
-    await expect(
-      hook.current.mutateAsync({
-        files: files,
-        parentId: parentId,
-      }),
-    ).rejects.toThrow(
+    await expect(hook.current.mutateAsync(args)).rejects.toThrow(
       `Unable to create target folder structure for file newFile.txt: Failed to create directory`,
     )
 
@@ -115,7 +143,7 @@ describe('usePrepareFileEntityUpload', () => {
     ).toHaveBeenCalledTimes(1)
     expect(
       useCreatePathsAndGetParentIdMockResult.mutateAsync,
-    ).toHaveBeenCalledWith({ file: newFile, parentId })
+    ).toHaveBeenCalledWith({ file: newFile, rootContainerId: rootContainerId })
 
     expect(mockGetFileEntityIdWithSameName).not.toHaveBeenCalled()
   })
@@ -123,7 +151,7 @@ describe('usePrepareFileEntityUpload', () => {
   test('file lookup fails', async () => {
     const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
-      ({ file }) => ({ file, parentId }),
+      ({ file }) => ({ file, parentId: rootContainerId }),
     )
     mockUseCreatePathsAndGetParentId.mockReturnValue(
       useCreatePathsAndGetParentIdMockResult,
@@ -135,12 +163,7 @@ describe('usePrepareFileEntityUpload', () => {
 
     const { result: hook } = renderHook()
 
-    await expect(
-      hook.current.mutateAsync({
-        files: files,
-        parentId: parentId,
-      }),
-    ).rejects.toThrow(
+    await expect(hook.current.mutateAsync(args)).rejects.toThrow(
       `Files could not be uploaded:\n\tFailed to lookup entity newFile.txt\n\tFailed to lookup entity existingFile.txt`,
     )
 
@@ -149,21 +172,27 @@ describe('usePrepareFileEntityUpload', () => {
     ).toHaveBeenCalledTimes(2)
     expect(
       useCreatePathsAndGetParentIdMockResult.mutateAsync,
-    ).toHaveBeenNthCalledWith(1, { file: newFile, parentId })
+    ).toHaveBeenNthCalledWith(1, {
+      file: newFile,
+      rootContainerId: rootContainerId,
+    })
     expect(
       useCreatePathsAndGetParentIdMockResult.mutateAsync,
-    ).toHaveBeenNthCalledWith(2, { file: updatedFile, parentId })
+    ).toHaveBeenNthCalledWith(2, {
+      file: updatedFile,
+      rootContainerId: rootContainerId,
+    })
 
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledTimes(2)
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledWith(
       'newFile.txt',
-      parentId,
+      rootContainerId,
       MOCK_CONTEXT_VALUE.synapseClient,
       'The file could not be uploaded.',
     )
     expect(mockGetFileEntityIdWithSameName).toHaveBeenCalledWith(
       'existingFile.txt',
-      parentId,
+      rootContainerId,
       MOCK_CONTEXT_VALUE.synapseClient,
       'The file could not be uploaded.',
     )

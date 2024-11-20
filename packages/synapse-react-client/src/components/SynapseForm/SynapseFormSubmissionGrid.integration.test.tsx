@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import UserFileGrid, {
   SynapseFormSubmissionGridProps,
 } from './SynapseFormSubmissionGrid'
@@ -13,7 +14,6 @@ import {
 } from '../../mocks/mock_drug_tool_data'
 import { server } from '../../mocks/msw/server'
 
-const token: string = '123444'
 const pathpart = 'someTool'
 const formGroupId = '5'
 const itemNoun = 'submission'
@@ -31,7 +31,6 @@ const renderComponent = async (props: SynapseFormSubmissionGridProps) => {
 
 describe('SynapseFormSubmissionsGrid', () => {
   const props: SynapseFormSubmissionGridProps = {
-    token,
     pathpart,
     formGroupId,
     itemNoun,
@@ -105,7 +104,7 @@ describe('SynapseFormSubmissionsGrid', () => {
     await userEvent.click(confirmDeleteButton)
     expect(spy).toHaveBeenCalledWith(
       formListDataInProgress.page[0].formDataId,
-      token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 
@@ -123,7 +122,7 @@ describe('SynapseFormSubmissionsGrid', () => {
           groupId: formGroupId,
           nextPageToken: formListDataInProgress.nextPageToken,
         },
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
   })
