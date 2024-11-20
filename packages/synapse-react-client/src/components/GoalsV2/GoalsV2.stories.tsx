@@ -1,18 +1,18 @@
-import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
-import GoalsV2 from './GoalsV2'
+import { Meta, StoryObj } from '@storybook/react'
+import Goals from './GoalsV2'
 
-export default {
-  title: 'Components/GoalsV2',
-  component: GoalsV2,
-  argTypes: {
-    entityId: { control: 'text' },
+const meta = {
+  title: 'Home Page/GoalsV2',
+  component: Goals,
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
   },
-} as ComponentMeta<typeof GoalsV2>
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-const Template: ComponentStory<typeof GoalsV2> = args => <GoalsV2 {...args} />
-
-export const Default = Template.bind({})
-Default.args = {
-  entityId: 'syn51449135',
+export const Demo: Story = {
+  args: {
+    entityId: 'syn51449135',
+  },
 }
