@@ -129,9 +129,10 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
     <Box
       sx={{
         flex: '1 1 auto',
-        borderTop: '6px solid #5BA998',
-        backgroundColor: '#689E90',
-        backgroundOpacity: 0.1,
+        backgroundColor: 'rgba(0, 128, 0, 0.05)',
+        zIndex: 0,
+        height: '560px',
+        padding: '80px',
       }}
     >
       <Box
@@ -139,25 +140,24 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           flex: '1 1 auto',
           zIndex: 1,
           textAlign: 'center',
-          paddingTop: '100px',
-          paddingBottom: '100px',
+          paddingBottom: '30px',
         }}
       >
         <Typography
           variant="headline1"
-          style={{ color: 'black' }}
+          style={{ color: 'black', fontFamily: 'Merriweather', fontSize: '32' }}
           sx={{
-            pt: 4,
-            mb: 2,
+            pt: '30px',
+            mb: '10px',
             mx: 'auto',
             width: 'max-content',
-            borderTop: '6px solid #ffffff88',
+            borderTop: '3px solid rgba(128, 128, 128, 0.25)',
           }}
         >
           What's in the Portal?
         </Typography>
         <Link
-          href="https://example.com"
+          href="https://eliteportal.synapse.org/Explore/Data"
           target="_blank"
           rel="noopener noreferrer"
           fontFamily="Lato"
@@ -213,14 +213,18 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: 2,
               }}
             >
               <GoalsV2Desktop {...goalsV2DataProps} />
             </Box>
           ) : (
-            <GoalsV2Mobile {...goalsV2DataProps} />
+            <Box
+              sx={{
+                display: 'grid',
+              }}
+            >
+              <GoalsV2Mobile {...goalsV2DataProps} />
+            </Box>
           )
         })}
       </div>
