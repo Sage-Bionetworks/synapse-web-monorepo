@@ -13,6 +13,6 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    entityId: 'syn51449135',
+    entityId: 'syn22315959',
   },
 }
