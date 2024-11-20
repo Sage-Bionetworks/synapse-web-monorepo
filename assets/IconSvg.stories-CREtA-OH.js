@@ -1,0 +1,8 @@
+import{j as r}from"./jsx-runtime-DoxjgJx5.js";import{a as s,I as a}from"./IconSvg-D7Q47tWe.js";import"./index-Cu9bd8lq.js";import"./createSvgIcon-BhV3a4Zr.js";import"./createTheme-CWLQ-DuD.js";import"./index-GEGPABih.js";import"./styled-BNZh1-oq.js";import"./Tooltip-CQm22TSO.js";import"./index-fnC48NPc.js";import"./utils-DoOf4pPF.js";import"./TransitionGroupContext-C4KIfRep.js";import"./useForkRef-Bm_QQ74L.js";import"./index-zcEXKDIA.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-Bq_CDIHS.js";import"./mergeSlotProps-CZobtCgD.js";import"./isHostComponent-DVu5iVWx.js";import"./useControlled-JEQ1v-P8.js";import"./useId-g68bhPgm.js";import"./useIsFocusVisible-Lp1_y5xp.js";import"./LayersTwoTone-BdLgRYRO.js";import"./ErrorOutlined-T6sjfcxT.js";import"./GetAppTwoTone-mQ-VL1kM.js";import"./InfoOutlined-DlYufPXz.js";import"./DeleteTwoTone-Dev5FGll.js";import"./CheckCircleTwoTone-JZD1d26p.js";const q={title:"UI/IconSvg",render:p=>r.jsx("div",{style:{display:"flex",flexWrap:"wrap",flexDirection:"row"},children:[...s].sort().map(t=>r.jsxs("div",{style:{margin:"10px",textAlign:"center"},children:[r.jsx("div",{children:r.jsx(a,{...p,icon:t,label:t})}),r.jsx("div",{style:{fontSize:"10px"},children:t})]},t))})},o={args:{sx:{color:"primary.main"},fontSize:"large"}};var i,e,m;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    sx: {
+      color: 'primary.main'
+    },
+    fontSize: 'large'
+  }
+}`,...(m=(e=o.parameters)==null?void 0:e.docs)==null?void 0:m.source}}};const B=["Icon"];export{o as Icon,B as __namedExportsOrder,q as default};
