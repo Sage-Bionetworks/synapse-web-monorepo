@@ -19,6 +19,7 @@ import {
 import { DetailsPageProps } from '../../types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
 import { DetailsPageContextProvider } from './DetailsPageContext'
+import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'
 
 const goToExplorePage = () => {
@@ -51,6 +52,7 @@ export default function DetailsPage(props: DetailsPageProps) {
     additionalFiltersSessionStorageKey,
     ContainerProps,
     children = <Outlet />,
+    resourcePrimaryKey,
   } = props
 
   const searchParams = useGetPortalComponentSearchParams()
@@ -117,6 +119,7 @@ export default function DetailsPage(props: DetailsPageProps) {
         rowData: row,
       }}
     >
+      <DetailsPageDocumentMetadata resourcePrimaryKey={resourcePrimaryKey} />
       <Container
         maxWidth={'lg'}
         className="DetailsPage tab-layout"

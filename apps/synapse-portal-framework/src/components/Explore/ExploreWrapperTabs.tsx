@@ -60,7 +60,6 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
     >
       {explorePaths.map(({ path, displayName = path }) => {
         path = `/Explore/${path}`
-        console.log('path', path, pathname)
         return (
           <Tab
             key={path}

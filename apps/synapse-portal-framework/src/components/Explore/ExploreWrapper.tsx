@@ -1,12 +1,13 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import { OrientationBanner } from 'synapse-react-client'
 import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '../../utils'
+import { useSetCanonicalUrl } from '../../utils/useSetCanonicalUrl'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 
@@ -21,8 +22,7 @@ function RouteMatchedOrientationBanner(props: { route: ExplorePageRoute }) {
 }
 
 /**
- * RouteControl is the set of controls used on the /Explore page to navigate the
- * different keys.
+ * The set of controls shared between Explore page to navigate the different Explore routes
  */
 export default function ExploreWrapper(props: ExploreWrapperProps) {
   const { explorePaths } = props
@@ -36,15 +36,22 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
   const currentRoute = explorePaths.find(
     route => encodeURI(route.path!) === currentExploreRoute,
   )
-  if (currentRoute) {
-    const pageName =
-      currentRoute.displayName ?? currentRoute.path?.replaceAll('/', '')
-    const documentTitle = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
-    const newTitle: string = documentTitle
-    if (document.title !== newTitle) {
-      document.title = newTitle
+  const pageName =
+    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '')
+
+  useEffect(() => {
+    if (pageName) {
+      const newTitle: string = `${
+        import.meta.env.VITE_PORTAL_NAME
+      } - ${pageName}`
+      if (document.title !== newTitle) {
+        document.title = newTitle
+      }
     }
-  }
+  }, [pathname, pageName])
+
+  // The canonical URL is the explore route with no searchParams
+  useSetCanonicalUrl(new URL(pathname, window.location.origin).toString())
 
   return (
     <>
@@ -76,7 +83,7 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
           }}
           onClick={() => setShowSubNav(showSubNav => !showSubNav)}
         >
-          <Typography variant={'headline3'}>{currentExploreRoute}</Typography>
+          <Typography variant={'headline3'}>{pageName}</Typography>
           {showSubNav ? (
             <ArrowDropDown fontSize={'large'} />
           ) : (
