@@ -42,7 +42,11 @@ function OrganizationDetailsPage() {
         isHeader={true}
         searchParams={searchParams}
       />
-      <DetailsPage sql={fundersSql} ContainerProps={{ maxWidth: 'xl' }}>
+      <DetailsPage
+        sql={fundersSql}
+        ContainerProps={{ maxWidth: 'xl' }}
+        resourcePrimaryKey={['abbreviation']}
+      >
         <DetailsPageTabs tabConfig={tabConfig} />
         <Outlet />
       </DetailsPage>

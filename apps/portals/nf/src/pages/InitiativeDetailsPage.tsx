@@ -35,6 +35,7 @@ export default function InitiativeDetailsPage() {
         ContainerProps={{
           maxWidth: 'xl',
         }}
+        resourcePrimaryKey={['initiative']}
       >
         <DetailsPageContent
           content={[
