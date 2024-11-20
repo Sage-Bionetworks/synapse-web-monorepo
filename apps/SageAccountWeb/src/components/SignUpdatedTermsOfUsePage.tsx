@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   displayToast,
   GovernanceMarkdownGithub,
@@ -24,7 +24,7 @@ export function SignUpdatedTermsOfUsePage() {
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
   const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
     accessToken,
@@ -34,7 +34,7 @@ export function SignUpdatedTermsOfUsePage() {
   )
 
   const redirectAfterSignOrSkip = () => {
-    const didRedirect = restoreLastPlace(history)
+    const didRedirect = restoreLastPlace(navigate)
     if (!didRedirect) {
       // if we did not redirect to a page in this app, then look for the redirect cookie
       processRedirectURLInOneSage()

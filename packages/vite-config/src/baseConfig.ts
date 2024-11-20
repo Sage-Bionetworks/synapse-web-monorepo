@@ -2,6 +2,7 @@ import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, UserConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -17,7 +18,7 @@ const baseConfig: UserConfig = defineConfig({
       transformMixedEsModules: true,
     },
   },
-  plugins: [nodePolyfills()],
+  plugins: [nodePolyfills(), tsconfigPaths()],
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),

@@ -1,8 +1,11 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "rootDir": ".",
     "baseUrl": ".",
+    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-portal-framework",
+    "noEmit": false,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "resolveJsonModule": true,
@@ -10,8 +13,27 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
     "moduleResolution": "bundler",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@sage-bionetworks/synapse-types": [
+        "../../../packages/synapse-types/src"
+      ],
+      "@sage-bionetworks/synapse-types/*": [
+        "../../../packages/synapse-types/src/*"
+      ],
+      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
+      "synapse-react-client/*": [
+        "../../../packages/synapse-react-client/src/*"
+      ],
+      "vite-config": ["../../../packages/vite-config/src"],
+      "vite-config/*": ["../../../packages/vite-config/src/*"]
+    }
   },
   "include": ["src/**/*.tsx", "src/**/*.ts"],
-  "files": ["src/types.d.ts"]
+  "files": ["src/types.d.ts"],
+  "references": [
+    { "path": "../../packages/synapse-client" },
+    { "path": "../../packages/synapse-react-client" },
+    { "path": "../../packages/synapse-types" }
+  ]
 }

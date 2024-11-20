@@ -2,7 +2,7 @@ import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
@@ -34,7 +34,7 @@ export function AccessRequirementDashboard(
     () => new URLSearchParams(location.search),
     [location.search],
   )
-  const history = useHistory()
+  const navigate = useNavigate()
 
   /**
    * When an input changes, update the props passed to the table and update the search params.
@@ -84,16 +84,19 @@ export function AccessRequirementDashboard(
     // Add the new params to the URL
     // Replace history because intuitively, the user has not navigated to a new page
     const paramsObject = new URLSearchParams(params)
-    history.replace({
-      pathname: location.pathname,
-      search: paramsObject.toString(),
-    })
+    navigate(
+      {
+        pathname: location.pathname,
+        search: paramsObject.toString(),
+      },
+      { replace: true },
+    )
   }, [
     nameOrID,
     relatedProjectId,
     reviewerId,
     typeFilter,
-    history,
+    navigate,
     location.pathname,
   ])
 

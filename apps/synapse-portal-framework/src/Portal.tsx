@@ -1,52 +1,30 @@
-import { BrowserRouter, Switch } from 'react-router-dom'
-import React, { useMemo } from 'react'
-import Footer from './components/Footer'
-import AppInitializer from './components/AppInitializer'
-import Navbar from './components/Navbar'
-import { CookiesProvider } from 'react-cookie'
-import {
-  CookiesNotification,
-  SynapseTheme,
-  SynapseToastContainer,
-  defaultQueryClientConfig,
-} from 'synapse-react-client'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { PortalProps } from './components/PortalProps'
+import React, { useMemo } from 'react'
+import { CookiesProvider } from 'react-cookie'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { defaultQueryClientConfig, SynapseTheme } from 'synapse-react-client'
 import { PortalContextProvider } from './components/PortalContext'
+import { PortalProps } from './components/PortalProps'
 
-const RouteResolver = React.lazy(() => import('./components/RouteResolver'))
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
+  const router = createBrowserRouter(props.routeConfig)
   const theme = useMemo(
     () => createTheme(SynapseTheme.mergeTheme({ palette })),
     [palette],
   )
+
   return (
     <PortalContextProvider value={context}>
       <CookiesProvider>
-        <BrowserRouter>
-          <ThemeProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-              <AppInitializer>
-                <SynapseToastContainer />
-                <Navbar />
-                <CookiesNotification />
-                <main className="main">
-                  {/* all the content below */}
-                  <React.Suspense fallback={<div />}>
-                    <Switch>
-                      <RouteResolver />
-                    </Switch>
-                  </React.Suspense>
-                </main>
-                <Footer />
-              </AppInitializer>
-            </QueryClientProvider>
-          </ThemeProvider>
-        </BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ThemeProvider>
       </CookiesProvider>
     </PortalContextProvider>
   )

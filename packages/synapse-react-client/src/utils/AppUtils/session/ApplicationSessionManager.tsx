@@ -1,13 +1,13 @@
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import dayjs from 'dayjs'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import SynapseClient from '../../../synapse-client'
+import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
+import { SynapseContextProvider, SynapseContextType } from '../../context'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
-import { useHistory } from 'react-router-dom'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
-import { SynapseContextProvider, SynapseContextType } from '../../context'
-import dayjs from 'dayjs'
-import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string
@@ -54,7 +54,7 @@ export function ApplicationSessionManager(
     onTwoFactorAuthResetThroughSSO,
     appId,
   } = props
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [token, setToken] = useState<string | undefined>()
   const [hasInitializedSession, setHasInitializedSession] = useState(false)
@@ -134,7 +134,7 @@ export function ApplicationSessionManager(
       onResetSessionComplete()
     }
     //in all cases when the session is cleared we should refresh the page to ensure private data is not being shown
-    history.go(0)
+    navigate(0)
   }, [refreshSession, onResetSessionComplete])
 
   /** Call refreshSession on mount */
@@ -152,7 +152,7 @@ export function ApplicationSessionManager(
 
   const { isLoading: isLoadingSSO } = useDetectSSOCode({
     onSignInComplete: () => {
-      restoreLastPlace(history)
+      restoreLastPlace(navigate)
       refreshSession()
     },
     onTwoFactorAuthRequired: twoFactorAuthError => {

@@ -1,13 +1,13 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import columnAliases from '../columnAliases'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   LabelLinkConfig,
+  QueryWrapperPlotNavProps,
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
+import columnAliases from '../columnAliases'
 import { dataSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
-const rgbIndex = 0
+const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
   {
     matchColumnName: 'dataDescriptionLocation',
@@ -25,50 +25,47 @@ export const dataColumnLinks: LabelLinkConfig = [
   },
 ]
 
-const data: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    shouldDeepLink: true,
-    hideDownload: true,
-    sql: dataSql,
-    name: 'Data',
-    columnAliases,
-    tableConfiguration: {
-      showDownloadColumn: false,
-      columnLinks: dataColumnLinks,
-    },
-    facetsToPlot: [
-      'study',
+const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex: dataRgbIndex,
+  shouldDeepLink: true,
+  hideDownload: true,
+  sql: dataSql,
+  name: 'Data',
+  columnAliases,
+  tableConfiguration: {
+    showDownloadColumn: false,
+    columnLinks: dataColumnLinks,
+  },
+  facetsToPlot: [
+    'study',
+    'reportedOutcome',
+    'dataCollectionMethod',
+    'deviceType',
+    'devicePlatform',
+    'deviceLocation',
+    'diagnosis',
+    'digitalAssessmentCategory',
+    'dataType',
+    'dataSubtype',
+  ],
+  searchConfiguration: {
+    searchable: [
+      'collection',
       'reportedOutcome',
-      'dataCollectionMethod',
-      'deviceType',
       'devicePlatform',
-      'deviceLocation',
       'diagnosis',
       'digitalAssessmentCategory',
-      'dataType',
-      'dataSubtype',
+      'digitalAssessmentDetails',
     ],
-    searchConfiguration: {
-      searchable: [
-        'collection',
-        'reportedOutcome',
-        'devicePlatform',
-        'diagnosis',
-        'digitalAssessmentCategory',
-        'digitalAssessmentDetails',
-      ],
-    },
   },
 }
 
 export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   sql: dataSql,
-  rgbIndex,
+  rgbIndex: dataRgbIndex,
   columnLinks: dataColumnLinks,
   hideDownload: true,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
 
-export default data
+export default dataQueryWrapperPlotNavProps

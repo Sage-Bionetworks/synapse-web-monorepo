@@ -14,6 +14,7 @@
     "table"
   ],
   "scripts": {
+    "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "vite build",
     "lint": "eslint src/*",
     "test": "vitest",
