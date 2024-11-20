@@ -3,7 +3,8 @@ import { GoalsV2DataProps } from './GoalsV2'
 import QueryCount from '../QueryCount/QueryCount'
 import IconButton from '@mui/material/IconButton'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
-import { Box, Link, Typography, Button, darken } from '@mui/material'
+import { Typography } from '@mui/material'
+import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
 
 export default function GoalsV2Desktop({
   asset,
@@ -12,29 +13,40 @@ export default function GoalsV2Desktop({
   title,
 }: GoalsV2DataProps) {
   return (
-    <div
-      className="GoalsV2__Card"
-      style={{ cursor: 'pointer' }}
-      onClick={() => window.open(link)}
+    <Card
+      sx={{
+        width: 200,
+        height: 'auto',
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        boxShadow: 'none',
+      }}
     >
-      <div
-        className="GoalsV2__Card__summary"
-        style={{ background: `url('${asset}')` }}
-      >
-        <p>
-          {countSql && (
-            <span className="GoalsV2__Card__header__count">
+      <CardActionArea onClick={() => window.open(link)}>
+        <CardMedia
+          component="img"
+          sx={{ height: 150, width: '100%', paddingX: 2, overflow: 'visible' }}
+          image={asset}
+          alt={title}
+        />
+        <CardContent
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="h6" component="strong" sx={{ marginRight: 1 }}>
+            {countSql && (
               <QueryCount parens={false} query={{ sql: countSql }} />
-            </span>
-          )}
-          <span className="GoalsV2__Card__header__title"> {title} </span>
-          <span className="GoalsV2__Card__header__icon">
-            <IconButton>
-              <NavigateNextIcon />
-            </IconButton>
-          </span>
-        </p>
-      </div>
-    </div>
+            )}
+          </Typography>
+          <Typography variant="body1">{title}</Typography>
+          <IconButton sx={{ color: '#5BA998' }}>
+            <NavigateNextIcon />
+          </IconButton>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }
