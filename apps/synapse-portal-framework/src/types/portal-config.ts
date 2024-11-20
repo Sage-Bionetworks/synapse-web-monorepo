@@ -31,6 +31,7 @@ import {
   DynamicFormModalProps,
   DynamicFormModal,
   SharePageLinkButtonProps,
+  ImageCardGridWithLinksProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../components/csbc-home-page/HomePageCardContainer'
@@ -359,6 +360,11 @@ type JsonLdScript = {
   props: JsonLdScriptProps
 }
 
+type ImageCardGridWithLinks = {
+  name: 'ImageCardGridWithLinks'
+  props: ImageCardGridWithLinksProps
+}
+
 export type SynapseConfig = (
   | RedirectToURL
   | RedirectWithQuery
@@ -421,6 +427,7 @@ export type SynapseConfig = (
   | DynamicForm
   | SharePageLinkButton
   | DynamicFormModal
+  | WhatWeDo
 ) &
   Metadata
 

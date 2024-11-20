@@ -12,6 +12,7 @@ import {
   partnersSql,
   peopleSql,
   projectsSql,
+  whatWeDoSql,
   //  upsetPlotSql,
 } from './resources'
 //import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
@@ -219,6 +220,16 @@ const routes: GenericRoute[] = [
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
           summaryLinkText: 'View All People',
+        },
+      },
+      {
+        name: 'ImageCardGridWithLinks',
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          sql: whatWeDoSql,
+          title: 'What We Do',
+          summaryText:
+            'We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics.',
         },
       },
     ],

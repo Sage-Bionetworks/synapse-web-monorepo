@@ -12,6 +12,7 @@ export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
 export const partnersSql =
   'SELECT * FROM syn62661043 order by organizationName desc'
+export const whatWeDoSql = 'SELECT * FROM syn64112885'
 
 export const defaultSearchConfiguration = {
   fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',
