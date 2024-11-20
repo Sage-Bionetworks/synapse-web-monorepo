@@ -14,7 +14,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.27.0",
     "synapse-react-client": "workspace:*",
-    "vite": "^5.4.3"
+    "vite": "^5.4.11"
   },
   "devDependencies": {
     "@types/react": "18.2.64",
