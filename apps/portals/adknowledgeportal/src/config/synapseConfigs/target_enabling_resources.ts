@@ -4,10 +4,13 @@ import {
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { targetEnablingResourcesExploreSql } from '../resources'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/2501607563/AMP-AD+Target+Enabling+Resources+Schema
+
+export const TARGET_ENABLING_RESOURCES_COLUMN_NAMES = {
+  GRANT: 'grant',
+}
 
 const targetSchema: GenericCardSchema = {
   type: SynapseConstants.EXPERIMENTAL,
@@ -65,9 +68,8 @@ export const targetEnablingResourcesTableConfiguration: QueryWrapperPlotNavProps
 
 const rgbIndex = 6
 
-const targetEnablingResources: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
+export const targetEnablingResourcesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
+  {
     rgbIndex,
     sql: targetEnablingResourcesExploreSql,
     visibleColumnCount: 7,
@@ -101,7 +103,4 @@ const targetEnablingResources: SynapseConfig = {
         'summary',
       ],
     },
-  },
-}
-
-export default targetEnablingResources
+  }

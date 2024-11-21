@@ -1,0 +1,21 @@
+name: Deploy an sageaccountweb to dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        description: Which tag to deploy from
+
+jobs:
+  build-and-deploy-sage-account-web:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-app.yml
+    with:
+      app-name: SageAccountWeb
+      branch-or-tag: ${{ inputs.tag }}
+      bucket-name: dev.accounts.synapse.org
+      cfdist-id: E39Y0MUIDX97EG
+      deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra

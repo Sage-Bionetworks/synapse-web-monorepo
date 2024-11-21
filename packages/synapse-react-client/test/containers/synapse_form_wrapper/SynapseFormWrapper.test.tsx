@@ -8,6 +8,7 @@ import SynapseFormWrapper, {
   SynapseFormWrapperProps,
   UploadToolSearchParams,
 } from '../../../src/components/SynapseForm/SynapseFormWrapper'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
@@ -30,7 +31,6 @@ const mockSynapseForm = jest
   })
 
 const mockFileEntity = mockFileEntityData.entity
-const token: string = '123444'
 const formSchemaEntityId = 'syn9988882982'
 const formUiSchemaEntityId = 'syn9988882983'
 const formNavSchemaEntityId = 'syn9988882984'
@@ -50,7 +50,6 @@ const renderComponent = (props: SynapseFormWrapperProps) => {
   })
 }
 const props: SynapseFormWrapperProps = {
-  token,
   formSchemaEntityId,
   formUiSchemaEntityId,
   formNavSchemaEntityId,
@@ -82,25 +81,25 @@ describe('SynapseFormWrapper', () => {
     await waitFor(() => {
       expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
         1,
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         'syn9988882982',
         undefined,
       )
       expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
         2,
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         'syn9988882983',
         undefined,
       )
       expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
         3,
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         'syn9988882984',
         undefined,
       )
       expect(SynapseClient.getFileResult).toHaveBeenCalledWith(
         mockFileEntity,
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         true,
         true,
       )
@@ -163,12 +162,12 @@ describe('SynapseFormWrapper', () => {
         expect(getFileEntityData).toHaveBeenCalledTimes(3)
         expect(getFileHandleContentFromID).toHaveBeenCalled()
         expect(getFileEntityData).not.toHaveBeenCalledWith(
-          token,
+          MOCK_CONTEXT_VALUE.accessToken,
           formSchemaEntityId,
           mockFormData.metadata.formSchemaVersion,
         )
         expect(getFileEntityData).toHaveBeenCalledWith(
-          token,
+          MOCK_CONTEXT_VALUE.accessToken,
           formSchemaEntityId,
           undefined,
           expect.anything(),
@@ -202,13 +201,13 @@ describe('SynapseFormWrapper', () => {
       await waitFor(() => {
         expect(getFileEntityData).toHaveBeenCalledTimes(3)
         expect(getFileEntityData).toHaveBeenCalledWith(
-          token,
+          MOCK_CONTEXT_VALUE.accessToken,
           formSchemaEntityId,
           mockFormData.metadata.formSchemaVersion,
           expect.anything(),
         )
         expect(getFileEntityData).not.toHaveBeenCalledWith(
-          token,
+          MOCK_CONTEXT_VALUE.accessToken,
           formSchemaEntityId,
           undefined,
         )

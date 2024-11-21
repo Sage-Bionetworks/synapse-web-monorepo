@@ -9,7 +9,7 @@
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.27.0",
     "synapse-react-client": "workspace:*",
     "vite": "^5.4.3"
   },
@@ -26,7 +26,7 @@
     "start": "vite",
     "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap arkportal",
     "preview": "vite preview",
-    "type-check": "tsc",
+    "type-check": "tsc --build",
     "lint": "eslint src",
     "_generate-sitemap": "node ../../synapse-portal-framework/sitemap/generate-sitemap.cjs \\\"$VITE_PORTAL_KEY\\\"",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",

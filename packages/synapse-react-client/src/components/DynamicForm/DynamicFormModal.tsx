@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { SynapseComponents } from '../..'
 import { Box } from '@mui/material'
-import DynamicForm, { DynamicFormProps } from '.'
+import WideButton from '../styled/WideButton'
+import DynamicForm, { DynamicFormProps } from './DynamicForm'
 
 type ModalProps = {
   submitButtonText?: string
@@ -40,13 +40,13 @@ const DynamicFormModal = ({
   return (
     <div className="browse-tools-page">
       <Box sx={{ margin: '10px 0px 50px 0px' }}>
-        <SynapseComponents.WideButton
+        <WideButton
           className="highlightSubmitToolButton"
           variant="contained"
           onClick={handleClickOpen}
         >
           {submitButtonText}
-        </SynapseComponents.WideButton>
+        </WideButton>
         <ConfirmationDialog
           open={open}
           title=""

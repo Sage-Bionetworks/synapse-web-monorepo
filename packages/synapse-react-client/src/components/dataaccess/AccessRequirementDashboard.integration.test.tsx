@@ -1,9 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
-import { Router } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import selectEvent from 'react-select-event'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { server } from '../../mocks/msw/server'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+} from '../../mocks/user/mock_user_profile'
+import SynapseClient from '../../synapse-client'
+import { getLocationTracker } from '../../testutils/LocationTracker'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,
@@ -12,14 +20,6 @@ import {
   RELATED_PROJECT_ID_SEARCH_PARAM_KEY,
   REVIEWER_ID_SEARCH_PARAM_KEY,
 } from './AccessRequirementDashboard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const NAME_CONTAINS_PREFIX = 'abc'
 const RELATED_PROJECT_ID = 'syn123'
@@ -29,23 +29,33 @@ const searchAccessRequirementsSpy = jest.spyOn(
   'searchAccessRequirements',
 )
 
+const { getLocation, LocationTracker } = getLocationTracker()
+
 function renderComponent(
   props?: AccessRequirementDashboardProps,
-  modifyHistory?: (history: MemoryHistory) => void,
+  initialEntries: string[] = ['/'],
 ) {
-  const history = createMemoryHistory()
-  if (modifyHistory) {
-    modifyHistory(history)
-  }
-  const renderResult = render(
-    <Router history={history}>
-      <AccessRequirementDashboard {...props} />
-    </Router>,
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/',
+        element: (
+          <>
+            <LocationTracker />
+            <AccessRequirementDashboard {...props} />
+          </>
+        ),
+      },
+    ],
     {
-      wrapper: createWrapper(),
+      initialEntries: initialEntries,
     },
   )
-  return { ...renderResult, history }
+
+  const renderResult = render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
+  return { ...renderResult }
 }
 
 describe('AccessRequirementDashboard tests', () => {
@@ -73,16 +83,16 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating nameOrID', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const nameOrIDInput = await screen.findByLabelText(
       'Filter by Access Requirement Name or ID',
     )
     await userEvent.type(nameOrIDInput, NAME_CONTAINS_PREFIX)
 
     await waitFor(() => {
-      expect(
-        new URLSearchParams(history.location.search).get('nameOrID'),
-      ).toEqual(NAME_CONTAINS_PREFIX)
+      expect(new URLSearchParams(getLocation().search).get('nameOrID')).toEqual(
+        NAME_CONTAINS_PREFIX,
+      )
 
       expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
@@ -96,7 +106,7 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const relatedProjectInput = await screen.findByLabelText(
       'Filter by Project',
     )
@@ -104,7 +114,7 @@ describe('AccessRequirementDashboard tests', () => {
 
     await waitFor(() =>
       expect(
-        new URLSearchParams(history.location.search).get('relatedProjectId'),
+        new URLSearchParams(getLocation().search).get('relatedProjectId'),
       ).toEqual(RELATED_PROJECT_ID),
     )
     expect(searchAccessRequirementsSpy).toHaveBeenLastCalledWith(
@@ -118,7 +128,7 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the URL search parameters when updating reviewerId', async () => {
-    const { history } = renderComponent()
+    renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
     await userEvent.click(reviewerInput)
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
@@ -127,7 +137,7 @@ describe('AccessRequirementDashboard tests', () => {
 
     await waitFor(() =>
       expect(
-        new URLSearchParams(history.location.search).get('reviewerId'),
+        new URLSearchParams(getLocation().search).get('reviewerId'),
       ).toEqual(MOCK_USER_ID.toString()),
     )
     await waitFor(() =>
@@ -143,18 +153,17 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
-    renderComponent(undefined, history => {
-      // Modify the search parameters before rendering
-      const searchParams = new URLSearchParams('')
-      searchParams.set(AR_NAME_OR_ID_SEARCH_PARAM_KEY, NAME_CONTAINS_PREFIX)
-      searchParams.set(RELATED_PROJECT_ID_SEARCH_PARAM_KEY, RELATED_PROJECT_ID)
-      searchParams.set(REVIEWER_ID_SEARCH_PARAM_KEY, MOCK_USER_ID.toString())
-      searchParams.set(
-        AR_TYPE_SEARCH_PARAM_KEY,
-        'org.sagebionetworks.repo.model.LockAccessRequirement',
-      )
-      history.push('?' + searchParams.toString())
-    })
+    const searchParams = new URLSearchParams('')
+    searchParams.set(AR_NAME_OR_ID_SEARCH_PARAM_KEY, NAME_CONTAINS_PREFIX)
+    searchParams.set(RELATED_PROJECT_ID_SEARCH_PARAM_KEY, RELATED_PROJECT_ID)
+    searchParams.set(REVIEWER_ID_SEARCH_PARAM_KEY, MOCK_USER_ID.toString())
+    searchParams.set(
+      AR_TYPE_SEARCH_PARAM_KEY,
+      'org.sagebionetworks.repo.model.LockAccessRequirement',
+    )
+    const initialEntries = ['/', `/?${searchParams.toString()}`]
+
+    renderComponent(undefined, initialEntries)
 
     await waitFor(
       () =>

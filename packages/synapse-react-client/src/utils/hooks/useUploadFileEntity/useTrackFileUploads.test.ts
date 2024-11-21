@@ -273,13 +273,13 @@ describe('useTrackFileUploads', () => {
     )
   })
 
-  test('isUploading, activeUploadCount', () => {
-    const preparingFile = new File([''], 'file.txt')
-    const uploadingFile = new File([''], 'file.txt')
-    const pausedFile = new File([''], 'file.txt')
-    const canceledFile = new File([''], 'file.txt')
-    const failedFile = new File([''], 'file.txt')
-    const completedFile = new File([''], 'file.txt')
+  test('isUploading, activeUploadCount, bytesPendingUpload', () => {
+    const preparingFile = new File(['.'], 'file.txt')
+    const uploadingFile = new File(['.'], 'file.txt')
+    const pausedFile = new File(['.'], 'file.txt')
+    const canceledFile = new File(['.'], 'file.txt')
+    const failedFile = new File(['.'], 'file.txt')
+    const completedFile = new File(['.'], 'file.txt')
 
     const { result: hook } = renderHook()
 
@@ -321,6 +321,13 @@ describe('useTrackFileUploads', () => {
     // Should count PREPARING, UPLOADING, and PAUSED
     expect(hook.current.activeUploadCount).toBe(3)
     expect(hook.current.isUploading).toBe(true)
+    // bytesPendingUpload should also count COMPLETED
+    expect(hook.current.bytesPendingUpload).toBe(
+      preparingFile.size +
+        uploadingFile.size +
+        pausedFile.size +
+        completedFile.size,
+    )
 
     act(() => {
       hook.current.cancelUpload(uploadingFile)
@@ -330,6 +337,8 @@ describe('useTrackFileUploads', () => {
 
     expect(hook.current.activeUploadCount).toBe(0)
     expect(hook.current.isUploading).toBe(false)
+    // only the completed upload remains
+    expect(hook.current.bytesPendingUpload).toBe(completedFile.size)
   })
 
   test('isUploadComplete', () => {

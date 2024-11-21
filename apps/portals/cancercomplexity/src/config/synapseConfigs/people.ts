@@ -1,10 +1,10 @@
 import {
   CardConfiguration,
   GenericCardSchema,
+  QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
 import { peopleSql } from '../resources'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import personSvg from '../style/Person.svg?url'
 
 const rgbIndex = 3
@@ -44,22 +44,19 @@ export const peopleCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const people: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: peopleSql,
-    cardConfiguration: peopleCardConfiguration,
-    shouldDeepLink: true,
-    name: 'People',
-    facetsToPlot: ['consortium', 'grantNumber'],
-    searchConfiguration: {
-      searchable: [
-        'name',
-        'grantName',
-        'grantNumber',
-        'workingGroupParticipation',
-      ],
-    },
+export const peopleQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: peopleSql,
+  cardConfiguration: peopleCardConfiguration,
+  shouldDeepLink: true,
+  name: 'People',
+  facetsToPlot: ['consortium', 'grantNumber'],
+  searchConfiguration: {
+    searchable: [
+      'name',
+      'grantName',
+      'grantNumber',
+      'workingGroupParticipation',
+    ],
   },
 }

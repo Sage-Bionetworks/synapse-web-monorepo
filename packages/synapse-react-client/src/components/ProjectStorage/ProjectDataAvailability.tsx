@@ -3,6 +3,7 @@ import { Box, SxProps, Tooltip, Typography } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import { useProjectStorageUsage } from '../../synapse-queries'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
+import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import HelpPopover from '../HelpPopover'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
@@ -21,7 +22,7 @@ export const ProjectDataAvailability: React.FunctionComponent<
     enabled: !!projectId && isLoggedIn,
   })
   const projectDataUsageArray = data?.locations.filter(
-    v => parseInt(v.storageLocationId) == SYNAPSE_STORAGE_LOCATION_ID,
+    v => v.storageLocationId == SYNAPSE_STORAGE_LOCATION_ID,
   )
   const synapseStorageUsage =
     projectDataUsageArray?.length == 1 ? projectDataUsageArray[0] : undefined
@@ -39,8 +40,8 @@ export const ProjectDataAvailability: React.FunctionComponent<
   const friendlySumFileBytes = calculateFriendlyFileSize(sumFileBytes, 1)
   const friendlyMaxAllowedFileBytes = calculateFriendlyFileSize(
     maxAllowedFileBytes,
-    0,
-  )
+    1,
+  ).replace(/\.0\s/, ' ') // SWC-7183: remove '.0 ' from the string if it exists
   return (
     <Box
       display="flex"
@@ -69,7 +70,7 @@ export const ProjectDataAvailability: React.FunctionComponent<
 - Basic Plan: Free, for sharing small datasets (<100GB) with self-service setup. No direct support.
 - Self-Managed Plan: Ideal for data longevity, FAIR principles, and NIH compliance. Includes consultation services and data access management tools.
 - Data Coordination Plan: For large, multi-institutional projects, with personalized consulting, data curation, and a custom data portal."
-          helpUrl="https://help.synapse.org/docs/Sage-Offerings.2965078125.html"
+          helpUrl={SAGE_OFFERINGS_HELP_URL}
         />
       </Box>
       {synapseStorageUsage.maxAllowedFileBytes && (

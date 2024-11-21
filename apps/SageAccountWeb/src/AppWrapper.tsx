@@ -8,7 +8,7 @@ import {
 } from 'synapse-react-client'
 import { SourceAppProvider } from './components/useSourceApp'
 import AppInitializer from './AppInitializer'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 export default function AppWrapper(
   props: React.PropsWithChildren<Record<never, never>>,
 ) {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <StyledEngineProvider injectFirst>
@@ -35,7 +35,7 @@ export default function AppWrapper(
           onTwoFactorAuthResetThroughSSO={(twoFaError, twoFaResetCode) => {
             // The user completed SSO with a twoFaResetCode
             // Send them to the reset 2FA page with the token
-            history.push(
+            navigate(
               `${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=${twoFaResetCode}`,
             )
           }}

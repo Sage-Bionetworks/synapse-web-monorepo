@@ -230,7 +230,8 @@ body {
 }
 
 .nav-button,
-a.nav-button {
+a.nav-button,
+.MuiButton-root.nav-button {
   height: -webkit-fill-available;
   // fallback for mozilla and ie11
   height: 100%;
@@ -252,7 +253,7 @@ a.nav-button {
   border-bottom-color: Portal.$secondary-action-color;
 }
 .nav-button-container:hover,
-.nav-button-container.isSelected {
+.nav-button-container.active {
   @extend %hoverFade;
   @extend %bottomBorderNav;
   border-radius: 0;
