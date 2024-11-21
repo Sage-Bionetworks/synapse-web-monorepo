@@ -9,7 +9,32 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@sage-bionetworks/synapse-client": [
+        "../../../packages/synapse-client/src"
+      ],
+      "@sage-bionetworks/synapse-client/*": [
+        "../../../packages/synapse-client/src/*"
+      ],
+      "@sage-bionetworks/synapse-types": [
+        "../../../packages/synapse-types/src"
+      ],
+      "@sage-bionetworks/synapse-types/*": [
+        "../../../packages/synapse-types/src/*"
+      ],
+      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
+      "synapse-react-client/*": [
+        "../../../packages/synapse-react-client/src/*"
+      ],
+      "vite-config": ["../../../packages/vite-config/src"],
+      "vite-config/*": ["../../../packages/vite-config/src/*"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/tests/setupTests.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/tests/setupTests.ts"],
+  "references": [
+    { "path": "../../packages/synapse-client" },
+    { "path": "../../packages/synapse-react-client" },
+    { "path": "../../packages/synapse-types" }
+  ]
 }

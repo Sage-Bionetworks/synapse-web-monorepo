@@ -1,3 +1,5 @@
+import ErrorPage, { SynapseErrorType } from './error/ErrorPage'
+import NoContentAvailable from './SynapseTable/NoContentAvailable'
 export * from './AccessTokenPage'
 export * from './AccountLevelBadges'
 export * from './Authentication'
@@ -84,3 +86,5 @@ export * from './ImageCardGridWithLinks'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'
+export { ErrorPage, SynapseErrorType }
+export { NoContentAvailable }

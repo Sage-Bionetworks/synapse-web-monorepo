@@ -21,7 +21,7 @@
     "react-bootstrap": "^1.6.8",
     "react-cookie": "4.0.0",
     "react-plotly.js": "^2.6.0",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.27.0",
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
     "sass": "^1.71.1",
@@ -36,7 +36,7 @@
     "lint": "eslint src",
     "test": "vitest",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --build"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
@@ -48,7 +48,6 @@
     "@types/plotly.js": "^2.29.2",
     "@types/react": "18.2.64",
     "@types/react-plotly.js": "^2.6.3",
-    "@types/react-router-dom": "^5.3.3",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
     "@vitest/utils": "^1.6.0",

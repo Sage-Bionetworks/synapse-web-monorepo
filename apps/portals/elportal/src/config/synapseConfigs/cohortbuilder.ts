@@ -1,17 +1,17 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import {
+  QueryWrapperPlotNavProps,
+  QueryWrapperSynapsePlotProps,
+  QueryWrapperSynapsePlotRowClickEvent,
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
 import {
   cavaticaConnectAccountURL,
   cohortBuilderFilesSql,
   cohortBuilderSql,
   defaultSearchConfiguration,
 } from '../resources'
-import { handleSelectedParticipantsToFiles } from './handleParticipantsToFiles'
 import { handleSelectedFilesToParticipants } from './handleFilesToParticipants'
-import {
-  QueryWrapperSynapsePlotProps,
-  QueryWrapperSynapsePlotRowClickEvent,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+import { handleSelectedParticipantsToFiles } from './handleParticipantsToFiles'
 
 const rgbIndex = 1
 
@@ -63,9 +63,9 @@ const getPlotConfig = (tableId: string) => {
 }
 const participantsTableId =
   SynapseUtilityFunctions.parseEntityIdFromSqlStatement(cohortBuilderSql)
-export const individualsView: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
+
+export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
+  {
     rgbIndex,
     name: 'Participants',
     visibleColumnCount: 10,
@@ -112,47 +112,43 @@ export const individualsView: SynapseConfig = {
     sql: cohortBuilderSql,
     shouldDeepLink: false,
     searchConfiguration: defaultSearchConfiguration,
-  },
-}
+  }
 
-export const filesView: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    name: 'Data',
-    showExportToCavatica: true,
-    fileIdColumnName: 'id',
-    fileNameColumnName: 'name',
-    fileVersionColumnName: 'fileVersion',
-    cavaticaConnectAccountURL: cavaticaConnectAccountURL,
-    visibleColumnCount: 10,
-    isRowSelectionVisible: true,
-    hideCopyToClipboard: true, //PORTALS-3212
-    rowSelectionPrimaryKey: ['id'],
-    additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
-    tableConfiguration: {
-      showAccessColumn: true,
-      showDownloadColumn: true,
-      columnLinks: [
-        {
-          matchColumnName: 'Study',
-          isMarkdown: false,
-          baseURL: 'Explore/Studies/DetailsPage',
-          URLColumnName: 'studyKey',
-        },
-      ],
-    },
-    sql: cohortBuilderFilesSql,
-
-    customControls: [
+export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Data',
+  showExportToCavatica: true,
+  fileIdColumnName: 'id',
+  fileNameColumnName: 'name',
+  fileVersionColumnName: 'fileVersion',
+  cavaticaConnectAccountURL: cavaticaConnectAccountURL,
+  visibleColumnCount: 10,
+  isRowSelectionVisible: true,
+  hideCopyToClipboard: true, //PORTALS-3212
+  rowSelectionPrimaryKey: ['id'],
+  additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
+  tableConfiguration: {
+    showAccessColumn: true,
+    showDownloadColumn: true,
+    columnLinks: [
       {
-        buttonText: 'View associated participants',
-        onClick: event => {
-          handleSelectedFilesToParticipants(event)
-        },
+        matchColumnName: 'Study',
+        isMarkdown: false,
+        baseURL: 'Explore/Studies/DetailsPage',
+        URLColumnName: 'studyKey',
       },
     ],
-    shouldDeepLink: false,
-    searchConfiguration: defaultSearchConfiguration,
   },
+  sql: cohortBuilderFilesSql,
+
+  customControls: [
+    {
+      buttonText: 'View associated participants',
+      onClick: event => {
+        handleSelectedFilesToParticipants(event)
+      },
+    },
+  ],
+  shouldDeepLink: false,
+  searchConfiguration: defaultSearchConfiguration,
 }

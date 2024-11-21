@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router-dom'
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect } from 'react'
 import {
@@ -12,20 +13,20 @@ const cookies = new UniversalCookies()
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,
 ) {
+  const [searchParams] = useSearchParams()
   const accountSitePrompted =
     cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==
     'true' // short-lived cookie
-  const urlSearchParams = new URLSearchParams(window.location.search)
-  const prompt = accountSitePrompted ? 'none' : urlSearchParams.get('prompt')
+  const prompt = accountSitePrompted ? 'none' : searchParams.get('prompt')
 
   let maxAge = undefined
   // check max age when re-establishing the session, not to auto-consent.
-  const maxAgeURLParam = urlSearchParams.get('max_age')
+  const maxAgeURLParam = searchParams.get('max_age')
   // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
   if (!accountSitePrompted && maxAgeURLParam && parseInt(maxAgeURLParam)) {
     maxAge = parseInt(maxAgeURLParam)
   }
-  const clientId = urlSearchParams.get('client_id') ?? undefined
+  const clientId = searchParams.get('client_id') ?? undefined
 
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
@@ -58,6 +59,7 @@ function AppInitializer(
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
       handleErrorRedirect(
+        searchParams,
         new OAuthClientError(
           'login_required',
           'User is not logged in, and prompt was set to none',

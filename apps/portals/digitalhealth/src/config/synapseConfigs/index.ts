@@ -1,8 +1,18 @@
-import { studies } from './studies'
-import { tools } from './tools'
-import { publications } from './publications'
-import data from './data'
+import dataQueryWrapperPlotNavProps from './data'
+import { publicationsQueryWrapperPlotNavProps } from './publications'
+import { studiesQueryWrapperPlotNavProps } from './studies'
+import { toolsQueryWrapperPlotNavProps } from './tools'
 
-export { publications, studies, data, tools }
+export {
+  publicationsQueryWrapperPlotNavProps,
+  studiesQueryWrapperPlotNavProps,
+  dataQueryWrapperPlotNavProps,
+  toolsQueryWrapperPlotNavProps,
+}
 
-export default { studies, data, tools, publications }
+export default {
+  studies: studiesQueryWrapperPlotNavProps,
+  data: dataQueryWrapperPlotNavProps,
+  tools: toolsQueryWrapperPlotNavProps,
+  publications: publicationsQueryWrapperPlotNavProps,
+}

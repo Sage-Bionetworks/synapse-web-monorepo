@@ -57,21 +57,16 @@ We ensure that overrides in Portal configurations are used over these blank conf
 
 # Adding new components from SRC or the portal
 
-To expose a new component add an entry to the [portal-config.ts](./types/portal-config.ts), this tells the
-type system how to treat the component in the actual config.
+To use a new component, simply export it from the package in which it is written and import it on the portal page in which you will use it.
 
 Note - if exposing a component from the portal side, you will need to make sure that the component is exported from [index.ts](./portal-components/index.ts).
 
 # Key Portal Components
 
-## RouteResolver
-
-The route resolver handles taking a URL and matching it the config. Read more in the [component](components/RouteResolver.tsx). This component is also responsible for injecting the access token into the react component.
-
 ## DetailsPages
 
 The detail pages ([e.g.](https://staging.adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn5550404])) give
-a deeper dive into a particular portal section. Read more in the [component](portal-components/DetailsPage/DetailsPage.tsx).
+a deeper dive into a particular portal section. Read more in the [component](components/DetailsPage/DetailsPage.tsx).
 
 # How to Log In to a Portal Running on Localhost
 
