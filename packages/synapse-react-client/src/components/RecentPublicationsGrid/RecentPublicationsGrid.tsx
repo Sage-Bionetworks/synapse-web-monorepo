@@ -14,6 +14,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import dayjs from 'dayjs'
+import { formatDate } from '../../utils/functions/DateFormatter'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -125,11 +126,10 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                   sx={{ fontSize: '14px' }}
                 >
                   {pub.values[publicationDateColIndex] &&
-                    dayjs(
-                      new Date(
-                        parseInt(pub.values[publicationDateColIndex] as string),
-                      ),
-                    ).format('MMMM, YYYY')}
+                    formatDate(
+                      dayjs(Number(pub.values[publicationDateColIndex])),
+                      'MMMM, YYYY',
+                    )}
                 </Typography>
               </CardContent>
             </Card>

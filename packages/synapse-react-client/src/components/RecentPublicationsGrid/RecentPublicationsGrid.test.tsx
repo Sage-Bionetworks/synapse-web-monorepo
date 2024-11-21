@@ -61,7 +61,7 @@ describe('RecentPublicationsGrid Tests', () => {
               '["Tag1_1", "Tag1_2"]',
               'Journal1',
               'Title1',
-              '1672531200000',
+              '1725819400000',
             ],
           },
           {
@@ -71,7 +71,7 @@ describe('RecentPublicationsGrid Tests', () => {
               '["Tag2_1", "Tag2_2"]',
               'Journal2',
               'Title2',
-              '1685577600000',
+              '1709578435000',
             ],
           },
         ],
@@ -125,12 +125,12 @@ describe('RecentPublicationsGrid Tests', () => {
     expect(screen.getByText('Tag1_1')).toBeInTheDocument()
     expect(screen.getByText('Title1')).toBeInTheDocument()
     expect(screen.getByText('Journal1')).toBeInTheDocument()
-    expect(screen.getByText('December, 2022')).toBeInTheDocument()
+    expect(screen.getByText('September, 2024')).toBeInTheDocument()
 
     expect(screen.getByText('Tag2_1')).toBeInTheDocument()
     expect(screen.getByText('Title2')).toBeInTheDocument()
     expect(screen.getByText('Journal2')).toBeInTheDocument()
-    expect(screen.getByText('May, 2023')).toBeInTheDocument()
+    expect(screen.getByText('March, 2024')).toBeInTheDocument()
   })
 
   it('renders summary text and button if props provided', () => {
