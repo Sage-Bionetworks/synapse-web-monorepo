@@ -103,7 +103,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                     )}
                 </Box>
                 <Typography
-                  variant="homepageHeadline2"
+                  variant="headline2"
                   sx={{
                     padding: '20px 0px',
                   }}
@@ -149,7 +149,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           padding: isSmallScreen || isMediumScreen ? '0 0 0 16px' : '0',
         }}
       >
-        <Typography variant="homepageHeadline2" paddingTop="26px">
+        <Typography variant="headline2" paddingTop="26px">
           Recently Published
         </Typography>
         <Typography

@@ -442,8 +442,6 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           headline1: 'p',
           headline2: 'p',
           headline3: 'p',
-          homepageHeadline1: 'p',
-          homepageHeadline2: 'p',
           body1: 'p',
           body1Italic: 'p',
           body2: 'p',

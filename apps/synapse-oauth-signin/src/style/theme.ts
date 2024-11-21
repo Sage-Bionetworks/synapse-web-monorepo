@@ -109,8 +109,6 @@ const themeOptions: ThemeOptions = {
       fontFamily: fontDefinition,
       fontSize: '14px',
     },
-    homepageHeadline1: {},
-    homepageHeadline2: {},
     headline1: {},
     headline2: {
       fontWeight: 700,

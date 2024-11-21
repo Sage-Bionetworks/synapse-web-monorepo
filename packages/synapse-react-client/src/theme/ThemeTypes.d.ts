@@ -22,8 +22,6 @@ type CustomTypographyVariants =
   | 'subsectionHeader'
   | 'dataFieldKey'
   | 'monospace'
-  | 'homepageHeadline1'
-  | 'homepageHeadline2'
 
 // We create this type because we have to use interfaces in the module augmentations, which don't allow mapped types.
 // This is also why we override ESLint to allow empty interfaces in this file.

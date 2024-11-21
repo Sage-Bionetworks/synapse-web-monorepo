@@ -18,20 +18,6 @@ export const typographyOptions: (
   palette: Palette,
 ) => TypographyOptions = palette => ({
   fontFamily: defaultFontFamily,
-  homepageHeadline1: {
-    ...defaultStyles,
-    fontFamily: "'Merriweather', serif",
-    fontSize: '24px',
-    fontWeight: 700,
-    lineHeight: '28px',
-  },
-  homepageHeadline2: {
-    ...defaultStyles,
-    fontFamily: "'Merriweather', serif",
-    fontSize: '20px',
-    fontWeight: 400,
-    lineHeight: '24px',
-  },
   headline1: {
     ...defaultStyles,
     fontSize: '24px',
