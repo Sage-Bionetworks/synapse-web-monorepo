@@ -5,7 +5,7 @@ export const peopleSql = 'SELECT * FROM syn51209684'
 export const projectsSql = 'SELECT * FROM syn51209786'
 export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'
 export const topPublicationsSql =
-  'SELECT * FROM syn64042839 ORDER BY "publicationDate" DESC LIMIT 6'
+  'SELECT * FROM syn51407023 ORDER BY "publicationDate" DESC LIMIT 6'
 export const studiesSql = 'SELECT * FROM syn51523775 ORDER BY isFeatured DESC'
 export const speciesSql = 'SELECT * FROM syn53406593 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'

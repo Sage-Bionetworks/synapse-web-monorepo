@@ -34,7 +34,7 @@ describe('RecentPublicationsGrid Tests', () => {
           },
           {
             name: 'Tag',
-            columnType: ColumnTypeEnum.STRING,
+            columnType: ColumnTypeEnum.STRING_LIST,
             id: '81722',
           },
           {
@@ -56,11 +56,23 @@ describe('RecentPublicationsGrid Tests', () => {
         rows: [
           {
             rowId: 1,
-            values: ['1', 'Tag1', 'Journal1', 'Title1', '1672531200000'],
+            values: [
+              '1',
+              '["Tag1_1", "Tag1_2"]',
+              'Journal1',
+              'Title1',
+              '1672531200000',
+            ],
           },
           {
             rowId: 2,
-            values: ['2', 'Tag2', 'Journal2', 'Title2', '1685577600000'],
+            values: [
+              '2',
+              '["Tag2_1", "Tag2_2"]',
+              'Journal2',
+              'Title2',
+              '1685577600000',
+            ],
           },
         ],
       },
@@ -73,7 +85,7 @@ describe('RecentPublicationsGrid Tests', () => {
       },
       {
         name: 'Tag',
-        columnType: ColumnTypeEnum.STRING,
+        columnType: ColumnTypeEnum.STRING_LIST,
         id: '81722',
       },
       {
@@ -110,12 +122,12 @@ describe('RecentPublicationsGrid Tests', () => {
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
 
-    expect(screen.getByText('Tag1')).toBeInTheDocument()
+    expect(screen.getByText('Tag1_1')).toBeInTheDocument()
     expect(screen.getByText('Title1')).toBeInTheDocument()
     expect(screen.getByText('Journal1')).toBeInTheDocument()
     expect(screen.getByText('December, 2022')).toBeInTheDocument()
 
-    expect(screen.getByText('Tag2')).toBeInTheDocument()
+    expect(screen.getByText('Tag2_1')).toBeInTheDocument()
     expect(screen.getByText('Title2')).toBeInTheDocument()
     expect(screen.getByText('Journal2')).toBeInTheDocument()
     expect(screen.getByText('May, 2023')).toBeInTheDocument()

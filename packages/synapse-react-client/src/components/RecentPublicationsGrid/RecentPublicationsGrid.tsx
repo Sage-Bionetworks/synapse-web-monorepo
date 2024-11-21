@@ -1,5 +1,14 @@
 import React from 'react'
-import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material'
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -15,6 +24,9 @@ export type RecentPublicationsGridProps = {
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'))
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -49,28 +61,52 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     queryResultBundle,
   )
 
-  console.log('result', queryResultBundle)
-  console.log('index', tagColIndex, journalColIndex, publicationDateColIndex)
-  console.log('drows', dataRows)
-
   return (
-    <Box sx={{ display: 'flex', gap: '80px' }}>
-      <Grid container spacing={2}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
+        gap: isSmallScreen || isMediumScreen ? '38px' : '80px',
+      }}
+    >
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          order: isSmallScreen || isMediumScreen ? 1 : 0,
+          flex: isSmallScreen || isMediumScreen ? '0 0 100%' : '3',
+        }}
+      >
         {dataRows.map(pub => (
           <Grid item xs={12} sm={6} md={4} key={pub.rowId}>
             <Card sx={{ height: '100%', boxShadow: 'none', border: 'none' }}>
               <CardContent>
+                <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}>
+                  {pub.values[tagColIndex] &&
+                    JSON.parse(pub.values[tagColIndex] as string).map(
+                      (tag: string, index: number) => (
+                        <Typography
+                          key={index}
+                          variant="overline"
+                          sx={{
+                            backgroundColor: '#EAECEE',
+                            borderRadius: '3px',
+                            padding: '4px 8px',
+                            border: 'none',
+                            lineHeight: 'initial',
+                          }}
+                        >
+                          {tag}
+                        </Typography>
+                      ),
+                    )}
+                </Box>
                 <Typography
-                  variant="overline"
+                  variant="homepageHeadline2"
                   sx={{
-                    backgroundColor: '#EAECEE',
-                    borderRadius: '3px',
-                    padding: '4px 8px',
+                    padding: '20px 0px',
                   }}
                 >
-                  {pub.values[tagColIndex]}
-                </Typography>
-                <Typography variant="headline2" sx={{ padding: '20px 0px' }}>
                   {pub.values[titleColIndex]}
                 </Typography>
                 <Typography
@@ -109,9 +145,11 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           height: '4px',
           borderTop: '3px solid #DFE2E6',
           alignItems: 'flex-start',
+          flex: isSmallScreen || isMediumScreen ? '0 0 100%' : '1',
+          padding: isSmallScreen || isMediumScreen ? '0 0 0 16px' : '0',
         }}
       >
-        <Typography variant="headline2" paddingTop="26px">
+        <Typography variant="homepageHeadline2" paddingTop="26px">
           Recently Published
         </Typography>
         <Typography
