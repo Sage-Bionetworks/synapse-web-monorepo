@@ -11,7 +11,6 @@ import {
 } from '../../utils/context/SynapseContext'
 
 const mockSynapseContext: Partial<SynapseContextType> = {
-  accessToken: 'mockAccessToken',
   isInExperimentalMode: false,
   utcTime: false,
   withErrorBoundary: false,
