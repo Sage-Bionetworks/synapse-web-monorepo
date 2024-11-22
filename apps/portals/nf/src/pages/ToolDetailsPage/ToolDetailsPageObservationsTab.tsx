@@ -33,22 +33,6 @@ export default function ToolDetailsPageObservationsTab() {
           ),
         },
         {
-          id: 'Natural History Observations',
-          title: 'Natural History Observations',
-          element: (
-            <DetailsPageContextConsumer columnName="resourceId">
-              {({ value }) => (
-                <CardContainerLogic
-                  sql={`${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`}
-                  type={SynapseConstants.OBSERVATION_CARD}
-                  limit={3}
-                  searchParams={{ resourceId: value! }}
-                />
-              )}
-            </DetailsPageContextConsumer>
-          ),
-        },
-        {
           id: 'Community Observations',
           title: 'Community Observations',
           element: (
