@@ -18,6 +18,7 @@ import {
   RssFeedCards,
   SynapseConstants,
   UserCardListRotate,
+  JsonLdScript,
 } from 'synapse-react-client'
 
 const limit = 3
@@ -25,6 +26,38 @@ const limit = 3
 export default function HomePage() {
   return (
     <>
+      <JsonLdScript
+        thing={{
+          '@context': 'https://schema.org',
+          '@type': 'DataCatalog',
+          '@id': 'https://nf.synapse.org',
+          keywords: [
+            'neurofibromatosis',
+            'schwannomatosis',
+            'NF1',
+            'NF2',
+            'RASopathies',
+            'rare tumor syndrome',
+            'genetics',
+            'tumor biology',
+            'biomedical research',
+            'Human Data',
+            'Life Science',
+          ],
+          description:
+            'The NF Data Portal provides a data repository for neurofibromatosis type 1 and schwannomatosis research data, aimed at improving understanding and treatment of the disorder.',
+          name: 'NF Data Portal',
+          provider: [
+            {
+              '@type': 'Organization',
+              '@id': 'Sage Bionetworks',
+              name: 'Sage Bionetworks',
+              url: 'https://www.synapse.org/',
+            },
+          ],
+          alternateName: 'Neurofibromatosis Data Portal',
+        }}
+      />
       <Header />
       <SectionLayout
         title={'Resource Overview'}
