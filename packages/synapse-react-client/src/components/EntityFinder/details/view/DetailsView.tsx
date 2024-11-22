@@ -72,7 +72,6 @@ export type EntityFinderTableViewRowData = EntityFinderHeader & {
   entityType: EntityType
   isSelected: boolean
   isDisabled: boolean
-  isExpanded: boolean
   isVersionableEntity: boolean
   currentSelectedVersion?: number
 }
@@ -294,7 +293,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           isDisabled: appearance === 'disabled',
           isVersionableEntity: isVersionableEntityType(entityType),
           currentSelectedVersion: currentSelectedVersion,
-          isExpanded: false,
         })
       }
       return entities

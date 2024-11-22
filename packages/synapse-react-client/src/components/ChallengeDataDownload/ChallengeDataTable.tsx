@@ -256,7 +256,6 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
           isDisabled: appearance === 'disabled',
           isVersionableEntity: isVersionableEntityType(entityType),
           currentSelectedVersion: currentSelectedVersion,
-          isExpanded: false,
         })
       }
       return entities
