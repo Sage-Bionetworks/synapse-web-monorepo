@@ -11,6 +11,7 @@ import {
   UserCardListRotate,
 } from 'synapse-react-client'
 import { partnersSql, peopleSql } from '../config/resources'
+import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 
 export default function HomePage() {
   return (
@@ -196,6 +197,9 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
+      <SectionLayout>
+        <ELContributeYourData />
+      </SectionLayout>
     </>
   )
 }
