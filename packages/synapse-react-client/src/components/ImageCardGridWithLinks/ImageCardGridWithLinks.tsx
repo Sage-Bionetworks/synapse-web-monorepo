@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles'
 import {
   SynapseClientError,
   SynapseConstants,
-  SynapseUtilityFunctions,
   useSynapseContext,
 } from '../../utils'
 import {
@@ -15,7 +14,8 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { getFiles } from '../../synapse-client'
+import { getFiles } from '../../synapse-client/SynapseClient'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 
 export type ImageCardGridWithLinksProps = {
   sql: string
@@ -45,7 +45,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   const [images, setImages] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 
-  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
@@ -56,6 +56,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
       sql,
     },
   }
+
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
@@ -106,6 +107,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
 
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
 
+  console.log('querybundle', queryBundleRequest)
   console.log('sql', sql)
   console.log('qresult', queryResultBundle)
   console.log('drows', dataRows)
@@ -147,6 +149,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
       <Grid container sx={{ gap: '24px', flex: 2 }}>
         {dataRows.map((card, index) => (
           <Grid
+            item
             key={index}
             xs={12}
             sm={6}
@@ -159,8 +162,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
                 boxShadow: 'none',
                 border: 'none',
                 position: 'relative',
-                // height: '100%',
-                // width: '327px',
                 width: '100%',
                 height: '200px',
                 borderRadius: '6px',
