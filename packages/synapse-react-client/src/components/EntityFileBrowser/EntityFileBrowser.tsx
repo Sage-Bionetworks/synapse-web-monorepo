@@ -1,17 +1,31 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
 import { Map } from 'immutable'
-import { Breadcrumbs } from '../EntityFinder/Breadcrumbs'
-import { EntityDetailsList } from '../EntityFinder/details/EntityDetailsList'
-import { EntityTree, FinderScope } from '../EntityFinder/tree/EntityTree'
+import {
+  EntityDetailsList,
+  EntityDetailsListDataConfiguration,
+  EntityDetailsListDataConfigurationType,
+} from '../EntityFinder/details/EntityDetailsList'
+import {
+  EntityTree,
+  EntityTreeContainer,
+  FinderScope,
+} from '../EntityFinder/tree/EntityTree'
 import { EntityTreeNodeType } from '../EntityFinder/tree/VirtualizedTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { useGetEntityBundle } from 'src/synapse-queries'
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  BreadcrumbsProps,
+} from '../EntityFinder/Breadcrumbs'
 
 export type EntityFileBrowserProps = {
   parentContainerId: string
+  onSelect: (entity: Reference) => void
 }
 
 /**
@@ -21,9 +35,32 @@ export type EntityFileBrowserProps = {
  */
 export const EntityFileBrowser: React.FunctionComponent<
   EntityFileBrowserProps
-> = ({ parentContainerId }) => {
+> = ({ parentContainerId, onSelect }) => {
+  const { data: entityBundle } = useGetEntityBundle(parentContainerId)
+  const [currentContainer, setCurrentContainer] =
+    useState<EntityTreeContainer>(parentContainerId)
+  const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
+    items: [],
+  })
+  const setBreadcrumbs = useCallback(
+    (items: BreadcrumbItem[]) => {
+      setBreadcrumbsProps({
+        items,
+      })
+    },
+    [setBreadcrumbsProps],
+  )
+  const projectId = entityBundle?.path.path[1].id ?? undefined
   const emptyMap = Map<string, number>()
-  const visibleTypes: EntityType[] = [EntityType.FOLDER, EntityType.FILE]
+  const types: EntityType[] = [EntityType.FOLDER, EntityType.FILE]
+
+  const configuration: EntityDetailsListDataConfiguration = {
+    type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
+    parentContainerId: currentContainer ?? '',
+    getProjectParams: {
+      sort: 'PROJECT_NAME',
+    },
+  }
   return (
     <div className="EntityFinderReflexContainer">
       <SizeMe>
@@ -36,9 +73,8 @@ export const EntityFileBrowser: React.FunctionComponent<
             <ReflexElement className="TreeViewReflexElement" flex={0.24}>
               <EntityTree
                 selectedEntities={emptyMap}
-                setDetailsViewConfiguration={setConfigFromTreeView}
+                setDetailsViewConfiguration={() => {}}
                 showDropdown={false}
-                visibleTypes={visibleTypes}
                 initialScope={FinderScope.CURRENT_PROJECT}
                 projectId={projectId}
                 initialContainer={parentContainerId}
@@ -46,22 +82,30 @@ export const EntityFileBrowser: React.FunctionComponent<
                 setCurrentContainer={setCurrentContainer}
                 treeNodeType={EntityTreeNodeType.DUAL_PANE}
                 setBreadcrumbItems={setBreadcrumbs}
-                selectableTypes={visibleTypesInTree}
+                selectableTypes={types}
+                hideScopeSelector={true}
+                showScopeAsRootNode={false}
               />
             </ReflexElement>
             <ReflexSplitter></ReflexSplitter>
             <ReflexElement className="DetailsViewReflexElement">
               <EntityDetailsList
-                configuration={configFromTreeView}
+                configuration={configuration}
                 versionSelection={VersionSelectionType.DISALLOWED}
                 selected={emptyMap}
                 isIdSelected={() => false}
                 isSelectable={() => false}
-                visibleTypes={selectableAndVisibleTypesInList}
-                selectableTypes={selectableTypes}
+                visibleTypes={types}
+                selectableTypes={types}
                 selectColumnType={'none'}
-                toggleSelection={toggleSelection}
-                enableSelectAll={selectMultiple}
+                toggleSelection={reference => {
+                  if (Array.isArray(reference)) {
+                    onSelect(reference[0])
+                  } else {
+                    onSelect(reference)
+                  }
+                }}
+                enableSelectAll={false}
                 setCurrentContainer={setCurrentContainer}
               />
               <Breadcrumbs {...breadcrumbsProps} />

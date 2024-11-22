@@ -106,6 +106,7 @@ export type EntityTreeProps = {
   treeNodeType: EntityTreeNodeType
   /** The entity types that may be selected. */
   selectableTypes: EntityType[]
+  hideScopeSelector?: boolean
 }
 
 /**
@@ -128,6 +129,7 @@ export function EntityTree(props: EntityTreeProps) {
     showScopeAsRootNode = true,
     treeNodeType,
     selectableTypes,
+    hideScopeSelector = false,
   } = props
 
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
@@ -417,26 +419,28 @@ export function EntityTree(props: EntityTreeProps) {
           : 'BrowseTree'
       }`}
     >
-      <div className="Header">
-        <div className="Browse">Browse:</div>
-        <div onClick={e => e.stopPropagation()}>
-          <DropdownSelect
-            variant={'outlined'}
-            options={filteredOptions}
-            selectedIndex={selectedIndex}
-            setSelectedIndex={index => {
-              const selectedScope = filteredOptions[index]
-              if (scope !== selectedScope) {
-                setScope(selectedScope)
-                setCurrentContainer(
-                  getScopeOptionDefaultContainer(selectedScope),
-                )
-              }
-            }}
-            size="small"
-          />
+      {!hideScopeSelector && (
+        <div className="Header">
+          <div className="Browse">Browse:</div>
+          <div onClick={e => e.stopPropagation()}>
+            <DropdownSelect
+              variant={'outlined'}
+              options={filteredOptions}
+              selectedIndex={selectedIndex}
+              setSelectedIndex={index => {
+                const selectedScope = filteredOptions[index]
+                if (scope !== selectedScope) {
+                  setScope(selectedScope)
+                  setCurrentContainer(
+                    getScopeOptionDefaultContainer(selectedScope),
+                  )
+                }
+              }}
+              size="small"
+            />
+          </div>
         </div>
-      </div>
+      )}
       {isLoading ? (
         <div className="Placeholder">
           <SynapseSpinner size={30} />
