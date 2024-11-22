@@ -30,6 +30,10 @@ import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
 import { UserBadge } from '../../../UserCard/UserBadge'
+import { displayFilesWereAddedToDownloadListSuccess } from 'src/components/download_list/DownloadConfirmationUtils'
+import { displayToast } from 'src/components/ToastMessage'
+import { useAddFileToDownloadList } from 'src/synapse-queries'
+import { useSynapseContext } from 'src/utils'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -257,6 +261,47 @@ export function EmptyRenderer({
     <div className="EntityFinderDetailsViewPlaceholder">
       {noResultsPlaceholder || <div>Empty</div>}
     </div>
+  )
+}
+
+export function AddFileToDownloadListRenderer<
+  T extends EntityIdAndVersionNumber,
+>(props: CellRendererProps<T>) {
+  const { entityId, versionNumber } = props.rowData
+  const { data: bundle } = useGetEntityBundle(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
+  )
+
+  const { downloadCartPageUrl } = useSynapseContext()
+
+  const { mutate: addToDownloadList } = useAddFileToDownloadList({
+    onSuccess: () => {
+      displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
+  if (bundle?.entityType !== EntityType.FILE) {
+    return <></>
+  }
+  return (
+    <Tooltip
+      title="Add to Download Cart"
+      placement="right"
+      className="EntityBadgeTooltip"
+    >
+      <button
+        className={'btn-download-icon'}
+        onClick={event => {
+          addToDownloadList({ entityId, entityVersionNumber: versionNumber })
+          event.stopPropagation()
+        }}
+      >
+        <IconSvg icon="download" />
+      </button>
+    </Tooltip>
   )
 }
 

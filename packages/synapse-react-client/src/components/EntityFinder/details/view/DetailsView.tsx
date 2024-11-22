@@ -25,6 +25,7 @@ import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
+  AddFileToDownloadListRenderer,
   BadgeIconsRenderer,
   CellRendererProps,
   CreatedOnRenderer,
@@ -40,6 +41,7 @@ import {
 } from './DetailsViewTableRenderers'
 import { VersionColumnHeader } from './VersionColumnHeader'
 import { Checkbox, Tooltip } from '@mui/material'
+import { SizeRenderer } from 'src/components/ChallengeDataDownload/Renderers'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -511,7 +513,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               minWidth={75}
               cellRenderer={BadgeIconsRenderer}
             />
-
             <Column<EntityFinderTableViewRowData>
               key="id"
               width={130}
@@ -560,6 +561,26 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               resizable
               cellRenderer={ModifiedByRenderer}
             />
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'SIZE'}
+                title="Size"
+                width={200}
+                sortable={false}
+                resizable={true}
+                cellRenderer={SizeRenderer}
+              />
+            )}
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'addToDownloadCart'}
+                title=""
+                width={100}
+                sortable={false}
+                resizable={true}
+                cellRenderer={AddFileToDownloadListRenderer}
+              />
+            )}
           </BaseTable>
         )}
       </AutoResizer>
