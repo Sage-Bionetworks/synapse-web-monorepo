@@ -188,6 +188,10 @@ type ELContributeYourData = {
   name: 'ELContributeYourData'
   props: undefined
 }
+type ELGettingStarted = {
+  name: 'ELGettingStarted'
+  props: undefined
+}
 type ARKWelcomePage = {
   name: 'ARKWelcomePage'
   props: undefined
@@ -400,6 +404,7 @@ export type SynapseConfig = (
   | NFBrowseToolsPage
   | ELBrowseToolsPage
   | ELContributeYourData
+  | ELGettingStarted
   | SurveyToast
   | ELBetaLaunchBanner
   | ARKWelcomePage

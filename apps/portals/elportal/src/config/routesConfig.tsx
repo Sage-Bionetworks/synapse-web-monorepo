@@ -58,6 +58,10 @@ const routes: GenericRoute[] = [
           entityId: 'syn51449135',
         },
       },
+      {
+        name: 'ELGettingStarted',
+        props: undefined,
+      },
       // Commented out for release (see EC-485)
       // {
       //   name: 'UpsetPlot',
