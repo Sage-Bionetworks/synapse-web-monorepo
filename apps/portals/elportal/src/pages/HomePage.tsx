@@ -197,7 +197,12 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
-      <SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          style: { maxWidth: '100%' },
+        }}
+      >
         <ELContributeYourData />
       </SectionLayout>
     </>
