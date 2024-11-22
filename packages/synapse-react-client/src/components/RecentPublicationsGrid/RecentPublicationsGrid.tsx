@@ -1,14 +1,5 @@
 import React from 'react'
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -25,9 +16,6 @@ export type RecentPublicationsGridProps = {
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
-  const theme = useTheme()
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'))
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -65,17 +53,16 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: isSmallScreen || isMediumScreen ? 'column' : 'row',
-        gap: isSmallScreen || isMediumScreen ? '38px' : '80px',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '3fr 1fr' },
+        gap: { xs: '38px', md: '80px' },
       }}
     >
       <Grid
         container
         spacing={2}
         sx={{
-          order: isSmallScreen || isMediumScreen ? 1 : 0,
-          flex: isSmallScreen || isMediumScreen ? '0 0 100%' : '3',
+          order: { xs: 1, md: 0 },
         }}
       >
         {dataRows.map(pub => (
@@ -142,11 +129,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
         flexDirection="column"
         gap="16px"
         sx={{
-          height: '4px',
-          borderTop: '3px solid #DFE2E6',
-          alignItems: 'flex-start',
-          flex: isSmallScreen || isMediumScreen ? '0 0 100%' : '1',
-          padding: isSmallScreen || isMediumScreen ? '0 0 0 16px' : '0',
+          padding: { xs: '0 16px' },
         }}
       >
         <Typography variant="headline2" paddingTop="26px">
@@ -163,7 +146,10 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
             variant="contained"
             color="primary"
             href={buttonLink}
-            sx={{ width: 'auto' }}
+            sx={{
+              whiteSpace: 'nowrap',
+              alignSelf: 'flex-start',
+            }}
           >
             {buttonLinkText}
           </Button>
