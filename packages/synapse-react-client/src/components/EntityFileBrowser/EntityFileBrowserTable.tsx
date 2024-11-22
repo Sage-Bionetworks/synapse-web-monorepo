@@ -89,6 +89,7 @@ export const EntityFileBrowserTable: React.FunctionComponent<
         isSelected: false,
         isDisabled: false,
         isVersionableEntity: isVersionableEntityType(entityType),
+        isExpanded: false,
       })
 
       return entities
@@ -100,15 +101,18 @@ export const EntityFileBrowserTable: React.FunctionComponent<
     (props: CellRendererProps<EntityFinderTableViewRowData>) => {
       if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
         return (
-          <span
-            role="link"
-            className="EntityFinderTableCellContainerLink"
-            onClick={e => {
-              e.stopPropagation()
-              setCurrentContainer(props.rowData.id)
-            }}
-          >
-            {props.rowData.name}
+          <span>
+            <button>{props.rowData.isExpanded ? '▼' : '▶'}</button>
+            <span
+              role="link"
+              className="EntityFinderTableCellContainerLink"
+              onClick={e => {
+                e.stopPropagation()
+                setCurrentContainer(props.rowData.id)
+              }}
+            >
+              {props.rowData.name}
+            </span>
           </span>
         )
       } else {
