@@ -35,6 +35,7 @@ import {
   EmptyRenderer,
   EntityIdAndVersionNumber,
   LoadingRenderer,
+  MD5Renderer,
   ModifiedByRenderer,
   ModifiedOnRenderer,
   TypeIconRenderer,
@@ -569,6 +570,16 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 sortable={false}
                 resizable={true}
                 cellRenderer={SizeRenderer}
+              />
+            )}
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'MD5'}
+                title="MD5"
+                width={200}
+                sortable={false}
+                resizable={true}
+                cellRenderer={MD5Renderer}
               />
             )}
             {visibleTypes.includes(EntityType.FILE) && (

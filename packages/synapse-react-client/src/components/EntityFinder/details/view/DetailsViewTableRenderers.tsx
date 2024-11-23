@@ -5,7 +5,7 @@ import BaseTable, {
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import dayjs from 'dayjs'
-import React, { SyntheticEvent, useEffect } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
@@ -34,6 +34,7 @@ import { displayFilesWereAddedToDownloadListSuccess } from 'src/components/downl
 import { displayToast } from 'src/components/ToastMessage'
 import { useAddFileToDownloadList } from 'src/synapse-queries'
 import { useSynapseContext } from 'src/utils'
+import { FileHandleWithPreview } from 'src/components/ChallengeDataDownload/Renderers'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -261,6 +262,44 @@ export function EmptyRenderer({
     <div className="EntityFinderDetailsViewPlaceholder">
       {noResultsPlaceholder || <div>Empty</div>}
     </div>
+  )
+}
+
+export function MD5Renderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
+  const [isCopying, setIsCopying] = useState(false)
+  const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
+  )
+
+  if (isLoadingEntityBundle || isCopying) {
+    return <Skeleton width={200} />
+  }
+  const file = bundle?.fileHandles.find(
+    (file: FileHandleWithPreview) => file.isPreview !== true,
+  )
+  if (file?.contentMd5 == undefined) {
+    return <></>
+  }
+
+  return (
+    <Tooltip title="Click to copy MD5 to your clipboard" placement="right">
+      <button
+        className={'btn-download-icon'}
+        onClick={event => {
+          setIsCopying(true)
+          event.stopPropagation()
+          navigator.clipboard.writeText(file?.contentMd5 ?? '').then(() => {
+            displayToast('MD5 copied to the clipboard', 'success')
+            setIsCopying(false)
+          })
+        }}
+      >
+        {file?.contentMd5}
+      </button>
+    </Tooltip>
   )
 }
 
