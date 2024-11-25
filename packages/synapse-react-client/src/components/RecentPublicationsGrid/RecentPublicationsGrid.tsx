@@ -115,19 +115,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     </Grid>
   )
 
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <SynapseSpinner size={40} />
-      </Box>
-    )
-  }
-
   return (
     <Box
       sx={{
@@ -143,9 +130,22 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           order: { xs: 1, md: 0 },
         }}
       >
-        {dataRows.map(pub => (
-          <PublicationCard pub={pub} key={pub.rowId} />
-        ))}
+        {isLoading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+            }}
+          >
+            <SynapseSpinner size={40} />
+          </Box>
+        ) : (
+          <Grid container spacing={2}>
+            {dataRows.map(pub => (
+              <PublicationCard pub={pub} key={pub.rowId} />
+            ))}
+          </Grid>
+        )}
       </Grid>
       <Box
         sx={{
