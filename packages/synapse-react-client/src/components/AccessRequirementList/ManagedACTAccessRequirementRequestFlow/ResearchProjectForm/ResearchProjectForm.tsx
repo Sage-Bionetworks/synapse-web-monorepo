@@ -13,7 +13,7 @@ import {
   ManagedACTAccessRequirement,
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useId, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   useGetResearchProject,
   useUpdateResearchProject,
