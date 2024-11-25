@@ -1,9 +1,3 @@
-import React, { useEffect, useState } from 'react'
-import {
-  ManagedACTAccessRequirement,
-  ResearchProject,
-} from '@sage-bionetworks/synapse-types'
-import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
   Box,
@@ -13,15 +7,26 @@ import {
   DialogTitle,
   IconButton,
   Stack,
-  Typography,
+  TextField,
 } from '@mui/material'
-import IconSvg from '../../../IconSvg/IconSvg'
+import {
+  ManagedACTAccessRequirement,
+  ResearchProject,
+} from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
 import {
   useGetResearchProject,
   useUpdateResearchProject,
 } from '../../../../synapse-queries'
-import TextField from '../../../TextField/TextField'
+import IconSvg from '../../../IconSvg/IconSvg'
+import TextFieldWithWordLimit, {
+  getWordCount,
+} from '../../../TextField/TextFieldWithWordLimit'
+import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+
+const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
+const INTENDED_DATA_USE_MAX_WORD_COUNT = 500
 
 export type ResearchProjectFormProps = {
   /* The access requirement to which the research project refers */
@@ -114,6 +119,16 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     })
   }
 
+  const formIsValid =
+    projectLead &&
+    institution &&
+    (!managedACTAccessRequirement.isIDURequired ||
+      (intendedDataUseStatement &&
+        getWordCount(intendedDataUseStatement) >=
+          INTENDED_DATA_USE_MIN_WORD_COUNT &&
+        getWordCount(intendedDataUseStatement) <=
+          INTENDED_DATA_USE_MAX_WORD_COUNT))
+
   return (
     <>
       <DialogTitle>
@@ -129,13 +144,22 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         <ManagedACTAccessRequirementFormWikiWrapper
           managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
         >
-          <form onSubmit={handleSubmit}>
-            <Typography variant={'body1'}>
-              Please tell us about your project.
-            </Typography>
+          <Box
+            component={'form'}
+            onSubmit={handleSubmit}
+            sx={{
+              '& .MuiTextField-root': {
+                marginBottom: '20px',
+              },
+            }}
+          >
             <TextField
               id={'project-lead'}
-              label={'Project Lead'}
+              label={'First and last names of your project lead or PI'}
+              placeholder={
+                'First and last name of individual leading the project, ex: Jane Smith'
+              }
+              fullWidth
               disabled={isLoading}
               type="text"
               value={projectLead}
@@ -144,7 +168,11 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
             />
             <TextField
               id={'institution'}
-              label={'Institution'}
+              label={'Your Institution'}
+              placeholder={
+                'Full, unabbreviated name of the institution you are affiliated with'
+              }
+              fullWidth
               type="text"
               disabled={isLoading}
               value={institution}
@@ -153,18 +181,20 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
             />
 
             {managedACTAccessRequirement.isIDURequired && (
-              <TextField
+              <TextFieldWithWordLimit
                 id={'data-use'}
-                label={
-                  <>
-                    Intended Data Use Statement -
-                    {managedACTAccessRequirement.isIDUPublic && (
-                      <i id={'idu-visible'}>
-                        this will be visible to the public
-                      </i>
-                    )}
-                  </>
+                minWords={INTENDED_DATA_USE_MIN_WORD_COUNT}
+                maxWords={INTENDED_DATA_USE_MAX_WORD_COUNT}
+                label={'Intended Data Use (IDU)'}
+                helperText={
+                  managedACTAccessRequirement.isIDUPublic
+                    ? 'This will be visible to the public'
+                    : undefined
                 }
+                placeholder={
+                  'Outline the objectives of your proposed research involving this data, and your study design and analysis plan.'
+                }
+                fullWidth
                 required
                 multiline
                 rows={9}
@@ -173,7 +203,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 onChange={e => setIntendedDataUseStatement(e.target.value)}
               />
             )}
-          </form>
+          </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>
         {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
       </DialogContent>
@@ -184,7 +214,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         <Button
           variant="contained"
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !formIsValid}
           onClick={handleSubmit}
         >
           {updateIsPending ? 'Saving...' : 'Save changes'}
