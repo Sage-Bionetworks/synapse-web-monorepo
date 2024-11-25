@@ -5,7 +5,12 @@ import RecentPublicationsGrid, {
 } from './RecentPublicationsGrid'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnTypeEnum,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
@@ -18,7 +23,7 @@ describe('RecentPublicationsGrid Tests', () => {
     summaryText: 'This is a summary.',
   }
 
-  const mockQueryResult = {
+  const mockQueryResult: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryResult: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -48,7 +53,7 @@ describe('RecentPublicationsGrid Tests', () => {
             id: '81724',
           },
           {
-            name: 'PublicationDate',
+            name: 'publicationDate',
             columnType: ColumnTypeEnum.DATE,
             id: '81725',
           },
@@ -108,15 +113,25 @@ describe('RecentPublicationsGrid Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseGetQueryResultBundle.mockReturnValue({
-      data: mockQueryResult,
-    } as any)
+    mockUseGetQueryResultBundle.mockReturnValue(
+      getUseQuerySuccessMock(mockQueryResult),
+    )
   })
 
-  it('fetches and displays publication cards', async () => {
-    render(<RecentPublicationsGrid {...mockProps} />, {
+  const renderWithRouter = (props: RecentPublicationsGridProps) => {
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        element: <RecentPublicationsGrid {...mockProps} />,
+      },
+    ])
+    return render(<RouterProvider router={router} />, {
       wrapper: createWrapper(),
     })
+  }
+
+  it('fetches and displays publication cards', async () => {
+    renderWithRouter(mockProps)
 
     await waitFor(() =>
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
@@ -134,9 +149,7 @@ describe('RecentPublicationsGrid Tests', () => {
   })
 
   it('renders summary text and button if props provided', () => {
-    render(<RecentPublicationsGrid {...mockProps} />, {
-      wrapper: createWrapper(),
-    })
+    renderWithRouter(mockProps)
 
     expect(screen.getByText('This is a summary.')).toBeInTheDocument()
 

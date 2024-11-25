@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -33,7 +34,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
       sql,
     },
   }
-  const { data: queryResultBundle } =
+  const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
@@ -113,6 +114,19 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
       </Box>
     </Grid>
   )
+
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <SynapseSpinner size={40} />
+      </Box>
+    )
+  }
 
   return (
     <Box
