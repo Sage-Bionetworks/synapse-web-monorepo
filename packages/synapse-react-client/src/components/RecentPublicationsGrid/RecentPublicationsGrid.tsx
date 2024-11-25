@@ -7,6 +7,7 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
+import { Link } from 'react-router-dom'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -89,7 +90,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           </Typography>
           <Typography
             variant="body1"
-            color="#71767F"
+            color="grey.700"
             sx={{
               fontStyle: 'italic',
               fontSize: '14px',
@@ -97,7 +98,11 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           >
             {pub.values[journalColIndex]}
           </Typography>
-          <Typography variant="body1" color="#71767F" sx={{ fontSize: '14px' }}>
+          <Typography
+            variant="body1"
+            color="grey.700"
+            sx={{ fontSize: '14px' }}
+          >
             {pub.values[publicationDateColIndex] &&
               formatDate(
                 dayjs(Number(pub.values[publicationDateColIndex])),
@@ -129,39 +134,42 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
         ))}
       </Grid>
       <Box
-        display="flex"
-        flexDirection="column"
-        gap="16px"
         sx={{
           padding: {
             xs: '0 16px',
-            borderTop: '3px solid',
-            borderColor: 'grey.400',
+            md: 0,
           },
         }}
       >
-        <Typography variant="headline2" paddingTop="26px">
-          Recently Published
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ fontStyle: 'italic', color: '#4A5056' }}
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="16px"
+          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
         >
-          {summaryText && summaryText}
-        </Typography>
-        {buttonLink && buttonLinkText && (
-          <Button
-            variant="contained"
-            color="primary"
-            href={buttonLink}
-            sx={{
-              whiteSpace: 'nowrap',
-              alignSelf: 'flex-start',
-            }}
+          <Typography variant="headline2" paddingTop="26px" color="grey.1000">
+            Recently Published
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontStyle: 'italic', color: 'grey.800' }}
           >
-            {buttonLinkText}
-          </Button>
-        )}
+            {summaryText && summaryText}
+          </Typography>
+          {buttonLink && buttonLinkText && (
+            <Button
+              variant="contained"
+              to={buttonLink}
+              component={Link}
+              sx={{
+                whiteSpace: 'nowrap',
+                alignSelf: 'flex-start',
+              }}
+            >
+              {buttonLinkText}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   )
