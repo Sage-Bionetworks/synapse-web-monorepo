@@ -2,7 +2,14 @@ import React from 'react'
 import ResearchProjectForm, {
   ResearchProjectFormProps,
 } from './ResearchProjectForm'
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
@@ -31,6 +38,8 @@ mockMarkdownSynapse.mockImplementation(
 )
 
 const CREATED_RESEARCH_PROJECT_ID = MOCK_RESEARCH_PROJECT.id
+
+const validIduStatement = 'this must be at least 50 words long '.repeat(10)
 
 jest
   .spyOn(SynapseClient, 'getResearchProject')
@@ -81,9 +90,14 @@ async function renderComponent(props: ResearchProjectFormProps) {
 async function setUp(props: ResearchProjectFormProps) {
   const user = userEvent.setup()
   const component = await renderComponent(props)
-  const projectLeadInput = await screen.findByLabelText('Project Lead')
-  const institutionInput = await screen.findByLabelText('Institution')
-  const iduInput = screen.queryByLabelText('Intended Data Use Statement', {
+  const projectLeadInput = await screen.findByLabelText(
+    'First and last names of your project lead or PI',
+    { exact: false },
+  )
+  const institutionInput = await screen.findByLabelText('Your Institution', {
+    exact: false,
+  })
+  const iduInput = screen.queryByLabelText('Intended Data Use (IDU)', {
     exact: false,
   })
   const saveChangesButton = await screen.findByRole('button', {
@@ -182,7 +196,7 @@ describe('ResearchProjectForm', () => {
 
     const projectLead = 'My name'
     const institution = 'My institution'
-    const idu = "what I'm going to do with the data"
+    const idu = validIduStatement
     await user.type(projectLeadInput, projectLead)
     await user.type(institutionInput, institution)
     await user.type(iduInput!, idu)
@@ -220,11 +234,9 @@ describe('ResearchProjectForm', () => {
     })
 
     expect(iduInput).toBeInTheDocument()
-    const willBePublicLabelledElement = await screen.findByLabelText(
-      'this will be visible to the public',
-      { exact: false },
+    expect(iduInput).toHaveAccessibleDescription(
+      'This will be visible to the public',
     )
-    expect(iduInput).toBe(willBePublicLabelledElement)
   })
 
   it('Hides on the Cancel action', async () => {
@@ -243,6 +255,104 @@ describe('ResearchProjectForm', () => {
       expect(mockOnHide).toHaveBeenCalled()
       expect(mockSaveResearchProject).not.toHaveBeenCalled()
     })
+  })
+
+  it('Blocks the save button if the form is invalid', async () => {
+    const {
+      user,
+      projectLeadInput,
+      institutionInput,
+      iduInput,
+      saveChangesButton,
+    } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: true,
+        isIDUPublic: false,
+      },
+    })
+
+    await waitFor(() => {
+      expect(projectLeadInput).not.toBeDisabled()
+      expect(institutionInput).not.toBeDisabled()
+      expect(iduInput).not.toBeDisabled()
+    })
+
+    // Nothing is filled out
+    expect(saveChangesButton).toBeDisabled()
+
+    // Fill everything out
+    const projectLead = 'My name'
+    const institution = 'My institution'
+    await user.type(projectLeadInput, projectLead)
+    await user.type(institutionInput, institution)
+    await user.type(iduInput!, validIduStatement)
+
+    expect(saveChangesButton).not.toBeDisabled()
+
+    // Blocks when project lead is empty
+    await user.clear(projectLeadInput)
+    expect(saveChangesButton).toBeDisabled()
+    await user.type(projectLeadInput, projectLead)
+
+    // Blocks when institution is empty
+    await user.clear(institutionInput)
+    expect(saveChangesButton).toBeDisabled()
+    await user.type(institutionInput, institution)
+
+    // Blocks when IDU is empty
+    await user.clear(iduInput!)
+    expect(saveChangesButton).toBeDisabled()
+
+    // Blocks when IDU is too short
+    await user.type(iduInput!, 'short')
+    expect(saveChangesButton).toBeDisabled()
+
+    // Blocks when IDU is too long
+    act(() => {
+      fireEvent.input(iduInput!, {
+        target: {
+          value: 'this is far too long for a valid idu statement '.repeat(51),
+        },
+      })
+    })
+    await waitFor(() => expect(saveChangesButton).toBeDisabled())
+
+    // Unblocks when IDU is valid
+    await user.clear(iduInput!)
+    await user.type(iduInput!, validIduStatement)
+  })
+
+  it('Does not block save without IDU when IDU is not required', async () => {
+    const {
+      user,
+      projectLeadInput,
+      institutionInput,
+      iduInput,
+      saveChangesButton,
+    } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: false,
+        isIDUPublic: false,
+      },
+    })
+
+    await waitFor(() => {
+      expect(projectLeadInput).not.toBeDisabled()
+      expect(institutionInput).not.toBeDisabled()
+      expect(iduInput).not.toBeInTheDocument()
+    })
+
+    // Fill everything out
+    const projectLead = 'My name'
+    const institution = 'My institution'
+    await user.type(projectLeadInput, projectLead)
+    await user.type(institutionInput, institution)
+
+    expect(saveChangesButton).not.toBeDisabled()
   })
 
   it('Shows an error if saving fails', async () => {
@@ -281,7 +391,7 @@ describe('ResearchProjectForm', () => {
 
     const projectLead = 'My name'
     const institution = 'My institution'
-    const idu = "what I'm going to do with the data"
+    const idu = validIduStatement
     await user.type(projectLeadInput, projectLead)
     await user.type(institutionInput, institution)
     await user.type(iduInput!, idu)
