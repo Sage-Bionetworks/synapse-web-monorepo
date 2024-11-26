@@ -92,6 +92,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
             </Box>
             <Typography
               variant="headline2"
+              color="grey.1000"
               sx={{
                 padding: '20px 0px',
               }}
