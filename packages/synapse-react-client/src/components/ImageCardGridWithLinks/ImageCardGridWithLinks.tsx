@@ -106,8 +106,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
     queryResultBundle,
   )
 
-  console.log('col', linkColumnIndex, linkTextColumnIndex)
-
   type ImageCardProps = {
     card: Row
     index: number
