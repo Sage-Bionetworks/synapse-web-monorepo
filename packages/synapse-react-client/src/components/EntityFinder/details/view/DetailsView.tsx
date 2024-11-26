@@ -42,7 +42,7 @@ import {
 } from './DetailsViewTableRenderers'
 import { VersionColumnHeader } from './VersionColumnHeader'
 import { Checkbox, Tooltip } from '@mui/material'
-import { SizeRenderer } from 'src/components/ChallengeDataDownload/Renderers'
+import { SizeRenderer } from '../../../ChallengeDataDownload/Renderers'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46

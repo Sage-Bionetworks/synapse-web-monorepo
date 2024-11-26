@@ -30,11 +30,11 @@ import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
 import { UserBadge } from '../../../UserCard/UserBadge'
-import { displayFilesWereAddedToDownloadListSuccess } from 'src/components/download_list/DownloadConfirmationUtils'
-import { displayToast } from 'src/components/ToastMessage'
-import { useAddFileToDownloadList } from 'src/synapse-queries'
-import { useSynapseContext } from 'src/utils'
-import { FileHandleWithPreview } from 'src/components/ChallengeDataDownload/Renderers'
+import { displayFilesWereAddedToDownloadListSuccess } from '../../../download_list/DownloadConfirmationUtils'
+import { displayToast } from '../../../ToastMessage'
+import { useAddFileToDownloadList } from '../../../../synapse-queries'
+import { useSynapseContext } from '../../../../utils'
+import { FileHandleWithPreview } from '../../../ChallengeDataDownload/Renderers'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -287,6 +287,7 @@ export function MD5Renderer<T extends EntityIdAndVersionNumber>(
   return (
     <Tooltip title="Click to copy MD5 to your clipboard" placement="right">
       <button
+        aria-label="MD5"
         className={'btn-download-icon'}
         onClick={event => {
           setIsCopying(true)
@@ -332,6 +333,7 @@ export function AddFileToDownloadListRenderer<
       className="EntityBadgeTooltip"
     >
       <button
+        aria-label="Add to Download Cart"
         className={'btn-download-icon'}
         onClick={event => {
           addToDownloadList({ entityId, entityVersionNumber: versionNumber })
