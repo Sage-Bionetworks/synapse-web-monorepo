@@ -16,7 +16,7 @@ import {
 import { EntityTreeNodeType } from '../EntityFinder/tree/VirtualizedTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { useGetEntityBundle } from 'src/synapse-queries'
+import { useGetEntityBundle } from '../../synapse-queries'
 import {
   BreadcrumbItem,
   Breadcrumbs,
@@ -56,7 +56,7 @@ export const EntityFileBrowser: React.FunctionComponent<
 
   const configuration: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-    parentContainerId: currentContainer ?? '',
+    parentContainerId: currentContainer ?? undefined,
     getProjectParams: {
       sort: 'PROJECT_NAME',
     },
