@@ -1,37 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, CardMedia, Grid, Link, Typography } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import {
-  SynapseClientError,
-  SynapseConstants,
-  useSynapseContext,
-} from '../../utils'
+import { Box, CardMedia, Grid, Link, Typography } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom'
+import { SynapseConstants, useSynapseContext } from '../../utils'
 import {
   BatchFileRequest,
   FileHandleAssociateType,
   FileHandleAssociation,
   QueryBundleRequest,
+  Row,
 } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { getFiles } from '../../synapse-client/SynapseClient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
 export type ImageCardGridWithLinksProps = {
   sql: string
   title: string
   summaryText: string
 }
-
-const StyledLink = styled(Link)(({ theme }) => ({
-  position: 'absolute',
-  backgroundColor: '#FFFF',
-  borderRadius: '6px',
-  textDecoration: 'none',
-  zIndex: 2,
-  color: theme.palette.primary.main,
-  padding: '6px 10px 6px 10px',
-}))
 
 enum ExpectedColumns {
   LINKTEXT = 'LinkText',
@@ -43,7 +32,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   const { sql, title, summaryText } = props
   const { accessToken } = useSynapseContext()
   const [images, setImages] = useState<string[] | undefined>()
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
@@ -57,7 +45,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
     },
   }
 
-  const { data: queryResultBundle } =
+  const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
   useEffect(() => {
@@ -91,7 +79,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
           requestedFiles: fileHandleAssociationList,
         }
         const files = await getFiles(batchFileRequest, accessToken)
-        setError(undefined)
         setImages(
           files.requestedFiles
             .filter(el => el.preSignedURL !== undefined)
@@ -99,7 +86,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         )
       } catch (e) {
         console.error('Error on get data', e)
-        setError(e)
       }
     }
     getData()
@@ -122,67 +108,110 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
 
   console.log('col', linkColumnIndex, linkTextColumnIndex)
 
-  return (
-    <Box padding={2} sx={{ display: 'flex', gap: '80px' }}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        gap="16px"
+  type ImageCardProps = {
+    card: Row
+    index: number
+  }
+
+  const ImageCard = ({ card, index }: ImageCardProps) => (
+    <Grid item xs={12} sm={6} md={4} key={card.rowId} sx={{ height: '245px' }}>
+      <Link
+        component={RouterLink}
+        to={card.values[linkColumnIndex] || ''}
         sx={{
-          flex: 1,
-          height: '4px',
-          borderTop: '3px solid #DFE2E6',
-          alignItems: 'flex-start',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          position: 'absolute',
+          backgroundColor: '#FFFF',
+          borderRadius: '6px 0px 6px 0px',
+          color: 'grey.1000',
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'none',
+            color: 'grey.1000',
+          },
+          zIndex: 2,
+          padding: '6px 10px 6px 10px',
         }}
       >
-        <Typography variant="headline2" paddingTop="26px">
-          {title}
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ fontStyle: 'italic', color: '#4A5056' }}
-        >
-          {summaryText}
-        </Typography>
-      </Box>
+        {card.values[linkTextColumnIndex]}
+        <ArrowForwardIosIcon
+          style={{
+            width: 16,
+            height: 16,
+          }}
+        />
+      </Link>
+      <CardMedia
+        component="img"
+        image={images?.[index]}
+        style={{
+          height: '100%',
+          width: '100%',
+          borderRadius: '6px',
+          objectFit: 'cover',
+        }}
+      />
+    </Grid>
+  )
 
-      <Grid container sx={{ gap: '24px', flex: 2 }}>
-        {dataRows.map((card, index) => (
-          <Grid
-            item
-            key={index}
-            xs={12}
-            sm={6}
-            md={3}
-            lg={3}
-            sx={{ paddingLeft: '0px', paddingTop: '0px' }}
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
+        gap: { xs: '38px', md: '80px' },
+      }}
+    >
+      <Box
+        sx={{
+          padding: {
+            xs: '0 16px',
+            md: 0,
+          },
+        }}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="16px"
+          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
+        >
+          <Typography variant="headline2" paddingTop="26px">
+            {title}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontStyle: 'italic', color: '#4A5056' }}
           >
-            <Card
-              sx={{
-                boxShadow: 'none',
-                border: 'none',
-                position: 'relative',
-                width: '100%',
-                height: '200px',
-                borderRadius: '6px',
-                padding: '0px',
-              }}
-            >
-              <StyledLink
-                href={card.values[linkColumnIndex] || ''}
-                target="_blank"
-                rel="noopener"
-              >
-                {card.values[linkTextColumnIndex]}
-              </StyledLink>
-              <CardMedia
-                component="img"
-                image={images?.[index]}
-                style={{ height: '100%', width: '100%' }}
-              />
-            </Card>
+            {summaryText}
+          </Typography>
+        </Box>
+      </Box>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          order: { xs: 1, md: 0 },
+        }}
+      >
+        {isLoading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+            }}
+          >
+            <SynapseSpinner size={40} />
+          </Box>
+        ) : (
+          <Grid container spacing={2.5} sx={{ margin: 0 }}>
+            {dataRows.map((card, index) => (
+              <ImageCard card={card} key={card.rowId} index={index} />
+            ))}
           </Grid>
-        ))}
+        )}
       </Grid>
     </Box>
   )
