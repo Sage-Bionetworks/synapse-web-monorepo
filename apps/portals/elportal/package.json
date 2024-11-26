@@ -6,10 +6,11 @@
   "dependencies": {
     "@mui/icons-material": "^5.15.13",
     "@mui/material": "^5.15.13",
+    "@mui/utils": "^5.15.13",
+    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.10",
     "pluralize": "^8.0.0",
-    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.27.0",
