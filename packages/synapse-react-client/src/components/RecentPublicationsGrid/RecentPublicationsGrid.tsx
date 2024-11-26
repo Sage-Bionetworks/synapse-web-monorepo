@@ -1,5 +1,12 @@
 import React from 'react'
-import { Grid, CardContent, Typography, Button, Box } from '@mui/material'
+import {
+  Grid,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+  Skeleton,
+} from '@mui/material'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -8,7 +15,6 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -60,57 +66,61 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid item xs={12} sm={6} md={4} key={pub.rowId}>
       <Box sx={{ height: '100%' }}>
-        <CardContent>
-          <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}>
-            {pub.values[tagColIndex] &&
-              JSON.parse(pub.values[tagColIndex] as string).map(
-                (tag: string, index: number) => (
-                  <Typography
-                    key={index}
-                    variant="overline"
-                    sx={{
-                      backgroundColor: 'grey.300',
-                      borderRadius: '3px',
-                      padding: '4px 8px',
-                      border: 'none',
-                      lineHeight: 'initial',
-                    }}
-                  >
-                    {tag}
-                  </Typography>
-                ),
-              )}
-          </Box>
-          <Typography
-            variant="headline2"
-            sx={{
-              padding: '20px 0px',
-            }}
-          >
-            {pub.values[titleColIndex]}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="grey.700"
-            sx={{
-              fontStyle: 'italic',
-              fontSize: '14px',
-            }}
-          >
-            {pub.values[journalColIndex]}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="grey.700"
-            sx={{ fontSize: '14px' }}
-          >
-            {pub.values[publicationDateColIndex] &&
-              formatDate(
-                dayjs(Number(pub.values[publicationDateColIndex])),
-                'MMMM, YYYY',
-              )}
-          </Typography>
-        </CardContent>
+        {isLoading ? (
+          <Skeleton variant="rectangular" height={250} width="100%" />
+        ) : (
+          <CardContent>
+            <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}>
+              {pub.values[tagColIndex] &&
+                JSON.parse(pub.values[tagColIndex] as string).map(
+                  (tag: string, index: number) => (
+                    <Typography
+                      key={index}
+                      variant="overline"
+                      sx={{
+                        backgroundColor: 'grey.300',
+                        borderRadius: '3px',
+                        padding: '4px 8px',
+                        border: 'none',
+                        lineHeight: 'initial',
+                      }}
+                    >
+                      {tag}
+                    </Typography>
+                  ),
+                )}
+            </Box>
+            <Typography
+              variant="headline2"
+              sx={{
+                padding: '20px 0px',
+              }}
+            >
+              {pub.values[titleColIndex]}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              sx={{
+                fontStyle: 'italic',
+                fontSize: '14px',
+              }}
+            >
+              {pub.values[journalColIndex]}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              sx={{ fontSize: '14px' }}
+            >
+              {pub.values[publicationDateColIndex] &&
+                formatDate(
+                  dayjs(Number(pub.values[publicationDateColIndex])),
+                  'MMMM, YYYY',
+                )}
+            </Typography>
+          </CardContent>
+        )}
       </Box>
     </Grid>
   )
@@ -130,22 +140,11 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           order: { xs: 1, md: 0 },
         }}
       >
-        {isLoading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              width: '100%',
-            }}
-          >
-            <SynapseSpinner size={40} />
-          </Box>
-        ) : (
-          <Grid container spacing={2}>
-            {dataRows.map(pub => (
-              <PublicationCard pub={pub} key={pub.rowId} />
-            ))}
-          </Grid>
-        )}
+        <Grid container spacing={2}>
+          {dataRows.map(pub => (
+            <PublicationCard pub={pub} key={pub.rowId} />
+          ))}
+        </Grid>
       </Grid>
       <Box
         sx={{
