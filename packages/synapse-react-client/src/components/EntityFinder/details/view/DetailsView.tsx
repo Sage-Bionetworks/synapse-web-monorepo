@@ -567,6 +567,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 key={'SIZE'}
                 title="Size"
                 width={200}
+                minWidth={85}
                 sortable={false}
                 resizable={true}
                 cellRenderer={SizeRenderer}
@@ -586,7 +587,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               <Column<EntityFinderTableViewRowData>
                 key={'addToDownloadCart'}
                 title=""
-                width={100}
+                width={40}
+                minWidth={40}
                 sortable={false}
                 resizable={true}
                 cellRenderer={AddFileToDownloadListRenderer}

@@ -273,7 +273,7 @@ export function MD5Renderer<T extends EntityIdAndVersionNumber>(
     props.rowData.entityId,
     props.rowData.versionNumber,
   )
-  const { mutate: copyMd5ToClipboard, isPending: isCopying } = useMutation({
+  const { mutate: copyMd5ToClipboard } = useMutation({
     mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
     onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
   })
