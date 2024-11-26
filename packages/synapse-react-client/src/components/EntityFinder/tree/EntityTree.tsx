@@ -207,7 +207,7 @@ export function EntityTree(props: EntityTreeProps) {
   })
 
   const { data: projectHeader, isLoading: isLoadingProjectHeader } =
-    useGetEntityHeader(projectId!, undefined, {
+    useGetEntityHeader(projectId, undefined, {
       enabled: !!(projectId ?? initialContainerPath?.path[1]?.id),
       refetchInterval: Infinity,
     })
@@ -374,7 +374,7 @@ export function EntityTree(props: EntityTreeProps) {
       fetchNextPage: async () => {
         await fetchNextPageProjects()
       },
-      hasNextPage: useProjectData && hasNextPageProjects! && !isLoadingProjects,
+      hasNextPage: useProjectData && hasNextPageProjects && !isLoadingProjects,
     }),
     [
       showScopeAsRootNode,

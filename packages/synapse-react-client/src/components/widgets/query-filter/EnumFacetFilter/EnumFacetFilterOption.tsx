@@ -24,7 +24,7 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
     inputType,
   } = props
 
-  let control = inputType === 'checkbox' ? <Checkbox /> : <Radio />
+  const control = inputType === 'checkbox' ? <Checkbox /> : <Radio />
 
   return (
     <Box

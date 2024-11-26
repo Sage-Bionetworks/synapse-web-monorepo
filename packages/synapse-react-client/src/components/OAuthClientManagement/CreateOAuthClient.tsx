@@ -124,7 +124,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
         synapseClient.openIDConnectServicesClient
           .putAuthV1Oauth2ClientIdVerificationPrecheck({
-            id: oAuthClient.client_id!,
+            id: oAuthClient.client_id,
             oAuthClient: oAuthClient,
           })
           .then(precheckResult => {

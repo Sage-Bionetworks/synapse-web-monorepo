@@ -193,9 +193,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                       </td>
                       <td>
                         {Array.isArray(current[1])
-                          ? (current[1] as string[] | number[] | boolean[])
-                              .map(getDisplayedAnnotation)
-                              .join(', ')
+                          ? current[1].map(getDisplayedAnnotation).join(', ')
                           : getDisplayedAnnotation(
                               current[1] as string | number | boolean,
                             )}

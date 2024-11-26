@@ -53,7 +53,7 @@ describe('RangeSlider', () => {
       screen.getByTestId(MUI_SLIDER_TEST_ID)
       await waitFor(() => expect(mockSlider).toHaveBeenCalled())
       act(() => {
-        mockSlider.mock.lastCall![0]!.onChange!(new Event('click'), [1, 20], 0)
+        mockSlider.mock.lastCall![0].onChange!(new Event('click'), [1, 20], 0)
       })
       expect(mockOnApplyClicked).not.toHaveBeenCalled()
       expect(mockOnChange).toHaveBeenCalledWith({ min: 1, max: 20 })
