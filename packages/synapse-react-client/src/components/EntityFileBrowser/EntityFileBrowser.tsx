@@ -30,7 +30,7 @@ export type EntityFileBrowserProps = {
 
 /**
  * Entity File Browser.  Essentially an EntityFinder where selection will call back (to change the page to the target entity)
- *
+ * TODO: From EntityBadgeIcons, show unlink functionality (add onUnlink and onUnlinkError in EntityFileBrowserProps!) and showHasWiki.
  * @returns
  */
 export const EntityFileBrowser: React.FunctionComponent<
@@ -52,7 +52,11 @@ export const EntityFileBrowser: React.FunctionComponent<
   )
   const projectId = entityBundle?.path.path[1].id ?? undefined
   const emptyMap = Map<string, number>()
-  const types: EntityType[] = [EntityType.FOLDER, EntityType.FILE]
+  const types: EntityType[] = [
+    EntityType.FOLDER,
+    EntityType.FILE,
+    EntityType.LINK,
+  ]
 
   const configuration: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,

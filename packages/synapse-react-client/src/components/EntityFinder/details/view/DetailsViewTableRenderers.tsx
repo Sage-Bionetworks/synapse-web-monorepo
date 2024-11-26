@@ -1,4 +1,4 @@
-import { Checkbox, Skeleton, Tooltip } from '@mui/material'
+import { Checkbox, IconButton, Skeleton, Tooltip } from '@mui/material'
 import BaseTable, {
   CallOrReturn,
   ColumnShape,
@@ -35,6 +35,7 @@ import { displayToast } from '../../../ToastMessage'
 import { useAddFileToDownloadList } from '../../../../synapse-queries'
 import { useSynapseContext } from '../../../../utils'
 import { FileHandleWithPreview } from '../../../ChallengeDataDownload/Renderers'
+import { useMutation } from '@tanstack/react-query'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -268,13 +269,15 @@ export function EmptyRenderer({
 export function MD5Renderer<T extends EntityIdAndVersionNumber>(
   props: CellRendererProps<T>,
 ) {
-  const [isCopying, setIsCopying] = useState(false)
   const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
   )
-
-  if (isLoadingEntityBundle || isCopying) {
+  const { mutate: copyMd5ToClipboard, isPending: isCopying } = useMutation({
+    mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
+    onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
+  })
+  if (isLoadingEntityBundle) {
     return <Skeleton width={200} />
   }
   const file = bundle?.fileHandles.find(
@@ -288,14 +291,9 @@ export function MD5Renderer<T extends EntityIdAndVersionNumber>(
     <Tooltip title="Click to copy MD5 to your clipboard" placement="right">
       <button
         aria-label="MD5"
-        className={'btn-download-icon'}
         onClick={event => {
-          setIsCopying(true)
           event.stopPropagation()
-          navigator.clipboard.writeText(file?.contentMd5 ?? '').then(() => {
-            displayToast('MD5 copied to the clipboard', 'success')
-            setIsCopying(false)
-          })
+          copyMd5ToClipboard(file?.contentMd5 ?? '')
         }}
       >
         {file?.contentMd5}
@@ -327,21 +325,16 @@ export function AddFileToDownloadListRenderer<
     return <></>
   }
   return (
-    <Tooltip
-      title="Add to Download Cart"
-      placement="right"
-      className="EntityBadgeTooltip"
-    >
-      <button
-        aria-label="Add to Download Cart"
-        className={'btn-download-icon'}
+    <Tooltip title="Add to Download Cart" placement="right">
+      <IconButton
+        sx={{ height: '35px', width: '35px' }}
         onClick={event => {
           addToDownloadList({ entityId, entityVersionNumber: versionNumber })
           event.stopPropagation()
         }}
       >
         <IconSvg icon="download" />
-      </button>
+      </IconButton>
     </Tooltip>
   )
 }
