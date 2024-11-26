@@ -375,7 +375,7 @@ export const getVersion = (): Promise<SynapseVersion> => {
 export function validateDefiningSql(
   definingSql: string,
   entityType: EntityType,
-  accessToken?: string | undefined,
+  accessToken?: string,
 ) {
   return doPost<ValidateDefiningSqlResponse>(
     '/repo/v1/validateDefiningSql',
@@ -863,10 +863,7 @@ export const getUserProfile = (accessToken: string | undefined) => {
  * Return any user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
-export const getUserProfileById = (
-  ownerId: string,
-  accessToken?: string | undefined,
-) => {
+export const getUserProfileById = (ownerId: string, accessToken?: string) => {
   return doGet<UserProfile>(
     USER_PROFILE_ID(ownerId),
     accessToken,
@@ -1757,10 +1754,7 @@ export const deleteMemberFromTeam = (
  * Get Team that matches the given ID.
  * https://rest-docs.synapse.org/rest/GET/team/id.html
  */
-export const getTeam = (
-  id: string | number,
-  accessToken?: string | undefined,
-) => {
+export const getTeam = (id: string | number, accessToken?: string) => {
   return doGet<Team>(
     TEAM(id),
     accessToken,
@@ -1772,10 +1766,7 @@ export const getTeam = (
  * Get Teams that match the given list of IDs.
  * https://rest-docs.synapse.org/rest/POST/teamList.html
  */
-export const getTeamList = (
-  ids: string[] | number[],
-  accessToken?: string | undefined,
-) => {
+export const getTeamList = (ids: string[] | number[], accessToken?: string) => {
   return doPost<ListWrapper<Team>>(
     `/repo/v1/teamList`,
     { list: ids },
@@ -2144,7 +2135,7 @@ export const calculateMd5: (blob: Blob) => Promise<string> = memoize(blob => {
 
     fileReader.onerror = function () {
       console.warn('oops, something went wrong.', fileReader.error)
-      reject(fileReader.error)
+      reject(fileReader.error!)
     }
 
     const loadNext = () => {
@@ -2171,7 +2162,7 @@ const processFilePart = async (
   getIsCancelled?: () => boolean,
   abortController?: AbortController,
 ) => {
-  if (clientSidePartsState![partNumber - 1]) {
+  if (clientSidePartsState[partNumber - 1]) {
     // no-op. this part has already been processed!
     updateProgress()
     return
@@ -2223,7 +2214,7 @@ const processFilePart = async (
   )
   if (addPartResponse.addPartState === 'ADD_SUCCESS') {
     // done with this part!
-    clientSidePartsState![partNumber - 1] = true
+    clientSidePartsState[partNumber - 1] = true
     updateProgress()
     checkUploadComplete(
       multipartUploadStatus,
@@ -2263,7 +2254,7 @@ export const checkUploadComplete = (
 ) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
   if (
-    clientSidePartsState!.every(v => {
+    clientSidePartsState.every(v => {
       return v
     })
   ) {
@@ -2416,7 +2407,7 @@ export const getFileHandleContentFromID = (
         )
       })
       .catch(err => {
-        reject(err)
+        reject(err as Error)
       })
   })
 }
@@ -2445,11 +2436,13 @@ export const getFileHandleContent = (
       })
     } else {
       reject(
-        `File size (${calculateFriendlyFileSize(
-          fileHandle.contentSize,
-        )}) exceeds the maximum size that can be downloaded (${calculateFriendlyFileSize(
-          maxFileSizeBytes,
-        )})`,
+        new Error(
+          `File size (${calculateFriendlyFileSize(
+            fileHandle.contentSize,
+          )}) exceeds the maximum size that can be downloaded (${calculateFriendlyFileSize(
+            maxFileSizeBytes,
+          )})`,
+        ),
       )
     }
   })
@@ -2490,11 +2483,11 @@ export const getFileResult = (
         ) {
           resolve(data.requestedFiles[0])
         } else {
-          reject(data.requestedFiles[0].failureCode)
+          reject(new Error(data.requestedFiles[0].failureCode))
         }
       })
       .catch(err => {
-        reject(err)
+        reject(err as Error)
       })
   })
 }
@@ -3876,10 +3869,7 @@ export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   accessToken: string | undefined = undefined,
 ): Promise<AvailableFilesResponse> => {
-  return getDownloadListJobResponse(
-    accessToken,
-    request,
-  ) as Promise<AvailableFilesResponse>
+  return getDownloadListJobResponse(accessToken, request)
 }
 
 /**
@@ -3893,10 +3883,7 @@ export const getDownloadListStatistics = (
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  return getDownloadListJobResponse(
-    accessToken,
-    filesStatsRequest,
-  ) as Promise<FilesStatisticsResponse>
+  return getDownloadListJobResponse(accessToken, filesStatsRequest)
 }
 
 /**
@@ -3910,7 +3897,7 @@ export const getDownloadListActionsRequired = (
   return getDownloadListJobResponse<ActionRequiredResponse>(
     accessToken,
     request,
-  ) as Promise<ActionRequiredResponse>
+  )
 }
 
 /**

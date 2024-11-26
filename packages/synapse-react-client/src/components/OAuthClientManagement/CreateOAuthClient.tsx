@@ -462,9 +462,11 @@ export const CreateOAuthModal: React.FunctionComponent<
         content={warningBody}
         onCancel={hideConfirmModal}
         onConfirm={() => {
-          isDelete
-            ? deleteClient(client?.client_id!)
-            : updateClient(updatedClient!)
+          if (isDelete) {
+            deleteClient(client?.client_id!)
+          } else {
+            updateClient(updatedClient!)
+          }
           hideConfirmModal()
         }}
         confirmButtonColor="error"

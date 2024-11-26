@@ -53,7 +53,7 @@ export type QueryWrapperProps = React.PropsWithChildren<{
  * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
  * either `useQueryContext` or `QueryContextConsumer`.
  */
-function _QueryWrapper(props: QueryWrapperProps) {
+function QueryWrapperInternal(props: QueryWrapperProps) {
   const {
     initQueryRequest,
     onQueryChange,
@@ -220,7 +220,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
   // i.e. other instances of QueryWrapper will not share state with this instance
   return (
     <Provider>
-      <_QueryWrapper {...props} />
+      <QueryWrapperInternal {...props} />
     </Provider>
   )
 }

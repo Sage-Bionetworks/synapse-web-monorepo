@@ -87,6 +87,6 @@ export const testDownloadSpeed = (accessToken: string): Promise<number> => {
           })
         })
       })
-      .catch(err => reject(err))
+      .catch(err => reject(err as Error))
   })
 }

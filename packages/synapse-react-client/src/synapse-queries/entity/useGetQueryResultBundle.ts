@@ -54,7 +54,7 @@ export default function useGetQueryResultBundle(
   })
 }
 
-function _useGetQueryResultBundleWithAsyncStatus<
+function useGetQueryResultBundleWithAsyncStatusInternal<
   TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
 >(
   queryBundleRequest: QueryBundleRequest,
@@ -108,7 +108,7 @@ export function useGetQueryRows<
 
   const enableQuery = rowDataRequest.partMask > 0 ? options?.enabled : false
 
-  return _useGetQueryResultBundleWithAsyncStatus<TData>(
+  return useGetQueryResultBundleWithAsyncStatusInternal<TData>(
     rowDataRequest,
     {
       ...options,
@@ -139,7 +139,7 @@ export function useGetQueryStats<
   const enableQuery =
     queryMetadataRequest.partMask > 0 ? options?.enabled : false
 
-  return _useGetQueryResultBundleWithAsyncStatus<TData>(
+  return useGetQueryResultBundleWithAsyncStatusInternal<TData>(
     queryMetadataRequest,
     {
       ...options,

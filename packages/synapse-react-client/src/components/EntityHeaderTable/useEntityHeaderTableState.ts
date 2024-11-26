@@ -23,7 +23,9 @@ export function useEntityHeaderTableState(
   const setNewEntityIDs = useCallback(
     (newValue: string) => {
       _setNewEntityIDs(newValue)
-      onUpdateEntityIDsTextbox && onUpdateEntityIDsTextbox(newValue)
+      if (onUpdateEntityIDsTextbox) {
+        onUpdateEntityIDsTextbox(newValue)
+      }
     },
     [onUpdateEntityIDsTextbox],
   )
