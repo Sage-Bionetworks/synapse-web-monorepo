@@ -25,6 +25,7 @@ import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
+  AddFileToDownloadListRenderer,
   BadgeIconsRenderer,
   CellRendererProps,
   CreatedOnRenderer,
@@ -34,12 +35,14 @@ import {
   EmptyRenderer,
   EntityIdAndVersionNumber,
   LoadingRenderer,
+  MD5Renderer,
   ModifiedByRenderer,
   ModifiedOnRenderer,
   TypeIconRenderer,
 } from './DetailsViewTableRenderers'
 import { VersionColumnHeader } from './VersionColumnHeader'
 import { Checkbox, Tooltip } from '@mui/material'
+import { SizeRenderer } from '../../../ChallengeDataDownload/Renderers'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -511,7 +514,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               minWidth={75}
               cellRenderer={BadgeIconsRenderer}
             />
-
             <Column<EntityFinderTableViewRowData>
               key="id"
               width={130}
@@ -560,6 +562,38 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               resizable
               cellRenderer={ModifiedByRenderer}
             />
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'SIZE'}
+                title="Size"
+                width={200}
+                minWidth={85}
+                sortable={false}
+                resizable={true}
+                cellRenderer={SizeRenderer}
+              />
+            )}
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'MD5'}
+                title="MD5"
+                width={200}
+                sortable={false}
+                resizable={true}
+                cellRenderer={MD5Renderer}
+              />
+            )}
+            {visibleTypes.includes(EntityType.FILE) && (
+              <Column<EntityFinderTableViewRowData>
+                key={'addToDownloadCart'}
+                title=""
+                width={40}
+                minWidth={40}
+                sortable={false}
+                resizable={true}
+                cellRenderer={AddFileToDownloadListRenderer}
+              />
+            )}
           </BaseTable>
         )}
       </AutoResizer>

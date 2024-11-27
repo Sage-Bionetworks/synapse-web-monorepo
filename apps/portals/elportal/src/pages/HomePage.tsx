@@ -9,9 +9,15 @@ import {
   RssFeedCards,
   SynapseConstants,
   UserCardListRotate,
+  RecentPublicationsGrid,
   ImageCardGridWithLinks,
 } from 'synapse-react-client'
-import { partnersSql, peopleSql, whatWeDoSql } from '../config/resources'
+import {
+  partnersSql,
+  peopleSql,
+  topPublicationsSql,
+  whatWeDoSql,
+} from '../config/resources'
 
 export default function HomePage() {
   return (
@@ -72,6 +78,14 @@ export default function HomePage() {
           filter={{
             value: 'whats-new',
           }}
+        />
+      </SectionLayout>
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <RecentPublicationsGrid
+          sql={topPublicationsSql}
+          buttonLink="Explore/Publications"
+          buttonLinkText="See More Publications"
+          summaryText="Never miss a new finding from the frontiers of aging research."
         />
       </SectionLayout>
       {/*<div className={'home-bg-dark'}>*/}

@@ -6,7 +6,7 @@ export function useColumnDataMarkdownProps(
   columnName: string,
   isRawMarkdown: boolean,
 ): MarkdownSynapseProps[] | null {
-  let { value } = useDetailsPageContext(columnName)
+  const { value } = useDetailsPageContext(columnName)
 
   if (!value) {
     return null

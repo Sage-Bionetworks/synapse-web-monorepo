@@ -27,9 +27,9 @@ export function getIsAllSelectedFromInfiniteList<TItem, TFetchResult>(
   numSelected: number,
   isSelected: (item: TItem) => boolean,
   isSelectable: (item: TItem) => boolean,
-  hasNextPage?: boolean | undefined,
+  hasNextPage?: boolean,
   fetchNextPage?: (
-    options?: FetchNextPageOptions | undefined,
+    options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TFetchResult, SynapseClientError>>,
   isFetchingNextPage?: boolean,
 ): boolean {
@@ -88,9 +88,9 @@ export default function useGetIsAllSelectedFromInfiniteList<
   numSelected: number,
   isSelected: (item: TItem) => boolean,
   isSelectable: (item: TItem) => boolean,
-  hasNextPage?: boolean | undefined,
+  hasNextPage?: boolean,
   fetchNextPage?: (
-    options?: FetchNextPageOptions | undefined,
+    options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TFetchResult, SynapseClientError>>,
   isFetchingNextPage?: boolean,
 ) {

@@ -340,7 +340,7 @@ export function Node(
       }}
       style={{
         ...style,
-        paddingLeft: `${20 + nestingLevel * 20}px`,
+        paddingLeft: `${nestingLevel * 20}px`,
       }}
     >
       {!isLeaf && (

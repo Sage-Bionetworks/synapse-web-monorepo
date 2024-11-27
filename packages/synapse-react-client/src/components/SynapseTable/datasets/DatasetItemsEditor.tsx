@@ -606,7 +606,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onConfirm={() => {
           if (onClose) {
             setShowWarningDialog(false)
-            onUnsavedChangesChange && onUnsavedChangesChange(false)
+            if (onUnsavedChangesChange) {
+              onUnsavedChangesChange(false)
+            }
             onClose()
           }
         }}

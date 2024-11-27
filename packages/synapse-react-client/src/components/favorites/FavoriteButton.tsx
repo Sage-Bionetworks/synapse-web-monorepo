@@ -45,7 +45,11 @@ export default function FavoriteButton(props: FavoriteButtonProps) {
             size={'small'}
             disabled={disableButton}
             onClick={() => {
-              isFavorite ? onRemoveFavorite(entityId) : onAddFavorite(entityId)
+              if (isFavorite) {
+                onRemoveFavorite(entityId)
+              } else {
+                onAddFavorite(entityId)
+              }
             }}
             sx={{ padding: '2px' }}
           >

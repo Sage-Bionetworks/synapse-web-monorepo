@@ -636,7 +636,7 @@ describe('EntityAclEditor', () => {
         )}/acl`,
         async (req, res, ctx) => {
           const status = 400
-          let response: SynapseApiResponse<AccessControlList> = {
+          const response: SynapseApiResponse<AccessControlList> = {
             reason: errorReason,
           }
 

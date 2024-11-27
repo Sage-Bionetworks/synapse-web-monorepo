@@ -140,8 +140,8 @@ describe('useExportToCavatica', () => {
     await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
-      expect(mockToastFn).toHaveBeenCalledWith(errorMessage, 'danger'),
-        expect(window.open).not.toHaveBeenCalled()
+      expect(mockToastFn).toHaveBeenCalledWith(errorMessage, 'danger')
+      expect(window.open).not.toHaveBeenCalled()
     })
   })
 })

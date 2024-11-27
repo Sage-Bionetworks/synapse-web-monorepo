@@ -15,6 +15,7 @@ import StudyDetailsPage, {
 } from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
+import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 
 const routes: RouteObject[] = [
   {
@@ -26,7 +27,14 @@ const routes: RouteObject[] = [
     ),
     children: [
       ...sharedRoutes,
-      { index: true, element: <HomePage /> },
+      {
+        index: true,
+        element: (
+          <HomePageThemeProvider>
+            <HomePage />
+          </HomePageThemeProvider>
+        ),
+      },
       {
         path: 'Browse Tools',
         element: (

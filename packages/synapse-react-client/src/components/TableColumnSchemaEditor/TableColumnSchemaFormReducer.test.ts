@@ -860,7 +860,7 @@ describe('TableColumnSchemaFormReducer', () => {
         isSelected: false,
       },
     ]
-    let newState = reducer(prevState, {
+    const newState = reducer(prevState, {
       type: 'delete',
     })
 

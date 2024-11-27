@@ -32,8 +32,8 @@ export function getEvaluationHandlers(backendOrigin: string) {
      * Get paginated list
      */
     rest.get(`${backendOrigin}${EVALUATION}`, async (req, res, ctx) => {
-      let status = 200
-      let response: SynapseApiResponse<PaginatedResults<Evaluation>> = {
+      const status = 200
+      const response: SynapseApiResponse<PaginatedResults<Evaluation>> = {
         results: mockEvaluations,
         totalNumberOfResults: mockEvaluations.length,
       }

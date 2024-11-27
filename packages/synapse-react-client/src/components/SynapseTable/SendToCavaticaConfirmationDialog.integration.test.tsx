@@ -123,7 +123,7 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
     await waitFor(() => {
       expect(mockUseExportToCavatica).toHaveBeenCalledWith(
         mockQueryBundleRequest,
-        mockQueryResultBundle.queryResult!.queryResults.headers,
+        mockQueryResultBundle.queryResult.queryResults.headers,
         undefined,
         undefined,
         undefined,
@@ -140,7 +140,7 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
     // Select rows
     act(() => {
       setSelectedRows!(
-        mockQueryResultBundle.queryResult!.queryResults.rows.slice(0, 2),
+        mockQueryResultBundle.queryResult.queryResults.rows.slice(0, 2),
       )
     })
 
@@ -158,14 +158,14 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: 'id',
                 operator: ColumnSingleValueFilterOperator.IN,
-                values: mockQueryResultBundle
-                  .queryResult!.queryResults.rows.slice(0, 2)
+                values: mockQueryResultBundle.queryResult.queryResults.rows
+                  .slice(0, 2)
                   .map(row => row.values[0]),
               },
             ],
           },
         }),
-        mockQueryResultBundle.queryResult!.queryResults.headers,
+        mockQueryResultBundle.queryResult.queryResults.headers,
         undefined,
         undefined,
         undefined,

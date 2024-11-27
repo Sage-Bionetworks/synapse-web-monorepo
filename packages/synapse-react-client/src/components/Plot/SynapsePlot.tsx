@@ -123,9 +123,9 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     for (let j = 1; j < row.values.length; j += 1) {
       // create pairs of data
       const rowValues = row.values
-      const xArray = plotData[j - 1]!.x as Plotly.Datum[]
-      const yArray = plotData[j - 1]!.y as Plotly.Datum[]
-      const customdata = plotData[j - 1]!.customdata as Plotly.Datum[]
+      const xArray = plotData[j - 1].x as Plotly.Datum[]
+      const yArray = plotData[j - 1].y as Plotly.Datum[]
+      const customdata = plotData[j - 1].customdata as Plotly.Datum[]
 
       xArray.push(horizontal ? rowValues[j] : rowValues[0])
       yArray.push(horizontal ? rowValues[0] : rowValues[j])

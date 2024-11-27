@@ -1,5 +1,5 @@
 import { JSONSchema7Definition } from 'json-schema'
-import { parse as papaparse } from 'papaparse'
+import { parse as papaparse, ParseError } from 'papaparse'
 import { useCallback, useMemo } from 'react'
 import { isObject } from 'lodash-es'
 
@@ -14,6 +14,14 @@ export type UseParseCsvReturn = {
 
 const DEFAULT_OPTIONS: ParseCsvOptions = {
   jsonSchemaDefinition: { type: 'string' },
+}
+
+export class UseParseCsvError extends Error {
+  public parseErrors: ParseError[]
+  constructor(parseErrors: ParseError[]) {
+    super('Error parsing CSV')
+    this.parseErrors = parseErrors
+  }
 }
 
 export default function useParseCsv(
@@ -36,7 +44,7 @@ export default function useParseCsv(
           dynamicTyping: !itemsAreString,
           complete: result => {
             if (result.errors.length > 0) {
-              reject(result.errors)
+              reject(new UseParseCsvError(result.errors))
             } else {
               resolve(result.data.flat())
             }

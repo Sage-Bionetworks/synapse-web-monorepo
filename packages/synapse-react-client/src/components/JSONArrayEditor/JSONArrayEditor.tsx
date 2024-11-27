@@ -24,7 +24,7 @@ import { SelectWidget } from '../SchemaDrivenAnnotationEditor/widget/SelectWidge
 import { BooleanWidget } from '../SchemaDrivenAnnotationEditor/widget/BooleanWidget'
 import { getTransformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import ErrorListTemplate from '../SchemaDrivenAnnotationEditor/template/ErrorListTemplate'
-import useParseCsv from './useParseCsv'
+import useParseCsv, { UseParseCsvError } from './useParseCsv'
 import { ParseError } from 'papaparse'
 
 const DEFAULT_ARRAY_ITEM_DEFINITION: JSONSchema7Definition = { type: 'string' }
@@ -75,7 +75,11 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
         setPastedValues('')
         setShowPasteNewValuesForm(false)
       } catch (e) {
-        setParseErrors(e as ParseError[])
+        if (e instanceof UseParseCsvError) {
+          setParseErrors(e.parseErrors)
+        } else {
+          throw e
+        }
       }
     }
   }, [onChange, pastedValues, value, parse])
