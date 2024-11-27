@@ -30,8 +30,8 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
   const [mode, setMode] = useState(SearchMode.SEARCH)
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
-      searchJson.queryTerm = searchValue.split(/[ ,]+/)
-      gotoPlace(`/Search:${encodeURIComponent(JSON.stringify(searchJson))}`)
+      const searchQuery = { ...searchJson, queryTerm: searchValue.split(/[ ,]+/) }
+      gotoPlace(`/Search:${encodeURIComponent(JSON.stringify(searchQuery))}`)
     } else {
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }
