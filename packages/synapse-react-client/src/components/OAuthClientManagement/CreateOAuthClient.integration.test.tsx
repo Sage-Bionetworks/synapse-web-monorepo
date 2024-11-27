@@ -144,7 +144,7 @@ describe('Create OAuth Client', () => {
 
     await user.type(inputs.name, mockClient.client_name)
     await user.type(inputs.homePage, mockClient.client_uri!)
-    await user.type(inputs.redirectURI, mockClient.redirect_uris[0]!)
+    await user.type(inputs.redirectURI, mockClient.redirect_uris[0])
     await user.type(inputs.sectorUri, mockClient.sector_identifier_uri)
     await user.click(inputs.userInfoSignedResponseAlg)
     await user.click(screen.getByRole('option', { name: 'JWT' }))

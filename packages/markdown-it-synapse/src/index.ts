@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape,@typescript-eslint/restrict-plus-operands */
+/* eslint-disable no-useless-escape */
 
 // Process ${widgetname?param1=1&param2=2}
 

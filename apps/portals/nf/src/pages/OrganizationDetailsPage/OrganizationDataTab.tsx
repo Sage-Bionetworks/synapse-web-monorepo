@@ -39,7 +39,7 @@ export default function OrganizationDataTab() {
               searchParams={{ fundingAgency }}
               lockedColumn={{
                 columnName: 'fundingAgency',
-                value: fundingAgency!,
+                value: fundingAgency,
               }}
               hideQueryCount
             />

@@ -42,7 +42,7 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   const enumOptions: EnumOption[] = sortableColumns.map(sortableColumn => {
     return {
       value: sortableColumn,
-      label: getColumnDisplayName(sortableColumn)!,
+      label: getColumnDisplayName(sortableColumn),
     }
   })
 

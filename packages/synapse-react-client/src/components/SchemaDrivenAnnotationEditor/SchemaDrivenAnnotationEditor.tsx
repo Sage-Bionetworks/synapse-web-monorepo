@@ -376,7 +376,9 @@ export function SchemaDrivenAnnotationEditor(
                   <ConfirmationButtons
                     hasCancelButton={onCancel !== undefined}
                     onCancel={() => {
-                      onCancel && onCancel()
+                      if (onCancel) {
+                        onCancel()
+                      }
                     }}
                     onConfirm={() => {
                       ref.current!.formElement.current.requestSubmit()

@@ -76,14 +76,14 @@ class _SynapseFormWrapper extends React.Component<
     }
   }
 
-  async componentDidMount() {
-    await this.getData(this.props.token)
+  componentDidMount() {
+    this.getData(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: SynapseFormWrapperProps) {
+  componentDidUpdate(prevProps: SynapseFormWrapperProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
-      await this.getData(this.props.token)
+      this.getData(this.props.token)
     }
   }
 
@@ -234,7 +234,7 @@ class _SynapseFormWrapper extends React.Component<
     const formGroupId = searchParams && searchParams.formGroupId
     if (!formGroupId) {
       console.error('formGroupId must be defined')
-      throw 'formGroupId must be defined'
+      throw new Error('formGroupId must be defined')
     }
     try {
       // do we need to create a new file entity, or update an existing file entity?

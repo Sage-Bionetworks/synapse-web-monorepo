@@ -21,7 +21,7 @@ const getIconTypeForEntity = (type: EntityType): IconName | '' => {
     case EntityType.DATASET_COLLECTION:
     case EntityType.MATERIALIZED_VIEW:
     case EntityType.VIRTUAL_TABLE:
-      return type2SvgIconName[type]!
+      return type2SvgIconName[type]
     default:
       return ''
   }

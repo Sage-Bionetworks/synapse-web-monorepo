@@ -33,7 +33,7 @@ const getAllIndividualIDs = async (event: CustomControlCallbackData) => {
     token,
   )
   return queryResultBundle.queryResult?.queryResults.rows.map(
-    row => row.values[0!]!,
+    row => row.values[0]!,
   )!
 }
 

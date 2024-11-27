@@ -188,7 +188,7 @@ export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
       setPendingInteraction({ userMessage: initialMessage })
       sendChatMessageToAgent({
         chatText: initialMessage,
-        sessionId: agentSession!.sessionId,
+        sessionId: agentSession.sessionId,
         enableTrace: true,
       })
       setInitialMessageProcessed(true)

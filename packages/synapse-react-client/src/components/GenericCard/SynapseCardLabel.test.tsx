@@ -96,7 +96,7 @@ describe('SynapseCardLabel tests', () => {
       />,
       { wrapper: createWrapper() },
     )
-    const links = container.querySelectorAll('a')!
+    const links = container.querySelectorAll('a')
     expect(links).toHaveLength(3)
     expect(links[0].getAttribute('href')).toEqual(
       `/${datasetBaseURL}?${DATASETS}=${val1}`,

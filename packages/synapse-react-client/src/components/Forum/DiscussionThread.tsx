@@ -212,9 +212,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           type="text"
           placeholder={INPUT_PLACEHOLDER}
           onClick={() => {
-            currentUserProfile?.userName == 'anonymous'
-              ? setShowSignInModal(true)
-              : setShowReplyEditor1(true)
+            if (currentUserProfile?.userName == 'anonymous') {
+              setShowSignInModal(true)
+            } else {
+              setShowReplyEditor1(true)
+            }
           }}
         />
       ) : (
@@ -237,9 +239,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               type="text"
               placeholder={INPUT_PLACEHOLDER}
               onClick={() => {
-                currentUserProfile?.userName == 'anonymous'
-                  ? setShowSignInModal(true)
-                  : setShowReplyEditor2(true)
+                if (currentUserProfile?.userName == 'anonymous') {
+                  setShowSignInModal(true)
+                } else {
+                  setShowReplyEditor2(true)
+                }
               }}
             />
           ) : (

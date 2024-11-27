@@ -697,7 +697,7 @@ describe('getCorrespondingSelectedFacet', () => {
 
       // One facet should be removed
       expect(result!.facets!.length).toEqual(
-        mockQueryResponseData.facets!.length - 1,
+        mockQueryResponseData.facets.length - 1,
       )
       // The removed facet should match the locked facet name
       expect(
@@ -714,7 +714,7 @@ describe('getCorrespondingSelectedFacet', () => {
         noLockedColumn,
       )
       expect(result!.facets!.length).toEqual(
-        mockQueryResponseData.facets!.length,
+        mockQueryResponseData.facets.length,
       )
 
       expect(

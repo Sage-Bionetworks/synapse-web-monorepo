@@ -21,7 +21,7 @@ type Props = {
   target?: string
 }
 export default function NavLink(props: Props) {
-  const link = props.to as string
+  const link = props.to
   let defaultTarget = '_self' // default to open in the same window
   let isExternal = false
   if (link.startsWith('http')) {

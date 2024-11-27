@@ -10,7 +10,7 @@ export type AccessRequirementSearchBoxProps = {
   /* id for the input tag */
   inputId?: string
   initialId?: string | number
-  onChange: (accessRequirementId?: string | undefined) => void
+  onChange: (accessRequirementId?: string) => void
   placeholder?: string
 }
 
