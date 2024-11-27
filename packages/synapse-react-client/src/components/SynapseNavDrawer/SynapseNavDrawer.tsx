@@ -53,16 +53,18 @@ export enum NavItem {
   HELP,
 }
 
+export const getSearchToken = (queryTerm: string[]) => {
+  const searchQuery = {
+    ...searchJson,
+    queryTerm,
+  }
+  return encodeURIComponent(JSON.stringify(searchQuery))
+}
+
 // To support project search, we send this json object in the url.
 // We update the queryTerm array based on user input.
-const projectSearchJson = {
+const searchJson = {
   queryTerm: [] as string[],
-  booleanQuery: [
-    {
-      key: 'node_type',
-      value: 'project',
-    },
-  ],
   facetOptions: [
     {
       name: 'EntityType',
@@ -102,6 +104,22 @@ const projectSearchJson = {
   ],
   start: 0,
   size: 30,
+}
+const projectSearchJson = {
+  ...searchJson,
+  booleanQuery: [
+    {
+      key: 'node_type',
+      value: 'project',
+    },
+  ],
+}
+const getProjectSearchToken = (queryTerm: string[]) => {
+  const searchQuery = {
+    ...projectSearchJson,
+    queryTerm,
+  }
+  return encodeURIComponent(JSON.stringify(searchQuery))
 }
 
 const NavDrawerListItem = (props: MenuItemParams) => {
@@ -229,8 +247,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
   }
 
   const onProjectSearch = (searchTerm: string) => {
-    projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/)
-    gotoPlace(`/Search:${encodeURI(JSON.stringify(projectSearchJson))}`)
+    gotoPlace(`/Search:${getProjectSearchToken(searchTerm.split(/[ ,]+/))}`)
   }
 
   const oneSageURL = useOneSageURL()
