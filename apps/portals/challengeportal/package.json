@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/material": "^5.15.13",
+    "@mui/material": "^6.1.9",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.10",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
