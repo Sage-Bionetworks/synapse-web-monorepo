@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, CardMedia, Grid, Link, Typography } from '@mui/material'
+import { Box, CardMedia, Grid, Link, Typography, Skeleton } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { SynapseConstants, useSynapseContext } from '../../utils'
 import {
@@ -13,13 +13,17 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { getFiles } from '../../synapse-client/SynapseClient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
 export type ImageCardGridWithLinksProps = {
   sql: string
   title: string
   summaryText: string
+}
+
+type ImageCardProps = {
+  card: Row
+  index: number
 }
 
 enum ExpectedColumns {
@@ -92,65 +96,65 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   }, [entityId, accessToken, queryResultBundle])
 
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
-
-  console.log('querybundle', queryBundleRequest)
-  console.log('sql', sql)
-  console.log('qresult', queryResultBundle)
-  console.log('drows', dataRows)
-  console.log('images', images)
-
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
-
   const linkTextColumnIndex = getFieldIndex(
     ExpectedColumns.LINKTEXT,
     queryResultBundle,
   )
 
-  type ImageCardProps = {
-    card: Row
-    index: number
-  }
-
   const ImageCard = ({ card, index }: ImageCardProps) => (
-    <Grid item xs={12} sm={6} md={4} key={card.rowId} sx={{ height: '245px' }}>
-      <Link
-        component={RouterLink}
-        to={card.values[linkColumnIndex] || ''}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          position: 'absolute',
-          backgroundColor: '#FFFF',
-          borderRadius: '6px 0px 6px 0px',
-          color: 'grey.1000',
-          textDecoration: 'none',
-          '&:hover': {
-            textDecoration: 'none',
-            color: 'grey.1000',
-          },
-          zIndex: 2,
-          padding: '6px 10px 6px 10px',
-        }}
-      >
-        {card.values[linkTextColumnIndex]}
-        <ArrowForwardIosIcon
-          style={{
-            width: 16,
-            height: 16,
-          }}
-        />
-      </Link>
-      <CardMedia
-        component="img"
-        image={images?.[index]}
-        style={{
-          height: '100%',
-          width: '100%',
-          borderRadius: '6px',
-          objectFit: 'cover',
-        }}
-      />
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={4}
+      key={card.rowId}
+      sx={{ height: '245px', paddingTop: '24px', paddingLeft: '24px' }}
+    >
+      {isLoading ? (
+        <Skeleton variant="rectangular" height={221} width="100%" />
+      ) : (
+        <>
+          <Link
+            component={RouterLink}
+            to={card.values[linkColumnIndex] || ''}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              position: 'absolute',
+              backgroundColor: '#FFFF',
+              borderRadius: '5px 0 6px 0',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'none',
+              },
+              padding: '6px 10px',
+            }}
+          >
+            <Box sx={{ color: 'grey.1000' }}>
+              {card.values[linkTextColumnIndex]}
+            </Box>
+            <ArrowForwardIosIcon
+              style={{
+                color: 'unset',
+                width: 16,
+                height: 16,
+              }}
+            />
+          </Link>
+          <CardMedia
+            component="img"
+            image={images?.[index]}
+            style={{
+              height: '100%',
+              width: '100%',
+              borderRadius: '6px',
+              objectFit: 'cover',
+            }}
+          />
+        </>
+      )}
     </Grid>
   )
 
@@ -194,22 +198,11 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
           order: { xs: 1, md: 0 },
         }}
       >
-        {isLoading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              width: '100%',
-            }}
-          >
-            <SynapseSpinner size={40} />
-          </Box>
-        ) : (
-          <Grid container spacing={2.5} sx={{ margin: 0 }}>
-            {dataRows.map((card, index) => (
-              <ImageCard card={card} key={card.rowId} index={index} />
-            ))}
-          </Grid>
-        )}
+        <Grid container spacing={2.5} sx={{ margin: 0 }}>
+          {dataRows.map((card, index) => (
+            <ImageCard card={card} key={card.rowId} index={index} />
+          ))}
+        </Grid>
       </Grid>
     </Box>
   )
