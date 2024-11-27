@@ -5,7 +5,7 @@ import BaseTable, {
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import dayjs from 'dayjs'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
