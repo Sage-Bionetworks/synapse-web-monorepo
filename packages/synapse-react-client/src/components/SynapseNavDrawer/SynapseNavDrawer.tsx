@@ -230,7 +230,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   const onProjectSearch = (searchTerm: string) => {
     projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/)
-    gotoPlace(`/Search:${encodeURI(JSON.stringify(projectSearchJson))}`)
+    gotoPlace(
+      `/Search:${encodeURIComponent(JSON.stringify(projectSearchJson))}`,
+    )
   }
 
   const oneSageURL = useOneSageURL()
