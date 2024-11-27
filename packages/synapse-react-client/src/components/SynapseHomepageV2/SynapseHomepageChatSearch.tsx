@@ -6,7 +6,7 @@ import { Box } from '@mui/material'
 import { Select } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { searchJson } from '../SynapseNavDrawer/SynapseNavDrawer'
+import { getSearchToken } from '../SynapseNavDrawer/SynapseNavDrawer'
 
 export type SynapseHomepageChatSearchProps = {
   gotoPlace: (href: string) => void
@@ -30,8 +30,7 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
   const [mode, setMode] = useState(SearchMode.SEARCH)
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
-      const searchQuery = { ...searchJson, queryTerm: searchValue.split(/[ ,]+/) }
-      gotoPlace(`/Search:${encodeURIComponent(JSON.stringify(searchQuery))}`)
+      gotoPlace(`/Search:${getSearchToken(searchValue.split(/[ ,]+/))}`)
     } else {
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }
