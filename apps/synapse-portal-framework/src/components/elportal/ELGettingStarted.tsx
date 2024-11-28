@@ -8,12 +8,13 @@ const ELGettingStarted: React.FC = () => {
     <Box
       sx={{
         backgroundColor: '#5BA998',
-        height: '250px',
         display: 'grid',
         gridTemplateColumns: '25% 25% 25% 25%',
-        alignItems: 'center',
         position: 'relative',
-        overflow: 'hidden',
+        pt: 6,
+        pb: 5,
+        pl: 3,
+        pr: 3,
       }}
     >
       <Box
@@ -21,9 +22,6 @@ const ELGettingStarted: React.FC = () => {
           flex: '1 1 auto',
           width: '100%',
           height: '100%',
-          textAlign: 'center',
-          paddingTop: '50px',
-          paddingBottom: '100px',
         }}
       >
         <Typography
@@ -31,8 +29,7 @@ const ELGettingStarted: React.FC = () => {
           style={{ color: 'white' }}
           sx={{
             pt: 2,
-            pb: 1,
-            mx: 'auto',
+            pb: 2,
             width: 'max-content',
             borderTop: '3px solid #ffffff88',
           }}
@@ -45,8 +42,7 @@ const ELGettingStarted: React.FC = () => {
           sx={{
             mb: 1,
             pb: 1,
-            mx: 'auto',
-            width: 'max-content',
+            maxWidth: '100%',
           }}
         >
           We provide all the help you need for navigating the portal and
