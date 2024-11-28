@@ -132,9 +132,13 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
               padding: '6px 10px',
             }}
           >
-            <Box sx={{ color: 'grey.1000' }}>
+            <Typography
+              color="grey.1000"
+              variant="headline2"
+              sx={{ fontSize: '16px' }}
+            >
               {card.values[linkTextColumnIndex]}
-            </Box>
+            </Typography>
             <ArrowForwardIosIcon
               style={{
                 color: 'unset',
@@ -180,12 +184,13 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
           gap="16px"
           sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
         >
-          <Typography variant="headline2" paddingTop="26px">
+          <Typography color="grey.1000" variant="headline2" paddingTop="26px">
             {title}
           </Typography>
           <Typography
             variant="body1"
-            sx={{ fontStyle: 'italic', color: '#4A5056' }}
+            color="grey.800"
+            sx={{ fontStyle: 'italic' }}
           >
             {summaryText}
           </Typography>
