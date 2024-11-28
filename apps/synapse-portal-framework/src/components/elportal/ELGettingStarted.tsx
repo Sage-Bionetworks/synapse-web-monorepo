@@ -7,13 +7,14 @@ const ELGettingStarted: React.FC = () => {
   return (
     <Box
       sx={{
-        backgroundColor: '#5BA998',
+        backgroundColor: '#39AC97',
         display: 'grid',
         gridTemplateColumns: '25% 25% 25% 25%',
         position: 'relative',
-        pt: 6,
-        pb: 5,
-        pl: 3,
+        // TODO: Add padding for both desktop and mobile
+        pt: '80px',
+        pb: '80px',
+        pl: '50px',
         pr: 3,
       }}
     >
@@ -52,7 +53,7 @@ const ELGettingStarted: React.FC = () => {
           variant="contained"
           // TODO: href="<LINK TO HELP SECTION>"
           sx={{
-            backgroundColor: '#5BA998',
+            backgroundColor: '#39AC97',
             border: '1px solid white',
             boxShadow: 'none',
             '&:hover': {
