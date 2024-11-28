@@ -1,7 +1,7 @@
 import { Box, Link, Button, Typography, darken } from '@mui/material'
 import React from 'react'
 // TODO import assets
-import exploreIcon from './assets/explore_icon.svg'
+import exploreIcon from './assets/explore_icon.png'
 
 const ELGettingStarted: React.FC = () => {
   return (
@@ -63,6 +63,50 @@ const ELGettingStarted: React.FC = () => {
         >
           Visit Our Help Section
         </Button>
+      </Box>
+      <Box
+        sx={{
+          flex: '1 1 auto',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <Box
+          sx={{
+            flex: '0 0 auto',
+            width: '50%',
+            height: '50%',
+            backgroundImage: `url(${exploreIcon})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'contain',
+          }}
+        ></Box>
+        <Typography
+          variant="headline3"
+          style={{ color: 'white', fontStyle: 'italic' }}
+          sx={{
+            mb: 1,
+            pt: 1,
+            pb: 1,
+            maxWidth: '100%',
+          }}
+        >
+          Explore
+        </Typography>
+        <Typography
+          variant="body1"
+          // TODO Text is running off of component
+          style={{ color: 'white', fontStyle: 'italic' }}
+          sx={{
+            mb: 1,
+            pb: 1,
+            maxWidth: '100%',
+          }}
+        >
+          Get the latest data, publications, and news from the Exceptional
+          Longevity research community.
+        </Typography>
       </Box>
     </Box>
   )
