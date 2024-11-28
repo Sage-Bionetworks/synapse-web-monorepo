@@ -122,7 +122,7 @@ describe('RecentPublicationsGrid Tests', () => {
     const router = createMemoryRouter([
       {
         path: '/',
-        element: <RecentPublicationsGrid {...mockProps} />,
+        element: <RecentPublicationsGrid {...props} />,
       },
     ])
     return render(<RouterProvider router={router} />, {
