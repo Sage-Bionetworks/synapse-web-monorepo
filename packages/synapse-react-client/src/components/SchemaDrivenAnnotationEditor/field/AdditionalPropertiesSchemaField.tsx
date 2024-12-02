@@ -43,7 +43,7 @@ export function guessPropertyType(list: Array<unknown>): PropertyType {
     return 'Boolean'
   } else if (
     list.every(item => typeof item === 'string') &&
-    (list as string[]).every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
+    list.every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
   ) {
     return 'Datetime'
   }

@@ -31,7 +31,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const mockTableBundle: TableBundle = {
-  columnModels: mockQueryResultBundle.columnModels!,
+  columnModels: mockQueryResultBundle.columnModels,
   maxRowsPerPage: 25,
 }
 

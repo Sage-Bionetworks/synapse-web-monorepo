@@ -161,7 +161,7 @@ export const getAccessRequirementStatusHandlers = (
           accessRequirement =>
             req.params.id === accessRequirement.id.toString(),
         )
-        let override = accessRequirementStatuses.get(req.params.id as string)
+        const override = accessRequirementStatuses.get(req.params.id as string)
         if (override) {
           response = override
         }

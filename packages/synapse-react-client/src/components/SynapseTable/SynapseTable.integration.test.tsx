@@ -194,7 +194,7 @@ describe('SynapseTable tests', () => {
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
         async (req, res, ctx) => {
           const responseBody: FileEntity = {
-            id: `${req.params.id!}`,
+            id: `${req.params.id}`,
             name: `Mock Entity with Id ${req.params.id}`,
             versionNumber: parseInt(req.params.version as string),
             versionLabel: `v${req.params.version}`,

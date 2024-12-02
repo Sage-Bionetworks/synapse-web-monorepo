@@ -97,7 +97,7 @@ export function useInviteUserToTeam(
   >({
     ...options,
     mutationFn: invitation =>
-      SynapseClient.createMembershipInvitation(invitation, accessToken!),
+      SynapseClient.createMembershipInvitation(invitation, accessToken),
   })
 }
 
@@ -172,7 +172,7 @@ export function useRequestToJoinTeam(
   >({
     ...options,
     mutationFn: request =>
-      SynapseClient.createMembershipRequest(request, accessToken!),
+      SynapseClient.createMembershipRequest(request, accessToken),
     onSuccess: async (data, variables, ctx) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMembershipStatusQueryKey(

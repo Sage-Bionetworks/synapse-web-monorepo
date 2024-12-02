@@ -3,7 +3,7 @@ import { cohortBuilderFilesSql } from '../resources'
 
 export const handleUpsetPlotClick = (selection: any) => {
   //  We should use generateEncodedQueryForSelectedFacetURL, but this single facet may have multiple values (union from UpsetPlot)
-  const sets = (selection as any).sets
+  const sets = selection.sets
   const facetColumnRequest: FacetColumnRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',

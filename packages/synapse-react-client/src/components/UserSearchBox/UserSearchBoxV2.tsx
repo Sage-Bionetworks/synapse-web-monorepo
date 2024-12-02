@@ -118,8 +118,8 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
 
   const selectRef = React.useRef<any>(null)
   React.useEffect(() => {
-    if (focusOnSelect) {
-      selectRef.current && selectRef.current.focus()
+    if (focusOnSelect && selectRef.current) {
+      selectRef.current.focus()
     }
   })
 

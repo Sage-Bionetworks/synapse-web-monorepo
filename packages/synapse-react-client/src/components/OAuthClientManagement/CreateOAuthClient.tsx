@@ -124,7 +124,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
         synapseClient.openIDConnectServicesClient
           .putAuthV1Oauth2ClientIdVerificationPrecheck({
-            id: oAuthClient.client_id!,
+            id: oAuthClient.client_id,
             oAuthClient: oAuthClient,
           })
           .then(precheckResult => {
@@ -462,9 +462,11 @@ export const CreateOAuthModal: React.FunctionComponent<
         content={warningBody}
         onCancel={hideConfirmModal}
         onConfirm={() => {
-          isDelete
-            ? deleteClient(client?.client_id!)
-            : updateClient(updatedClient!)
+          if (isDelete) {
+            deleteClient(client?.client_id!)
+          } else {
+            updateClient(updatedClient!)
+          }
           hideConfirmModal()
         }}
         confirmButtonColor="error"

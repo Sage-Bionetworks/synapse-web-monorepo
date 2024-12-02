@@ -270,8 +270,9 @@ describe('QueryWrapper', () => {
         {},
         'Page Title',
         '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
-          encodeURIComponent(JSON.stringify(lqr.query)),
-      ) + '&anotherPram=somethingElse'
+          encodeURIComponent(JSON.stringify(lqr.query)) +
+          '&anotherPram=somethingElse',
+      )
       renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => expect(providedContext).toBeDefined())
 

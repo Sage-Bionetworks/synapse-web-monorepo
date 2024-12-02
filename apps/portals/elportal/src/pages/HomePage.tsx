@@ -9,9 +9,10 @@ import {
   RssFeedCards,
   SynapseConstants,
   UserCardListRotate,
+  RecentPublicationsGrid,
 } from 'synapse-react-client'
-import { partnersSql, peopleSql } from '../config/resources'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
+import { partnersSql, peopleSql, topPublicationsSql } from '../config/resources'
 
 export default function HomePage() {
   return (
@@ -65,6 +66,14 @@ export default function HomePage() {
           filter={{
             value: 'whats-new',
           }}
+        />
+      </SectionLayout>
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <RecentPublicationsGrid
+          sql={topPublicationsSql}
+          buttonLink="Explore/Publications"
+          buttonLinkText="See More Publications"
+          summaryText="Never miss a new finding from the frontiers of aging research."
         />
       </SectionLayout>
       {/*<div className={'home-bg-dark'}>*/}

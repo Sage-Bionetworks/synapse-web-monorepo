@@ -274,7 +274,9 @@ const expectFacetCharts = async (page: Page) => {
         const availableFacetNames: string[] = []
         for (let i = 0; i < nAvailableFacets; i++) {
           const buttonText = await availableFacetButtons.nth(i).textContent()
-          buttonText && availableFacetNames.push(buttonText)
+          if (buttonText) {
+            availableFacetNames.push(buttonText)
+          }
         }
         return availableFacetNames
       })

@@ -79,7 +79,7 @@ function Card(props: { propsToPass: any; type: string }) {
   }
 }
 
-function _CardContainer(props: CardContainerProps) {
+function CardContainerInternal(props: CardContainerProps) {
   const {
     isHeader = false,
     unitDescription,
@@ -200,7 +200,7 @@ export function CardContainer(props: CardContainerProps) {
   )
   return (
     <Suspense fallback={fallback}>
-      <_CardContainer {...props} />
+      <CardContainerInternal {...props} />
     </Suspense>
   )
 }

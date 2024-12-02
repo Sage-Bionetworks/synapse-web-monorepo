@@ -83,14 +83,14 @@ export const MetadataTable = ({
         <tr className="MetadataTable__Row">
           <td className="MetadataTable__Row__Key"> Last Modified By</td>
           <td className="MetadataTable__Row__Value">
-            <UserBadge userId={entityBundle.entity?.modifiedBy!} /> at{' '}
+            <UserBadge userId={entityBundle.entity?.modifiedBy} /> at{' '}
             {formatDate(dayjs(entityBundle.entity?.modifiedOn))}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
           <td className="MetadataTable__Row__Key">Created By</td>
           <td className="MetadataTable__Row__Value">
-            <UserBadge userId={entityBundle.entity?.createdBy!} /> at{' '}
+            <UserBadge userId={entityBundle.entity?.createdBy} /> at{' '}
             {formatDate(dayjs(entityBundle.entity?.createdOn))}
           </td>
         </tr>
