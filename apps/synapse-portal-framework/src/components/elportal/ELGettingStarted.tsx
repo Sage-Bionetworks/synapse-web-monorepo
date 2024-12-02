@@ -2,6 +2,8 @@ import { Box, Link, Button, Typography, darken } from '@mui/material'
 import React from 'react'
 // TODO import assets
 import exploreIcon from './assets/explore_icon.png'
+import uncoverIcon from './assets/uncover_icon.png'
+import accessIcon from './assets/access_icon.png'
 
 const ELGettingStarted: React.FC = () => {
   return (
@@ -65,16 +67,31 @@ const ELGettingStarted: React.FC = () => {
           Visit Our Help Section
         </Button>
       </Box>
-      <IconSquare />
-      <IconSquare />
-      <IconSquare />
+      <IconSquare
+        iconUrl={exploreIcon}
+        headline="Explore"
+        description="Get the latest data, publications, and news from the Exceptional
+         Longevity Research community"
+      />
+      <IconSquare
+        iconUrl={accessIcon}
+        headline="Access"
+        description="Download data, review metadata, and obtain method summaries for
+          the latest groundbreaking studies."
+      />
+      <IconSquare
+        iconUrl={uncoverIcon}
+        headline="Uncover"
+        description="Analyze and transform the data using translational research tools
+          and AI/ML models. Make a longevity breakthrough. Then repeat."
+      />
     </Box>
   )
 }
 
 export default ELGettingStarted
 
-export function IconSquare() {
+export function IconSquare({ iconUrl, headline, description }) {
   return (
     <Box
       sx={{
@@ -89,7 +106,7 @@ export function IconSquare() {
           flex: '0 0 auto',
           width: '50%',
           height: '50%',
-          backgroundImage: `url(${exploreIcon})`,
+          backgroundImage: `url(${iconUrl})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'contain',
         }}
@@ -104,7 +121,7 @@ export function IconSquare() {
           maxWidth: '100%',
         }}
       >
-        Explore
+        {headline}
       </Typography>
       <Typography
         variant="body1"
@@ -116,8 +133,7 @@ export function IconSquare() {
           maxWidth: '100%',
         }}
       >
-        Get the latest data, publications, and news from the Exceptional
-        Longevity research community.
+        {description}
       </Typography>
     </Box>
   )
