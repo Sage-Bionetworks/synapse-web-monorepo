@@ -34,16 +34,17 @@ const ChallengeDetailPageWrapper = () => {
         enabled: !!projectId,
       },
     )
-  const { data: teamMembers, isLoading: isTeamMembersLoading } =
-    SynapseQueries.useGetTeamMembers(challenge?.participantTeamId ?? '', {
+
+  const { data: teamMemberCount, isLoading: isTeamMemberCountLoading } =
+    SynapseQueries.useGetTeamMemberCount(challenge?.participantTeamId ?? '', {
       enabled: !!challenge,
     })
-  if (isEntityBundleLoading || isChallengeLoading || isTeamMembersLoading) {
+  if (isEntityBundleLoading || isChallengeLoading || isTeamMemberCountLoading) {
     return <Skeleton height="60px" width="400px" />
   }
   const isChallengeActive =
     entityBundle?.annotations.annotations['Status']?.value[0] == 'Active'
-  const memberCount = teamMembers?.totalNumberOfResults
+  const memberCount = teamMemberCount?.count
   if (projectId !== undefined) {
     return (
       // mimic card container layout to align with card fields

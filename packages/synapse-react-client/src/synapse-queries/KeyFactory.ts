@@ -729,6 +729,9 @@ export class KeyFactory {
   public getTeamMembersQueryKey(teamId: string) {
     return this.getKey('team', teamId, 'membersList')
   }
+  public getTeamMemberCountQueryKey(teamId: string) {
+    return this.getKey('team', teamId, 'memberCount')
+  }
 
   public getIsUserMemberOfTeamQueryKey(teamId: string, userId: string) {
     return this.getKey('team', teamId, 'member', userId)
