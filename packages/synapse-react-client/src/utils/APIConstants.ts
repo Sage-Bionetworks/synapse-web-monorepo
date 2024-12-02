@@ -156,6 +156,8 @@ export const TEAM_ID_MEMBER_ID = (
 ) => TEAM(teamId) + `/member/${memberId}`
 export const TEAM_MEMBERS = (teamId: string | number) =>
   `${REPO}/teamMembers/${teamId}`
+export const TEAM_MEMBER_COUNT = (teamId: string | number) =>
+  `${REPO}/teamMembers/count/${teamId}`
 
 const notificationUnsubscribeEndpoint = 'https://www.synapse.org/SignedToken:'
 const teamEndpoint = 'https://www.synapse.org/Team:'

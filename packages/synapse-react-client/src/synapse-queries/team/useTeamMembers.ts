@@ -16,6 +16,7 @@ import {
   TeamMember,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
+import { Count } from '@sage-bionetworks/synapse-client'
 
 export function useGetTeamMembers(
   teamId: string | number,
@@ -28,6 +29,18 @@ export function useGetTeamMembers(
     ...options,
     queryKey: keyFactory.getTeamMembersQueryKey(String(teamId)),
     queryFn: () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
+  })
+}
+
+export function useGetTeamMemberCount(
+  teamId: string | number,
+  options?: Partial<UseQueryOptions<Count, SynapseClientError>>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getTeamMemberCountQueryKey(String(teamId)),
+    queryFn: () => SynapseClient.getTeamMemberCount(accessToken, teamId),
   })
 }
 
