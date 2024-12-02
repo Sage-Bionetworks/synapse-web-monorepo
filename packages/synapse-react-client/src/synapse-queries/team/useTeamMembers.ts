@@ -33,14 +33,17 @@ export function useGetTeamMembers(
 }
 
 export function useGetTeamMemberCount(
-  teamId: string | number,
+  teamId: string,
   options?: Partial<UseQueryOptions<Count, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { keyFactory, synapseClient } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: keyFactory.getTeamMemberCountQueryKey(String(teamId)),
-    queryFn: () => SynapseClient.getTeamMemberCount(accessToken, teamId),
+    queryFn: () =>
+      synapseClient.teamServicesClient.getRepoV1TeamMembersCountId({
+        id: teamId,
+      }),
   })
 }
 

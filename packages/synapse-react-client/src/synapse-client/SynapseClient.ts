@@ -101,7 +101,6 @@ import {
   TERMS_OF_USE_INFO,
   TERMS_OF_USE_STATUS,
   PROJECT_STORAGE_USAGE,
-  TEAM_MEMBER_COUNT,
 } from '../utils/APIConstants'
 import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
 import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
@@ -351,7 +350,6 @@ import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
 import xss from 'xss'
 import { xssOptions } from '../utils/functions/SanitizeHtmlUtils'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { Count } from '@sage-bionetworks/synapse-client'
 
 const cookies = new UniversalCookies()
 
@@ -1571,14 +1569,6 @@ export const getTeamMembers = (
   const url = `${TEAM_MEMBERS(teamId)}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
-  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
-}
-
-export const getTeamMemberCount = (
-  accessToken: string | undefined,
-  teamId: string | number,
-): Promise<Count> => {
-  const url = TEAM_MEMBER_COUNT(teamId)
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
