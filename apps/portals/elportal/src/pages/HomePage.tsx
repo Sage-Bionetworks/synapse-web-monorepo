@@ -10,6 +10,7 @@ import {
   SynapseConstants,
   UserCardListRotate,
   RecentPublicationsGrid,
+  PortalFeatureHighlights,
 } from 'synapse-react-client'
 import { partnersSql, peopleSql, topPublicationsSql } from '../config/resources'
 
@@ -74,6 +75,12 @@ export default function HomePage() {
           buttonLinkText="See More Publications"
           summaryText="Never miss a new finding from the frontiers of aging research."
         />
+      </SectionLayout>
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <PortalFeatureHighlights />
+      </SectionLayout>
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <PortalFeatureHighlights reverseOrder={true} />
       </SectionLayout>
       {/*<div className={'home-bg-dark'}>*/}
       {/*  <SectionLayout ContainerProps={{ className: 'home-spacer' }}>*/}
