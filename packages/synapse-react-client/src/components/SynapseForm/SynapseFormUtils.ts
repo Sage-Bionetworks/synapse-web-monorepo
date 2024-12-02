@@ -30,9 +30,9 @@ export async function getFileEntityData(
       content: content,
     }
   } catch (error) {
-    const newError = {
-      message: `${error.message}:  configuration data for ${entityId} failed to load`,
-    }
+    const newError = new Error(
+      `${error.message}:  configuration data for ${entityId} failed to load`,
+    )
     if (onError) {
       onError(newError)
     }

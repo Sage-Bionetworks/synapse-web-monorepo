@@ -5,7 +5,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 
 const mockOnClick = jest.fn()
 
-let props: FacetChipProps = {
+const props: FacetChipProps = {
   children: 'Make',
   isChecked: true,
   onClick: mockOnClick,

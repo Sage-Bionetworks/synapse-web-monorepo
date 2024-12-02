@@ -32,6 +32,9 @@ import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../src/mocks/msw/server'
 import { MOCK_USER_ID } from '../../../../src/mocks/user/mock_user_profile'
 import * as EntityBadgeModule from '../../../../src/components/EntityBadgeIcons/EntityBadgeIcons'
+import { getEntityBundleHandler } from '../../../../src/mocks/msw/handlers/entityHandlers'
+import { mockFileHandle } from '../../../../src/mocks/mock_file_handle'
+import { calculateFriendlyFileSize } from '../../../../src/utils/functions/calculateFriendlyFileSize'
 
 const mockEntityBadgeIcons = jest
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
@@ -143,7 +146,6 @@ describe('DetailsView tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-
     server.use(
       rest.get(
         `${getEndpoint(
@@ -270,7 +272,7 @@ describe('DetailsView tests', () => {
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      expect((await screen.findAllByRole('columnheader')).length).toBe(9)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(12)
     })
     it('hides the selected column', async () => {
       renderComponent({
@@ -278,7 +280,7 @@ describe('DetailsView tests', () => {
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      expect((await screen.findAllByRole('columnheader')).length).toBe(8)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(11)
     })
     it('hides the version column', async () => {
       renderComponent({
@@ -286,7 +288,7 @@ describe('DetailsView tests', () => {
         versionSelection: VersionSelectionType.DISALLOWED,
       })
 
-      expect((await screen.findAllByRole('columnheader')).length).toBe(8)
+      expect((await screen.findAllByRole('columnheader')).length).toBe(11)
     })
   })
 
@@ -822,6 +824,32 @@ describe('DetailsView tests', () => {
           ),
         )
       })
+    })
+  })
+  describe('File columns', () => {
+    it('File row contains MD5, file size, and add to download cart', async () => {
+      mockAllIsIntersecting(true)
+      renderComponent({
+        visibleTypes: [EntityType.FILE],
+        selectableTypes: [EntityType.FILE],
+      })
+
+      await screen.findByLabelText('MD5')
+      expect(screen.findByText(mockFileHandle.contentMd5!)).toBeDefined()
+      await screen.findByLabelText('Add to Download Cart')
+      const fileSize = calculateFriendlyFileSize(mockFileHandle.contentSize)
+      expect(screen.findByText(fileSize)).toBeDefined()
+    })
+    it('Project row does not contain MD5 or add to download cart', async () => {
+      mockAllIsIntersecting(true)
+      renderComponent({
+        visibleTypes: [EntityType.PROJECT],
+        selectableTypes: [EntityType.PROJECT],
+      })
+      expect(screen.queryByLabelText('MD5')).not.toBeInTheDocument()
+      expect(
+        screen.queryByLabelText('Add to Download Cart'),
+      ).not.toBeInTheDocument()
     })
   })
 })

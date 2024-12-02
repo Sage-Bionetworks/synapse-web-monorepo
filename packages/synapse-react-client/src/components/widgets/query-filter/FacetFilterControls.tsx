@@ -185,7 +185,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     )
   }, [facets])
 
-  const columnModels = queryMetadata!.columnModels
+  const columnModels = queryMetadata.columnModels
 
   const toggleShowFacetFilter = useCallback(
     (facetColumnName: string) => {

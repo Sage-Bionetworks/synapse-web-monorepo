@@ -110,7 +110,7 @@ export default function DetailsPage(props: DetailsPageProps) {
 
   let row
   if (queryResultBundle?.queryResult?.queryResults?.rows) {
-    row = queryResultBundle?.queryResult!.queryResults.rows[0]
+    row = queryResultBundle?.queryResult.queryResults.rows[0]
   }
   return (
     <DetailsPageContextProvider

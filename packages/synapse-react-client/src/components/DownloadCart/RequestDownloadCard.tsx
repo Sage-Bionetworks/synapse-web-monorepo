@@ -75,9 +75,11 @@ export const RequestDownloadCard: React.FunctionComponent<
           <Button
             variant="outlined"
             onClick={() => {
-              useReactACLEditor
-                ? setShowSharingSettings(true)
-                : onViewSharingSettingsClicked(entityId)
+              if (useReactACLEditor) {
+                setShowSharingSettings(true)
+              } else {
+                onViewSharingSettingsClicked(entityId)
+              }
             }}
             disabled={hasDownloadPermission}
           >

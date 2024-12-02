@@ -9,15 +9,14 @@ import { aclCustomizedMockFileEntities } from './mockFileEntityACLVariants'
 import { EntityType, FileEntity } from '@sage-bionetworks/synapse-types'
 import { times } from 'lodash-es'
 
-const generatedFileEntityData: MockEntityData<FileEntity>[] = times(50).map(
-  i =>
-    generateBaseEntity({
-      id: 30000 + i + 1,
-      type: EntityType.FILE,
-      entity: {
-        parentId: mockProject.id,
-      },
-    }) as MockEntityData<FileEntity>,
+const generatedFileEntityData: MockEntityData<FileEntity>[] = times(50).map(i =>
+  generateBaseEntity({
+    id: 30000 + i + 1,
+    type: EntityType.FILE,
+    entity: {
+      parentId: mockProject.id,
+    },
+  }),
 )
 
 const generatedProjectsEntityData = mockProjectIds.map(id => {

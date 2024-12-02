@@ -102,14 +102,14 @@ class _SynapseFormSubmissionGrid extends React.Component<
     }
   }
 
-  async componentDidMount() {
-    await this.refresh(this.props.token)
+  componentDidMount() {
+    this.refresh(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
+  componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
-      await this.refresh(this.props.token)
+      this.refresh(this.props.token)
     }
   }
 
@@ -155,7 +155,7 @@ class _SynapseFormSubmissionGrid extends React.Component<
       }
     } catch (error) {
       this.onError(error)
-      return Promise.reject(error)
+      return Promise.reject(error as Error)
     } finally {
       this.setState({
         isLoading: false,

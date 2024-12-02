@@ -1,22 +1,35 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
+import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import MarkdownSynapse from './MarkdownSynapse'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import * as SynapseClient from '../../synapse-client/SynapseClient'
+
+const mockGetEntityWiki = jest.spyOn(SynapseClient, 'getEntityWiki')
+const mockGetWikiAttachmentsFromEntity = jest.spyOn(
+  SynapseClient,
+  'getWikiAttachmentsFromEntity',
+)
+
 describe('renders without crashing', () => {
-  let SynapseClient: any
   beforeAll(() => {
-    SynapseClient = require('../../synapse-client/SynapseClient')
-    SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() =>
-      Promise.resolve(['']),
-    )
+    mockGetWikiAttachmentsFromEntity.mockResolvedValue({ list: [] })
   })
   const mockOwnerId = 'mock_owner_id'
   const mockWikiId = 'mock_wiki_id'
 
   it('renders a table of contents without crashing', async () => {
-    SynapseClient.getEntityWiki = jest.fn(() =>
-      Promise.resolve({ markdown: '${toc}\n#Heading1' }),
-    )
+    mockGetEntityWiki.mockResolvedValue({
+      markdown: '${toc}\n#Heading1',
+      id: '1',
+      modifiedBy: `${MOCK_USER_ID}`,
+      modifiedOn: new Date().toISOString(),
+      title: 'toc',
+      attachmentFileHandleIds: [],
+      createdBy: `${MOCK_USER_ID}`,
+      createdOn: new Date().toISOString(),
+      etag: 'etag',
+    })
 
     render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
       wrapper: createWrapper(),
@@ -31,9 +44,18 @@ describe('renders without crashing', () => {
   })
 
   it('renders a table of contents with a non-toc-header header', async () => {
-    SynapseClient.getEntityWiki = jest.fn(() =>
-      Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
-    )
+    mockGetEntityWiki.mockResolvedValue({
+      markdown: "${toc}\n#Heading1\n##! Don't show me!",
+      id: '1',
+      modifiedBy: `${MOCK_USER_ID}`,
+      modifiedOn: new Date().toISOString(),
+      title: 'toc',
+      attachmentFileHandleIds: [],
+      createdBy: `${MOCK_USER_ID}`,
+      createdOn: new Date().toISOString(),
+      etag: 'etag',
+    })
+
     render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
       wrapper: createWrapper(),
     })

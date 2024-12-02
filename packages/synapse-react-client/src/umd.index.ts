@@ -96,6 +96,7 @@ import { RejectProfileValidationRequestModal } from './components/dataaccess/Rej
 import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
 import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
+import { EntityFileBrowser } from './components/EntityFileBrowser'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -128,6 +129,7 @@ const SynapseComponents = {
   SynapseHomepageV2,
   SynapsePlansPage,
   SynapseFooter,
+  EntityFileBrowser,
   EntityFinder,
   ErrorPage,
   EntityBadgeIcons,

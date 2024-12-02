@@ -127,7 +127,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       )}
       {disableLink && avatar}
       {!disableLink && (
-        // eslint-disable-next-line react/jsx-no-target-blank
         <a
           href={linkLocation}
           target={openLinkInNewTab ? '_blank' : ''}
@@ -152,7 +151,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             </span>
           ) : (
             // consolidate click events
-            // eslint-disable-next-line react/jsx-no-target-blank
             <a
               href={linkLocation}
               target={openLinkInNewTab ? '_blank' : ''}

@@ -71,8 +71,9 @@ describe('OrientationBanner tests', () => {
     jest.clearAllMocks()
   })
   afterEach(() => {
-    localStorage.getItem(defaultStorageId) &&
+    if (localStorage.getItem(defaultStorageId)) {
       localStorage.removeItem(defaultStorageId)
+    }
   })
 
   it('displays the alert when the notification has not been dismissed', () => {

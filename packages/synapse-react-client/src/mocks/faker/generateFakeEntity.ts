@@ -75,7 +75,7 @@ export function generateBaseEntity<T extends Entity = Entity>(
     : undefined
 
   return {
-    id: entity.id!,
+    id: entity.id,
     entity: entity as T,
     name: entity.name,
     entityHeader: header,
@@ -155,5 +155,5 @@ export function generateProject(
       name: faker.lorem.words({ min: 1, max: 4 }),
       ...entityDataOverrides,
     },
-  }) as MockEntityData<Project>
+  })
 }

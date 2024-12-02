@@ -102,7 +102,11 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           if (showCardOnHover) {
             event.stopPropagation()
           }
-          isShowingOverlay ? toggleHide(false) : toggleShow(false)
+          if (isShowingOverlay) {
+            toggleHide(false)
+          } else {
+            toggleShow(false)
+          }
         }}
         className={`${className ?? ''}`}
         sx={{

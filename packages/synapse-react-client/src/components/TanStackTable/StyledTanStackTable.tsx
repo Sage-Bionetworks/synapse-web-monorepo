@@ -33,7 +33,7 @@ export default function StyledTanStackTable<T = unknown>(
     const headers = table.getFlatHeaders()
     const colSizes: { [key: string]: number } = {}
     for (let i = 0; i < headers.length; i++) {
-      const header = headers[i]!
+      const header = headers[i]
       colSizes[getHeaderSizeCssVariable(header.id)] = header.getSize()
       colSizes[getColumnSizeCssVariable(header.column.id)] =
         header.column.getSize()

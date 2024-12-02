@@ -68,7 +68,7 @@ export const palette: PaletteOptions = {
     1000: '#22252a',
     900: '#353a3f',
     800: '#4a5056',
-    700: '#878e95',
+    700: '#71767F',
     600: '#aeb5bc',
     500: '#d0d4d9',
     400: '#dfe2e6',
@@ -77,7 +77,7 @@ export const palette: PaletteOptions = {
     100: '#fbfbfc',
   },
   // The neutral palette can be used to color components like buttons in grayscale
-  neutral: generatePalette('#878e95'), // grey-700
+  neutral: generatePalette('#71767F'), // grey-700
   darkPrimary: generatePalette('#164B6E'),
   lightPrimary: { ...generatePalette('#f8f9fa'), contrastText: '#164B6E' },
   light: { ...generatePalette('#f8f9fa'), contrastText: '#22252a' }, // grey-1000
