@@ -36,7 +36,7 @@ export default function PdfPreview(props: PdfPreviewProps) {
   }
   const fhaUrl = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}/filehandleassociation?associatedObjectId=${
+  )}Portal/filehandleassociation?associatedObjectId=${
     fha.associateObjectId
   }&associatedObjectType=${fha.associateObjectType}&fileHandleId=${
     fha.fileHandleId
@@ -47,7 +47,7 @@ export default function PdfPreview(props: PdfPreviewProps) {
         ref={frameEl}
         src={`${getEndpoint(
           BackendDestinationEnum.PORTAL_ENDPOINT,
-        )}/pdf.js/web/viewer.html?file=${fhaUrl}`}
+        )}pdf.js/web/viewer.html?file=${encodeURIComponent(fhaUrl)}`}
         height="800px"
         style={{ border: 0, width: '100%' }}
       />

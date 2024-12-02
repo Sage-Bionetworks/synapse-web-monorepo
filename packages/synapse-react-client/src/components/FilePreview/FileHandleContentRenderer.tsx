@@ -54,10 +54,12 @@ export default function FileHandleContentRenderer(
       <HtmlPreview rawHtml={content!} createdByUserId={fileHandle.createdBy} />
     )
   } else if (previewType === PreviewRendererType.PDF) {
-    ;<PdfPreview
-      fileHandle={fileHandle}
-      fileHandleAssociation={fileHandleAssociation}
-    />
+    return (
+      <PdfPreview
+        fileHandle={fileHandle}
+        fileHandleAssociation={fileHandleAssociation}
+      />
+    )
   } else {
     if (previewType !== PreviewRendererType.NONE) {
       console.warn(
