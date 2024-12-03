@@ -12,8 +12,12 @@ export type PdfPreviewProps = {
   fileHandleAssociation: FileHandleAssociation
 }
 
-const maxPdfSize = Math.pow(1024, 3) * 30 // 30MB
+const maxPdfSize = Math.pow(1024, 2) * 30 // 30MB
 const friendlyMaxPdfSize = calculateFriendlyFileSize(maxPdfSize) // 30MB
+
+export const getFhaUrl = (fha: FileHandleAssociation) => {
+  return `Portal/filehandleassociation?associatedObjectId=${fha.associateObjectId}&associatedObjectType=${fha.associateObjectType}&fileHandleId=${fha.fileHandleId}`
+}
 
 /**
  * Renders raw HTML. Uses file handle data to determine if the content should be sanitized.
@@ -34,13 +38,7 @@ export default function PdfPreview(props: PdfPreviewProps) {
       </Alert>
     )
   }
-  const fhaUrl = `${getEndpoint(
-    BackendDestinationEnum.PORTAL_ENDPOINT,
-  )}Portal/filehandleassociation?associatedObjectId=${
-    fha.associateObjectId
-  }&associatedObjectType=${fha.associateObjectType}&fileHandleId=${
-    fha.fileHandleId
-  }`
+  const fhaUrl = getFhaUrl(fha)
   return (
     <>
       <iframe
