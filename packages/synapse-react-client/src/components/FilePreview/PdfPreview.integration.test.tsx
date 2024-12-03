@@ -1,11 +1,15 @@
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import PdfPreview, { getFhaUrl, PdfPreviewProps } from './PdfPreview'
+import PdfPreview, {
+  getFhaUrl,
+  maxPdfSize,
+  PdfPreviewProps,
+} from './PdfPreview'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -40,5 +44,16 @@ describe('PDF Preview tests', () => {
       expect(frame).toBeDefined()
       expect(frame).toHaveAttribute('src', expectedIFrameSource)
     })
+  })
+  it('PDF is not rendered if too large', async () => {
+    renderComponent({
+      fileHandle: { ...mockFileHandle, contentSize: maxPdfSize + 100 },
+      fileHandleAssociation: mockFHA,
+    })
+    const alertElement = await screen.findByRole('alert')
+    expect(alertElement).toBeInTheDocument()
+    expect(
+      screen.getByText(/The PDF preview was not shown because the file size/),
+    ).toBeInTheDocument()
   })
 })

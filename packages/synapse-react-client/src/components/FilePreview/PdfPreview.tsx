@@ -12,7 +12,7 @@ export type PdfPreviewProps = {
   fileHandleAssociation: FileHandleAssociation
 }
 
-const maxPdfSize = Math.pow(1024, 2) * 30 // 30MB
+export const maxPdfSize = Math.pow(1024, 2) * 30 // 30MB
 const friendlyMaxPdfSize = calculateFriendlyFileSize(maxPdfSize) // 30MB
 
 export const getFhaUrl = (fha: FileHandleAssociation) => {
@@ -29,7 +29,6 @@ export default function PdfPreview(props: PdfPreviewProps) {
   const frameEl = useRef(null)
 
   const friendlyFileSize = calculateFriendlyFileSize(fileHandle.contentSize)
-
   if (fileHandle.contentSize > maxPdfSize) {
     return (
       <Alert severity="error" sx={{ marginBottom: '20px' }}>
