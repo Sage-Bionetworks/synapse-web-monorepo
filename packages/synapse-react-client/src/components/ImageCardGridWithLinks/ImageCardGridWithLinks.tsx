@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Box, CardMedia, Grid, Link, Typography, Skeleton } from '@mui/material'
+import {
+  Box,
+  CardMedia,
+  Grid,
+  Link,
+  Typography,
+  Skeleton,
+  Card,
+} from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { SynapseConstants, useSynapseContext } from '../../utils'
 import {
@@ -55,7 +63,7 @@ const ImageCard = ({
     {isLoading ? (
       <Skeleton variant="rectangular" height={221} width="100%" />
     ) : (
-      <>
+      <Card raised={false} sx={{ height: '100%', position: 'relative' }}>
         <Link
           component={RouterLink}
           to={card.values[linkColumnIndex] || ''}
@@ -65,7 +73,7 @@ const ImageCard = ({
             gap: '10px',
             position: 'absolute',
             backgroundColor: '#FFFF',
-            borderRadius: '5px 0 6px 0',
+            borderRadius: '0px 0px 6px 0px',
             textDecoration: 'none',
             '&:hover': {
               textDecoration: 'none',
@@ -98,7 +106,7 @@ const ImageCard = ({
             objectFit: 'cover',
           }}
         />
-      </>
+      </Card>
     )}
   </Grid>
 )
