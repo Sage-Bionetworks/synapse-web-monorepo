@@ -22,6 +22,7 @@ import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { getFiles } from '../../synapse-client/SynapseClient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import { SynapseClient } from 'synapse-react-client'
 
 export type ImageCardGridWithLinksProps = {
   sql: string
@@ -58,12 +59,24 @@ const ImageCard = ({
     sm={6}
     md={4}
     key={card.rowId}
-    sx={{ height: '245px', paddingTop: '24px', paddingLeft: '24px' }}
+    sx={{
+      height: '245px',
+      paddingTop: '24px',
+      paddingLeft: '24px',
+    }}
   >
     {isLoading ? (
       <Skeleton variant="rectangular" height={221} width="100%" />
     ) : (
-      <Card raised={false} sx={{ height: '100%', position: 'relative' }}>
+      <Card
+        raised={false}
+        sx={{
+          height: '100%',
+          position: 'relative',
+          borderRadius: '6px',
+          border: 'none',
+        }}
+      >
         <Link
           component={RouterLink}
           to={card.values[linkColumnIndex] || ''}
@@ -102,7 +115,6 @@ const ImageCard = ({
           style={{
             height: '100%',
             width: '100%',
-            borderRadius: '6px',
             objectFit: 'cover',
           }}
         />
@@ -147,25 +159,34 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         if (imageFileHandleIds.length === 0) {
           return
         }
-        const fileHandleAssociationList: FileHandleAssociation[] =
-          imageFileHandleIds.map(fileId => {
-            return {
-              associateObjectId: entityId,
-              associateObjectType: FileHandleAssociateType.TableEntity,
-              fileHandleId: fileId,
-            }
-          })
-        const batchFileRequest: BatchFileRequest = {
-          includeFileHandles: false,
-          includePreSignedURLs: true,
-          includePreviewPreSignedURLs: false,
-          requestedFiles: fileHandleAssociationList,
-        }
-        const files = await getFiles(batchFileRequest, accessToken)
+        // const fileHandleAssociationList: FileHandleAssociation[] =
+        //   imageFileHandleIds.map(fileId => {
+        //     return {
+        //       associateObjectId: entityId,
+        //       associateObjectType: FileHandleAssociateType.TableEntity,
+        //       fileHandleId: fileId,
+        //     }
+        //   })
+        // const batchFileRequest: BatchFileRequest = {
+        //   includeFileHandles: false,
+        //   includePreSignedURLs: true,
+        //   includePreviewPreSignedURLs: false,
+        //   requestedFiles: fileHandleAssociationList,
+        // }
+        // const files = await getFiles(batchFileRequest, accessToken)
+        // setImages(
+        //   files.requestedFiles
+        //     .filter(el => el.preSignedURL !== undefined)
+        //     .map(el => el.preSignedURL!),
+        // )
         setImages(
-          files.requestedFiles
-            .filter(el => el.preSignedURL !== undefined)
-            .map(el => el.preSignedURL!),
+          imageFileHandleIds.map(fileId =>
+            SynapseClient.getPortalFileHandleServletUrl(
+              fileId,
+              entityId,
+              FileHandleAssociateType.TableEntity,
+            ),
+          ),
         )
       } catch (e) {
         console.error('Error on get data', e)
