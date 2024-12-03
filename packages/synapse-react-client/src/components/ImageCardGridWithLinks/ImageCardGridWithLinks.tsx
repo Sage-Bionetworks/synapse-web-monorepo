@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Box,
   CardMedia,
@@ -9,9 +9,8 @@ import {
   Card,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
-import { SynapseConstants, useSynapseContext } from '../../utils'
+import { SynapseConstants } from '../../utils'
 import {
-  BatchFileRequest,
   FileHandleAssociateType,
   FileHandleAssociation,
   QueryBundleRequest,
@@ -19,10 +18,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { getFiles } from '../../synapse-client/SynapseClient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import { SynapseClient } from 'synapse-react-client'
+import { useGetStablePresignedUrl } from '../../synapse-queries'
 
 export type ImageCardGridWithLinksProps = {
   sql: string
@@ -32,11 +30,11 @@ export type ImageCardGridWithLinksProps = {
 
 type ImageCardProps = {
   card: Row
-  index: number
-  images: string[] | undefined
   isLoading: boolean
   linkColumnIndex: number
   linkTextColumnIndex: number
+  entityId: string
+  fileId: string | null
 }
 
 enum ExpectedColumns {
@@ -47,87 +45,96 @@ enum ExpectedColumns {
 
 const ImageCard = ({
   card,
-  index,
   isLoading,
   linkColumnIndex,
   linkTextColumnIndex,
-  images,
-}: ImageCardProps) => (
-  <Grid
-    item
-    xs={12}
-    sm={6}
-    md={4}
-    key={card.rowId}
-    sx={{
-      height: '245px',
-      paddingTop: '24px',
-      paddingLeft: '24px',
-    }}
-  >
-    {isLoading ? (
-      <Skeleton variant="rectangular" height={221} width="100%" />
-    ) : (
-      <Card
-        raised={false}
-        sx={{
-          height: '100%',
-          position: 'relative',
-          borderRadius: '6px',
-          border: 'none',
-        }}
-      >
-        <Link
-          component={RouterLink}
-          to={card.values[linkColumnIndex] || ''}
+  entityId,
+  fileId,
+}: ImageCardProps) => {
+  const fha: FileHandleAssociation = {
+    associateObjectId: entityId,
+    associateObjectType: FileHandleAssociateType.TableEntity,
+    fileHandleId: fileId ?? '',
+  }
+  const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
+    enabled: !!fileId,
+  })
+  const dataUrl = stablePresignedUrl?.dataUrl
+
+  return (
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={4}
+      key={card.rowId}
+      sx={{
+        height: '245px',
+        paddingTop: '24px',
+        paddingLeft: '24px',
+      }}
+    >
+      {isLoading ? (
+        <Skeleton variant="rectangular" height={221} width="100%" />
+      ) : (
+        <Card
+          raised={false}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            position: 'absolute',
-            backgroundColor: '#FFFF',
-            borderRadius: '0px 0px 6px 0px',
-            textDecoration: 'none',
-            '&:hover': {
-              textDecoration: 'none',
-            },
-            padding: '6px 10px',
+            height: '100%',
+            position: 'relative',
+            borderRadius: '6px',
+            border: 'none',
           }}
         >
-          <Typography
-            color="grey.1000"
-            variant="headline2"
-            sx={{ fontSize: '16px' }}
+          <Link
+            component={RouterLink}
+            to={card.values[linkColumnIndex] || ''}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              position: 'absolute',
+              backgroundColor: '#FFFF',
+              borderRadius: '0px 0px 6px 0px',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'none',
+              },
+              padding: '6px 10px',
+            }}
           >
-            {card.values[linkTextColumnIndex]}
-          </Typography>
-          <ArrowForwardIosIcon
+            <Typography
+              color="grey.1000"
+              variant="headline2"
+              sx={{ fontSize: '16px' }}
+            >
+              {card.values[linkTextColumnIndex]}
+            </Typography>
+            <ArrowForwardIosIcon
+              style={{
+                color: 'unset',
+                width: 16,
+                height: 16,
+              }}
+            />
+          </Link>
+          <CardMedia
+            component="img"
+            image={dataUrl}
             style={{
-              color: 'unset',
-              width: 16,
-              height: 16,
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover',
             }}
           />
-        </Link>
-        <CardMedia
-          component="img"
-          image={images?.[index]}
-          style={{
-            height: '100%',
-            width: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Card>
-    )}
-  </Grid>
-)
+        </Card>
+      )}
+    </Grid>
+  )
+}
 
 function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   const { sql, title, summaryText } = props
-  const { accessToken } = useSynapseContext()
-  const [images, setImages] = useState<string[] | undefined>()
-
   const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -143,57 +150,10 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const imageColumnIndex = getFieldIndex(
-          ExpectedColumns.IMAGE,
-          queryResultBundle,
-        )
-        const image = (queryResultBundle?.queryResult!.queryResults.rows.map(
-          el => el.values[imageColumnIndex],
-        ) ?? []) as string[]
-        const imageFileHandleIds = image.filter(
-          v => v != null && v !== undefined,
-        )
-        if (imageFileHandleIds.length === 0) {
-          return
-        }
-        // const fileHandleAssociationList: FileHandleAssociation[] =
-        //   imageFileHandleIds.map(fileId => {
-        //     return {
-        //       associateObjectId: entityId,
-        //       associateObjectType: FileHandleAssociateType.TableEntity,
-        //       fileHandleId: fileId,
-        //     }
-        //   })
-        // const batchFileRequest: BatchFileRequest = {
-        //   includeFileHandles: false,
-        //   includePreSignedURLs: true,
-        //   includePreviewPreSignedURLs: false,
-        //   requestedFiles: fileHandleAssociationList,
-        // }
-        // const files = await getFiles(batchFileRequest, accessToken)
-        // setImages(
-        //   files.requestedFiles
-        //     .filter(el => el.preSignedURL !== undefined)
-        //     .map(el => el.preSignedURL!),
-        // )
-        setImages(
-          imageFileHandleIds.map(fileId =>
-            SynapseClient.getPortalFileHandleServletUrl(
-              fileId,
-              entityId,
-              FileHandleAssociateType.TableEntity,
-            ),
-          ),
-        )
-      } catch (e) {
-        console.error('Error on get data', e)
-      }
-    }
-    getData()
-  }, [entityId, accessToken, queryResultBundle])
+  const imageColumnIndex = getFieldIndex(
+    ExpectedColumns.IMAGE,
+    queryResultBundle,
+  )
 
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
@@ -243,17 +203,20 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
           order: { xs: 1, md: 0 },
         }}
       >
-        {dataRows.map((card, index) => (
-          <ImageCard
-            images={images}
-            card={card}
-            key={card.rowId}
-            index={index}
-            isLoading={isLoading}
-            linkColumnIndex={linkColumnIndex}
-            linkTextColumnIndex={linkTextColumnIndex}
-          />
-        ))}
+        {dataRows.map(card => {
+          const fileId = card.values[imageColumnIndex]
+          return (
+            <ImageCard
+              card={card}
+              key={card.rowId}
+              linkColumnIndex={linkColumnIndex}
+              linkTextColumnIndex={linkTextColumnIndex}
+              fileId={fileId}
+              entityId={entityId}
+              isLoading={isLoading}
+            />
+          )
+        })}
       </Grid>
     </Box>
   )

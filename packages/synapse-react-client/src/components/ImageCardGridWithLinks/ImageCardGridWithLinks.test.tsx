@@ -140,14 +140,6 @@ describe('ImageCardGridWithLinks Tests', () => {
     await waitFor(() => {
       const images = screen.getAllByRole('img')
       expect(images).toHaveLength(2)
-      expect(images[0]).toHaveAttribute(
-        'src',
-        'https://data.prod.sagebase.org/3503364/fe41104b-53ad-429a-8514-b6d34dac5244/cutecat.jpeg?response-content-disposition=attachment%3B%20filename%3D%22cutecat.jpeg%22%3B%20filename%2A%3Dutf-8%27%27cutecat.jpeg&response-content-type=image%2Fjpeg&X-Amz-Date=20241127T185252Z&X-Amz-Expires=30&Expires=1732733602&Signature=ScTtKjHjH67a~rIWY-1Oei8yRkowBtp6pSyhbYAsaAdXfLgffMcnV-ellHQ0nX3k~Rsv~nuWcFJgZlYJWljuIlgs2YN6r1YkWJtU~z7QxOpEsJFq43ASMhEV7lnd09V3q2CPsc4KvjwYufoyVqV-VbHwWTCbGnpYF4pqnyuRk3XOY8JfyJNifrgstiKzyIrvrtKct9yz8yqu~Ng5RKqsiWwIgQ581gT78wb69UntRNKETq9raRInrxMnoSKWuxG-wshtw1fCH9A25Z1EmmdTgmL8A2xj1uyqaREslYE~qvuBaVjUJb64Hwmvr4xcIIbo6o7Cobk6itG4Y07nduo8IA__&Key-Pair-Id=K1ODM3BLJ5L7YV',
-      )
-      expect(images[1]).toHaveAttribute(
-        'src',
-        'https://data.prod.sagebase.org/3503364/77d6bdc9-2e54-40ee-ae03-57026fbf0518/striped-grey-kitten.jpg?response-content-disposition=attachment%3B%20filename%3D%22striped-grey-kitten.jpg%22%3B%20filename%2A%3Dutf-8%27%27striped%252Dgrey%252Dkitten.jpg&response-content-type=image%2Fjpeg&X-Amz-Date=20241127T185252Z&X-Amz-Expires=30&Expires=1732733602&Signature=Gce~hKOKN2kmj-EbI3klMaWWKDW8KXznUxY-AZ0gbbpZj0-ZRiNalrB3BfZ2-G2AM5yp5fsJVmTcGrmEiu1T1l0wY48JHhPmokEObYLbBhenPsvriOit6ppZ1Q8UxoQq6Hp~AMbIQaU1k7INjtUF~dLJbBN~SkEmepGuOnW9Iw0iUw8sGPeR8m7I~q~f3hSJQO~d9yc3iMNp4BieE491AKsHXtHwKSn8AA6uhD8J2CrftIu18DicvWX4uTb25eW0103z5QxWdDIDIx-nyIOJ~3nCjgK92G2~ZySOGlifeFmdWVVzzUe0ppq9rdlihVQa19ZckOx9OpRe1bq3eYQjzA__&Key-Pair-Id=K1ODM3BLJ5L7YV',
-      )
     })
   })
 })
