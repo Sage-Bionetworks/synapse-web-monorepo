@@ -59,7 +59,7 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Name'} />,
     size: 400,
     enableColumnFilter: false,
-    sortingFn: 'alphanumericCaseSensitive',
+    sortingFn: 'alphanumeric',
     enableSorting: true,
   }),
   columnHelper.accessor('type', {
