@@ -6,6 +6,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import SynapseClient from '../../synapse-client'
 
 export type PdfPreviewProps = {
   fileHandle: FileHandle
@@ -14,10 +15,6 @@ export type PdfPreviewProps = {
 
 export const maxPdfSize = Math.pow(1024, 2) * 30 // 30MB
 const friendlyMaxPdfSize = calculateFriendlyFileSize(maxPdfSize) // 30MB
-
-export const getFhaUrl = (fha: FileHandleAssociation) => {
-  return `Portal/filehandleassociation?associatedObjectId=${fha.associateObjectId}&associatedObjectType=${fha.associateObjectType}&fileHandleId=${fha.fileHandleId}`
-}
 
 /**
  * Renders raw HTML. Uses file handle data to determine if the content should be sanitized.
@@ -37,7 +34,11 @@ export default function PdfPreview(props: PdfPreviewProps) {
       </Alert>
     )
   }
-  const fhaUrl = getFhaUrl(fha)
+  const fhaUrl = SynapseClient.getPortalFileHandleServletUrl(
+    fha.fileHandleId,
+    fha.associateObjectId,
+    fha.associateObjectType,
+  )
   return (
     <>
       <iframe

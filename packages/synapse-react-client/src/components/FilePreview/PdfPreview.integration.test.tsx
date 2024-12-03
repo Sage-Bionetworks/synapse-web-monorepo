@@ -5,16 +5,13 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import PdfPreview, {
-  getFhaUrl,
-  maxPdfSize,
-  PdfPreviewProps,
-} from './PdfPreview'
+import PdfPreview, { maxPdfSize, PdfPreviewProps } from './PdfPreview'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { mockFileHandle } from '../../mocks/mock_file_handle'
+import SynapseClient from '../../synapse-client'
 
 function renderComponent(props: PdfPreviewProps) {
   return render(<PdfPreview {...props} />, { wrapper: createWrapper() })
@@ -26,7 +23,13 @@ const mockFHA: FileHandleAssociation = {
   fileHandleId: mockFileHandle.id,
 }
 
-const expectedEncodedFhaUrl = encodeURIComponent(getFhaUrl(mockFHA))
+const expectedEncodedFhaUrl = encodeURIComponent(
+  SynapseClient.getPortalFileHandleServletUrl(
+    mockFHA.fileHandleId,
+    mockFHA.associateObjectId,
+    mockFHA.associateObjectType,
+  ),
+)
 const expectedIFrameSource = `${getEndpoint(
   BackendDestinationEnum.PORTAL_ENDPOINT,
 )}pdf.js/web/viewer.html?file=${expectedEncodedFhaUrl}`
