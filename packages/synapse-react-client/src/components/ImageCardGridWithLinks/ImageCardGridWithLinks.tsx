@@ -24,6 +24,10 @@ export type ImageCardGridWithLinksProps = {
 type ImageCardProps = {
   card: Row
   index: number
+  images: string[] | undefined
+  isLoading: boolean
+  linkColumnIndex: number
+  linkTextColumnIndex: number
 }
 
 enum ExpectedColumns {
@@ -31,6 +35,73 @@ enum ExpectedColumns {
   LINK = 'Link',
   IMAGE = 'Image',
 }
+
+const ImageCard = ({
+  card,
+  index,
+  isLoading,
+  linkColumnIndex,
+  linkTextColumnIndex,
+  images,
+}: ImageCardProps) => (
+  <Grid
+    item
+    xs={12}
+    sm={6}
+    md={4}
+    key={card.rowId}
+    sx={{ height: '245px', paddingTop: '24px', paddingLeft: '24px' }}
+  >
+    {isLoading ? (
+      <Skeleton variant="rectangular" height={221} width="100%" />
+    ) : (
+      <>
+        <Link
+          component={RouterLink}
+          to={card.values[linkColumnIndex] || ''}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            position: 'absolute',
+            backgroundColor: '#FFFF',
+            borderRadius: '5px 0 6px 0',
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'none',
+            },
+            padding: '6px 10px',
+          }}
+        >
+          <Typography
+            color="grey.1000"
+            variant="headline2"
+            sx={{ fontSize: '16px' }}
+          >
+            {card.values[linkTextColumnIndex]}
+          </Typography>
+          <ArrowForwardIosIcon
+            style={{
+              color: 'unset',
+              width: 16,
+              height: 16,
+            }}
+          />
+        </Link>
+        <CardMedia
+          component="img"
+          image={images?.[index]}
+          style={{
+            height: '100%',
+            width: '100%',
+            borderRadius: '6px',
+            objectFit: 'cover',
+          }}
+        />
+      </>
+    )}
+  </Grid>
+)
 
 function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
   const { sql, title, summaryText } = props
@@ -102,66 +173,6 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
     queryResultBundle,
   )
 
-  const ImageCard = ({ card, index }: ImageCardProps) => (
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={4}
-      key={card.rowId}
-      sx={{ height: '245px', paddingTop: '24px', paddingLeft: '24px' }}
-    >
-      {isLoading ? (
-        <Skeleton variant="rectangular" height={221} width="100%" />
-      ) : (
-        <>
-          <Link
-            component={RouterLink}
-            to={card.values[linkColumnIndex] || ''}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              position: 'absolute',
-              backgroundColor: '#FFFF',
-              borderRadius: '5px 0 6px 0',
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'none',
-              },
-              padding: '6px 10px',
-            }}
-          >
-            <Typography
-              color="grey.1000"
-              variant="headline2"
-              sx={{ fontSize: '16px' }}
-            >
-              {card.values[linkTextColumnIndex]}
-            </Typography>
-            <ArrowForwardIosIcon
-              style={{
-                color: 'unset',
-                width: 16,
-                height: 16,
-              }}
-            />
-          </Link>
-          <CardMedia
-            component="img"
-            image={images?.[index]}
-            style={{
-              height: '100%',
-              width: '100%',
-              borderRadius: '6px',
-              objectFit: 'cover',
-            }}
-          />
-        </>
-      )}
-    </Grid>
-  )
-
   return (
     <Box
       sx={{
@@ -205,7 +216,15 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
       >
         <Grid container spacing={2.5} sx={{ margin: 0 }}>
           {dataRows.map((card, index) => (
-            <ImageCard card={card} key={card.rowId} index={index} />
+            <ImageCard
+              images={images}
+              card={card}
+              key={card.rowId}
+              index={index}
+              isLoading={isLoading}
+              linkColumnIndex={linkColumnIndex}
+              linkTextColumnIndex={linkTextColumnIndex}
+            />
           ))}
         </Grid>
       </Grid>

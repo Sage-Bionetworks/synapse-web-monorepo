@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import ImageCardGridWithLinks from './ImageCardGridWithLinks'
-import { BrowserRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import React from 'react'
 
 const meta = {
@@ -15,9 +15,9 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   render: args => (
-    <BrowserRouter>
+    <MemoryRouter>
       <ImageCardGridWithLinks {...args} />
-    </BrowserRouter>
+    </MemoryRouter>
   ),
   args: {
     sql: 'SELECT * FROM syn64130706',
