@@ -22,6 +22,8 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunction
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { useGetStablePresignedUrl } from '../../synapse-queries'
 
+const BORDER_RADIUS = '6px'
+
 export type ImageCardGridWithLinksProps = {
   sql: string
   title: string
@@ -82,7 +84,7 @@ const ImageCard = ({
           sx={{
             height: '100%',
             position: 'relative',
-            borderRadius: '6px',
+            borderRadius: BORDER_RADIUS,
             border: 'none',
           }}
         >
@@ -95,7 +97,7 @@ const ImageCard = ({
               gap: '10px',
               position: 'absolute',
               backgroundColor: '#FFFF',
-              borderRadius: '0px 0px 6px 0px',
+              borderRadius: `0px 0px ${BORDER_RADIUS} 0px`,
               textDecoration: 'none',
               '&:hover': {
                 textDecoration: 'none',
