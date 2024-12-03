@@ -146,7 +146,9 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             */}
           {/* make SRC-whiteText overridable with a good name! */}
           {isLarge || disableLink ? (
-            <span className={isLarge ? 'SRC-whiteText' : 'SRC-blackText'}>
+            <span
+              className={isLarge ? 'SRC-primary-action-color' : 'SRC-blackText'}
+            >
               {name}
             </span>
           ) : (
@@ -172,14 +174,14 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
           )}
         </p>
         {(position || company) && (
-          <p className={`${isLarge ? 'SRC-whiteText' : ''}`}>
+          <p className={`${isLarge ? 'SRC-blackText' : ''}`}>
             {position} {position ? ' / ' : ''} {company}
           </p>
         )}
         {!hideEmail && (
           <p
             ref={copyToClipboardRef}
-            className={`${isLarge ? 'SRC-whiteText' : ''}
+            className={`${isLarge ? 'SRC-blackText' : ''}
               SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
@@ -194,7 +196,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             tabIndex={0}
           >
             <span style={{ paddingRight: '5px', paddingBottom: '2px' }}>
-              <a className={`link ${isLarge ? 'SRC-whiteText' : ''}`}>
+              <a className={`link ${isLarge ? 'SRC-blackText' : ''}`}>
                 {`${userName}@synapse.org`}
               </a>
             </span>
@@ -208,7 +210,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             rel="noopener noreferrer"
             style={{ width: 'fit-content' }}
             tabIndex={0}
-            className={isLarge ? 'SRC-whiteText' : ''}
+            className={isLarge ? 'SRC-blackText' : ''}
           >
             View ORCID
           </a>
@@ -247,7 +249,8 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   return (
     <Card>
       <div
-        className={`SRC-primary-background-color SRC-userCard SRC-userCardMediumUp`}
+        className={`SRC-userCard SRC-userCardMediumUp`}
+        style={{ backgroundColor: 'transparent' }}
       >
         {mediumCard}
       </div>
