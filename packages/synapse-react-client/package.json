@@ -232,7 +232,7 @@
     "type-fest": "^4.21.0",
     "typescript": "5.5.3",
     "util": "^0.12.5",
-    "vite": "^5.4.3",
+    "vite": "^6.0.2",
     "vite-config": "workspace:*",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.20"
