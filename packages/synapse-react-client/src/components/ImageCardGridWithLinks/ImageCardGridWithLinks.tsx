@@ -209,24 +209,22 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
       </Box>
       <Grid
         container
-        spacing={2}
+        spacing={2.5}
         sx={{
           order: { xs: 1, md: 0 },
         }}
       >
-        <Grid container spacing={2.5} sx={{ margin: 0 }}>
-          {dataRows.map((card, index) => (
-            <ImageCard
-              images={images}
-              card={card}
-              key={card.rowId}
-              index={index}
-              isLoading={isLoading}
-              linkColumnIndex={linkColumnIndex}
-              linkTextColumnIndex={linkTextColumnIndex}
-            />
-          ))}
-        </Grid>
+        {dataRows.map((card, index) => (
+          <ImageCard
+            images={images}
+            card={card}
+            key={card.rowId}
+            index={index}
+            isLoading={isLoading}
+            linkColumnIndex={linkColumnIndex}
+            linkTextColumnIndex={linkTextColumnIndex}
+          />
+        ))}
       </Grid>
     </Box>
   )
