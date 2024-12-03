@@ -12,6 +12,7 @@ import {
   RecentPublicationsGrid,
   ImageCardGridWithLinks,
 } from 'synapse-react-client'
+import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import {
   partnersSql,
   peopleSql,
@@ -218,6 +219,14 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          style: { maxWidth: '100%' },
+        }}
+      >
+        <ELContributeYourData />
+      </SectionLayout>
     </>
   )
 }
