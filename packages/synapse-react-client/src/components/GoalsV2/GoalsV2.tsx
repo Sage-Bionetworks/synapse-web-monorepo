@@ -125,6 +125,35 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   )
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
+  const goalsDataArray: GoalsV2DataProps[] = []
+
+  queryResultBundle?.queryResult!.queryResults.rows.forEach((el, index) => {
+    const values = el.values as string[]
+    if (values.some(value => value === null)) {
+      console.warn('Row has null value(s) when no nulls expected')
+    }
+    const tableId =
+      tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+    let countSql
+    if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
+      countSql = values[countSqlColumnIndex]
+    } else if (tableId) {
+      countSql = `SELECT * FROM ${tableId}`
+    }
+    const title = values[titleColumnIndex]
+    const summary = values[summaryColumnIndex]
+    const link = values[linkColumnIndex]
+    const asset = assets?.[index] ?? ''
+    const goalsV2DataProps: GoalsV2DataProps = {
+      countSql,
+      title,
+      summary,
+      link,
+      asset,
+    }
+    goalsDataArray.push(goalsV2DataProps)
+  })
+
   return (
     <Box
       sx={{
@@ -185,48 +214,14 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       </Box>
       {error && <ErrorBanner error={error} />}
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-        {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
-          const values = el.values as string[]
-          if (values.some(value => value === null)) {
-            // We cast values above assuming there are no null values, emit a warning just in case.
-            console.warn('Row has null value(s) when no nulls expected')
-          }
-          const tableId =
-            tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
-          let countSql
-          if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
-            countSql = values[countSqlColumnIndex]
-          } else if (tableId) {
-            countSql = `SELECT * FROM ${tableId}`
-          }
-          const title = values[titleColumnIndex]
-          const summary = values[summaryColumnIndex]
-          const link = values[linkColumnIndex]
-          // assume that we recieve assets in order of rows and there is an asset for each item
-          // can revisit if this isn't the case.
-          const asset = assets?.[index] ?? ''
-          const goalsV2DataProps: GoalsV2DataProps = {
-            countSql,
-            title,
-            summary,
-            link,
-            asset,
-          }
+        {goalsDataArray.map((row, index) => {
           return showDesktop ? (
-            <Box
-              sx={{
-                display: 'grid',
-              }}
-            >
-              <GoalsV2Desktop {...goalsV2DataProps} />
+            <Box sx={{ display: 'grid' }}>
+              <GoalsV2Desktop key={index} {...row} />
             </Box>
           ) : (
-            <Box
-              sx={{
-                display: 'grid',
-              }}
-            >
-              <GoalsV2Mobile {...goalsV2DataProps} />
+            <Box sx={{ display: 'grid' }}>
+              <GoalsV2Mobile key={index} {...row} />
             </Box>
           )
         })}
