@@ -1,4 +1,4 @@
-import { Box, Link, Button, Typography, darken } from '@mui/material'
+import { Box, Button, Typography, darken } from '@mui/material'
 import React from 'react'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
@@ -64,7 +64,7 @@ const ELGettingStarted: React.FC = () => {
         </Typography>
         <Button
           variant="contained"
-          // TODO: href="<LINK TO HELP SECTION>"
+          href="https://help.eliteportal.org/help/"
           style={{
             fontSize: '14px',
             fontWeight: 500,
