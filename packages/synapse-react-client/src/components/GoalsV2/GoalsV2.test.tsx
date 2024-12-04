@@ -77,25 +77,31 @@ describe('GoalsV2', () => {
     })
   })
 
-  // test('displays error message on fetch failure', async () => {
-  //   server.use(
-  //     rest.get('https://repo-prod.prod.sagebase.org/repo/v1/entity/:entityId/table/query/async/get/:token', (req, res, ctx) => {
-  //       return res(ctx.status(500), ctx.json({ message: 'Internal Server Error' }))
-  //     })
-  //   )
+  test('images do not display on fetch failure', async () => {
+    server.use(
+      rest.get(
+        'https://repo-prod.prod.sagebase.org/repo/v1/entity/:entityId/table/query/async/get/:token',
+        (req, res, ctx) => {
+          return res(
+            ctx.status(500),
+            ctx.json({ message: 'Internal Server Error' }),
+          )
+        },
+      ),
+    )
 
-  //   render(
-  //     <QueryClientProvider client={queryClient}>
-  //       <SynapseContextProvider synapseContext={mockSynapseContext}>
-  //         <GoalsV2 entityId="syn22315959" />
-  //       </SynapseContextProvider>
-  //     </QueryClientProvider>
-  //   )
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SynapseContextProvider synapseContext={mockSynapseContext}>
+          <GoalsV2 entityId="synxyz" />
+        </SynapseContextProvider>
+      </QueryClientProvider>,
+    )
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Error: Internal Server Error')).toBeInTheDocument()
-  //   })
-  // })
+    await waitFor(() => {
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
+  })
 
   test('displays assets when fetch is successful', async () => {
     render(
