@@ -128,24 +128,24 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   return (
     <Box
       sx={{
-        flex: '1 1 auto',
         backgroundColor: 'rgba(0, 128, 0, 0.05)',
-        zIndex: 0,
         height: '560px',
         padding: '80px',
       }}
     >
       <Box
         sx={{
-          flex: '1 1 auto',
-          zIndex: 1,
           textAlign: 'center',
           paddingBottom: '30px',
         }}
       >
         <Typography
           variant="headline1"
-          style={{ color: 'black', fontFamily: 'Merriweather', fontSize: '32' }}
+          style={{
+            color: 'grey.1000',
+            fontFamily: 'Merriweather',
+            fontSize: '32px',
+          }}
           sx={{
             pt: '30px',
             mb: '10px',
@@ -165,6 +165,9 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           fontStyle="semi-bold"
         >
           <Button
+            href="https://eliteportal.synapse.org/Explore/Data" // <-- this should probably be a prop for reusability
+            target="_blank"
+            rel="noopener noreferrer"
             variant="contained"
             sx={{
               backgroundColor: '#5BA998',
