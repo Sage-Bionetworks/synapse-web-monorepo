@@ -1,22 +1,18 @@
 import { Typography, Box, Button, CardMedia, Grid } from '@mui/material'
-import { Row } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
 export type PortalFeatureHighlightsProps = {
-  sql?: string
   reverseOrder?: boolean
   title?: string
+  image?: string
   buttonText?: string
-  summaryText?: string
-}
-
-type PortalFeatureHighlightsCardProps = {
-  feat: Row
+  summaryText?: string | React.ReactNode
+  link?: string
 }
 
 const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
-  const { reverseOrder } = props
+  const { reverseOrder, image, title, buttonText, summaryText, link } = props
   return (
     <Grid
       container
@@ -28,11 +24,11 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
         order={{ xs: 0, md: reverseOrder ? 1 : 0 }}
         xs={12}
         md={5}
-        lg={8}
+        lg={7.6}
       >
         <CardMedia
           component="img"
-          image="https://picsum.photos/400/300"
+          image={image}
           style={{
             borderRadius: '12px',
             objectFit: 'cover',
@@ -40,7 +36,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
           }}
         />
       </Grid>
-      <Grid item xs={12} md={4} lg={3}>
+      <Grid item xs={12} md={4} lg={3.4}>
         <Box
           display="flex"
           flexDirection="column"
@@ -52,19 +48,20 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
             paddingTop="26px"
             paddingBottom="10px"
             color="grey.1000"
-            fontSize={'31px'}
+            fontSize={'32px'}
           >
-            Computational Tools
+            {title}
           </Typography>
           <Button
             variant="contained"
             component={Link}
-            to=""
+            to={link || ''}
             sx={{
               whiteSpace: 'nowrap',
+              padding: '6px 24px',
             }}
           >
-            button text
+            {buttonText}
           </Button>
           <Typography
             variant="body1"
@@ -75,10 +72,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
               lineHeight: '27px',
             }}
           >
-            The portal supports secure access to leading cloud-based analysis
-            platforms, such as CAVATICA. This is just the beginning. Future
-            integrations will further expand resources for data analysis and
-            collaboration.
+            {summaryText}
           </Typography>
         </Box>
       </Grid>

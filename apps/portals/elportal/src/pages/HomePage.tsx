@@ -12,9 +12,28 @@ import {
   RecentPublicationsGrid,
   PortalFeatureHighlights,
 } from 'synapse-react-client'
+import analyzetheclouds from '@sage-bionetworks/synapse-portal-framework/components/elportal/assets/analyzetheclouds.png'
+import computationaltools from '@sage-bionetworks/synapse-portal-framework/components/elportal/assets/computationaltools.png'
 import { partnersSql, peopleSql, topPublicationsSql } from '../config/resources'
+import { Typography } from '@mui/material'
 
 export default function HomePage() {
+  const styledPortalFeatureHighlightsSummaryText = (
+    <>
+      The portal supports secure access to leading cloud-based analysis
+      platforms, such as{' '}
+      <Typography
+        component="span"
+        sx={{ fontWeight: 'bold', color: 'primary.main' }}
+      >
+        CAVATICA
+      </Typography>
+      .<br />
+      <br />
+      This is just the beginning. Future integrations will further expand
+      resources for data analysis and collaboration.
+    </>
+  )
   return (
     <>
       <Header />
@@ -77,10 +96,23 @@ export default function HomePage() {
         />
       </SectionLayout>
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <PortalFeatureHighlights />
+        <PortalFeatureHighlights
+          image={analyzetheclouds}
+          title="Analyze on the Cloud"
+          buttonText="Learn About Our Analysis Platforms"
+          summaryText={styledPortalFeatureHighlightsSummaryText}
+          link="Analysis Platforms"
+        />
       </SectionLayout>
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <PortalFeatureHighlights reverseOrder={true} />
+        <PortalFeatureHighlights
+          image={computationaltools}
+          title="Computational Tools"
+          buttonText="Check out our Computational Tools"
+          summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips. "
+          reverseOrder={true}
+          link="Explore/Computational Tools"
+        />
       </SectionLayout>
       {/*<div className={'home-bg-dark'}>*/}
       {/*  <SectionLayout ContainerProps={{ className: 'home-spacer' }}>*/}
