@@ -17,7 +17,9 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
     <Grid
       container
       gap={{ xs: '38px', md: '80px' }}
-      padding={'0 56px 0px 56px'}
+      padding={{ md: '0 56px 0px 56px' }}
+      justifyContent="center"
+      alignItems={{ md: 'center', lg: 'flex-start' }}
     >
       <Grid
         item
@@ -57,6 +59,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
             component={Link}
             to={link || ''}
             sx={{
+              minWidth: '265px',
               whiteSpace: 'nowrap',
               padding: '6px 24px',
             }}
