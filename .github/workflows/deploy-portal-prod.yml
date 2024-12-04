@@ -12,7 +12,7 @@ on:
       tag:
         required: true
         type: string
-        description: Which tag to deploy from
+        description: Which tag or branch to deploy from
 
 jobs:
   build-and-deploy:
@@ -37,6 +37,5 @@ jobs:
           role-duration-seconds: 1200
       - name: setup-outputbucket-prod
         run: |
-          cd apps/portals
-          echo chmod +x ./deploy.sh
-          echo ./deploy.sh WARNING-push-production ${{ inputs.portal-name }}
+          chmod +x apps/synapse-portal-framework/run.sh
+          ./apps/synapse-portal-framework/run.sh WARNING-push-production ${{ inputs.portal-name }}
