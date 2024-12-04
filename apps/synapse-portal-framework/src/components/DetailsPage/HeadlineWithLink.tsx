@@ -19,7 +19,7 @@ export function HeadlineWithLinkDerivedFromEntityId(props: {
   return (
     <HeadlineWithLink
       {...rest}
-      title={`${props.entityTitlePrepend}${entityHeader?.name}`}
+      title={`${entityTitlePrepend}${entityHeader?.name ?? ''}`}
     />
   )
 }
