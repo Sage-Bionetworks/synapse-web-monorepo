@@ -8,6 +8,7 @@ import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import { Markdown } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
+import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
   studyDetailsPageRoutes,
@@ -31,6 +32,14 @@ const routes: RouteObject[] = [
         element: (
           <HomePageThemeProvider>
             <HomePage />
+          </HomePageThemeProvider>
+        ),
+      },
+      {
+        path: 'HomepageV2',
+        element: (
+          <HomePageThemeProvider>
+            <HomePageV2 />
           </HomePageThemeProvider>
         ),
       },
