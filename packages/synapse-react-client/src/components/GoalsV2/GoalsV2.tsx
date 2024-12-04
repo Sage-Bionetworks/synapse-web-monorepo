@@ -184,7 +184,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         </Link>
       </Box>
       {error && <ErrorBanner error={error} />}
-      <div className={`GoalsV2${showDesktop ? '__Desktop' : ''}`}>
+      <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
         {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
           const values = el.values as string[]
           if (values.some(value => value === null)) {
