@@ -1,3 +1,10 @@
+import { Box, Skeleton, Typography } from '@mui/material'
+import {
+  DiscussionReplyBundle,
+  DiscussionThreadBundle,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import {
   getReply,
@@ -7,18 +14,10 @@ import {
   getUserProfileById,
 } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  DiscussionReplyBundle,
-  DiscussionThreadBundle,
-  UserProfile,
-} from '@sage-bionetworks/synapse-types'
-import dayjs from 'dayjs'
-import { Skeleton, Typography } from '@mui/material'
-import { Col, Row } from 'react-bootstrap'
-import IconSvg from '../IconSvg/IconSvg'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import IconSvg from '../IconSvg/IconSvg'
+import { SkeletonParagraph } from '../Skeleton/SkeletonParagraph'
 import { UserBadge } from '../UserCard/UserBadge'
 
 export const getMessage = async (url: string): Promise<string> => {
@@ -47,27 +46,29 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
   const [replyAuthor, setReplyAuthor] = useState<UserProfile>()
   const [isLoading, setIsLoading] = useState(false)
 
-  const getThreadOrReply = async () => {
-    let newMessageUrl
-    const thread = await getThread(threadId, accessToken)
-    setIsLoading(true)
-    if (replyId) {
-      const reply = await getReply(replyId, accessToken)
-      newMessageUrl = await getReplyMessageUrl(reply.messageKey, accessToken)
-      setReplyAuthor(await getUserProfileById(reply.createdBy))
-      setReplyBundle(reply)
-    } else {
-      setReplyAuthor(await getUserProfileById(thread.createdBy))
-      newMessageUrl = await getThreadMessageUrl(thread.messageKey, accessToken)
-    }
-    setMessageUrl(await getMessage(newMessageUrl.messageUrl))
-    setThreadBundle(thread)
-    setIsLoading(false)
-  }
-
   useEffect(() => {
+    const getThreadOrReply = async () => {
+      let newMessageUrl
+      setIsLoading(true)
+      const thread = await getThread(threadId, accessToken)
+      if (replyId) {
+        const reply = await getReply(replyId, accessToken)
+        newMessageUrl = await getReplyMessageUrl(reply.messageKey, accessToken)
+        setReplyAuthor(await getUserProfileById(reply.createdBy))
+        setReplyBundle(reply)
+      } else {
+        setReplyAuthor(await getUserProfileById(thread.createdBy))
+        newMessageUrl = await getThreadMessageUrl(
+          thread.messageKey,
+          accessToken,
+        )
+      }
+      setMessageUrl(await getMessage(newMessageUrl.messageUrl))
+      setThreadBundle(thread)
+      setIsLoading(false)
+    }
     getThreadOrReply()
-  }, [])
+  }, [accessToken, replyId, threadId])
 
   const getUrl = (threadId: string, projectId: string, replyId?: string) => {
     let url = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${projectId}/discussion/threadId=${threadId}`
@@ -78,23 +79,23 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
   }
 
   return (
-    <div className="bootstrap-4-backport search-result-container">
-      <Row>
-        <Col xs={1}>
+    <div className="search-result-container">
+      <Box display={'grid'} gridTemplateColumns={'40px auto'}>
+        <div>
           {isLoading ? (
-            <Skeleton variant="circular" width="40px" height="40px" />
+            <Skeleton variant="circular" width="30px" height={'30px'} />
           ) : replyId ? (
             <IconSvg icon="replyTwoTone" />
           ) : (
             <IconSvg icon="chatTwoTone" />
           )}
-        </Col>
-        <Col xs={11}>
+        </div>
+        <div>
           {isLoading ? (
-            <SkeletonTable numCols={1} numRows={4} />
+            <SkeletonParagraph numRows={4} />
           ) : (
             <>
-              <Typography variant="headline3">
+              <Typography variant="headline3" gutterBottom>
                 <a
                   className="link"
                   href={getUrl(
@@ -107,7 +108,9 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
                 </a>
               </Typography>
               <div className="truncated">
-                <Typography variant="body1">{messageUrl}</Typography>
+                <Typography variant="body1" gutterBottom>
+                  {messageUrl}
+                </Typography>
               </div>
               <div className="search-result-footer">
                 {replyId ? 'Reply' : 'Thread'} by{' '}
@@ -116,8 +119,8 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
               </div>
             </>
           )}
-        </Col>
-      </Row>
+        </div>
+      </Box>
     </div>
   )
 }
