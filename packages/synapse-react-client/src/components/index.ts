@@ -84,6 +84,7 @@ export * from './DatasetJsonLdScript'
 export * from './SharePageLinkButton'
 export * from './SageResourcesPopover'
 export * from './RecentPublicationsGrid'
+export * from './ImageCardGridWithLinks'
 export * from './PortalFeatureHighlights'
 
 // TODO: Find a better way to expose Icon components

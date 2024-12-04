@@ -9,8 +9,16 @@ import {
   RssFeedCards,
   SynapseConstants,
   UserCardListRotate,
+  RecentPublicationsGrid,
+  ImageCardGridWithLinks,
 } from 'synapse-react-client'
-import { partnersSql, peopleSql } from '../config/resources'
+import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
+import {
+  partnersSql,
+  peopleSql,
+  topPublicationsSql,
+  whatWeDoSql,
+} from '../config/resources'
 
 export default function HomePage() {
   return (
@@ -25,6 +33,13 @@ export default function HomePage() {
           ownerId={'syn27229419'}
           wikiId="626030"
           loadingSkeletonRowCount={10}
+        />
+      </SectionLayout>
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <ImageCardGridWithLinks
+          sql={whatWeDoSql}
+          title="What We Do"
+          summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
         />
       </SectionLayout>
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
@@ -66,7 +81,14 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-
+      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+        <RecentPublicationsGrid
+          sql={topPublicationsSql}
+          buttonLink="Explore/Publications"
+          buttonLinkText="See More Publications"
+          summaryText="Never miss a new finding from the frontiers of aging research."
+        />
+      </SectionLayout>
       {/*<div className={'home-bg-dark'}>*/}
       {/*  <SectionLayout ContainerProps={{ className: 'home-spacer' }}>*/}
       {/*    <FeaturedDataTabs*/}
@@ -197,6 +219,14 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          style: { maxWidth: '100%' },
+        }}
+      >
+        <ELContributeYourData />
+      </SectionLayout>
     </>
   )
 }
