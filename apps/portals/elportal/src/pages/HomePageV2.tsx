@@ -222,7 +222,7 @@ export default function HomePage() {
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
-          style: { maxWidth: '100%' },
+          style: { maxWidth: '100%', padding: 0 },
         }}
       >
         <ELContributeYourData />
