@@ -34,7 +34,7 @@ describe('PortalFeatureHighlights component', () => {
     expect(image).toHaveAttribute('src', 'test-image.jpg')
   })
 
-  it('renders the button with the correcf text and link', () => {
+  it('renders the button with the correct text and link', () => {
     renderComponent(props)
     const button = screen.getByRole('link', { name: 'Click me' })
     expect(button).toBeInTheDocument()
