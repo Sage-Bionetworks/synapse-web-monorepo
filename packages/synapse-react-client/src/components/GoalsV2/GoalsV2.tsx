@@ -177,7 +177,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           }}
           sx={{
             pt: '30px',
-            mb: '10px',
+            mb: '40px',
             mx: 'auto',
             width: 'max-content',
             borderTop: '3px solid rgba(128, 128, 128, 0.25)',
@@ -202,6 +202,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
               backgroundColor: '#5BA998',
               border: '1px solid white',
               boxShadow: 'none',
+              borderRadius: '5px',
               '&:hover': {
                 backgroundColor: darken('#5BA998', 0.05),
                 boxShadow: 'none',
