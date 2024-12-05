@@ -67,7 +67,10 @@ describe('GoalsV2', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SynapseContextProvider synapseContext={mockSynapseContext}>
-          <GoalsV2 entityId="syn22315959" />
+          <GoalsV2
+            entityId="syn22315959"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
         </SynapseContextProvider>
       </QueryClientProvider>,
     )
@@ -93,7 +96,10 @@ describe('GoalsV2', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SynapseContextProvider synapseContext={mockSynapseContext}>
-          <GoalsV2 entityId="synxyz" />
+          <GoalsV2
+            entityId="synxyz"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
         </SynapseContextProvider>
       </QueryClientProvider>,
     )
@@ -107,7 +113,10 @@ describe('GoalsV2', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SynapseContextProvider synapseContext={mockSynapseContext}>
-          <GoalsV2 entityId="syn22315959" />
+          <GoalsV2
+            entityId="syn22315959"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
         </SynapseContextProvider>
       </QueryClientProvider>,
     )
