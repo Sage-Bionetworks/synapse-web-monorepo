@@ -14,5 +14,6 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     entityId: 'syn22315959',
+    dataLink: 'https://eliteportal.synapse.org/Explore/Data',
   },
 }
