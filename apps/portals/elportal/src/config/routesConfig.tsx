@@ -95,7 +95,13 @@ const routes: RouteObject[] = [
       {
         path: 'Contribute Data',
         element: (
-          <ELContributeYourData />
+          <SectionLayout title={'Contribute Data'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621277"
+              loadingSkeletonRowCount={15}
+            />
+          </SectionLayout>
         ),
       },
     ],
