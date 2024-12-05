@@ -29,11 +29,7 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: (
-          <HomePageThemeProvider>
-            <HomePage />
-          </HomePageThemeProvider>
-        ),
+        element: <HomePage />,
       },
       {
         path: 'HomepageV2',
