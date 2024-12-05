@@ -84,7 +84,7 @@ export default function HomePage() {
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <RecentPublicationsGrid
           sql={topPublicationsSql}
-          buttonLink="Explore/Publications"
+          buttonLink="/Explore/Publications"
           buttonLinkText="See More Publications"
           summaryText="Never miss a new finding from the frontiers of aging research."
         />
