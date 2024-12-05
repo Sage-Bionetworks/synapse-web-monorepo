@@ -174,7 +174,7 @@ describe('ApplicationSessionManager tests', () => {
 
     // useDetectSSOCode will then invoke onSignInComplete to refresh the session
     const options: UseDetectSSOCodeOptions =
-      mockUseDetectSSOCode.mock.calls[0]![0]!
+      mockUseDetectSSOCode.mock.calls[0][0]!
     options.onSignInComplete!()
 
     await waitFor(() => {
@@ -207,7 +207,7 @@ describe('ApplicationSessionManager tests', () => {
     }
     // useDetectSSOCode will then invoke onTwoFactorAuthRequired to pass along the error
     const options: UseDetectSSOCodeOptions =
-      mockUseDetectSSOCode.mock.calls[0]![0]!
+      mockUseDetectSSOCode.mock.calls[0][0]!
     options.onTwoFactorAuthRequired!(twoFactorAuthError)
 
     await waitFor(() => {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import Portal from '@sage-bionetworks/synapse-portal-framework'
+import { navbarConfig } from './config/navbarConfig'
 import palette from './config/paletteConfig'
 import routes from './config/routesConfig'
 import footerConfig from './config/footerConfig'
@@ -27,6 +28,7 @@ root.render(
       footerConfig={footerConfig}
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
+      navbarConfig={navbarConfig}
     />
   </React.StrictMode>,
 )

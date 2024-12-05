@@ -123,9 +123,10 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
   }
 
   public componentWillUnmount() {
-    this.markupRef.current &&
+    if (this.markupRef.current) {
       // @ts-expect-error TODO: find better documentation on typescript/react event params
       this.markupRef.current.removeEventListener('click', this.handleLinkClicks)
+    }
   }
 
   // Manually handle clicks to anchor tags where the scrollto isn't handled by page hash
@@ -156,7 +157,9 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
         event.preventDefault()
         // handle table of contents widget
         const idOfContent = anchor.getAttribute('data-anchor')
-        const goTo = this.markupRef.current!.querySelector(`#${idOfContent}`)
+        const goTo = this.markupRef.current!.querySelector(
+          `[id="${idOfContent}"]`,
+        )
         try {
           goTo!.scrollIntoView({
             behavior: 'smooth',
@@ -581,7 +584,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
     )
   }
 
-  public async componentDidMount() {
+  public componentDidMount(): void {
     if (this.state.data.markdown) {
       this.setState({ isLoading: false })
       if (this.props.onMarkdownProcessingDone) {
@@ -593,26 +596,29 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
-    this.markupRef.current &&
+    if (this.markupRef.current) {
       // @ts-expect-error
       this.markupRef.current.addEventListener('click', this.handleLinkClicks)
+    }
     // unpack and set default value if not specified
     // get wiki attachments
-    await this.getWikiPageMarkdown()
-    this.processMath()
-    this.setState({ isLoading: false })
+    this.getWikiPageMarkdown().then(() => {
+      this.processMath()
+      this.setState({ isLoading: false })
+    })
   }
 
   // on component update find and re-render the math/widget items accordingly
-  public async componentDidUpdate(prevProps: MarkdownSynapseProps) {
+  public componentDidUpdate(prevProps: MarkdownSynapseProps) {
     let shouldUpdate = this.props.ownerId !== prevProps.ownerId
     shouldUpdate = shouldUpdate || this.props.wikiId !== prevProps.wikiId
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
     if (shouldUpdate) {
-      await this.getWikiPageMarkdown()
+      this.getWikiPageMarkdown().then(() => this.processMath())
+    } else {
+      this.processMath()
     }
-    this.processMath()
   }
 
   public render() {

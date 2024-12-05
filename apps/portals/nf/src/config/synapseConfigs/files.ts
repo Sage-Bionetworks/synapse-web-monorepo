@@ -1,4 +1,3 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { columnAliases } from './commonProps'
 import { filesSql } from '../resources'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
@@ -23,9 +22,3 @@ export const filesPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   columnAliases,
 }
-const files: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: filesPlotNavProps,
-}
-
-export default files

@@ -45,21 +45,24 @@ fs.readFile(`src/config/${fileName}`, (err, data) => {
         //reset from space count
         currentNestedPath.forEach((_value, index) => {
           if (index >= spaceCount) {
-            currentNestedPath[index] = undefined;
+            currentNestedPath[index] = undefined
           }
-      })
+        })
         currentNestingSpaceCount = 0
       }
       previousNestingSpaceCount = spaceCount
       currentNestedPath[spaceCount] = newPath
-      const currentPath = currentNestedPath.filter(value => value !== undefined).join('/')
+      const currentPath = currentNestedPath
+        .filter(value => value !== undefined)
+        .map(str => str.replace(/\/+$/, ''))
+        .join('/')
       if (!newPath.match('^[:]slug.*')) {
-        fileContent += `\t<url>\n\t\t<loc>${baseUrl}/${currentPath}</loc>\n\t\t<lastmod>${now}</lastmod>\n\t</url>\n`
+        fileContent += `\t<url>\n\t\t<loc>${baseUrl}${currentPath}</loc>\n\t\t<lastmod>${now}</lastmod>\n\t</url>\n`
       }
     }
   } while (m)
   fileContent += '</urlset>'
-  fs.writeFile('build/sitemap.xml', fileContent, (err) => {
+  fs.writeFile('build/sitemap.xml', fileContent, err => {
     if (err) {
       console.error(err)
       throw err

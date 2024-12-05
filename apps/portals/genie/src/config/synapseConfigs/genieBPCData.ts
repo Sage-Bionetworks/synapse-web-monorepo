@@ -1,26 +1,23 @@
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client'
 import { genieBPCSql } from '../resources'
 
 const rgbIndex = 0
 
-const genieBPCData: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
-    rgbIndex,
-    sql: genieBPCSql,
-    name: 'Files',
-    showExportToCavatica: true,
-    isRowSelectionVisible: true,
-    rowSelectionPrimaryKey: ['id'],
-    visibleColumnCount: 6,
-    fileIdColumnName: 'id',
-    fileNameColumnName: 'name',
-    fileVersionColumnName: 'currentVersion',
-    tableConfiguration: {
-      showAccessColumn: true,
-    },
-    defaultShowPlots: false,
+const genieBPCDataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex,
+  sql: genieBPCSql,
+  name: 'Files',
+  showExportToCavatica: true,
+  isRowSelectionVisible: true,
+  rowSelectionPrimaryKey: ['id'],
+  visibleColumnCount: 6,
+  fileIdColumnName: 'id',
+  fileNameColumnName: 'name',
+  fileVersionColumnName: 'currentVersion',
+  tableConfiguration: {
+    showAccessColumn: true,
   },
+  defaultShowPlots: false,
 }
 
-export default genieBPCData
+export default genieBPCDataQueryWrapperPlotNavProps

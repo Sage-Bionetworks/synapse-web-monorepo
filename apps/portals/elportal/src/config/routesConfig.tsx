@@ -1,433 +1,97 @@
+import App from '@sage-bionetworks/synapse-portal-framework/App'
+import ELBetaLaunchBanner from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBetaLaunchBanner'
+import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBrowseToolsPage'
+import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import React from 'react'
-import { GenericRoute } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import { SynapseConstants } from 'synapse-react-client'
-import RouteControlWrapperProps from './routeControlWrapperProps'
-import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
-import {
-  projectCardConfiguration,
-  projectsDetailsPageConfiguration,
-} from './synapseConfigs/projects'
-import {
-  computationalSql,
-  partnersSql,
-  peopleSql,
-  projectsSql,
-  //  upsetPlotSql,
-} from './resources'
-//import { handleUpsetPlotClick } from './synapseConfigs/handleUpsetPlotClick'
+import { RouteObject } from 'react-router-dom'
+import { Markdown } from 'synapse-react-client'
+import HomePage from '../pages/HomePage'
+import HomePageV2 from '../pages/HomePageV2'
+import ProjectDetailsPage from '../pages/ProjectDetailsPage'
+import StudyDetailsPage, {
+  studyDetailsPageRoutes,
+} from '../pages/StudyDetailsPage'
+import explorePageRoutes from './explorePageRoutes'
+import { computationalSql } from './resources'
+import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 
-const routes: GenericRoute[] = [
+const routes: RouteObject[] = [
   {
-    exact: true,
-    displayName: 'Home',
-    path: undefined,
-    link: '/',
-    synapseConfigArray: [],
-  },
-  {
-    path: '',
-    exact: false,
-    synapseConfigArray: [
+    path: '/',
+    element: (
+      <App>
+        <ELBetaLaunchBanner />
+      </App>
+    ),
+    children: [
+      ...sharedRoutes,
       {
-        name: 'ELBetaLaunchBanner',
-        centerTitle: true,
-        props: undefined,
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'HomepageV2',
+        element: (
+          <HomePageThemeProvider>
+            <HomePageV2 />
+          </HomePageThemeProvider>
+        ),
+      },
+      {
+        path: 'Browse Tools',
+        element: (
+          <ELBrowseToolsPage
+            popularSearchesSql={''}
+            toolsSql={computationalSql}
+          />
+        ),
+      },
+      {
+        path: 'Explore',
+        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
+        children: explorePageRoutes,
+      },
+      {
+        path: 'Explore/Projects/DetailsPage',
+        element: <ProjectDetailsPage />,
+      },
+      {
+        path: 'Explore/Studies/DetailsPage',
+        element: <StudyDetailsPage />,
+        children: studyDetailsPageRoutes,
+      },
+      {
+        path: 'Analysis Platforms',
+        element: (
+          <SectionLayout title={'Analysis Platforms'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621275"
+              loadingSkeletonRowCount={10}
+            />
+          </SectionLayout>
+        ),
+      },
+      {
+        path: 'Data Access',
+        element: (
+          <SectionLayout title={'Data Access'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621276"
+              loadingSkeletonRowCount={10}
+            />
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="622372"
+              loadingSkeletonRowCount={10}
+            />
+          </SectionLayout>
+        ),
       },
     ],
-  },
-  {
-    path: '',
-    hideRouteFromNavbar: true,
-    exact: true,
-    synapseConfigArray: [
-      {
-        title: 'About the Portal',
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
-        name: 'Markdown',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '626030',
-          loadingSkeletonRowCount: 10,
-        },
-      },
-      {
-        name: 'Goals',
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          entityId: 'syn51449135',
-        },
-      },
-      {
-        name: 'ELGettingStarted',
-        props: undefined,
-      },
-      // Commented out for release (see EC-485)
-      // {
-      //   name: 'UpsetPlot',
-      //   title: 'Exploring the Data',
-      //   outsideContainerClassName: 'home-spacer home-bg-dark',
-      //   centerTitle: true,
-      //   props: {
-      //     sql: upsetPlotSql,
-      //     rgbIndex: 0,
-      //     maxBarCount: 20,
-      //     setName: '# Files per assay',
-      //     combinationName: '# individuals',
-      //     onClick: handleUpsetPlotClick,
-      //     // summaryLinkText: 'Explore All Data',
-      //     // summaryLink: '/Explore/Data',
-      //   },
-      // },
-      {
-        name: 'RssFeedCards',
-        title: "What's New",
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer',
-        props: {
-          url: 'https://news.eliteportal.org',
-          itemsToShow: 3,
-          allowCategories: [],
-          // mailChimpListName: 'AMP-AD quarterly newsletter',
-          // mailChimpUrl:
-          //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-          filter: {
-            value: 'whats-new',
-          },
-        },
-      },
-      // {
-      //   name: 'FeaturedDataTabs',
-      //   centerTitle: true,
-      //   outsideContainerClassName: 'home-spacer home-bg-dark',
-      //   props: {
-      //     sql: dataSql,
-      //     rgbIndex: 3,
-      //     configs: [
-      //       {
-      //         title: 'Human Studies',
-      //         icon: 'PERSON',
-      //         explorePagePath: '/Explore/Studies',
-      //         exploreObjectType: 'Studies',
-      //         plotsConfig: {
-      //           configs: [
-      //             {
-      //               title:
-      //                 'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog study',
-      //               description:
-      //                 'This study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS traits and five distinct definitions of longevity.',
-      //               facetsToPlot: ['dataType'],
-      //               selectFacetColumnName: 'study',
-      //               selectFacetColumnValue: 'MRGWAS',
-      //               detailsPagePath:
-      //                 '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
-      //               unitDescription: 'Files',
-      //             },
-      //             {
-      //               title:
-      //                 'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study',
-      //               description:
-      //                 'This study provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
-      //               facetsToPlot: ['dataType'],
-      //               selectFacetColumnName: 'study',
-      //               selectFacetColumnValue: 'ADAMTS7',
-      //               detailsPagePath:
-      //                 '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
-      //               unitDescription: 'Files',
-      //             },
-      //             {
-      //               title:
-      //                 'The Phenome-wide association study of aging: data files and a web resource',
-      //               description:
-      //                 'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
-      //               facetsToPlot: ['dataType'],
-      //               selectFacetColumnName: 'study',
-      //               selectFacetColumnValue: 'Aging-PheWAS',
-      //               detailsPagePath:
-      //                 '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
-      //               unitDescription: 'Files',
-      //             },
-      //           ],
-      //         },
-      //       },
-      //       {
-      //         title: 'Animal Model Studies',
-      //         icon: 'MOUSE',
-      //         explorePagePath: '/Explore/Studies',
-      //         exploreObjectType: 'Studies',
-      //         plotsConfig: {
-      //           configs: [],
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-
-      {
-        name: 'Ecosystem',
-        title: 'Related Resources',
-        centerTitle: true,
-        subtitle: '',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        props: {
-          config: [
-            {
-              title: 'Data Repositories',
-              ownerId: 'syn27229419',
-              wikiId: '621470',
-            },
-            {
-              title: 'Cross-Species Research Resources',
-              ownerId: 'syn27229419',
-              wikiId: '621472',
-            },
-          ],
-        },
-      },
-      //PORTALS-3208: Surface Our Partners (similar to NF)
-      {
-        name: 'CardContainerLogic',
-        title: 'Our Partners',
-        outsideContainerClassName: 'home-spacer',
-        centerTitle: true,
-        props: {
-          sql: partnersSql,
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: {
-            title: 'organizationName',
-            type: SynapseConstants.ORGANIZATION,
-            description: 'summary',
-            icon: 'abbreviation',
-            link: 'organizationPath',
-            thumbnailRequiresPadding: true,
-            imageFileHandleColumnName: 'cardLogo',
-          },
-          descriptionConfig: {
-            showFullDescriptionByDefault: true,
-          },
-          ctaLinkConfig: {
-            text: 'Visit Website',
-            link: 'website',
-          },
-        },
-      },
-      {
-        name: 'UserCardListRotate',
-        title: 'Our People & Institutions',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        centerTitle: true,
-        props: {
-          sql: `${peopleSql} WHERE isFeatured=true ORDER BY firstName`,
-          count: 3,
-          size: SynapseConstants.MEDIUM_USER_CARD,
-          useQueryResultUserData: true,
-          summaryLink: 'Explore/People',
-          summaryLinkText: 'View All People',
-        },
-      },
-    ],
-  },
-  {
-    path: 'Browse Tools',
-    exact: true,
-    hideRouteFromNavbar: true, // EC-485: hide from nav bar for release
-    synapseConfigArray: [
-      {
-        name: 'ELBrowseToolsPage',
-        props: {
-          popularSearchesSql: '',
-          toolsSql: computationalSql,
-        },
-        isOutsideContainer: true,
-      },
-    ],
-  },
-  {
-    path: 'Explore',
-    routes: [
-      {
-        exact: true,
-        path: 'Data',
-        hideRouteFromNavbar: false,
-      },
-      {
-        exact: true,
-        path: 'Cohort Builder',
-        synapseConfigArray: [
-          {
-            name: 'OrientationBanner',
-            isOutsideContainer: true,
-            props: {
-              name: 'CohortBuilder',
-              title: 'Getting Started With Cohort Builder',
-              text: (
-                <>
-                  This page helps you explore and find data in the ELITE Portal
-                  related to a specific group of Participants. Add filters to
-                  build a list of participants, select specific participants you
-                  are interested in, and view the files associated with your
-                  chosen cohort. From there, you can download the related data
-                  files or Sent to CAVATICA for analysis. See the ELITE Portal
-                  Help Docs for more information about{' '}
-                  <a
-                    href="https://help.eliteportal.org/help/cohort-builder"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Cohort Builder
-                  </a>
-                  .
-                </>
-              ),
-              sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },
-              // TODO DOCS-122
-              // secondaryButtonConfig: {
-              //   text: 'Learn more about Cohort Builder',
-              //   href: '',
-              // },
-            },
-          },
-        ],
-      },
-      {
-        path: ':slug/',
-        hideRouteFromNavbar: true,
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: RouteControlWrapperProps,
-          },
-        ],
-      },
-      {
-        path: 'Projects',
-        routes: [
-          {
-            path: 'DetailsPage',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'CardContainerLogic',
-                isOutsideContainer: true,
-                props: {
-                  sql: projectsSql,
-                  isHeader: true,
-                  ...projectCardConfiguration,
-                  titleLinkConfig: {
-                    isMarkdown: false,
-                    overrideLinkURLColumnName: 'externalWebsite',
-                    baseURL: 'Explore/Projects',
-                    URLColumnName: '',
-                    matchColumnName: '',
-                  },
-                },
-              },
-              {
-                name: 'DetailsPage',
-                props: projectsDetailsPageConfiguration,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        path: 'Studies',
-        routes: [
-          {
-            path: 'DetailsPage',
-            routes: [
-              { path: '', synapseConfigArray: studiesProgrammaticRouteConfig },
-            ],
-          },
-        ],
-      },
-      {
-        path: 'Publications',
-        hideRouteFromNavbar: false,
-      },
-      {
-        path: 'Computational Tools',
-        hideRouteFromNavbar: false,
-      },
-      {
-        path: 'People',
-        hideRouteFromNavbar: false,
-      },
-    ],
-  },
-  {
-    exact: true,
-    path: 'Analysis Platforms',
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        title: 'Analysis Platforms',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '621275',
-          loadingSkeletonRowCount: 10,
-        },
-      },
-    ],
-  },
-  {
-    path: 'Data Access',
-    exact: true,
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        title: 'Data Access',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '621276',
-          loadingSkeletonRowCount: 10,
-        },
-      },
-      {
-        name: 'Markdown',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '622372',
-          loadingSkeletonRowCount: 10,
-        },
-      },
-    ],
-  },
-
-  {
-    path: 'Contribute Data',
-    routes: [
-      {
-        exact: true,
-        path: '',
-        hideRouteFromNavbar: true,
-        synapseConfigArray: [
-          {
-            name: 'ELContributeYourData',
-            props: undefined,
-            isOutsideContainer: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    exact: true,
-    displayName: 'News',
-    path: undefined,
-    target: '_blank',
-    link: 'http://news.eliteportal.org/',
-    synapseConfigArray: [],
-  },
-  {
-    exact: true,
-    displayName: 'Help',
-    path: undefined,
-    target: '_blank',
-    link: 'https://help.eliteportal.org/',
-    synapseConfigArray: [],
   },
 ]
 

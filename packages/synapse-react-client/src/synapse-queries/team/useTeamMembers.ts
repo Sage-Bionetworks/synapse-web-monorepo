@@ -16,6 +16,7 @@ import {
   TeamMember,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
+import { Count } from '@sage-bionetworks/synapse-client'
 
 export function useGetTeamMembers(
   teamId: string | number,
@@ -28,6 +29,21 @@ export function useGetTeamMembers(
     ...options,
     queryKey: keyFactory.getTeamMembersQueryKey(String(teamId)),
     queryFn: () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
+  })
+}
+
+export function useGetTeamMemberCount(
+  teamId: string,
+  options?: Partial<UseQueryOptions<Count, SynapseClientError>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getTeamMemberCountQueryKey(String(teamId)),
+    queryFn: () =>
+      synapseClient.teamServicesClient.getRepoV1TeamMembersCountId({
+        id: teamId,
+      }),
   })
 }
 
@@ -97,7 +113,7 @@ export function useInviteUserToTeam(
   >({
     ...options,
     mutationFn: invitation =>
-      SynapseClient.createMembershipInvitation(invitation, accessToken!),
+      SynapseClient.createMembershipInvitation(invitation, accessToken),
   })
 }
 
@@ -172,7 +188,7 @@ export function useRequestToJoinTeam(
   >({
     ...options,
     mutationFn: request =>
-      SynapseClient.createMembershipRequest(request, accessToken!),
+      SynapseClient.createMembershipRequest(request, accessToken),
     onSuccess: async (data, variables, ctx) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMembershipStatusQueryKey(

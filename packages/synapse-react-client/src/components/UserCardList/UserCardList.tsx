@@ -96,9 +96,7 @@ export class UserCardList extends React.Component<
         lastName: values[lastNameIndex] ?? '',
         company: values[institutionIndex] ?? undefined,
         ownerId: null,
-        userName: values[firstNameIndex]
-          ? values[firstNameIndex]![0] ?? ''
-          : '',
+        userName: values[firstNameIndex] ? values[firstNameIndex][0] ?? '' : '',
       }
     })
   }

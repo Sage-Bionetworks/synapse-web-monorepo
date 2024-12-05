@@ -1,4 +1,4 @@
-import { Checkbox, Skeleton, Tooltip } from '@mui/material'
+import { Checkbox, IconButton, Skeleton, Tooltip } from '@mui/material'
 import BaseTable, {
   CallOrReturn,
   ColumnShape,
@@ -30,6 +30,12 @@ import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
 import { UserBadge } from '../../../UserCard/UserBadge'
+import { displayFilesWereAddedToDownloadListSuccess } from '../../../download_list/DownloadConfirmationUtils'
+import { displayToast } from '../../../ToastMessage'
+import { useAddFileToDownloadList } from '../../../../synapse-queries'
+import { useSynapseContext } from '../../../../utils'
+import { FileHandleWithPreview } from '../../../ChallengeDataDownload/Renderers'
+import { useMutation } from '@tanstack/react-query'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -257,6 +263,79 @@ export function EmptyRenderer({
     <div className="EntityFinderDetailsViewPlaceholder">
       {noResultsPlaceholder || <div>Empty</div>}
     </div>
+  )
+}
+
+export function MD5Renderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
+  const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
+  )
+  const { mutate: copyMd5ToClipboard } = useMutation({
+    mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
+    onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
+  })
+  if (isLoadingEntityBundle) {
+    return <Skeleton width={200} />
+  }
+  const file = bundle?.fileHandles.find(
+    (file: FileHandleWithPreview) => file.isPreview !== true,
+  )
+  if (file?.contentMd5 == undefined) {
+    return <></>
+  }
+
+  return (
+    <Tooltip title="Click to copy MD5 to your clipboard" placement="right">
+      <button
+        aria-label="MD5"
+        onClick={event => {
+          event.stopPropagation()
+          copyMd5ToClipboard(file?.contentMd5 ?? '')
+        }}
+      >
+        {file?.contentMd5}
+      </button>
+    </Tooltip>
+  )
+}
+
+export function AddFileToDownloadListRenderer<
+  T extends EntityIdAndVersionNumber,
+>(props: CellRendererProps<T>) {
+  const { entityId, versionNumber } = props.rowData
+  const { data: bundle } = useGetEntityBundle(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
+  )
+
+  const { downloadCartPageUrl } = useSynapseContext()
+
+  const { mutate: addToDownloadList } = useAddFileToDownloadList({
+    onSuccess: () => {
+      displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
+  if (bundle?.entityType !== EntityType.FILE) {
+    return <></>
+  }
+  return (
+    <Tooltip title="Add to Download Cart" placement="right">
+      <IconButton
+        sx={{ height: '35px', width: '35px' }}
+        onClick={event => {
+          addToDownloadList({ entityId, entityVersionNumber: versionNumber })
+          event.stopPropagation()
+        }}
+      >
+        <IconSvg icon="download" />
+      </IconButton>
+    </Tooltip>
   )
 }
 

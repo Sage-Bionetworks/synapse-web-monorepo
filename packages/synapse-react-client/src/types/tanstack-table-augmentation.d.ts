@@ -23,9 +23,9 @@ declare module '@tanstack/react-table' {
 
     /** The type of filter that this column may have */
     filterVariant?: 'enumeration' // could be extended to include 'range', 'freeText', etc.
-    /** If the filterVariant is `enumeration`, this list captures the potential values that may be picked for filtering */
-    enumValues?: ColumnFilterEnumValue<TValue>[]
     /** If the filterVariant is `enumeration`, determines whether the user can filter by multiple values. */
     enableMultipleSelect?: boolean
+    /** Get the display text for a given value for this column, which may be used in non-cell UI such as the enumerated facet control. */
+    getDisplayText?: (value: TValue) => string
   }
 }

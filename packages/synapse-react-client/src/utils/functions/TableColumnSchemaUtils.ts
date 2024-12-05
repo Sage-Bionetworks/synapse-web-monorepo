@@ -52,7 +52,7 @@ export async function createTableUpdateTransactionRequest(
 
   // Create the new column models.
   // The newSchema will match the proposed schema, but column models that have been changed will end up getting a new ID
-  let newSchema: SetOptional<ColumnModel, 'id'>[] = []
+  const newSchema: SetOptional<ColumnModel, 'id'>[] = []
   for (const m of proposedSchema) {
     const copy: SetOptional<ColumnModel, 'id'> = {
       ...m,

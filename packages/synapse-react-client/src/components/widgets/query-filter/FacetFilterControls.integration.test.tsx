@@ -109,14 +109,14 @@ describe('FacetFilterControls tests', () => {
     it('renders all available facet chips', async () => {
       init()
       expect(await screen.findAllByRole('button')).toHaveLength(
-        mockQueryResponseData.facets!.length,
+        mockQueryResponseData.facets.length,
       )
     })
 
     it('facet chip changes color onClick', async () => {
       init()
       const facetChip = await screen.findByRole('button', {
-        name: mockQueryResponseData.facets![0].columnName,
+        name: mockQueryResponseData.facets[0].columnName,
       })
       expect(facetChip.className).toEqual('Chip Checked')
       await userEvent.click(facetChip)
@@ -125,7 +125,7 @@ describe('FacetFilterControls tests', () => {
   })
 
   describe('getDefaultShownFacetFilters', () => {
-    const allFacetColumnNames = mockQueryResponseData.facets!.map(
+    const allFacetColumnNames = mockQueryResponseData.facets.map(
       f => f.columnName,
     )
     it('return the first three facet column names', () => {

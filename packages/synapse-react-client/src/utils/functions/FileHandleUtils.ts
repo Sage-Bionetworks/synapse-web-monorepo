@@ -113,7 +113,7 @@ export function getStorageLocationName(
 export function getDataFileHandle(
   entityBundle: EntityBundle,
 ): FileHandle | undefined {
-  let dataFileHandle = undefined
+  let dataFileHandle: FileHandle | undefined = undefined
   if (entityBundle.entityType === EntityType.FILE) {
     dataFileHandle = entityBundle.fileHandles.filter(
       fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,

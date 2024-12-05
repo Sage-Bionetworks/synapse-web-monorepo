@@ -3,7 +3,7 @@ import { escapeAttrValue, IFilterXSSOptions, safeAttrValue } from 'xss'
 // PORTALS-1450: including 'style' in the allow-list will cause string values to come through, which crashes the app when used (because it uses jsx).
 export const xssOptions: IFilterXSSOptions = {
   whiteList: {
-    a: ['target', 'href', 'title', 'ref'],
+    a: ['target', 'href', 'title', 'rel'],
     abbr: ['title'],
     address: [],
     area: ['shape', 'coords', 'href', 'alt'],

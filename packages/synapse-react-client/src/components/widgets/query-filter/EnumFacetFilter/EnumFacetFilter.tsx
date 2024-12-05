@@ -38,7 +38,7 @@ export type FacetValueSortConfig = {
   direction: Direction
 }
 
-function _EnumFacetFilter(props: EnumFacetFilterProps) {
+function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
   const {
     facet,
     containerAs = 'Collapsible',
@@ -228,7 +228,7 @@ export function EnumFacetFilter(props: EnumFacetFilterProps) {
         />
       }
     >
-      <_EnumFacetFilter {...props} />
+      <EnumFacetFilterInternal {...props} />
     </Suspense>
   )
 }

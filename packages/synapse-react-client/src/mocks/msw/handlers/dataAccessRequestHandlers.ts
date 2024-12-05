@@ -71,7 +71,7 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
       `${backendOrigin}${DATA_ACCESS_REQUEST}`,
       async (req, res, ctx) => {
         const resp = await req.json()
-        let existingRequest = resp.id
+        const existingRequest = resp.id
           ? mockDataAccessRequestService.getOneById(resp.id)
           : null
 

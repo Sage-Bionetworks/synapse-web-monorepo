@@ -21,6 +21,7 @@ import {
   ColumnSort,
   createColumnHelper,
   getCoreRowModel,
+  getFacetedUniqueValues as defaultGetFacetedUniqueValues,
   SortingState,
   Table,
   Updater,
@@ -58,6 +59,14 @@ export function accessRequirementConcreteTypeValueToDisplayValue(
   }
 }
 
+const ALL_ACCESS_REQUIREMENT_CONCRETE_TYPES = [
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+]
+
 const isIntegerInput = (v: string): boolean => {
   return /^\d+$/.test(v)
 }
@@ -93,30 +102,7 @@ const columns = [
     enableColumnFilter: true,
     meta: {
       filterVariant: 'enumeration',
-      enumValues: [
-        {
-          value: TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-          displayText:
-            TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-        },
-        {
-          value: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-          displayText: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-        },
-        {
-          value: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-          displayText:
-            MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-        },
-        {
-          value: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-          displayText: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-        },
-        {
-          value: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-          displayText: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-        },
-      ],
+      getDisplayText: accessRequirementConcreteTypeValueToDisplayValue,
       enableMultipleSelect: false,
     },
   }),
@@ -306,6 +292,20 @@ export function useAccessRequirementTable(
       state: {
         sorting: sortingState,
         columnFilters: columnFilters,
+      },
+      getFacetedUniqueValues: (
+        table: Table<AccessRequirementSearchResult>,
+        columnId: string,
+      ) => {
+        if (columnId === 'type') {
+          // Hard-code the set of possible access requirement types with count = 0 to indicate that we don't have facet counts.
+          return () =>
+            new Map(ALL_ACCESS_REQUIREMENT_CONCRETE_TYPES.map(v => [v, 0]))
+        }
+        return defaultGetFacetedUniqueValues<AccessRequirementSearchResult>()(
+          table,
+          columnId,
+        )
       },
       onSortingChange: setSortingState,
       onColumnFiltersChange: onColumnFiltersChange,

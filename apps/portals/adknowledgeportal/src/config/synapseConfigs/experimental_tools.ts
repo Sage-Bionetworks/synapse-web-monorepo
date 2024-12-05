@@ -4,7 +4,6 @@ import type {
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { experimentalModelsSql } from '../resources'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/1254293523/AMP-AD+Experimental+Models+Schema
@@ -111,9 +110,8 @@ export const experimentalDetailsTableConfiguration: QueryWrapperPlotNavProps['ta
 
 const rgbIndex = 6
 
-const experimentalTools: SynapseConfig = {
-  name: 'QueryWrapperPlotNav',
-  props: {
+export const experimentalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
+  {
     rgbIndex,
     visibleColumnCount: 10,
     sql: experimentalModelsSql,
@@ -155,7 +153,8 @@ const experimentalTools: SynapseConfig = {
         'targetedGenes',
       ],
     },
-  },
-}
+  }
 
-export default experimentalTools
+export const EXPERIMENTAL_MODELS_COLUMN_NAMES = {
+  GRANT: 'grant',
+}

@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
+import { useSynapseContext } from '../../utils'
 
 dayjs.extend(calendar)
 /**
@@ -54,7 +55,7 @@ type SynapseFormSubmissionGridState = {
   modalContext?: { action: (...args: any[]) => void; arguments: any[] }
 }
 
-export class SynapseFormSubmissionGrid extends React.Component<
+class _SynapseFormSubmissionGrid extends React.Component<
   SynapseFormSubmissionGridProps,
   SynapseFormSubmissionGridState
 > {
@@ -101,14 +102,14 @@ export class SynapseFormSubmissionGrid extends React.Component<
     }
   }
 
-  async componentDidMount() {
-    await this.refresh(this.props.token)
+  componentDidMount() {
+    this.refresh(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
+  componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
-      await this.refresh(this.props.token)
+      this.refresh(this.props.token)
     }
   }
 
@@ -154,7 +155,7 @@ export class SynapseFormSubmissionGrid extends React.Component<
       }
     } catch (error) {
       this.onError(error)
-      return Promise.reject(error)
+      return Promise.reject(error as Error)
     } finally {
       this.setState({
         isLoading: false,
@@ -165,8 +166,8 @@ export class SynapseFormSubmissionGrid extends React.Component<
   getMore = async (fileListType: FileListType, nextPageToken: string) => {
     const statusList =
       fileListType === 'SUBMITTED'
-        ? SynapseFormSubmissionGrid.requestFilter.SUBMITTED
-        : SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS
+        ? _SynapseFormSubmissionGrid.requestFilter.SUBMITTED
+        : _SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS
     const result = await this.getTypeFileListing(statusList, nextPageToken)
     if (fileListType === 'SUBMITTED') {
       this.setState(prevState => ({
@@ -187,11 +188,11 @@ export class SynapseFormSubmissionGrid extends React.Component<
 
   getUserFileListing = async (): Promise<void> => {
     const inProgress = await this.getTypeFileListing(
-      SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS,
+      _SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS,
       this.state.inProgress.nextPageToken,
     )
     const submitted = await this.getTypeFileListing(
-      SynapseFormSubmissionGrid.requestFilter.SUBMITTED,
+      _SynapseFormSubmissionGrid.requestFilter.SUBMITTED,
       this.state.submitted.nextPageToken,
     )
 
@@ -516,6 +517,15 @@ export class SynapseFormSubmissionGrid extends React.Component<
       </div>
     )
   }
+}
+
+export function SynapseFormSubmissionGrid(
+  props: SynapseFormSubmissionGridProps,
+) {
+  const synapseContext = useSynapseContext()
+  return (
+    <_SynapseFormSubmissionGrid {...props} token={synapseContext.accessToken} />
+  )
 }
 
 export default SynapseFormSubmissionGrid

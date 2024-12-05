@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import {
   displayToast,
   SynapseClient,
@@ -346,7 +346,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   }, [accessToken])
 
   if (isReturnToAccountSettings) {
-    return <Redirect to="/authenticated/myaccount" />
+    return <Navigate to="/authenticated/myaccount" />
   }
   const onSubmit = async () => {
     if (profile && verificationSubmission) {

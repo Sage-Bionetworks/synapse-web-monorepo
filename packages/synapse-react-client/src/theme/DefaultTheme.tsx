@@ -382,6 +382,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           mb: '4px',
           fontSize: '14px',
           transform: 'none',
+          '.MuiInputLabel-asterisk': {
+            color: theme.palette.secondary.main,
+          },
         }),
       },
     },

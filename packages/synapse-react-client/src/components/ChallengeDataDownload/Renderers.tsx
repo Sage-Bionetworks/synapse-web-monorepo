@@ -7,7 +7,7 @@ import { useGetEntityBundle } from '../../synapse-queries'
 import { FileHandle } from '@sage-bionetworks/synapse-types'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 
-type FileHandleWithPreview = FileHandle & {
+export type FileHandleWithPreview = FileHandle & {
   isPreview?: boolean
 }
 

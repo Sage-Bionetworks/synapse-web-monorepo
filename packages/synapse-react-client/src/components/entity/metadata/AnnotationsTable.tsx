@@ -108,9 +108,7 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
                   <td className="AnnotationsTable__Row__Key">{key}</td>
                   <td className="AnnotationsTable__Row__Value">
                     {Array.isArray(annotations[key])
-                      ? (annotations[key] as string[] | number[] | boolean[])
-                          .map(getDisplayedAnnotation)
-                          .join(', ')
+                      ? annotations[key].map(getDisplayedAnnotation).join(', ')
                       : getDisplayedAnnotation(
                           annotations[key] as string | number | boolean,
                         )}
