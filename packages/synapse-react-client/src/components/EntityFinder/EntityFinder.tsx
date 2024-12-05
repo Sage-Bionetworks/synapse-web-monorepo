@@ -1,38 +1,38 @@
-import pluralize from 'pluralize'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-} from '@mui/material'
-import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
+import {
+  Box,
+  Chip,
+  IconButton,
+  InputAdornment,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+} from '@mui/material'
+import {
+  EntityType,
+  KeyValue,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
 import SynapseClient from '../../synapse-client'
-import {
-  entityTypeToFriendlyName,
-  getEntityTypeFromHeader,
-} from '../../utils/functions/EntityTypeUtils'
-import { parseSynId } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Reference } from '@sage-bionetworks/synapse-types'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { KeyValue } from '@sage-bionetworks/synapse-types'
+import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
+import { parseSynId } from '../../utils/functions/RegularExpressions'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
+  EntityDetailsListProps,
 } from './details/EntityDetailsList'
 import { EntityFinderHeader } from './EntityFinderHeader'
-import { SelectionPane } from './SelectionPane'
 import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
@@ -41,10 +41,6 @@ import { VersionSelectionType } from './VersionSelectionType'
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
 const TREE_DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
-
-// In the map used to track selections, we use -1 to denote 'selected without version'
-// This is necessary because undefined is returned by map.get when the item is not in the map
-export const NO_VERSION_NUMBER = -1
 
 const searchForOnlyTypesBooleanQuery = (
   entityTypes: EntityType[],
@@ -61,7 +57,7 @@ const searchForOnlyTypesBooleanQuery = (
 }
 
 export type EntityFinderProps = {
-  /** Whether or not it is possible to select multiple entities */
+  /** Whether it is possible to select multiple entities */
   selectMultiple: boolean
   /** Callback invoked when the selection changes */
   onSelectedChange: (selected: Reference[]) => void
@@ -79,10 +75,13 @@ export type EntityFinderProps = {
   selectableTypes?: EntityType[]
   /** The types to show in the tree used to navigate. If `treeOnly` is true, any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInTree?: EntityType[]
-  /** The text to show before the list of selected entities */
-  selectedCopy?: string | ((count: number) => string)
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
+}
+
+enum EntityFinderTab {
+  BROWSE,
+  SELECTED,
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
@@ -95,10 +94,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectableTypes = DEFAULT_SELECTABLE_TYPES,
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
-  selectedCopy = selectMultiple ? count => `Selected (${count})` : 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
   const { accessToken } = useSynapseContext()
+  const [currentTab, setCurrentTab] = React.useState(EntityFinderTab.BROWSE)
 
   const [searchActive, setSearchActive] = useState(false)
   // The raw value of the search input box:
@@ -115,8 +114,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     useState<EntityDetailsListDataConfiguration>({
       type: EntityDetailsListDataConfigurationType.PROMPT,
     })
-
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // If a type is selectable, it should be visible in the tree/list (depending on treeOnly)
   const selectableAndVisibleTypesInTree = useMemo(
@@ -144,6 +141,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   )
 
   const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
+  // A snapshot of the selectedEntities used to populate the selection list, allowing deselection of entities without removing them from the list.
+  const [selectedEntitiesSnapshot, setSelectedEntitiesSnapshot] =
+    useState(selectedEntities)
 
   const isIdSelected = useCallback(
     (entity: EntityFinderHeader) => {
@@ -162,15 +162,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
   useEffect(() => {
     // When it changes, convert the map of selected items to a list of references and invoke the callback
-    onSelectedChange(
-      selectedEntities.toArray().map(([id, version]) => {
-        return {
-          targetId: id,
-          targetVersionNumber:
-            version === NO_VERSION_NUMBER ? undefined : version,
-        }
-      }),
-    )
+    onSelectedChange(Array.from(selectedEntities.values()))
   }, [selectedEntities, onSelectedChange])
 
   useEffect(() => {
@@ -188,29 +180,32 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     }
   }, [accessToken, searchTerms, handleError])
 
+  const handleTabChange = (
+    _event: React.SyntheticEvent,
+    newValue: EntityFinderTab,
+  ) => {
+    setSelectedEntitiesSnapshot(selectedEntities)
+    setCurrentTab(newValue)
+  }
+
   const mainPanelClass = searchActive
     ? 'MainPanelSearch'
     : treeOnly
     ? 'MainPanelSinglePane'
     : 'MainPanelDualPane'
 
-  let searchButtonText
-  const tableArray = [
-    'table',
-    'entityview',
-    'materializedview',
-    'submissionview',
-    'dataset',
-    'datasetcollection',
-  ]
-  if (selectableTypes.length === 1) {
-    searchButtonText = `Search for ${pluralize(
-      entityTypeToFriendlyName(selectableTypes[0]),
-    )}`
-  } else if (selectableTypes.every(element => tableArray.includes(element))) {
-    searchButtonText = 'Search for Tables'
-  } else {
-    searchButtonText = 'Search all of Synapse'
+  const entityDetailsListProps: EntityDetailsListProps = {
+    configuration: configFromTreeView,
+    versionSelection: versionSelection,
+    selected: selectedEntities,
+    isIdSelected: isIdSelected,
+    isSelectable: isSelectable,
+    visibleTypes: selectableAndVisibleTypesInList,
+    selectableTypes: selectableTypes,
+    selectColumnType: selectMultiple ? 'checkbox' : 'none',
+    toggleSelection: toggleSelection,
+    enableSelectAll: selectMultiple,
+    setCurrentContainer: setCurrentContainer,
   }
 
   return (
@@ -218,84 +213,86 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       <div className="EntityFinder">
         <Box
           display="flex"
-          justifyContent="flex-end"
-          alignItems="stretch"
-          pb={1}
+          justifyContent="space-between"
+          mb={2.5}
+          flexWrap={'wrap'}
+          columnGap={16}
+          rowGap={2}
         >
-          <>
-            {searchActive ? (
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => {
-                  setSearchActive(false)
-                  setSearchInput('')
-                  setSearchTerms(undefined)
-                }}
-                startIcon={<ArrowBackOutlinedIcon />}
-                sx={{ flexShrink: 0, mr: 1 }}
-              >
-                Back to Browse
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                className="EntityFinder__Search__SearchButton"
-                onClick={() => {
-                  setSearchActive(true)
-                  searchInputRef.current!.focus()
-                }}
-                startIcon={<SearchIcon />}
-                sx={{ flexShrink: 0 }}
-              >
-                {searchButtonText}
-              </Button>
-            )}
-            <TextField
-              className="EntityFinder__Search__Input"
-              aria-hidden={!searchActive}
-              data-active={searchActive}
-              inputRef={searchInputRef}
-              placeholder="Search by name, Wiki contents, or Synapse ID"
-              value={searchInput}
-              onChange={event => {
-                setSearchInput(event.target.value)
-              }}
-              onKeyDown={(event: any) => {
-                if (event.key === 'Enter') {
-                  if (event.target.value === '') {
-                    setSearchTerms(undefined)
-                  } else {
-                    setSearchTerms(event.target.value.trim().split(' '))
-                  }
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            sx={{ flexShrink: 0 }}
+          >
+            <Tab value={EntityFinderTab.BROWSE} label={'Browse'}></Tab>
+            <Tab
+              value={EntityFinderTab.SELECTED}
+              label={
+                <Stack direction={'row'} gap={0.5} alignItems={'center'}>
+                  <span>Selected</span>
+                  <Chip
+                    size={'small'}
+                    label={selectedEntities.size.toLocaleString()}
+                    sx={{
+                      backgroundColor: 'tertiary.500',
+                      color: 'grey.900',
+                      height: '21px',
+                    }}
+                  ></Chip>
+                </Stack>
+              }
+            ></Tab>
+          </Tabs>
+          <TextField
+            fullWidth
+            size={'small'}
+            placeholder="Search by name, wiki content, or SynID"
+            value={searchInput}
+            onChange={event => {
+              setSearchInput(event.target.value)
+            }}
+            onKeyDown={(event: any) => {
+              if (event.key === 'Enter') {
+                const trimmedInput = event.target.value.trim()
+                setSearchActive(!!trimmedInput)
+                if (trimmedInput) {
+                  setSearchTerms(trimmedInput.split(/\s+/))
                 }
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => {
-                        setSearchInput('')
-                        setSearchTerms(undefined)
-                      }}
-                      aria-label="Clear Search"
-                      disabled={!searchInput}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </>
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerms ? (
+                <InputAdornment position="end">
+                  <IconButton
+                    size={'small'}
+                    onClick={() => {
+                      setSearchInput('')
+                      setSearchTerms(undefined)
+                      setSearchActive(false)
+                    }}
+                    aria-label="Clear Search"
+                    disabled={!searchInput && !searchActive}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ) : undefined,
+            }}
+            sx={{ flex: '1 1 350px' }}
+          />
         </Box>
-        <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>
+        <div
+          role={'tabpanel'}
+          className={`EntityFinder__MainPanel ${mainPanelClass}`}
+          style={{
+            display: currentTab === EntityFinderTab.BROWSE ? 'block' : 'none',
+          }}
+        >
           {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
           {searchActive && (
             <EntityDetailsList
@@ -376,21 +373,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         </ReflexElement>
                         <ReflexSplitter></ReflexSplitter>
                         <ReflexElement className="DetailsViewReflexElement">
-                          <EntityDetailsList
-                            configuration={configFromTreeView}
-                            versionSelection={versionSelection}
-                            selected={selectedEntities}
-                            isIdSelected={isIdSelected}
-                            isSelectable={isSelectable}
-                            visibleTypes={selectableAndVisibleTypesInList}
-                            selectableTypes={selectableTypes}
-                            selectColumnType={
-                              selectMultiple ? 'checkbox' : 'none'
-                            }
-                            toggleSelection={toggleSelection}
-                            enableSelectAll={selectMultiple}
-                            setCurrentContainer={setCurrentContainer}
-                          />
+                          <EntityDetailsList {...entityDetailsListProps} />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>
                       </ReflexContainer>
@@ -401,14 +384,20 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           }
         </div>
-
-        {selectedEntities.size > 0 && (
-          <SelectionPane
-            title={selectedCopy}
-            selectedEntities={selectedEntities}
-            toggleSelection={toggleSelection}
+        <div
+          role={'tabpanel'}
+          style={{
+            display: currentTab === EntityFinderTab.SELECTED ? 'block' : 'none',
+          }}
+        >
+          <EntityDetailsList
+            {...entityDetailsListProps}
+            configuration={{
+              type: EntityDetailsListDataConfigurationType.REFERENCE_LIST,
+              referenceList: Array.from(selectedEntitiesSnapshot.values()),
+            }}
           />
-        )}
+        </div>
       </div>
     </SynapseErrorBoundary>
   )
