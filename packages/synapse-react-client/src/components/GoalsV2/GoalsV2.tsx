@@ -19,6 +19,7 @@ import { Box, Link, Typography, Button, darken } from '@mui/material'
 
 export type GoalsV2Props = {
   entityId: string
+  dataLink: string
 }
 
 export type GoalsV2DataProps = {
@@ -42,7 +43,7 @@ enum ExpectedColumns {
 const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
-  const { entityId } = props
+  const { entityId, dataLink } = props
   const { accessToken } = useSynapseContext()
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
@@ -186,7 +187,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           What's in the Portal?
         </Typography>
         <Link
-          href="https://eliteportal.synapse.org/Explore/Data"
+          href={dataLink}
           target="_blank"
           rel="noopener noreferrer"
           fontFamily="Lato"
@@ -194,7 +195,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           fontStyle="semi-bold"
         >
           <Button
-            href="https://eliteportal.synapse.org/Explore/Data" // <-- this should probably be a prop for reusability
+            href={dataLink}
             target="_blank"
             rel="noopener noreferrer"
             variant="contained"
