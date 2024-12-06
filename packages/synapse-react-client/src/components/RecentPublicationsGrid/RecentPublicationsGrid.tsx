@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Grid,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  Skeleton,
-} from '@mui/material'
+import { Grid, Typography, Button, Box, Skeleton } from '@mui/material'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -46,13 +39,16 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
 
   enum ExpectedColumns {
-    TAG = 'Tag',
+    CATEGORY = 'Category',
     JOURNAL = 'Journal',
     TITLE = 'Title',
     PUBLICATION_DATE = 'publicationDate',
   }
 
-  const tagColIndex = getFieldIndex(ExpectedColumns.TAG, queryResultBundle)
+  const categoryColIndex = getFieldIndex(
+    ExpectedColumns.CATEGORY,
+    queryResultBundle,
+  )
   const journalColIndex = getFieldIndex(
     ExpectedColumns.JOURNAL,
     queryResultBundle,
@@ -64,63 +60,93 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   )
 
   const PublicationCard = ({ pub }: PublicationCardProps) => (
-    <Grid item xs={12} sm={6} md={4} key={pub.rowId}>
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={3.62}
+      key={pub.rowId}
+      sx={{
+        paddingTop: '0px !important',
+        paddingLeft: '0px !important',
+      }}
+    >
       <Box sx={{ height: '100%' }}>
         {isLoading ? (
           <Skeleton variant="rectangular" height={250} width="100%" />
         ) : (
-          <CardContent>
-            <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}>
-              {pub.values[tagColIndex] &&
-                JSON.parse(pub.values[tagColIndex] as string).map(
-                  (tag: string, index: number) => (
-                    <Typography
-                      key={index}
-                      variant="overline"
-                      sx={{
-                        backgroundColor: 'grey.300',
-                        borderRadius: '3px',
-                        padding: '4px 8px',
-                        border: 'none',
-                        lineHeight: 'initial',
-                      }}
-                    >
-                      {tag}
-                    </Typography>
-                  ),
-                )}
-            </Box>
+          <Box>
+            {/* <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}> */}
+            {
+              pub.values[categoryColIndex] && (
+                <Typography
+                  variant="overline"
+                  fontSize={'14px'}
+                  sx={{
+                    backgroundColor: 'grey.300',
+                    borderRadius: '3px',
+                    padding: '4px 8px',
+                    border: 'none',
+                    lineHeight: 'initial',
+                  }}
+                >
+                  {pub.values[categoryColIndex]}
+                </Typography>
+              )
+              // JSON.parse(pub.values[categoryColIndex] as string).map(
+              //   (tag: string, index: number) => (
+              //     <Typography
+              //       key={index}
+              //       variant="overline"
+              //       sx={{
+              //         backgroundColor: 'grey.300',
+              //         borderRadius: '3px',
+              //         padding: '4px 8px',
+              //         border: 'none',
+              //         lineHeight: 'initial',
+              //       }}
+              //     >
+              //       {tag}
+              //     </Typography>
+              //   ),
+              // )
+            }
+            {/* </Box> */}
             <Typography
               variant="headline2"
               color="grey.1000"
+              fontSize={'21px'}
               sx={{
                 padding: '20px 0px',
               }}
             >
               {pub.values[titleColIndex]}
             </Typography>
-            <Typography
-              variant="body1"
-              color="grey.700"
-              sx={{
-                fontStyle: 'italic',
-                fontSize: '14px',
-              }}
-            >
-              {pub.values[journalColIndex]}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="grey.700"
-              sx={{ fontSize: '14px' }}
-            >
-              {pub.values[publicationDateColIndex] &&
-                formatDate(
-                  dayjs(Number(pub.values[publicationDateColIndex])),
-                  'MMMM, YYYY',
-                )}
-            </Typography>
-          </CardContent>
+            <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
+              <Typography
+                variant="body1"
+                color="grey.700"
+                fontSize={'14px'}
+                fontStyle={'italic'}
+                lineHeight={1.35}
+              >
+                {pub.values[journalColIndex]}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="grey.700"
+                fontSize={'14px'}
+                lineHeight={1.35}
+                paddingBottom={'35px'}
+              >
+                {pub.values[publicationDateColIndex] &&
+                  formatDate(
+                    dayjs(Number(pub.values[publicationDateColIndex])),
+                    'MMMM, YYYY',
+                  )}
+              </Typography>
+            </Box>
+          </Box>
         )}
       </Box>
     </Grid>
@@ -130,18 +156,19 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: '3fr 1fr' },
+        gridTemplateColumns: { xs: '1fr', md: '3fr 0.5fr' },
         gap: { xs: '38px', md: '80px' },
+        padding: '80px',
+        backgroundColor: 'grey.100',
       }}
     >
       <Grid
         container
-        spacing={2}
         sx={{
           order: { xs: 1, md: 0 },
         }}
       >
-        <Grid container spacing={2}>
+        <Grid container spacing={0} gap={'32px'}>
           {dataRows.map(pub => (
             <PublicationCard pub={pub} key={pub.rowId} />
           ))}
@@ -161,7 +188,12 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           gap="16px"
           sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
         >
-          <Typography variant="headline2" paddingTop="26px" color="grey.1000">
+          <Typography
+            variant="headline2"
+            paddingTop="26px"
+            color="grey.1000"
+            fontSize={'24px'}
+          >
             Recently Published
           </Typography>
           <Typography
@@ -178,6 +210,9 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               sx={{
                 whiteSpace: 'nowrap',
                 alignSelf: 'flex-start',
+                boxShadow: 'none',
+                padding: '6px 24px',
+                fontWeight: 600,
               }}
             >
               {buttonLinkText}
