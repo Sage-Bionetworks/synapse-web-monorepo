@@ -254,7 +254,7 @@ export default function HomePage() {
             title="Analyze on the Cloud"
             buttonText="Learn About Our Analysis Platforms"
             summaryText={styledPortalFeatureHighlightsSummaryText}
-            link="Analysis Platforms"
+            link="/Analysis Platforms"
           />
         </SectionLayout>
         <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
@@ -264,7 +264,7 @@ export default function HomePage() {
             buttonText="Check out our Computational Tools"
             summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips. "
             reverseOrder={true}
-            link="Explore/Computational Tools"
+            link="/Explore/Computational Tools"
           />
         </SectionLayout>
       </SectionLayout>
