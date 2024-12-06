@@ -1,5 +1,4 @@
 import { Skeleton } from '@mui/material'
-import React from 'react'
 import { components, GroupBase, SelectComponentsConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 import SynapseClient from '../../../synapse-client'

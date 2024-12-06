@@ -1,9 +1,8 @@
 import { Box, Link, Button, Typography, darken } from '@mui/material'
-import React from 'react'
 import backgroundSpotsLeft from './assets/dot_blob_top_left.png'
 import backgroundSpotsRight from './assets/dot_blob_bottom_right.png'
 
-const ELContributeYourData: React.FC = () => {
+function ELContributeYourData() {
   return (
     <Box
       sx={{

@@ -1,7 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as _ from 'lodash-es'
-import React from 'react'
 import StepsSideNav, { StepsSideNavProps } from './StepsSideNav'
 import { Step } from './types'
 import { stepsWithChildren } from '../../mocks/mock_drug_tool_data'

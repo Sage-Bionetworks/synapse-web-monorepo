@@ -1,16 +1,12 @@
-import React from 'react'
-import { Box, SxProps, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 /**
  * FISMA SAR V1-AC-8 System Use Notification, see https://sagebionetworks.jira.com/browse/SWC-6430
  */
-export const SystemUseNotification: React.FunctionComponent<
-  SxProps
-> = sxProps => {
+export function SystemUseNotification() {
   return (
     <Box
       sx={{
-        ...sxProps,
         color: 'grey.700',
         maxHeight: '110px',
         overflow: 'auto',

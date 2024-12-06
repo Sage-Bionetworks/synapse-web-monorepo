@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import {
   commandList,
   CommandListType,
@@ -17,11 +17,11 @@ export type MarkdownEditorProps = {
   setText: (text: string) => void
 }
 
-export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
+export function MarkdownEditor({
   placeholder,
   text,
   setText,
-}) => {
+}: MarkdownEditorProps) {
   const [currentTab, setCurrentTab] =
     useState<(typeof MarkdownEditorTabs)[number]>('WRITE')
   const [selectionStart, setSelectionStart] = useState<number>(0)

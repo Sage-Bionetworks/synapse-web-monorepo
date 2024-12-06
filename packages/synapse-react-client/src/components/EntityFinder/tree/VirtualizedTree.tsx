@@ -1,7 +1,7 @@
 import { Skeleton, Tooltip, Typography } from '@mui/material'
 import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {
@@ -292,7 +292,7 @@ export function Node(
     return <></>
   }
 
-  let tooltipContent: React.ReactNode = ''
+  let tooltipContent: ReactNode = ''
   if (isEntityHeaderNode(node)) {
     tooltipContent = (
       <div style={{ textAlign: 'center' }}>

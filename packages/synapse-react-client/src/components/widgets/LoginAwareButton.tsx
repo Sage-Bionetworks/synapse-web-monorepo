@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
 import { Link, LinkProps } from 'react-router-dom'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
@@ -8,9 +7,7 @@ import { useSynapseContext } from '../../utils'
 export type LoginAwareButtonProps = ButtonProps &
   Partial<Pick<LinkProps, 'to' | 'replace'>>
 
-export const LoginAwareButton: React.FunctionComponent<
-  LoginAwareButtonProps
-> = (props: LoginAwareButtonProps) => {
+export function LoginAwareButton(props: LoginAwareButtonProps) {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const mergedProps = { ...props }

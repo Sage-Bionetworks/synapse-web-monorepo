@@ -1,5 +1,3 @@
-import React from 'react'
-
 type ChipContainerProps = {
   chips: any[]
 }
@@ -11,6 +9,6 @@ const ChipContainer = ({ chips }: ChipContainerProps) => {
     }
     return <span key={index}> {el}</span>
   })
-  return <React.Fragment>{chipsFormatted}</React.Fragment>
+  return <>{chipsFormatted}</>
 }
 export default ChipContainer

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'

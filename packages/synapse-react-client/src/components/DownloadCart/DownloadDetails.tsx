@@ -1,4 +1,3 @@
-import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import IconSvg from '../IconSvg/IconSvg'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { NoContentPlaceholderType } from '../SynapseTable'
 import SearchResultsNotFound from '../SynapseTable/SearchResultsNotFound'
 import ThisTableIsEmpty from '../SynapseTable/TableIsEmpty'

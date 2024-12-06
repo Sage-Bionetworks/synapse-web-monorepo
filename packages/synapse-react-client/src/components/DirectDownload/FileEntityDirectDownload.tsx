@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetEntity } from '../../synapse-queries'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { isFileEntity } from '../../utils/types/IsType'

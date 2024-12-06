@@ -1,4 +1,4 @@
-import React, { KeyboardEventHandler, useEffect, useState } from 'react'
+import { KeyboardEventHandler, useEffect, useState } from 'react'
 import { Box, List, IconButton, Typography, Alert, Fade } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
@@ -44,13 +44,13 @@ type TraceEventWithFriendlyMessage = {
   friendlyMessage?: string
 } & TraceEvent
 
-export const SynapseChat: React.FunctionComponent<SynapseChatProps> = ({
+export function SynapseChat({
   initialMessage,
   agentRegistrationId,
   chatbotName = 'SynapseChat',
   hideTitle = false,
   textboxPositionOffset = '0px',
-}) => {
+}: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [agentSession, setAgentSession] = useState<AgentSession>()
   const { mutate: createAgentSession, error: createAgentSessionError } =

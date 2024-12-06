@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { MuiContainer, CertificationQuiz as Quiz } from 'synapse-react-client'
 import ReturnArrow from '../assets/ReturnArrow.svg?url'

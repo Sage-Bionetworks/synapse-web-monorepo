@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getEvaluation } from '../../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
@@ -7,7 +7,7 @@ export type EvaluationIdRendererProps = {
   evaluationId: string
 }
 
-const EvaluationIdRenderer: React.FC<EvaluationIdRendererProps> = props => {
+function EvaluationIdRenderer(props: EvaluationIdRendererProps) {
   const { accessToken } = useSynapseContext()
   const { evaluationId } = props
   const [evaluationName, setEvaluationName] = useState<string>()

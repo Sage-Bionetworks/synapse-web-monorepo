@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, MouseEvent } from 'react'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
 import { Close, MenuOutlined } from '@mui/icons-material'
 import {
@@ -60,9 +60,9 @@ export type SynapseHomepageNavBarProps = {
   gotoPlace: (href: string) => void
 }
 
-export const SynapseHomepageNavBar: React.FunctionComponent<
-  SynapseHomepageNavBarProps
-> = ({ gotoPlace }) => {
+export function SynapseHomepageNavBar({
+  gotoPlace,
+}: SynapseHomepageNavBarProps) {
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
   const registrationLink = useOneSageURL('/register1')
@@ -71,10 +71,8 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
 
   // mobile view nav bar menu
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
-    React.useState<null | HTMLElement>(null)
-  const handleClickMobileMenu = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+    useState<null | HTMLElement>(null)
+  const handleClickMobileMenu = (event: MouseEvent<HTMLButtonElement>) => {
     setMobileMenuAnchorEl(event.currentTarget)
   }
   const handleCloseMobileMenu = () => {
@@ -83,7 +81,7 @@ export const SynapseHomepageNavBar: React.FunctionComponent<
 
   // Portals dropdown
   const [portalResourcesAnchorEl, setPortalResourcesAnchorEl] =
-    React.useState<HTMLElement | null>(null)
+    useState<HTMLElement | null>(null)
   const handleClosePortalResources = () => {
     setPortalResourcesAnchorEl(null)
   }

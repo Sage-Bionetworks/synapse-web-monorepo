@@ -84,7 +84,7 @@ enum EntityFinderTab {
   SELECTED,
 }
 
-export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
+export function EntityFinder({
   initialScope,
   projectId,
   initialContainer = null,
@@ -95,7 +95,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   treeOnly = false,
-}: EntityFinderProps) => {
+}: EntityFinderProps) {
   const { accessToken } = useSynapseContext()
   const [currentTab, setCurrentTab] = React.useState(EntityFinderTab.BROWSE)
 

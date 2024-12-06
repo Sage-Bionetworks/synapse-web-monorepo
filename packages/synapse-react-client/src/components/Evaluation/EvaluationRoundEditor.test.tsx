@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import dayjs, { Dayjs } from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import React from 'react'
 import {
   EvaluationRoundEditor,
   EvaluationRoundEditorProps,

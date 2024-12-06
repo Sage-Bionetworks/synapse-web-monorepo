@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SourceAppLogo } from './SourceApp'
 import { TextField, Typography } from '@mui/material'
 import { LeftRightPanel } from './LeftRightPanel'

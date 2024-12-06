@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ReadonlyDeep } from 'type-fest'
@@ -81,7 +81,7 @@ export const QueryContext = createContext<QueryContextType | undefined>(
   undefined,
 )
 
-export type QueryContextProviderProps = React.PropsWithChildren<{
+export type QueryContextProviderProps = PropsWithChildren<{
   queryContext: QueryContextType
 }>
 

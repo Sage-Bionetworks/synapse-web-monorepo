@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants, SynapseClient } from 'synapse-react-client'
@@ -12,7 +12,7 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type SurveysCompletedPlotsProps = {
   token?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
 type PlotData = {
@@ -101,16 +101,16 @@ export function fetchData(
   )
 }
 
-const DEFAULT_SURVEYS_COMPLETED_PLOTS_STYLE: React.CSSProperties = {
+const DEFAULT_SURVEYS_COMPLETED_PLOTS_STYLE: CSSProperties = {
   width: '100%',
   height: '400px',
   padding: '100px 50px',
 }
 
-const SurveysCompletedPlots: FunctionComponent<SurveysCompletedPlotsProps> = ({
+function SurveysCompletedPlots({
   token,
   style = DEFAULT_SURVEYS_COMPLETED_PLOTS_STYLE,
-}: SurveysCompletedPlotsProps) => {
+}: SurveysCompletedPlotsProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [plotData, setPlotData] = useState<PlotData | null>(null)
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import { useGetEvaluation } from '../../synapse-queries/evaluation/useEvaluation'

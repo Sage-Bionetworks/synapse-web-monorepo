@@ -6,7 +6,9 @@ import {
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
-import React, {
+import {
+  ForwardedRef,
+  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -101,7 +103,7 @@ export const ADD_ALL_ANNOTATIONS_BUTTON_TEXT = 'Add All Annotations'
 
 function TableColumnSchemaFormInternal(
   props: TableColumnSchemaFormProps,
-  ref: React.ForwardedRef<SubmitHandle>,
+  ref: ForwardedRef<SubmitHandle>,
 ) {
   const {
     initialData,
@@ -508,12 +510,12 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
   )
 }
 
-const TableColumnSchemaFormInternalWithForwardRef = React.forwardRef<
+const TableColumnSchemaFormInternalWithForwardRef = forwardRef<
   SubmitHandle,
   TableColumnSchemaFormProps
 >(TableColumnSchemaFormInternal)
 
-const TableColumnSchemaFormWrapped = React.forwardRef<
+const TableColumnSchemaFormWrapped = forwardRef<
   SubmitHandle,
   TableColumnSchemaFormProps
 >(function TableColumnSchemaForm(props: TableColumnSchemaFormProps, ref) {

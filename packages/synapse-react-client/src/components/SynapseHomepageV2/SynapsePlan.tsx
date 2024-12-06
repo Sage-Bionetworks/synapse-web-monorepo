@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { Button, Typography } from '@mui/material'
 import { Box } from '@mui/material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
@@ -10,9 +10,14 @@ export type SynapsePlanProps = {
   ctaLink: string
   backgroundColor: string
 }
-export const SynapsePlan: React.FunctionComponent<
-  PropsWithChildren<SynapsePlanProps>
-> = ({ title, description, ctaText, ctaLink, backgroundColor, children }) => {
+export function SynapsePlan({
+  title,
+  description,
+  ctaText,
+  ctaLink,
+  backgroundColor,
+  children,
+}: PropsWithChildren<SynapsePlanProps>) {
   return (
     <Box
       sx={{

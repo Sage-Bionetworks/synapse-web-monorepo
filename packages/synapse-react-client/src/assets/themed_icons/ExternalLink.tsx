@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const ExternalLink = () => (
   <svg
     width="12"

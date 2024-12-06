@@ -1,6 +1,5 @@
 import { MenuItem, TextField, Typography } from '@mui/material'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   getAccessTypeFromPermissionLevel,
   getPermissionLevelFromAccessType,
@@ -17,9 +16,7 @@ export type PermissionLevelMenuProps = {
 const CUSTOM_VALUE = 'CUSTOM'
 const CUSTOM_TEXT = 'Custom'
 
-export const PermissionLevelMenu: React.FunctionComponent<
-  PermissionLevelMenuProps
-> = (props: PermissionLevelMenuProps) => {
+export function PermissionLevelMenu(props: PermissionLevelMenuProps) {
   const { currentAccessType, availablePermissionLevels, onChange } = props
 
   const selectedPermissionLevel: PermissionLevel | null =

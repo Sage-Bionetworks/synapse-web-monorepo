@@ -1,7 +1,13 @@
 import { Alert, Box, Stack, TextField, Typography } from '@mui/material'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useEffect, useImperativeHandle, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
 import { useGetEntity } from '../../synapse-queries/index'
 import { useLinkFileEntityToURL } from '../../utils/hooks/useUploadFileEntity/useLinkFileEntityToURL'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
@@ -19,9 +25,9 @@ export type LinkToURLHandle = {
   submit: () => void
 }
 
-export const LinkToURL = React.forwardRef(function LinkToURL(
+export const LinkToURL = forwardRef(function LinkToURL(
   props: LinkToURLProps,
-  ref: React.ForwardedRef<LinkToURLHandle>,
+  ref: ForwardedRef<LinkToURLHandle>,
 ) {
   const { entityId, onIsValidChanged = noop, onSuccess = noop } = props
 

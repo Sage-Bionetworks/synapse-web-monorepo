@@ -1,6 +1,5 @@
 import { Widget, WidgetProps } from '@rjsf/utils'
 import dayjs, { Dayjs } from 'dayjs'
-import React from 'react'
 import DateTimePicker from '../../DateTimePicker/DateTimePicker'
 
 /**

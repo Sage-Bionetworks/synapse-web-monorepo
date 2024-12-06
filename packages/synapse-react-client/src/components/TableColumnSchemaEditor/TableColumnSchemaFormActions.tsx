@@ -4,7 +4,7 @@ import {
   getNumberOfSelectedItems,
   tableColumnSchemaFormDataAtom,
 } from './TableColumnSchemaFormReducer'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { getNumberOfColumnModelsWithValuesBelowMinimumRecommendedSizes } from './TableColumnSchemaEditorUtils'
 import {
   Box,

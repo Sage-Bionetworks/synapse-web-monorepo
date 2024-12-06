@@ -3,7 +3,7 @@ import BaseTable, {
   Column,
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
@@ -49,7 +49,7 @@ const ROW_HEIGHT = 46
  *
  * @param param0
  */
-export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
+export function ChallengeDataTable({
   entities,
   isLoading,
   hasNextPage,
@@ -69,7 +69,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
   getChildrenInfiniteRequestObject,
   totalEntities,
   setCurrentContainer,
-}) => {
+}: DetailsViewProps) {
   const queryClient = useQueryClient()
 
   const { accessToken, keyFactory } = useSynapseContext()

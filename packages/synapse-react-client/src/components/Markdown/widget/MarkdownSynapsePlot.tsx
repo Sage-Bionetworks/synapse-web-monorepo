@@ -1,4 +1,3 @@
-import React from 'react'
 import SynapsePlot from '../../Plot/SynapsePlot'
 import { AxisType, PlotType } from 'plotly.js-basic-dist'
 

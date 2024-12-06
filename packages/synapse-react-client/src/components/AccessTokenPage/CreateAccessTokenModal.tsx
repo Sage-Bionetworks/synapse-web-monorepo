@@ -1,9 +1,9 @@
-import React from 'react'
 import { FormControlLabel, Checkbox, Stack, Typography } from '@mui/material'
 import {
   AccessTokenGenerationRequest,
   scopeDescriptions,
 } from '@sage-bionetworks/synapse-types'
+import { ChangeEvent, useState } from 'react'
 import { CopyToClipboardInput } from '../CopyToClipboardInput/CopyToClipboardInput'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
@@ -22,14 +22,12 @@ export type CreateAccessTokenModalProps = {
 
 export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
   const { onClose = noop, onCreate = noop } = props
-  const [tokenName, setTokenName] = React.useState('')
-  const [viewAccess, setViewAccess] = React.useState(true)
-  const [downloadAccess, setDownloadAccess] = React.useState(false)
-  const [modifyAccess, setModifyAccess] = React.useState(false)
+  const [tokenName, setTokenName] = useState('')
+  const [viewAccess, setViewAccess] = useState(true)
+  const [downloadAccess, setDownloadAccess] = useState(false)
+  const [modifyAccess, setModifyAccess] = useState(false)
 
-  const [validationError, setValidationError] = React.useState<string | null>(
-    null,
-  )
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const {
     mutate,
@@ -38,7 +36,7 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
     data: createdTokenResponse,
   } = useCreatePersonalAccessToken()
 
-  const handleTokenNameChange = (event: React.ChangeEvent) => {
+  const handleTokenNameChange = (event: ChangeEvent) => {
     setTokenName((event.target as HTMLInputElement).value)
   }
 

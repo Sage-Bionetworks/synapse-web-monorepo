@@ -1,4 +1,3 @@
-import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { SubscriptionPage, SynapseClient } from '../../index'

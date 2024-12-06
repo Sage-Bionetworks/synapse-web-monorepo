@@ -13,7 +13,14 @@ import {
   ManagedACTAccessRequirement,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react'
 import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
@@ -60,10 +67,10 @@ export type SetManagedAccessRequirementFieldsProps = {
   onError: () => void
 }
 
-export const SetManagedAccessRequirementFields = React.forwardRef(
+export const SetManagedAccessRequirementFields = forwardRef(
   function SetManagedAccessRequirementFields(
     props: SetManagedAccessRequirementFieldsProps,
-    ref: React.ForwardedRef<SetManagedAccessRequirementFieldsHandle>,
+    ref: ForwardedRef<SetManagedAccessRequirementFieldsHandle>,
   ) {
     const { accessRequirementId, onSave, onError } = props
 

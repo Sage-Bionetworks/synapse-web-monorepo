@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
@@ -49,9 +48,7 @@ function getQueryRequest(
     },
   }
 }
-const QueryPerFacetPlotsCard: React.FunctionComponent<
-  QueryPerFacetPlotsCardProps
-> = props => {
+function QueryPerFacetPlotsCard(props: QueryPerFacetPlotsCardProps) {
   const {
     title,
     description,

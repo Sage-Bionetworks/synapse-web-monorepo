@@ -20,7 +20,7 @@ import {
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
 import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
 import {
   canHaveDefault,
@@ -528,7 +528,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 endAdornment: (
                   <Tooltip
                     title={
-                      <React.Fragment>
+                      <>
                         <p>
                           <Link
                             href={
@@ -546,7 +546,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                           point to the key referenced in the sub-column JSON
                           Path.
                         </p>
-                      </React.Fragment>
+                      </>
                     }
                   >
                     <InfoTwoTone sx={{ color: 'grey.700' }} />

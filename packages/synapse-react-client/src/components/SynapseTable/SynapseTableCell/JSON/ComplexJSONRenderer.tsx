@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import ExpandCollapseButton from '../../ExpandCollapseButton'
 import { chromeLight, Inspector } from 'react-inspector'
@@ -18,7 +18,7 @@ export function ComplexJSONRenderer(props: ComplexJSONRendererProps) {
   const [expandAll, setExpandAll] = useState(false)
 
   // @ts-expect-error - the theme prop type provided by react-inspector is wrong
-  const theme: React.ComponentProps<typeof Inspector>['theme'] = {
+  const theme: ComponentProps<typeof Inspector>['theme'] = {
     ...chromeLight,
     BASE_BACKGROUND_COLOR: 'none',
   }

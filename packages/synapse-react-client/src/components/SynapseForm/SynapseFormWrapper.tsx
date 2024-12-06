@@ -1,6 +1,6 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { get, includes } from 'lodash-es'
-import React from 'react'
+import { Component } from 'react'
 import { Button } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert'
 import { UiSchema } from '@rjsf/utils'
@@ -64,7 +64,7 @@ interface Notification extends Error {
   type: StatusEnum
 }
 
-class _SynapseFormWrapper extends React.Component<
+class _SynapseFormWrapper extends Component<
   SynapseFormWrapperProps,
   SynapseFormWrapperState
 > {

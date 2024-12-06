@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
+import { useState } from 'react'
 import { TermsAndConditions } from 'synapse-react-client'
-import React from 'react'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ReturnToAppButton } from './ReturnToAppButton'
@@ -12,12 +12,12 @@ export type TermsAndConditionsWrappedProps = {
   onNext: (verificationSubmission: VerificationSubmission) => void
 }
 
-const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
+function TermsAndConditionsWrapped({
   onNext,
   verificationSubmission,
-}) => {
-  const [isFormComplete, setIsFormComplete] = React.useState(false)
-  // const [isSignatureComplete, setIsSignatureComplete] = React.useState(false)
+}: TermsAndConditionsWrappedProps) {
+  const [isFormComplete, setIsFormComplete] = useState(false)
+  // const [isSignatureComplete, setIsSignatureComplete] = useState(false)
 
   return (
     <Box>

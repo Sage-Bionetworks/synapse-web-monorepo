@@ -1,7 +1,7 @@
 import { Alert, Box, Button, ButtonProps } from '@mui/material'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 import { defaults } from 'lodash-es'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   CreateWikiPageInput,
   useCreateWikiPage,
@@ -32,9 +32,7 @@ export type WikiMarkdownEditorButtonProps = {
   displayWikiMarkdown?: boolean
 }
 
-export const WikiMarkdownEditorButton: React.FunctionComponent<
-  WikiMarkdownEditorButtonProps
-> = (props: WikiMarkdownEditorButtonProps) => {
+export function WikiMarkdownEditorButton(props: WikiMarkdownEditorButtonProps) {
   const {
     ownerObjectType,
     ownerObjectId,

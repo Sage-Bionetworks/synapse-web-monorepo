@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import FileUpload from './FileUpload'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'

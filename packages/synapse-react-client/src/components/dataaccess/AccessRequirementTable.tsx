@@ -1,4 +1,3 @@
-import React from 'react'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
 import { StarTwoTone } from '@mui/icons-material'

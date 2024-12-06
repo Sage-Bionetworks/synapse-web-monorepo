@@ -1,7 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
-import React from 'react'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import { server } from '../../mocks/msw/server'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'

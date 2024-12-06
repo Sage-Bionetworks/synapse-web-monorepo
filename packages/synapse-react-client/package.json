@@ -279,9 +279,6 @@
       "last 2 ie version"
     ]
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
-  },
   "msw": {
     "workerDirectory": "public"
   }

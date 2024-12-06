@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Link, TextField, Typography } from '@mui/material'
 import { TextFieldProps } from '@mui/material/TextField'
 import { EntityType } from '@sage-bionetworks/synapse-types'

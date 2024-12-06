@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetCurrentUserProfile } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
 import { SynapseConstants, useSynapseContext } from '../../../utils'
