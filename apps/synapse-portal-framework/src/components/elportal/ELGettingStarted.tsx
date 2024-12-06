@@ -4,59 +4,50 @@ import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
 import accessIcon from './assets/access_icon.png'
 
-// TODO Fix vertical column space (getting started section is slightly bigger)
-// TODO Set padding for mobile and desktop
-
 const ELGettingStarted: React.FC = () => {
   return (
     <Box
       sx={{
-        backgroundColor: '#39AC97',
+        backgroundColor: 'primary.main',
         display: 'grid',
-        gridTemplateColumns: '25% 25% 25% 25%',
-        position: 'relative',
-        pt: '80px',
-        pb: '80px',
-        pl: '80px',
-        pr: '80px',
+        p: '80px',
+        gridTemplateColumns: {
+          xs: '100%',
+          sm: '50% 50%',
+          md: '25% 25% 25% 25%',
+        },
+        gap: '10px',
+        gridAutoRows: '1fr',
       }}
     >
       <Box
         sx={{
-          flex: '1 1 auto',
           width: '100%',
           height: '100%',
           borderTop: '3px solid #ffffff88',
-          pt: '20px',
-          pb: '20px',
+          py: '20px',
         }}
       >
         <Typography
-          variant="headline1"
-          style={{
-            color: 'white',
-            fontFamily: "'Merriweather', serif",
-            fontWeight: 400,
-            fontSize: '24px',
-          }}
+          variant="headline2"
           sx={{
             width: '100%',
+            color: 'white',
+            fontFamily: "'Merriweather', serif",
+            fontSize: '24px',
           }}
         >
           Getting Started
         </Typography>
         <Typography
           variant="body1"
-          style={{
+          sx={{
+            maxWidth: '100%',
+            my: '16px',
             color: 'white',
             fontStyle: 'italic',
             fontSize: '13px',
             lineHeight: '20px',
-          }}
-          sx={{
-            maxWidth: '100%',
-            mt: '16px',
-            mb: '16px',
           }}
         >
           We provide all the help you need for navigating the portal and
@@ -65,19 +56,11 @@ const ELGettingStarted: React.FC = () => {
         <Button
           variant="contained"
           href="https://help.eliteportal.org/help/"
-          style={{
-            fontSize: '14px',
-            fontWeight: 500,
-          }}
           sx={{
-            backgroundColor: '#39AC97',
             border: '1px solid white',
             padding: '6px 24px',
-            boxShadow: 'none',
-            '&:hover': {
-              backgroundColor: darken('#5BA998', 0.05),
-              boxShadow: 'none',
-            },
+            fontSize: '14px',
+            boxShadow: 'none !important',
           }}
         >
           Visit Our Help Section
@@ -111,7 +94,6 @@ export function IconSquare({ iconUrl, headline, description }) {
   return (
     <Box
       sx={{
-        flex: '1 1 auto',
         width: '100%',
         height: '100%',
         overflow: 'hidden',
@@ -119,7 +101,6 @@ export function IconSquare({ iconUrl, headline, description }) {
     >
       <Box
         sx={{
-          flex: '0 0 auto',
           width: '50%',
           height: '50%',
           mb: '10px',
@@ -130,29 +111,25 @@ export function IconSquare({ iconUrl, headline, description }) {
       ></Box>
       <Typography
         variant="headline3"
-        style={{
-          color: 'white',
-          fontFamily: "'Merriweather', serif",
-          fontWeight: 400,
-        }}
         sx={{
           mb: '10px',
           maxWidth: '100%',
+          color: 'white',
+          fontFamily: "'Merriweather', serif",
+          fontWeight: 400,
         }}
       >
         {headline}
       </Typography>
       <Typography
         variant="body1"
-        style={{
+        sx={{
+          maxWidth: '100%',
           color: 'white',
           fontFamily: "'DM Sans', sans-serif",
           fontSize: '13px',
           lineHeight: '15px',
           fontWeight: 400,
-        }}
-        sx={{
-          maxWidth: '100%',
         }}
       >
         {description}
