@@ -5,3 +5,6 @@
 
 // style_overrides should be last to ensure its styles have highest priority
 @use './config/style/style_overrides';
+
+// Merriweather font is used only on the ELITE Portal
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
