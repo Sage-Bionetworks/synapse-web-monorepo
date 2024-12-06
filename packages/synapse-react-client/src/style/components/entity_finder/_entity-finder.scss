@@ -34,7 +34,8 @@ $-splitter-width: 12px;
 .MuiDialog-root {
   .EntityFinder {
     &__MainPanel.MainPanelDualPane,
-    &__MainPanel.MainPanelSearch {
+    &__MainPanel.MainPanelSearch,
+    .MainPanelSelected {
       // Hack to make the dialog responsive to the width of the entity finder
       // We may be able to remove this if we remove/replace the EntityFinder's `AutoSizer` component with something other
       // than the 'react-base-table' implementation

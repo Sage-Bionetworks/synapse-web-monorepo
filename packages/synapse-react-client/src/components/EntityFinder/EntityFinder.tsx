@@ -386,6 +386,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         </div>
         <div
           role={'tabpanel'}
+          className={'MainPanelSelected'}
           style={{
             display: currentTab === EntityFinderTab.SELECTED ? 'block' : 'none',
           }}
