@@ -9,6 +9,8 @@ import {
   Snackbar,
   Stack,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 
 export type AlertButtonConfig = {
@@ -60,6 +62,9 @@ function ButtonFromConfig(props: {
         >
           <Button
             variant={variant}
+            sx={{
+              width: { xs: '100%', md: 'initial' },
+            }}
             color="primary"
             disabled={config.isDisabled}
             onClick={e => {
@@ -102,6 +107,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     globalAlertSx,
   } = props
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
   useEffect(() => {
     let timer: NodeJS.Timeout
     if (onClose && autoCloseAfterDelayInSeconds) {
@@ -123,6 +131,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         '.MuiAlert-message': {
           flexGrow: 1,
         },
+        '.MuiAlert-icon': {
+          display: { xs: 'none', sm: 'flex' },
+        },
         ...sx,
       }}
       className="FullWidthAlert"
@@ -133,26 +144,43 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'start', sm: 'center' }}
         spacing={{ xs: 1, sm: 2 }}
+        gap={{ xs: '8px', sm: 'initial' }}
         display="flex"
         justifyContent="space-between"
       >
         <Box>
-          {title && <AlertTitle>{title}</AlertTitle>}
-          {description}
+          {isMobile ? (
+            <>
+              {title && (
+                <AlertTitle
+                  sx={{ margin: 0, textAlign: { xs: 'center', sm: 'initial' } }}
+                >
+                  {title}
+                </AlertTitle>
+              )}
+            </>
+          ) : (
+            <>
+              {title && <AlertTitle>{title}</AlertTitle>}
+              {description}
+            </>
+          )}
         </Box>
         {(primaryButtonConfig ||
           secondaryButtonConfig ||
           tertiaryButtonConfig) && (
           <Stack
             spacing={{ xs: 1, lg: 2 }}
-            direction={{
-              xs: 'column-reverse',
-              sm: 'column',
-              lg: 'row',
-            }}
+            direction={{ xs: 'row', sm: 'column' }}
             alignItems="center"
             display="flex"
             flexShrink={0}
+            sx={{
+              gap: { xs: '8px', sm: 'initial' },
+              flexWrap: { xs: 'wrap', sm: 'nowrap' },
+              justifyContent: { xs: 'center', sm: 'initial' },
+              width: { xs: '100%', sm: 'initial' },
+            }}
           >
             {tertiaryButtonConfig && (
               <ButtonFromConfig config={tertiaryButtonConfig} variant="text" />
