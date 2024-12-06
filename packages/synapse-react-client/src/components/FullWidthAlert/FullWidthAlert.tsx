@@ -171,7 +171,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           tertiaryButtonConfig) && (
           <Stack
             spacing={{ xs: 1, lg: 2 }}
-            direction={{ xs: 'row', sm: 'column' }}
+            direction={{ xs: 'row', sm: 'column', lg: 'row' }}
             alignItems="center"
             display="flex"
             flexShrink={0}
