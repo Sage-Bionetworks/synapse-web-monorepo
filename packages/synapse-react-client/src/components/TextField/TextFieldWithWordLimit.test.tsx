@@ -58,4 +58,12 @@ describe('TextFieldWithWordLimit', () => {
 
     screen.getByText('3 of 10 words')
   })
+  it('counts words only', () => {
+    renderComponent({
+      maxWords: 10,
+      value: ', . ,,,,,,. , $ % 66555 3 two @@ & three',
+    })
+
+    screen.getByText('4 of 10 words')
+  })
 })

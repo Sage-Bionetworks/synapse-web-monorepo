@@ -21,7 +21,7 @@ export function getWordCount(s: string) {
   return (
     s
       .trim()
-      .split(/\s+/)
+      .split(/\W+/)
       // remove empty string(s)
       .filter(s => !!s).length
   )
