@@ -216,13 +216,16 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           justifyContent="space-between"
           mb={2.5}
           flexWrap={'wrap'}
-          columnGap={16}
           rowGap={2}
+          columnGap={4}
+          sx={{
+            flexWrap: { xs: 'wrap', md: 'nowrap' },
+          }}
         >
           <Tabs
             value={currentTab}
             onChange={handleTabChange}
-            sx={{ flexShrink: 0 }}
+            sx={{ flex: 'none' }}
           >
             <Tab value={EntityFinderTab.BROWSE} label={'Browse'}></Tab>
             <Tab
@@ -244,7 +247,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             ></Tab>
           </Tabs>
           <TextField
-            fullWidth
             size={'small'}
             placeholder="Search by name, wiki content, or SynID"
             value={searchInput}
@@ -283,7 +285,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 </InputAdornment>
               ) : undefined,
             }}
-            sx={{ flex: '1 1 350px' }}
+            sx={{
+              maxWidth: { xs: '100%', md: '350px' },
+              flex: '1 1 350px',
+            }}
           />
         </Box>
         <div

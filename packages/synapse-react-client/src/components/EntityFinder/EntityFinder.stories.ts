@@ -25,8 +25,8 @@ export const DualPane: Story = {
   args: {
     treeOnly: false,
     initialScope: FinderScope.CURRENT_PROJECT,
-    projectId: 'syn23567475',
-    initialContainer: 'syn24183903',
+    projectId: 'syn5550376',
+    initialContainer: 'syn5550376',
     selectMultiple: true,
     visibleTypesInList: Object.values(EntityType),
     versionSelection: VersionSelectionType.TRACKED,
@@ -39,8 +39,8 @@ export const SinglePane: Story = {
   args: {
     treeOnly: true,
     initialScope: FinderScope.CURRENT_PROJECT,
-    projectId: 'syn23567475',
-    initialContainer: 'syn24183903',
+    projectId: 'syn5550376',
+    initialContainer: 'syn5550376',
     selectMultiple: false,
     visibleTypesInTree: [
       EntityType.PROJECT,
