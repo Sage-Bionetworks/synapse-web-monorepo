@@ -4,8 +4,11 @@
 @use 'sass:color';
 
 .TreeView.BrowseTree {
+  .Header {
+    padding-right: 20px;
+  }
   .Node.BrowseNode {
-    grid-template-columns: [toggle] 20px [name] auto;
+    grid-template-columns: [toggle] 20px [name] minmax(0, max-content);
     gap: 2px;
     padding: 0px 10px;
     .ExpandButton {

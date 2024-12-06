@@ -26,7 +26,6 @@ import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
 import { DatasetItemsEditorTableData } from '../../../SynapseTable/datasets/DatasetItemsEditor'
-import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
 import { UserBadge } from '../../../UserCard/UserBadge'
@@ -472,6 +471,9 @@ export const DetailsViewVersionRenderer = ({
     isSelected,
     currentSelectedVersion,
   } = rowData
+
+  const NO_VERSION_NUMBER_OPTION_VALUE = -1
+
   const { data: versionData } = useGetVersionsInfinite(id, {
     enabled: isVersionableEntity,
     staleTime: 60 * 1000, // 60 seconds
@@ -483,7 +485,7 @@ export const DetailsViewVersionRenderer = ({
     if (
       isSelected &&
       versionSelection == VersionSelectionType.REQUIRED &&
-      currentSelectedVersion === NO_VERSION_NUMBER &&
+      currentSelectedVersion == null &&
       versions.length > 0
     ) {
       toggleSelection({
@@ -511,6 +513,9 @@ export const DetailsViewVersionRenderer = ({
     return <></>
   }
 
+  const currentSelectedVersionOptionValue =
+    currentSelectedVersion ?? NO_VERSION_NUMBER_OPTION_VALUE
+
   return (
     <div>
       {versions && versions.length > 0 ? (
@@ -518,7 +523,7 @@ export const DetailsViewVersionRenderer = ({
           role="listbox"
           size="sm"
           as="select"
-          value={currentSelectedVersion}
+          value={currentSelectedVersionOptionValue}
           onClick={(event: SyntheticEvent<HTMLSelectElement>) => {
             event.stopPropagation()
           }}
@@ -528,12 +533,16 @@ export const DetailsViewVersionRenderer = ({
             toggleSelection({
               targetId: id,
               targetVersionNumber:
-                version === NO_VERSION_NUMBER ? undefined : version,
+                version === NO_VERSION_NUMBER_OPTION_VALUE
+                  ? undefined
+                  : version,
             })
           }}
         >
           {showLatestVersion && (
-            <option value={NO_VERSION_NUMBER}>{latestVersionText}</option>
+            <option value={NO_VERSION_NUMBER_OPTION_VALUE}>
+              {latestVersionText}
+            </option>
           )}
           {versions.map(version => {
             return (

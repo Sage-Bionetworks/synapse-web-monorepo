@@ -1,4 +1,3 @@
-import { Map } from 'immutable'
 import React, {
   Dispatch,
   SetStateAction,
@@ -30,13 +29,14 @@ import {
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
 import { EntityFinderHeader } from '../EntityFinderHeader'
+import { EntitySelectionMapType } from '../useEntitySelection'
 import {
   EntityTreeNodeType,
   RootNodeConfiguration,
   VirtualizedTree,
 } from './VirtualizedTree'
 import { displayToast } from '../../ToastMessage/ToastMessage'
-import DropdownSelect from '../../DropdownSelect'
+import DropdownSelect from '../../DropdownSelect/DropdownSelect'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -94,7 +94,7 @@ export type EntityTreeProps = {
   currentContainer: EntityTreeContainer
   setCurrentContainer: Dispatch<SetStateAction<EntityTreeContainer>>
   showDropdown: boolean
-  selectedEntities: Map<string, number>
+  selectedEntities: EntitySelectionMapType
   visibleTypes?: EntityType[]
   toggleSelection?: (entity: Reference) => void
   setDetailsViewConfiguration?: (
@@ -214,20 +214,22 @@ export function EntityTree(props: EntityTreeProps) {
       refetchInterval: Infinity,
     })
 
-  if (
-    FinderScope.CURRENT_PROJECT === scope &&
-    projectId &&
-    !isLoadingProjectHeader &&
-    !projectHeader
-  ) {
-    // The header wasn't returned, so the user doesn't have access to the current project
-    // Let's change the scope to something else
-    displayToast(
-      `You don't have access to the current project (${projectId}).`,
-      'warning',
-    )
-    setScope(FinderScope.CREATED_BY_ME)
-  }
+  useEffect(() => {
+    if (
+      FinderScope.CURRENT_PROJECT === scope &&
+      projectId &&
+      !isLoadingProjectHeader &&
+      !projectHeader
+    ) {
+      // The header wasn't returned, so the user doesn't have access to the current project
+      // Let's change the scope to something else
+      displayToast(
+        `You don't have access to the current project (${projectId}).`,
+        'warning',
+      )
+      setScope(FinderScope.CREATED_BY_ME)
+    }
+  }, [isLoadingProjectHeader, projectHeader, projectId, scope])
 
   // Populates the first level of entities in the tree view
   const {
@@ -420,25 +422,23 @@ export function EntityTree(props: EntityTreeProps) {
       }`}
     >
       {!hideScopeSelector && (
-        <div className="Header">
-          <div className="Browse">Browse:</div>
-          <div onClick={e => e.stopPropagation()}>
-            <DropdownSelect
-              variant={'outlined'}
-              options={filteredOptions}
-              selectedIndex={selectedIndex}
-              setSelectedIndex={index => {
-                const selectedScope = filteredOptions[index]
-                if (scope !== selectedScope) {
-                  setScope(selectedScope)
-                  setCurrentContainer(
-                    getScopeOptionDefaultContainer(selectedScope),
-                  )
-                }
-              }}
-              size="small"
-            />
-          </div>
+        <div className="Header" onClick={e => e.stopPropagation()}>
+          <DropdownSelect
+            variant={'outlined'}
+            options={filteredOptions}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={index => {
+              const selectedScope = filteredOptions[index]
+              if (scope !== selectedScope) {
+                setScope(selectedScope)
+                setCurrentContainer(
+                  getScopeOptionDefaultContainer(selectedScope),
+                )
+              }
+            }}
+            size="small"
+            fullWidth
+          />
         </div>
       )}
       {isLoading ? (

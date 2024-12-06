@@ -4,16 +4,21 @@
 
 .TreeView.SelectTree {
   background: unset;
-  width: $-tree-only-width;
+  max-width: $-tree-only-width;
 
   .Header {
-    background-color: SRC.$background-color-gray;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px solid SRC.$gray-light;
   }
 
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;
-      grid-template-columns: [toggle] 15px [icon] 27px [name] auto [badge] auto;
+      grid-template-columns: [toggle] 15px [icon] 27px [name] minmax(
+          0,
+          max-content
+        ) [badge] auto;
       padding: 16px 20px;
       .ExpandButton {
         font-size: large;

@@ -3,7 +3,6 @@
 @use 'sass:map';
 
 $-border-size: 1px;
-$-header-height: 45px;
 $-border: $-border-size solid SRC.$border-color-gray;
 $-finder-height: 500px;
 $-breadcrumb-height: 40px;
@@ -32,22 +31,25 @@ $-splitter-width: 12px;
   width: 100%;
 }
 
+.MuiDialog-root {
+  .EntityFinder {
+    &__MainPanel.MainPanelDualPane,
+    &__MainPanel.MainPanelSearch,
+    .MainPanelSelected {
+      // Hack to make the dialog responsive to the width of the entity finder
+      // We may be able to remove this if we remove/replace the EntityFinder's `AutoSizer` component with something other
+      // than the 'react-base-table' implementation
+      width: 85vw;
+    }
+  }
+}
+
 .EntityFinder {
+  --entity-finder-height: #{$-finder-height};
+  --entity-tree-header-height: 65px;
   width: 100%;
   margin: auto;
 
-  &__Search__Input {
-    transition: flex-grow 250ms ease-in-out, width 250ms ease-in-out;
-    &[data-active='true'] {
-      flex-grow: 1;
-      width: 100%;
-    }
-    &[data-active='false'] {
-      flex-grow: 0.00001;
-      overflow: hidden;
-      width: 0;
-    }
-  }
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
@@ -56,7 +58,7 @@ $-splitter-width: 12px;
   }
   &__MainPanel.MainPanelDualPane,
   &__MainPanel.MainPanelSearch {
-    width: 85vw;
+    width: 100%;
   }
 
   &__MainPanel.MainPanelSinglePane {
@@ -79,4 +81,13 @@ $-splitter-width: 12px;
 
     background-color: transparent;
   }
+
+  .TreeView.BrowseTree {
+    padding-left: 20px;
+  }
+}
+
+.EntityFileBrowser {
+  --entity-finder-height: #{$-finder-height};
+  --entity-tree-header-height: 0px;
 }

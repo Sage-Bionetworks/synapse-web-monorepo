@@ -20,7 +20,6 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
-import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -165,16 +164,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   // An entity may be in the list and unselected because it isn't of a selectable type
                   return selected.has(e.id)
                 })
-                .map(e => {
-                  const selectedVersion = selected.get(e.id)
-                  return {
-                    targetId: e.id,
-                    targetVersionNumber:
-                      selectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : selectedVersion,
-                  }
-                }),
+                .map(e => selected.get(e.id)!),
             )
           } else {
             // Not all of the items are selected, so we will select all
@@ -271,13 +261,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         // only include entities that should not be hidden
         const entityType = getEntityTypeFromHeader(entity)
 
-        const currentSelectedVersion = selected.get(entity.id)
+        const currentSelectedVersion = selected.get(
+          entity.id,
+        )?.targetVersionNumber
         let versionNumber: number | undefined = undefined
         if ('versionNumber' in entity) {
-          if (
-            currentSelectedVersion != null &&
-            currentSelectedVersion !== NO_VERSION_NUMBER
-          ) {
+          if (currentSelectedVersion != null) {
             // if a version is selected, the row should show that version's data
             versionNumber = currentSelectedVersion
           } else if (versionSelection === VersionSelectionType.REQUIRED) {
@@ -453,10 +442,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
                   toggleSelection({
                     targetId: id,
-                    targetVersionNumber:
-                      currentSelectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : currentSelectedVersion,
+                    targetVersionNumber: currentSelectedVersion,
                   })
                 }
               },
