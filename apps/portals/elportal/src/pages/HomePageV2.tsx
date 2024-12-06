@@ -104,7 +104,7 @@ export default function HomePage() {
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <RecentPublicationsGrid
           sql={topPublicationsSql}
-          buttonLink="Explore/Publications"
+          buttonLink="/Explore/Publications"
           buttonLinkText="See More Publications"
           summaryText="Never miss a new finding from the frontiers of aging research."
         />
@@ -242,7 +242,7 @@ export default function HomePage() {
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
-          style: { maxWidth: '100%' },
+          style: { maxWidth: '100%', padding: 0 },
         }}
       >
         <SectionLayout ContainerProps={{ className: 'home-spacer' }}>

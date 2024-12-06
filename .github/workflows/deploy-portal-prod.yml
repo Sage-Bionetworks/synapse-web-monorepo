@@ -8,7 +8,15 @@ on:
         description: Which portal to deploy
         options:
           - adknowledgeportal
+          - arkportal
+          - bsmn
+          - cancercomplexity
           - challengeportal
+          - digitalhealth
+          - elportal
+          - genie
+          - nf
+          - stopadportal
       tag:
         required: true
         type: string
