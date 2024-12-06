@@ -17,7 +17,6 @@ import {
   ColumnSingleValueFilterOperator,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import {
   CardConfiguration,

@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react'
+import { SyntheticEvent, useId, useState } from 'react'
 import { useGetAllSubscriptions } from '../../synapse-queries/subscription/useSubscription'
 import {
   SortByType as SubscriptionSortField,
@@ -63,10 +63,7 @@ export default function SubscriptionPage() {
       <Tabs
         sx={{ mb: 3 }}
         value={objectType}
-        onChange={(
-          event: React.SyntheticEvent,
-          newValue: SubscriptionObjectType,
-        ) => {
+        onChange={(event: SyntheticEvent, newValue: SubscriptionObjectType) => {
           event.stopPropagation()
           setObjectType(newValue)
         }}

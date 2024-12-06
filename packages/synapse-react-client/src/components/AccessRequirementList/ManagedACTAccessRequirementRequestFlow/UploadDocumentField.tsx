@@ -7,7 +7,7 @@ import { Box, Button, ButtonProps } from '@mui/material'
 import FileUpload from '../../FileUpload/FileUpload'
 import IconSvg from '../../IconSvg/IconSvg'
 import DirectDownloadButton from '../../DirectDownloadButton'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 type UploadDocumentFieldProps = {
   id: string

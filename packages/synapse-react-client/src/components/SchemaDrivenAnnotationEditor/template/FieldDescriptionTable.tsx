@@ -1,10 +1,10 @@
 import { Box, Collapse } from '@mui/material'
-import React from 'react'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
+import { ReactNode } from 'react'
 
 export type FieldDescriptionTableProps = {
   schema: JSONSchema7
-  description: React.ReactNode
+  description: ReactNode
 }
 
 function getTypeAsString(

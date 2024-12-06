@@ -9,7 +9,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
+import { createRef } from 'react'
 import SetAccessRequirementCommonFields, {
   SetAccessRequirementCommonFieldsHandle,
   SetAccessRequirementCommonFieldsProps,
@@ -70,7 +70,7 @@ const existingTeamArProps: SetAccessRequirementCommonFieldsProps = {
 }
 
 function renderComponent(props: SetAccessRequirementCommonFieldsProps) {
-  const ref = React.createRef<SetAccessRequirementCommonFieldsHandle>()
+  const ref = createRef<SetAccessRequirementCommonFieldsHandle>()
   const component = render(
     <SetAccessRequirementCommonFields ref={ref} {...props} />,
     {

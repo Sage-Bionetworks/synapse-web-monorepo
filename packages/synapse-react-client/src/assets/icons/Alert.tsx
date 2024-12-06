@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-export const AlertIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const AlertIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="65"
     height="65"

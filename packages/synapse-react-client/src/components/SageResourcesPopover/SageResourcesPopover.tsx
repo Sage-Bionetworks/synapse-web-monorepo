@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Button, Grid, Popover, Typography, useTheme } from '@mui/material'
 import { useSourceAppConfigs } from '../../utils/hooks'
 
@@ -8,11 +7,11 @@ export type SageResourcesPopoverProps = {
   onClose: () => void
 }
 
-export const SageResourcesPopover: React.FC<SageResourcesPopoverProps> = ({
+export function SageResourcesPopover({
   sourceAppConfigTableID = 'syn45291362',
   anchorEl,
   onClose,
-}) => {
+}: SageResourcesPopoverProps) {
   const theme = useTheme()
   const open = Boolean(anchorEl)
   const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)

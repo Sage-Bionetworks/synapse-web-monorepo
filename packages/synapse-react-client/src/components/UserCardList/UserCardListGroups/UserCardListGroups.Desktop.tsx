@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import UserCardListRotate from '../UserCardListRotate'
 import { FacetColumnValuesRequest } from '@sage-bionetworks/synapse-types'
 import { UserCardListGroupsProps } from './UserCardListGroups'

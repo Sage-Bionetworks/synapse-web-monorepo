@@ -1,5 +1,5 @@
 import { Alert, Button, Box } from '@mui/material'
-import React from 'react'
+import { ReactNode } from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
@@ -29,14 +29,14 @@ export type StepperDialogProps = {
   onStepChange: (arg: string) => void
   open: boolean
   step: Step
-  content: React.ReactNode
+  content: ReactNode
   loading: boolean
 }
 
 /**
  * A stepper dialog built using MUI components.
  */
-const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
+function StepperDialog({
   errorMessage,
   onCancel,
   onConfirm,
@@ -46,7 +46,7 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
   step,
   content,
   loading,
-}) => {
+}: StepperDialogProps) {
   if (!step) return null
 
   const dialogContent = (

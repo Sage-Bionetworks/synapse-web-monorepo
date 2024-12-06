@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@mui/material'
 import { ReactComponent as NihHeart } from '../../assets/homepage/nih-heart.svg'
 import { ReactComponent as NihMental } from '../../assets/homepage/nih-mental.svg'
@@ -13,7 +12,7 @@ import { ReactComponent as MlCommons } from '../../assets/homepage/ml-commons.sv
 import { ReactComponent as Gray } from '../../assets/homepage/gray.svg'
 import { ReactComponent as Aacr } from '../../assets/homepage/aacr.svg'
 
-export const SynapsePartners: React.FunctionComponent = () => {
+export function SynapsePartners() {
   return (
     <Box sx={{ m: 'auto', maxWidth: '1200px' }}>
       <Box

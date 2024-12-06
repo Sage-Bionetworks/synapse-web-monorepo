@@ -1,5 +1,5 @@
 import { Link as MuiLink } from '@mui/material'
-import React from 'react'
+import { CSSProperties, ReactNode } from 'react'
 import { NavLink as ReactRouterNavLink } from 'react-router-dom'
 
 /*
@@ -16,8 +16,8 @@ type Props = {
   onClick?: () => void
   className?: string
   id?: string
-  style?: React.CSSProperties
-  children: React.ReactNode
+  style?: CSSProperties
+  children: ReactNode
   target?: string
 }
 export default function NavLink(props: Props) {

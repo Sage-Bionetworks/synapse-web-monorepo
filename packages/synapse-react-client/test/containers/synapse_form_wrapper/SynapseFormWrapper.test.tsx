@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import _ from 'lodash-es'
-import React from 'react'
 import * as SynapseFormModule from '../../../src/components/SynapseForm/SynapseForm'
 import { SynapseFormProps } from '../../../src/components/SynapseForm/SynapseForm'
 import * as SynapseFormUtils from '../../../src/components/SynapseForm/SynapseFormUtils'

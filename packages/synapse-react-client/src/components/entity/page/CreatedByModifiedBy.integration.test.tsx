@@ -1,4 +1,3 @@
-import React from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { render, screen } from '@testing-library/react'

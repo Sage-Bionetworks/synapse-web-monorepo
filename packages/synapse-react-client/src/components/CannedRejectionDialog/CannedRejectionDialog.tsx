@@ -10,7 +10,7 @@ import {
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { UseQueryResult } from '@tanstack/react-query'
 import { Set } from 'immutable'
-import React, { useEffect, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
@@ -41,7 +41,7 @@ export type CannedRejectionDialogProps = {
   /** Error to display, in case one occurred in the callback to `onReject` */
   error: SynapseClientError | null
   /** Optional children, can be used to extend the form as needed on step 2 */
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 type RejectionCategoryProps = {
@@ -49,14 +49,14 @@ type RejectionCategoryProps = {
   rows: Row[]
   rejectionReasonFormTextIndex: number
   selectedRowIds: Set<number>
-  setSelectedRowIds: React.Dispatch<React.SetStateAction<Set<number>>>
+  setSelectedRowIds: Dispatch<SetStateAction<Set<number>>>
   initialIsExpanded?: boolean
 }
 
 type SelectRejectionReasonsFormProps = {
   tableQuery: UseQueryResult<QueryResultBundle, SynapseClientError>
   selectedRowIds: Set<number>
-  setSelectedRowIds: React.Dispatch<React.SetStateAction<Set<number>>>
+  setSelectedRowIds: Dispatch<SetStateAction<Set<number>>>
   rejectionFormPromptCopy?: string
 }
 
@@ -72,7 +72,7 @@ function RejectionCategory(props: RejectionCategoryProps) {
     rejectionReasonFormTextIndex,
     initialIsExpanded = false,
   } = props
-  const [isExpanded, setIsExpanded] = React.useState(initialIsExpanded)
+  const [isExpanded, setIsExpanded] = useState(initialIsExpanded)
 
   return (
     <>
@@ -198,7 +198,7 @@ function SelectRejectionReasonsForm(props: SelectRejectionReasonsFormProps) {
 
 type DraftRejectionMessageProps = {
   emailText: string
-  setEmailText: React.Dispatch<React.SetStateAction<string>>
+  setEmailText: Dispatch<SetStateAction<string>>
 }
 
 /**
@@ -252,7 +252,7 @@ export function CannedRejectionDialog(props: CannedRejectionDialogProps) {
     error,
   } = props
 
-  const [step, setStep] = React.useState<1 | 2>(1)
+  const [step, setStep] = useState<1 | 2>(1)
   // selectedRowIds are the row IDs of the canned responses the user selected:
   const [emailText, setEmailText] = useState('')
   const [selectedRowIds, setSelectedRowIds] = useState(Set<number>())

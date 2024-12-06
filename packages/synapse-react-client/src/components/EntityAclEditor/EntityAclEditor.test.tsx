@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef } from 'react'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
@@ -60,7 +60,7 @@ const deleteAclSpy = jest.spyOn(SynapseClient, 'deleteEntityACL')
 const sendMessageSpy = jest.spyOn(SynapseClient, 'sendMessage')
 
 function renderComponent(props: EntityAclEditorProps) {
-  const ref = React.createRef<EntityAclEditorHandle>()
+  const ref = createRef<EntityAclEditorHandle>()
   const component = render(<EntityAclEditor ref={ref} {...props} />, {
     wrapper: createWrapper(),
   })

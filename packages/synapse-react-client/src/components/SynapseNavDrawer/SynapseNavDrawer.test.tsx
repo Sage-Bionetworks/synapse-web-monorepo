@@ -1,5 +1,4 @@
 import { render, screen, within } from '@testing-library/react'
-import React from 'react'
 import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'

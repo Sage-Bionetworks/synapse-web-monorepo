@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,

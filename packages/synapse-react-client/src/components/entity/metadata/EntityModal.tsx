@@ -1,6 +1,6 @@
 import Skeleton from '@mui/material/Skeleton'
 import Form from '@rjsf/core'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   entityTypeToFriendlyName,
   isVersionableEntityType,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 
 export type AdditionalPropertyContextType = {
   dropProperty: (event?: any) => void
@@ -13,11 +13,11 @@ export type AdditionalPropertyContextType = {
  * level. RJSF does not normally provide the drop property handler at the `array` level, so we capture it and pass it
  * along using this context.
  */
-export const AdditionalPropertyContext = React.createContext<
+export const AdditionalPropertyContext = createContext<
   AdditionalPropertyContextType | undefined
 >(undefined)
 
-export type AdditionalPropertyContextProviderProps = React.PropsWithChildren<{
+export type AdditionalPropertyContextProviderProps = PropsWithChildren<{
   value: AdditionalPropertyContextType
 }>
 

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
 import {
   AccessApprovalSearchRequest,
@@ -20,9 +20,10 @@ export type AccessApprovalsTableProps = {
   accessorId: string
   accessRequirementId?: string
 }
-export const AccessApprovalsTable: React.FunctionComponent<
-  AccessApprovalsTableProps
-> = ({ accessorId, accessRequirementId }) => {
+export function AccessApprovalsTable({
+  accessorId,
+  accessRequirementId,
+}: AccessApprovalsTableProps) {
   const [sort, setSort] = useState<AccessApprovalSearchSort>({
     field: AccessApprovalSortField.MODIFIED_ON,
     direction: Direction.DESC,

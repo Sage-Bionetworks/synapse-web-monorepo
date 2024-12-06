@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { Step, StepStateEnum } from './types'
 

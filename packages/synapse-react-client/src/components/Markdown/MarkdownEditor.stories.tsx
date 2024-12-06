@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { MarkdownEditor } from './MarkdownEditor'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
 
 const meta: Meta<typeof MarkdownEditor> = {

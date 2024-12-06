@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material'
 import { Match } from '@sage-bionetworks/synapse-client'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
 import { useSearchForumInfinite } from '../../synapse-queries/forum/useForum'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'

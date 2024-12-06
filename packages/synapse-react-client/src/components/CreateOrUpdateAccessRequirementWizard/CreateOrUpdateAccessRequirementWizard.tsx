@@ -1,5 +1,5 @@
 import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
-import React, { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   AccessRequirementAclEditor,
   AccessRequirementAclEditorHandle,
@@ -31,9 +31,9 @@ export type CreateOrUpdateAccessRequirementWizardProps = {
   'subject' | 'accessRequirementId'
 >
 
-export const CreateOrUpdateAccessRequirementWizard: React.FunctionComponent<
-  CreateOrUpdateAccessRequirementWizardProps
-> = (props: CreateOrUpdateAccessRequirementWizardProps) => {
+export function CreateOrUpdateAccessRequirementWizard(
+  props: CreateOrUpdateAccessRequirementWizardProps,
+) {
   const { open, onCancel, onComplete } = props
 
   const [step, setStep] = useState<CreateOrUpdateAccessRequirementWizardStep>(

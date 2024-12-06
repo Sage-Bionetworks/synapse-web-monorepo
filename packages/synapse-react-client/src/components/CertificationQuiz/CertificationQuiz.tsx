@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -29,7 +29,7 @@ import CertificationAnswer from './CertificationAnswer'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 import { Box } from '@mui/material'
 
-const CertificationQuiz: React.FunctionComponent = () => {
+function CertificationQuiz() {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const [quiz, setQuiz] = useState<Quiz | undefined>()
@@ -46,7 +46,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
     useGetPassingRecord(userId, {
       enabled: userId !== undefined,
     })
-  const formRef = React.useRef<HTMLFormElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
@@ -333,7 +333,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
   )
 }
 
-const CertificationQuizSkeleton: React.FunctionComponent = () => {
+function CertificationQuizSkeleton() {
   const questions: ReactNode[] = []
   for (let i = 0; i < 20; i++) {
     questions.push(

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Link, Skeleton, Stack } from '@mui/material'
 import IconSvg, { IconName } from '../IconSvg'
 import ConditionalWrapper from '../utils/ConditionalWrapper'

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { UseDetectSSOCodeReturnType } from '../../hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { TermsOfServiceStatus } from '@sage-bionetworks/synapse-types'
@@ -19,11 +19,11 @@ export type ApplicationSessionContextType = {
   isLoadingSSO: UseDetectSSOCodeReturnType['isLoading']
 }
 
-const ApplicationSessionContext = React.createContext<
+const ApplicationSessionContext = createContext<
   ApplicationSessionContextType | undefined
 >(undefined)
 
-export type ApplicationSessionContextProviderProps = React.PropsWithChildren<{
+export type ApplicationSessionContextProviderProps = PropsWithChildren<{
   context: ApplicationSessionContextType
 }>
 

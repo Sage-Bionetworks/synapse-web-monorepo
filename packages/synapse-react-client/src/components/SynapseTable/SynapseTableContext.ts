@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
+import { createContext, useContext } from 'react'
 import { LabelLinkConfig } from '../CardContainerLogic'
 
 export type SynapseTableContextType = {
   columnLinks?: LabelLinkConfig
 }
 
-export const SynapseTableContext = React.createContext<
+export const SynapseTableContext = createContext<
   SynapseTableContextType | undefined
 >(undefined)
 

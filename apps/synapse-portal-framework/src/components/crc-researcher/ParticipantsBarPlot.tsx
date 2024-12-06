@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import _ from 'lodash-es'
@@ -19,7 +19,7 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type ParticipantsBarPlotProps = {
   token?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
 const barLayoutConfig: Partial<Plotly.Layout> = {
@@ -158,16 +158,16 @@ export function fetchData(token: string): Promise<RowSet> {
   )
 }
 
-const DEFAULT_PARTICIPANTS_BAR_PLOT_STYLE: React.CSSProperties = {
+const DEFAULT_PARTICIPANTS_BAR_PLOT_STYLE: CSSProperties = {
   width: '100%',
   height: '100%',
   margin: '30px 10px',
 }
 
-const ParticipantsBarPlot: FunctionComponent<ParticipantsBarPlotProps> = ({
+function ParticipantsBarPlot({
   token,
   style = DEFAULT_PARTICIPANTS_BAR_PLOT_STYLE,
-}: ParticipantsBarPlotProps) => {
+}: ParticipantsBarPlotProps) {
   // get plot data!
   const [isLoaded, setIsLoaded] = useState(false)
   const [barPlotQueryData, setBarPlotQueryData] = useState<GraphItem[]>([])

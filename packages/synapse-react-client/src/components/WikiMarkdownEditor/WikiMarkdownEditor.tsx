@@ -1,7 +1,7 @@
 import { Alert, Box, Button, TextField } from '@mui/material'
 import { ObjectType, WikiPage } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { UpdateWikiPageInput, useUpdateWikiPage } from '../../synapse-queries'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { DialogBase } from '../DialogBase'
@@ -25,9 +25,7 @@ export type WikiMarkdownEditorProps = {
   // showDeleteButton: boolean
 }
 
-export const WikiMarkdownEditor: React.FunctionComponent<
-  WikiMarkdownEditorProps
-> = (props: WikiMarkdownEditorProps) => {
+export function WikiMarkdownEditor(props: WikiMarkdownEditorProps) {
   // TODO: SWC-6774 - get showDeleteButton from props
   const showDeleteButton = false
   const {

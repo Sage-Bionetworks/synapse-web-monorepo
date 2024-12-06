@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import React from 'react'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '../../utils'
 import {
@@ -19,9 +18,7 @@ const CERTIFICATION_VERIFICATION_AND_USERPROFILE_BUNDLE_MASK =
   SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
   SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
 
-export const AccountLevelBadges: React.FunctionComponent<
-  AccountLevelBadgesProps
-> = ({ userId }: AccountLevelBadgesProps) => {
+export function AccountLevelBadges({ userId }: AccountLevelBadgesProps) {
   const {
     data: userBundle,
     isLoading,

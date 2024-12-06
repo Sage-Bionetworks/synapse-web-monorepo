@@ -1,5 +1,4 @@
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import * as React from 'react'
 import { AppUtils, ChallengeSubmission } from 'synapse-react-client'
 
 export type ChallengeSubmissionWrapperProps = {

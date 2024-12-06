@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FileHandleAssociation,
   QueryBundleRequest,
@@ -34,7 +33,7 @@ export type ProgramsDataProps = {
   fileHandleAssociation?: FileHandleAssociation
 }
 
-export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
+export function Programs(props: ProgramsProps) {
   const {
     entityId,
     titleColumnName,

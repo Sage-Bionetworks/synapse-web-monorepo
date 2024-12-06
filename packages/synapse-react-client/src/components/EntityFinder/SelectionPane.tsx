@@ -1,5 +1,5 @@
 import { Clear } from '@mui/icons-material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
@@ -16,11 +16,11 @@ export type SelectionPaneProps = {
   toggleSelection: (entity: Reference) => void
 }
 
-export const SelectionPane: React.FC<SelectionPaneProps> = ({
+export function SelectionPane({
   title,
   selectedEntities,
   toggleSelection,
-}: SelectionPaneProps) => {
+}: SelectionPaneProps) {
   if (typeof title === 'function') {
     title = title(selectedEntities.size)
   }
@@ -60,10 +60,13 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   )
 }
 
-const EntityPathDisplay: React.FunctionComponent<{
+function EntityPathDisplay({
+  entity,
+  toggleSelection,
+}: {
   entity: Reference
   toggleSelection: (entity: Reference) => void
-}> = ({ entity, toggleSelection }) => {
+}) {
   const { data: bundle } = useGetEntityBundle(
     entity.targetId,
     entity.targetVersionNumber,

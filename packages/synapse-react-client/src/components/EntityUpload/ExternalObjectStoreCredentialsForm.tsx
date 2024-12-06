@@ -3,14 +3,14 @@ import {
   instanceOfExternalObjectStoreUploadDestination,
   UploadDestination,
 } from '@sage-bionetworks/synapse-client'
-import React from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 type ExternalObjectStoreCredentialsFormProps = {
   uploadDestination?: UploadDestination
   accessKey: string
-  setAccessKey: React.Dispatch<React.SetStateAction<string>>
+  setAccessKey: Dispatch<SetStateAction<string>>
   secretKey: string
-  setSecretKey: React.Dispatch<React.SetStateAction<string>>
+  setSecretKey: Dispatch<SetStateAction<string>>
 }
 
 export function ExternalObjectStoreCredentialsForm(

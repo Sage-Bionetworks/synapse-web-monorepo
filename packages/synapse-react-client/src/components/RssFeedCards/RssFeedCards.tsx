@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 import Parser from 'rss-parser'
 import dayjs from 'dayjs'
 import { ReactComponent as SubscribePlus } from '../../assets/icons/subscribe_plus.svg'
@@ -28,7 +28,7 @@ export type RssFeedCardsProps = {
   mailChimpUrl?: string
   viewAllNewsButtonText?: string
 }
-export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
+export class RssFeedCards extends Component<RssFeedCardsProps, RssState> {
   // only update the state if this component is mounted
   _isMounted = false
 

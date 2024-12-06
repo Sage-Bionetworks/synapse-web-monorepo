@@ -1,6 +1,6 @@
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 import { Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FileUpload } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client'
 import {
@@ -16,7 +16,7 @@ export type AttestationProps = {
   onNext: (vs: VerificationSubmission) => void
 }
 
-const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
+function Attestation(props: AttestationProps) {
   const { verificationSubmission } = props
   const [attachments, setAttachments] = useState(
     verificationSubmission.attachments,

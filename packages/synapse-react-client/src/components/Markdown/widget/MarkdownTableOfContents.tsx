@@ -1,5 +1,3 @@
-import React from 'react'
-
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',

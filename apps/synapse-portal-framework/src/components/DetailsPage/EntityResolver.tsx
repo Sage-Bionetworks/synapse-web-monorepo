@@ -1,11 +1,11 @@
 import { Skeleton } from '@mui/material'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import React from 'react'
+import { ReactNode } from 'react'
 import { SynapseQueries } from 'synapse-react-client'
 
 export function EntityResolver(props: {
   entityId: string
-  children: (entityHeader: EntityHeader) => React.ReactNode
+  children: (entityHeader: EntityHeader) => ReactNode
 }) {
   const { data: entityHeader, isLoading } = SynapseQueries.useGetEntityHeader(
     props.entityId,

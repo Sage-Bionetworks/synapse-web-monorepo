@@ -2,7 +2,6 @@ import '@testing-library/jest-dom'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { when } from 'jest-when'
-import React from 'react'
 import * as DetailsListModule from '../../../src/components/EntityFinder/details/EntityDetailsList'
 import {
   EntityDetailsListDataConfiguration,

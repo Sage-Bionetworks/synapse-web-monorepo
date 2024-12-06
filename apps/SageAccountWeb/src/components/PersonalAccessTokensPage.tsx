@@ -1,4 +1,3 @@
-import React from 'react'
 import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'

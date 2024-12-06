@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
 
 export type RedirectDialogProps = {
@@ -55,13 +55,11 @@ const getInitialCountdownSeconds = (redirectURL: string) => {
 }
 
 const RedirectDialog = (props: RedirectDialogProps) => {
-  const [countdownSeconds, setCountdownSeconds] = React.useState<
-    number | undefined
-  >()
+  const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
-  const [redirectInstructions, setRedirectInstructions] = React.useState()
+  const [redirectInstructions, setRedirectInstructions] = useState()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (redirectUrl && countdownSeconds) {
       // You would expect that we should redirect when countdownSeconds reaches 0,
       // but it actually takes about a second to perform the redirect.
@@ -77,7 +75,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     }
   }, [redirectUrl, countdownSeconds])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (redirectUrl) {
       const isRedirectToSynapse = isSynapseURL(redirectUrl)
       setRedirectInstructions(
@@ -88,7 +86,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     }
   }, [redirectUrl])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (redirectUrl && !countdownSeconds) {
       setCountdownSeconds(getInitialCountdownSeconds(redirectUrl))
     }

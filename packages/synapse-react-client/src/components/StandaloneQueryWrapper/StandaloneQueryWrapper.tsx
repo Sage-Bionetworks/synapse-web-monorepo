@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -80,9 +80,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
  * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
  * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
  */
-const StandaloneQueryWrapper: React.FunctionComponent<
-  StandaloneQueryWrapperProps
-> = (props: StandaloneQueryWrapperProps) => {
+function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
   /** @deprecated property inherited from SynapseTableProps */
   const { hideDownload } = props
   const {

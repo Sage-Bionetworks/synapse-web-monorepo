@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Download = () => (
   <svg
     data-icon="download"

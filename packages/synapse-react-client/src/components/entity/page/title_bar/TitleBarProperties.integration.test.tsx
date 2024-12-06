@@ -12,7 +12,6 @@ import {
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
-import React from 'react'
 import mockDataset from '../../../../mocks/entity/mockDataset'
 import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
 import mockFileEntity from '../../../../mocks/entity/mockFileEntity'

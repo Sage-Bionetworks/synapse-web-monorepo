@@ -3,7 +3,6 @@ import { ColumnTypeEnum, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import React from 'react'
 
 describe('SynapseCardLabel tests', () => {
   const DATASETS = 'datasets'

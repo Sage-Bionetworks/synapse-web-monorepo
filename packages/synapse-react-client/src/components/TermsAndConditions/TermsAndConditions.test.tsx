@@ -1,4 +1,3 @@
-import React from 'react'
 import TermsAndConditions from './TermsAndConditions'
 import { SynapseClient, SynapseContextType } from '../../index'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'

@@ -1,5 +1,4 @@
 import { render, screen, act } from '@testing-library/react'
-import React from 'react'
 import { EvaluationEditor as mockEvaluationEditor } from './EvaluationEditor'
 import {
   EvaluationEditorPage,

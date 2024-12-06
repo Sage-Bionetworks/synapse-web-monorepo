@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo } from 'react'
 import { Column, Table } from '@tanstack/react-table'
 import { DebouncedInput } from './DebouncedInput'
 
@@ -15,7 +15,7 @@ export function Filter({
 
   const columnFilterValue = (column.getFilterValue() as string) ?? ''
 
-  const sortedUniqueValues: string[] = React.useMemo(
+  const sortedUniqueValues: string[] = useMemo(
     () =>
       typeof firstValue === 'number'
         ? []

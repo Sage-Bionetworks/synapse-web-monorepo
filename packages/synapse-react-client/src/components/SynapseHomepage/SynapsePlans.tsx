@@ -1,6 +1,5 @@
 import { styled, useMediaQuery, useTheme, SxProps } from '@mui/material'
 import { Box, Typography } from '@mui/material'
-import React from 'react'
 import IconSvg from '../IconSvg'
 import { StandardCSSProperties } from '@mui/system'
 

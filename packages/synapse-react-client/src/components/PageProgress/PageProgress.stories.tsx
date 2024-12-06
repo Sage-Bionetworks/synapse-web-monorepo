@@ -1,12 +1,11 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-
+import { useState } from 'react'
 import PageProgress, { PageProgressProps } from './PageProgress'
 
 const meta = {
   title: 'UI/PageProgress',
   render: function RenderFn(args) {
-    const [percent, setPercent] = React.useState(0)
+    const [percent, setPercent] = useState(0)
     return (
       <PageProgress
         barPercent={percent}

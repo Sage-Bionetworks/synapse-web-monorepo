@@ -1,5 +1,5 @@
 import { Box, Button, SxProps } from '@mui/material'
-import React from 'react'
+import { MouseEventHandler } from 'react'
 import IconSvg, { IconName } from '../IconSvg'
 import LastLoginInfo, { useLastLoginInfo } from './LastLoginInfo'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
@@ -17,7 +17,7 @@ const iconSx: SxProps = {
 export type LoginMethodButtonProps = {
   loginMethod: LoginMethod
   iconName: IconName
-  onClick: React.MouseEventHandler<HTMLButtonElement>
+  onClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export default function LoginMethodButton(props: LoginMethodButtonProps) {

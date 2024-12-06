@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
+import { createRef } from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
@@ -59,7 +59,7 @@ const defaultProps: AccessRequirementAclEditorProps = {
 }
 
 function renderComponent(props: AccessRequirementAclEditorProps) {
-  const ref = React.createRef<AccessRequirementAclEditorHandle>()
+  const ref = createRef<AccessRequirementAclEditorHandle>()
   const component = render(
     <AccessRequirementAclEditor ref={ref} {...props} />,
     {

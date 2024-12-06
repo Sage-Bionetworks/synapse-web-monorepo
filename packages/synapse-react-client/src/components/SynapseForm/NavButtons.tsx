@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { Step, NavActionEnum } from './types'
 export interface NavButtonsProps {

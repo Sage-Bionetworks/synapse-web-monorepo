@@ -1,4 +1,4 @@
-import React, { createRef, useMemo, useState } from 'react'
+import { createRef, useMemo, useState } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {

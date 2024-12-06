@@ -1,4 +1,3 @@
-import React from 'react'
 import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
 import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,

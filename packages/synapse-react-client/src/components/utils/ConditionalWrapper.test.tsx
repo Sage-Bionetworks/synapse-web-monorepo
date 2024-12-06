@@ -1,12 +1,12 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
+import { PropsWithChildren } from 'react'
 import ConditionalWrapper from './ConditionalWrapper'
 
 const WRAPPER_TEXT = 'Wrapper Text'
 const WRAPPER_PROP_TEXT = 'Wrapper Prop Text'
 const INNER_TEXT = 'Inner Text'
 
-type WrapperProps = React.PropsWithChildren<{ showWrapperPropText: boolean }>
+type WrapperProps = PropsWithChildren<{ showWrapperPropText: boolean }>
 
 function Wrapper(props: WrapperProps) {
   return (

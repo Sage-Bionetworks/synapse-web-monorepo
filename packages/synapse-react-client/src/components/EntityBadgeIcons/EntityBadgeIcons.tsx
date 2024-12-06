@@ -8,7 +8,7 @@ import {
   PublicTwoTone,
 } from '@mui/icons-material'
 import { isEmpty } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import {
   useDeleteEntity,

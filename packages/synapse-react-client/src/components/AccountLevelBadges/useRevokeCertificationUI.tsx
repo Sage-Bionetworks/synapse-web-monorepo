@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useIsCurrentUserACTMember } from '../../synapse-queries'
 import { useRevokeCertification } from '../../synapse-queries/user/useRevokeCertification'
 import { displayToast } from '../ToastMessage'

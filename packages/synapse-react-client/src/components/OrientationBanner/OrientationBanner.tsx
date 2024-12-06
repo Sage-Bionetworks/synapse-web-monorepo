@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTheme } from '@mui/material'
 import FullWidthAlert, {
   AlertButtonConfig,
@@ -6,6 +5,7 @@ import FullWidthAlert, {
 } from '../FullWidthAlert/FullWidthAlert'
 import Illustrations from '../../assets/illustrations'
 import { useCookiePreferences } from '../../utils/hooks/useCookiePreferences'
+import { ReactNode, useState } from 'react'
 
 const OrientationBannerNameStrings = [
   'Challenges',
@@ -38,7 +38,7 @@ export const ORIENTATION_BANNER_KEYS = OrientationBannerNameStrings.map(el =>
 export interface OrientationBannerProps {
   name: OrientationBannerName
   title: string
-  text: React.ReactNode
+  text: ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
   sx?: FullWidthAlertProps['sx']
@@ -50,7 +50,7 @@ function OrientationBanner(props: OrientationBannerProps) {
   const [cookiePreferences] = useCookiePreferences()
 
   const storageBannerId = getOrientationBannerKey(name)
-  const [showBanner, setShowBanner] = React.useState(
+  const [showBanner, setShowBanner] = useState(
     localStorage.getItem(storageBannerId) === null,
   )
 

@@ -96,7 +96,7 @@ import {
   WarningTwoTone,
   WatchLater,
 } from '@mui/icons-material'
-import React from 'react'
+import { Fragment } from 'react'
 import AccessManagement from '../../assets/mui_components/AccessManagement'
 import AccountCertified from '../../assets/mui_components/AccountCertified'
 import AccountRegistered from '../../assets/mui_components/AccountRegistered'
@@ -541,7 +541,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
 function IconSvg(props: IconSvgProps) {
   const { icon, label = '', wrap = true, ...svgIconProps } = props
 
-  const Wrapper = wrap ? 'span' : React.Fragment
+  const Wrapper = wrap ? 'span' : Fragment
   const wrapperProps = wrap
     ? {
         'data-svg': icon,

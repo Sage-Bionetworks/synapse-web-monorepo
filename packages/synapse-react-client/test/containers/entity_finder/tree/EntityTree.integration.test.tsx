@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { EntityDetailsListDataConfigurationType } from '../../../../src/components/EntityFinder/details/EntityDetailsList'
 import {
   EntityTree,

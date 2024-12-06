@@ -1,6 +1,12 @@
 import { sourceAppConfigTableID } from '../resources'
 import { SourceAppConfig } from './SourceAppConfigs'
-import React, { useContext, useEffect, useMemo } from 'react'
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react'
 import { getSearchParam } from '../URLUtils'
 import { useLocalStorageValue } from '@react-hookz/web'
 import {
@@ -20,11 +26,11 @@ export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
 /**
  * This must be exported to use the context in class components.
  */
-export const SourceAppContext = React.createContext<SourceAppContextType>(
+export const SourceAppContext = createContext<SourceAppContextType>(
   SynapseHookUtils.STATIC_SOURCE_APP_CONFIG,
 )
 
-export type SourceAppContextProviderProps = React.PropsWithChildren<{
+export type SourceAppContextProviderProps = PropsWithChildren<{
   sourceAppId?: string
 }>
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import RangeSlider, { RangeSliderProps } from './RangeSlider'
 import { Paper } from '@mui/material'

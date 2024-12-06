@@ -1,5 +1,5 @@
-import React from 'react'
 import Plotly from 'plotly.js-basic-dist'
+import { Component, ContextType } from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import SynapseClient from '../synapse-client'
 import {
@@ -40,12 +40,12 @@ type StatisticsPlotState = {
   plotData?: ProjectFilesStatisticsResponse
 }
 
-class StatisticsPlot extends React.Component<
+class StatisticsPlot extends Component<
   StatisticsPlotProps,
   StatisticsPlotState
 > {
   static contextType = SynapseContext
-  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+  declare context: NonNullable<ContextType<typeof SynapseContext>>
   constructor(props: StatisticsPlotProps) {
     super(props)
     this.state = {

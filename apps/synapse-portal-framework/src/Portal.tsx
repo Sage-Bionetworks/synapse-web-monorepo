@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { defaultQueryClientConfig, SynapseTheme } from 'synapse-react-client'

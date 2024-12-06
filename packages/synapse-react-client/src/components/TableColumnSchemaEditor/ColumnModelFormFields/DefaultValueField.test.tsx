@@ -1,4 +1,3 @@
-import React from 'react'
 import DefaultValueField, { DefaultValueFieldProps } from './DefaultValueField'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { act, render, screen, within } from '@testing-library/react'

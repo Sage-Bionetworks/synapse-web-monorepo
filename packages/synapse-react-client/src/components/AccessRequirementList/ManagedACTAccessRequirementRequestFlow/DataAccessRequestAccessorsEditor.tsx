@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import { Form } from 'react-bootstrap'
 import {
   Button,
@@ -27,7 +27,7 @@ export type DataAccessRequestAccessorsEditorProps = {
   /* Whether this request is a renewal */
   isRenewal: boolean
   /* Text to show to inform the user about requirements accessors may need to meet */
-  helpText: React.ReactNode
+  helpText: ReactNode
 }
 
 /**

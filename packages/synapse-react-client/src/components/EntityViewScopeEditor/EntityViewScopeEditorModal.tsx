@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import EntityViewScopeEditor from './EntityViewScopeEditor'
 import EntityViewMaskEditor from './EntityViewMaskEditor'

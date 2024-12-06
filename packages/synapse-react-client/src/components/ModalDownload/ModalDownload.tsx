@@ -1,15 +1,17 @@
-import React from 'react'
 import { Button } from '@mui/material'
 import Form, { IChangeEvent } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
-import SynapseClient from '../../synapse-client'
 import {
   DownloadFromTableRequest,
   DownloadFromTableResult,
-  SortItem,
   QueryBundleRequest,
+  SortItem,
 } from '@sage-bionetworks/synapse-types'
-
+import { Component, ContextType, CSSProperties, Fragment } from 'react'
+import SynapseClient from '../../synapse-client'
+import { SynapseContext } from '../../utils/context/SynapseContext'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { DialogBase } from '../DialogBase'
 import {
   csvOption,
   formSchemaArray,
@@ -17,9 +19,6 @@ import {
   includeRowIdAndRowVersionOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { SynapseContext } from '../../utils/context/SynapseContext'
-import { DialogBase } from '../DialogBase'
 
 type ModalDownloadState = {
   isLoading: boolean
@@ -38,12 +37,12 @@ export type ModalDownloadProps = {
   sort?: SortItem[]
 }
 
-export class ModalDownload extends React.Component<
+export class ModalDownload extends Component<
   ModalDownloadProps,
   ModalDownloadState
 > {
   static contextType = SynapseContext
-  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+  declare context: NonNullable<ContextType<typeof SynapseContext>>
 
   constructor(props: ModalDownloadProps) {
     super(props)
@@ -127,7 +126,7 @@ export class ModalDownload extends React.Component<
   }
 
   render() {
-    const spinnerStyle: React.CSSProperties = {
+    const spinnerStyle: CSSProperties = {
       height: 50,
       width: 50,
       backgroundSize: 50,
@@ -157,7 +156,7 @@ export class ModalDownload extends React.Component<
                   </div>
                 </div>
               )}
-              <React.Fragment />
+              <Fragment />
             </Form>
           </>
         }

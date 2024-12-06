@@ -1,4 +1,3 @@
-import React from 'react'
 import Header, { HeaderProps } from './Header'
 import { render, screen } from '@testing-library/react'
 

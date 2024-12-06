@@ -1,6 +1,6 @@
 import { InfoOutlined } from '@mui/icons-material'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -250,9 +250,7 @@ export function getPlotStyle(
   }
 }
 
-const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
-  props: FacetNavPanelProps,
-): JSX.Element => {
+function FacetNavPanel(props: FacetNavPanelProps) {
   const {
     onHide,
     isModalView,

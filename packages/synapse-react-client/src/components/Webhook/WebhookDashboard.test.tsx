@@ -8,7 +8,6 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { rest } from 'msw'
-import React from 'react'
 import mockProject from '../../mocks/entity/mockProject'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { webhookService } from '../../mocks/msw/handlers/webhookHandlers'

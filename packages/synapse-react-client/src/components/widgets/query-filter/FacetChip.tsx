@@ -1,7 +1,7 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
 
-export type FacetChipProps = React.PropsWithChildren<{
+export type FacetChipProps = PropsWithChildren<{
   isChecked: boolean
   onClick: () => void
 }>

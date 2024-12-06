@@ -1,4 +1,3 @@
-import React from 'react'
 import { TwoFactorEnrollmentForm } from 'synapse-react-client'
 import { useNavigate } from 'react-router-dom'
 

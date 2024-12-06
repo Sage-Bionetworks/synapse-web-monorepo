@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { QueryContextProvider } from '../src/components/QueryContext'
 import { QueryVisualizationContextProvider } from '../src/components/QueryVisualizationWrapper'
@@ -56,7 +55,7 @@ export const Demo: Story = {
             getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
             isRowSelectionVisible: args.hasRowSelection,
             selectedRows: args.hasRowSelection
-              ? mockQueryResultBundle.queryResult!.queryResults.rows.slice(0, 2)
+              ? mockQueryResultBundle.queryResult.queryResults.rows.slice(0, 2)
               : [],
           }}
         >

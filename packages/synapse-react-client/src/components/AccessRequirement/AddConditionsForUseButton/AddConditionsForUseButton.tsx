@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@mui/material'
 import IconSvg from '../../IconSvg/IconSvg'
 import ImposeRestrictionDialog from '../ImposeRestrictionDialog/ImposeRestrictionDialog'

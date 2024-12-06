@@ -1,4 +1,3 @@
-import React from 'react'
 import { ReactComponent as SageLogo } from './assets/sage-logo.svg'
 import { ReactComponent as NCI } from './assets/nci.svg'
 import { ReactComponent as NIH } from './assets/nih.svg'

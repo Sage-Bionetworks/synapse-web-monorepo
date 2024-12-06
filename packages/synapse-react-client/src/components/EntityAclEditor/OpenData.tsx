@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg from '../IconSvg'
 import { Box, BoxProps, styled, Typography } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'

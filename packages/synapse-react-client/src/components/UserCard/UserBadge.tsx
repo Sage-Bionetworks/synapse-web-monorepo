@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import { CSSProperties, useMemo, useRef } from 'react'
 import { SynapseConstants } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
@@ -135,7 +135,7 @@ export function UserBadge(props: UserBadgeProps) {
 
   const Tag = showCardOnHover || !disableLink ? Link : 'span'
 
-  let style: React.CSSProperties = {}
+  let style: CSSProperties = {}
   if (showCardOnHover) {
     style = { whiteSpace: 'nowrap' }
   } else if (disableLink) {

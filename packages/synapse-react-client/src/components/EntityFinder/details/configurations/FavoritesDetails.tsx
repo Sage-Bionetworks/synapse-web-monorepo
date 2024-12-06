@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetFavoritesInfinite } from '../../../../synapse-queries/user/useFavorites'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -6,9 +5,7 @@ import { DetailsView } from '../view/DetailsView'
 
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 
-export const FavoritesDetails: React.FunctionComponent<
-  FavoritesDetailsProps
-> = ({ ...sharedProps }) => {
+export function FavoritesDetails({ ...sharedProps }: FavoritesDetailsProps) {
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useGetFavoritesInfinite('NAME', 'ASC', { throwOnError: true })
 

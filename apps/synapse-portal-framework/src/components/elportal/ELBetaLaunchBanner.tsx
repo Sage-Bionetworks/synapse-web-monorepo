@@ -1,11 +1,11 @@
 import { Link } from '@mui/material'
-import React from 'react'
+import { useState } from 'react'
 import { SynapseComponents, SynapseHookUtils } from 'synapse-react-client'
 const EL_BETA_LAUNCH_LOCALSTORAGE_KEY =
   'org.sagebionetworks.security.cookies.portal.elbetalaunch.dismissed'
 const ELBetaLaunchBanner = () => {
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
-  const [showBanner, setShowBanner] = React.useState(
+  const [showBanner, setShowBanner] = useState(
     localStorage.getItem(EL_BETA_LAUNCH_LOCALSTORAGE_KEY) === null,
   )
   return !showBanner ? (

@@ -1,4 +1,3 @@
-import React from 'react'
 import { UiSchema } from '@rjsf/utils'
 import { FormSchema, Step, SummaryFormat } from './types'
 import {

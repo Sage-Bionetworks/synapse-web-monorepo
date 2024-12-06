@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { FormEventHandler, KeyboardEventHandler, useState } from 'react'
 import { MenuItem, OutlinedInput } from '@mui/material'
 import { FormControl } from '@mui/material'
 import { InputAdornment } from '@mui/material'
@@ -21,9 +21,9 @@ enum SearchMode {
  * SWC-7005: Not used in the current implementation of the Home Page, but there are plans to utilize it later.
  * @returns
  */
-export const SynapseHomepageChatSearch: React.FunctionComponent<
-  SynapseHomepageChatSearchProps
-> = ({ gotoPlace }) => {
+export function SynapseHomepageChatSearch({
+  gotoPlace,
+}: SynapseHomepageChatSearchProps) {
   const theme = useTheme()
   const [searchValue, setSearchValue] = useState('')
   const [chatValue, setChatValue] = useState('')
@@ -35,11 +35,11 @@ export const SynapseHomepageChatSearch: React.FunctionComponent<
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }
   }
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault()
     executeSearch()
   }
-  const handleKeyDown: React.KeyboardEventHandler<
+  const handleKeyDown: KeyboardEventHandler<
     HTMLTextAreaElement | HTMLInputElement
   > = event => {
     if (event.key === 'Enter') {

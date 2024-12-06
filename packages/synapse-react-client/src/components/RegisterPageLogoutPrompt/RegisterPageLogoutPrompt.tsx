@@ -1,12 +1,12 @@
-import React from 'react'
 import { Button, Paper, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 import SynapseClient from '../../synapse-client'
 import { displayToast } from '../ToastMessage'
 import SageFullLogo from '../../assets/icons/SageFullLogo'
 
 export type RegisterPageLogoutPromptProps = {
   onLogout: () => void
-  logo?: React.ReactNode
+  logo?: ReactNode
 }
 
 export default function RegisterPageLogoutPrompt(

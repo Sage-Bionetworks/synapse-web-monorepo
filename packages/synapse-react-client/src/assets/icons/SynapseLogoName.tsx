@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const SynapseLogoName = (props: React.SVGProps<SVGSVGElement>) => (
+const SynapseLogoName = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="109"
     height="15"

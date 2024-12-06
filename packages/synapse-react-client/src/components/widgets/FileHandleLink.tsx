@@ -3,7 +3,7 @@ import {
   BatchFileResult,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SynapseConstants } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'

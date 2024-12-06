@@ -5,7 +5,6 @@ import {
   RenderResult,
   waitFor,
 } from '@testing-library/react'
-import React from 'react'
 import SynapseClient from '../../synapse-client'
 import StatisticsPlot, { StatisticsPlotProps } from '../StatisticsPlot'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

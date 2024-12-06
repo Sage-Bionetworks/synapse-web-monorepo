@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import { isDataset } from '../../../utils/functions/EntityTypeUtils'
@@ -25,9 +25,7 @@ export type DownloadOptionsProps = {
   darkTheme?: boolean
 }
 
-export const DownloadOptions: React.FunctionComponent<
-  DownloadOptionsProps
-> = props => {
+export function DownloadOptions(props: DownloadOptionsProps) {
   const { accessToken } = useSynapseContext()
   const {
     entityId,
@@ -47,10 +45,9 @@ export const DownloadOptions: React.FunctionComponent<
     [getCurrentQueryRequest],
   )
 
-  const [showLoginModal, setShowLoginModal] = React.useState(false)
-  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
-  const [showProgrammaticOptions, setShowProgrammaticOptions] =
-    React.useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showExportMetadata, setShowExportMetadata] = useState(false)
+  const [showProgrammaticOptions, setShowProgrammaticOptions] = useState(false)
   const { onDownloadFiles, darkTheme = true } = props
 
   const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
@@ -64,7 +61,7 @@ export const DownloadOptions: React.FunctionComponent<
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 
   return (
-    <React.Fragment>
+    <>
       <Dropdown as="span">
         <ElementWithTooltip
           tooltipText={'Download Options'}
@@ -157,6 +154,6 @@ export const DownloadOptions: React.FunctionComponent<
           queryBundleRequest={queryBundleRequest}
         ></ProgrammaticTableDownload>
       )}
-    </React.Fragment>
+    </>
   )
 }

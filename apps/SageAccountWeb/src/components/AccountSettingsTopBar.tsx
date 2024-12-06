@@ -1,4 +1,3 @@
-import React from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
@@ -9,7 +8,7 @@ import {
 } from 'synapse-react-client'
 import { Link } from '@mui/material'
 
-const AccountSettingsTopBar: React.FunctionComponent = () => {
+function AccountSettingsTopBar() {
   const sourceApp = useSourceApp()
   const iconSx: SxProps = {
     width: '32px',

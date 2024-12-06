@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import {

@@ -1,4 +1,4 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 import { StyledEngineProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
  * @constructor
  */
 export default function AppWrapper(
-  props: React.PropsWithChildren<Record<never, never>>,
+  props: PropsWithChildren<Record<never, never>>,
 ) {
   const navigate = useNavigate()
 

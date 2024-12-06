@@ -1,6 +1,6 @@
 import { Box, TextField, useTheme } from '@mui/material'
 import { StyledFormControl } from '../StyledComponents'
-import React, { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ContinueButton } from './ContinueButton'
 
@@ -35,7 +35,7 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
   const [values, setValues] = useState({ ...props.verificationSubmission })
   const [errors] = useState({} as Partial<VerificationSubmission>)
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValues(values => ({
       ...values,
       [event.target.name]: event.target.value,

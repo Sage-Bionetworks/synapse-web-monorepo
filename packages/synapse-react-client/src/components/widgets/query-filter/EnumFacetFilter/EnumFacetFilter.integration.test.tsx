@@ -1,4 +1,3 @@
-import React from 'react'
 import { EnumFacetFilter, EnumFacetFilterProps } from './EnumFacetFilter'
 import {
   ColumnModel,

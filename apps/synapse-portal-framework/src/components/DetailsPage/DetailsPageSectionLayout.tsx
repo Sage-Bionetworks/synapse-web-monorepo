@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import { HeadlineWithLink } from './HeadlineWithLink'
 import { SynapseErrorBoundary } from 'synapse-react-client'
 
@@ -14,7 +14,7 @@ export type DetailsPageSectionLayoutType = {
   /** The unique, persistent ID to use for linking to the section */
   id: string
   /** The contents of the section */
-  element: React.ReactNode
+  element: ReactNode
   helpText?: string
 }
 

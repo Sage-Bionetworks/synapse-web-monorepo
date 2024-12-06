@@ -6,7 +6,7 @@ import {
   TranslatableString,
   WrapIfAdditionalTemplateProps,
 } from '@rjsf/utils'
-import React, { FocusEventHandler } from 'react'
+import { FocusEventHandler } from 'react'
 import { Grid, TextField } from '@mui/material'
 
 /** The `WrapIfAdditional` component is used by the `FieldTemplate` to rename, or remove properties that are

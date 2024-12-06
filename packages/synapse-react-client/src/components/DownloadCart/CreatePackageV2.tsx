@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { ChangeEvent, SyntheticEvent, useState } from 'react'
 import { Box, Button, InputAdornment, TextField } from '@mui/material'
 import {
   createPackageFromDownloadListV2,
@@ -31,7 +31,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     DownloadListPackageResponse | undefined
   >(undefined)
   const { onPackageCreation } = props
-  const createPackageHandler = async (event: React.SyntheticEvent) => {
+  const createPackageHandler = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!fileName) {
       setAlert({
@@ -73,7 +73,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     }
   }
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     setZipFileName(event.target.value)
   }
 

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router-dom'
 import {
   FooterConfig,
@@ -17,11 +17,11 @@ export type PortalContextType = {
   navbarConfig: NavbarConfig
 }
 
-export const PortalContext = React.createContext<PortalContextType | undefined>(
+export const PortalContext = createContext<PortalContextType | undefined>(
   undefined,
 )
 
-export type PortalContextProviderProps = React.PropsWithChildren<{
+export type PortalContextProviderProps = PropsWithChildren<{
   value: PortalContextType
 }>
 

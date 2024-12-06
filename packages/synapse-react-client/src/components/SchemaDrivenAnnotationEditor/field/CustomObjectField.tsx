@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { getDefaultRegistry } from '@rjsf/core'
 import { convertToArray } from '../AnnotationEditorUtils'
 import {

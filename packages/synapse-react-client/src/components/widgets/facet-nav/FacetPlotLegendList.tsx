@@ -1,4 +1,3 @@
-import React from 'react'
 import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import { Box, Typography } from '@mui/material'

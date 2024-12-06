@@ -1,10 +1,10 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
 type IconMinusProps = {
   title?: string
 }
 
-const IconMinus = (props: React.SVGProps<SVGSVGElement> & IconMinusProps) => (
+const IconMinus = (props: SVGProps<SVGSVGElement> & IconMinusProps) => (
   <svg
     {...props}
     className={`Icon-Minus ${props.className ?? ''}`}

@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
-import React from 'react'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'

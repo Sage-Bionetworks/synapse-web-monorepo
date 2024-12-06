@@ -1,6 +1,5 @@
 import { TextField, Typography } from '@mui/material'
 import { StyledFormControl } from '../StyledComponents'
-import React from 'react'
 
 export type TermsAndConditionsSignatureProps = {
   canSign: boolean
@@ -18,9 +17,11 @@ const tcSignatureFieldSx = {
   '.MuiTextField-root': { marginTop: '0px' },
 }
 
-export const TermsAndConditionsSignature: React.FC<
-  TermsAndConditionsSignatureProps
-> = ({ canSign, onSigned, expectedSignature }) => {
+export function TermsAndConditionsSignature({
+  canSign,
+  onSigned,
+  expectedSignature,
+}: TermsAndConditionsSignatureProps) {
   return (
     <>
       <Typography variant="subtitle1" sx={tcSignatureTextSx}>

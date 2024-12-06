@@ -1,4 +1,3 @@
-import React from 'react'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { Link, Typography } from '@mui/material'
 import { SRC_SIGN_IN_CLASS } from '../../../utils/SynapseConstants'
@@ -39,9 +38,7 @@ const content = (
   </>
 )
 
-export const DownloadLoginModal: React.FunctionComponent<
-  DownloadLoginModalProps
-> = props => {
+export function DownloadLoginModal(props: DownloadLoginModalProps) {
   return (
     <ConfirmationDialog
       open={true}

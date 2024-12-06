@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Box, Divider, Link, Stack, Typography } from '@mui/material'
 import { useGetEntityBundle } from '../../../../synapse-queries'
 import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
@@ -14,7 +14,7 @@ export type TitleBarPropertiesProps = {
 
 type PropertyProps = {
   title: string
-  value: React.ReactNode
+  value: ReactNode
 }
 function Property(props: PropertyProps) {
   const { title, value } = props

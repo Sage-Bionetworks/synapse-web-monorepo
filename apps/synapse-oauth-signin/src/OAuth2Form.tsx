@@ -10,7 +10,7 @@ import {
   FileHandleAssociateType,
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   AppUtils,

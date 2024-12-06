@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import { Fragment, useCallback, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import { CloseTwoTone, AddBox } from '@mui/icons-material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
@@ -29,9 +29,12 @@ const selectUnusedType = (
   ) as EvaluationRoundLimitType
 }
 
-export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
-  EvaluationRoundLimitOptionsListProps
-> = ({ limitInputs, handleChange, handleDeleteLimit, onAddNewLimit }) => {
+export function EvaluationRoundLimitOptionsList({
+  limitInputs,
+  handleChange,
+  handleDeleteLimit,
+  onAddNewLimit,
+}: EvaluationRoundLimitOptionsListProps) {
   // all types that are currently being used
   const selectedTypes: Set<EvaluationRoundLimitType> = new Set(
     limitInputs.map(limit => limit.type),
@@ -58,7 +61,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
     >
       {limitInputs.map((limit, index) => {
         return (
-          <React.Fragment key={limit.type}>
+          <Fragment key={limit.type}>
             <EvaluationRoundLimitOptions
               limitInput={limit}
               allSelectedTypes={selectedTypes}
@@ -91,7 +94,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
                   </IconButton>
                 )
             }
-          </React.Fragment>
+          </Fragment>
         )
       })}
     </div>

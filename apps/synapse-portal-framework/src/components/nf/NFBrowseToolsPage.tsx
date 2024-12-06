@@ -1,6 +1,6 @@
+import { ReactElement } from 'react'
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
-import React from 'react'
 import { Link, Typography, Box } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
@@ -15,7 +15,7 @@ import Search from '../Search'
 
 type Category = {
   resourceName: string
-  image: React.ReactElement
+  image: ReactElement
 }
 
 const categories: Category[] = [

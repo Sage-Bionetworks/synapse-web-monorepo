@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'

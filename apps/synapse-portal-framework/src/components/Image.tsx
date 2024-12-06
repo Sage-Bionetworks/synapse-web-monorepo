@@ -1,7 +1,7 @@
-import React, { FunctionComponent, SVGProps } from 'react'
+import { ComponentType, SVGProps } from 'react'
 
 export type ImageProps = {
-  Svg?: FunctionComponent<SVGProps<SVGSVGElement>>
+  Svg?: ComponentType<SVGProps<SVGSVGElement>>
   imgSrc?: string | undefined
   className?: string
 }

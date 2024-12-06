@@ -1,4 +1,10 @@
-import React, { createContext, useContext } from 'react'
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+} from 'react'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 
 export type QueryVisualizationContextType = {
@@ -17,21 +23,19 @@ export type QueryVisualizationContextType = {
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
   isShowingExportToCavaticaModal: boolean
-  setIsShowingExportToCavaticaModal: React.Dispatch<
-    React.SetStateAction<boolean>
-  >
+  setIsShowingExportToCavaticaModal: Dispatch<SetStateAction<boolean>>
   showFacetFilter: boolean
-  setShowFacetFilter: React.Dispatch<React.SetStateAction<boolean>>
+  setShowFacetFilter: Dispatch<SetStateAction<boolean>>
   showSearchBar: boolean
-  setShowSearchBar: React.Dispatch<React.SetStateAction<boolean>>
+  setShowSearchBar: Dispatch<SetStateAction<boolean>>
   showDownloadConfirmation: boolean
-  setShowDownloadConfirmation: React.Dispatch<React.SetStateAction<boolean>>
+  setShowDownloadConfirmation: Dispatch<SetStateAction<boolean>>
   showSqlEditor: boolean
-  setShowSqlEditor: React.Dispatch<React.SetStateAction<boolean>>
+  setShowSqlEditor: Dispatch<SetStateAction<boolean>>
   showCopyToClipboard: boolean
-  setShowCopyToClipboard: React.Dispatch<React.SetStateAction<boolean>>
+  setShowCopyToClipboard: Dispatch<SetStateAction<boolean>>
   showPlots: boolean
-  setShowPlots: React.Dispatch<React.SetStateAction<boolean>>
+  setShowPlots: Dispatch<SetStateAction<boolean>>
 }
 /**
  * This must be exported to use the context in class components.
@@ -39,7 +43,7 @@ export type QueryVisualizationContextType = {
 export const QueryVisualizationContext = createContext<
   QueryVisualizationContextType | undefined
 >(undefined)
-export type QueryVisualizationContextProviderProps = React.PropsWithChildren<{
+export type QueryVisualizationContextProviderProps = PropsWithChildren<{
   queryVisualizationContext: QueryVisualizationContextType
 }>
 /**

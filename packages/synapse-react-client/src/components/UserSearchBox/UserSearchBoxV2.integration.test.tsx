@@ -1,6 +1,5 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import selectEvent from 'react-select-event'
 import UserSearchBox from './UserSearchBoxV2'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

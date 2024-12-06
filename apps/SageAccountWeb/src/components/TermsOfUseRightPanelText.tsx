@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { SynapseHookUtils } from 'synapse-react-client'

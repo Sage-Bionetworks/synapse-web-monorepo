@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { Icon } from '../row_renderers/utils'
@@ -20,9 +19,7 @@ export type FeaturedDataTabsProps = {
   sql: string
 }
 
-const FeaturedDataTabs: React.FunctionComponent<
-  FeaturedDataTabsProps
-> = props => {
+function FeaturedDataTabs(props: FeaturedDataTabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const { configs, rgbIndex, sql } = props
   // explore all data button

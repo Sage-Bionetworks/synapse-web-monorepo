@@ -1,8 +1,7 @@
-import React from 'react'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 export type QueryCountProps = {
   query: Query
@@ -27,10 +26,6 @@ export function QueryCount(props: QueryCountProps) {
 
   const localCount = queryResult?.queryCount?.toLocaleString()
   /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
-  return (
-    <React.Fragment>
-      {localCount && (parens ? `(${localCount})` : localCount)}
-    </React.Fragment>
-  )
+  return <>{localCount && (parens ? `(${localCount})` : localCount)}</>
 }
 export default QueryCount

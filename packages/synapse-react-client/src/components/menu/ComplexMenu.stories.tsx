@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import IconSvg from '../IconSvg/IconSvg'
 import { ComplexMenu } from './ComplexMenu'

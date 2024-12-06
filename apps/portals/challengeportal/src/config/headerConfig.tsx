@@ -1,4 +1,3 @@
-import React from 'react'
 import { HomePageHeaderConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { ReactComponent as SageLogo } from './style/SageLogo.svg'
 import { ReactComponent as DreamLogo } from './style/DreamLogo.svg'

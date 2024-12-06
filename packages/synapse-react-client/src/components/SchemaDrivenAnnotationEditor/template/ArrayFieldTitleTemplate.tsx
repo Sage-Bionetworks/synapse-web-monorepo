@@ -4,7 +4,6 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
-import React from 'react'
 import { InputLabel } from '@mui/material'
 
 /**

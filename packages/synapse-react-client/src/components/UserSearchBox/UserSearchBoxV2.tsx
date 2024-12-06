@@ -1,5 +1,5 @@
 import { Skeleton } from '@mui/material'
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Select, {
   components,
   GroupBase,
@@ -80,7 +80,7 @@ const customSelectComponents: Partial<
   },
 }
 
-const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
+function UserSearchBoxV2(props: UserSearchBoxProps) {
   const {
     inputId,
     defaultValue = null,
@@ -116,8 +116,8 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     },
   )
 
-  const selectRef = React.useRef<any>(null)
-  React.useEffect(() => {
+  const selectRef = useRef<any>(null)
+  useEffect(() => {
     if (focusOnSelect && selectRef.current) {
       selectRef.current.focus()
     }

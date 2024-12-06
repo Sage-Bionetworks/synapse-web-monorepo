@@ -1,4 +1,3 @@
-import React from 'react'
 import { convertToConcreteEntityType } from '../../../../utils/functions/EntityTypeUtils'
 import { useSearchInfinite } from '../../../../synapse-queries/search/useSearch'
 import { Hit, SearchQuery } from '@sage-bionetworks/synapse-types'
@@ -24,10 +23,10 @@ function toEntityHeader(hit: Hit): EntityHeaderFromHit {
   }
 }
 
-export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
+export function SearchDetails({
   searchQuery,
   ...sharedProps
-}) => {
+}: SearchDetailsProps) {
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useSearchInfinite(searchQuery, {
       enabled: !!searchQuery.queryTerm,

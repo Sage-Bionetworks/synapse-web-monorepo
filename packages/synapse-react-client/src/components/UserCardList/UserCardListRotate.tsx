@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -70,9 +70,7 @@ export const getDisplayIds = (
   }
 }
 
-export const UserCardListRotate: React.FunctionComponent<
-  UserCardListRotateProps
-> = ({
+export function UserCardListRotate({
   sql,
   count,
   useQueryResultUserData = false,
@@ -83,7 +81,7 @@ export const UserCardListRotate: React.FunctionComponent<
   searchParams,
   sqlOperator,
   additionalFiltersSessionStorageKey,
-}) => {
+}: UserCardListRotateProps) {
   const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
   const [queryData, setQueryData] = useState<QueryResultBundle>()

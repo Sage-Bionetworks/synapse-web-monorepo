@@ -1,5 +1,4 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import { StandaloneQueryWrapper } from 'synapse-react-client'
 import { mc2SupplementSql } from '../resources'
 

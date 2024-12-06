@@ -1,12 +1,12 @@
-import React from 'react'
+import { useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { scrollToWithOffset } from '../../utils'
 
 export function useScrollOnMount() {
-  const scrolledRef = React.useRef(false)
+  const scrolledRef = useRef(false)
   const { hash } = useLocation()
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       if (hash) {
         const id = hash.replace('#', '')

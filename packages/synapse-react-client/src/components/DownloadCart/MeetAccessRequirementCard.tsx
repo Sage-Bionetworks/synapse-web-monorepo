@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   useGetAccessRequirements,
   useGetAccessRequirementStatus,
@@ -33,9 +33,10 @@ export const ACT_TITLE =
   'Requires Approval of Data-Specific Access Requirements'
 export const LOCK_TITLE = 'Access Restricted'
 
-export const MeetAccessRequirementCard: React.FunctionComponent<
-  MeetAccessRequirementCardProps
-> = ({ accessRequirementId, count }: MeetAccessRequirementCardProps) => {
+export function MeetAccessRequirementCard({
+  accessRequirementId,
+  count,
+}: MeetAccessRequirementCardProps) {
   const { data: ar, isLoading } = useGetAccessRequirements(
     accessRequirementId,
     { throwOnError: true },

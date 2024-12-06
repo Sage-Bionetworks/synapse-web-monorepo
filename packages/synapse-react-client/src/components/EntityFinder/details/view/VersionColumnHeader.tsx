@@ -1,4 +1,3 @@
-import React from 'react'
 import { HelpPopover } from '../../../HelpPopover/HelpPopover'
 import { VersionSelectionType } from '../../VersionSelectionType'
 

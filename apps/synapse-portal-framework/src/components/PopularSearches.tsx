@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseConstants, SynapseUtilityFunctions } from 'synapse-react-client'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
@@ -12,10 +11,10 @@ export type PopularSearchesProps = {
 /**
  * Expects table/view column "displayText", and "fullTextSearch".  Create links using this information.
  */
-const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
+function PopularSearches({
   sql,
   onGoToExploreToolsWithFullTextSearch,
-}) => {
+}: PopularSearchesProps) {
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
   const request: QueryBundleRequest = {

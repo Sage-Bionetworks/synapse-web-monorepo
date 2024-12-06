@@ -1,5 +1,4 @@
 import { Close } from '@mui/icons-material'
-import React from 'react'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 
 export type SelectionCriteriaPillProps = {

@@ -1,5 +1,12 @@
 import { Collapse, TextField } from '@mui/material'
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
@@ -17,11 +24,11 @@ const helpMessageCopy =
 const helpLink =
   'https://help.synapse.org/docs/Querying-Tables,-Views,-and-Datasets.2667642897.html#QueryingTables,Views,andDatasets-UsingAdvancedSearchQueries'
 
-export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
+export function SqlEditor({
   helpMessage = helpMessageCopy,
   helpUrl = helpLink,
   resetErrorBoundary,
-}: SqlEditorProps) => {
+}: SqlEditorProps) {
   const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
   const { showSqlEditor } = useQueryVisualizationContext()
 
@@ -42,7 +49,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
     }
   }, [showSqlEditor, lastQueryRequest])
 
-  const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
+  const search = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (resetErrorBoundary) {
       resetErrorBoundary()

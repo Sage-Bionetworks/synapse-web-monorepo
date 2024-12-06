@@ -1,5 +1,4 @@
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import React from 'react'
 import { act, render, screen, within } from '@testing-library/react'
 import { waitFor } from '@testing-library/react'
 import SynapseClient from '../../synapse-client'

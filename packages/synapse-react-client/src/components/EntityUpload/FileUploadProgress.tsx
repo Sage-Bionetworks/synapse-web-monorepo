@@ -13,7 +13,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
 export type FileUploadProgressProps = {

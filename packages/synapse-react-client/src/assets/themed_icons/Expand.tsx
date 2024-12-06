@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Expand = () => (
   <svg
     data-icon="expand"

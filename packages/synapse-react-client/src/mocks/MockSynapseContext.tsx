@@ -1,5 +1,5 @@
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
-import React from 'react'
+import { createContext } from 'react'
 import { KeyFactory } from '../synapse-queries'
 import FullContextProvider from '../utils/context/FullContextProvider'
 import { SynapseContextType } from '../utils/context/SynapseContext'
@@ -18,7 +18,7 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   }),
 }
 
-export const MOCK_CONTEXT = React.createContext(MOCK_CONTEXT_VALUE)
+export const MOCK_CONTEXT = createContext(MOCK_CONTEXT_VALUE)
 
 /**
  * Full context object with default values for testing.

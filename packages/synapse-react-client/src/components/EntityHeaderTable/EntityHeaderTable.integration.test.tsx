@@ -1,5 +1,4 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
-import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'

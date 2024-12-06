@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useAtomValue } from 'jotai'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEntity } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
 import {
@@ -164,7 +164,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     initialLimit,
   } = props
   const queryContext = useQueryContext()
-  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
+  const [showExportMetadata, setShowExportMetadata] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
   const { isLoading: isLoadingQueryMetadata } = useQuery(
@@ -271,9 +271,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   )
 }
 
-const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
-  props: QueryWrapperPlotNavProps,
-) => {
+function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const {
     searchParams,
     sql,

@@ -1,6 +1,5 @@
 import { Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { PermissionLevelMenu } from './PermissionLevelMenu'
 import { IconSvgButton } from '../IconSvgButton'
@@ -19,9 +18,7 @@ type ResourceAccessItemProps = {
   onRemove: () => void
 }
 
-export const ResourceAccessItem: React.FunctionComponent<
-  ResourceAccessItemProps
-> = (props: ResourceAccessItemProps) => {
+export function ResourceAccessItem(props: ResourceAccessItemProps) {
   const {
     resourceAccess,
     availablePermissionLevels,

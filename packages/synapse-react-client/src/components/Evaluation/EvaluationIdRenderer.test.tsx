@@ -1,4 +1,3 @@
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EvaluationIdRenderer, {
   EvaluationIdRendererProps,

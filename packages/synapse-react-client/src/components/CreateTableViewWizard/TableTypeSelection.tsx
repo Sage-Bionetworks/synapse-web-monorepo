@@ -1,4 +1,3 @@
-import React from 'react'
 import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'

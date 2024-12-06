@@ -1,5 +1,5 @@
 import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
-import React, { useMemo, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ChangePasswordWithToken,
@@ -64,7 +64,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     return undefined
   }, [passwordResetTokenValue])
 
-  const handleResetPassword = (clickEvent: React.FormEvent<HTMLElement>) => {
+  const handleResetPassword = (clickEvent: FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
     mutate(userName)
   }

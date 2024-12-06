@@ -5,7 +5,7 @@ import {
   StrictRJSFSchema,
 } from '@rjsf/utils'
 import { isEqual } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { convertToArray } from '../AnnotationEditorUtils'
 import { Grid, InputLabel } from '@mui/material'

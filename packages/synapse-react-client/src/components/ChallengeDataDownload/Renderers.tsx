@@ -1,4 +1,3 @@
-import React from 'react'
 import { CellRendererProps } from './types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsViewTableRenderers'

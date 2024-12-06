@@ -1,4 +1,3 @@
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import { programsSql } from './resources'
 import { computationalToolsQueryWrapperPlotNavProps } from './synapseConfigs/computational_tools'

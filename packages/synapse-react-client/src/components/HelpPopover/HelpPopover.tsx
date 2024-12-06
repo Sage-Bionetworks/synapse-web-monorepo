@@ -1,4 +1,3 @@
-import React from 'react'
 import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { ButtonProps, SxProps, TooltipProps } from '@mui/material'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
@@ -13,7 +12,7 @@ export type HelpPopoverProps = {
   iconSx?: SxProps
 }
 
-export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
+export function HelpPopover({
   markdownText,
   helpUrl,
   placement = 'bottom',
@@ -21,7 +20,7 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
   className = '',
   iconSx,
   containerSx,
-}: HelpPopoverProps) => {
+}: HelpPopoverProps) {
   const actionButtonConfig = helpUrl
     ? {
         content: <>More info</>,

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import {
@@ -12,9 +11,9 @@ export type SynapseTrendingProjectsProps = {
   past30DaysDownloadMetricsTable: string
 }
 
-export const SynapseTrendingProjects: React.FunctionComponent<
-  SynapseTrendingProjectsProps
-> = ({ past30DaysDownloadMetricsTable }) => {
+export function SynapseTrendingProjects({
+  past30DaysDownloadMetricsTable,
+}: SynapseTrendingProjectsProps) {
   const { data: past30DaysDownloadData } =
     useGetQueryResultBundleWithAsyncStatus({
       entityId: past30DaysDownloadMetricsTable,

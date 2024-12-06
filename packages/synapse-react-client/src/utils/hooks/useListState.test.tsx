@@ -1,5 +1,4 @@
 import { useListState } from './useListState'
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -7,9 +6,7 @@ type UserListStateWrapperProps = {
   initialValue: string[]
 }
 
-const UseListStateWrapper: React.FunctionComponent<
-  UserListStateWrapperProps
-> = ({ initialValue }) => {
+function UseListStateWrapper({ initialValue }: UserListStateWrapperProps) {
   const { list, handleListRemove, handleListChange, appendToList } =
     useListState(initialValue)
   return (

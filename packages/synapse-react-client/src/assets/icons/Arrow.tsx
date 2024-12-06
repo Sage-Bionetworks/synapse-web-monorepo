@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-type ArrowProps = React.SVGProps<SVGSVGElement> & {
+type ArrowProps = SVGProps<SVGSVGElement> & {
   arrowDirection: 'left' | 'right'
 }
 

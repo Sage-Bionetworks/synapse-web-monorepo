@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@mui/material'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 import { IconSvgButton, IconSvgButtonProps } from '../IconSvgButton'

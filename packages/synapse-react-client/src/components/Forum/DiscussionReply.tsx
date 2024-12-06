@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import {
   DiscussionReplyBundle,
@@ -26,13 +26,11 @@ export type DiscussionReplyProps = {
   onClickLink?: () => void
 }
 
-const DEFAULT_ON_CLICK_LINK: DiscussionReplyProps['onClickLink'] = () =>
+const DEFAULT_ON_CLICK_LINK = () =>
   alert('This functionality has not been implemented yet')
 
-export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
-  reply,
-  onClickLink = DEFAULT_ON_CLICK_LINK,
-}) => {
+export function DiscussionReply(props: DiscussionReplyProps) {
+  const { reply, onClickLink = DEFAULT_ON_CLICK_LINK } = props
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()

@@ -1,4 +1,3 @@
-import React from 'react'
 import WideButton from '../../styled/WideButton'
 
 export type ButtonLinkWidgetParams = {

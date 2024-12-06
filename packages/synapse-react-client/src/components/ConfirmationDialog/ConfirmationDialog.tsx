@@ -1,10 +1,10 @@
 import { Button, ButtonProps } from '@mui/material'
-import React from 'react'
+import { MouseEventHandler } from 'react'
 import { DialogBase, DialogBaseProps } from '../DialogBase'
 import { defaults } from 'lodash-es'
 
 export type ConfirmationButtonsProps = {
-  onConfirm: React.MouseEventHandler<HTMLButtonElement>
+  onConfirm: MouseEventHandler<HTMLButtonElement>
   onCancel: DialogBaseProps['onCancel']
   confirmButtonProps?: Omit<ButtonProps, 'onClick'>
   cancelButtonProps?: Omit<ButtonProps, 'onClick'>

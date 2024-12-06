@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, MouseEvent, WheelEvent } from 'react'
 import ReactFlow, {
   Controls,
   Node,
@@ -73,8 +73,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     onEdgesChangedListener,
   } = props
   const { accessToken } = useSynapseContext()
-  const [tempNodes, setTempNodes] = React.useState<Node[]>(initialNodes)
-  const [tempEdges, setTempEdges] = React.useState<Edge[]>(initialEdges)
+  const [tempNodes, setTempNodes] = useState<Node[]>(initialNodes)
+  const [tempEdges, setTempEdges] = useState<Edge[]>(initialEdges)
   const [nodes, setNodes] = useNodesState([])
   const [edges, setEdges] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
@@ -95,13 +95,12 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     )
   }
   const rootEntityHeaders = rootEntityHeadersPage?.results
-  const [initializedPosition, setInitializedPosition] =
-    React.useState<boolean>(false)
+  const [initializedPosition, setInitializedPosition] = useState<boolean>(false)
 
   // Get the react flow instance so we attempt to properly center the view.
   const reactFlowInstance = useReactFlow()
 
-  const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
+  const onClickNode = useCallback((_event: MouseEvent, node: Node) => {
     setClickedNode(node)
   }, [])
 
@@ -380,7 +379,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     onEdgesChangedListener,
   ])
 
-  const onPaneScrollFunction: (event?: React.WheelEvent) => void = useCallback(
+  const onPaneScrollFunction: (event?: WheelEvent) => void = useCallback(
     event => {
       // Cannot simply check the truthy value of event.deltaX (or Y) because the value might be 0 (or -0), which is falsy
       if (

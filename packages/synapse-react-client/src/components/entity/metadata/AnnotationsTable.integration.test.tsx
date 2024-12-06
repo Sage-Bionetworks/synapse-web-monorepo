@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_JSON } from '../../../utils/APIConstants'

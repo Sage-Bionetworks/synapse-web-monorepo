@@ -1,5 +1,4 @@
 import { upperFirst } from 'lodash-es'
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {

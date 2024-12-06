@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { QueryClient } from '@tanstack/react-query'
 import { MOCK_CONTEXT_VALUE } from '../mocks/MockSynapseContext'
 import { SynapseContextType } from '../utils/context/SynapseContext'

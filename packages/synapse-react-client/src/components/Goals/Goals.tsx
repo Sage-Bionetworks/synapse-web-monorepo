@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   QueryBundleRequest,
   FileHandleAssociation,
@@ -40,7 +40,7 @@ enum ExpectedColumns {
 // PORTALS-2367
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
-export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
+export function Goals(props: GoalsProps) {
   const { entityId } = props
   const { accessToken } = useSynapseContext()
   const [assets, setAssets] = useState<string[] | undefined>()

@@ -3,7 +3,7 @@ import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { Engine, EngineResult } from 'json-rules-engine'
 import _ from 'lodash-es'
-import React from 'react'
+import { Component, createRef, RefObject } from 'react'
 import Switch from 'react-switch'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import Blocker from '../utils/Blocker'
@@ -69,7 +69,7 @@ export interface SummaryFormat {
   value: string
 }
 
-export default class SynapseForm extends React.Component<
+export default class SynapseForm extends Component<
   SynapseFormProps,
   SynapseFormState
 > {
@@ -85,8 +85,8 @@ export default class SynapseForm extends React.Component<
   )
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
-  formRef: React.RefObject<Form<IFormData>> //ref to form for submission
-  submitButtonRef: React.RefObject<HTMLButtonElement>
+  formRef: RefObject<Form<IFormData>> //ref to form for submission
+  submitButtonRef: RefObject<HTMLButtonElement>
   formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: UiSchema
@@ -127,9 +127,9 @@ export default class SynapseForm extends React.Component<
       })
       .sort((a, b) => a.order - b.order)
 
-    this.formRef = React.createRef()
-    this.formDivRef = React.createRef()
-    this.submitButtonRef = React.createRef()
+    this.formRef = createRef()
+    this.formDivRef = createRef()
+    this.submitButtonRef = createRef()
     const currentStep = this.getFirstStep(steps, props.formData)
     this.state = {
       currentStep,

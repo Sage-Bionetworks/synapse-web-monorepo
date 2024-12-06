@@ -1,15 +1,11 @@
 import { Box, Button, Link, Typography } from '@mui/material'
-import React from 'react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardMediumConfig, ReleaseCardStat } from './ReleaseCardTypes'
 import { formatReleaseCardData } from './ReleaseCardUtils'
 
-const StatGrid: React.FunctionComponent<ReleaseCardStat> = ({
-  value,
-  label,
-}: ReleaseCardStat) => {
+function StatGrid({ value, label }: ReleaseCardStat) {
   return (
     <>
       <Box gridColumn="span 1" gridRow="span 1" justifySelf="flex-end">
@@ -31,14 +27,12 @@ export type ReleaseCardMediumProps = Omit<
   'releaseCardConfig'
 > & { releaseCardConfig: ReleaseCardMediumConfig }
 
-export const ReleaseCardMedium: React.FunctionComponent<
-  ReleaseCardMediumProps
-> = ({
+export function ReleaseCardMedium({
   data,
   schema,
   includePortalCardClass = true,
   releaseCardConfig,
-}: ReleaseCardMediumProps) => {
+}: ReleaseCardMediumProps) {
   const { releaseName, releaseEntityId, releaseDate, stats } =
     formatReleaseCardData(
       schema,

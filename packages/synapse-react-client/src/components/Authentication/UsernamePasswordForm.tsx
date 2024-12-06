@@ -1,5 +1,5 @@
 import { Button, Link } from '@mui/material'
-import React, { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
 import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
@@ -23,7 +23,7 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  function handleLogin(e: React.SyntheticEvent) {
+  function handleLogin(e: SyntheticEvent) {
     e.preventDefault()
     onSubmit(username, password)
   }

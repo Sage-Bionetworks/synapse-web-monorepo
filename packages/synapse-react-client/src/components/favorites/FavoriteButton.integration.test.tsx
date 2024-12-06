@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import FavoriteButton from './FavoriteButton'

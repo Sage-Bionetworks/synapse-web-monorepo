@@ -7,7 +7,7 @@ import {
   Paper,
 } from '@mui/material'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   displayToast,
@@ -44,7 +44,7 @@ export function SignUpdatedTermsOfUsePage() {
   const isSkipAvailable =
     tosStatus?.userCurrentTermsOfServiceState ==
     TermsOfServiceState.MUST_AGREE_SOON
-  const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
+  const onSignTermsOfUse = async (event: SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {

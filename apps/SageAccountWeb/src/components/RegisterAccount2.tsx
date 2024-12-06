@@ -1,6 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
-import React, { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { displayToast, SynapseClient } from 'synapse-react-client'
 import {
   AliasType,
@@ -47,7 +47,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
     }
   }, [emailValidationSignedTokenValue])
 
-  const onCreateAccount = async (event: React.SyntheticEvent) => {
+  const onCreateAccount = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
       displayToast('Please provide a username and try again.', 'danger')

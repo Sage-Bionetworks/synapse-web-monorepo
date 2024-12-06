@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { Box, Collapse, SxProps, Typography } from '@mui/material'

@@ -1,6 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { ForumPage, ForumPageProps } from './ForumPage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SubscriptionObjectType, Topic } from '@sage-bionetworks/synapse-types'

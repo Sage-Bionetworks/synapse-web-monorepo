@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import { CSSProperties, Suspense } from 'react'
 import { SkeletonInlineBlock } from './Skeleton'
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
@@ -10,7 +10,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { SynapseErrorBoundary } from './error'
 
 export type TotalQueryResultsProps = {
-  style?: React.CSSProperties
+  style?: CSSProperties
   frontText: string
   endText?: string
   applyChanges?: (newFacets: FacetColumnRequest[]) => void

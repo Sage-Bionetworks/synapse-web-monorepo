@@ -1,5 +1,4 @@
 import { Add, ArrowDownward, ArrowUpward, Close } from '@mui/icons-material'
-import React from 'react'
 import { Button, IconButton, SxProps } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import {

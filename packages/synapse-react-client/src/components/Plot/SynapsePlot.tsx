@@ -1,5 +1,4 @@
 import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
-import React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils'
 import {

@@ -1,8 +1,8 @@
 import { Box, Typography, useTheme } from '@mui/material'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import React from 'react'
+import { PropsWithChildren } from 'react'
 
-const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+function ThankYou({ children }: PropsWithChildren) {
   const theme = useTheme()
   return (
     <Box

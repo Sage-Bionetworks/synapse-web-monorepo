@@ -2,7 +2,6 @@ import { InfoTwoTone } from '@mui/icons-material'
 import { Box, Link, Tooltip, Typography } from '@mui/material'
 import { useLocalStorageValue } from '@react-hookz/web'
 import dayjs from 'dayjs'
-import React from 'react'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_DATE_LOCALSTORAGE_KEY,

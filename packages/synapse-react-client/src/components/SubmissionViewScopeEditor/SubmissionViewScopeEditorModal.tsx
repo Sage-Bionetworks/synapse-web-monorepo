@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
 import { SubmissionView } from '@sage-bionetworks/synapse-types'

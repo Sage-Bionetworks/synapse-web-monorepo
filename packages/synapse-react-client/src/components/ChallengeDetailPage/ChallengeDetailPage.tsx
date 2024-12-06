@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import {

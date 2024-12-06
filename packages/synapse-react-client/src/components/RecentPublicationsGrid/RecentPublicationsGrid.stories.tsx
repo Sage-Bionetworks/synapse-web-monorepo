@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import RecentPublicationsGrid from './RecentPublicationsGrid'
 import { BrowserRouter } from 'react-router-dom'
-import React from 'react'
 
 const meta = {
   title: 'Home Page/RecentPublicationsGrid',

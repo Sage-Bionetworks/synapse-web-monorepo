@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { useBlocker } from 'react-router-dom'
 
 /**
@@ -6,7 +7,7 @@ import { useBlocker } from 'react-router-dom'
  */
 export default function Blocker(props: {
   shouldBlock: Parameters<typeof useBlocker>[0]
-  children: (blocker: ReturnType<typeof useBlocker>) => React.ReactNode
+  children: (blocker: ReturnType<typeof useBlocker>) => ReactNode
 }) {
   const blocker = useBlocker(props.shouldBlock)
 

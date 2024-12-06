@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { SynapseComponents, SynapseHookUtils } from 'synapse-react-client'
 
 export type SurveyToastProps = {
@@ -17,7 +17,7 @@ const SurveyToast = (props: SurveyToastProps) => {
     surveyButtonText = 'Take The Survey',
   } = props
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
-  const [showBanner, setShowBanner] = React.useState(
+  const [showBanner, setShowBanner] = useState(
     localStorage.getItem(localStorageKey) === null,
   )
   return !showBanner ? (

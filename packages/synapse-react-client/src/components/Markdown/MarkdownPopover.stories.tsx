@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { MarkdownPopover, MarkdownPopoverProps } from './MarkdownPopover'
 import { userEvent, within } from '@storybook/testing-library'

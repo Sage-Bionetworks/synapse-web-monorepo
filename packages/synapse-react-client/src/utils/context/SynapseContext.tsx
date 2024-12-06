@@ -1,5 +1,5 @@
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
-import React, { useContext, useMemo } from 'react'
+import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
 import { KeyFactory } from '../../synapse-queries/KeyFactory'
 import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
@@ -37,10 +37,9 @@ const defaultContext = {
 /**
  * This must be exported to use the context in class components.
  */
-export const SynapseContext =
-  React.createContext<SynapseContextType>(defaultContext)
+export const SynapseContext = createContext<SynapseContextType>(defaultContext)
 
-export type SynapseContextProviderProps = React.PropsWithChildren<{
+export type SynapseContextProviderProps = PropsWithChildren<{
   synapseContext: Partial<SynapseContextType>
 }>
 

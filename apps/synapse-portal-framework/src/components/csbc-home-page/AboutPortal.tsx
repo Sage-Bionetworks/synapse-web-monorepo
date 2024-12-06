@@ -1,4 +1,3 @@
-import React from 'react'
 import { HomePageCardProps } from './HomePageCard'
 import HomePageCardContainer from './HomePageCardContainer'
 

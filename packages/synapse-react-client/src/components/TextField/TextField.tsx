@@ -1,4 +1,4 @@
-import React, { useId, useMemo } from 'react'
+import { PropsWithChildren, useId, useMemo } from 'react'
 import {
   InputBase,
   InputLabel,
@@ -38,10 +38,8 @@ export default function TextField(props: TextFieldProps) {
   const Wrapper = useMemo(
     () =>
       noWrapInFormControl
-        ? (props: React.PropsWithChildren<object>) => (
-            <React.Fragment>{props.children}</React.Fragment>
-          )
-        : (props: React.PropsWithChildren<object>) => (
+        ? (props: PropsWithChildren<object>) => <>{props.children}</>
+        : (props: PropsWithChildren<object>) => (
             <StyledFormControl fullWidth sx={{ my: 1 }}>
               {props.children}
             </StyledFormControl>

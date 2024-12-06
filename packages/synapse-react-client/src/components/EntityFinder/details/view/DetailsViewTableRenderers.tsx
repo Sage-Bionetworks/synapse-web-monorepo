@@ -5,7 +5,7 @@ import BaseTable, {
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import dayjs from 'dayjs'
-import React, { SyntheticEvent, useEffect } from 'react'
+import { ReactNode, SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
@@ -50,10 +50,7 @@ export type CellRendererProps<T> = {
   isScrolling?: boolean
 }
 
-export type CellRenderer<T> = CallOrReturn<
-  React.ReactNode,
-  CellRendererProps<T>
->
+export type CellRenderer<T> = CallOrReturn<ReactNode, CellRendererProps<T>>
 
 /**
  * The data across tables may differ, but it has entity ID and version, then it can use many of these renderers
@@ -257,7 +254,7 @@ export const TypeIconRenderer: ColumnShape<EntityFinderTableViewRowData>['cellRe
 export function EmptyRenderer({
   noResultsPlaceholder,
 }: {
-  noResultsPlaceholder: React.ReactNode
+  noResultsPlaceholder: ReactNode
 }) {
   return (
     <div className="EntityFinderDetailsViewPlaceholder">

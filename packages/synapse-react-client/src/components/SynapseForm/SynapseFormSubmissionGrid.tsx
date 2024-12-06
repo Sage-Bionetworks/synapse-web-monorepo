@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 
 import SynapseClient from '../../synapse-client'
 import {
@@ -55,7 +55,7 @@ type SynapseFormSubmissionGridState = {
   modalContext?: { action: (...args: any[]) => void; arguments: any[] }
 }
 
-class _SynapseFormSubmissionGrid extends React.Component<
+class _SynapseFormSubmissionGrid extends Component<
   SynapseFormSubmissionGridProps,
   SynapseFormSubmissionGridState
 > {

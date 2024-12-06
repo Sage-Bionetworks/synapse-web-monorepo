@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo } from 'react'
 import { Typography } from '@mui/material'
 import { usePortalContext } from './PortalContext'
 
@@ -53,4 +53,4 @@ function Header() {
   )
 }
 
-export default React.memo(Header)
+export default memo(Header)

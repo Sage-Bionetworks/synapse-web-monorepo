@@ -1,5 +1,5 @@
 import Skeleton from '@mui/material/Skeleton'
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo, ReactNode } from 'react'
 import { useGetUserProfile } from '../../synapse-queries'
 import Typography from '@mui/material/Typography'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
@@ -11,7 +11,7 @@ import UserTeams from './UserTeams'
 type UserProfileLinkConfig = {
   name: 'Projects' | 'Teams' | 'Challenges'
   iconName: IconName
-  render: React.ReactNode
+  render: ReactNode
 }
 
 export type UserProfileLinksProps = {

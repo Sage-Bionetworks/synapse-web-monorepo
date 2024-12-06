@@ -1,7 +1,13 @@
 import { Alert, Box, Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, AccessControlList } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
-import React, { useEffect, useImperativeHandle, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
 import {
   useCreateAccessRequirementACL,
   useDeleteAccessRequirementACL,
@@ -39,10 +45,10 @@ export type AccessRequirementAclEditorProps = {
   onSaveComplete: (saveSuccessful: boolean) => void
 }
 
-export const AccessRequirementAclEditor = React.forwardRef(
+export const AccessRequirementAclEditor = forwardRef(
   function AccessRequirementAclEditor(
     props: AccessRequirementAclEditorProps,
-    ref: React.ForwardedRef<AccessRequirementAclEditorHandle>,
+    ref: ForwardedRef<AccessRequirementAclEditorHandle>,
   ) {
     const { accessRequirementId, onSaveComplete } = props
     const [error, setError] = useState<string | null>(null)

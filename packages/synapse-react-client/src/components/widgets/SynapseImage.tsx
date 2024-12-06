@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, ContextType, CSSProperties } from 'react'
 import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
 import { SynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -29,10 +29,7 @@ type SynapseImageState = {
   preSignedURL: string
 }
 
-class SynapseImage extends React.Component<
-  SynapseImageProps,
-  SynapseImageState
-> {
+class SynapseImage extends Component<SynapseImageProps, SynapseImageState> {
   constructor(props: SynapseImageProps) {
     super(props)
     this.getEntity = this.getEntity.bind(this)
@@ -43,7 +40,7 @@ class SynapseImage extends React.Component<
   }
 
   static contextType = SynapseContext
-  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+  declare context: NonNullable<ContextType<typeof SynapseContext>>
 
   public getEntity() {
     const { synapseId } = this.props
@@ -128,7 +125,7 @@ class SynapseImage extends React.Component<
     if (alignLowerCase === 'center') {
       className = 'align-center'
     }
-    const style: React.CSSProperties = {
+    const style: CSSProperties = {
       maxWidth: scale,
       height: 'auto',
     }
@@ -136,14 +133,14 @@ class SynapseImage extends React.Component<
       return null
     }
     return (
-      <React.Fragment>
+      <>
         <img
           alt={altText}
           className={'img-fluid  ' + className}
           src={this.state.preSignedURL}
           style={style}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

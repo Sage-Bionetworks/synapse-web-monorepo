@@ -1,4 +1,3 @@
-import React from 'react'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
 import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'

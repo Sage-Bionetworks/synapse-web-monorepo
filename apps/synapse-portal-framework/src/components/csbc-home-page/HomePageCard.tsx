@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseComponents } from 'synapse-react-client'
 
 export type HomePageCardProps = {

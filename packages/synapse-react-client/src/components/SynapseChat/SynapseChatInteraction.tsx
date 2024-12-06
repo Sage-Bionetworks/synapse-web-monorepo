@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Alert, Box, ListItem, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
@@ -12,14 +12,12 @@ export type SynapseChatInteractionProps = {
   chatErrorReason?: string
 }
 
-export const SynapseChatInteraction: React.FunctionComponent<
-  SynapseChatInteractionProps
-> = ({
+export function SynapseChatInteraction({
   userMessage,
   chatResponseText,
   chatErrorReason,
   scrollIntoView = false,
-}) => {
+}: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   useEffect(() => {

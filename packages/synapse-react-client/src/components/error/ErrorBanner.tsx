@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import { Box, Button, Collapse, Stack } from '@mui/material'
 import {
   ErrorBoundary,
@@ -110,10 +110,10 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
   )
 }
 
-export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
+export function ErrorFallbackComponent({
   error,
   resetErrorBoundary,
-}) => {
+}: FallbackProps) {
   return (
     <div className="SRC-marginBottomTop">
       <ErrorBanner
@@ -124,9 +124,10 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   )
 }
 
-export const TableRowFallbackComponent: React.FunctionComponent<
-  FallbackProps
-> = ({ error, resetErrorBoundary }) => {
+export function TableRowFallbackComponent({
+  error,
+  resetErrorBoundary,
+}: FallbackProps) {
   return (
     <tr>
       <td colSpan={999}>
@@ -145,7 +146,7 @@ export const TableRowFallbackComponent: React.FunctionComponent<
  * @returns
  */
 export const SynapseErrorBoundary = (
-  props: React.PropsWithChildren<
+  props: PropsWithChildren<
     Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
   >,
 ) => <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />

@@ -1,7 +1,7 @@
 import RedirectDialog, {
   redirectInstructionsMap,
 } from '../components/RedirectDialog'
-import React, { useEffect, useState } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 import {
   ApplicationSessionManager,
   SynapseClient,
@@ -14,7 +14,7 @@ import { useCookies } from 'react-cookie'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
-function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
+function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
   const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)

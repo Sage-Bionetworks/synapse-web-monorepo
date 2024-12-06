@@ -1,6 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { clearLastLoginInfo } from './LastLoginInfo'
 import LoginMethodButton, { LoginMethodButtonProps } from './LoginMethodButton'
 import {

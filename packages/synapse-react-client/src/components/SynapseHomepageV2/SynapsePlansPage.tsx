@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import { SynapsePlans } from './SynapsePlans'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
@@ -8,9 +7,7 @@ export type SynapsePlansPageProps = {
   gotoPlace: (href: string) => void
 }
 
-export const SynapsePlansPage: React.FunctionComponent<
-  SynapsePlansPageProps
-> = ({ gotoPlace }) => {
+export function SynapsePlansPage({ gotoPlace }: SynapsePlansPageProps) {
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <Box

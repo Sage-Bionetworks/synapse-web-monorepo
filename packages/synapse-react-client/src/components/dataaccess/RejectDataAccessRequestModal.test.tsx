@@ -1,7 +1,6 @@
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { act, render, waitFor } from '@testing-library/react'
 import failOnConsoleError from 'jest-fail-on-console'
-import React from 'react'
 import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { rest, server } from '../../mocks/msw/server'

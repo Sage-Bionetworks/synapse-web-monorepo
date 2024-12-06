@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import {
   AccessorChange,
   AccessType,
@@ -554,7 +554,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                     multiline
                     rows={3}
                     value={publication}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                       setPublication(e.target.value)
                     }
                   />
@@ -565,7 +565,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                     disabled={submitDataAccessRequestIsPending}
                     multiline
                     rows={3}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                       setSummaryOfUse(e.target.value)
                     }
                   />

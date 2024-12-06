@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useUpdateVerificationSubmission } from '../../synapse-queries/verificationSubmission/useVerificationSubmission'
 import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'

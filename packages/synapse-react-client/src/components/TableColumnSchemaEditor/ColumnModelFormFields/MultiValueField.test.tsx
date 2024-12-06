@@ -1,4 +1,3 @@
-import React from 'react'
 import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'
 import { JSONSchema7Definition } from 'json-schema'
 import MultiValueField, { MultiValueFieldProps } from './MultiValueField'

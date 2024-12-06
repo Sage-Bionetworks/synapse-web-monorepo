@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/maintenance.svg'
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
@@ -89,7 +89,7 @@ type ErrorPageAction = {
   description: string
 }
 
-const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
+function ErrorPage(props: ErrorPageProps) {
   const { type, entityId = '', entityVersion, message, gotoPlace } = props
   const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
     useState<boolean>(false)

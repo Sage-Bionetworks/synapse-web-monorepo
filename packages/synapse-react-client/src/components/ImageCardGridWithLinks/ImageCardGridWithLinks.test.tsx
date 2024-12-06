@@ -5,7 +5,6 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { screen, render, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import React from 'react'
 import {
   BatchFileResult,
   ColumnTypeEnum,

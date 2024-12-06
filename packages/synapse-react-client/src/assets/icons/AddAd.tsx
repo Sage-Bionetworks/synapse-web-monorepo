@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const AddAd = (props: React.SVGProps<SVGSVGElement>) => (
+const AddAd = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="24"
     height="24"

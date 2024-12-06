@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import React from 'react'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
 import { ReactComponent as SeamlessIntegration } from '../../assets/homepage/seamless-integration-feature.svg'
 import { ReactComponent as ResearchCredit } from '../../assets/homepage/research-credit-feature.svg'
@@ -11,7 +10,7 @@ import { ReactComponent as Fisma } from '../../assets/homepage/fisma.svg'
 import { ReactComponent as Hipaa } from '../../assets/homepage/hipaa-compliant.svg'
 import { useOneSageURL } from '../../utils/hooks'
 
-export const SynapseFeatures: React.FunctionComponent = () => {
+export function SynapseFeatures() {
   const sageResourcesUrl = useOneSageURL('/sageresources')
   return (
     <Box sx={{ position: 'relative' }}>

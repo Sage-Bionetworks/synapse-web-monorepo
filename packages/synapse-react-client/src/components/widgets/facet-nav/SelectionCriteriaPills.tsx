@@ -1,4 +1,3 @@
-import React from 'react'
 import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnModel,

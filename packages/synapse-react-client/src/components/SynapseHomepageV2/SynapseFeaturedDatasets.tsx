@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
@@ -8,9 +7,9 @@ export type SynapseFeaturedDatasetsProps = {
   sourceTable: string
 }
 
-export const SynapseFeaturedDatasets: React.FunctionComponent<
-  SynapseFeaturedDatasetsProps
-> = ({ sourceTable }) => {
+export function SynapseFeaturedDatasets({
+  sourceTable,
+}: SynapseFeaturedDatasetsProps) {
   // TODO: Figure out how we should present the featured datasets.  Random selection?  Paginated with page nav?
   // TODO: Only show 3 cards, and a "Show all datasets" which shows another 3?
   const { data } = useGetQueryResultBundleWithAsyncStatus({
