@@ -1,4 +1,4 @@
-import { Typography, Box, Button, CardMedia, Grid } from '@mui/material'
+import { Typography, Box, Button, CardMedia, Grid, Stack } from '@mui/material'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,7 +7,7 @@ export type PortalFeatureHighlightsProps = {
   title?: string
   image?: string
   buttonText?: string
-  summaryText?: string | React.ReactNode
+  summaryText?: React.ReactNode
   link?: string
 }
 
@@ -39,18 +39,19 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
         />
       </Grid>
       <Grid item xs={12} md={4} lg={3.4}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="16px"
-          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
+        <Stack
+          spacing={2}
+          sx={{
+            borderTop: '3px solid',
+            borderColor: 'grey.400',
+          }}
         >
           <Typography
             variant="headline2"
-            paddingTop="26px"
+            paddingTop="30px"
             paddingBottom="10px"
             color="grey.1000"
-            fontSize={'32px'}
+            fontSize={'31px'}
           >
             {title}
           </Typography>
@@ -62,6 +63,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
               minWidth: '265px',
               whiteSpace: 'nowrap',
               padding: '6px 24px',
+              fontWeight: '600',
             }}
           >
             {buttonText}
@@ -77,7 +79,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
           >
             {summaryText}
           </Typography>
-        </Box>
+        </Stack>
       </Grid>
     </Grid>
   )

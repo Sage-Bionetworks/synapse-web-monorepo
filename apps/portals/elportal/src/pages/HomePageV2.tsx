@@ -21,8 +21,8 @@ import {
   whatWeDoSql,
 } from '../config/resources'
 import { Typography } from '@mui/material'
-import analyzetheclouds from '@sage-bionetworks/synapse-portal-framework/components/elportal/assets/analyzetheclouds.png'
-import computationaltools from '@sage-bionetworks/synapse-portal-framework/components/elportal/assets/computationaltools.png'
+import analyzetheclouds from '../assets/analyzetheclouds.png'
+import computationaltools from '../assets/computationaltools.png'
 
 export default function HomePage() {
   const styledPortalFeatureHighlightsSummaryText = (
@@ -262,7 +262,7 @@ export default function HomePage() {
             image={computationaltools}
             title="Computational Tools"
             buttonText="Check out our Computational Tools"
-            summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips. "
+            summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
             reverseOrder={true}
             link="/Explore/Computational Tools"
           />
