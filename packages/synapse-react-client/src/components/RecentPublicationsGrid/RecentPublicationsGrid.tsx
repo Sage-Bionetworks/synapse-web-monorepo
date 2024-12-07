@@ -23,6 +23,7 @@ type PublicationCardProps = {
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  // if mobile, take top 3 instead
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
@@ -63,7 +64,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     <Grid
       item
       xs={12}
-      sm={6}
+      sm={4}
       md={3.62}
       key={pub.rowId}
       sx={{
@@ -137,7 +138,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                 color="grey.700"
                 fontSize={'14px'}
                 lineHeight={1.35}
-                paddingBottom={'35px'}
+                paddingBottom={{ xs: 0, md: '35px' }}
               >
                 {pub.values[publicationDateColIndex] &&
                   formatDate(
@@ -157,8 +158,9 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '3fr 0.5fr' },
+        height: { xs: 'auto', md: 'initial' },
         gap: { xs: '38px', md: '80px' },
-        padding: '80px',
+        padding: { xs: '40px', lg: '80px' },
         backgroundColor: 'grey.100',
       }}
     >
@@ -177,7 +179,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
       <Box
         sx={{
           padding: {
-            xs: '0 16px',
+            // xs: '0 16px',
             md: 0,
           },
         }}
