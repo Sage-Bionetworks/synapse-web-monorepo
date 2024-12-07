@@ -92,7 +92,7 @@ export const SynapsePlansPage: React.FunctionComponent<
             size="large"
             variant="contained"
             color="light"
-            href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+            href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162"
             target="_blank"
             sx={{
               p: '5px 25px',
