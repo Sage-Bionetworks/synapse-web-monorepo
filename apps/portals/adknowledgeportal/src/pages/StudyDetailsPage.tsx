@@ -55,7 +55,7 @@ const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
           columnName={STUDY_TABLE_COLUMN_NAMES.ACK_CONTEXT}
         />
         <MarkdownSynapseFromColumnData
-          columnName={STUDY_TABLE_COLUMN_NAMES.ACK_CONTEXT}
+          columnName={STUDY_TABLE_COLUMN_NAMES.ACKNOWLEDGEMENT}
           MarkdownCollapseProps={{
             title: 'Acknowledgement Statement',
             textDescription: 'full statement',

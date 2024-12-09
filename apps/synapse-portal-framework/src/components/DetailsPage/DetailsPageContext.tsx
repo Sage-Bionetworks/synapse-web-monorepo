@@ -93,7 +93,6 @@ export function DetailsPageContextConsumer(
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
         const value = getValue(context, columnName)
-        console.log(context, value)
         return children({ context, value })
       }}
     </DetailsPageContext.Consumer>
