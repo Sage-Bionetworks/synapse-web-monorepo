@@ -17,17 +17,14 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
     <Grid
       container
       gap={{ xs: '38px', md: '80px' }}
-      padding={{ md: '0 56px 0px 56px' }}
+      padding={{ md: '0 56px' }}
       justifyContent="center"
       alignItems={{ md: 'center', lg: 'flex-start' }}
+      flexDirection={{
+        md: reverseOrder ? 'row-reverse' : 'row',
+      }}
     >
-      <Grid
-        item
-        order={{ xs: 0, md: reverseOrder ? 1 : 0 }}
-        xs={12}
-        md={5}
-        lg={7.6}
-      >
+      <Grid item xs={12} md={5} lg={7.6}>
         <CardMedia
           component="img"
           image={image}
