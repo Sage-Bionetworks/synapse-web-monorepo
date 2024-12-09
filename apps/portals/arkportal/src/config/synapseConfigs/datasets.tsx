@@ -41,10 +41,12 @@ export const datasetSchema: GenericCardSchema = {
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: ['project', 'assay', 'datasetType'],
+  secondaryLabels: ['project', 'assay', 'datasetType', 'id'],
   icon: 'datasetType',
 }
-
+export const datasetColumnAliases: Record<string, string> = {
+  id: 'On Synapse',
+}
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
