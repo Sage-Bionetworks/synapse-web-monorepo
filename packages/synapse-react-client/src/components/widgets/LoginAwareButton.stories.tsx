@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { LoginAwareButton } from './LoginAwareButton'

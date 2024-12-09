@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import {
   AccessRequirement,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -58,7 +58,7 @@ export type AccessRequirementListProps = {
   /* Displays the provided list of access requirements, instead of the ones fetched using the subject ID */
   accessRequirementFromProps?: Array<AccessRequirement>
   /* If provided, displays these actions on when viewing all ARs */
-  customDialogActions?: React.ReactNode
+  customDialogActions?: ReactNode
 } & (
   | {
       /**

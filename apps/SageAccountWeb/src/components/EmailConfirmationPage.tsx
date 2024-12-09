@@ -1,15 +1,12 @@
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import { Button, Link } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
-import React from 'react'
 import { Container } from 'react-bootstrap'
 
 export type EmailConfirmationPageProps = {
   email: string
 }
-export const EmailConfirmationPage: React.FunctionComponent<
-  EmailConfirmationPageProps
-> = ({ email }) => {
+export function EmailConfirmationPage({ email }: EmailConfirmationPageProps) {
   const buttonSx = {
     width: '100%',
     padding: '10px',

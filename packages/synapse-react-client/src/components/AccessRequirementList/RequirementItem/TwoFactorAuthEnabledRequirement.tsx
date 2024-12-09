@@ -1,4 +1,3 @@
-import React from 'react'
 import { ButtonProps, Typography } from '@mui/material'
 import {
   BackendDestinationEnum,

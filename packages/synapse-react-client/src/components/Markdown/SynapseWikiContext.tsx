@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { createContext, ReactNode, useContext } from 'react'
 import { FileHandleResults, WikiPage } from '@sage-bionetworks/synapse-types'
 
 export type SynapseWikiContextType = {
@@ -12,13 +12,13 @@ export type SynapseWikiContextType = {
 /**
  * This must be exported to use the context in class components.
  */
-export const SynapseWikiContext = React.createContext<
+export const SynapseWikiContext = createContext<
   SynapseWikiContextType | undefined
 >(undefined)
 
 export type SynapseWikiContextProviderProps = {
   wikiContext?: SynapseWikiContextType
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 /**
@@ -26,9 +26,10 @@ export type SynapseWikiContextProviderProps = {
  * @param param0
  * @returns
  */
-export const SynapseWikiContextProvider: React.FunctionComponent<
-  SynapseWikiContextProviderProps
-> = ({ children, wikiContext }) => {
+export function SynapseWikiContextProvider({
+  children,
+  wikiContext,
+}: SynapseWikiContextProviderProps) {
   return (
     <SynapseWikiContext.Provider value={wikiContext}>
       {children}

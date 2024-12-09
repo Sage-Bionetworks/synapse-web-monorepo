@@ -1,5 +1,4 @@
 import { Box, Chip, Link, Paper, SxProps, Typography } from '@mui/material'
-import React from 'react'
 import { EastTwoTone } from '@mui/icons-material'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
@@ -25,9 +24,7 @@ const clampedTextSx: SxProps = {
   // height: YOUR HEIGHT,
   // '-webkit-line-clamp': NUMBER OF LINES,
 }
-export const SynapseFeaturedDatasetItem: React.FunctionComponent<
-  SynapseFeaturedDatasetItemProps
-> = ({
+export function SynapseFeaturedDatasetItem({
   sourceTable,
   id,
   community,
@@ -39,7 +36,7 @@ export const SynapseFeaturedDatasetItem: React.FunctionComponent<
   individuals,
   size,
   sizeUnit,
-}) => {
+}: SynapseFeaturedDatasetItemProps) {
   const tags: string[] = keywords ? JSON.parse(keywords) : []
   return (
     <Paper

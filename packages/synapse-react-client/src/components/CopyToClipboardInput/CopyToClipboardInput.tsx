@@ -1,6 +1,6 @@
-import React from 'react'
 import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from '../ToastMessage/ToastMessage'
 
 export type CopyToClipboardInputProps = {
@@ -15,15 +15,15 @@ export type CopyToClipboardInputProps = {
  * For smaller/inline strings, look at UserCardMedium functionality for displaying the value in a <p> tag instead of a
  * readonly <input> tag.
  */
-export const CopyToClipboardInput: React.FunctionComponent<
-  CopyToClipboardInputProps
-> = ({ value, inputWidth }: CopyToClipboardInputProps) => {
-  const [showModal, setShowModal] = React.useState(false)
-  const ref = React.createRef<HTMLDivElement>()
+export function CopyToClipboardInput({
+  value,
+  inputWidth,
+}: CopyToClipboardInputProps) {
+  const [showModal, setShowModal] = useState(false)
+  const ref = createRef<HTMLDivElement>()
 
   const copyToClipboard =
-    (ref: React.RefObject<HTMLElement>, value: string) =>
-    (event: React.SyntheticEvent) => {
+    (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
       event.preventDefault()
 
       // use the Clipboard API

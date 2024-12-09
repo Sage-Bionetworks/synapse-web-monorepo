@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'

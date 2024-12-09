@@ -1,4 +1,3 @@
-import React from 'react'
 import { TargetEnum } from '../CardContainerLogic'
 import { Link } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -91,7 +90,7 @@ const rules: LinkifyRule[] = [
 ]
 const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
 
-const Linkify: React.FC<LinkifyProps> = ({ text, className }) => {
+function Linkify({ text, className }: LinkifyProps) {
   if (text == null) {
     return <></>
   }

@@ -1,36 +1,44 @@
-import React from 'react'
-import MarkdownIt from 'markdown-it'
-import xss from 'xss'
-import SynapseClient from '../../synapse-client'
-import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
-import { SynapseClientError, SynapseContext } from '../../utils'
+import { Link, Typography } from '@mui/material'
+import markdownitContainer from '@sage-bionetworks/markdown-it-container'
 import {
   FileHandleResults,
   ObjectType,
   WikiPage,
 } from '@sage-bionetworks/synapse-types'
+import katex from 'katex'
+import MarkdownIt from 'markdown-it'
+import markdownitBr from 'markdown-it-br'
+import markdownitCentertext from 'markdown-it-center-text'
+import markdownitInlineComments from 'markdown-it-inline-comments'
+import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
+import markdownitSub from 'markdown-it-sub-alt'
+import markdownitSup from 'markdown-it-sup-alt'
+import * as markdownitSynapse from 'markdown-it-synapse'
+import markdownitSynapsePlugin from 'markdown-it-synapse'
+import markdownitSynapseHeading from 'markdown-it-synapse-heading'
+import markdownitMath from 'markdown-it-synapse-math'
+import markdownitSynapseTable from 'markdown-it-synapse-table'
+import {
+  Component,
+  ComponentType,
+  ContextType,
+  createRef,
+  Fragment,
+  MouseEvent,
+  RefObject,
+} from 'react'
+import xss from 'xss'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError, SynapseContext } from '../../utils'
+import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
 import { ErrorBanner } from '../error/ErrorBanner'
+import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
 import {
   SynapseWikiContextProvider,
   SynapseWikiContextType,
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
-import { SkeletonTable } from '../Skeleton'
-import { Link, Typography } from '@mui/material'
-import katex from 'katex'
-import * as markdownitSynapse from 'markdown-it-synapse'
-import markdownitSynapsePlugin from 'markdown-it-synapse'
-import markdownitSub from 'markdown-it-sub-alt'
-import markdownitSup from 'markdown-it-sup-alt'
-import markdownitCentertext from 'markdown-it-center-text'
-import markdownitSynapseHeading from 'markdown-it-synapse-heading'
-import markdownitSynapseTable from 'markdown-it-synapse-table'
-import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
-import markdownitContainer from '@sage-bionetworks/markdown-it-container'
-import markdownitInlineComments from 'markdown-it-inline-comments'
-import markdownitBr from 'markdown-it-br'
-import markdownitMath from 'markdown-it-synapse-math'
 
 export const NO_WIKI_CONTENT = 'There is no content.'
 
@@ -44,7 +52,7 @@ export type MarkdownSynapseProps = {
   onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
   showPlaceholderIfNoWikiContent?: boolean
 }
-type MarkdownSynapseComponent = React.ComponentType<MarkdownSynapseProps>
+type MarkdownSynapseComponent = ComponentType<MarkdownSynapseProps>
 
 const md = MarkdownIt({ html: true })
 
@@ -59,15 +67,15 @@ type MarkdownSynapseState = {
  * Basic Markdown functionality for Synapse, supporting Images/Plots/References/Bookmarks/buttonlinks
  *
  * @class Markdown
- * @extends {React.Component}
+ * @extends {Component}
  */
-const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends React.Component<
+const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends Component<
   MarkdownSynapseProps,
   MarkdownSynapseState
 > {
-  public markupRef: React.RefObject<HTMLInputElement>
+  public markupRef: RefObject<HTMLInputElement>
   static contextType = SynapseContext
-  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+  declare context: NonNullable<ContextType<typeof SynapseContext>>
 
   /**
    * Creates an instance of Markdown.
@@ -106,7 +114,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       data,
       isLoading: true,
     }
-    this.markupRef = React.createRef()
+    this.markupRef = createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
     // handle widgets and math markdown
     this.renderMarkdown = this.renderMarkdown.bind(this)
@@ -130,7 +138,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
   }
 
   // Manually handle clicks to anchor tags where the scrollto isn't handled by page hash
-  public handleLinkClicks(event: React.MouseEvent<HTMLElement>) {
+  public handleLinkClicks(event: MouseEvent<HTMLElement>) {
     const genericElement = event.target as HTMLElement
     if (genericElement.tagName === 'A' || genericElement.tagName === 'BUTTON') {
       const anchor = event.target as HTMLAnchorElement
@@ -444,9 +452,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
       // recursively render children
       const children = Array.from(element.childNodes).map((el, index) => {
         return (
-          <React.Fragment key={index}>
-            {this.recursiveRender(el, markdown)}
-          </React.Fragment>
+          <Fragment key={index}>{this.recursiveRender(el, markdown)}</Fragment>
         )
       })
       // Render tagName as parent element of the children below

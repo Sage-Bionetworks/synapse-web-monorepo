@@ -1,5 +1,3 @@
-import React from 'react'
-
 export type HeaderProps = {
   isSubmitted?: boolean
   bodyText?: string //should never take user input only use cardcoded text from a parent component. Uses dangerouslySetInnerHTML

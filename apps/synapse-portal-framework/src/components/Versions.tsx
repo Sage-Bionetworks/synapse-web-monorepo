@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Tooltip } from '@mui/material'
 import dayjs from 'dayjs'
 
 // To test this component, create a deploy_date.txt in the public folder (just like the deploy jobs do):
 // date +"%D %T" > ./public/deploy_date.txt
 
-const Versions: React.FunctionComponent = () => {
+function Versions() {
   const [buildDate, setBuildDate] = useState<string>()
   const [deployDate, setDeployDate] = useState<string>()
 

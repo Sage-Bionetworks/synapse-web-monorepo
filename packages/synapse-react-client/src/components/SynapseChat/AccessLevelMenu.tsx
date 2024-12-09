@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import DropdownSelect from '../DropdownSelect'
@@ -20,10 +20,10 @@ const accessLevelOptions = [
   },
 ]
 
-export const AccessLevelMenu: React.FunctionComponent<AccessLevelMenuProps> = ({
+export function AccessLevelMenu({
   onChange,
   initAccessLevel,
-}) => {
+}: AccessLevelMenuProps) {
   const initOption = accessLevelOptions.findIndex(
     v => v.value == initAccessLevel,
   )

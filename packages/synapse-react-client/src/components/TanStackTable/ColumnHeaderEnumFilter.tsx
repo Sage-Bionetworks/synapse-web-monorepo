@@ -1,6 +1,6 @@
 import { Column, RowData } from '@tanstack/react-table'
 import { isEmpty, isEqual, noop } from 'lodash-es'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import EnumFacetFilterUI, {
   EnumFacetFilterUIProps,
   RenderedFacetValue,

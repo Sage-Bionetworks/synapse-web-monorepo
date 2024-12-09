@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import { Fragment, Suspense, useMemo } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -202,7 +202,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
       {/* create a plot for every facet to be plotted */}
       {facetPlotDataArray.map((plotData, index) => {
         return (
-          <React.Fragment key={index}>
+          <Fragment key={index}>
             <FacetPlotsCardPlotContainer
               className={FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}
               sx={{
@@ -245,7 +245,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
                 </Box>
               </Box>
             </FacetPlotsCardPlotContainer>
-          </React.Fragment>
+          </Fragment>
         )
       })}
     </Paper>

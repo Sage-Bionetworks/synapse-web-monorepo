@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, SxProps } from '@mui/material'
 import { SynapseConstants } from 'synapse-react-client'
 
@@ -6,9 +5,7 @@ export type TermsAndConditionsLinkProps = {
   sx?: SxProps
 }
 
-export const TermsAndConditionsLink: React.FC<TermsAndConditionsLinkProps> = ({
-  sx,
-}) => {
+export function TermsAndConditionsLink({ sx }: TermsAndConditionsLinkProps) {
   return (
     <Button
       variant="text"

@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom'
 import { act, render, screen } from '@testing-library/react'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { mockFileStatistics } from '../../mocks/mock_file_statistics'

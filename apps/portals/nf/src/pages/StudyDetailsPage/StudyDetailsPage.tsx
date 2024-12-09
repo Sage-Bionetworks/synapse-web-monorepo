@@ -7,7 +7,6 @@ import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/compon
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import {
   CardContainerLogic,

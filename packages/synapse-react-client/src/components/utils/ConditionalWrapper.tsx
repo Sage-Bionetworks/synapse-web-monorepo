@@ -1,12 +1,17 @@
-import React from 'react'
+import {
+  ComponentProps,
+  ComponentType,
+  PropsWithChildren,
+  ReactNode,
+} from 'react'
 
 type ConditionalWrapperProps<
-  TWrapper extends React.ComponentType<React.PropsWithChildren> = React.ComponentType<React.PropsWithChildren>,
+  TWrapper extends ComponentType<PropsWithChildren> = ComponentType<PropsWithChildren>,
 > = {
   condition: boolean
   wrapper: TWrapper
-  wrapperProps?: Omit<React.ComponentProps<TWrapper>, 'children'>
-  children: React.ReactNode
+  wrapperProps?: Omit<ComponentProps<TWrapper>, 'children'>
+  children: ReactNode
 }
 
 export default function ConditionalWrapper(props: ConditionalWrapperProps) {

@@ -4,7 +4,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import EntitySubjectsSelector from './EntitySubjectsSelector'
 
 const meta: Meta<typeof EntitySubjectsSelector> = {

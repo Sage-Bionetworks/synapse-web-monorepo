@@ -2,7 +2,6 @@ import {
   AccessRequirement,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { hasAccessorRequirement } from './GovernanceUtils'
 import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
 
@@ -11,9 +10,7 @@ type AccessorRequirementsProps = {
   onChange: (updatedAr: AccessRequirement) => void
 }
 
-export const AccessorRequirements: React.FunctionComponent<
-  AccessorRequirementsProps
-> = (props: AccessorRequirementsProps) => {
+export function AccessorRequirements(props: AccessorRequirementsProps) {
   const { accessRequirement, onChange } = props
 
   return (

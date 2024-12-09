@@ -1,7 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
-import React from 'react'
 import UserCard, { UserCardProps } from './UserCard'
 import UserCardContextMenu, {
   MenuAction,

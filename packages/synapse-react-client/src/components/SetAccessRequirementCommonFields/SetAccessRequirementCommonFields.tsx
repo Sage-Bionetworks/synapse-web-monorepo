@@ -22,7 +22,14 @@ import {
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react'
 import {
   useCreateAccessRequirement,
   useGetAccessRequirements,
@@ -86,10 +93,10 @@ export type SetAccessRequirementCommonFieldsProps = {
   onError: () => void
 }
 
-export const SetAccessRequirementCommonFields = React.forwardRef(
+export const SetAccessRequirementCommonFields = forwardRef(
   function SetAccessRequirementCommonFields(
     props: SetAccessRequirementCommonFieldsProps,
-    ref: React.ForwardedRef<SetAccessRequirementCommonFieldsHandle>,
+    ref: ForwardedRef<SetAccessRequirementCommonFieldsHandle>,
   ) {
     const { subject, accessRequirementId, onSave, onError } = props
 

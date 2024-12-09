@@ -4,7 +4,6 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import ToggleSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/ToggleSynapseObjects'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   computationalSql,
   experimentalModelsSql,

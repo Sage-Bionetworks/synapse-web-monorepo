@@ -1,7 +1,6 @@
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useRowSet } from './UseRowSet'
-import React from 'react'
 import { server } from '../../mocks/msw/server'
 import { QueryWrapper } from '../QueryWrapper'
 import {

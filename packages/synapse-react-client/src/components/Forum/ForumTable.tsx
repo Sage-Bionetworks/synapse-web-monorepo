@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useGetForumThreadsInfinite } from '../../synapse-queries/forum/useForum'
 import { AVATAR } from '../../utils/SynapseConstants'
 import {
@@ -92,12 +92,12 @@ function getColumns(
   ]
 }
 
-export const ForumTable: React.FC<ForumTableProps> = ({
+export function ForumTable({
   forumId,
   limit,
   filter,
   onClickLink,
-}) => {
+}: ForumTableProps) {
   const [tableSortState, setTableSortState] = useState<SortingState>([
     {
       desc: true,

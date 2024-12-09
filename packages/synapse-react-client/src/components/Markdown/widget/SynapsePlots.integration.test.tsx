@@ -1,5 +1,4 @@
 import { render, waitFor } from '@testing-library/react'
-import React from 'react'
 import MarkdownSynapse from '../MarkdownSynapse'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import EntityHeaderTable from '../EntityHeaderTable'
 import { EntityType, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEvaluationsInfinite } from '../../synapse-queries/evaluation/useEvaluation'
 import { HelpPopover } from '../HelpPopover'
 import {

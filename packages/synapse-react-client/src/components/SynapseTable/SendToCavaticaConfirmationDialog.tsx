@@ -13,7 +13,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'

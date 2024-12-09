@@ -1,4 +1,3 @@
-import React from 'react'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import ChallengeTeamWizard from './index'

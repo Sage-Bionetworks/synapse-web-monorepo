@@ -1,4 +1,3 @@
-import React from 'react'
 import UserIdList, { UserIdListProps } from './UserIdList'
 import { render, screen, waitFor } from '@testing-library/react'
 import {

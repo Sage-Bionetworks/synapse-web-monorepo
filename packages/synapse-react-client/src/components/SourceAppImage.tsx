@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -13,9 +12,7 @@ export type SourceAppImageProps = {
 }
 
 // Refactored into it's own class, thinking that using a prefetch resource would improve loading performance of the images, but it does not.
-const SourceAppImage: React.FC<SourceAppImageProps> = (
-  props: SourceAppImageProps,
-) => {
+function SourceAppImage(props: SourceAppImageProps) {
   const { sourceAppConfigTableID, fileHandleId, friendlyName } = props
   const fha: FileHandleAssociation = {
     associateObjectId: sourceAppConfigTableID,

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { LoginAwareButton, LoginAwareButtonProps } from './LoginAwareButton'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'

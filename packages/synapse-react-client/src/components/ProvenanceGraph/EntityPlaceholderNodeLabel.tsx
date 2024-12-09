@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
 

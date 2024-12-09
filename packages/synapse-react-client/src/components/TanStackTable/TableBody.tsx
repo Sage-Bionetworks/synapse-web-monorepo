@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo } from 'react'
 import { Cell, flexRender, Table } from '@tanstack/react-table'
 import { getColumnSizeCssVariable } from './TanStackTableUtils'
 import ExpandableTableDataCell from '../SynapseTable/ExpandableTableDataCell'
@@ -52,6 +52,6 @@ export function TableBody<T = unknown>(props: TableBodyProps<T>) {
 
 // special memoized wrapper for our table body that we will use during column resizing
 // see https://tanstack.com/table/v8/docs/guide/column-sizing#advanced-column-resizing-performance
-export const MemoizedTableBody = React.memo(TableBody, (prev, next) => {
+export const MemoizedTableBody = memo(TableBody, (prev, next) => {
   return prev.table.options.data === next.table.options.data
 }) as typeof TableBody

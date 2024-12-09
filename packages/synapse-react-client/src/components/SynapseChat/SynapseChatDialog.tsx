@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from '@mui/material'
 import SynapseChat, { SynapseChatProps } from './SynapseChat'
 import { DialogBase } from '../DialogBase'
@@ -8,9 +7,7 @@ export type SynapseChatDialogProps = {
   onClose: () => void
 } & Omit<SynapseChatProps, 'hideTitle' | 'textboxPositionOffset'>
 
-export const SynapseChatDialog: React.FunctionComponent<
-  SynapseChatDialogProps
-> = props => {
+export function SynapseChatDialog(props: SynapseChatDialogProps) {
   const { chatbotName = 'SynapseChat', open, onClose } = props
   return (
     <DialogBase

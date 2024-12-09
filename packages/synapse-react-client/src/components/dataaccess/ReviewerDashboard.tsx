@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import {
   createBrowserRouter,
   createMemoryRouter,
@@ -20,11 +20,7 @@ import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import SubmissionPage from './SubmissionPage'
 
-function LinkTab(props: {
-  href: string
-  children: React.ReactNode
-  icon: IconName
-}) {
+function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
   const { href, children, icon } = props
   return (
     <NavLink className="Tab" role="tab" to={href}>

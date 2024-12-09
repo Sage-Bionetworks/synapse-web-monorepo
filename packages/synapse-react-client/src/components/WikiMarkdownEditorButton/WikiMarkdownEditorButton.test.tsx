@@ -1,7 +1,6 @@
 import { ErrorResponse, ObjectType } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { mockToUAccessRequirementWithWikiPageKey } from '../../mocks/accessRequirement/mockAccessRequirements'
 import {

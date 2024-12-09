@@ -1,7 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { Row } from '@sage-bionetworks/synapse-types'
 import Plotly, { Datum } from 'plotly.js-basic-dist'
-import React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -13,9 +12,13 @@ export type SynapseByTheNumbersItemProps = {
   plotYColIndex: number
 }
 
-export const SynapseByTheNumbersItem: React.FunctionComponent<
-  SynapseByTheNumbersItemProps
-> = ({ title, description, rows, plotXColIndex, plotYColIndex }) => {
+export function SynapseByTheNumbersItem({
+  title,
+  description,
+  rows,
+  plotXColIndex,
+  plotYColIndex,
+}: SynapseByTheNumbersItemProps) {
   if (rows.length == 0) {
     return <></>
   }

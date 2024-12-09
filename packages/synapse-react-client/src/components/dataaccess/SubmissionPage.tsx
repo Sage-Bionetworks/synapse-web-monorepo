@@ -1,7 +1,7 @@
 import { Button, Skeleton, Typography } from '@mui/material'
 import { isEmpty, toLower, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { useMemo, Fragment, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import useGetDataAccessSubmission, {
@@ -40,7 +40,7 @@ function DataAccessSubmissionFileHandleLink(props: {
   fileHandleId: string
 }) {
   const { submissionId, fileHandleId } = props
-  const fileHandleAssociation = React.useMemo(
+  const fileHandleAssociation = useMemo(
     () => ({
       fileHandleId: fileHandleId,
       associateObjectId: submissionId,
@@ -306,7 +306,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           </Typography>
           {submission ? (
             submission.accessorChanges.map(accessorChange => (
-              <React.Fragment key={accessorChange.userId}>
+              <Fragment key={accessorChange.userId}>
                 <Typography className="Key DataAccessor" variant="smallText1">
                   <span style={{ whiteSpace: 'nowrap' }}>
                     <UserBadge
@@ -325,7 +325,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                     ),
                   )}
                 </Typography>
-              </React.Fragment>
+              </Fragment>
             ))
           ) : (
             <Skeleton width={100} />
@@ -413,13 +413,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             <>
               <Typography variant="smallText2">Other Attachments</Typography>
               {submission.attachments.map(fileHandleId => (
-                <React.Fragment key={fileHandleId}>
+                <Fragment key={fileHandleId}>
                   <DataAccessSubmissionFileHandleLink
                     submissionId={submission.id}
                     fileHandleId={fileHandleId}
                   />
                   <br />
-                </React.Fragment>
+                </Fragment>
               ))}
             </>
           )}

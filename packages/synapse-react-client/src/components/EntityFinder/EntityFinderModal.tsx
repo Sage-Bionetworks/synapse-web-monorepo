@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { Box, Typography } from '@mui/material'
 import { ConfirmationDialog } from '../ConfirmationDialog'

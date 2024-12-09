@@ -2,16 +2,16 @@ import { HeaderContext } from '@tanstack/react-table'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { HelpTwoTone } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
-import React, { useCallback } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 
 type ColumnHeaderProps = {
   title?: string
-  helpText?: React.ReactNode
-  additionalButtons?: React.ReactNode
+  helpText?: ReactNode
+  additionalButtons?: ReactNode
 
   // TODO: Replace with props that can be passed to a reusable filter control
-  filterControl?: React.ReactNode
+  filterControl?: ReactNode
 }
 
 /**

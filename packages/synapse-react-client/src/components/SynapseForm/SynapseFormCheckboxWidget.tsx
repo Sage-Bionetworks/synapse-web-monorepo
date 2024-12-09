@@ -1,4 +1,3 @@
-import React from 'react'
 import { Widgets } from '@rjsf/mui'
 import { RJSFSchema, WidgetProps } from '@rjsf/utils'
 

@@ -1,6 +1,5 @@
 import { Alert, Typography } from '@mui/material'
 import { Box } from '@mui/material'
-import React from 'react'
 import { useGetTeam } from '../../synapse-queries'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 

@@ -1,6 +1,6 @@
 import { useMediaQuery, useTheme } from '@mui/material'
 import { Box, Button, Typography } from '@mui/material'
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 
 export type SynapseFeatureItemProps = {
   title: string
@@ -12,9 +12,15 @@ export type SynapseFeatureItemProps = {
   image: ReactElement
 }
 
-export const SynapseFeatureItem: React.FunctionComponent<
-  SynapseFeatureItemProps
-> = ({ title, subtitle, description, featureName, link, icons, image }) => {
+export function SynapseFeatureItem({
+  title,
+  subtitle,
+  description,
+  featureName,
+  link,
+  icons,
+  image,
+}: SynapseFeatureItemProps) {
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
   return isSmallView ? (

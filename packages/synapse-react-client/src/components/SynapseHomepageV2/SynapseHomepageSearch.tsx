@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { PopperProps } from '@mui/material'
 import { FormControl } from '@mui/material'
 import { InputAdornment } from '@mui/material'
@@ -44,9 +44,10 @@ const PopperAlwaysPlacedBelow = (props: PopperProps) => {
  * SWC-7005: Not used in the current implementation of the Home Page, but there are plans to utilize it later.
  * @returns
  */
-export const SynapseHomepageSearch: React.FunctionComponent<
-  SynapseHomepageSearchProps
-> = ({ sourceTable, gotoPlace }) => {
+export function SynapseHomepageSearch({
+  sourceTable,
+  gotoPlace,
+}: SynapseHomepageSearchProps) {
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const theme = useTheme()
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS

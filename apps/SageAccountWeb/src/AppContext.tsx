@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import { createContext, ReactNode, useContext } from 'react'
+
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 
 export type AppContextType = {
@@ -13,18 +14,17 @@ export type AppContextType = {
 /**
  * This must be exported to use the context in class components.
  */
-export const AppContext = React.createContext<AppContextType | undefined>(
-  undefined,
-)
+export const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export type AppContextProviderProps = {
   appContext: AppContextType
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
-export const AppContextProvider: React.FunctionComponent<
-  AppContextProviderProps
-> = ({ children, appContext }) => {
+export function AppContextProvider({
+  children,
+  appContext,
+}: AppContextProviderProps) {
   return (
     <AppContext.Provider value={appContext}>{children}</AppContext.Provider>
   )

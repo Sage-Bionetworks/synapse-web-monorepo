@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Chart = () => (
   <svg
     data-icon="chart"

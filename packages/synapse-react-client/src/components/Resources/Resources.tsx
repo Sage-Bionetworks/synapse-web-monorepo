@@ -1,4 +1,3 @@
-import React from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
@@ -23,7 +22,7 @@ export type Data = {
   wikiId: string
 }[]
 
-export const Resources: React.FC<ResourcesProps> = (props: ResourcesProps) => {
+export function Resources(props: ResourcesProps) {
   const { entityId } = props
   const showDesktop = useShowDesktop()
 

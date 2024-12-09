@@ -1,4 +1,4 @@
-import React from 'react'
+import { ComponentType } from 'react'
 import {
   DATABASE,
   DATASET,
@@ -85,7 +85,7 @@ import {
 } from '../../assets/themed_icons'
 import IconSvg from '../IconSvg/IconSvg'
 
-export type IconOptions = Record<string, string | React.ComponentType<any>>
+export type IconOptions = Record<string, string | ComponentType<any>>
 
 export type IconProps = {
   type: string
@@ -150,12 +150,7 @@ const defaultIcons = {
   [DOWNLOAD_PERMISSION_REQUIRED]:
     'https://s3.amazonaws.com/static.synapse.org/images/downloadPermissionRequired.svg',
 }
-const Icon: React.FunctionComponent<IconProps> = ({
-  type,
-  value = '',
-  iconOptions,
-  cssClass,
-}) => {
+function Icon({ type, value = '', iconOptions, cssClass }: IconProps) {
   const IconSvg = iconSvgMapping[value] || iconSvgMapping[type]
   if (IconSvg) return IconSvg
 

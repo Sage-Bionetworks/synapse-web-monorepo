@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { CSSProperties, SyntheticEvent, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
@@ -24,16 +24,14 @@ type MetadataEvent = {
 
 const tooltipColumnSelectionId = 'addAndRemoveColumns'
 
-export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
-  props: ColumnSelectionProps,
-) => {
+export function ColumnSelection(props: ColumnSelectionProps) {
   const { headers, isColumnSelected, toggleColumnSelection, darkTheme } = props
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [show, setShow] = useState(false)
   const onDropdownClick = (
     _show: boolean,
-    _event: React.SyntheticEvent<Dropdown, Event>,
+    _event: SyntheticEvent<Dropdown, Event>,
     metadata: MetadataEvent,
   ) => {
     if (metadata.source === 'rootClose') {
@@ -47,7 +45,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       as="span"
       onToggle={(
         show: boolean,
-        event: React.SyntheticEvent<Dropdown, Event>,
+        event: SyntheticEvent<Dropdown, Event>,
         metadata: MetadataEvent,
       ) => onDropdownClick(show, event, metadata)}
       show={show}
@@ -70,7 +68,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
         {headers?.map(header => {
           const { name } = header
           const isCurrentColumnSelected = isColumnSelected.includes(name)
-          const iconStyle: React.CSSProperties = {
+          const iconStyle: CSSProperties = {
             width: '11px',
             marginRight: '10px',
             visibility: isCurrentColumnSelected ? undefined : 'hidden',

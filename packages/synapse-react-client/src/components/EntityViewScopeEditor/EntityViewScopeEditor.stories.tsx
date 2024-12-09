@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 import EntityViewScopeEditor from './EntityViewScopeEditor'
 import mockProject from '../../mocks/entity/mockProject'
 import { mockFolderEntity } from '../../mocks/entity/mockEntity'
 import { Paper } from '@mui/material'
-import React from 'react'
 
 const meta: Meta = {
   title: 'Synapse/EntityView/Scope Editor',
@@ -16,7 +16,7 @@ const meta: Meta = {
     ),
   ],
   render: function Render(args) {
-    const [ids, setIds] = React.useState<string[]>([])
+    const [ids, setIds] = useState<string[]>([])
     return <EntityViewScopeEditor {...args} scopeIds={ids} onChange={setIds} />
   },
 } satisfies Meta

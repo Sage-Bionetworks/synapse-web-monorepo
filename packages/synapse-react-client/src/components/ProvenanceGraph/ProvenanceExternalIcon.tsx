@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 
 export type ProvenanceExternalIconProps = {

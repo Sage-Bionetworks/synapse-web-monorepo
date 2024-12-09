@@ -3,7 +3,9 @@ import {
   AccessRequirement,
   ManagedACTAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import React, {
+import {
+  ForwardedRef,
+  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -37,10 +39,10 @@ export type SetBasicAccessRequirementFieldsProps = {
   allowDeleteTextInstructions?: boolean
 }
 
-export const SetBasicAccessRequirementFields = React.forwardRef(
+export const SetBasicAccessRequirementFields = forwardRef(
   function SetBasicAccessRequirementFields(
     props: SetBasicAccessRequirementFieldsProps,
-    ref: React.ForwardedRef<SetBasicAccessRequirementFieldsHandle>,
+    ref: ForwardedRef<SetBasicAccessRequirementFieldsHandle>,
   ) {
     const {
       accessRequirementId,

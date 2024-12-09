@@ -1,4 +1,3 @@
-import React from 'react'
 import SubmissionViewScopeEditor, {
   SubmissionViewScopeEditorProps,
 } from './SubmissionViewScopeEditor'

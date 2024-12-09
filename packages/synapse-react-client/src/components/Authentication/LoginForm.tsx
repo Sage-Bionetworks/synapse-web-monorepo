@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseLoginReturn, useOneSageURL } from '../../utils/hooks'

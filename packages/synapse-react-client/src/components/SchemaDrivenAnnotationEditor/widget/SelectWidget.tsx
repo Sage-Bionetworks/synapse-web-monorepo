@@ -1,5 +1,4 @@
 import { Widget, WidgetProps, EnumOptionsType } from '@rjsf/utils'
-import React from 'react'
 import { Autocomplete, TextField } from '@mui/material'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isObject } from 'lodash-es'

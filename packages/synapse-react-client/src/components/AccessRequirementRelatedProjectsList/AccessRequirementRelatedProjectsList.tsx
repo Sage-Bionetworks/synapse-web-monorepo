@@ -1,4 +1,3 @@
-import React from 'react'
 import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
 import { EntityLink } from '../EntityLink'

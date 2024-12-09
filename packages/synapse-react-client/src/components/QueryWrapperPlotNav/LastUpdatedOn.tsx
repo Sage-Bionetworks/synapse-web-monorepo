@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React from 'react'
+import { Suspense } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Skeleton, Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -34,8 +34,8 @@ export default function LastUpdatedOnWithSuspense() {
     return <></>
   }
   return (
-    <React.Suspense fallback={<Skeleton width={100}></Skeleton>}>
+    <Suspense fallback={<Skeleton width={100}></Skeleton>}>
       <LastUpdatedOn />
-    </React.Suspense>
+    </Suspense>
   )
 }

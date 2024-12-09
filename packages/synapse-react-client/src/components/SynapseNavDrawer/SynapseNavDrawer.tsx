@@ -4,7 +4,7 @@ import {
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../../assets/icons/SynapseLogoName'
@@ -181,9 +181,11 @@ const NavDrawerListItem = (props: MenuItemParams) => {
 /**
  * Displays the Synapse navigational drawer on the left side of the page.  Has links to various areas if logged in.
  */
-export const SynapseNavDrawer: React.FunctionComponent<
-  SynapseNavDrawerProps
-> = ({ initIsOpen = false, signoutCallback, gotoPlace }) => {
+export function SynapseNavDrawer({
+  initIsOpen = false,
+  signoutCallback,
+  gotoPlace,
+}: SynapseNavDrawerProps) {
   const [isOpen, setOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
   const [projectSearchText, setProjectSearchText] = useState<string>('')

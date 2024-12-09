@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Database = () => (
   <svg
     data-icon="database"

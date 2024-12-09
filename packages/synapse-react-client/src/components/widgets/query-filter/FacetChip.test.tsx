@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import React from 'react'
 import { FacetChip, FacetChipProps } from './FacetChip'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 

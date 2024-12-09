@@ -1,9 +1,9 @@
 import { Dropdown } from 'react-bootstrap'
-import React, { useState } from 'react'
+import { useState, MouseEvent, PropsWithChildren } from 'react'
 import { Fade, IconButton, Menu, Tooltip } from '@mui/material'
 import IconSvg from '../../../IconSvg'
 
-export type EnumFacetFilterDropdownProps = React.PropsWithChildren<{
+export type EnumFacetFilterDropdownProps = PropsWithChildren<{
   facetTitle: string
   menuText: string
   filterIsActive: boolean
@@ -37,8 +37,8 @@ function EnumFacetFilterIconDropdown(
 ) {
   const { children, filterIsActive, facetTitle } = props
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const handleClickDropdownIcon = (event: React.MouseEvent<HTMLElement>) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const handleClickDropdownIcon = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {

@@ -1,5 +1,5 @@
 import { Box, Link, Tab, Tabs, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { ReactElement, SyntheticEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export enum ProgrammaticOptionsTabs {
@@ -12,11 +12,11 @@ export type ProgrammaticInstructionsModalProps = {
   show: boolean
   title: string
   onClose: () => void
-  pythonNotes?: React.ReactElement
+  pythonNotes?: ReactElement
   pythonCode?: string
-  rNotes?: React.ReactElement
+  rNotes?: ReactElement
   rCode?: string
-  cliNotes?: React.ReactElement
+  cliNotes?: ReactElement
   cliCode?: string
   helpMarkdown?: string
   helpUrl?: string
@@ -80,7 +80,7 @@ export const ProgrammaticInstructionsModal = ({
         <Tabs
           value={currentTab}
           onChange={(
-            event: React.SyntheticEvent,
+            event: SyntheticEvent,
             newValue: ProgrammaticOptionsTabs,
           ) => {
             event.stopPropagation()

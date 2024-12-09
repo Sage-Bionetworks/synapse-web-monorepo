@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import { Suspense, useState } from 'react'
 import { CardContainer } from '../CardContainer/CardContainer'
 import { SynapseTable, SynapseTableConfiguration } from '../SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { UserBadge } from '../UserCard/UserBadge'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'

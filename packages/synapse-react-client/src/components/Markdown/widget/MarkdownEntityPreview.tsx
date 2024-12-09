@@ -1,4 +1,3 @@
-import React from 'react'
 import EntityPreview from '../../FilePreview/EntityPreview'
 import { parseSynId } from '../../../utils/functions/RegularExpressions'
 

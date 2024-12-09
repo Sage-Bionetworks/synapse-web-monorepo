@@ -1,6 +1,6 @@
 import { Divider, Typography } from '@mui/material'
 import { InfoWindow, Marker } from '@react-google-maps/api'
-import React, { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { GeoData } from '../../synapse-client'
 import { UserBadge } from '../UserCard/UserBadge'
 
@@ -48,18 +48,18 @@ export function SynapseUserMarker(props: SynapseUserMarkerProps) {
     <Marker onClick={onClick} position={position} options={options}>
       {showInfoWindow && (
         <InfoWindow onCloseClick={onInfoWindowCloseClick}>
-          <React.Fragment>
+          <>
             <Typography variant="body1" component={'span'}>
               {geoData.location}
             </Typography>
             <Divider />
             {geoData.userIds.map(id => (
-              <React.Fragment key={id}>
+              <Fragment key={id}>
                 <br />
                 <UserBadge userId={id} openLinkInNewTab={true} />
-              </React.Fragment>
+              </Fragment>
             ))}
-          </React.Fragment>
+          </>
         </InfoWindow>
       )}
     </Marker>

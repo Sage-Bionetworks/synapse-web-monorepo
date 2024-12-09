@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
@@ -29,11 +28,11 @@ export type ObservationCardProps = {
  * Specialized Observation Card, initially implemented for the NF portal.
  * Expects the following columns: submitterName, submitterUserId, time, timeUnits, text, and tag.
  */
-export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
+export function ObservationCard({
   data,
   schema,
   includePortalCardClass = true,
-}: ObservationCardProps) => {
+}: ObservationCardProps) {
   const submitterName = data[schema.observationSubmitterName]
   const submitterUserId = data[schema.synapseId]
   const time = data[schema.observationTime]
@@ -88,7 +87,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   )
 }
 
-export const LoadingObservationCard: React.FunctionComponent = () => {
+export function LoadingObservationCard() {
   return (
     <div className="SRC-portalCard ObservationCard">
       <div className="ObservationCard__submitter">

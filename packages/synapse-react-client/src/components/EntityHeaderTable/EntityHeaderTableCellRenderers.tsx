@@ -1,4 +1,3 @@
-import React from 'react'
 import { CellContext, HeaderContext } from '@tanstack/react-table'
 import { Checkbox, Link } from '@mui/material'
 import { EntityLink } from '../EntityLink'

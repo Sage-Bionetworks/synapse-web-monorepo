@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { useGetRestrictionInformation } from '../../synapse-queries'

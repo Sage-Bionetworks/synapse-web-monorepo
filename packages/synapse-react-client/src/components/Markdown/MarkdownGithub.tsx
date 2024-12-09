@@ -1,4 +1,3 @@
-import React from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import MarkdownSynapse from './MarkdownSynapse'
 import { Box, Container } from '@mui/material'
@@ -15,9 +14,7 @@ export type MarkdownGithubProps = {
  * Loads the version of the Governance Github Markdown file that the Synapse backend determines is the current version
  * @returns
  */
-export const GovernanceMarkdownGithub: React.FunctionComponent<
-  MarkdownGithubProps
-> = props => {
+export function GovernanceMarkdownGithub(props: MarkdownGithubProps) {
   //Get latest ToS tag (from Synapse backend)
   const { data } = useTermsOfServiceInfo()
   const tosTag = data?.latestTermsOfServiceVersion
@@ -28,9 +25,7 @@ export const GovernanceMarkdownGithub: React.FunctionComponent<
  * Loads the latest tagged version of the (presumably MD) file from GitHub
  * @returns
  */
-export const MarkdownGithubLatestTag: React.FunctionComponent<
-  MarkdownGithubProps
-> = props => {
+export function MarkdownGithubLatestTag(props: MarkdownGithubProps) {
   const { repoOwner, repoName } = props
   const { data: latestTag } = useLatestTag(repoOwner, repoName)
   return <MarkdownGithub {...props} tagName={latestTag} />
@@ -40,11 +35,14 @@ export const MarkdownGithubLatestTag: React.FunctionComponent<
  * Load MD file content from GitHub (using the given tag)
  * @returns
  */
-const MarkdownGithub: React.FunctionComponent<
-  MarkdownGithubProps & {
-    tagName?: string
-  }
-> = ({ repoOwner, repoName, filePath, tagName }) => {
+function MarkdownGithub({
+  repoOwner,
+  repoName,
+  filePath,
+  tagName,
+}: MarkdownGithubProps & {
+  tagName?: string
+}) {
   const { data: fileContent } = useFileContent(
     `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${tagName}/${filePath}`,
     {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
@@ -9,9 +8,9 @@ export type SynapseByTheNumbersProps = {
 }
 const formatter = Intl.NumberFormat('en')
 
-export const SynapseByTheNumbers: React.FunctionComponent<
-  SynapseByTheNumbersProps
-> = ({ metricsTable }) => {
+export function SynapseByTheNumbers({
+  metricsTable,
+}: SynapseByTheNumbersProps) {
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: metricsTable,
     query: {

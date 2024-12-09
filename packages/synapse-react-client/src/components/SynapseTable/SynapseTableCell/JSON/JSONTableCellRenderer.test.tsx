@@ -1,4 +1,3 @@
-import React from 'react'
 import JSONTableCellRenderer from './index'
 import { render } from '@testing-library/react'
 

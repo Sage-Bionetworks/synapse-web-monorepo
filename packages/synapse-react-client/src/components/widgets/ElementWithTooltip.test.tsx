@@ -1,13 +1,13 @@
 import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
-import React from 'react'
+import { ComponentProps } from 'react'
 import Columns from '../../assets/icons/columns'
 import { IconSvgProps } from '../IconSvg/IconSvg'
 import { ElementWithTooltip } from './ElementWithTooltip'
 
 const mockCallback = jest.fn()
-type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
+type ElementWithTooltipProps = ComponentProps<typeof ElementWithTooltip>
 
 afterEach(cleanup)
 

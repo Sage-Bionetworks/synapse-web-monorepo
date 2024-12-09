@@ -7,7 +7,7 @@ import {
 } from '@mui/material'
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   PromptInfo,
   UseUploadFileEntitiesReturn,

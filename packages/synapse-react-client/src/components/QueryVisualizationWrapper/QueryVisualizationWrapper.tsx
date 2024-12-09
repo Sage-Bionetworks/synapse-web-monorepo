@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from '../QueryContext'
 import { NoContentPlaceholderType } from '../SynapseTable'
@@ -22,7 +22,7 @@ type ColumnOrFacetHelpConfig = {
 }
 
 export type QueryVisualizationWrapperProps = {
-  children: React.ReactNode | React.ReactNode[]
+  children: ReactNode | ReactNode[]
   rgbIndex?: number
   /** The singular word to use to describe a what a row represents (e.g. "file"). Defaults to "result" */
   unitDescription?: string

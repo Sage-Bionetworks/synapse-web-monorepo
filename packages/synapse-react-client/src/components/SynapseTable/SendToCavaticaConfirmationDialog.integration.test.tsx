@@ -1,4 +1,4 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
 import { QueryWrapper } from '../../index'
 import { act, render, screen, waitFor } from '@testing-library/react'
@@ -48,7 +48,7 @@ let showSendToCavaticaModal:
   | undefined
 let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
-function ContextReceiver(props: React.PropsWithChildren<any>) {
+function ContextReceiver(props: PropsWithChildren<any>) {
   setSelectedRows = useSetAtom(selectedRowsAtom)
   showSendToCavaticaModal =
     useQueryVisualizationContext().setIsShowingExportToCavaticaModal

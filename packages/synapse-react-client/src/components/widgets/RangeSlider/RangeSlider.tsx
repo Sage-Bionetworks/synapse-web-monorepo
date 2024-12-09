@@ -1,6 +1,5 @@
-import React from 'react'
 import { RangeValues } from '../Range'
-import { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import {
   Box,
   Button,
@@ -10,7 +9,7 @@ import {
   Typography,
 } from '@mui/material'
 
-export type RangeSliderProps = React.PropsWithChildren<{
+export type RangeSliderProps = PropsWithChildren<{
   domain: string[]
   initialValues: RangeValues
   step: number

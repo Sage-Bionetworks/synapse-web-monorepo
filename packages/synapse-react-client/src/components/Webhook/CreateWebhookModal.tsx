@@ -23,7 +23,7 @@ import {
   WebhookVerificationStatus,
 } from '@sage-bionetworks/synapse-client'
 import { upperFirst } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import { Fragment, PropsWithChildren, useEffect, useState } from 'react'
 import {
   useCreateWebhook,
   useDeleteWebhook,
@@ -50,7 +50,7 @@ const NEW_ENDPOINT_DOMAIN_REQUEST_SUMMARY = encodeURIComponent(
 )
 const NEW_ENDPOINT_CONTACT_FORM_URL = `https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/16/create/85?summary=${NEW_ENDPOINT_DOMAIN_REQUEST_TITLE}&description=${NEW_ENDPOINT_DOMAIN_REQUEST_SUMMARY}`
 
-function UpdateWarningWrapper(props: React.PropsWithChildren) {
+function UpdateWarningWrapper(props: PropsWithChildren) {
   return (
     <Box
       sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
@@ -171,7 +171,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
     initialData &&
     initialData.verificationStatus === WebhookVerificationStatus.VERIFIED
       ? UpdateWarningWrapper
-      : React.Fragment
+      : Fragment
 
   return (
     <ConfirmationDialog

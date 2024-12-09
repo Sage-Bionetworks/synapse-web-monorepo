@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, CSSProperties } from 'react'
 import { SynapseConstants, SynapseContext } from '../../utils'
 import {
   isDatasetCollection,
@@ -194,10 +194,7 @@ export const getColumnIndex = (
 }
 
 // SWC-6115: special rendering of the version column (for Views)
-export const VersionLabel: React.FC<{
-  synapseId: string
-  version: string
-}> = props => {
+export function VersionLabel(props: { synapseId: string; version: string }) {
   const { synapseId, version } = props
   return (
     <span>
@@ -298,7 +295,7 @@ export function getLinkParams(
 /**
  * Renders a card from a table query
  */
-class _GenericCard extends React.Component<GenericCardPropsInternal> {
+class _GenericCard extends Component<GenericCardPropsInternal> {
   static contextType = SynapseContext
 
   constructor(props: GenericCardPropsInternal) {
@@ -465,7 +462,7 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
 
     const showFooter = values.length > 0
 
-    const style: React.CSSProperties = {
+    const style: CSSProperties = {
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,

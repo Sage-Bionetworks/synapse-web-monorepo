@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSynapseContext } from '../../utils'
 import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 import { Box, Button, Typography } from '@mui/material'
@@ -23,13 +22,13 @@ export type SynapseFooterProps = {
 }
 
 const currentYear = new Date().getFullYear()
-export const SynapseFooter: React.FunctionComponent<SynapseFooterProps> = ({
+export function SynapseFooter({
   portalVersion,
   srcVersion,
   repoVersion,
   gotoPlace,
   onExperimentalModeToggle,
-}) => {
+}: SynapseFooterProps) {
   const { accessToken } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
   const sageResourcesUrl = useOneSageURL('/sageresources')

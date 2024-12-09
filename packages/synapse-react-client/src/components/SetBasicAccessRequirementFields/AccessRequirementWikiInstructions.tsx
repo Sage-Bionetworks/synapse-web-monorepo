@@ -1,15 +1,14 @@
 import { Box, Typography } from '@mui/material'
 import { AccessRequirement, ObjectType } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import WikiMarkdownEditorButton from '../WikiMarkdownEditorButton'
 
 export type AccessRequirementWikiInstructionsProps = {
   accessRequirement: AccessRequirement
 }
 
-export const AccessRequirementWikiInstructions: React.FunctionComponent<
-  AccessRequirementWikiInstructionsProps
-> = (props: AccessRequirementWikiInstructionsProps) => {
+export function AccessRequirementWikiInstructions(
+  props: AccessRequirementWikiInstructionsProps,
+) {
   const { accessRequirement } = props
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box } from '@mui/material'
 import { FormControl } from 'react-bootstrap'
 import {
@@ -25,9 +25,7 @@ export type ForumThreadEditorProps = {
   | { isDialog: true; openDialog: boolean }
 )
 
-export const ForumThreadEditor: React.FunctionComponent<
-  ForumThreadEditorProps
-> = props => {
+export function ForumThreadEditor(props: ForumThreadEditorProps) {
   const {
     initialText,
     initialTitle,

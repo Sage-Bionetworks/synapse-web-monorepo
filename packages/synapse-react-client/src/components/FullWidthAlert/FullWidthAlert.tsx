@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import {
   Alert,
   AlertProps,
@@ -10,6 +9,7 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
+import { MouseEventHandler, ReactNode, useEffect } from 'react'
 
 export type AlertButtonConfig = {
   text: string
@@ -18,9 +18,7 @@ export type AlertButtonConfig = {
 } & (
   | // "onClick" or "href", but not both
   {
-      onClick?:
-        | ((e?: React.MouseEvent<HTMLElement, MouseEvent>) => void)
-        | (() => void)
+      onClick?: MouseEventHandler<HTMLButtonElement>
     }
   | { href?: string }
 )
@@ -31,14 +29,14 @@ export interface FullWidthAlertProps {
   variant?: FullWidthAlertVariant
   show?: boolean
   title?: string
-  description?: React.ReactNode
+  description?: ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
   tertiaryButtonConfig?: AlertButtonConfig
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
-  icon?: React.ReactNode
+  icon?: ReactNode
   sx?: AlertProps['sx']
   globalAlertSx?: AlertProps['sx']
 }

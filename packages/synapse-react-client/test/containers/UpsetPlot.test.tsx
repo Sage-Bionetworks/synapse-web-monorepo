@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import React from 'react'
 import UpsetPlot, { UpsetPlotProps } from '../../src/components/Plot/UpsetPlot'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../src/synapse-client'

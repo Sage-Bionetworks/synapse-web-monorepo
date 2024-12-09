@@ -3,9 +3,9 @@ import {
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
 import { Box, Collapse, SxProps, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 
-export type ComponentCollapseProps = React.PropsWithChildren<{
+export type ComponentCollapseProps = PropsWithChildren<{
   text: string
   defaultVisible?: boolean // default to false (collapsed)
 }>

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
+import { useEffect } from 'react'
 import FullWidthAlert from './FullWidthAlert'
 import { SynapseNavDrawer } from '../SynapseNavDrawer/SynapseNavDrawer'
 
@@ -61,7 +61,7 @@ export const SynapseNavDrawerIsShowing: Story = {
   ),
   decorators: [
     Story => {
-      React.useEffect(() => {
+      useEffect(() => {
         // SWC applies this class when SynapseNavDrawer is visible
         document.body.classList.add('SynapseNavDrawerIsShowing')
         return () => {

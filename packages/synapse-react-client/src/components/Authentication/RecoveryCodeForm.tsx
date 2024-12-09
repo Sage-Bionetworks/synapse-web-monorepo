@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import TextField from '../TextField/TextField'
 import { UseLoginReturn } from '../../utils/hooks'
@@ -13,7 +13,7 @@ type RecoveryCodeFormProps = {
 
 export default function RecoveryCodeForm(props: RecoveryCodeFormProps) {
   const { onSubmit, loginIsPending } = props
-  const [recoveryCode, setRecoveryCode] = React.useState('')
+  const [recoveryCode, setRecoveryCode] = useState('')
   return (
     <Box>
       <TextField

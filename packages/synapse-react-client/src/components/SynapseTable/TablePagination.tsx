@@ -1,4 +1,10 @@
-import React, { ComponentProps, forwardRef, Ref, useCallback } from 'react'
+import {
+  ChangeEvent,
+  ComponentProps,
+  forwardRef,
+  Ref,
+  useCallback,
+} from 'react'
 import {
   MenuItem,
   Pagination,
@@ -40,7 +46,7 @@ export const TablePagination = () => {
       setPageSize(maxRowsPerPage)
     }
   }
-  const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePage = (_event: ChangeEvent<unknown>, value: number) => {
     goToPage(value)
   }
 

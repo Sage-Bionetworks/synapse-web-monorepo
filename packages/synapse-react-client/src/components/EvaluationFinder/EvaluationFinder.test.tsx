@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import EvaluationFinder, { EvaluationFinderProps } from './EvaluationFinder'
 import { Evaluation, PaginatedResults } from '@sage-bionetworks/synapse-types'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useListState } from '../../utils/hooks/useListState'
 import { EvaluationRoundEditor } from './EvaluationRoundEditor'
 import { Button } from '@mui/material'
@@ -59,9 +59,9 @@ const fetchEvaluationList = (
 /**
  * Edits EvaluationsRounds for an Evaluation.
  */
-export const EvaluationRoundEditorList: React.FunctionComponent<
-  EvaluationRoundEditorListProps
-> = ({ evaluationId }: EvaluationRoundEditorListProps) => {
+export function EvaluationRoundEditorList({
+  evaluationId,
+}: EvaluationRoundEditorListProps) {
   const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 

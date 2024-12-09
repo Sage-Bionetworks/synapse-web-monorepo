@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import LightTooltip from '../styled/LightTooltip'
 

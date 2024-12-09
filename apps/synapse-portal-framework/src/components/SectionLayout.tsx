@@ -1,10 +1,10 @@
 import { Box, Container, ContainerProps } from '@mui/material'
-import React from 'react'
+import { PropsWithChildren, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { HelpPopover } from 'synapse-react-client'
 import { scrollToWithOffset } from '../utils'
 
-type SectionLayoutProps = React.PropsWithChildren<{
+type SectionLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
   title?: string
   centerTitle?: boolean
@@ -17,7 +17,7 @@ export function SectionLayout(props: SectionLayoutProps) {
     props
   const { hash } = useLocation()
 
-  const scrollToRef = React.useRef(null)
+  const scrollToRef = useRef(null)
   const scrollToJsx =
     title && hash && hash === `#${encodeURI(title)}` ? (
       <span ref={scrollToRef} />

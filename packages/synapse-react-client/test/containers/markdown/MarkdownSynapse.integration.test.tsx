@@ -1,5 +1,4 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
-import React from 'react'
 import * as MarkdownSynapseImageModule from '../../../src/components/Markdown/widget/MarkdownSynapseImage'
 import * as MarkdownPlotModule from '../../../src/components/Markdown/widget/MarkdownSynapsePlot'
 import MarkdownSynapse, {

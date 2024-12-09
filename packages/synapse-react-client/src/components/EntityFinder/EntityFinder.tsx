@@ -1,5 +1,5 @@
 import pluralize from 'pluralize'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Box,
   Button,
@@ -85,7 +85,7 @@ export type EntityFinderProps = {
   treeOnly?: boolean
 }
 
-export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
+export function EntityFinder({
   initialScope,
   projectId,
   initialContainer = null,
@@ -97,7 +97,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   selectedCopy = selectMultiple ? count => `Selected (${count})` : 'Selected',
   treeOnly = false,
-}: EntityFinderProps) => {
+}: EntityFinderProps) {
   const { accessToken } = useSynapseContext()
 
   const [searchActive, setSearchActive] = useState(false)

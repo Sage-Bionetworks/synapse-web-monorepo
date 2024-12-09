@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Alert, Button, Link, TextField } from '@mui/material'
 import { Link as RouterLink, Navigate } from 'react-router-dom'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
@@ -45,7 +45,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
     hideReset2FA,
   })
 
-  const handleChangePassword = (clickEvent: React.FormEvent<HTMLElement>) => {
+  const handleChangePassword = (clickEvent: FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
     if (newPassword !== confirmPassword) {
       displayToast('Passwords do not match.', 'danger')

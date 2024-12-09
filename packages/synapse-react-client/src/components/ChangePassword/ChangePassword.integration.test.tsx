@@ -1,4 +1,3 @@
-import React from 'react'
 import ChangePassword, {
   ChangePasswordProps,
   PASSWORD_CHANGED_SUCCESS_MESSAGE,

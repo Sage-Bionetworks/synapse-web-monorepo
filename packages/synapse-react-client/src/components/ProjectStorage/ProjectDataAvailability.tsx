@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, SxProps, Tooltip, Typography } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import { useProjectStorageUsage } from '../../synapse-queries'
@@ -13,9 +12,10 @@ export type ProjectDataAvailabilityProps = {
 }
 const usageBarWidth = 142 //px
 
-export const ProjectDataAvailability: React.FunctionComponent<
-  ProjectDataAvailabilityProps
-> = ({ projectId, sx }) => {
+export function ProjectDataAvailability({
+  projectId,
+  sx,
+}: ProjectDataAvailabilityProps) {
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
   const { data } = useProjectStorageUsage(projectId!, {

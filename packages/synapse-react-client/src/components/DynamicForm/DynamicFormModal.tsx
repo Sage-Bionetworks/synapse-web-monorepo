@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { Box } from '@mui/material'
 import WideButton from '../styled/WideButton'

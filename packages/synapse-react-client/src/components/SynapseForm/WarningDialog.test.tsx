@@ -1,4 +1,3 @@
-import React from 'react'
 import * as _ from 'lodash-es'
 
 import WarningDialog, { WarningDialogProps } from './WarningDialog'

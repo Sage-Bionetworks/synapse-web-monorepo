@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Collapse, Typography } from '@mui/material'
 import ExpandCollapseButton from '../../ExpandCollapseButton'
 import { JSONPrimitiveType } from './JSONRendererUtils'

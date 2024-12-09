@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 import { OAuthClientError } from './OAuthClientError'
-import React, { useCallback, useEffect } from 'react'
+import { PropsWithChildren, useCallback, useEffect } from 'react'
 import {
   ApplicationSessionManager,
   useFramebuster,
@@ -10,9 +10,7 @@ import { handleErrorRedirect } from './URLUtils'
 import UniversalCookies from 'universal-cookie'
 
 const cookies = new UniversalCookies()
-function AppInitializer(
-  props: React.PropsWithChildren<Record<string, unknown>>,
-) {
+function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   const [searchParams] = useSearchParams()
   const accountSitePrompted =
     cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==

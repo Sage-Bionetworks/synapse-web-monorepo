@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useGetApprovedSubmissionInfoInfinite } from '../../synapse-queries'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
@@ -11,9 +11,7 @@ export type IDUReportProps = {
   accessRequirementId: string
 }
 
-export const IDUReport: React.FunctionComponent<IDUReportProps> = (
-  props: IDUReportProps,
-) => {
+export function IDUReport(props: IDUReportProps) {
   const { accessRequirementId } = props
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
@@ -48,10 +46,10 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
         <div className="IDUReport">
           {allRows.map((item: SubmissionInfo) => {
             return (
-              <React.Fragment key={JSON.stringify(item)}>
+              <Fragment key={JSON.stringify(item)}>
                 <SubmissionInfoCard info={item} />
                 <hr />
-              </React.Fragment>
+              </Fragment>
             )
           })}
           {/* To trigger loading the next page */}

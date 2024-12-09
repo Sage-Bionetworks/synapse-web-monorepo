@@ -1,5 +1,6 @@
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
+
 import {
   SynapseConstants,
   SynapseUtilityFunctions,
@@ -10,7 +11,7 @@ import { useSourceApp } from './components/useSourceApp'
 import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
 import { getSearchParam } from './URLUtils'
 
-function AppInitializer(props: { children?: React.ReactNode }) {
+function AppInitializer(props: { children?: ReactNode }) {
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()

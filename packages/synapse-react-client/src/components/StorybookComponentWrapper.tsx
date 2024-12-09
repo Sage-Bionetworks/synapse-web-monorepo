@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
-import React, { Suspense, useEffect, useMemo } from 'react'
+import { ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import SynapseClient, {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
@@ -60,7 +60,7 @@ function overrideEndpoint(stack: SynapseStack) {
  * @returns
  */
 export function StorybookComponentWrapper(props: {
-  children: React.ReactNode
+  children: ReactNode
   /* This will match the `globalTypes` object in preview.tsx. */
   storybookContext: {
     args: {
@@ -84,9 +84,7 @@ export function StorybookComponentWrapper(props: {
     overrideEndpoint(currentStack)
   }, [currentStack])
 
-  const [accessToken, setAccessToken] = React.useState<string | undefined>(
-    undefined,
-  )
+  const [accessToken, setAccessToken] = useState<string | undefined>(undefined)
 
   useDetectSSOCode()
 

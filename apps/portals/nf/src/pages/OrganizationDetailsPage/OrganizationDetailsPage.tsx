@@ -5,7 +5,6 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import React from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { fundersSql } from 'src/config/resources'
 import { organizationCardSchema } from 'src/config/synapseConfigs/organizations'

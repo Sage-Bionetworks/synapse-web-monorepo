@@ -1,4 +1,3 @@
-import React from 'react'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants, SynapseComponents } from 'synapse-react-client'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -7,9 +6,7 @@ type NavUserLinkProps = {
   userProfile: UserProfile | undefined
 }
 
-const NavUserLink: React.FunctionComponent<NavUserLinkProps> = ({
-  userProfile,
-}) => {
+function NavUserLink({ userProfile }: NavUserLinkProps) {
   return (
     <>
       {/* this div is an overlay to capture click events (the UserCard Avatar stops propogation) */}

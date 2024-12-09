@@ -1,4 +1,3 @@
-import React from 'react'
 import { act, render } from '@testing-library/react'
 import { server } from '../../mocks/msw/server'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'

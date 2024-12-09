@@ -1,6 +1,6 @@
 import { Button, Paper } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
 import { getAllAccessRequirementAclHandlers } from '../../mocks/msw/handlers/accessRequirementAclHandlers'

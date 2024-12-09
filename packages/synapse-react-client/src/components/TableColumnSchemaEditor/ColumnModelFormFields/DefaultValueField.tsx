@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import {
   FormControl,
@@ -25,7 +25,7 @@ export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   disabled?: boolean
   TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
   SelectProps?: Omit<SelectProps, 'variant' | 'value' | 'onChange' | 'disabled'>
-  selectFormHelperText?: React.ReactNode
+  selectFormHelperText?: ReactNode
 }
 
 function DefaultValueBooleanField(props: DefaultValueFieldProps<string>) {

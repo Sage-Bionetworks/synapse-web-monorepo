@@ -1,4 +1,3 @@
-import React from 'react'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { Button } from '@mui/material'
 import { RowSelectionUI } from './RowSelectionUI'

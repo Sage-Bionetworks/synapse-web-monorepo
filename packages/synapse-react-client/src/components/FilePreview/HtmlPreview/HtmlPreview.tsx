@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react'
+import { useMemo, useEffect, useState, useRef } from 'react'
 import xss from 'xss'
 import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../synapse-queries/team/useTeamMembers'

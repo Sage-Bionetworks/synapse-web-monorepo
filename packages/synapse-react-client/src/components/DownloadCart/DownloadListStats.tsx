@@ -1,4 +1,3 @@
-import React from 'react'
 import DownloadDetails from './DownloadDetails'
 
 export type DownloadListStatsProps = {

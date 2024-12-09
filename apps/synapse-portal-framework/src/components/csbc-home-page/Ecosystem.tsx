@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { SynapseComponents } from 'synapse-react-client'
 
 type Config = {
@@ -13,7 +13,7 @@ export type EcosystemProps = {
 }
 
 const Ecosystem = (props: EcosystemProps) => {
-  const [index, setIndex] = React.useState(0)
+  const [index, setIndex] = useState(0)
   const { config } = props
   return (
     <div className="Ecosystem">

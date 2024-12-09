@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import {
   QueryClient,
   QueryClientConfig,
@@ -21,7 +21,7 @@ export const defaultQueryClientConfig = {
 
 const defaultQueryClient = new QueryClient(defaultQueryClientConfig)
 
-export type FullContextProviderProps = React.PropsWithChildren<{
+export type FullContextProviderProps = PropsWithChildren<{
   synapseContext: Partial<SynapseContextType>
   queryClient?: QueryClient
   theme?: ThemeOptions

@@ -2,7 +2,7 @@ import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { FeaturedToolCard } from './FeaturedToolCard'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -39,9 +39,7 @@ type ToolData = {
  * Display a set of FeaturedToolCards (driven by a Table/View). Driven by the following annotations/column names:
  * 'id', 'name', 'type', and 'description'.
  */
-export const FeaturedToolsList: React.FunctionComponent<
-  FeaturedToolsListProps
-> = ({
+export function FeaturedToolsList({
   entityId,
   toolDetailPageURL,
   toolURLColumnName,
@@ -51,7 +49,7 @@ export const FeaturedToolsList: React.FunctionComponent<
   typeColumnName = 'type',
   dateColumnName,
   filterClause,
-}) => {
+}: FeaturedToolsListProps) {
   const sql = `SELECT * FROM ${entityId} ${filterClause} LIMIT 3`
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

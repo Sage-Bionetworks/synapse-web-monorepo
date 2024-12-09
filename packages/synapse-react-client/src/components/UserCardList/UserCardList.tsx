@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import { UserProfileList } from '../../synapse-client/SynapseClient'
 import { MEDIUM_USER_CARD, UserCardSize } from '../../utils/SynapseConstants'
@@ -22,7 +22,7 @@ export type UserCardListProps = {
 export type UserCardListState = {
   userProfileMap: Record<string, UserProfile>
 }
-export class UserCardList extends React.Component<
+export class UserCardList extends Component<
   UserCardListProps,
   UserCardListState
 > {

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FormControl,
   FormControlLabel,
@@ -7,6 +6,7 @@ import {
   RadioGroup,
   Typography,
 } from '@mui/material'
+import { ChangeEvent, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { useCreateLockAccessRequirement } from '../../../synapse-queries'
 import { displayToast } from '../../ToastMessage/ToastMessage'
@@ -33,7 +33,7 @@ export default function ImposeRestrictionDialog(
   )
 
   const { entityId, open, onClose } = props
-  const [isSensitiveHumanData, setIsSensitiveHumanData] = React.useState<
+  const [isSensitiveHumanData, setIsSensitiveHumanData] = useState<
     boolean | null
   >(null)
 
@@ -66,7 +66,7 @@ export default function ImposeRestrictionDialog(
     }
   }
 
-  function radioOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+  function radioOnChangeHandler(event: ChangeEvent<HTMLInputElement>) {
     setIsSensitiveHumanData((event.target as HTMLInputElement).value === 'true')
   }
 

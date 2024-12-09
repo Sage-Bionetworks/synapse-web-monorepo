@@ -1,4 +1,4 @@
-import React from 'react'
+import { ComponentType, SVGProps } from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as DataIconSvg } from './assets/data-icon.svg'
 import { ReactComponent as InsightIconSvg } from './assets/insight-icon.svg'
@@ -6,7 +6,7 @@ import { ReactComponent as MethodsIconSvg } from './assets/methods-icon.svg'
 import { ReactComponent as PeopleIconSvg } from './assets/people-icon.svg'
 
 type LinkProps = {
-  icon: React.FC<React.SVGProps<SVGSVGElement>>
+  icon: ComponentType<SVGProps<SVGSVGElement>>
   description: string
   title: string
   linkText: string

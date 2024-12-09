@@ -1,4 +1,3 @@
-import React from 'react'
 import PaperAirPlane from '../../assets/PaperAirPlane.svg?url'
 import RocketShip from '../../assets/RocketShip.svg?url'
 import Arrow from '../../assets/Arrow.svg?url'
@@ -32,9 +31,7 @@ interface VerificationProgressProps {
   signFont: string
 }
 
-export const VerificationProgress: React.FC<VerificationProgressProps> = (
-  props: VerificationProgressProps,
-) => {
+export function VerificationProgress(props: VerificationProgressProps) {
   return (
     <div className="progress-container">
       <div
@@ -92,9 +89,9 @@ interface AccountVerificationProgressProps {
   step: ValidationWizardStep
 }
 
-export const AccountVerificationProgess: React.FC<
-  AccountVerificationProgressProps
-> = ({ step }) => {
+export function AccountVerificationProgess({
+  step,
+}: AccountVerificationProgressProps) {
   return (
     <div className="progress-indicator">
       <div style={{ textAlign: 'center' }}>

@@ -1,7 +1,7 @@
 import BrainhubCarousel, {
   CarouselProps as BrainhubCarouselProps,
 } from '@brainhubeu/react-carousel'
-import React, { useState } from 'react'
+import { Children, cloneElement, ReactElement, useState } from 'react'
 import Arrow from '../../assets/icons/Arrow'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import { SizeMe } from 'react-sizeme'
@@ -13,7 +13,7 @@ function mod(a: number, b: number) {
 }
 
 export type CarouselProps = {
-  children: React.ReactElement[]
+  children: ReactElement[]
   isLoading?: boolean
 }
 
@@ -44,14 +44,11 @@ const MobileProps: BrainhubCarouselProps = {
  * Responsive carousel. The component will display a loading spinner if no children are passed via props.
  * Note that the child components must accept a className prop, or its class will be overriden
  */
-export const Carousel: React.FunctionComponent<CarouselProps> = ({
-  children,
-  isLoading = false,
-}) => {
+export function Carousel({ children, isLoading = false }: CarouselProps) {
   const showDesktop = useShowDesktop()
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  const styledChildren = React.Children.map(children, (child, index) => {
+  const styledChildren = Children.map(children, (child, index) => {
     // react-carousel renders a flexbox that translates the visible portion to achieve the carousel effect.
     // To create the 'infinite' effect, duplicates are rendered, and the translation sometimes 'jumps' to the previous identical part of the flex container
     // Styling just the 'active' card (and not duplicates) causes CSS transitions to appear to run twice when the translation jumps
@@ -62,7 +59,7 @@ export const Carousel: React.FunctionComponent<CarouselProps> = ({
     } else {
       childClass += ' SRC-Carousel__UnselectedCard'
     }
-    return React.cloneElement(child, {
+    return cloneElement(child, {
       className: childClass,
       role: 'listitem',
     })

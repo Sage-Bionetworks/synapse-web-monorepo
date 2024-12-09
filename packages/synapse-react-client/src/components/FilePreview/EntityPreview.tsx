@@ -1,4 +1,3 @@
-import React from 'react'
 import { useResolveLinkEntity } from '../../utils/functions/ResolveLinkEntity'
 import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import {

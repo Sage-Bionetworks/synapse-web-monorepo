@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { PropsWithChildren, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { hasResettableFilters as hasResettableFiltersUtil } from '../../utils/functions/queryUtils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -24,7 +24,7 @@ import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
 import useComputeRowSelectionPrimaryKey from './useComputeRowSelectionPrimaryKey'
 import useHasFacetedSelectColumn from './useHasFacetedSelectColumn'
 
-export type QueryWrapperProps = React.PropsWithChildren<{
+export type QueryWrapperProps = PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean

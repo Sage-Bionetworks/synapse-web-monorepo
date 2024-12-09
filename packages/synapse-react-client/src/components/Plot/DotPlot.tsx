@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem, PlotStyle, Dictionary } from './types'
 import _, { countBy } from 'lodash-es'
+import Plotly from 'plotly.js-basic-dist'
+import { CSSProperties } from 'react'
+import createPlotlyComponent from 'react-plotly.js/factory'
+import { Dictionary, GraphItem, PlotStyle } from './types'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -11,7 +11,7 @@ export type DotPlotProps = {
   layoutConfig: Partial<Plotly.Layout>
   optionsConfig: Partial<Plotly.Config>
   label?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
   id: string
   isLegend?: boolean
   isXAxis?: boolean
@@ -226,12 +226,12 @@ const DEFAULT_DOTPLOT_PLOTSTYLE: PlotStyle = {
   markerSize: 9,
   backgroundColor: 'transparent',
 }
-const DEFAULT_DOTPLOT_STYLE: React.CSSProperties = {
+const DEFAULT_DOTPLOT_STYLE: CSSProperties = {
   width: '100%',
   height: '100%',
 }
 
-const DotPlot: FunctionComponent<DotPlotProps> = ({
+function DotPlot({
   plotData,
   optionsConfig,
   layoutConfig,
@@ -244,7 +244,7 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
   onClick,
   isLegend = false,
   isXAxis = false,
-}: DotPlotProps) => {
+}: DotPlotProps) {
   const pointsTypes = label ? [label] : undefined
 
   return (

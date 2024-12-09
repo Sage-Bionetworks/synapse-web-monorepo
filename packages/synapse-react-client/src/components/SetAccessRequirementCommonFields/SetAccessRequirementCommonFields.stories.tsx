@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   SetAccessRequirementCommonFields,
   SetAccessRequirementCommonFieldsHandle,

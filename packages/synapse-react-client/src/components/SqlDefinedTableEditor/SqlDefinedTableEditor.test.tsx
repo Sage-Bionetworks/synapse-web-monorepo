@@ -1,5 +1,4 @@
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import React from 'react'
 import SqlDefinedTableEditor, {
   SqlDefinedTableEditorProps,
 } from './SqlDefinedTableEditor'

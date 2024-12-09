@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
 import {
   Button,
   ButtonGroup,
@@ -38,14 +38,14 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     onButtonClick,
     ...rest
   } = props
-  const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false)
+  const anchorRef = useRef<HTMLDivElement>(null)
   const [selectedIndexLocal, setSelectedIndexLocal] = useState(
     selectedIndex ?? 0,
   )
 
   const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    event: ReactMouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
     if (setSelectedIndex) {
@@ -72,7 +72,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <ButtonGroup
         variant={variant}
         ref={anchorRef}
@@ -139,6 +139,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
           </Grow>
         )}
       </Popper>
-    </React.Fragment>
+    </>
   )
 }

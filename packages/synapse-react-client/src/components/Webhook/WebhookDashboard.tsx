@@ -20,7 +20,7 @@ import {
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   useGetWebhooksInfinite,
   useResendVerificationCode,

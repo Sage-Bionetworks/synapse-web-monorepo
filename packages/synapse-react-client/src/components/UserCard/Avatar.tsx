@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { CSSProperties, useRef } from 'react'
 import { getColor } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
@@ -19,14 +19,14 @@ export type AvatarProps = {
   className?: string
 }
 
-export const Avatar: React.FunctionComponent<AvatarProps> = ({
+export function Avatar({
   userProfile,
   avatarSize = 'LARGE',
   imageURL,
   showCardOnHover = false,
   isLoadingAvatar = false,
   className,
-}) => {
+}: AvatarProps) {
   const target = useRef(null)
 
   const mediumUserCard = (
@@ -72,7 +72,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
 
   const hasProfileImage = !!imageURL
 
-  const conditionalStyles: React.CSSProperties = hasProfileImage
+  const conditionalStyles: CSSProperties = hasProfileImage
     ? {
         backgroundImage: `url(${imageURL})`,
       }

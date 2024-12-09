@@ -1,9 +1,9 @@
-import React from 'react'
 import { SxProps } from '@mui/material'
 import { ComplexMenu } from '../../../menu/ComplexMenu'
 import IconSvg, { IconName } from '../../../IconSvg/IconSvg'
 import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
 import { IconSvgButtonProps } from '../../../IconSvgButton'
+import { MouseEvent } from 'react'
 
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
@@ -19,7 +19,7 @@ export type ActionConfiguration = {
   text: string
   disabled?: boolean
   tooltipText?: string
-  onClick?: (e: React.MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
   href?: string
 }
 

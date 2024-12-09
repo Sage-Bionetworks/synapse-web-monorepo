@@ -1,4 +1,3 @@
-import React from 'react'
 import IconPlus from '../../../assets/icons/IconPlus'
 import IconMinus from '../../../assets/icons/IconMinus'
 import { IconButton } from '@mui/material'

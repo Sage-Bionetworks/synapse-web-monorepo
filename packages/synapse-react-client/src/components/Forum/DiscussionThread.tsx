@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetRepliesInfinite } from '../../synapse-queries/forum/useReply'
 import {

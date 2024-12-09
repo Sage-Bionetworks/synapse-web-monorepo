@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, IconButton } from '@mui/material'
+import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from './ToastMessage/ToastMessage'
 import { BoxProps } from '@mui/material'
 import IconSvg from './IconSvg'
@@ -9,15 +9,16 @@ export type CopyToClipboardIconProps = BoxProps & {
   size?: number
 }
 
-export const CopyToClipboardIcon: React.FunctionComponent<
-  CopyToClipboardIconProps
-> = ({ value, size = 16, ...props }: CopyToClipboardIconProps) => {
-  const [showModal, setShowModal] = React.useState(false)
-  const ref = React.createRef<HTMLDivElement>()
+export function CopyToClipboardIcon({
+  value,
+  size = 16,
+  ...props
+}: CopyToClipboardIconProps) {
+  const [showModal, setShowModal] = useState(false)
+  const ref = createRef<HTMLDivElement>()
 
   const copyToClipboard =
-    (ref: React.RefObject<HTMLElement>, value: string) =>
-    (event: React.SyntheticEvent) => {
+    (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
       event.preventDefault()
 
       // use the Clipboard API

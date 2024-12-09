@@ -1,6 +1,6 @@
 import { SynapseConstants } from '../../utils'
 import SynapseClient from '../../synapse-client'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import {
   QueryBundleRequest,
@@ -16,9 +16,7 @@ export type TableFeedCardsProps = {
   tableEntityId: string
 }
 
-const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
-  tableEntityId,
-}) => {
+function TableFeedCards({ tableEntityId }: TableFeedCardsProps) {
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [itemCountShowing, setItemCountShowing] = useState<number>(3)

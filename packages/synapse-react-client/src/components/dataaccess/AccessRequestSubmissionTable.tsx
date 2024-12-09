@@ -1,6 +1,6 @@
 import { upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import SortIcon from '../../assets/icons/Sort'
@@ -31,9 +31,7 @@ export type AccessRequestSubmissionTableProps = {
   reviewerFilterType?: SubmissionReviewerFilterType
 }
 
-export const AccessRequestSubmissionTable: React.FunctionComponent<
-  AccessRequestSubmissionTableProps
-> = ({
+export function AccessRequestSubmissionTable({
   showSubmitter,
   showStatus,
   showRequesters,
@@ -42,7 +40,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   reviewerId,
   submissionState,
   reviewerFilterType,
-}) => {
+}: AccessRequestSubmissionTableProps) {
   const [sort, setSort] = useState<SubmissionSearchSort>({
     field: SubmissionSortField.CREATED_ON,
     direction: Direction.DESC,

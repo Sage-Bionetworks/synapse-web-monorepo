@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import {
   Button,
   FormControlLabel,
@@ -10,15 +10,15 @@ import {
 import { displayToast } from '../src/components/ToastMessage'
 
 export const ToastDemo = () => {
-  const [variant, setVariant] = React.useState<
+  const [variant, setVariant] = useState<
     'info' | 'success' | 'warning' | 'danger'
   >('info')
 
-  const [title, setTitle] = React.useState('')
-  const [message, setMessage] = React.useState('')
-  const [autoClose, setAutoClose] = React.useState(0)
-  const [buttonText, setButtonText] = React.useState('')
-  const [linkText, setLinkText] = React.useState('')
+  const [title, setTitle] = useState('')
+  const [message, setMessage] = useState('')
+  const [autoClose, setAutoClose] = useState(0)
+  const [buttonText, setButtonText] = useState('')
+  const [linkText, setLinkText] = useState('')
 
   function fireToast() {
     const primaryButtonConfig =

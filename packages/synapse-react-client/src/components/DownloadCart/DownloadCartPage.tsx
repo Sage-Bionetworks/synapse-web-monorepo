@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect, useState } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
@@ -27,9 +26,7 @@ const cliDownloadCode = `synapse get-download-list`
 /**
  * Show the Download Cart page.
  */
-export const DownloadCartPage: React.FunctionComponent<
-  DownloadListActionsRequiredProps
-> = props => {
+export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =

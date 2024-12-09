@@ -9,7 +9,7 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { Button, Tooltip } from '@mui/material'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { displayToast } from '../../ToastMessage'

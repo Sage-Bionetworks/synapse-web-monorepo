@@ -1,6 +1,5 @@
 import { ErrorTwoTone } from '@mui/icons-material'
 import { Skeleton, Stack, Typography } from '@mui/material'
-import React from 'react'
 import { useGetTeam } from '../../synapse-queries'
 import TeamBadge from '../TeamBadge'
 
@@ -8,9 +7,7 @@ export type TeamBadgeOrErrorProps = {
   teamId: string
 }
 
-export const TeamBadgeOrError: React.FunctionComponent<
-  TeamBadgeOrErrorProps
-> = (props: TeamBadgeOrErrorProps) => {
+export function TeamBadgeOrError(props: TeamBadgeOrErrorProps) {
   const { teamId } = props
 
   const { data: team, isLoading, error } = useGetTeam(teamId)

@@ -1,5 +1,4 @@
 import { ExplorePageRoute } from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapperProps'
-import React from 'react'
 import { QueryWrapperPlotNav } from 'synapse-react-client'
 import {
   datasets,

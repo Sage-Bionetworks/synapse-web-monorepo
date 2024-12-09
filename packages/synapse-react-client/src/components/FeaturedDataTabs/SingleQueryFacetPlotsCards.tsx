@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -36,9 +35,7 @@ function getQueryRequest(sql: string): QueryBundleRequest {
   }
 }
 
-const SingleQueryFacetPlotsCards: React.FunctionComponent<
-  SingleQueryFacetPlotsCardsProps
-> = props => {
+function SingleQueryFacetPlotsCards(props: SingleQueryFacetPlotsCardsProps) {
   const { sql, facetsToPlot, rgbIndex, columnAliases, unitDescription } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (

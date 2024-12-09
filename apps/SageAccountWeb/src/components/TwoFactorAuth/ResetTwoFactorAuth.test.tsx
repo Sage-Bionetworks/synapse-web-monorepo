@@ -1,4 +1,3 @@
-import React from 'react'
 import { ResetTwoFactorAuth } from './ResetTwoFactorAuth'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'

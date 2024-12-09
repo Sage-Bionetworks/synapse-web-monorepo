@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { SortDirection } from '@sage-bionetworks/synapse-types'
@@ -27,9 +27,7 @@ export const Control = ({
   )
 }
 
-const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
-  sortConfig,
-}) => {
+function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
   const queryContext = useQueryContext()
   const { executeQueryRequest } = queryContext

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // importing FunctionComponent
+import { useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import {
   ElementWithTooltip,

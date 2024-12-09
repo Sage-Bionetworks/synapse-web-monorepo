@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
 import { Paper } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const meta: Meta = {
   title: 'Synapse/SubmissionView Scope Editor',

@@ -1,4 +1,3 @@
-import React from 'react'
 import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { Box } from '@mui/material'
 

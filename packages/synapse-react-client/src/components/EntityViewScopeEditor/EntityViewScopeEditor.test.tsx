@@ -1,4 +1,3 @@
-import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import EntityViewScopeEditor, {
   EntityViewScopeEditorProps,

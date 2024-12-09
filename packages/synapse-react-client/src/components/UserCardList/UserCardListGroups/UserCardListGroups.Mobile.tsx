@@ -1,4 +1,3 @@
-import React from 'react'
 import UserCardListRotate from '../UserCardListRotate'
 import { FacetColumnValuesRequest } from '@sage-bionetworks/synapse-types'
 import ExpandableContent from '../../home_page/ExpandableContent'

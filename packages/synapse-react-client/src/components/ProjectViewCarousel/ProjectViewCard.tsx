@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, Button, Paper, Stack, Typography } from '@mui/material'
+import { HTMLAttributes, ReactNode } from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type ProjectCardProps = {
@@ -7,8 +7,8 @@ export type ProjectCardProps = {
   projectName: string
   projectDescription: string
   synId: string
-  image?: React.ReactNode
-} & React.HTMLAttributes<HTMLDivElement>
+  image?: ReactNode
+} & HTMLAttributes<HTMLDivElement>
 
 export function ProjectViewCard(props: ProjectCardProps) {
   const { projectName, projectDescription, synId, image, ...domProps } = props

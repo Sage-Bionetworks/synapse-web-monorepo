@@ -1,7 +1,7 @@
 import { initialize } from '@googlemaps/jest-mocks'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React, { MouseEventHandler } from 'react'
+import { ComponentProps, MouseEventHandler } from 'react'
 import { GeoData } from '../../synapse-client'
 import GoogleMap, { MapProps } from './GoogleMap'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -22,13 +22,13 @@ import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
 
 /** Mock the Google Maps library */
 jest.mock('@react-google-maps/api', () => ({
-  LoadScript: ({ children }: React.ComponentProps<typeof LoadScript>) => (
+  LoadScript: ({ children }: ComponentProps<typeof LoadScript>) => (
     <div data-testid="LoadScript">{children}</div>
   ),
-  GoogleMap: ({ children }: React.ComponentProps<typeof ReactGoogleMap>) => (
+  GoogleMap: ({ children }: ComponentProps<typeof ReactGoogleMap>) => (
     <div data-testid="GoogleMap">{children}</div>
   ),
-  Marker: ({ onClick, children }: React.ComponentProps<typeof Marker>) => (
+  Marker: ({ onClick, children }: ComponentProps<typeof Marker>) => (
     <div
       data-testid="Marker"
       onClick={onClick as unknown as MouseEventHandler<HTMLDivElement>}
@@ -36,7 +36,7 @@ jest.mock('@react-google-maps/api', () => ({
       {children}
     </div>
   ),
-  InfoWindow: ({ children }: React.ComponentProps<typeof InfoWindow>) => (
+  InfoWindow: ({ children }: ComponentProps<typeof InfoWindow>) => (
     <div data-testid="InfoWindow">{children}</div>
   ),
 }))

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -11,9 +10,7 @@ export type SubmissionInfoCardProps = {
   info: SubmissionInfo
 }
 
-export const SubmissionInfoCard: React.FunctionComponent<
-  SubmissionInfoCardProps
-> = ({ info }: SubmissionInfoCardProps) => {
+export function SubmissionInfoCard({ info }: SubmissionInfoCardProps) {
   return (
     <>
       {info && (
@@ -42,7 +39,7 @@ export const SubmissionInfoCard: React.FunctionComponent<
   )
 }
 
-export const LoadingSubmissionInfoCard: React.FunctionComponent = () => {
+export function LoadingSubmissionInfoCard() {
   return (
     <p className="SubmissionInfoCard">
       <SkeletonTable numCols={1} numRows={4} />

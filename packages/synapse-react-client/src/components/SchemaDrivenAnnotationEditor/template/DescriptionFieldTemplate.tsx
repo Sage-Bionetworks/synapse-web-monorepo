@@ -1,5 +1,4 @@
 import { DescriptionFieldProps } from '@rjsf/utils'
-import React from 'react'
 import { Typography } from '@mui/material'
 import FieldDescriptionTable from './FieldDescriptionTable'
 

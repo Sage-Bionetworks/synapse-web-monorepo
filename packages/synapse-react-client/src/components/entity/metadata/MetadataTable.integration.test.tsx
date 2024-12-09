@@ -4,7 +4,6 @@ import {
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import mockProjectEntityData from '../../../mocks/entity/mockProject'
 import { mockFileHandle } from '../../../mocks/mock_file_handle'

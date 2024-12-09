@@ -7,7 +7,6 @@ import {
   Tooltip,
 } from '@mui/material'
 import { ColumnType, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   getFormDataValueAsNumber,
   isFormDataValueSmallerThanRecommendedValue,

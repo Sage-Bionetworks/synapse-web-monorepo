@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, BoxProps, Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 
@@ -31,11 +30,17 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   },
 }))
 
-export const LeftRightPanel: React.FC<{
+type LeftRightPanelProps = {
   leftContent: JSX.Element
   rightContent: JSX.Element
   className?: string
-}> = ({ leftContent, rightContent, className }) => {
+}
+
+export function LeftRightPanel({
+  leftContent,
+  rightContent,
+  className,
+}: LeftRightPanelProps) {
   return (
     <StyledOuterContainer className={className}>
       <StyledInnerContainer>

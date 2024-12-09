@@ -1,4 +1,3 @@
-import React from 'react'
 import { Chip, Typography } from '@mui/material'
 import {
   SearchQuery,
@@ -28,9 +27,7 @@ export type SynapseSearchChipsProps = {
   gotoPlace: (href: string) => void
 }
 
-export const SynapseSearchChips: React.FunctionComponent<
-  SynapseSearchChipsProps
-> = ({ gotoPlace }) => {
+export function SynapseSearchChips({ gotoPlace }: SynapseSearchChipsProps) {
   return (
     <>
       {searchValues.map(value => {

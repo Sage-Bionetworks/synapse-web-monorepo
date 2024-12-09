@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react'
 
 export type BreadcrumbItem = {
   name: string
@@ -11,10 +11,7 @@ export type BreadcrumbsProps = {
   maxItemCount?: number
 }
 
-export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
-  items,
-  maxItemCount = 4,
-}: BreadcrumbsProps) => {
+export function Breadcrumbs({ items, maxItemCount = 4 }: BreadcrumbsProps) {
   const truncateBreadcrumbs = items.length > maxItemCount
   if (truncateBreadcrumbs) {
     items = items.slice(-maxItemCount)
@@ -29,7 +26,7 @@ export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
         </>
       )}
       {items.map((item, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           <button
             className={`BreadcrumbItem ${item.isCurrent ? 'Current' : ''}`}
             key={index}
@@ -43,7 +40,7 @@ export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
             {item.name}
           </button>
           {index !== items.length - 1 && <span>&gt;</span>}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   )

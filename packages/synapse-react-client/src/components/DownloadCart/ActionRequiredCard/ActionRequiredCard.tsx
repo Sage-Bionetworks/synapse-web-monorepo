@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Paper,
@@ -7,14 +6,15 @@ import {
   styled,
   Typography,
 } from '@mui/material'
+import { ReactNode } from 'react'
 import Icon from '../../Icon'
 import { StyledComponent } from '@emotion/styled'
 
 export type ActionRequiredCardProps =
   | {
-      title: React.ReactNode
-      description: React.ReactNode
-      actionNode: React.ReactNode
+      title: ReactNode
+      description: ReactNode
+      actionNode: ReactNode
       iconType: string
       count?: number
       isLoading?: false

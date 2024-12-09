@@ -3,7 +3,6 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   CardContainerLogic,
   ErrorPage,

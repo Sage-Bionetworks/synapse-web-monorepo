@@ -1,5 +1,3 @@
-import React from 'react'
-
 export type SearchProps = {
   size?: number
   fill?: string

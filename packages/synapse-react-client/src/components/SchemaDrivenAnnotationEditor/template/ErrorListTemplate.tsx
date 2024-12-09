@@ -7,7 +7,6 @@ import {
   StrictRJSFSchema,
 } from '@rjsf/utils'
 import { getFriendlyPropertyName } from '../AnnotationEditorUtils'
-import React from 'react'
 
 export default function ErrorListTemplate<
   T = any,

@@ -1,7 +1,6 @@
 import { Collapse as MockCollapse } from '@mui/material'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import {
   ColumnModel,
   ColumnTypeEnum,

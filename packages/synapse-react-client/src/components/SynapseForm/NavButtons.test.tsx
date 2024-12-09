@@ -1,7 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as _ from 'lodash-es'
-import React from 'react'
 import {
   NavButtons,
   NavButtonsProps,

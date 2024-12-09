@@ -1,6 +1,6 @@
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 
 export type HeaderCardProps = {
@@ -17,7 +17,7 @@ export type HeaderCardProps = {
   icon: JSX.Element
 }
 
-const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
+function HeaderCard({
   type,
   title,
   subTitle = '',
@@ -29,7 +29,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   href,
   target,
   icon,
-}) => {
+}: HeaderCardProps) {
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',

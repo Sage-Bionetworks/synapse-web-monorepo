@@ -1,5 +1,4 @@
 import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import FullWidthAlert from '../FullWidthAlert'

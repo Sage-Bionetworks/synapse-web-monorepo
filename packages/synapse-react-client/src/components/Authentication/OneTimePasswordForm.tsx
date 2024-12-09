@@ -1,4 +1,3 @@
-import React from 'react'
 import TOTPForm from './TOTPForm'
 import { Alert, Button, Link, Typography } from '@mui/material'
 import RecoveryCodeForm from './RecoveryCodeForm'

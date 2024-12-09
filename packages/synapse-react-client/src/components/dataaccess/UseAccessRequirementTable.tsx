@@ -27,7 +27,7 @@ import {
   Updater,
   useReactTable,
 } from '@tanstack/react-table'
-import React, { useCallback, useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { Link, Typography } from '@mui/material'
@@ -111,7 +111,7 @@ const columns = [
     cell: ({ getValue }) => (
       <>
         {getValue().map(projectId => (
-          <React.Fragment key={projectId}>
+          <Fragment key={projectId}>
             <EntityLink entity={projectId} />{' '}
             <Typography
               component={'span'}
@@ -121,7 +121,7 @@ const columns = [
               ({projectId})
             </Typography>
             <br />
-          </React.Fragment>
+          </Fragment>
         ))}
       </>
     ),

@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg from './IconSvg/IconSvg'
 import { useSynapseContext } from '../utils/context/SynapseContext'
 import { displayToast } from './ToastMessage/ToastMessage'
@@ -11,9 +10,7 @@ export type AddToDownloadListV2Props = {
   entityVersionNumber?: number
 }
 
-const AddToDownloadListV2: React.FunctionComponent<
-  AddToDownloadListV2Props
-> = props => {
+function AddToDownloadListV2(props: AddToDownloadListV2Props) {
   const { entityId, entityVersionNumber } = props
   const { accessToken } = useSynapseContext()
   const isLoggedIn = !!accessToken
