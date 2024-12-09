@@ -5,4 +5,5 @@ module.exports = {
     ['@babel/preset-typescript', { allowDeclareFields: true }],
     '@babel/preset-react',
   ],
+  plugins: [['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]],
 }
