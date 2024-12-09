@@ -51,7 +51,7 @@ export const EntityFileBrowser: React.FunctionComponent<
     [setBreadcrumbsProps],
   )
   const projectId = entityBundle?.path.path[1].id ?? undefined
-  const emptyMap = Map<string, number>()
+  const emptyMap = Map<string, Reference>()
   const types: EntityType[] = [
     EntityType.FOLDER,
     EntityType.FILE,
@@ -66,7 +66,7 @@ export const EntityFileBrowser: React.FunctionComponent<
     },
   }
   return (
-    <div className="EntityFinderReflexContainer">
+    <div className="EntityFileBrowser EntityFinderReflexContainer">
       <SizeMe>
         {({ size }) => (
           <ReflexContainer
