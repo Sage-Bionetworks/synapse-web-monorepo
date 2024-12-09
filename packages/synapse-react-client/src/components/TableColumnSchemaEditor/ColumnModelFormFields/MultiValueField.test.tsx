@@ -19,9 +19,7 @@ jest.mock('../TableColumnSchemaEditorUtils', () => {
 jest.mock('../../JSONArrayEditor/JSONArrayEditorModal', () => {
   return {
     __esModule: true,
-    default: jest
-      .fn()
-      .mockReturnValue(<div data-testid={'JSONArrayEditorModal'} />),
+    default: jest.fn(),
   }
 })
 
@@ -29,6 +27,9 @@ const mockGetJsonSchemaDefinition = jest.mocked(
   getJsonSchemaItemDefinitionForColumnType,
 )
 const mockJsonArrayEditorModal = jest.mocked(JSONArrayEditorModal)
+mockJsonArrayEditorModal.mockImplementation(() => (
+  <div data-testid={'JSONArrayEditorModal'} />
+))
 
 function renderComponent(props: MultiValueFieldProps) {
   return render(<MultiValueField {...props} />, {
