@@ -259,6 +259,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 setSearchActive(!!trimmedInput)
                 if (trimmedInput) {
                   setSearchTerms(trimmedInput.split(/\s+/))
+                  setCurrentTab(EntityFinderTab.BROWSE)
                 }
               }
             }}
