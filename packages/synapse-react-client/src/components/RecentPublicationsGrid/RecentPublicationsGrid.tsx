@@ -1,13 +1,6 @@
 import React from 'react'
-import {
-  Grid,
-  Typography,
-  Button,
-  Box,
-  Skeleton,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material'
+import { Typography, Button, Box, Skeleton } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -18,7 +11,7 @@ import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
 
 export type RecentPublicationsGridProps = {
-  sqlString: string
+  sql: string
   buttonLink?: string
   buttonLinkText?: string
   summaryText?: string
@@ -29,11 +22,8 @@ type PublicationCardProps = {
 }
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
-  const { sqlString, buttonLink, buttonLinkText, summaryText } = props
-  const theme = useTheme()
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const { sql, buttonLink, buttonLinkText, summaryText } = props
 
-  const sql = `${sqlString} ORDER BY publicationDate DESC LIMIT ${isXs ? 3 : 6}`
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -74,21 +64,16 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
 
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid
-      item
       key={pub.rowId}
       height={{ xs: 'auto', sm: '275px' }}
       minWidth={{ xs: '280px', lg: 'initial' }}
       maxWidth={{ xs: '450px', lg: 'initial' }}
-      sx={{
-        paddingTop: '0px !important',
-        paddingLeft: '0px !important',
-      }}
     >
       <Box sx={{ height: '100%' }}>
         {isLoading ? (
           <Skeleton variant="rectangular" height={275} width="100%" />
         ) : (
-          <Box>
+          <div>
             {pub.values[categoryColIndex] && (
               <Typography
                 variant="overline"
@@ -138,7 +123,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                   )}
               </Typography>
             </Box>
-          </Box>
+          </div>
         )}
       </Box>
     </Grid>
@@ -161,7 +146,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
       >
         <Grid
           container
-          sx={{
+          sx={theme => ({
             display: 'grid',
             gap: '32px',
             gridTemplateColumns: {
@@ -170,7 +155,12 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               lg: 'repeat(auto-fill, minmax(255px, 1fr))',
               xl: 'repeat(auto-fill, minmax(322px, 1fr))',
             },
-          }}
+            [theme.breakpoints.down('sm')]: {
+              '& > :nth-of-type(n+4)': {
+                display: 'none',
+              },
+            },
+          })}
         >
           {dataRows.map(pub => (
             <PublicationCard pub={pub} key={pub.rowId} />

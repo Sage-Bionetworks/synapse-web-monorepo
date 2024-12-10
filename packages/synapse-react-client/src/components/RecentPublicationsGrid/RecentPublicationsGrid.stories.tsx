@@ -21,7 +21,7 @@ export const Demo: Story = {
     </BrowserRouter>
   ),
   args: {
-    sqlString: 'SELECT * FROM syn51407023',
+    sql: 'SELECT * FROM syn51407023',
     buttonLink: 'Explore/Publications',
     buttonLinkText: 'See More Publications',
     summaryText:
