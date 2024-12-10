@@ -21,7 +21,7 @@ export const Demo: Story = {
     </BrowserRouter>
   ),
   args: {
-    sql: 'SELECT * FROM syn51407023 ORDER BY "publicationDate" DESC LIMIT 6',
+    sqlString: 'SELECT * FROM syn51407023',
     buttonLink: 'Explore/Publications',
     buttonLinkText: 'See More Publications',
     summaryText:
