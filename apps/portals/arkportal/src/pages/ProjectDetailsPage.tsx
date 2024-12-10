@@ -7,7 +7,10 @@ import React from 'react'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, projectsSql } from '../config/resources'
-import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  datasetColumnAliases,
+} from '../config/synapseConfigs/datasets'
 import {
   projectsCardConfiguration,
   projectSchema,
@@ -45,6 +48,8 @@ export function ProjectDetailsPage() {
                       {...datasetCardConfiguration}
                       sql={datasetsSql}
                       searchParams={{ project: value! }}
+                      columnAliases={datasetColumnAliases}
+                      secondaryLabelLimit={4}
                     />
                   )}
                 </DetailsPageContextConsumer>
