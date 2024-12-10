@@ -248,25 +248,21 @@ export default function HomePage() {
         <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
           <ELContributeYourData />
         </SectionLayout>
-        <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-          <PortalFeatureHighlights
-            image={analyzetheclouds}
-            title="Analyze on the Cloud"
-            buttonText="Learn About Our Analysis Platforms"
-            summaryText={styledPortalFeatureHighlightsSummaryText}
-            link="/Analysis Platforms"
-          />
-        </SectionLayout>
-        <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-          <PortalFeatureHighlights
-            image={computationaltools}
-            title="Computational Tools"
-            buttonText="Check out our Computational Tools"
-            summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
-            reverseOrder={true}
-            link="/Explore/Computational Tools"
-          />
-        </SectionLayout>
+        <PortalFeatureHighlights
+          image={analyzetheclouds}
+          title="Analyze on the Cloud"
+          buttonText="Learn About Our Analysis Platforms"
+          summaryText={styledPortalFeatureHighlightsSummaryText}
+          link="/Analysis Platforms"
+        />
+        <PortalFeatureHighlights
+          image={computationaltools}
+          title="Computational Tools"
+          buttonText="Check out our Computational Tools"
+          summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
+          reverseOrder={true}
+          link="/Explore/Computational Tools"
+        />
       </SectionLayout>
     </>
   )

@@ -13,32 +13,39 @@ export type PortalFeatureHighlightsProps = {
 
 const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
   const { reverseOrder, image, title, buttonText, summaryText, link } = props
+
   return (
     <Grid
       container
       gap={{ xs: '38px', md: '80px' }}
-      padding={{ md: '0 56px' }}
+      padding={{ xs: '40px', lg: '80px' }}
       justifyContent="center"
       alignItems={{ md: 'center', lg: 'flex-start' }}
       flexDirection={{
         md: reverseOrder ? 'row-reverse' : 'row',
       }}
     >
-      <Grid item xs={12} md={5} lg={7.6}>
+      <Grid item xs={12} md={6} lg={7} xl={8}>
         <CardMedia
           component="img"
           image={image}
-          style={{
+          sx={{
+            height: {
+              xs: '250px',
+              sm: '400px',
+              md: '450px',
+              xl: '627.563px',
+            },
             borderRadius: '12px',
             objectFit: 'cover',
             width: '100%',
           }}
         />
       </Grid>
-      <Grid item xs={12} md={4} lg={3.4}>
+      <Grid item xs={12} md={4} lg={3} xl={2}>
         <Stack
-          spacing={2}
           sx={{
+            gap: '16px',
             borderTop: '3px solid',
             borderColor: 'grey.400',
           }}
