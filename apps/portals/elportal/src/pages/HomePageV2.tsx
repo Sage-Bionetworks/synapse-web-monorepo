@@ -1,50 +1,23 @@
-import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import React from 'react'
 import {
-  CardContainerLogic,
-  Goals,
-  Markdown,
-  RssFeedCards,
-  SynapseConstants,
-  UserCardListRotate,
   RecentPublicationsGrid,
   ImageCardGridWithLinks,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
-import {
-  partnersSql,
-  peopleSql,
-  topPublicationsSql,
-  whatWeDoSql,
-} from '../config/resources'
+import { topPublicationsSql, whatWeDoSql } from '../config/resources'
+import { Box } from '@mui/material'
 
 export default function HomePage() {
   return (
     <>
-      <Header />
-      <SectionLayout
-        title={'About the Portal'}
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <Markdown
-          ownerId={'syn27229419'}
-          wikiId="626030"
-          loadingSkeletonRowCount={10}
-        />
-      </SectionLayout>
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <ImageCardGridWithLinks
-          sql={whatWeDoSql}
-          title="What We Do"
-          summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
-        />
-      </SectionLayout>
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <Goals entityId={'syn51449135'} />
-      </SectionLayout>
+      {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}> */}
+      <ImageCardGridWithLinks
+        sql={whatWeDoSql}
+        title="What We Do"
+        summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
+      />
+      {/* </SectionLayout> */}
       {/* Commented out for release (see EC-485) */}
       {/*<div className={'home-bg-dark'}>*/}
       {/*<SectionLayout*/}
@@ -65,30 +38,14 @@ export default function HomePage() {
       {/*  />*/}
       {/*</SectionLayout>*/}
       {/*</div>*/}
-      <SectionLayout
-        title={"What's New"}
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <RssFeedCards
-          url="https://news.eliteportal.org"
-          itemsToShow={3}
-          allowCategories={[]}
-          // mailChimpListName='AMP-AD quarterly newsletter',
-          // mailChimpUrl='https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
-          filter={{
-            value: 'whats-new',
-          }}
-        />
-      </SectionLayout>
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+      <Box sx={{ backgroundColor: 'grey.100' }}>
         <RecentPublicationsGrid
-          sql={topPublicationsSql}
+          sqlString={topPublicationsSql}
           buttonLink="/Explore/Publications"
           buttonLinkText="See More Publications"
           summaryText="Never miss a new finding from the frontiers of aging research."
         />
-      </SectionLayout>
+      </Box>
       {/*<div className={'home-bg-dark'}>*/}
       {/*  <SectionLayout ContainerProps={{ className: 'home-spacer' }}>*/}
       {/*    <FeaturedDataTabs*/}
@@ -154,71 +111,8 @@ export default function HomePage() {
       {/*    />*/}
       {/*  </SectionLayout>*/}
       {/*</div>*/}
-      <div className={'home-bg-dark'}>
-        <SectionLayout
-          title={'Related Resources'}
-          centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
-        >
-          <Ecosystem
-            config={[
-              {
-                title: 'Data Repositories',
-                ownerId: 'syn27229419',
-                wikiId: '621470',
-              },
-              {
-                title: 'Cross-Species Research Resources',
-                ownerId: 'syn27229419',
-                wikiId: '621472',
-              },
-            ]}
-          />
-        </SectionLayout>
-      </div>
       {/* PORTALS-3208: Surface Our Partners (similar to NF) */}
-      <SectionLayout
-        title={'Our Partners'}
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <CardContainerLogic
-          sql={partnersSql}
-          type={SynapseConstants.GENERIC_CARD}
-          genericCardSchema={{
-            title: 'organizationName',
-            type: SynapseConstants.ORGANIZATION,
-            description: 'summary',
-            icon: 'abbreviation',
-            link: 'organizationPath',
-            thumbnailRequiresPadding: true,
-            imageFileHandleColumnName: 'cardLogo',
-          }}
-          descriptionConfig={{
-            showFullDescriptionByDefault: true,
-          }}
-          ctaLinkConfig={{
-            text: 'Visit Website',
-            link: 'website',
-          }}
-        />
-      </SectionLayout>
-      <div className={'home-bg-dark'}>
-        <SectionLayout
-          title={'Our People & Institutions'}
-          centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
-        >
-          <UserCardListRotate
-            sql={`${peopleSql} WHERE isFeatured=true ORDER BY firstName`}
-            count={3}
-            size={SynapseConstants.MEDIUM_USER_CARD}
-            useQueryResultUserData={true}
-            summaryLink="Explore/People"
-            summaryLinkText="View All People"
-          />
-        </SectionLayout>
-      </div>
+
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',

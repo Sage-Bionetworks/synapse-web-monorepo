@@ -1,5 +1,13 @@
 import React from 'react'
-import { Grid, Typography, Button, Box, Skeleton } from '@mui/material'
+import {
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Skeleton,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -10,7 +18,7 @@ import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
 
 export type RecentPublicationsGridProps = {
-  sql: string
+  sqlString: string
   buttonLink?: string
   buttonLinkText?: string
   summaryText?: string
@@ -21,9 +29,13 @@ type PublicationCardProps = {
 }
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
-  const { sql, buttonLink, buttonLinkText, summaryText } = props
+  const { sqlString, buttonLink, buttonLinkText, summaryText } = props
+  const theme = useTheme()
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const sql = `${sqlString} ORDER BY publicationDate DESC LIMIT ${isXs ? 3 : 6}`
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
-  // if mobile, take top 3 instead
+
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
@@ -63,10 +75,10 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid
       item
-      xs={12}
-      sm={4}
-      md={3.62}
       key={pub.rowId}
+      height={{ xs: 'auto', sm: '275px' }}
+      minWidth={{ xs: '280px', lg: 'initial' }}
+      maxWidth={{ xs: '450px', lg: 'initial' }}
       sx={{
         paddingTop: '0px !important',
         paddingLeft: '0px !important',
@@ -74,45 +86,24 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     >
       <Box sx={{ height: '100%' }}>
         {isLoading ? (
-          <Skeleton variant="rectangular" height={250} width="100%" />
+          <Skeleton variant="rectangular" height={275} width="100%" />
         ) : (
           <Box>
-            {/* <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}> */}
-            {
-              pub.values[categoryColIndex] && (
-                <Typography
-                  variant="overline"
-                  fontSize={'14px'}
-                  sx={{
-                    backgroundColor: 'grey.300',
-                    borderRadius: '3px',
-                    padding: '4px 8px',
-                    border: 'none',
-                    lineHeight: 'initial',
-                  }}
-                >
-                  {pub.values[categoryColIndex]}
-                </Typography>
-              )
-              // JSON.parse(pub.values[categoryColIndex] as string).map(
-              //   (tag: string, index: number) => (
-              //     <Typography
-              //       key={index}
-              //       variant="overline"
-              //       sx={{
-              //         backgroundColor: 'grey.300',
-              //         borderRadius: '3px',
-              //         padding: '4px 8px',
-              //         border: 'none',
-              //         lineHeight: 'initial',
-              //       }}
-              //     >
-              //       {tag}
-              //     </Typography>
-              //   ),
-              // )
-            }
-            {/* </Box> */}
+            {pub.values[categoryColIndex] && (
+              <Typography
+                variant="overline"
+                fontSize={'14px'}
+                sx={{
+                  backgroundColor: 'grey.300',
+                  borderRadius: '3px',
+                  padding: '4px 8px',
+                  border: 'none',
+                  lineHeight: 'initial',
+                }}
+              >
+                {pub.values[categoryColIndex]}
+              </Typography>
+            )}
             <Typography
               variant="headline2"
               color="grey.1000"
@@ -154,48 +145,50 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   )
 
   return (
-    <Box
+    <Grid
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: '3fr 0.5fr' },
+        gridTemplateColumns: { xs: '1fr', md: '3fr 1fr' },
         height: { xs: 'auto', md: 'initial' },
-        gap: { xs: '38px', md: '80px' },
+        gap: { xs: '24px', md: '80px' },
         padding: { xs: '40px', lg: '80px' },
-        backgroundColor: 'grey.100',
       }}
     >
-      <Grid
-        container
+      <Box
         sx={{
           order: { xs: 1, md: 0 },
         }}
       >
-        <Grid container spacing={0} gap={'32px'}>
+        <Grid
+          container
+          sx={{
+            display: 'grid',
+            gap: '32px',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(auto-fill, minmax(280px, 1fr))',
+              lg: 'repeat(auto-fill, minmax(255px, 1fr))',
+              xl: 'repeat(auto-fill, minmax(322px, 1fr))',
+            },
+          }}
+        >
           {dataRows.map(pub => (
             <PublicationCard pub={pub} key={pub.rowId} />
           ))}
         </Grid>
-      </Grid>
-      <Box
-        sx={{
-          padding: {
-            // xs: '0 16px',
-            md: 0,
-          },
-        }}
-      >
+      </Box>
+      <Box>
         <Box
           display="flex"
           flexDirection="column"
           gap="16px"
-          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
+          sx={{
+            borderTop: '3px solid',
+            borderColor: 'grey.400',
+            padding: '30px 0',
+          }}
         >
-          <Typography
-            variant="headline2"
-            paddingTop="26px"
-            color="grey.1000"
-            fontSize={'24px'}
-          >
+          <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>
             Recently Published
           </Typography>
           <Typography
@@ -215,6 +208,12 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                 boxShadow: 'none',
                 padding: '6px 24px',
                 fontWeight: 600,
+                '&:hover': {
+                  boxShadow: 'none',
+                  backgroundColor: '#1A8975',
+                  animationTimingFunction: 'ease-out',
+                  animationDuration: '64ms',
+                },
               }}
             >
               {buttonLinkText}
@@ -222,7 +221,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           )}
         </Box>
       </Box>
-    </Box>
+    </Grid>
   )
 }
 

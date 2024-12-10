@@ -17,7 +17,7 @@ const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
 describe('RecentPublicationsGrid Tests', () => {
   const mockProps: RecentPublicationsGridProps = {
-    sql: 'SELECT * FROM syn123',
+    sqlString: 'SELECT * FROM syn123',
     buttonLink: 'https://example.com',
     buttonLinkText: 'View All Publications',
     summaryText: 'This is a summary.',
@@ -38,8 +38,8 @@ describe('RecentPublicationsGrid Tests', () => {
             id: '81721',
           },
           {
-            name: 'Tag',
-            columnType: ColumnTypeEnum.STRING_LIST,
+            name: 'Category',
+            columnType: ColumnTypeEnum.STRING,
             id: '81722',
           },
           {
@@ -61,23 +61,11 @@ describe('RecentPublicationsGrid Tests', () => {
         rows: [
           {
             rowId: 1,
-            values: [
-              '1',
-              '["Tag1_1", "Tag1_2"]',
-              'Journal1',
-              'Title1',
-              '1725819400000',
-            ],
+            values: ['1', 'Category1', 'Journal1', 'Title1', '1725819400000'],
           },
           {
             rowId: 2,
-            values: [
-              '2',
-              '["Tag2_1", "Tag2_2"]',
-              'Journal2',
-              'Title2',
-              '1709578435000',
-            ],
+            values: ['2', 'Category2', 'Journal2', 'Title2', '1709578435000'],
           },
         ],
       },
@@ -89,8 +77,8 @@ describe('RecentPublicationsGrid Tests', () => {
         id: '81721',
       },
       {
-        name: 'Tag',
-        columnType: ColumnTypeEnum.STRING_LIST,
+        name: 'Category',
+        columnType: ColumnTypeEnum.STRING,
         id: '81722',
       },
       {
@@ -137,12 +125,12 @@ describe('RecentPublicationsGrid Tests', () => {
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
 
-    expect(screen.getByText('Tag1_1')).toBeInTheDocument()
+    expect(screen.getByText('Category1')).toBeInTheDocument()
     expect(screen.getByText('Title1')).toBeInTheDocument()
     expect(screen.getByText('Journal1')).toBeInTheDocument()
     expect(screen.getByText('September, 2024')).toBeInTheDocument()
 
-    expect(screen.getByText('Tag2_1')).toBeInTheDocument()
+    expect(screen.getByText('Category2')).toBeInTheDocument()
     expect(screen.getByText('Title2')).toBeInTheDocument()
     expect(screen.getByText('Journal2')).toBeInTheDocument()
     expect(screen.getByText('March, 2024')).toBeInTheDocument()
