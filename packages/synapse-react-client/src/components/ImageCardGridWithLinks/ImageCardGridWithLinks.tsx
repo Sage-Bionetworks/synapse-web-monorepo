@@ -170,6 +170,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
         gap: { xs: '38px', md: '80px' },
+        padding: { xs: '40px', lg: '80px' },
       }}
     >
       <Box
