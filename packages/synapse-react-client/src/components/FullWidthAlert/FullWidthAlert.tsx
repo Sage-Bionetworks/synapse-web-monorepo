@@ -149,22 +149,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         justifyContent="space-between"
       >
         <Box>
-          {isMobile ? (
-            <>
-              {title && (
-                <AlertTitle
-                  sx={{ margin: 0, textAlign: { xs: 'center', sm: 'initial' } }}
-                >
-                  {title}
-                </AlertTitle>
-              )}
-            </>
-          ) : (
-            <>
-              {title && <AlertTitle>{title}</AlertTitle>}
-              {description}
-            </>
-          )}
+          {title && <AlertTitle>{title}</AlertTitle>}
+          {description}
         </Box>
         {(primaryButtonConfig ||
           secondaryButtonConfig ||
