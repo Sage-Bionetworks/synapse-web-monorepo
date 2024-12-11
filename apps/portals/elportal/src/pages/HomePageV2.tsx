@@ -20,7 +20,7 @@ import {
   topPublicationsSql,
   whatWeDoSql,
 } from '../config/resources'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
 
@@ -31,9 +31,18 @@ export default function HomePage() {
       platforms, such as{' '}
       <Typography
         component="span"
-        sx={{ fontWeight: 'bold', color: 'primary.main' }}
+        sx={{
+          fontWeight: 'bold',
+          color: 'primary.main',
+        }}
       >
-        CAVATICA
+        <Link
+          href="https://www.cavatica.org/"
+          target="_blank"
+          sx={{ textDecoration: 'none' }}
+        >
+          CAVATICA
+        </Link>
       </Typography>
       .<br />
       <br />
