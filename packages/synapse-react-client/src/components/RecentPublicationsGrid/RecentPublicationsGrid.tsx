@@ -130,7 +130,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   )
 
   return (
-    <Grid
+    <Box
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '3fr 1fr' },
@@ -144,8 +144,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           order: { xs: 1, md: 0 },
         }}
       >
-        <Grid
-          container
+        <Box
           sx={theme => ({
             display: 'grid',
             gap: '32px',
@@ -165,7 +164,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           {dataRows.map(pub => (
             <PublicationCard pub={pub} key={pub.rowId} />
           ))}
-        </Grid>
+        </Box>
       </Box>
       <Box>
         <Box
@@ -195,14 +194,11 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               sx={{
                 whiteSpace: 'nowrap',
                 alignSelf: 'flex-start',
-                boxShadow: 'none',
+                boxShadow: 'none !important',
                 padding: '6px 24px',
                 fontWeight: 600,
                 '&:hover': {
-                  boxShadow: 'none',
                   backgroundColor: '#1A8975',
-                  animationTimingFunction: 'ease-out',
-                  animationDuration: '64ms',
                 },
               }}
             >
@@ -211,7 +207,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           )}
         </Box>
       </Box>
-    </Grid>
+    </Box>
   )
 }
 

@@ -17,7 +17,7 @@ const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
 describe('RecentPublicationsGrid Tests', () => {
   const mockProps: RecentPublicationsGridProps = {
-    sqlString: 'SELECT * FROM syn123',
+    sql: 'SELECT * FROM syn123',
     buttonLink: 'https://example.com',
     buttonLinkText: 'View All Publications',
     summaryText: 'This is a summary.',
