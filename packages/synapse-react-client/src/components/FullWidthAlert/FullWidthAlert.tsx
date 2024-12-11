@@ -9,8 +9,6 @@ import {
   Snackbar,
   Stack,
   Tooltip,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material'
 
 export type AlertButtonConfig = {
@@ -107,9 +105,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     globalAlertSx,
   } = props
 
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
   useEffect(() => {
     let timer: NodeJS.Timeout
     if (onClose && autoCloseAfterDelayInSeconds) {
@@ -164,7 +159,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
             sx={{
               gap: { xs: '8px', sm: 'initial' },
               flexWrap: { xs: 'wrap', sm: 'nowrap' },
-              justifyContent: { xs: 'center', sm: 'initial' },
               width: { xs: '100%', sm: 'initial' },
             }}
           >
