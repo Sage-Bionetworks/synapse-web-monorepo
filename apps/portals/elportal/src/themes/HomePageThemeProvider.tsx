@@ -1,4 +1,4 @@
-import { ThemeOptions, ThemeProvider, useTheme } from '@mui/material'
+import { ThemeOptions, ThemeProvider, darken, useTheme } from '@mui/material'
 import { DeepPartial } from 'synapse-react-client'
 import { deepmerge } from '@mui/utils'
 import React from 'react'
@@ -12,6 +12,20 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
       },
       headline2: {
         fontFamily: "'Merriweather', serif",
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          contained: {
+            animationTimingFunction: 'ease-out',
+            animationDuration: '64ms',
+            '&:hover': {
+              color: '#FFF !important',
+              backgroundColor: darken(theme.palette.primary.main, 0.2),
+            },
+          },
+        },
       },
     },
   }

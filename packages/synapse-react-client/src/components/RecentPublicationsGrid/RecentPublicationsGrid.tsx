@@ -197,9 +197,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                 boxShadow: 'none !important',
                 padding: '6px 24px',
                 fontWeight: 600,
-                '&:hover': {
-                  backgroundColor: '#1A8975',
-                },
               }}
             >
               {buttonLinkText}
