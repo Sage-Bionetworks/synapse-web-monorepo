@@ -1,4 +1,4 @@
-import { Box, Button, Typography, darken } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
