@@ -35,7 +35,6 @@ const defaultProps: EntityFinderModalProps = {
     visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
     selectableTypes: Object.values(EntityType),
     treeOnly: false,
-    selectedCopy: 'Chosen Entities',
   },
   show: true,
   title: 'Entity Finder Modal Title',

@@ -12,7 +12,10 @@ import {
 } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql } from '../config/resources'
-import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  datasetColumnAliases,
+} from '../config/synapseConfigs/datasets'
 
 export function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -23,6 +26,8 @@ export function DatasetDetailsPage() {
         sql={datasetsSql}
         isHeader
         searchParams={searchParams}
+        columnAliases={datasetColumnAliases}
+        secondaryLabelLimit={4}
       />
       <DetailsPage
         sql={datasetsSql}
