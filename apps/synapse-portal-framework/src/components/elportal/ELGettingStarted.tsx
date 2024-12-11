@@ -33,7 +33,6 @@ const ELGettingStarted: React.FC = () => {
           sx={{
             width: '100%',
             color: 'white',
-            fontFamily: "'Merriweather', serif",
             fontSize: '24px',
           }}
         >
@@ -56,11 +55,12 @@ const ELGettingStarted: React.FC = () => {
         <Button
           variant="contained"
           href="https://help.eliteportal.org/help/"
+          rel="noopener noreferrer"
+          target="_blank"
           sx={{
             border: '1px solid white',
             padding: '6px 24px',
             fontSize: '14px',
-            boxShadow: 'none !important',
           }}
         >
           Visit Our Help Section
@@ -115,7 +115,6 @@ export function IconSquare({ iconUrl, headline, description }) {
           mb: '10px',
           maxWidth: '100%',
           color: 'white',
-          fontFamily: "'Merriweather', serif",
           fontWeight: 400,
         }}
       >
@@ -126,10 +125,7 @@ export function IconSquare({ iconUrl, headline, description }) {
         sx={{
           maxWidth: '100%',
           color: 'white',
-          fontFamily: "'DM Sans', sans-serif",
           fontSize: '13px',
-          lineHeight: '15px',
-          fontWeight: 400,
         }}
       >
         {description}
