@@ -13,6 +13,7 @@ import {
   ImageCardGridWithLinks,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
+import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
 import {
   partnersSql,
   peopleSql,
@@ -225,6 +226,7 @@ export default function HomePage() {
           style: { maxWidth: '100%', padding: 0 },
         }}
       >
+        <ELGettingStarted />
         <ELContributeYourData />
       </SectionLayout>
     </>
