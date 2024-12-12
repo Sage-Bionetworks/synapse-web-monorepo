@@ -1,6 +1,5 @@
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import {
   FeaturedDataTabs,
   Goals,

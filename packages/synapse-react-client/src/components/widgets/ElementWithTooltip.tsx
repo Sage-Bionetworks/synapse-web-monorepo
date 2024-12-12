@@ -1,12 +1,17 @@
-import React from 'react'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import { Tooltip } from '@mui/material'
+import {
+  ComponentElement,
+  CSSProperties,
+  PropsWithChildren,
+  ReactNode,
+} from 'react'
 
 type CustomImageProps = {
-  svgImg: React.ComponentElement<any, any>
+  svgImg: ComponentElement<any, any>
   altText: string
 }
 
@@ -29,7 +34,7 @@ const DEFAULT_TOOLTIP_VISUAL_PROPS: Partial<TooltipVisualProps> = {
  *  If there are no children and callback Fn is not supplied it is assumed to be a a dropdown trigger
  */
 
-type ElementWithTooltipProps = React.PropsWithChildren<{
+type ElementWithTooltipProps = PropsWithChildren<{
   image?: IconSvgProps | CustomImageProps
   imageColor?: string
   tooltipText: string
@@ -38,13 +43,13 @@ type ElementWithTooltipProps = React.PropsWithChildren<{
   tooltipVisualProps?: Partial<TooltipVisualProps>
   darkTheme?: boolean
   size?: string
-  icon?: React.ReactNode
+  icon?: ReactNode
 }>
 
 function getTooltipTriggerContents(
   image: IconSvgProps | CustomImageProps,
   imageColor: string | undefined,
-  size: React.CSSProperties['width'] | undefined,
+  size: CSSProperties['width'] | undefined,
 ): JSX.Element {
   if ('svgImg' in image) {
     return image.svgImg

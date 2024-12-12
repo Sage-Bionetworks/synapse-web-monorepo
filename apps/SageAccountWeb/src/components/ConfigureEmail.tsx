@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import {
   displayToast,
   SynapseClient,
@@ -82,10 +82,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     }
   }, [emailVerificationToken])
 
-  const changePrimaryEmail = async (
-    event: React.SyntheticEvent,
-    email: string,
-  ) => {
+  const changePrimaryEmail = async (event: SyntheticEvent, email: string) => {
     event.preventDefault()
     try {
       await SynapseClient.updateNotificationEmail(email, accessToken)
@@ -96,7 +93,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     }
   }
 
-  const deleteEmail = async (event: React.SyntheticEvent, email: string) => {
+  const deleteEmail = async (event: SyntheticEvent, email: string) => {
     event.preventDefault()
     try {
       await SynapseClient.deleteEmail(accessToken, email)
@@ -107,7 +104,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     }
   }
 
-  const addEmail = async (event: React.SyntheticEvent) => {
+  const addEmail = async (event: SyntheticEvent) => {
     event.preventDefault()
     try {
       const callbackUrl = `${SynapseClient.getRootURL()}${

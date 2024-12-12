@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import {
   displayToast,
@@ -167,7 +167,7 @@ const STEP_CONTENT = [
   },
 ]
 
-const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
+function RightPanel({ stepNumber }: { stepNumber: number }) {
   const theme = useTheme()
   const totalSteps = 4
   return (
@@ -401,7 +401,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     }
   }
 
-  const onPrevious = async (event: React.SyntheticEvent) => {
+  const onPrevious = async (event: SyntheticEvent) => {
     event.preventDefault()
     switch (step) {
       case ValidationWizardStep.VERIFY_IDENTITY:

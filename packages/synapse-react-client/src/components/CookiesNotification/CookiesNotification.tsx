@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import FullWidthAlert from '../FullWidthAlert'
 import { Link, Typography } from '@mui/material'
 import CookiePreferencesDialog from './CookiePreferencesDialog'

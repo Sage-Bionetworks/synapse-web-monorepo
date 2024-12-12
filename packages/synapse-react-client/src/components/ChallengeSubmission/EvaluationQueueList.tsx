@@ -1,5 +1,4 @@
 import { Alert, Box, Radio, TextField, Typography } from '@mui/material'
-import React from 'react'
 import { useGetEntityEvaluations } from '../../synapse-queries'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'

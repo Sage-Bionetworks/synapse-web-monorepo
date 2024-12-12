@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import {
   displayToast,
   TermsAndConditions,
@@ -26,7 +26,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
   const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
 
-  const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
+  const onSignTermsOfUse = async (event: SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {

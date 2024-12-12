@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, Button, Paper, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 import InlineBadge from '../../styled/InlineBadge'
 import pluralize from 'pluralize'
 import { useAtomValue } from 'jotai'
@@ -9,7 +9,7 @@ export type RowSelectionUIProps = {
   show?: boolean
   selectedRowCount: number
   onClearSelection: () => void
-  customControls?: React.ReactNode
+  customControls?: ReactNode
 }
 
 /**

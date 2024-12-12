@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { DescriptionConfig } from '../CardContainerLogic'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { Link } from '@mui/material'
@@ -99,11 +99,11 @@ export type CollapsibleDescriptionProps = {
   descriptionSubTitle: string
 }
 
-export const CollapsibleDescription: React.FC<CollapsibleDescriptionProps> = ({
+export function CollapsibleDescription({
   description,
   descriptionSubTitle,
   descriptionConfig,
-}) => {
+}: CollapsibleDescriptionProps) {
   const [hasClickedShowMore, setClickedShowMore] = useState<boolean>(false)
   /* 
         Below is a hack that allows word highlighting to work, the Search component insert's

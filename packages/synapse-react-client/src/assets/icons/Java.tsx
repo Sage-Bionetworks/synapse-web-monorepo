@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const Java = (props: React.SVGProps<SVGSVGElement>) => (
+const Java = (props: SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
     className={`SRC-java-icon ${props.className ?? ''}`}

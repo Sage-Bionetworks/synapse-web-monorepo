@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { THREAD, THREAD_ID, THREAD_REPLIES } from '../../utils/APIConstants'

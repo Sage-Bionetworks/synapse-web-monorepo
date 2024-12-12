@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
@@ -61,9 +61,10 @@ export type EntityDetailsListProps = EntityDetailsListSharedProps & {
   configuration: EntityDetailsListDataConfiguration
 }
 
-export const EntityDetailsList: React.FunctionComponent<
-  EntityDetailsListProps
-> = ({ configuration, ...sharedProps }) => {
+export function EntityDetailsList({
+  configuration,
+  ...sharedProps
+}: EntityDetailsListProps) {
   /**
    * This component simply uses the data configuration prop to determine which configuration component
    * to use. Each configuration component has its own logic to utilize different Synapse APIs.

@@ -3,7 +3,7 @@ import BaseTable, {
   Column,
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   getEntityTypeFromHeader,
@@ -56,7 +56,7 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   sort?: { sortBy: SortBy; sortDirection: Direction }
   /** If sortable, `setSort` will be invoked when the user tries to change the sort */
   setSort?: (soryBy: SortBy, sortDirection: Direction) => void
-  noResultsPlaceholder?: React.ReactElement
+  noResultsPlaceholder?: ReactElement
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
   /** This request object is only used to tell react-query to cancel fetching all children at once. */
@@ -87,7 +87,7 @@ export type EntityFinderTableViewRowData = EntityFinderHeader & {
  *
  * @param param0
  */
-export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
+export function DetailsView({
   entities,
   isLoading,
   hasNextPage,
@@ -107,7 +107,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   getChildrenInfiniteRequestObject,
   totalEntities,
   setCurrentContainer,
-}) => {
+}: DetailsViewProps) {
   const queryClient = useQueryClient()
 
   const { accessToken, keyFactory: queryClientKeyFactory } = useSynapseContext()

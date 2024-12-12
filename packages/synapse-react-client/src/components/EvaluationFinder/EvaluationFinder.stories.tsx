@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { Paper } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import EvaluationFinder from './EvaluationFinder'
 
 const meta: Meta = {

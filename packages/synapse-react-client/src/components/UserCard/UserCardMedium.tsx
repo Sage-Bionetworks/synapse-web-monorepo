@@ -1,5 +1,11 @@
 import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import {
+  MutableRefObject,
+  SyntheticEvent,
+  useRef,
+  useState,
+  MouseEvent,
+} from 'react'
 import IconCopy from '../../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
@@ -35,11 +41,11 @@ export type UserCardMediumProps = {
  */
 const copyToClipboard =
   (
-    ref: React.MutableRefObject<HTMLElement | null>,
+    ref: MutableRefObject<HTMLElement | null>,
     value: string,
     onCopy: () => void,
   ) =>
-  (event: React.SyntheticEvent) => {
+  (event: SyntheticEvent) => {
     event.preventDefault()
 
     // use the Clipboard API
@@ -49,7 +55,7 @@ const copyToClipboard =
     })
   }
 
-export const UserCardMedium: React.FC<UserCardMediumProps> = ({
+export function UserCardMedium({
   userProfile,
   menuActions,
   isLarge = false,
@@ -61,12 +67,10 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   isValidated,
   isCertified,
   isLoadingAvatar,
-}) => {
-  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
-    null,
-  )
+}: UserCardMediumProps) {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
   const isContextMenuOpen = Boolean(menuAnchorEl)
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
     setMenuAnchorEl(event.currentTarget)
   }
   const handleMenuClose = () => {
@@ -117,7 +121,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     />
   )
   const mediumCard = (
-    <React.Fragment>
+    <>
       {!hideEmail && (
         <ToastMessage
           show={showModal}
@@ -216,7 +220,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       </div>
       {/* conditionally render menu actions, if there are no actions then we don't show the button */}
       {menuActions && menuActions.length > 0 && (
-        <React.Fragment>
+        <>
           <IconButton
             role="menu"
             tabIndex={0}
@@ -232,9 +236,9 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             onClose={handleMenuClose}
             open={isContextMenuOpen}
           />
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   )
 
   if (!isLarge) {
@@ -258,7 +262,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   )
 }
 
-export const LoadingUserCardMedium: React.FunctionComponent = () => {
+export function LoadingUserCardMedium() {
   return (
     <Card
       className="SRC-userCard SRC-userCardMediumUp"

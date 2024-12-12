@@ -1,7 +1,6 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { render, screen, within } from '@testing-library/react'
 import * as _ from 'lodash-es'
-import React from 'react'
 import SummaryTable, { SummaryTableProps } from './SummaryTable'
 import { Step } from './types'
 import {

@@ -1,5 +1,5 @@
-import React from 'react'
 import { Breadcrumbs, Link, SxProps, Tooltip, Typography } from '@mui/material'
+import { MouseEventHandler } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { truncateString } from '../../../../utils/functions/StringUtils'
 
@@ -11,7 +11,7 @@ type BreadcrumbItem = {
   /* Link for the item */
   href?: string
   /* Event handler fired when the link is clicked */
-  onClick?: React.MouseEventHandler
+  onClick?: MouseEventHandler
 }
 
 type EntityPageBreadcrumbsProps = {

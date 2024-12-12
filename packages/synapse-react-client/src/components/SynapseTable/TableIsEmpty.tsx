@@ -1,4 +1,3 @@
-import React from 'react'
 import NoData from '../../assets/icons/NoData'
 
 export default function ThisTableIsEmpty() {

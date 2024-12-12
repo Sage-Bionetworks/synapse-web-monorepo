@@ -1,4 +1,3 @@
-import React from 'react'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { SEPERATOR } from '../../utils/SynapseConstants'
 import { Divider, Menu, MenuItem } from '@mui/material'
@@ -16,9 +15,7 @@ export type UserCardContextMenuProps = {
   onClose?: () => void
 }
 
-const UserCardContextMenu: React.FC<UserCardContextMenuProps> = (
-  props: UserCardContextMenuProps,
-) => {
+function UserCardContextMenu(props: UserCardContextMenuProps) {
   const {
     menuActions = [],
     userProfile,

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Activity } from '@sage-bionetworks/synapse-types'
 import { Tooltip, Typography } from '@mui/material'

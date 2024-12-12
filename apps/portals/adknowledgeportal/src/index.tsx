@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import Portal from '@sage-bionetworks/synapse-portal-framework'
 import { navbarConfig } from './config/navbarConfig'
@@ -19,7 +19,7 @@ const container = document.getElementById('root')
 const root = createRoot(container!)
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <Portal
       portalName={import.meta.env.VITE_PORTAL_NAME}
       palette={palette}
@@ -30,5 +30,5 @@ root.render(
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
     />
-  </React.StrictMode>,
+  </StrictMode>,
 )

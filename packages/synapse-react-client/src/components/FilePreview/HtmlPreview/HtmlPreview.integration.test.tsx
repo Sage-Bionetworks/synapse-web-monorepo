@@ -1,5 +1,4 @@
 import { render, renderHook, screen, waitFor } from '@testing-library/react'
-import React from 'react'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,

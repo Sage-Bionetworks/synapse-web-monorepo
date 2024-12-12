@@ -1,5 +1,4 @@
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'

@@ -12,7 +12,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import failOnConsole from 'jest-fail-on-console'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { EntityDetailsListDataConfigurationType } from '../../../../src/components/EntityFinder/details/EntityDetailsList'
 import {
   EntityTree,

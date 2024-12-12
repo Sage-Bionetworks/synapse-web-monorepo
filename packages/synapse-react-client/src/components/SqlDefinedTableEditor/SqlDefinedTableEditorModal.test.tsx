@@ -1,5 +1,4 @@
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import React from 'react'
 import SqlDefinedTableEditorModal from './SqlDefinedTableEditorModal'
 import { SqlDefinedTableEditorModalProps } from './SqlDefinedTableEditorModal'
 import { render, screen, within } from '@testing-library/react'

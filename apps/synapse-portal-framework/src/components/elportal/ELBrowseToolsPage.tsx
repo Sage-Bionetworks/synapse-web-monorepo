@@ -1,6 +1,5 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import Layout from '../Layout'
-import React from 'react'
 import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 // import PopularSearches from '../PopularSearches'

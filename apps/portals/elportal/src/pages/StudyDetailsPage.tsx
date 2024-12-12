@@ -9,7 +9,6 @@ import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import {

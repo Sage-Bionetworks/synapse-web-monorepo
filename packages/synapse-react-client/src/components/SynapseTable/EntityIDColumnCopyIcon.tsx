@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -21,12 +21,11 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [idData, setIdData] = React.useState<QueryResultBundle>()
-  const [abortController, setAbortController] =
-    React.useState<AbortController>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [idData, setIdData] = useState<QueryResultBundle>()
+  const [abortController, setAbortController] = useState<AbortController>()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!abortController) {
       setAbortController(new AbortController())
     }
@@ -71,7 +70,7 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
       })
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (idData) {
       const { rows } = idData.queryResult!.queryResults
       const synIDs = rows

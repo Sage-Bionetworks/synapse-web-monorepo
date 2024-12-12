@@ -1,4 +1,12 @@
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  Suspense,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import OpenData from './OpenData'
 import { AclEditor, AclEditorProps } from '../AclEditor/AclEditor'
@@ -127,9 +135,9 @@ function getDisplayedPermissionLevelOverride(
   }
 }
 
-const EntityAclEditor = React.forwardRef(function EntityAclEditor(
+const EntityAclEditor = forwardRef(function EntityAclEditor(
   props: EntityAclEditorProps,
-  ref: React.ForwardedRef<EntityAclEditorHandle>,
+  ref: ForwardedRef<EntityAclEditorHandle>,
 ) {
   const {
     entityId,
@@ -420,16 +428,16 @@ const EntityAclEditor = React.forwardRef(function EntityAclEditor(
   )
 })
 
-const EntityAclEditorWithSuspense = React.forwardRef(
+const EntityAclEditorWithSuspense = forwardRef(
   function EntityAclEditorWithSuspense(
     props: EntityAclEditorProps,
-    ref: React.ForwardedRef<EntityAclEditorHandle>,
+    ref: ForwardedRef<EntityAclEditorHandle>,
   ) {
     return (
       <SynapseErrorBoundary>
-        <React.Suspense fallback={<AclEditorSkeleton />}>
+        <Suspense fallback={<AclEditorSkeleton />}>
           <EntityAclEditor {...props} ref={ref} />
-        </React.Suspense>
+        </Suspense>
       </SynapseErrorBoundary>
     )
   },

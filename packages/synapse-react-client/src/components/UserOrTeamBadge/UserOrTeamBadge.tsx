@@ -1,5 +1,4 @@
 import { Skeleton } from '@mui/material'
-import React from 'react'
 import { useGetUserGroupHeader } from '../../synapse-queries'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'

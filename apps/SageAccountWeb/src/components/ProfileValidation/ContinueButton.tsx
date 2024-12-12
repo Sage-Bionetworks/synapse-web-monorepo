@@ -1,8 +1,7 @@
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import { Button, ButtonProps, useTheme } from '@mui/material'
-import React from 'react'
 
-export const ContinueButton: React.FC<ButtonProps> = (props: ButtonProps) => {
+export function ContinueButton(props: ButtonProps) {
   const theme = useTheme()
   return (
     <Button

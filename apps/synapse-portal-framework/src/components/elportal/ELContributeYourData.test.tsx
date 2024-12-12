@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import React from 'react'
 import ELContributeYourData from './ELContributeYourData'
 import { describe, expect, test } from 'vitest'
 

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+
 import UpSetJS, {
   extractSets,
   generateCombinations,
@@ -42,7 +43,7 @@ export type UpsetPlotData = {
  * Upset plot.  See https://medium.com/@sgratzl/upset-js-javascript-tutorial-1b84bfd6896d
  * Currently this is driven by a Synapse Table/View, but we may want to alter it to read in the data from a flat file instead.
  */
-export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
+export function UpsetPlot({
   sql,
   rgbIndex,
   maxBarCount,
@@ -52,7 +53,7 @@ export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   summaryLinkText,
   summaryLink,
   onClick,
-}) => {
+}: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()

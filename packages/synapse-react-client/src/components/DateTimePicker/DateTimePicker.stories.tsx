@@ -1,5 +1,5 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { PropsWithChildren } from 'react'
 import DateTimePicker from './DateTimePicker'
 import { SynapseContextProvider, useSynapseContext } from '../../utils'
 import dayjs from 'dayjs'
@@ -13,7 +13,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 function TimezoneConfigOverrideWrapper(
-  props: React.PropsWithChildren<{ utcTimeOverride: boolean }>,
+  props: PropsWithChildren<{ utcTimeOverride: boolean }>,
 ) {
   const { children, utcTimeOverride } = props
   const currentContext = useSynapseContext()

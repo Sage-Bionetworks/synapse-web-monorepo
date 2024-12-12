@@ -1,6 +1,5 @@
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import {

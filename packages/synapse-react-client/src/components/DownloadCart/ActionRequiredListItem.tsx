@@ -1,4 +1,3 @@
-import React from 'react'
 import { Action } from '@sage-bionetworks/synapse-types'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'

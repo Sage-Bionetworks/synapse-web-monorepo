@@ -1,4 +1,4 @@
-import React from 'react'
+import { SyntheticEvent } from 'react'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import {
   FacetColumnResultValues,
@@ -44,7 +44,7 @@ function ColumnFilter(props: FilterProps) {
   const selectedValues = selectedFacetFromQuery?.facetValues || []
 
   const onChange = (
-    event: React.SyntheticEvent,
+    event: SyntheticEvent,
     values: string[], // New value for the selected options
   ) => {
     removeSelectedFacet(topLevelEnumeratedFacetToFilter)

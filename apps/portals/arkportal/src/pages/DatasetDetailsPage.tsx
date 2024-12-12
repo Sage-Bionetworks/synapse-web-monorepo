@@ -4,7 +4,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   CardContainerLogic,
   DatasetJsonLdScript,

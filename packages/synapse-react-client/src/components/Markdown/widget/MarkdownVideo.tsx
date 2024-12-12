@@ -1,4 +1,3 @@
-import React from 'react'
 import SynapseVideo, { SynapseVideoProps } from '../../widgets/SynapseVideo'
 
 export type MarkdownVideoProps = SynapseVideoProps['params']

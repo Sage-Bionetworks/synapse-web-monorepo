@@ -9,7 +9,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import React from 'react'
+import { useState, MouseEvent } from 'react'
 import { useMatch } from 'react-router-dom'
 import NavLink from '../NavLink'
 
@@ -19,9 +19,9 @@ export function DropdownNavButton(props) {
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('lg'))
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {

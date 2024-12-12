@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { SynapseConstants } from '../../utils'
 import { useGetProfileImage } from '../../synapse-queries/file/useFiles'
 import {

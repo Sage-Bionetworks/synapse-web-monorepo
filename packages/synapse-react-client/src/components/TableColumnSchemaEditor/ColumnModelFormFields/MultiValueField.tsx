@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import JSONArrayEditorModal from '../../JSONArrayEditor/JSONArrayEditorModal'
 import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'

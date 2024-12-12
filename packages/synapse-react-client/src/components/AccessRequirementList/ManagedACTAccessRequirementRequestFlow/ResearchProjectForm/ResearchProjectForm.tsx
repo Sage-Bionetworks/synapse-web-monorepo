@@ -13,7 +13,7 @@ import {
   ManagedACTAccessRequirement,
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   useGetResearchProject,
   useUpdateResearchProject,
@@ -108,7 +108,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     )
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLElement>) => {
     e.preventDefault()
     mutate({
       ...existingResearchProject,

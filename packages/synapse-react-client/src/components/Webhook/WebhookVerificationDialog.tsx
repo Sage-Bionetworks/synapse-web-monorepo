@@ -1,5 +1,5 @@
 import { Alert, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useVerifyWebhook } from '../../synapse-queries/webhook/useWebhook'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from '../ToastMessage'

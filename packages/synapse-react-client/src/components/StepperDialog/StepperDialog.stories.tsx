@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 
 import { StepperDialog, StepperDialogProps } from './index'
 import Button from '@mui/material/Button'
 import { Step } from './StepperDialog'
 
-const steps: Record<string, Step & { content: React.ReactNode }> = {
+const steps: Record<string, Step & { content: ReactNode }> = {
   STEP_1: {
     id: 'STEP_1',
     title: 'Stepper Dialog (Step 1)',
@@ -68,12 +68,10 @@ const meta = {
   title: 'UI/StepperDialog',
   component: StepperDialog,
   render: function RenderFn(args) {
-    const [step, setStep] = useState<Step & { content: React.ReactNode }>(
+    const [step, setStep] = useState<Step & { content: ReactNode }>(
       steps.STEP_1,
     )
-    const [content, setContent] = useState<React.ReactNode>(
-      steps.STEP_1.content,
-    )
+    const [content, setContent] = useState<ReactNode>(steps.STEP_1.content)
     const onStepChange = (stepId: string) => {
       const tmp = steps[stepId]
       setStep(tmp)

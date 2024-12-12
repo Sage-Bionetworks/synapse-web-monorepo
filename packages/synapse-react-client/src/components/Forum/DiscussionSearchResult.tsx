@@ -5,7 +5,7 @@ import {
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   getReply,
   getReplyMessageUrl,

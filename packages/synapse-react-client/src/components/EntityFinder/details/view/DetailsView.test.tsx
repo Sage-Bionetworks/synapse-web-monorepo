@@ -11,7 +11,6 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import * as EntityBadgeModule from '../../../../components/EntityBadgeIcons/EntityBadgeIcons'
 import { mockProjectHeader } from '../../../../mocks/entity/mockEntity'

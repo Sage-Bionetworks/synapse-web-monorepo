@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { TextField, Button, InputAdornment } from '@mui/material'
 
 type SearchProps = {

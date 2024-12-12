@@ -7,7 +7,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import React from 'react'
+import { ReactNode } from 'react'
 import { ReactComponent as Certified } from '../../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../../assets/icons/account-validated.svg'
 import { ReactComponent as EnabledMFA } from '../../assets/icons/account-enabled-mfa.svg'
@@ -17,9 +17,9 @@ type AccountLevelBadgeConfig = {
   label: string
   description: string
   tooltipText: string
-  icon: React.ReactNode
+  icon: ReactNode
   linkHref: string
-  buttonNode?: React.ReactNode
+  buttonNode?: ReactNode
 }
 
 export const accountLevelBadgeConfig: Record<
@@ -59,9 +59,10 @@ export type AccountLevelBadgeProps = {
   buttonProps?: ButtonProps
 }
 
-export const AccountLevelBadge: React.FunctionComponent<
-  AccountLevelBadgeProps
-> = ({ badgeType, buttonProps }: AccountLevelBadgeProps) => {
+export function AccountLevelBadge({
+  badgeType,
+  buttonProps,
+}: AccountLevelBadgeProps) {
   const badgeConfig = accountLevelBadgeConfig[badgeType]
   return (
     <Card

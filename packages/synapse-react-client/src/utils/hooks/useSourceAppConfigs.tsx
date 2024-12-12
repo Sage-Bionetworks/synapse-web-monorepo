@@ -1,5 +1,4 @@
 import { PaletteOptions } from '@mui/material'
-import React from 'react'
 import SourceAppImage from '../../components/SourceAppImage'
 import Palettes from '../../theme/palette/Palettes'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'

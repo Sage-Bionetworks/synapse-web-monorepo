@@ -1,4 +1,3 @@
-import React from 'react'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ColumnFilter from './ColumnFilter'

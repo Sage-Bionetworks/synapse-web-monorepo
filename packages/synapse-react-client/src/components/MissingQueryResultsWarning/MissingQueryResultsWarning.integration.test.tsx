@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import MissingQueryResultsWarning from './MissingQueryResultsWarning'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EntityRef, Table } from '@sage-bionetworks/synapse-types'

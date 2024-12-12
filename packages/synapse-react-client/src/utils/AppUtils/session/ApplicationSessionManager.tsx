@@ -1,6 +1,6 @@
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import dayjs from 'dayjs'
-import React, { useCallback, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SynapseClient from '../../../synapse-client'
 import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
@@ -9,7 +9,7 @@ import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 
-export type ApplicationSessionManagerProps = React.PropsWithChildren<{
+export type ApplicationSessionManagerProps = PropsWithChildren<{
   downloadCartPageUrl?: string
   /* If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated. If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
   maxAge?: number
