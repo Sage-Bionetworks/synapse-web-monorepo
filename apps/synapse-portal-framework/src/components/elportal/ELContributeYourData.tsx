@@ -6,7 +6,7 @@ function ELContributeYourData() {
   return (
     <Box
       sx={{
-        backgroundColor: '#5BA998',
+        backgroundColor: 'primary.main',
         display: 'grid',
         gridTemplateColumns: '33% 33% 33%',
         position: 'relative',
