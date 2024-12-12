@@ -90,6 +90,18 @@ const routes: RouteObject[] = [
           </SectionLayout>
         ),
       },
+      {
+        path: 'Contribute Data',
+        element: (
+          <SectionLayout title={'Contribute Data'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621277"
+              loadingSkeletonRowCount={15}
+            />
+          </SectionLayout>
+        ),
+      },
     ],
   },
 ]
