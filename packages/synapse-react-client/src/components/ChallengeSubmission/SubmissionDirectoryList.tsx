@@ -13,24 +13,22 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
+import { useGetEntities } from '../../synapse-queries/entity/useEntity'
+import { useGetEntityChildren } from '../../synapse-queries/entity/useGetEntityChildren'
+import { invalidateAllQueriesForEntity } from '../../synapse-queries/QueryFilterUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import {
-  invalidateAllQueriesForEntity,
-  useGetEntities,
-  useGetEntityChildren,
-} from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { InfoTwoTone } from '@mui/icons-material'
 import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FileUpload from '../FileUpload'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { UploadCallbackResp } from '@sage-bionetworks/synapse-types'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'

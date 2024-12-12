@@ -6,7 +6,7 @@ import Select, {
   PropsValue,
   SelectComponentsConfig,
 } from 'react-select'
-import { useSearchUserGroupHeaders } from '../../synapse-queries'
+import { useSearchUserGroupHeaders } from '../../synapse-queries/user/useUserGroupHeader'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'

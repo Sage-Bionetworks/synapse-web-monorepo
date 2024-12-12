@@ -1,12 +1,13 @@
 import { Box } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import SynapseClient from '../../synapse-client'
-import { OAuth2State, SynapseClientError } from '../../utils'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
   OAUTH2_PROVIDERS,
 } from '../../utils/SynapseConstants'
+import { OAuth2State } from '../../utils/types/OAuth2State'
 import LoginMethodButton from './LoginMethodButton'
 import { MouseEvent } from 'react'
 

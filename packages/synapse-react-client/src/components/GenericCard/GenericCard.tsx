@@ -1,14 +1,4 @@
-import { Component, CSSProperties } from 'react'
-import { SynapseConstants, SynapseContext } from '../../utils'
-import {
-  isDatasetCollection,
-  isTableEntity,
-} from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import {
-  DOI_REGEX,
-  SYNAPSE_ENTITY_ID_REGEX,
-} from '../../utils/functions/RegularExpressions'
+import { Box, Link } from '@mui/material'
 import {
   ColumnModel,
   ColumnType,
@@ -19,7 +9,20 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { Box, Link } from '@mui/material'
+import { Component, CSSProperties } from 'react'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { SynapseContext } from '../../utils/context/SynapseContext'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import {
+  isDatasetCollection,
+  isTableEntity,
+} from '../../utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import {
+  DOI_REGEX,
+  SYNAPSE_ENTITY_ID_REGEX,
+} from '../../utils/functions/RegularExpressions'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   CardLink,
   ColumnIconConfigs,
@@ -27,24 +30,23 @@ import {
   TargetEnum,
 } from '../CardContainerLogic'
 import HeaderCard from '../HeaderCard'
+import { IconOptions } from '../Icon/Icon'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
-import { CardFooter, Icon } from '../row_renderers/utils'
-import { FileHandleLink } from '../widgets/FileHandleLink'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
+
+import { useQueryContext } from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
 } from '../QueryVisualizationWrapper'
-import { IconOptions } from '../Icon'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { SynapseCardLabel } from './SynapseCardLabel'
+import { CardFooter, Icon } from '../row_renderers/utils'
+import { FileHandleLink } from '../widgets/FileHandleLink'
+import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
-import { useGetEntity } from '../../synapse-queries'
-import { useQueryContext } from '../QueryContext'
+import { SynapseCardLabel } from './SynapseCardLabel'
 
 export type KeyToAlias = {
   key: string

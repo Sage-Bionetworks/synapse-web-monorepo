@@ -1,9 +1,13 @@
+import { Typography } from '@mui/material'
+import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import SearchImage from '../../assets/icons/SearchImage'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -12,11 +16,7 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from './AccessRequestSubmissionTable'
-import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
-import SearchImage from '../../assets/icons/SearchImage'
 
 const SearchStartComponent = () => {
   return (

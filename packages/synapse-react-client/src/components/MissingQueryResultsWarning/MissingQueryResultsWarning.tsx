@@ -1,7 +1,8 @@
 import { WarningSharp } from '@mui/icons-material'
-import { SynapseConstants } from '../../utils'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries/entity/useGetQueryResultBundle'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { isEntityRefCollectionView } from '../../utils/functions/EntityTypeUtils'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
+
 import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover/HelpPopover'

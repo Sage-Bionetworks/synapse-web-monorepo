@@ -8,7 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { useGetDockerTags } from '../../synapse-queries/docker'
+import { useGetDockerTags } from '../../synapse-queries/docker/useGetDockerTag'
 import { EntityItem } from './ChallengeSubmission'
 
 type SubmissionCommitRow = {

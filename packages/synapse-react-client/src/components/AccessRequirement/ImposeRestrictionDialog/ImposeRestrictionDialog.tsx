@@ -8,9 +8,9 @@ import {
 } from '@mui/material'
 import { ChangeEvent, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
-import { useCreateLockAccessRequirement } from '../../../synapse-queries'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { ConfirmationDialog } from '../../ConfirmationDialog'
+import { useCreateLockAccessRequirement } from 'src/synapse-queries/dataaccess/useAccessRequirements'
 
 export type ImposeRestrictionFormProps = {
   /* The ID of the entity that the user may choose to restrict */

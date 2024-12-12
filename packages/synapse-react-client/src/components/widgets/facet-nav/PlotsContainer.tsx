@@ -1,6 +1,6 @@
 import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
-import { UniqueFacetIdentifier } from '../../../utils'
-import { useQueryContext } from '../../QueryContext'
+import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import QueryWrapperSynapsePlot, {
   QueryWrapperSynapsePlotProps,

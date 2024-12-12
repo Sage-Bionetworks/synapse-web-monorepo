@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
+import {
+  useGetEntity,
+  useUpdateEntity,
+} from '../../synapse-queries/entity/useEntity'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
 import { SubmissionView } from '@sage-bionetworks/synapse-types'
 import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
 import { Alert } from '@mui/material'

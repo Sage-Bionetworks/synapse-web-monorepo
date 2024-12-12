@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
@@ -38,9 +38,8 @@ import * as AddToDownloadListV2Module from '../AddToDownloadListV2'
 import {
   QueryContextConsumer,
   QueryContextType,
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../index'
+} from '../../components/QueryContext/QueryContext'
+import { QueryWrapper, QueryWrapperProps } from '../../components/QueryWrapper'
 import {
   MOCK_TABLE_ENTITY_ID,
   mockTableEntity,

@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
-import { useGetEntity } from '../../synapse-queries'
+
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
-import { QueryContextType } from '../QueryContext'
+import { QueryContextType } from '../QueryContext/QueryContext'
 
 type UseComputeRowSelectionPrimaryKeyOptions = {
   entityId: string

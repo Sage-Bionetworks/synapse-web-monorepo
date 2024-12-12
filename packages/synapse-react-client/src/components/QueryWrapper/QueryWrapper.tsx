@@ -17,7 +17,7 @@ import {
   selectedRowsAtom,
 } from './TableRowSelectionState'
 import { Provider, useAtomValue, useSetAtom } from 'jotai'
-import { LockedColumn } from '../../utils'
+import { LockedColumn } from '../../utils/types/LockedColumn'
 import { noop } from 'lodash-es'
 import useOnQueryDataChange from './useOnQueryDataChange'
 import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'

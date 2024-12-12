@@ -1,4 +1,3 @@
-import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnModel,
   ColumnMultiValueFunctionQueryFilter,
@@ -8,28 +7,32 @@ import {
   QueryFilter,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import SelectionCriteriaPill, {
-  SelectionCriteriaPillProps,
-} from './SelectionCriteriaPill'
-import {
-  QueryVisualizationContextType,
-  useQueryVisualizationContext,
-} from '../../QueryVisualizationWrapper'
-import {
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  isFacetColumnRangeRequest,
-  isFacetColumnValuesRequest,
-  isTextMatchesQueryFilter,
-  LockedColumn,
-} from '../../../utils'
+import { useQuery } from '@tanstack/react-query'
 import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
-import { useQuery } from '@tanstack/react-query'
+import { LockedColumn } from '../../../utils/types/LockedColumn'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  isFacetColumnRangeRequest,
+  isFacetColumnValuesRequest,
+  isTextMatchesQueryFilter,
+} from '../../../utils/types/IsType'
+import {
+  QueryContextType,
+  useQueryContext,
+} from '../../QueryContext/QueryContext'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from '../../QueryVisualizationWrapper'
+import SelectionCriteriaPill, {
+  SelectionCriteriaPillProps,
+} from './SelectionCriteriaPill'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 

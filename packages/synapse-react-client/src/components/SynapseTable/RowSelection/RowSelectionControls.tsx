@@ -1,7 +1,8 @@
+import { useGetEntity } from '../../../synapse-queries/entity/useEntity'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { Button } from '@mui/material'
 import { RowSelectionUI } from './RowSelectionUI'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { GetAppTwoTone } from '@mui/icons-material'
@@ -11,7 +12,7 @@ import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
 import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
+
 import { Table } from '@sage-bionetworks/synapse-types'
 
 const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'

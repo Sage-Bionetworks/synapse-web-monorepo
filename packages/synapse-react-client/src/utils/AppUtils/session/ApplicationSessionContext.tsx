@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext } from 'react'
-import { UseDetectSSOCodeReturnType } from '../../hooks'
+import { UseDetectSSOCodeReturnType } from '../../hooks/useDetectSSOCode'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { TermsOfServiceStatus } from '@sage-bionetworks/synapse-types'
 

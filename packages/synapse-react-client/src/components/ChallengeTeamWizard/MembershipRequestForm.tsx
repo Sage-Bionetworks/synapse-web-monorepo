@@ -6,11 +6,9 @@ import {
   useState,
 } from 'react'
 import { Alert, Box, TextField, Typography } from '@mui/material'
-import {
-  useGetCurrentUserProfile,
-  useGetTeam,
-  useRequestToJoinTeam,
-} from '../../synapse-queries'
+import { useGetTeam } from '../../synapse-queries/team/useTeam'
+import { useRequestToJoinTeam } from '../../synapse-queries/team/useTeamMembers'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { noop } from 'lodash-es'
 

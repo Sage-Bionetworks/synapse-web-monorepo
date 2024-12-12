@@ -15,7 +15,7 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   DEFAULT_PAGE_SIZE,
 } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,

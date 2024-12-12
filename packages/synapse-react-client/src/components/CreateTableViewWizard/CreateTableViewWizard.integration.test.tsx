@@ -26,7 +26,7 @@ import {
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { rest } from 'msw'
-import { BackendDestinationEnum } from '../../utils/functions'
+import { BackendDestinationEnum } from '../../utils/functions/getEndpoint'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'

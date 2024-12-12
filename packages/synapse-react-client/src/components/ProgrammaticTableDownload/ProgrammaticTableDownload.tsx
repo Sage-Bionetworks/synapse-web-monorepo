@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import { SynapseConstants } from '../../utils'
+
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   PYTHON_CLIENT_IMPORT_AND_LOGIN,
   R_CLIENT_IMPORT_AND_LOGIN,

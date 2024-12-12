@@ -8,7 +8,7 @@ import {
   useImperativeHandle,
   useState,
 } from 'react'
-import { useGetEntity } from '../../synapse-queries/index'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { useLinkFileEntityToURL } from '../../utils/hooks/useUploadFileEntity/useLinkFileEntityToURL'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 

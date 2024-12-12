@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useSynapseContext } from '../context'
-import { BackendDestinationEnum, getEndpoint } from '../functions/index'
+import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
 import {
   ONE_SAGE_APPID_QUERY_PARAM_KEY,
   ONE_SAGE_PRODUCTION_URL,

@@ -1,5 +1,3 @@
-import { ORIENTATION_BANNER_KEYS } from '../components/OrientationBanner'
-
 /** Bootstrapped principals */
 /** The group representing all users logged-in to Synapse */
 export const AUTHENTICATED_PRINCIPAL_ID = 273948
@@ -188,6 +186,42 @@ export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
 
 export const ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY =
   'org.sagebionetworks.account.promptedforlogin'
+
+const ORIENTATION_BANNER_NAME_STRINGS = [
+  'Challenges',
+  'CohortBuilder',
+  'DataAccessManagement',
+  'Datasets',
+  'Discussions',
+  'Docker',
+  'Favorites',
+  'Files',
+  'Following',
+  'Projects',
+  'Tables',
+  'Teams',
+  'TrashCan',
+  'Wikis',
+  'Donate',
+] as const
+export type OrientationBannerName =
+  (typeof ORIENTATION_BANNER_NAME_STRINGS)[number]
+
+export function getOrientationBannerKey(name: OrientationBannerName) {
+  return 'orientation_banner_' + name.toLowerCase() + '_dismissed'
+}
+
+export const ORIENTATION_BANNER_NAME_TO_KEY: Record<
+  OrientationBannerName,
+  string
+> = ORIENTATION_BANNER_NAME_STRINGS.reduce(
+  (acc, el) => ({ ...acc, [el]: getOrientationBannerKey(el) }),
+  {} as Record<OrientationBannerName, string>,
+)
+
+export const ORIENTATION_BANNER_KEYS = ORIENTATION_BANNER_NAME_STRINGS.map(el =>
+  getOrientationBannerKey(el),
+)
 
 /* Persistent localStorage keys on SWC logout */
 export const PERSISTENT_LOCAL_STORAGE_KEYS = [

@@ -13,7 +13,7 @@ import {
 } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { syn17328596 as mockTableQueryData } from '../../mocks/query/syn17328596'
 import userEvent from '@testing-library/user-event'
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'

@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import { SynapsePlan } from './SynapsePlan'
 import { SynapsePlanContent } from './SynapsePlanContent'
-import { useOneSageURL } from '../../utils/hooks'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 
 export function SynapsePlans() {
   const registrationUrl = useOneSageURL('/register1')

@@ -17,7 +17,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import {
   useGetResearchProject,
   useUpdateResearchProject,
-} from '../../../../synapse-queries'
+} from '../../../../synapse-queries/dataaccess/useAccessRequirements'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
   getWordCount,

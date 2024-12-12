@@ -1,4 +1,4 @@
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { Box, BoxProps, styled, Typography } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 

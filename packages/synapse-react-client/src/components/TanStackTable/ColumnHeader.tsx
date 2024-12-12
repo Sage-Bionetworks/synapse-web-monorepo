@@ -1,7 +1,7 @@
 import { HeaderContext } from '@tanstack/react-table'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { HelpTwoTone } from '@mui/icons-material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { ReactNode, useCallback } from 'react'
 import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 

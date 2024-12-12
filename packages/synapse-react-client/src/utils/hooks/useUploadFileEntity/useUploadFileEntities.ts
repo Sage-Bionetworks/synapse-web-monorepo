@@ -9,10 +9,10 @@ import {
 } from '../../../synapse-client/SynapseClient'
 import {
   useCreateEntity,
-  useGetDefaultUploadDestination,
   useUpdateEntity,
-} from '../../../synapse-queries'
+} from '../../../synapse-queries/entity/useEntity'
 import { FileUploadArgs } from '../../../synapse-queries/file/FileUploadArgs'
+import { useGetDefaultUploadDestination } from '../../../synapse-queries/file/useUploadDestination'
 import { useDirectUploadToS3 } from '../../../synapse-queries/file/useDirectUploadToS3'
 import { useSynapseMultipartUpload } from '../../../synapse-queries/file/useSynapseMultipartUpload'
 import { fixDefaultContentType } from '../../ContentTypeUtils'

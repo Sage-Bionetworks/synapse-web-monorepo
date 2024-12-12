@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { useGetProfileImage } from '../../synapse-queries/file/useFiles'
 import {
   useGetPrincipalIdForAlias,

@@ -12,7 +12,10 @@ import {
   getRequires2FAChangePasswordHandler,
   getSuccessfulChangePasswordHandler,
 } from '../../mocks/msw/handlers/changePasswordHandlers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'

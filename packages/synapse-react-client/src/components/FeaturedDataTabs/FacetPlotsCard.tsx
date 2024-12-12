@@ -34,7 +34,7 @@ import {
 } from './FacetPlotsCardGrid'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 import { times } from 'lodash-es'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 const Plot = createPlotlyComponent(Plotly)

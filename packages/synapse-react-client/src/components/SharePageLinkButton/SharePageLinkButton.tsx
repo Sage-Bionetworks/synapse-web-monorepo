@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { displayToast } from '../ToastMessage'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { Button, ButtonProps } from '@mui/material'
 
 export type SharePageLinkButtonProps = {

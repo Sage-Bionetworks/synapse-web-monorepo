@@ -13,7 +13,8 @@ import {
 import { MOCK_WIKI_ETAG, mockWikiPages } from '../../mockWiki'
 import { mockWikiPageKeys } from '../../mockWikiPageKey'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
-import { SynapseApiResponse } from '../handlers'
+
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const wikiOwnerObjectTypes = [

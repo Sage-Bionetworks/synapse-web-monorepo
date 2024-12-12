@@ -23,13 +23,14 @@ import {
   Tooltip,
 } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
+import { useGetEntityHeaders } from '../../synapse-queries/entity/useGetEntityHeaders'
 import {
   entityTypeToFriendlyName,
   getEntityTypeFromHeader,
   normalizeSynPrefix,
 } from '../../utils/functions/EntityTypeUtils'
-import { useGetEntityHeaders } from '../../synapse-queries'
-import IconSvg from '../IconSvg'
+
+import IconSvg from '../IconSvg/IconSvg'
 import { SkeletonTable } from '../Skeleton'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { parse } from 'papaparse'

@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import CertificationQuiz from './CertificationQuiz'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -18,9 +19,12 @@ import {
 } from '../../testutils/ReactQueryMockUtils'
 import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { rest, server } from '../../mocks/msw/server'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
+
 import { mockUserBundle } from '../../mocks/user/mock_user_profile'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'

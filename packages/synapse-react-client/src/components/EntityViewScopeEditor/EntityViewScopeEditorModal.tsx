@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+import {
+  useGetEntity,
+  useUpdateEntity,
+} from '../../synapse-queries/entity/useEntity'
 import ConfirmationDialog from '../ConfirmationDialog'
 import EntityViewScopeEditor from './EntityViewScopeEditor'
 import EntityViewMaskEditor from './EntityViewMaskEditor'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityView,

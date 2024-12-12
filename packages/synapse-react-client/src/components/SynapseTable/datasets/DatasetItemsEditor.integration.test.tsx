@@ -16,8 +16,11 @@ import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
 import { displayToast } from '../../ToastMessage'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '../../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
-import { SynapseContextType } from '../../../utils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../utils/functions/getEndpoint'
+import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import {
   EntityRef,
   EntityType,

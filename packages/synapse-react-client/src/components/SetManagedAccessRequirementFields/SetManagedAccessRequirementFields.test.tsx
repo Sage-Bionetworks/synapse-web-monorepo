@@ -28,7 +28,10 @@ import {
   WIKI_PAGE_ID,
 } from '../../utils/APIConstants'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DUC_TEMPLATE_UPLOAD_ERROR,

@@ -3,7 +3,8 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import UnmanagedACTAccessRequirementItem, {
   UnmanagedACTAccessRequirementItemProps,
 } from './UnmanagedACTAccessRequirementItem'
-import { SynapseClient, SynapseContextType } from '../../../index'
+import SynapseClient from '../../../synapse-client'
+import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import {
   AccessRequirementStatus,
   RestrictableObjectType,

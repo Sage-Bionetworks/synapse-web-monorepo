@@ -6,15 +6,13 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useGetEntityPath } from '../../../synapse-queries/entity/useEntity'
+import { useGetEntityHeader } from '../../../synapse-queries/entity/useGetEntityHeaders'
+import { useGetFavorites } from '../../../synapse-queries/user/useFavorites'
+import { useGetProjectsInfinite } from '../../../synapse-queries/user/useProjects'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
-import {
-  useGetEntityHeader,
-  useGetEntityPath,
-  useGetFavorites,
-  useGetProjectsInfinite,
-} from '../../../synapse-queries'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityPath,

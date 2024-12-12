@@ -3,6 +3,7 @@ import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
 import { Map } from 'immutable'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import {
   EntityDetailsList,
   EntityDetailsListDataConfiguration,
@@ -16,7 +17,7 @@ import {
 import { EntityTreeNodeType } from '../EntityFinder/tree/VirtualizedTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { useGetEntityBundle } from '../../synapse-queries'
+
 import {
   BreadcrumbItem,
   Breadcrumbs,

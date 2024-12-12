@@ -1,10 +1,10 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { Alert, Button, Link, TextField } from '@mui/material'
 import { Link as RouterLink, Navigate } from 'react-router-dom'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
   'Your password was successfully changed.'

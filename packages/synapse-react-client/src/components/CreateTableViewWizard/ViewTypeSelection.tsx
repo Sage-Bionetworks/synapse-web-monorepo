@@ -3,11 +3,11 @@ import {
   EntityType,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
+import { useGetFeatureFlag } from '../../synapse-queries/featureflags/useGetFeatureFlag'
 import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
 import { Link } from '@mui/material'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'
-import { useGetFeatureFlag } from '../../synapse-queries'
 
 const FILE_VIEW_DESCRIPTION = (
   <>

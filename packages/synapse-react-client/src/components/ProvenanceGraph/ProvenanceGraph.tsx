@@ -1,36 +1,31 @@
-import { useCallback, useEffect, useState, MouseEvent, WheelEvent } from 'react'
-import ReactFlow, {
-  Controls,
-  Node,
-  Edge,
-  useNodesState,
-  useEdgesState,
-  getConnectedEdges,
-  ReactFlowProvider,
-  useReactFlow,
-} from 'reactflow'
-import {
-  getLayoutedElements,
-  isArrayEqual,
-  NodeType,
-  ProvenanceNodeData,
-} from './ProvenanceUtils'
+import { CircularProgress } from '@mui/material'
 import {
   Activity,
+  EntityHeader,
+  ReferenceList,
   Used,
+  USED_ENTITY_CONCRETE_TYPE_VALUE,
   UsedEntity,
   UsedURL,
-  USED_ENTITY_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import SynapseClient from '../../synapse-client'
-import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
-import { useGetEntityHeaders } from '../../synapse-queries'
-import { CircularProgress } from '@mui/material'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { SynapseErrorBoundary } from '../error/ErrorBanner'
+import { MouseEvent, useCallback, useEffect, useState, WheelEvent } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
+import ReactFlow, {
+  Controls,
+  Edge,
+  getConnectedEdges,
+  Node,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
+} from 'reactflow'
+import SynapseClient from '../../synapse-client'
+import { useGetEntityHeaders } from '../../synapse-queries/entity/useGetEntityHeaders'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
 import {
   addActivityNode,
   addEntityNode,
@@ -41,6 +36,12 @@ import {
   findEntityNode,
   isRootEntity,
 } from './ProvenanceGraphUtils'
+import {
+  getLayoutedElements,
+  isArrayEqual,
+  NodeType,
+  ProvenanceNodeData,
+} from './ProvenanceUtils'
 import 'reactflow/dist/style.css'
 
 export type ProvenanceProps = {

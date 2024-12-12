@@ -16,7 +16,10 @@ import { noop } from 'lodash-es'
 import { server } from '../../mocks/msw/server'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import { generateAsyncJobHandlers } from '../../mocks/msw/handlers/asyncJobHandlers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import SynapseClient from '../../synapse-client'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import {

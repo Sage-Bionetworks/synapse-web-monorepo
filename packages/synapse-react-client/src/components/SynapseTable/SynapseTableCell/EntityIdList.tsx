@@ -1,5 +1,5 @@
+import { useGetEntityHeaders } from '../../../synapse-queries/entity/useGetEntityHeaders'
 import { EntityLink } from '../../EntityLink'
-import { useGetEntityHeaders } from '../../../synapse-queries'
 
 export type EntityIdListProps = {
   entityIdList: string[]

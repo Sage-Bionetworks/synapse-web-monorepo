@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import { useGetAccessRequirementWikiPageKey } from '../../../synapse-queries'
+import { useGetAccessRequirementWikiPageKey } from '../../../synapse-queries/dataaccess/useAccessRequirements'
 import { useCanShowManagedACTWikiInWizard } from '../AccessRequirementListUtils'
 import { Grid, Typography } from '@mui/material'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'

@@ -23,7 +23,10 @@ import {
   mockTraceEventsResponse3,
 } from 'src/mocks/chat/mockChat'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
-import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'src/utils/functions/getEndpoint'
 
 let traceCallCount = 0
 export const getChatbotHandlers = (

@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes } from 'react'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 
 type ExpandCollapseButtonProps = {
   isExpanded: boolean

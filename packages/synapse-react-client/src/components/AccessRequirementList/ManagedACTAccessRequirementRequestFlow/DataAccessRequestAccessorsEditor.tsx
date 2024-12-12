@@ -15,7 +15,7 @@ import {
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useGetCurrentUserProfile } from '../../../synapse-queries'
+import { useGetCurrentUserProfile } from '../../../synapse-queries/user/useUserBundle'
 import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
 import { UserBadge } from '../../UserCard/UserBadge'
 

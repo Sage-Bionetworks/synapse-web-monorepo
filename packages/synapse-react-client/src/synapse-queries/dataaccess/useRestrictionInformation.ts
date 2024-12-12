@@ -9,7 +9,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseClient from '../../synapse-client'
 import { chunk } from 'lodash-es'
 

@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
-import { QueryWrapper } from '../../index'
+import { QueryWrapper } from '../../components/QueryWrapper'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'

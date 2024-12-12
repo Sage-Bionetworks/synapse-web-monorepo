@@ -6,7 +6,8 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
 import { useGetCurrentUserProfile } from './useUserBundle'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'

@@ -1,4 +1,9 @@
 import { useState } from 'react'
+import {
+  useCancelDataAccessRequest,
+  useGetAccessRequirementStatus,
+  useGetAccessRequirementWikiPageKey,
+} from '../../../synapse-queries/dataaccess/useAccessRequirements'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
   ManagedACTAccessRequirement,
@@ -8,11 +13,6 @@ import {
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import RequirementItem from '../RequirementItem/RequirementItem'
-import {
-  useCancelDataAccessRequest,
-  useGetAccessRequirementStatus,
-  useGetAccessRequirementWikiPageKey,
-} from '../../../synapse-queries'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 export type ManagedACTAccessRequirementItemProps = {

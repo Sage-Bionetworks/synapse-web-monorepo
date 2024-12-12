@@ -1,6 +1,7 @@
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo } from 'react'
-import { useGetUserGroupHeaders } from '../../synapse-queries'
+import { useGetUserGroupHeaders } from '../../synapse-queries/user/useUserGroupHeader'
+
 import {
   compareResourceAccessAndUserGroupHeader,
   ResourceAccessAndUserGroupHeader,

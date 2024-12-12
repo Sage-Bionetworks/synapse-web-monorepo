@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import {
   ANONYMOUS_PRINCIPAL_ID,
   AVATAR,
@@ -7,7 +8,6 @@ import {
   SEPERATOR,
   SMALL_USER_CARD,
 } from '../../utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
 import UserCard, { UserCardProps } from './UserCard'
 import { Box } from '@mui/material'
 

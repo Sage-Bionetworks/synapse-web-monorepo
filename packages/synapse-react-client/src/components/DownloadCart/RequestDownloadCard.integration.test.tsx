@@ -1,9 +1,12 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { rest, server } from '../../mocks/msw/server'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   REQUEST_DOWNLOAD_TITLE,
   RequestDownloadCard,

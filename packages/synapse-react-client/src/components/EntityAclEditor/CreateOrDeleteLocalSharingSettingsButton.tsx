@@ -1,5 +1,5 @@
 import { Button, Typography } from '@mui/material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 
 export const CREATE_LOCAL_SHARING_SETTINGS = 'Create local sharing settings'
 export const DELETE_LOCAL_SHARING_SETTINGS = 'Delete local sharing settings'

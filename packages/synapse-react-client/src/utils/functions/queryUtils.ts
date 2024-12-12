@@ -16,9 +16,9 @@ import {
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-  LockedColumn,
-  UniqueFacetIdentifier,
-} from '../types'
+} from '../types/IsType'
+import { LockedColumn } from '../types/LockedColumn'
+import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
 import {
   hasFilesInView,
   isDataset,

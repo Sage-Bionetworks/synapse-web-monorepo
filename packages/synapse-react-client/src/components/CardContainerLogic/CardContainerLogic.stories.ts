@@ -16,7 +16,7 @@ import {
 } from '../../utils/SynapseConstants'
 import CardContainerLogic from './index'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { GenericCardSchema } from '../GenericCard'
+import { GenericCardSchema } from '../GenericCard/GenericCard'
 import { StatConfig } from '../ReleaseCard'
 import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
 import {

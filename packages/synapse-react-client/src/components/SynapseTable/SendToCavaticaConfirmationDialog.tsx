@@ -21,7 +21,7 @@ import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   hasSelectedRowsAtom,

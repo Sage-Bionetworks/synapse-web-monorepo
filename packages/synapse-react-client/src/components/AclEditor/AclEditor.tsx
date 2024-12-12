@@ -20,7 +20,7 @@ import {
   PUBLIC_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_IDS,
 } from '../../utils/SynapseConstants'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { noop } from 'lodash-es'
 import { AclEditorSkeleton } from './AclEditorSkeleton'
 

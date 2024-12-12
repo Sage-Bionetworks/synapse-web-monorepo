@@ -2,7 +2,7 @@ import { Box, IconButton } from '@mui/material'
 import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from './ToastMessage/ToastMessage'
 import { BoxProps } from '@mui/material'
-import IconSvg from './IconSvg'
+import IconSvg from './IconSvg/IconSvg'
 
 export type CopyToClipboardIconProps = BoxProps & {
   value: string

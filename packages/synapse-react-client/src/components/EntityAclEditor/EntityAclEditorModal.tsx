@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import EntityAclEditor, { EntityAclEditorHandle } from './EntityAclEditor'
 import { displayToast } from '../ToastMessage'
-import { useGetEntityBundle } from '../../synapse-queries'
+
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import { noop } from 'lodash-es'
 

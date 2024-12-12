@@ -4,10 +4,10 @@ import {
   ColumnType,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries/entity/useGetQueryResultBundle'
 import { RangeValues } from '../Range'
-import { useQueryContext } from '../../QueryContext'
-import { SynapseConstants } from '../../../utils'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries'
+import { useQueryContext } from '../../QueryContext/QueryContext'
+import * as SynapseConstants from '../../../utils/SynapseConstants'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { RangeFacetFilterUI } from './RangeFacetFilterUI'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'

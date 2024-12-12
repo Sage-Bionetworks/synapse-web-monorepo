@@ -1,5 +1,5 @@
 import { Action } from '@sage-bionetworks/synapse-types'
-import { useGetEntityActionsRequired } from '../../synapse-queries'
+import { useGetEntityActionsRequired } from '../../synapse-queries/entity/useGetEntityActionsRequired'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 

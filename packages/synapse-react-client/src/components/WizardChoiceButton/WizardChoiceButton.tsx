@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { ReactNode } from 'react'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import WizardChoiceButtonDescription from './WizardChoiceButtonDescription'
 
 export default function WizardChoiceButton(props: {

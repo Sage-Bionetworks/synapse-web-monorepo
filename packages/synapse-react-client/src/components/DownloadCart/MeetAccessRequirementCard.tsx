@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   useGetAccessRequirements,
   useGetAccessRequirementStatus,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,

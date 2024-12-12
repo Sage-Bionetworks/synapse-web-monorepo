@@ -7,7 +7,7 @@ import {
   useCreateWikiPage,
   useGetRootWikiPageKey,
   useGetWikiPage,
-} from '../../synapse-queries'
+} from '../../synapse-queries/wiki/useWiki'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import MarkdownSynapse, {
   MarkdownSynapseProps,

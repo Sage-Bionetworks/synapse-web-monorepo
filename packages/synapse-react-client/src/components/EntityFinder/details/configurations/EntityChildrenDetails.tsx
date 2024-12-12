@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useGetEntityChildrenInfinite } from '../../../../synapse-queries/entity/useGetEntityChildren'
 import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+
 import { DetailsView } from '../view/DetailsView'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 

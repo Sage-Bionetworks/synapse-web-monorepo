@@ -8,7 +8,7 @@ import {
   TERMS_OF_USE_TITLE,
 } from './MeetAccessRequirementCard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { rest, server } from '../../mocks/msw/server'
 import {
   mockLockAccessRequirement,
@@ -20,7 +20,10 @@ import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_STATUS,
 } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   AccessRequirement,
   AccessRequirementStatus,

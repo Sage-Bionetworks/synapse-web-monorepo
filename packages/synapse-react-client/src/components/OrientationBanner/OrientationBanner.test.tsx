@@ -4,11 +4,11 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import OrientationBanner, {
-  getOrientationBannerKey,
+import {
+  ORIENTATION_BANNER_NAME_TO_KEY,
   OrientationBannerName,
-  OrientationBannerProps,
-} from './OrientationBanner'
+} from '../../utils/SynapseConstants'
+import OrientationBanner, { OrientationBannerProps } from './OrientationBanner'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 
@@ -29,7 +29,7 @@ const defaultProps = {
   },
 } satisfies OrientationBannerProps
 
-const defaultStorageId = getOrientationBannerKey(defaultProps.name)
+const defaultStorageId = ORIENTATION_BANNER_NAME_TO_KEY[defaultProps.name]
 
 function renderComponent(
   props: OrientationBannerProps,
@@ -93,10 +93,13 @@ describe('OrientationBanner tests', () => {
 
   it('displays the alert even if a different notification was previously dismissed', () => {
     const otherBannerName = 'Challenges' as OrientationBannerName
-    localStorage.setItem(getOrientationBannerKey(otherBannerName), 'true')
+    localStorage.setItem(
+      ORIENTATION_BANNER_NAME_TO_KEY[otherBannerName],
+      'true',
+    )
     renderComponent(defaultProps)
     expect(screen.queryByRole('alert')).toBeInTheDocument()
-    localStorage.removeItem(getOrientationBannerKey(otherBannerName))
+    localStorage.removeItem(ORIENTATION_BANNER_NAME_TO_KEY[otherBannerName])
   })
 
   it('hides the alert when the close button is clicked', async () => {

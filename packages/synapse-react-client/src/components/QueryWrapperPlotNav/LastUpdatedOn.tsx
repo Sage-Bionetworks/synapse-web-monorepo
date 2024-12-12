@@ -4,7 +4,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { Skeleton, Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 
 function LastUpdatedOn() {
   const { queryMetadataQueryOptions } = useQueryContext()

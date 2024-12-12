@@ -7,7 +7,7 @@ import {
   PaginatedResults,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetDockerTags(
   entityId: string,

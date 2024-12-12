@@ -2,7 +2,7 @@ import { CSSProperties, useRef } from 'react'
 import { getColor } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
-import { useOverlay } from '../../utils/hooks'
+import { useOverlay } from '../../utils/hooks/useOverlay'
 import { Avatar as MUIAvatar, Skeleton, SxProps } from '@mui/material'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds

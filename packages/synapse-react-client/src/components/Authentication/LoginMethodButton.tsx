@@ -1,6 +1,6 @@
 import { Box, Button, SxProps } from '@mui/material'
 import { MouseEventHandler } from 'react'
-import IconSvg, { IconName } from '../IconSvg'
+import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import LastLoginInfo, { useLastLoginInfo } from './LastLoginInfo'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
 

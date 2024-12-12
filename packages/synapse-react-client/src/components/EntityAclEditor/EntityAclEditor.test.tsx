@@ -1,5 +1,6 @@
 import { createRef } from 'react'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { SynapseApiResponse } from '../../mocks/msw/SynapseApiResponse'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import EntityAclEditor, {
@@ -35,9 +36,11 @@ import {
 } from '../../mocks/entity/mockFileEntityACLVariants'
 import { rest } from 'msw'
 import { ENTITY_ID } from '../../utils/APIConstants'
-import { SynapseApiResponse } from '../../mocks/msw/handlers'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   CREATE_LOCAL_SHARING_SETTINGS,
   DELETE_LOCAL_SHARING_SETTINGS,

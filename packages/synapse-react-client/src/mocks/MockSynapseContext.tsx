@@ -1,6 +1,6 @@
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext } from 'react'
-import { KeyFactory } from '../synapse-queries'
+import { KeyFactory } from '../synapse-queries/KeyFactory'
 import FullContextProvider from '../utils/context/FullContextProvider'
 import { SynapseContextType } from '../utils/context/SynapseContext'
 

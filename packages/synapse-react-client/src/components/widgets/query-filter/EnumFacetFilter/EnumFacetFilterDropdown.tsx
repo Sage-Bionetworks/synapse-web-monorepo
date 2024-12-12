@@ -1,7 +1,7 @@
 import { Dropdown } from 'react-bootstrap'
 import { useState, MouseEvent, PropsWithChildren } from 'react'
 import { Fade, IconButton, Menu, Tooltip } from '@mui/material'
-import IconSvg from '../../../IconSvg'
+import IconSvg from '../../../IconSvg/IconSvg'
 
 export type EnumFacetFilterDropdownProps = PropsWithChildren<{
   facetTitle: string

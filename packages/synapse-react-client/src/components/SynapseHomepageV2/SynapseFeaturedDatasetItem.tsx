@@ -1,6 +1,9 @@
 import { Box, Chip, Link, Paper, SxProps, Typography } from '@mui/material'
 import { EastTwoTone } from '@mui/icons-material'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 
 export type SynapseFeaturedDatasetItemProps = {

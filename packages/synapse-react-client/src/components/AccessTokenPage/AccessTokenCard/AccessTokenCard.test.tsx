@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SynapseClient } from '../../../index'
+import SynapseClient from '../../../synapse-client'
 import {
   AccessTokenCard,
   AccessTokenCardProps,

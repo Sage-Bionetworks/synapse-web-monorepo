@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
-import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
-import { useGetEntityChildrenInfinite } from '../../synapse-queries'
+import { useGetEntityChildrenInfinite } from '../../synapse-queries/entity/useGetEntityChildren'
+
 import useGetIsAllSelectedFromInfiniteList from '../../utils/hooks/useGetIsAllSelectedInfiniteList'
+import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
 import { ChallengeDataTable } from './ChallengeDataTable'
 
 type ChallengeEntityChildrenDetailsProps = EntityDetailsListSharedProps & {

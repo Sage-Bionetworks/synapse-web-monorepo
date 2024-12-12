@@ -2,7 +2,7 @@ import {
   FileHandleAssociation,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
@@ -12,7 +12,10 @@ import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { CardLink } from '../CardContainerLogic'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
-import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
+import {
+  getFileHandleAssociation,
+  getLinkParams,
+} from '../GenericCard/GenericCard'
 
 export type ProgramsProps = {
   entityId: string

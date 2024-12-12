@@ -2,7 +2,10 @@
  * Hooks to access Entity Services in Synapse
  */
 
-import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
+import {
+  EntityLookupRequest,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
 import {
@@ -23,11 +26,7 @@ import {
 import SynapseClient from '../../synapse-client'
 import { allowNotFoundError } from '../../synapse-client/SynapseClientUtils'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import {
-  createTableUpdateTransactionRequest,
-  SynapseClientError,
-  useSynapseContext,
-} from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessControlList,
   ColumnModel,
@@ -43,6 +42,7 @@ import {
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
+import { createTableUpdateTransactionRequest } from '../../utils/functions/TableColumnSchemaUtils'
 import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
 import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'

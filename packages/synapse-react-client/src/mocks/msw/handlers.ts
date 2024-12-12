@@ -1,21 +1,24 @@
 import { rest } from 'msw'
-import { getEntityHandlers } from './handlers/entityHandlers'
-import {
-  getCurrentUserCertifiedValidatedHandler,
-  getUserProfileHandlers,
-} from './handlers/userProfileHandlers'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
+import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
 import { getAllAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
-import { getWebhookHandlers } from './handlers/webhookHandlers'
-import { getAllWikiHandlers } from './handlers/wikiHandlers'
+import getAllChallengeHandlers from './handlers/challengeHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
-import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
-import { getFileHandlers } from './handlers/fileHandlers'
-import { SynapseError } from '../../utils/SynapseError'
 import { getDiscussionHandlers } from './handlers/discussionHandlers'
+import { getDoiHandler } from './handlers/doiHandlers'
+import { getEntityHandlers } from './handlers/entityHandlers'
+import { getEvaluationHandlers } from './handlers/evaluationHandlers'
+import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
+import { getFileHandlers } from './handlers/fileHandlers'
+import { getMessageHandlers } from './handlers/messageHandlers'
+import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
+import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
+import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHandlers'
+import { getShortIoHandlers } from './handlers/shortIoHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
 import {
   getAnnotationColumnHandlers,
@@ -23,20 +26,13 @@ import {
   getDefaultColumnHandlers,
   getHandlersForTableQuery,
 } from './handlers/tableQueryHandlers'
-import { getEvaluationHandlers } from './handlers/evaluationHandlers'
-import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
-import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
-import getAllChallengeHandlers from './handlers/challengeHandlers'
 import getAllTeamHandlers from './handlers/teamHandlers'
-import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
-import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHandlers'
-import { getMessageHandlers } from './handlers/messageHandlers'
-import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
-import { getDoiHandler } from './handlers/doiHandlers'
-import { getShortIoHandlers } from './handlers/shortIoHandlers'
-
-// Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
-export type SynapseApiResponse<T> = T | SynapseError
+import {
+  getCurrentUserCertifiedValidatedHandler,
+  getUserProfileHandlers,
+} from './handlers/userProfileHandlers'
+import { getWebhookHandlers } from './handlers/webhookHandlers'
+import { getAllWikiHandlers } from './handlers/wikiHandlers'
 
 const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   rest.options('*', async (req, res, ctx) => {

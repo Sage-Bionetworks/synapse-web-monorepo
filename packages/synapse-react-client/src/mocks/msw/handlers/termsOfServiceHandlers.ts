@@ -7,7 +7,10 @@ import {
   termsOfServiceInfo,
   termsOfServiceNewUserStatus,
 } from 'src/mocks/termsOfService/mockTermsOfService'
-import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'src/utils/functions/getEndpoint'
 
 export const getTermsOfServiceHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),

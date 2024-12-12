@@ -1,5 +1,6 @@
 import { createRef, useMemo, useState } from 'react'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
+import { useGetFullTableQueryResults } from '../../synapse-queries/entity/useGetQueryResultBundle'
+
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {
   phaseObservationIndex,
@@ -13,7 +14,7 @@ import {
   SQLOperator,
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
-} from '../../utils/functions'
+} from '../../utils/functions/SqlFunctions'
 import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton, Typography } from '@mui/material'
 import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'

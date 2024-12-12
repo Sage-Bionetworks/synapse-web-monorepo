@@ -1,14 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react'
-import OrientationBanner, {
-  getOrientationBannerKey,
-  OrientationBannerProps,
-} from './OrientationBanner'
+import { ORIENTATION_BANNER_NAME_TO_KEY } from '../../utils/SynapseConstants'
+import OrientationBanner, { OrientationBannerProps } from './OrientationBanner'
 
 const meta = {
   title: 'UI/OrientationBanner',
   component: OrientationBanner,
   render: args => {
-    localStorage.removeItem(getOrientationBannerKey(args.name))
+    localStorage.removeItem(ORIENTATION_BANNER_NAME_TO_KEY[args.name])
     return <OrientationBanner {...args} />
   },
 } satisfies Meta<OrientationBannerProps>

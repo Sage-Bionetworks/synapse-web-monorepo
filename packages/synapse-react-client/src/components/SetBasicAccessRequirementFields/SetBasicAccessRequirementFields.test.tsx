@@ -25,7 +25,10 @@ import {
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,

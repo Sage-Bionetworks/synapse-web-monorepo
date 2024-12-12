@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
+import SynapseClient from '../../synapse-client/index'
 import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
@@ -7,7 +8,6 @@ import {
   MOCK_USER_ID_2,
   mockUserBundle,
 } from '../../mocks/user/mock_user_profile'
-import { SynapseClient } from '../../index'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'

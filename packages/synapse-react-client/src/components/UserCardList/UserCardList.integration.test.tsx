@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import UserCardList, { UserCardListProps } from './UserCardList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { server } from '../../mocks/msw/server'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'

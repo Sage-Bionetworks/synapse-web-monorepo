@@ -5,13 +5,13 @@ import {
   CreateChallengeTeamRequest,
   PaginatedIds,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
 import { rest } from 'msw'
 import {
   MOCK_CHALLENGE_ID,
   mockRegisteredChallengeTeams,
 } from '../../challenge/mockChallenge'
 import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../team/mockTeam'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const registeredChallengeTeamService = new BasicMockedCrudService<

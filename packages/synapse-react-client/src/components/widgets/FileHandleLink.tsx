@@ -4,7 +4,7 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'

@@ -14,11 +14,12 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
 import { useCallback } from 'react'
-import { useGetEntityHeader } from '../../synapse-queries'
+import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
+
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   isRowSelectedAtom,
@@ -265,8 +266,10 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
   const { cell, table } = props
   const { queryMetadataQueryOptions } = useQueryContext()
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
-  const entityOrRowId = getEntityOrRowId(props)
-  const entityOrRowVersion = getEntityOrRowVersion(props)
+  const entityOrRowId = getEntityOrRowId(props as CellContext<Row, unknown>)
+  const entityOrRowVersion = getEntityOrRowVersion(
+    props as CellContext<Row, unknown>,
+  )
   const versionNumber =
     entityOrRowVersion !== undefined ? parseInt(entityOrRowVersion) : undefined
   const selectColumns = table.options.meta?.rowSet?.headers ?? []

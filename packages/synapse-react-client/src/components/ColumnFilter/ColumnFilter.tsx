@@ -10,7 +10,7 @@ import {
   facetObjectMatchesDefinition,
   getCorrespondingSelectedFacet,
 } from '../../utils/functions/queryUtils'
-import { UniqueFacetIdentifier } from '../../utils'
+import { UniqueFacetIdentifier } from '../../utils/types/UniqueFacetIdentifier'
 
 export type FilterProps = {
   topLevelEnumeratedFacetToFilter: UniqueFacetIdentifier

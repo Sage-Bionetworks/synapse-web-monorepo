@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { ReactNode, SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
+import { useAddFileToDownloadList } from '../../../../synapse-queries/download/useDownloadList'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
 import { isTableType } from '../../../../utils/functions/EntityTypeUtils'
 import {
@@ -31,8 +32,8 @@ import { EntityFinderTableViewRowData } from './DetailsView'
 import { UserBadge } from '../../../UserCard/UserBadge'
 import { displayFilesWereAddedToDownloadListSuccess } from '../../../download_list/DownloadConfirmationUtils'
 import { displayToast } from '../../../ToastMessage'
-import { useAddFileToDownloadList } from '../../../../synapse-queries'
-import { useSynapseContext } from '../../../../utils'
+
+import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import { FileHandleWithPreview } from '../../../ChallengeDataDownload/Renderers'
 import { useMutation } from '@tanstack/react-query'
 

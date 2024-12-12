@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 const GITHUB_API_URL = 'https://api.github.com/repos'
 
 export function useLatestTag(

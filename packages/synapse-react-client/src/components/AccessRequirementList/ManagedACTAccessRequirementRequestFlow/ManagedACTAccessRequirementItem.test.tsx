@@ -11,11 +11,12 @@ import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
 } from '../../../mocks/accessRequirement/mockAccessRequirements'
-import { SynapseClient, SynapseContextType } from '../../../index'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import userEvent from '@testing-library/user-event'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import { SynapseContextType } from '../../../utils/context/SynapseContext'
+import SynapseClient from '../../../synapse-client'
 
 async function renderComponent(
   props: ManagedACTAccessRequirementItemProps,

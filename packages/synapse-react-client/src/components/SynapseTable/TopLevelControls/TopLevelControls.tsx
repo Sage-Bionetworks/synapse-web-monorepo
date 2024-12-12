@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { useGetEntity } from '../../../synapse-queries/entity/useEntity'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import {
   Query,
@@ -9,7 +10,7 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
@@ -22,7 +23,7 @@ import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
-import IconSvg from '../../IconSvg'
+import IconSvg from '../../IconSvg/IconSvg'
 import { useAtomValue } from 'jotai'
 import {
   hasSelectedRowsAtom,
@@ -31,7 +32,6 @@ import {
 } from '../../QueryWrapper/TableRowSelectionState'
 import CustomControlButton from './CustomControlButton'
 import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
 
 const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaTopLevelControlButton'
 

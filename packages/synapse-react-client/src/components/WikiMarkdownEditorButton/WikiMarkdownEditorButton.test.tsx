@@ -14,7 +14,7 @@ import {
 } from '../../mocks/mockWikiPageKey'
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
-import { CreateWikiPageInput } from '../../synapse-queries'
+import { CreateWikiPageInput } from '../../synapse-queries/wiki/useWiki'
 import {
   confirmMarkdownSynapseTextContent,
   expectMarkdownSynapseNotToGetWiki,
@@ -22,7 +22,10 @@ import {
 } from '../../testutils/MarkdownSynapseUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { WIKI_PAGE } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,

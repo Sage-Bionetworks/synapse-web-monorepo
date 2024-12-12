@@ -5,7 +5,10 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import SynapseClient from '../../synapse-client'
 
 export type PdfPreviewProps = {

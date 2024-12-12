@@ -6,7 +6,7 @@ import PlotsContainer, {
   PlotsContainerProps,
 } from '../../widgets/facet-nav/PlotsContainer'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../../utils'
+import * as SynapseConstants from '../../../utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { server } from '../../../mocks/msw/server'

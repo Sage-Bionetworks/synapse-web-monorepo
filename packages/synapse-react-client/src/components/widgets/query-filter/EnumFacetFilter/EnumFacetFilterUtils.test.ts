@@ -1,4 +1,4 @@
-import { SynapseConstants } from '../../../../utils'
+import * as SynapseConstants from '../../../../utils/SynapseConstants'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
 import {
   EntityHeader,

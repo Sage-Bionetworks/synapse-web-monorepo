@@ -11,7 +11,7 @@ import {
   useCreateEntity,
   useGetEntityLookupQueryOptions,
   useGetEntityQueryOptions,
-} from '../../../synapse-queries/index'
+} from '../../../synapse-queries/entity/useEntity'
 import { getUseMutationMock } from '../../../testutils/ReactQueryMockUtils'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { useCreateFolderPath } from './useCreateFolderPath'

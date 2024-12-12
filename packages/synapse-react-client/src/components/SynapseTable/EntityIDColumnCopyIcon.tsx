@@ -8,7 +8,7 @@ import {
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../utils/functions/SqlFunctions'
 

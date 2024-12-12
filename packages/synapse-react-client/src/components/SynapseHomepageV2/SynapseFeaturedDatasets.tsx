@@ -1,4 +1,4 @@
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { SynapseFeaturedDatasetItem } from './SynapseFeaturedDatasetItem'

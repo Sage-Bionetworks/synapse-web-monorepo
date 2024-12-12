@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import StepperDialog from '../StepperDialog'
 import { Step } from '../StepperDialog/StepperDialog'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SubmissionCommitList from './SubmissionCommitList'
 import EvaluationQueueList from './EvaluationQueueList'
 import { Typography } from '@mui/material'

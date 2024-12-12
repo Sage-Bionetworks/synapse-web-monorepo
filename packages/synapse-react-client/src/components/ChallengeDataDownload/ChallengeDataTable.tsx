@@ -11,7 +11,7 @@ import {
   EntityHeader,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   getEntityTypeFromHeader,
   isContainerType,

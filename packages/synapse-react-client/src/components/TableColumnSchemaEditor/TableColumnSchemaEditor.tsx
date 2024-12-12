@@ -1,8 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react'
-import {
-  useGetEntityBundle,
-  useUpdateTableColumns,
-} from '../../synapse-queries'
+import { useUpdateTableColumns } from '../../synapse-queries/entity/useEntity'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'

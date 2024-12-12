@@ -1,4 +1,4 @@
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'

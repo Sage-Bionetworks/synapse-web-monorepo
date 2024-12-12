@@ -23,9 +23,9 @@ import {
   mockUserData,
   mockUserProfileData,
 } from '../../user/mock_user_profile'
-import { SynapseApiResponse } from '../handlers'
 import { UserProfileList } from '../../../synapse-client/SynapseClient'
 import { mockUserGroupData } from '../../usergroup/mockUserGroup'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**

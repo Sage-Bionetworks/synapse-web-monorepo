@@ -12,7 +12,7 @@ import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { EntityTypeGroup } from '../../utils/functions/EntityTypeUtils'
 import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage'
 
 export type ImportTableColumnsButtonProps = Omit<ButtonProps, 'onClick'> & {

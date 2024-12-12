@@ -1,7 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { ViewMoreQueryResultsButton } from './ViewMoreQueryResultsButton'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryContextProvider, QueryContextType } from '../QueryContext'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../QueryContext/QueryContext'
 import userEvent from '@testing-library/user-event'
 
 function setUp(

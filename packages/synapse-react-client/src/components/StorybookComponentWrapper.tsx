@@ -1,3 +1,4 @@
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
@@ -8,12 +9,11 @@ import SynapseClient, {
   getUserProfile,
   signOut,
 } from '../synapse-client'
+import { defaultQueryClientConfig } from '../utils/context/index'
 import {
-  defaultQueryClientConfig,
-  SynapseClientError,
   SynapseContextProvider,
   SynapseContextType,
-} from '../utils'
+} from '../utils/context/SynapseContext'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
 import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
 import { SynapseToastContainer } from './ToastMessage'

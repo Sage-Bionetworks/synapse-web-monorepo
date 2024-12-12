@@ -14,7 +14,7 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { usePrefetchTableRows } from './usePrefetchTableData'

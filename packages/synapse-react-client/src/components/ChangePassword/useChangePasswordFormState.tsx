@@ -8,14 +8,17 @@ import {
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { useChangePassword, useResetTwoFactorAuth } from '../../synapse-queries'
 import { Alert, Typography } from '@mui/material'
+import { useChangePassword } from '../../synapse-queries/auth/useChangePassword'
+import { useResetTwoFactorAuth } from '../../synapse-queries/auth/useTwoFactorEnrollment'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from '../Authentication/Constants'
-import { ONE_TIME_PASSWORD_STEP, OneTimePasswordForm } from '../Authentication'
-import { useOneSageURL } from '../../utils/hooks'
+import OneTimePasswordForm, {
+  ONE_TIME_PASSWORD_STEP,
+} from '../Authentication/OneTimePasswordForm'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
 
 export const TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT =

@@ -1,5 +1,5 @@
-import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
+import { useGetCurrentUserBundle } from '../../../synapse-queries/user/useUserBundle'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'

@@ -1,4 +1,4 @@
-import { useGetAllDownloadListActionsRequired } from '../../synapse-queries'
+import { useGetAllDownloadListActionsRequired } from '../../synapse-queries/download/useDownloadList'
 import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'
 import { ActionRequiredListItem } from './ActionRequiredListItem'

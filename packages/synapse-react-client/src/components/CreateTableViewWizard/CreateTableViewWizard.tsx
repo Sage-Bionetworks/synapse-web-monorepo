@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCreateEntity } from '../../synapse-queries/entity/useEntity'
 import TableNameForm from './TableNameForm'
 import {
   ColumnModel,
@@ -11,7 +12,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import TableTypeSelection from './TableTypeSelection'
 import { Alert, Box, Button } from '@mui/material'
-import { useCreateEntity } from '../../synapse-queries'
+
 import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
 import ViewTypeSelection from './ViewTypeSelection'
 import TableColumnSchemaForm, {

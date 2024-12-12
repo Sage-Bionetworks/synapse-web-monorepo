@@ -14,7 +14,7 @@ import {
 import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { AccessRequirementTextInstructions } from './AccessRequirementTextInstructions'
 import { AccessRequirementWikiInstructions } from './AccessRequirementWikiInstructions'

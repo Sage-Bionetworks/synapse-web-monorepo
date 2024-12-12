@@ -1,8 +1,6 @@
-import { useSynapseContext } from '../../utils'
-import {
-  useAddQueryToDownloadList,
-  useGetEntityChildren,
-} from '../../synapse-queries'
+import { useAddQueryToDownloadList } from '../../synapse-queries/download/useDownloadList'
+import { useGetEntityChildren } from '../../synapse-queries/entity/useGetEntityChildren'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'

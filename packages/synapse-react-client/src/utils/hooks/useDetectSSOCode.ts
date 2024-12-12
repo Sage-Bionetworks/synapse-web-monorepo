@@ -1,4 +1,4 @@
-import { BackendDestinationEnum } from '../functions'
+import { BackendDestinationEnum } from '../functions/getEndpoint'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
@@ -11,7 +11,7 @@ import {
 } from '../../synapse-client'
 import { useEffect, useMemo, useState } from 'react'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
-import { OAuth2State } from '../types'
+import { OAuth2State } from '../types/OAuth2State'
 import { useOneSageURL } from './useOneSageURL'
 
 export type UseDetectSSOCodeReturnType = {

@@ -10,7 +10,7 @@ import { Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
   useGetAccessRequirementStatus,
   useGetAccessRequirementWikiPageKey,
-} from '../../../synapse-queries'
+} from '../../../synapse-queries/dataaccess/useAccessRequirements'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 

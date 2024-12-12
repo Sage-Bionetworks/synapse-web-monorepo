@@ -5,7 +5,7 @@ import {
 } from '../../utils/functions/SqlFunctions'
 import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import TopLevelControls, {

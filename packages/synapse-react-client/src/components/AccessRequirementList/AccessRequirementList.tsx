@@ -34,10 +34,10 @@ import {
   useGetAccessRequirementsForEntity,
   useGetAccessRequirementsForTeam,
   useSortAccessRequirementIdsByCompletion,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 import { noop } from 'lodash-es'
 import { DialogBaseTitle } from '../DialogBase'

@@ -7,7 +7,10 @@ import {
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
 } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   EntityType,
   PaginatedResults,

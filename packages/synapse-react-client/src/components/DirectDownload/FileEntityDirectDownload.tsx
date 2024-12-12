@@ -1,5 +1,5 @@
-import { useGetEntity } from '../../synapse-queries'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { isFileEntity } from '../../utils/types/IsType'
 import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
 import { Skeleton } from '@mui/material'

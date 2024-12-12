@@ -7,7 +7,7 @@ import {
   BatchFileRequest,
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type SynapseVideoProps = {

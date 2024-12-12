@@ -22,10 +22,8 @@ import {
 } from 'react'
 import { FixedSizeList } from 'react-window'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/index'
-import {
-  useGetDefaultUploadDestination,
-  useGetEntity,
-} from '../../synapse-queries'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { useGetDefaultUploadDestination } from '../../synapse-queries/file/useUploadDestination'
 import { getUploadDestinationString } from '../../utils/functions/FileHandleUtils'
 import {
   UploaderState,

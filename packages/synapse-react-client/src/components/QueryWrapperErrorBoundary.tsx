@@ -1,8 +1,9 @@
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { PropsWithChildren, useCallback, useMemo } from 'react'
 import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { EntityActionsRequired } from './AccessRequirement/EntityActionsRequired'
-import { SynapseClientError, useSynapseContext } from '../utils'
+import { useSynapseContext } from '../utils/context/SynapseContext'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,

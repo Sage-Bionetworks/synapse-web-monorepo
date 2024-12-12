@@ -7,7 +7,7 @@ import {
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../../../utils'
+import * as SynapseConstants from '../../../../utils/SynapseConstants'
 import { isFacetColumnValuesRequest } from '../../../../utils/types/IsType'
 import { getCorrespondingSelectedFacet } from '../../../../utils/functions/queryUtils'
 

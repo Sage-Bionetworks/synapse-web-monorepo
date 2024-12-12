@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useGetEntityBundle, useGetFeatureFlag } from '../../synapse-queries'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+import { useGetFeatureFlag } from '../../synapse-queries/featureflags/useGetFeatureFlag'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'

@@ -8,9 +8,9 @@ import {
   SubscriptionRequest,
   Topic,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
 import { forumSubscriptions, threadSubscriptions } from '../../mockSubscription'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const subscriptionService = new BasicMockedCrudService<

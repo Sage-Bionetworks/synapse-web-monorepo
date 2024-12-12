@@ -8,22 +8,20 @@ import {
   RowSet,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
-import {
-  useGetEntity,
-  useGetEntityHeaders,
-  useGetFileBatch,
-  useGetRestrictionInformationBatch,
-  useGetUserGroupHeaders,
-} from '../../synapse-queries'
-import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
-import { useQueryContext } from '../QueryContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
-import { useSynapseContext } from '../../utils'
-import { goToPage as transformQueryToGoToPage } from '../../utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
 import { cloneDeep } from 'lodash-es'
+import { useCallback, useMemo } from 'react'
+import { useGetRestrictionInformationBatch } from '../../synapse-queries/dataaccess/useRestrictionInformation'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { useGetEntityHeaders } from '../../synapse-queries/entity/useGetEntityHeaders'
+import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
+import { useGetUserGroupHeaders } from '../../synapse-queries/user/useUserGroupHeader'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
+import { goToPage as transformQueryToGoToPage } from '../../utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { getTableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
+import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
 
 function usePrefetchFileHandleData(rowSet: RowSet) {
   const { entityId, versionNumber, queryMetadataQueryOptions } =

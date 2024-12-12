@@ -1,4 +1,4 @@
-import { useGetUserGroupHeaderWithAlias } from '../../../synapse-queries'
+import { useGetUserGroupHeaderWithAlias } from '../../../synapse-queries/user/useUserGroupHeader'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
 
 export type MarkdownUserOrTeamBadgeProps = {

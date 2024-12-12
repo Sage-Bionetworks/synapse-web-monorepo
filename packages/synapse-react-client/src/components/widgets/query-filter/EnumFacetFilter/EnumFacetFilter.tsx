@@ -12,8 +12,9 @@ import {
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../../QueryContext'
-import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
+import { isFacetColumnValuesRequest } from '../../../../utils/types/IsType'
+import { useQueryContext } from '../../../QueryContext/QueryContext'
+import * as SynapseConstants from '../../../../utils/SynapseConstants'
 import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
 import {

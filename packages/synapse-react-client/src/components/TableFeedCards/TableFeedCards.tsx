@@ -1,4 +1,4 @@
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'

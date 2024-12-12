@@ -1,21 +1,22 @@
+import { Alert, Button, Typography } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
+import { isEmpty } from 'lodash-es'
 import { useCallback } from 'react'
 import {
   useGetAccessRequirementsForTeam,
   useGetAccessRequirementStatuses,
-  useGetCurrentUserProfile,
-  useGetEntity,
-  useGetEntityChallenge,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { useGetEntityChallenge } from '../../synapse-queries/entity/useGetEntityChallenge'
 import {
   useAddMemberToTeam,
   useGetMembershipStatus,
 } from '../../synapse-queries/team/useTeamMembers'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Alert, Button, Typography } from '@mui/material'
-import { isEmpty } from 'lodash-es'
 
 export type ChallengeRequirementsModalProps = {
   open: boolean

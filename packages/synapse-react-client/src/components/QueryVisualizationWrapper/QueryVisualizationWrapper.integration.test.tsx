@@ -6,7 +6,7 @@ import {
 } from './QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   Query,

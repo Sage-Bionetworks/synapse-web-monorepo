@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 import { useState } from 'react'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetRepliesInfinite } from '../../synapse-queries/forum/useReply'
 import {
@@ -20,10 +22,6 @@ import { Button, Typography } from '@mui/material'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityBundle,
-} from '../../synapse-queries'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { SubscribersModal } from './SubscribersModal'

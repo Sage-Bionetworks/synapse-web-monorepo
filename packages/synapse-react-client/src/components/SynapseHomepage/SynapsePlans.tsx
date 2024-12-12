@@ -1,6 +1,6 @@
 import { styled, useMediaQuery, useTheme, SxProps } from '@mui/material'
 import { Box, Typography } from '@mui/material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { StandardCSSProperties } from '@mui/system'
 
 const centerProps: StandardCSSProperties = {

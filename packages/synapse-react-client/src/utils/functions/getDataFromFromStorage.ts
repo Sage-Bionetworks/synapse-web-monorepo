@@ -5,7 +5,7 @@ import {
   Evaluation,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../index'
+import * as SynapseConstants from '../SynapseConstants'
 
 const getStoredEntityHeaders = (): EntityHeader[] => {
   try {

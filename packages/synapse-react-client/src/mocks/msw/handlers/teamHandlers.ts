@@ -9,7 +9,6 @@ import {
   Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
 import { rest } from 'msw'
 import {
   mockTeamMembershipInvitations,
@@ -19,6 +18,7 @@ import {
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { uniqueId } from 'lodash-es'
 import { delay } from '../../../synapse-client/HttpClient'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const mockedTeamService = new BasicMockedCrudService<Team, 'id'>({

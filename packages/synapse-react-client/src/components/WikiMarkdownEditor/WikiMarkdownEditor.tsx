@@ -2,7 +2,10 @@ import { Alert, Box, Button, TextField } from '@mui/material'
 import { ObjectType, WikiPage } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useState } from 'react'
-import { UpdateWikiPageInput, useUpdateWikiPage } from '../../synapse-queries'
+import {
+  UpdateWikiPageInput,
+  useUpdateWikiPage,
+} from '../../synapse-queries/wiki/useWiki'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

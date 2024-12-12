@@ -4,6 +4,7 @@ import { ProjectHeader } from '@sage-bionetworks/synapse-types'
 import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
 import { EntityHeaderFromProjectHeader } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+
 import { DetailsView } from '../view/DetailsView'
 
 type ProjectListDetailsProps = EntityDetailsListSharedProps & {

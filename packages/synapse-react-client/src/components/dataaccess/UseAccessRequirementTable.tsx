@@ -28,7 +28,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Fragment, useCallback, useMemo, useState } from 'react'
-import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
+import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
+
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { Link, Typography } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'

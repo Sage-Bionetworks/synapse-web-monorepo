@@ -1,5 +1,5 @@
 import { ACCESS_TYPE, UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,

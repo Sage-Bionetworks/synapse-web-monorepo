@@ -1,18 +1,19 @@
-import { renderHook as _renderHook, waitFor } from '@testing-library/react'
-import useDetectSSOCode, { UseDetectSSOCodeOptions } from './useDetectSSOCode'
-import { OAuth2State, SynapseClient } from '../../index'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ErrorResponseCode,
   LoginResponse,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
-import { BackendDestinationEnum } from '../functions'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { renderHook as _renderHook, waitFor } from '@testing-library/react'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import SynapseClient from '../../synapse-client'
+import { OAuth2State } from '../../utils/types/OAuth2State'
+import { BackendDestinationEnum } from '../functions/getEndpoint'
 import {
   LOGIN_METHOD_OAUTH2_GOOGLE,
   OAUTH2_PROVIDERS,
 } from '../SynapseConstants'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import useDetectSSOCode, { UseDetectSSOCodeOptions } from './useDetectSSOCode'
 
 const authorizationCode = '12345'
 

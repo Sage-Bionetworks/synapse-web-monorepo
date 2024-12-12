@@ -1,6 +1,7 @@
 import { Box, SxProps, Tooltip, Typography } from '@mui/material'
-import { useSynapseContext } from '../../utils'
-import { useProjectStorageUsage } from '../../synapse-queries'
+import { useProjectStorageUsage } from '../../synapse-queries/entity/useProjectStorage'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+
 import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
 import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import HelpPopover from '../HelpPopover'

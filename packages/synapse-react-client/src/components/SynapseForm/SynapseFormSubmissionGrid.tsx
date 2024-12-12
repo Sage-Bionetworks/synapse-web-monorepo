@@ -17,7 +17,7 @@ import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 dayjs.extend(calendar)
 /**

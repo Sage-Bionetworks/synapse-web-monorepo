@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { displayToast } from '../../../index'
 import { GetApp } from '@mui/icons-material'
+import { displayToast } from '../../ToastMessage/index'
 import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
 import { Button } from '@mui/material'
 import { times } from 'lodash-es'

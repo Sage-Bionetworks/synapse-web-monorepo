@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   AccountLevelBadge,
   AccountLevelBadgeType,

@@ -1,9 +1,10 @@
 import { Reference } from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { useGetEntityHeaders } from '../../../../synapse-queries/index'
-import { getIsAllSelectedFromInfiniteList } from '../../../../utils/hooks/index'
+import { useGetEntityHeaders } from '../../../../synapse-queries/entity/useGetEntityHeaders'
+import { getIsAllSelectedFromInfiniteList } from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+
 import { DetailsView } from '../view/DetailsView'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {

@@ -1,5 +1,11 @@
 import { useCallback, useState } from 'react'
 import { isEmpty } from 'lodash-es'
+import { useGetJson } from '../../../synapse-queries/entity/useEntity'
+import {
+  useGetSchemaBinding,
+  useGetValidationResults,
+} from '../../../synapse-queries/entity/useEntityBoundSchema'
+import { useGetFeatureFlag } from '../../../synapse-queries/featureflags/useGetFeatureFlag'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
@@ -8,12 +14,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import {
-  useGetFeatureFlag,
-  useGetJson,
-  useGetSchemaBinding,
-  useGetValidationResults,
-} from '../../../synapse-queries'
 import { SkeletonTable } from '../../Skeleton'
 import dayjs from 'dayjs'
 import FullWidthAlert from '../../FullWidthAlert'

@@ -1,4 +1,4 @@
-import { QueryContextType } from '../../QueryContext'
+import { QueryContextType } from '../../QueryContext/QueryContext'
 import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'

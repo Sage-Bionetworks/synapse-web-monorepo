@@ -10,9 +10,10 @@ import {
   SetAccessRequirementCommonFieldsHandle,
   SetAccessRequirementCommonFieldsProps,
 } from '../SetAccessRequirementCommonFields'
-import SetBasicAccessRequirementFields, {
+import {
+  SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,
-} from '../SetBasicAccessRequirementFields'
+} from '../SetBasicAccessRequirementFields/SetBasicAccessRequirementFields'
 import SetManagedAccessRequirementFields, {
   SetManagedAccessRequirementFieldsHandle,
 } from '../SetManagedAccessRequirementFields'

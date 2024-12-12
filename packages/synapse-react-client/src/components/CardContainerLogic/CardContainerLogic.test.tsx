@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import CardContainerLogic, { CardContainerLogicProps } from './index'
 import * as QueryVisualizationWrapperModule from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
