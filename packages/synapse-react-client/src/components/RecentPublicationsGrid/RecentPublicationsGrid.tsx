@@ -1,4 +1,3 @@
-import React from 'react'
 import { Typography, Button, Box, Skeleton } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
@@ -196,10 +195,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                 alignSelf: 'flex-start',
                 padding: '6px 24px',
                 fontWeight: 600,
-                // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
-                '&:hover': {
-                  color: '#FFF !important',
-                },
               }}
             >
               {buttonLinkText}

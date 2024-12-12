@@ -27,6 +27,8 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
             animationDuration: '64ms',
             '&:hover': {
               backgroundColor: darken(theme.palette.primary.main, 0.2),
+              // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
+              color: '#FFF !important',
             },
           },
         },

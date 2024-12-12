@@ -69,11 +69,6 @@ function ELContributeYourData() {
             sx={{
               backgroundColor: '#5BA998',
               border: '1px solid white',
-              boxShadow: 'none',
-              '&:hover': {
-                backgroundColor: darken('#5BA998', 0.05),
-                boxShadow: 'none',
-              },
             }}
           >
             Start Contributing
