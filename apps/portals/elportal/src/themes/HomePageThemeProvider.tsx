@@ -14,6 +14,9 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
       headline2: {
         fontFamily: "'Merriweather', serif",
       },
+      headline3: {
+        fontFamily: "'Merriweather', serif",
+      },
     },
   }
   const mergedTheme = deepmerge(theme, homePageOverrides)
