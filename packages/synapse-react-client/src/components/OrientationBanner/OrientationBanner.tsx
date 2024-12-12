@@ -82,7 +82,11 @@ function OrientationBanner(props: OrientationBannerProps) {
         }
         setShowBanner(false)
       }}
-      sx={{ ...defaultSx, ...sx }}
+      sx={{
+        ...defaultSx,
+        ...sx,
+        display: { xs: 'none', md: 'unset' },
+      }}
     />
   )
 }
