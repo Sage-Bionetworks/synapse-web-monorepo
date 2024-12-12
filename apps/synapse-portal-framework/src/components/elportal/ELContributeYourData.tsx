@@ -67,7 +67,6 @@ function ELContributeYourData() {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: '#5BA998',
               border: '1px solid white',
             }}
           >
