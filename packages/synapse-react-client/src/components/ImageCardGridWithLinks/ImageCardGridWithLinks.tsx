@@ -172,21 +172,19 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <Box
-        sx={{
-          padding: {
-            xs: '0 16px',
-            md: 0,
-          },
-        }}
-      >
+      <div>
         <Box
           display="flex"
           flexDirection="column"
           gap="16px"
           sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
         >
-          <Typography color="grey.1000" variant="headline2" paddingTop="26px">
+          <Typography
+            color="grey.1000"
+            variant="headline2"
+            paddingTop="26px"
+            fontSize="24px"
+          >
             {title}
           </Typography>
           <Typography
@@ -197,7 +195,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
             {summaryText}
           </Typography>
         </Box>
-      </Box>
+      </div>
       <Grid
         container
         spacing={2.5}
