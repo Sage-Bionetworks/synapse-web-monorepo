@@ -1,5 +1,5 @@
 import { Collapse, TextField } from '@mui/material'
-import React, { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
@@ -16,10 +16,10 @@ export type FullTextSearchProps = {
   helpUrl?: string
 }
 
-export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
+export function FullTextSearch({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
-}: FullTextSearchProps) => {
+}: FullTextSearchProps) {
   const { executeQueryRequest, queryMetadataQueryOptions } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
@@ -28,7 +28,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   const { data } = useQuery(queryMetadataQueryOptions)
   const columnModels = data?.columnModels
 
-  const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
+  const search = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     // The HTML validation doesn't trim the string, so we add an extra check.

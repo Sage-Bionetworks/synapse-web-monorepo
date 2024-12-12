@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 
 export type SynapseFeatureItemProps = {
   title: string
@@ -7,9 +7,11 @@ export type SynapseFeatureItemProps = {
   logo: ReactElement
 }
 
-export const SynapseFeatureItem: React.FunctionComponent<
-  SynapseFeatureItemProps
-> = ({ title, description, logo }) => {
+export function SynapseFeatureItem({
+  title,
+  description,
+  logo,
+}: SynapseFeatureItemProps) {
   return (
     <div className="SynapseFeatureItem">
       <Box sx={{ height: '60px' }}>{logo}</Box>

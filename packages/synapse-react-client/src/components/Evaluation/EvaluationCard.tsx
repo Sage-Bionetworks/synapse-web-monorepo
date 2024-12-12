@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   deleteEvaluation,
   getEvaluationPermissions,
@@ -42,13 +42,13 @@ export type EvaluationCardProps = {
  * All Evaluation metadata must be provided to this component; it will not
  * retrieve an Evaluation via a REST API call
  */
-export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
+export function EvaluationCard({
   evaluation,
   onEdit,
   onModifyAccess,
   onSubmit,
   onDeleteSuccess,
-}: EvaluationCardProps) => {
+}: EvaluationCardProps) {
   const { accessToken } = useSynapseContext()
   const [error, setError] = useState<SynapseClientError>()
   const [permissions, setPermissions] = useState<UserEvaluationPermissions>()
@@ -130,9 +130,12 @@ type EvaluationCardDropdownProps = {
   onDelete: () => void
 }
 
-const EvaluationCardDropdown: React.FunctionComponent<
-  EvaluationCardDropdownProps
-> = ({ permissions, onEdit, onModifyAccess, onDelete }) => {
+function EvaluationCardDropdown({
+  permissions,
+  onEdit,
+  onModifyAccess,
+  onDelete,
+}: EvaluationCardDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   if (

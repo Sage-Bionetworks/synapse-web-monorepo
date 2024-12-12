@@ -1,5 +1,5 @@
 import { Collapse, FormControlLabel, Radio, RadioGroup } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,

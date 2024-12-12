@@ -1,5 +1,4 @@
 import { Box, Skeleton, Stack } from '@mui/material'
-import React from 'react'
 
 function PiePlotSkeleton() {
   return (

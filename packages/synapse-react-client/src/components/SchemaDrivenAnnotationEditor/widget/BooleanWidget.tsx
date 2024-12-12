@@ -1,5 +1,4 @@
 import { Widget, WidgetProps } from '@rjsf/utils'
-import React from 'react'
 
 /**
  * Select widget compatible with react-jsonschema-form booleans

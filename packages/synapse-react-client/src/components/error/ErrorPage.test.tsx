@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,

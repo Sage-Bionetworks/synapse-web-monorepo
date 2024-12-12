@@ -1,9 +1,9 @@
-import React from 'react'
+import { ButtonHTMLAttributes } from 'react'
 import IconSvg from '../IconSvg'
 
 type ExpandCollapseButtonProps = {
   isExpanded: boolean
-} & React.ButtonHTMLAttributes<HTMLButtonElement>
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
 export default function ExpandCollapseButton(props: ExpandCollapseButtonProps) {
   const { isExpanded, ...buttonProps } = props

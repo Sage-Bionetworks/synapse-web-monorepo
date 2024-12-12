@@ -5,7 +5,7 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import QueryWrapperSynapsePlot, {
   QueryWrapperSynapsePlotProps,
 } from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import React, { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import useFacetPlots, { getFacets } from './useFacetPlots'
 import FacetNavPanel, {
   FacetNavPanelProps,

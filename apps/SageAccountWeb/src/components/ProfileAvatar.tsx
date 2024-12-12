@@ -1,5 +1,5 @@
 import Slider from '@mui/material/Slider'
-import React, { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Box, IconButton, SxProps } from '@mui/material'
 import {
   ConfirmationDialog,
@@ -56,7 +56,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     }
   }
 
-  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader()
       reader.addEventListener('load', () => {
@@ -67,7 +67,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     }
   }
 
-  const hiddenFileInput = React.useRef<HTMLInputElement>(null)
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
   const clickHandler = () => {
     if (hiddenFileInput?.current) {
       hiddenFileInput.current.click()

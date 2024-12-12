@@ -1,5 +1,4 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
-import React from 'react'
 
 const AccessManagement = (props: SvgIconProps) => {
   return (

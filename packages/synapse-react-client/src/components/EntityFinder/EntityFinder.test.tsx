@@ -2,7 +2,6 @@ import '@testing-library/jest-dom'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { when } from 'jest-when'
-import React from 'react'
 import * as DetailsListModule from '../../../src/components/EntityFinder/details/EntityDetailsList'
 import {
   EntityDetailsListDataConfiguration,
@@ -10,7 +9,6 @@ import {
 } from '../../../src/components/EntityFinder/details/EntityDetailsList'
 import EntityFinder, {
   EntityFinderProps,
-  NO_VERSION_NUMBER,
 } from '../../../src/components/EntityFinder/EntityFinder'
 import * as EntityTreeModule from '../../../src/components/EntityFinder/tree/EntityTree'
 import { FinderScope } from '../../../src/components/EntityFinder/tree/EntityTree'
@@ -27,6 +25,7 @@ import {
 import { Map } from 'immutable'
 import * as useEntityBundleModule from '../../../src/synapse-queries/entity/useEntityBundle'
 import SynapseClient from '../../../src/synapse-client'
+import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
 
 jest.mock('react-reflex', () => {
   return {
@@ -42,14 +41,14 @@ jest.mock('react-reflex', () => {
 
 const mockUseGetEntityBundle = jest.spyOn(useEntityBundleModule, 'default')
 
-const mockEntityTree = jest
+jest
   .spyOn(EntityTreeModule, 'EntityTree')
   .mockImplementation(({ toggleSelection, setDetailsViewConfiguration }) => {
     invokeToggleSelectionViaTree = reference => {
-      toggleSelection(reference)
+      toggleSelection!(reference)
     }
     invokeSetConfigViaTree = configuration => {
-      setDetailsViewConfiguration(configuration)
+      setDetailsViewConfiguration!(configuration)
     }
     return <div role="tree"></div>
   })
@@ -85,30 +84,34 @@ const defaultProps: EntityFinderProps = {
   visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
   selectableTypes: Object.values(EntityType),
   treeOnly: false,
-  selectedCopy: 'Chosen Entities',
 }
 
 function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
-  return render(
+  const user = userEvent.setup()
+  render(
     <SynapseTestContext>
       <EntityFinder {...defaultProps} {...propOverrides} />
     </SynapseTestContext>,
   )
+
+  const searchInput = screen.getByRole('textbox')
+
+  return { user, searchInput }
 }
 
 describe('EntityFinder tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockUseGetEntityBundle.mockReturnValue({
-      data: {
+    mockUseGetEntityBundle.mockReturnValue(
+      getUseQuerySuccessMock({
         entity: {
           id: 'syn123',
           name: 'My file entity',
           concreteType: 'org.sagebionetworks.repo.model.FileEntity',
         },
-      },
-    })
+      }),
+    )
   })
 
   describe('single-select toggleSelection validation', () => {
@@ -328,7 +331,9 @@ describe('EntityFinder tests', () => {
     await waitFor(() =>
       expect(mockDetailsList).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          selected: Map([[reference.targetId, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [reference.targetId, { targetId: reference.targetId }],
+          ]),
         }),
         {},
       ),
@@ -355,61 +360,24 @@ describe('EntityFinder tests', () => {
   })
 
   describe('Search', () => {
-    it('Updates the search button text when only one type is selectable', async () => {
-      // Folders are the only selectable type, so only folders will appear in search.
-      renderComponent({ selectableTypes: [EntityType.FOLDER] })
-
-      // Search button text should match
-      await screen.findByText('Search for Folders')
-    })
-
-    it('Updates the search button text when only table types are selectable', async () => {
-      // Datasets and entity views are table types
-      renderComponent({
-        selectableTypes: [EntityType.DATASET, EntityType.ENTITY_VIEW],
+    it('handles searching for terms', async () => {
+      const { user, searchInput } = renderComponent({
+        treeOnly: true,
+        selectableTypes: [EntityType.FILE],
       })
 
-      // Search button text should match
-      await screen.findByText('Search for Tables')
-    })
-
-    it('clicking the search button opens the input field', async () => {
-      renderComponent({ treeOnly: true })
-
       // Tree should be visible before we start search. No table should be visible
-      expect(() => screen.getByRole('tree')).not.toThrowError()
-      expect(() => screen.getByRole('table')).toThrowError()
-
-      // Don't show the search box before the button is clicked
-      expect(() => screen.getByRole('textbox')).toThrowError()
-
-      await userEvent.click(screen.getByText('Search all of Synapse'))
-      await waitFor(() => screen.getByRole('textbox'))
-
-      // The tree should be hidden when searching. The table of search results should be visible
-      expect(() => screen.getByRole('tree')).toThrowError()
-      expect(() => screen.getByRole('table')).not.toThrowError()
-
-      // Close the search
-      await userEvent.click(screen.getByText('Back to Browse'))
-
-      // Tree should come back, table should be gone
-      await waitFor(() => screen.getByRole('tree'))
-      expect(() => screen.getByRole('table')).toThrowError()
-
-      // Search input field should be gone too
-      expect(() => screen.getByRole('textbox')).toThrowError()
-    })
-
-    it('handles searching for terms', async () => {
-      renderComponent({ selectableTypes: [EntityType.FILE] })
+      expect(() => screen.getByRole('tree')).not.toThrow()
+      expect(() => screen.getByRole('table')).toThrow()
 
       const query = 'my search terms '
       const queryTerms = ['my', 'search', 'terms']
-      await userEvent.click(screen.getByText('Search for Files'))
-      await waitFor(() => screen.getByRole('textbox'))
-      await userEvent.type(screen.getByRole('textbox'), query)
-      await userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await user.type(searchInput, query)
+      await user.type(searchInput, '{enter}')
+
+      // The tree should be hidden when searching. The table of search results should be visible
+      expect(() => screen.getByRole('tree')).toThrow()
+      expect(() => screen.getByRole('table')).not.toThrow()
 
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
@@ -453,19 +421,51 @@ describe('EntityFinder tests', () => {
           {},
         ),
       )
+
+      // Clear the search results and verify we go back to the original view
+      await user.click(screen.getByRole('button', { name: 'Clear Search' }))
+
+      // Tree should be visible once again and table should be hidden
+      expect(() => screen.getByRole('tree')).not.toThrow()
+      expect(() => screen.getByRole('table')).toThrow()
     })
 
     it('handles searching for a synId', async () => {
-      renderComponent()
+      const { user, searchInput } = renderComponent()
 
       const entityId = 'syn123'
       const version = 2
 
-      const entityHeaderResult = { results: [{ id: entityId }] }
-      const entityHeaderResultWithVersion: PaginatedResults<
-        Partial<EntityHeader>
-      > = {
-        results: [{ id: entityId, versionNumber: version }],
+      const entityHeaderResult: PaginatedResults<EntityHeader> = {
+        results: [
+          {
+            id: entityId,
+            name: 'foo',
+            benefactorId: 123,
+            type: 'org.sagebionetworks.repo.model.FileEntity',
+            createdOn: '',
+            modifiedOn: '',
+            createdBy: '',
+            modifiedBy: '',
+            isLatestVersion: false,
+          },
+        ],
+      }
+      const entityHeaderResultWithVersion: PaginatedResults<EntityHeader> = {
+        results: [
+          {
+            id: entityId,
+            versionNumber: version,
+            name: 'foo',
+            benefactorId: 123,
+            type: 'org.sagebionetworks.repo.model.FileEntity',
+            createdOn: '',
+            modifiedOn: '',
+            createdBy: '',
+            modifiedBy: '',
+            isLatestVersion: true,
+          },
+        ],
       }
 
       when(mockGetEntityHeaders)
@@ -479,10 +479,8 @@ describe('EntityFinder tests', () => {
         )
         .mockResolvedValue(entityHeaderResultWithVersion)
 
-      await userEvent.click(screen.getByText('Search all of Synapse'))
-      await waitFor(() => screen.getByRole('textbox'))
-      await userEvent.type(screen.getByRole('textbox'), entityId)
-      await userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await user.type(searchInput, entityId)
+      await user.type(searchInput, '{enter}')
 
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
@@ -498,12 +496,9 @@ describe('EntityFinder tests', () => {
       expect(mockGetEntityHeaders).toBeCalledTimes(1)
 
       // Search with a version number
-      await userEvent.clear(screen.getByRole('textbox'))
-      await userEvent.type(
-        screen.getByRole('textbox'),
-        `${entityId}.${version}`,
-      )
-      await userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await user.clear(searchInput)
+      await user.type(searchInput, `${entityId}.${version}`)
+      await user.type(searchInput, '{enter}')
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
           expect.objectContaining({

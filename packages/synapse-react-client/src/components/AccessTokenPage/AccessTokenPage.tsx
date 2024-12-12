@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import { useGetPersonalAccessTokensInfinite } from '../../synapse-queries/user/usePersonalAccessToken'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
@@ -9,13 +9,10 @@ import { AddCircleTwoTone } from '@mui/icons-material'
 
 export type AccessTokenPageProps = {
   title: string
-  body: React.ReactNode
+  body: ReactNode
 }
 
-export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
-  title,
-  body,
-}: AccessTokenPageProps) => {
+export function AccessTokenPage({ title, body }: AccessTokenPageProps) {
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
 
   const {

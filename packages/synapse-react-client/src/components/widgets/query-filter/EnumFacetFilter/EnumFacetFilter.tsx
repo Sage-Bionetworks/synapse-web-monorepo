@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,

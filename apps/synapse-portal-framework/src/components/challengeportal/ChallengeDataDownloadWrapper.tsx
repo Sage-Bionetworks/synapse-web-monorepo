@@ -1,5 +1,4 @@
 import { Alert } from '@mui/material'
-import * as React from 'react'
 import {
   AppUtils,
   ChallengeDataDownload,

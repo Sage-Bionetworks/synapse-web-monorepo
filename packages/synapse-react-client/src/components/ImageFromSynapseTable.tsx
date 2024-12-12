@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react'
+import { CSSProperties } from 'react'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -12,9 +12,7 @@ export type ImageFromSynapseTableProps = {
   style?: CSSProperties
 }
 
-const ImageFromSynapseTable: React.FC<ImageFromSynapseTableProps> = (
-  props: ImageFromSynapseTableProps,
-) => {
+function ImageFromSynapseTable(props: ImageFromSynapseTableProps) {
   const { tableId, fileHandleId, alt, style } = props
   const fha: FileHandleAssociation = {
     associateObjectId: tableId,

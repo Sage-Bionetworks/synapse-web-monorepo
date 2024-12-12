@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import React from 'react'
 import SynapseClient from '../../synapse-client'
 import { OAuth2State, SynapseClientError } from '../../utils'
 import {
@@ -9,6 +8,7 @@ import {
   OAUTH2_PROVIDERS,
 } from '../../utils/SynapseConstants'
 import LoginMethodButton from './LoginMethodButton'
+import { MouseEvent } from 'react'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -33,10 +33,7 @@ export default function AuthenticationMethodSelection(
     state,
   } = props
 
-  function onSSOSignIn(
-    event: React.MouseEvent<HTMLButtonElement>,
-    provider: string,
-  ) {
+  function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
     if (onBeginOAuthSignIn) {
       onBeginOAuthSignIn()
     }

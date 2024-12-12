@@ -1,5 +1,5 @@
 import { Box, Collapse } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'

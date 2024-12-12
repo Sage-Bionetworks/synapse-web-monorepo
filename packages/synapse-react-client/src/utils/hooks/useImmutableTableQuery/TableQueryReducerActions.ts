@@ -12,7 +12,7 @@ import {
   isFacetColumnValuesRequest,
 } from '../../types/IsType'
 import { facetObjectMatchesDefinition } from '../../functions/queryUtils'
-import React from 'react'
+import * as React from 'react'
 import { DEFAULT_PAGE_SIZE } from '../../SynapseConstants'
 import { QueryChangeCommitOptions } from './useTableQueryReducer'
 

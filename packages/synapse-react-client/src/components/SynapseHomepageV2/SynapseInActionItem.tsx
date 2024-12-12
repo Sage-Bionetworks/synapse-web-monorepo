@@ -8,7 +8,6 @@ import {
   SxProps,
   Fade,
 } from '@mui/material'
-import React from 'react'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
@@ -39,9 +38,7 @@ const mobileViewSxProps: SxProps = {
   textAlign: 'center',
 }
 
-export const SynapseInActionItem: React.FunctionComponent<
-  SynapseInActionItemProps
-> = ({
+export function SynapseInActionItem({
   tableId,
   friendlyName,
   title,
@@ -51,7 +48,7 @@ export const SynapseInActionItem: React.FunctionComponent<
   link,
   imageFileHandleId,
   mobileImageFileHandleId,
-}) => {
+}: SynapseInActionItemProps) {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   // desktop image animation support

@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ACTIVITY_FOR_ENTITY } from '../../utils/APIConstants'

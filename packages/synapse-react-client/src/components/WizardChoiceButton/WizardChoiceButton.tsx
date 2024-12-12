@@ -1,11 +1,11 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 import IconSvg from '../IconSvg'
 import WizardChoiceButtonDescription from './WizardChoiceButtonDescription'
 
 export default function WizardChoiceButton(props: {
   title: string
-  description?: React.ReactNode
+  description?: ReactNode
   onClick?: () => void
 }) {
   const { title, description, onClick } = props

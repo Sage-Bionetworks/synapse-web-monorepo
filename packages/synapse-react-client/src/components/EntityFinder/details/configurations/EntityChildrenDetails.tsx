@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEntityChildrenInfinite } from '../../../../synapse-queries/entity/useGetEntityChildren'
 import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -9,9 +9,10 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
 }
 
-export const EntityChildrenDetails: React.FunctionComponent<
-  EntityChildrenDetailsProps
-> = ({ parentContainerId, ...sharedProps }) => {
+export function EntityChildrenDetails({
+  parentContainerId,
+  ...sharedProps
+}: EntityChildrenDetailsProps) {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
 

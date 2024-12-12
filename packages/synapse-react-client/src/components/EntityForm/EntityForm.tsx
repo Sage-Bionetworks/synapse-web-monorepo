@@ -2,8 +2,8 @@
 // Will generate a Form (based on your schema files).
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
-import React from 'react'
 import Form from '@rjsf/core'
+import { Component, ContextType, createRef } from 'react'
 import SynapseClient from '../../synapse-client'
 import {
   EntityId,
@@ -35,18 +35,15 @@ type EntityFormState = {
   formUiSchema?: any // ui schema that directs how to render the form elements
 }
 
-export class EntityForm extends React.Component<
-  EntityFormProps,
-  EntityFormState
-> {
+export class EntityForm extends Component<EntityFormProps, EntityFormState> {
   static contextType = SynapseContext
-  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+  declare context: NonNullable<ContextType<typeof SynapseContext>>
 
   formRef: any
 
   constructor(props: EntityFormProps) {
     super(props)
-    this.formRef = React.createRef()
+    this.formRef = createRef()
     this.state = {
       isLoading: true,
       successfullyUploaded: false,
@@ -347,10 +344,10 @@ export class EntityForm extends React.Component<
         {!this.state.error &&
           this.context.accessToken &&
           this.state.isLoading && (
-            <React.Fragment>
+            <>
               <span>Saving&hellip;</span>
               <span style={{ marginLeft: '2px' }} className={'spinner'} />
-            </React.Fragment>
+            </>
           )}
       </div>
     )

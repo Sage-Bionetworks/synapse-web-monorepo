@@ -1,5 +1,4 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
-import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
 import queryResultBundleJson from '../../mocks/query/syn51735464GroupBySpecies'

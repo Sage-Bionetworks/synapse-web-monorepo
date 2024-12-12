@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   AccessTokenRecord,
   scopeDescriptions,

@@ -1,6 +1,6 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import { OrientationBanner } from 'synapse-react-client'
 import {

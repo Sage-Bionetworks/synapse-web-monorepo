@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { Ref, useCallback, useMemo, useState } from 'react'
 import RJSFForm from '@rjsf/core'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
@@ -34,7 +34,7 @@ export type JSONArrayEditorProps<T = unknown> = {
   arrayItemDefinition?: JSONSchema7Definition
   onChange: (newValue: T[]) => void
   onSubmit: (formData: T[]) => void
-  formRef?: React.Ref<RJSFForm<T, RJSFSchema, GenericObjectType>>
+  formRef?: Ref<RJSFForm<T, RJSFSchema, GenericObjectType>>
 }
 
 function getSchema(

@@ -1,5 +1,5 @@
 import { Dropdown } from 'react-bootstrap'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import IconSvg from '../IconSvg/IconSvg'
 
@@ -8,9 +8,10 @@ export type EvaluationRoundEditorDropdownProps = {
   onSave: () => void
 }
 
-export const EvaluationRoundEditorDropdown: React.FunctionComponent<
-  EvaluationRoundEditorDropdownProps
-> = ({ onSave, onDelete }) => {
+export function EvaluationRoundEditorDropdown({
+  onSave,
+  onDelete,
+}: EvaluationRoundEditorDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   return (

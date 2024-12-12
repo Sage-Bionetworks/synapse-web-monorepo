@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
 import Background from './assets/genie-homepage-background.jpg?url'
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, MouseEvent } from 'react'
 import { Box, Button, LinearProgress } from '@mui/material'
 
 export type PageProgressProps = {
@@ -11,9 +11,7 @@ export type PageProgressProps = {
   forwardBtnActive: boolean
 }
 
-export const PageProgress: React.FunctionComponent<
-  PageProgressProps
-> = props => {
+export function PageProgress(props: PageProgressProps) {
   const {
     barColor,
     barPercent,
@@ -35,13 +33,13 @@ export const PageProgress: React.FunctionComponent<
     }
   }, [barPercent])
 
-  const handleBackButtonClick = (e: React.MouseEvent) => {
+  const handleBackButtonClick = (e: MouseEvent) => {
     if (backBtnCallback) {
       backBtnCallback()
     }
   }
 
-  const handleNextButtonClick = (e: React.MouseEvent) => {
+  const handleNextButtonClick = (e: MouseEvent) => {
     if (forwardBtnCallback && forwardBtnActive) {
       forwardBtnCallback()
     }

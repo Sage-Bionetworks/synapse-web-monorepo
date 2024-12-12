@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseConstants, UniqueFacetIdentifier } from '../../utils'
 import {
   getAdditionalFilters,

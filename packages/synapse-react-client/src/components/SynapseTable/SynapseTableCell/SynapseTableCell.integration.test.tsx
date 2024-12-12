@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { SynapseConstants } from '../../../utils'
 import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'

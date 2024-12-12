@@ -1,5 +1,5 @@
 import { omitBy } from 'lodash-es'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { useLocation, useNavigate } from 'react-router-dom'

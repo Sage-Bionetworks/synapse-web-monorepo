@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
@@ -33,9 +33,10 @@ export type EntityFileBrowserProps = {
  * TODO: From EntityBadgeIcons, show unlink functionality (add onUnlink and onUnlinkError in EntityFileBrowserProps!) and showHasWiki.
  * @returns
  */
-export const EntityFileBrowser: React.FunctionComponent<
-  EntityFileBrowserProps
-> = ({ parentContainerId, onSelect }) => {
+export function EntityFileBrowser({
+  parentContainerId,
+  onSelect,
+}: EntityFileBrowserProps) {
   const { data: entityBundle } = useGetEntityBundle(parentContainerId)
   const [currentContainer, setCurrentContainer] =
     useState<EntityTreeContainer>(parentContainerId)
@@ -51,7 +52,7 @@ export const EntityFileBrowser: React.FunctionComponent<
     [setBreadcrumbsProps],
   )
   const projectId = entityBundle?.path.path[1].id ?? undefined
-  const emptyMap = Map<string, number>()
+  const emptyMap = Map<string, Reference>()
   const types: EntityType[] = [
     EntityType.FOLDER,
     EntityType.FILE,
@@ -66,7 +67,7 @@ export const EntityFileBrowser: React.FunctionComponent<
     },
   }
   return (
-    <div className="EntityFinderReflexContainer">
+    <div className="EntityFileBrowser EntityFinderReflexContainer">
       <SizeMe>
         {({ size }) => (
           <ReflexContainer

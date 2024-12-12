@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { getRoutes } from './routes'
@@ -12,9 +12,9 @@ const root = createRoot(container!)
 const router = createBrowserRouter(getRoutes())
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </StrictMode>,
 )
 
 // If you want your app to work offline and load faster, you can change

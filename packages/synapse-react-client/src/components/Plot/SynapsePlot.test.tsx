@@ -1,4 +1,3 @@
-import React from 'react'
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 import { SynapseClient } from '../../index'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'

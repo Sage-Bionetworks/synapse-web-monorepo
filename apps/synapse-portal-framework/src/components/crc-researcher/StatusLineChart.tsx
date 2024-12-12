@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import {
@@ -18,7 +18,7 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type StatusLineChartProps = {
   token?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
 type PlotData = {
@@ -160,12 +160,12 @@ export function fetchData(
   )
 }
 
-const DEFAULT_STATUSLINECHART_STYLE: React.CSSProperties = { width: '100%' }
+const DEFAULT_STATUSLINECHART_STYLE: CSSProperties = { width: '100%' }
 
-const StatusLineChart: FunctionComponent<StatusLineChartProps> = ({
+function StatusLineChart({
   token,
   style = DEFAULT_STATUSLINECHART_STYLE,
-}: StatusLineChartProps) => {
+}: StatusLineChartProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [plotData, setPlotData] = useState<PlotData | null>(null)
 

@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
-import React from 'react'
+import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import {
@@ -61,7 +61,7 @@ export default function DetailsPage(props: DetailsPageProps) {
 
   useScrollOnMount()
 
-  const queryBundleRequest = React.useMemo(() => {
+  const queryBundleRequest = useMemo(() => {
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
       additionalFiltersSessionStorageKey,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, MouseEvent } from 'react'
 import { CheckIcon } from '../../assets/icons/terms/CheckIcon'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { Link, Skeleton } from '@mui/material'
@@ -22,9 +22,7 @@ export type TermsAndConditionsItemProps = {
   onChange: (id: number) => void
 }
 
-const TermsAndConditionsItem: React.FunctionComponent<
-  TermsAndConditionsItemProps
-> = props => {
+function TermsAndConditionsItem(props: TermsAndConditionsItemProps) {
   const { id, item, enabled, checked, onChange, termsAndConditionsTableID } =
     props
   const { iconFileHandleId, label, description } = item
@@ -50,14 +48,14 @@ const TermsAndConditionsItem: React.FunctionComponent<
     }
   }, [enabled, checked])
 
-  const handleShowDescLink = (e: React.MouseEvent) => {
+  const handleShowDescLink = (e: MouseEvent) => {
     e.preventDefault()
     if (enabled) {
       setShowDes(!showDesc)
     }
   }
 
-  const handleCheckboxClick = (e: React.MouseEvent) => {
+  const handleCheckboxClick = (e: MouseEvent) => {
     if (enabled) {
       onChange(id)
     }

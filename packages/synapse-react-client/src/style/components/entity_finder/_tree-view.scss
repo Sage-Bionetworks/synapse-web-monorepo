@@ -14,7 +14,9 @@
   height: $-finder-height;
   overflow: hidden;
   .Tree {
-    height: $-finder-height - $-header-height;
+    height: calc(
+      var(--entity-finder-height) - var(--entity-tree-header-height)
+    );
     overflow: auto;
 
     // This defines general styles for the node elements of the tree
@@ -27,11 +29,14 @@
       display: inline-grid;
       align-items: center;
       // grid-template-columns are defined in `tree-node-browse` and `tree-node-select` files
-      .ExpandButton {
+      button {
         grid-column: toggle / span 1;
         text-align: center;
-        color: SRC.$primary-action-color-active;
-        cursor: pointer;
+
+        .ExpandButton {
+          display: block;
+          color: SRC.$primary-action-color-active;
+        }
       }
 
       .EntityName {
@@ -54,17 +59,11 @@
   }
 
   .Header {
-    height: $-header-height;
+    height: var(--entity-tree-header-height);
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    .Browse {
-      padding: 0px 10px;
-      font-weight: bold;
-    }
-    button.btn {
-      padding: 5px 10px;
-    }
+
     .MuiButtonGroup-grouped {
       white-space: nowrap;
     }

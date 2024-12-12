@@ -2,7 +2,7 @@ import {
   EvaluationRound,
   EvaluationRoundLimit,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, Button } from '@mui/material'
 import { Card, Col, Form, FormControl, FormGroup, Row } from 'react-bootstrap'
 import dayjs, { Dayjs } from 'dayjs'
@@ -134,9 +134,11 @@ function getDateErrorMessage(
   }
 }
 
-export const EvaluationRoundEditor: React.FunctionComponent<
-  EvaluationRoundEditorProps
-> = ({ evaluationRoundInput, onSave, onDelete }) => {
+export function EvaluationRoundEditor({
+  evaluationRoundInput,
+  onSave,
+  onDelete,
+}: EvaluationRoundEditorProps) {
   const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)

@@ -1,4 +1,3 @@
-import React from 'react'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
 import { SetPasswordInstructions } from './ResetPassword'

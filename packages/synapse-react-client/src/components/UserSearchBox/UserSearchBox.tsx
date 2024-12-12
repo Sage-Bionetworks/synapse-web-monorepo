@@ -1,5 +1,4 @@
 import Downshift from 'downshift'
-import React from 'react'
 import { useState } from 'react'
 import { getUserGroupHeaders } from '../../synapse-client/SynapseClient'
 import {
@@ -16,7 +15,7 @@ export type UserSearchBoxProps = {
   filterUserIds?: string[]
 }
 
-const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
+function UserSearchBox(props: UserSearchBoxProps) {
   const { id, onSelectCallback, filterUserIds, typeFilter } = props
   const [users, setUsers] = useState<UserGroupHeader[]>([])
 

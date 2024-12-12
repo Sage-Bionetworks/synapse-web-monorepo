@@ -1,4 +1,3 @@
-import React from 'react'
 import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
 import { Avatar, Box, Skeleton, Stack, Typography } from '@mui/material'
 import { useGetEntityBundle } from '../../../../synapse-queries'

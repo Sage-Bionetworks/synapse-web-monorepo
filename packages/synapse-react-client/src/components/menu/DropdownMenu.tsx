@@ -1,4 +1,3 @@
-import React, { useId } from 'react'
 import {
   Button,
   ButtonProps,
@@ -15,6 +14,14 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import {
+  KeyboardEvent,
+  MouseEvent,
+  SyntheticEvent,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 
 /**
@@ -26,7 +33,7 @@ export type DropdownMenuItem = {
   /* The icon to show for this item in the menu. */
   icon?: IconName
   /* A function invoked upon clicking the item, assuming `disabled` is falsy */
-  onClick?: (e: React.MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
   /* A link that the item should point to. */
   href?: string
   /* The optional tooltipText to show for this item. Compatible with the `disabled` prop. */
@@ -68,8 +75,8 @@ export function DropdownMenu(props: DropdownMenuProps) {
   } = props
 
   const dropdownMenuId = useId()
-  const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLButtonElement>(null)
+  const [open, setOpen] = useState(false)
+  const anchorRef = useRef<HTMLButtonElement>(null)
 
   const numberOfMenuItems = items.flat().length
 
@@ -101,7 +108,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     setOpen(prevOpen => !prevOpen)
   }
 
-  const handleClose = (event: Event | React.SyntheticEvent) => {
+  const handleClose = (event: Event | SyntheticEvent) => {
     if (
       anchorRef.current &&
       anchorRef.current.contains(event.target as HTMLElement)
@@ -112,7 +119,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     setOpen(false)
   }
 
-  function handleListKeyDown(event: React.KeyboardEvent) {
+  function handleListKeyDown(event: KeyboardEvent) {
     if (event.key === 'Tab') {
       event.preventDefault()
       setOpen(false)
@@ -122,7 +129,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Tooltip
         title={
           buttonTooltip ? (
@@ -200,7 +207,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
                               }
                               // Allow pointer events on disabled item so tooltip works.
                               style={{ pointerEvents: 'auto' }}
-                              onClick={(e: React.MouseEvent) => {
+                              onClick={(e: MouseEvent) => {
                                 /*
                                  * Must check if the item is disabled because we set
                                  * `pointer-events: 'auto'`
@@ -256,6 +263,6 @@ export function DropdownMenu(props: DropdownMenuProps) {
           </Fade>
         )}
       </Popper>
-    </React.Fragment>
+    </>
   )
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGoogleAnalytics } from '../../utils/hooks'
 
 export type GoogleAnalyticsProps = {
@@ -9,9 +8,7 @@ export type GoogleAnalyticsProps = {
  * This is exported for use in the Synapse.org GWT codebase.
  * @param props
  */
-export const GoogleAnalytics: React.FunctionComponent<GoogleAnalyticsProps> = (
-  props: GoogleAnalyticsProps,
-) => {
+export function GoogleAnalytics(props: GoogleAnalyticsProps) {
   const { measurementId } = props
   useGoogleAnalytics(measurementId)
   return <></>

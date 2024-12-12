@@ -1,15 +1,15 @@
-import React from 'react'
 import {
   MultichoiceAnswer,
   MultichoiceQuestion,
 } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { Box } from '@mui/material'
+import { MouseEventHandler } from 'react'
 
 export type CertificationAnswerProps = {
   question: MultichoiceQuestion
   answer: MultichoiceAnswer
-  onClick?: React.MouseEventHandler<HTMLInputElement>
+  onClick?: MouseEventHandler<HTMLInputElement>
   checked?: boolean
   disabled?: boolean
 }

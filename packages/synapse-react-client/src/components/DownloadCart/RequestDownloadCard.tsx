@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEntityBundle, useGetFeatureFlag } from '../../synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
@@ -13,21 +13,19 @@ export type RequestDownloadCardProps = {
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
-const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED: RequestDownloadCardProps['onViewSharingSettingsClicked'] =
-  benefactorEntityId =>
-    window.open(
-      `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-      '_blank',
-    )
+const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED = (benefactorEntityId =>
+  window.open(
+    `https://www.synapse.org/Synapse:${benefactorEntityId}`,
+    '_blank',
+  )) satisfies RequestDownloadCardProps['onViewSharingSettingsClicked']
 
 export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'
-export const RequestDownloadCard: React.FunctionComponent<
-  RequestDownloadCardProps
-> = ({
-  entityId,
-  count,
-  onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
-}: RequestDownloadCardProps) => {
+export function RequestDownloadCard(props: RequestDownloadCardProps) {
+  const {
+    entityId,
+    count,
+    onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
+  } = props
   const {
     data: entityBundle,
     isLoading,

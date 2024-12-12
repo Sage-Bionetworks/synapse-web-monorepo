@@ -1,4 +1,3 @@
-import React from 'react'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
 
 export default function SearchResultsNotFound() {

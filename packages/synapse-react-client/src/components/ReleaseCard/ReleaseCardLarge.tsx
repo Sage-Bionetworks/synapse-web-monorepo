@@ -1,6 +1,6 @@
 import { CalendarTodayTwoTone } from '@mui/icons-material'
 import { Box, Button, Divider, Stack, Typography } from '@mui/material'
-import React from 'react'
+import { Fragment } from 'react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardLargeConfig, ReleaseCardStat } from './ReleaseCardTypes'
@@ -9,10 +9,7 @@ import {
   formatReleaseCardData,
 } from './ReleaseCardUtils'
 
-const StatFlex: React.FunctionComponent<ReleaseCardStat> = ({
-  value,
-  label,
-}: ReleaseCardStat) => {
+function StatFlex({ value, label }: ReleaseCardStat) {
   return (
     <Stack
       direction="column"
@@ -34,14 +31,12 @@ export type ReleaseCardLargeProps = Omit<
   'releaseCardConfig'
 > & { releaseCardConfig: ReleaseCardLargeConfig }
 
-export const ReleaseCardLarge: React.FunctionComponent<
-  ReleaseCardLargeProps
-> = ({
+export function ReleaseCardLarge({
   data,
   schema,
   includePortalCardClass = true,
   releaseCardConfig,
-}: ReleaseCardLargeProps) => {
+}: ReleaseCardLargeProps) {
   const { releaseName, releaseDate, stats } = formatReleaseCardData(
     schema,
     data,
@@ -116,10 +111,10 @@ export const ReleaseCardLarge: React.FunctionComponent<
           <StatFlex {...releaseDate} />
           {stats.map(stat => {
             return (
-              <React.Fragment key={stat.label}>
+              <Fragment key={stat.label}>
                 <Divider orientation="vertical" flexItem />
                 <StatFlex {...stat} />
-              </React.Fragment>
+              </Fragment>
             )
           })}
         </Stack>

@@ -1,10 +1,10 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import {
   RecentPublicationsGrid,
   ImageCardGridWithLinks,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
+import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
 import { topPublicationsSql, whatWeDoSql } from '../config/resources'
 import { Box } from '@mui/material'
 
@@ -50,6 +50,7 @@ export default function HomePage() {
           style: { maxWidth: '100%', padding: 0 },
         }}
       >
+        <ELGettingStarted />
         <ELContributeYourData />
       </SectionLayout>
     </>

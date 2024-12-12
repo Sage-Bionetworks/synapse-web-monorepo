@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash-es'
-import React, { useMemo, useState } from 'react'
+import { Fragment, ReactNode, useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import {
   Query,
@@ -68,7 +68,7 @@ export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
-  icon?: React.ReactNode
+  icon?: ReactNode
   buttonID?: string // optionally set the ID property of the element
 }
 
@@ -216,7 +216,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           {customControls &&
             customControls.map((customControl, index) => {
               return (
-                <React.Fragment key={index}>
+                <Fragment key={index}>
                   <CustomControlButton
                     variant="text"
                     disabled={!numberOfResultsToInvokeAction}
@@ -231,7 +231,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     startIcon={customControl.icon}
                   />
                   <Divider orientation="vertical" variant="middle" flexItem />
-                </React.Fragment>
+                </Fragment>
               )
             })}
           {showExportToCavatica && (

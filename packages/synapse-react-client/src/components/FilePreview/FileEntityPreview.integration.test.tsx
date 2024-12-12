@@ -1,5 +1,4 @@
 import { render, screen, within } from '@testing-library/react'
-import React from 'react'
 import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
 import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'

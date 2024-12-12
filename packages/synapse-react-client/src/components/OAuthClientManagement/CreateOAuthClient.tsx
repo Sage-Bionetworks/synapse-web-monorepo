@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
@@ -45,9 +45,7 @@ export type CreateOAuthModalProps = {
   setIsShowingModal: (a: boolean) => void
 }
 
-export const CreateOAuthModal: React.FunctionComponent<
-  CreateOAuthModalProps
-> = ({
+export function CreateOAuthModal({
   isShowingModal = false,
   isEdit,
   onClose,
@@ -55,7 +53,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   setIsShowingConfirmModal,
   isShowingConfirmModal,
   setIsShowingModal,
-}) => {
+}: CreateOAuthModalProps) {
   const { synapseClient } = useSynapseContext()
   const [clientName, setClientName] = useState('')
   const [redirectUris, setRedirectUris] = useState([{ uri: '' }])
@@ -218,7 +216,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   }
 
   const handleUriChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number,
   ) => {
     if (redirectUris) {

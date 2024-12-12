@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { DownloadOptions } from './index'
 import { DownloadOptionsProps } from './DownloadOptions'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
