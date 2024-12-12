@@ -58,6 +58,9 @@ function ButtonFromConfig(props: {
         >
           <Button
             variant={variant}
+            sx={{
+              width: { xs: '100%', md: 'initial' },
+            }}
             color="primary"
             disabled={config.isDisabled}
             onClick={e => {
@@ -121,6 +124,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         '.MuiAlert-message': {
           flexGrow: 1,
         },
+        '.MuiAlert-icon': {
+          display: { xs: 'none', sm: 'flex' },
+        },
         ...sx,
       }}
       className="FullWidthAlert"
@@ -131,6 +137,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'start', sm: 'center' }}
         spacing={{ xs: 1, sm: 2 }}
+        gap={{ xs: '8px', sm: 'initial' }}
         display="flex"
         justifyContent="space-between"
       >
@@ -143,14 +150,20 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           tertiaryButtonConfig) && (
           <Stack
             spacing={{ xs: 1, lg: 2 }}
-            direction={{
-              xs: 'column-reverse',
-              sm: 'column',
-              lg: 'row',
-            }}
+            direction={{ xs: 'row', sm: 'column', lg: 'row' }}
             alignItems="center"
             display="flex"
             flexShrink={0}
+            sx={theme => ({
+              gap: { xs: '8px', sm: 'initial' },
+              flexWrap: { xs: 'wrap', sm: 'nowrap' },
+              width: { xs: '100%', sm: 'initial' },
+              [theme.breakpoints.down('sm')]: {
+                '& > *': {
+                  flexGrow: 1,
+                },
+              },
+            })}
           >
             {tertiaryButtonConfig && (
               <ButtonFromConfig config={tertiaryButtonConfig} variant="text" />
