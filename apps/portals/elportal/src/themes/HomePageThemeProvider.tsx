@@ -18,10 +18,10 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
       MuiButton: {
         styleOverrides: {
           contained: {
+            boxShadow: 'none !important',
             animationTimingFunction: 'ease-out',
             animationDuration: '64ms',
             '&:hover': {
-              color: '#FFF !important',
               backgroundColor: darken(theme.palette.primary.main, 0.2),
             },
           },

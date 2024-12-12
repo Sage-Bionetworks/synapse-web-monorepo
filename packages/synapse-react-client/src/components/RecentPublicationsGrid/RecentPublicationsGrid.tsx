@@ -194,9 +194,12 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               sx={{
                 whiteSpace: 'nowrap',
                 alignSelf: 'flex-start',
-                boxShadow: 'none !important',
                 padding: '6px 24px',
                 fontWeight: 600,
+                // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
+                '&:hover': {
+                  color: '#FFF !important',
+                },
               }}
             >
               {buttonLinkText}
