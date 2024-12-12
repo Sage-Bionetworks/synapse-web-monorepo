@@ -156,11 +156,16 @@ function FullWidthAlert(props: FullWidthAlertProps) {
             alignItems="center"
             display="flex"
             flexShrink={0}
-            sx={{
+            sx={theme => ({
               gap: { xs: '8px', sm: 'initial' },
               flexWrap: { xs: 'wrap', sm: 'nowrap' },
               width: { xs: '100%', sm: 'initial' },
-            }}
+              [theme.breakpoints.down('sm')]: {
+                '& > *': {
+                  flexGrow: 1,
+                },
+              },
+            })}
           >
             {tertiaryButtonConfig && (
               <ButtonFromConfig config={tertiaryButtonConfig} variant="text" />
