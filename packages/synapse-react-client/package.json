@@ -39,7 +39,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.13",
-    "@mui/material": "^5.15.13",
+    "@mui/material": "^6.2.0",
     "@mui/system": "^5.15.13",
     "@mui/utils": "^5.15.13",
     "@mui/x-data-grid": "^6.19.6",
