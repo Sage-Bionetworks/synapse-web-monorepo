@@ -10,9 +10,11 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
     typography: {
       headline1: {
         fontFamily: "'Merriweather', serif",
+        lineHeight: 'normal',
       },
       headline2: {
         fontFamily: "'Merriweather', serif",
+        lineHeight: 'normal',
       },
       headline3: {
         fontFamily: "'Merriweather', serif",

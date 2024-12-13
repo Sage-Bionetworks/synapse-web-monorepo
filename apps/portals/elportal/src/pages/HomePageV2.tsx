@@ -2,13 +2,42 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import {
   RecentPublicationsGrid,
   ImageCardGridWithLinks,
+  PortalFeatureHighlights,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
 import { topPublicationsSql, whatWeDoSql } from '../config/resources'
+import { Link, Typography } from '@mui/material'
+import analyzetheclouds from '../assets/analyzetheclouds.png'
+import computationaltools from '../assets/computationaltools.png'
 import { Box } from '@mui/material'
 
 export default function HomePage() {
+  const styledPortalFeatureHighlightsSummaryText = (
+    <>
+      The portal supports secure access to leading cloud-based analysis
+      platforms, such as{' '}
+      <Typography
+        component="span"
+        sx={{
+          fontWeight: 'bold',
+          color: 'primary.main',
+        }}
+      >
+        <Link
+          href="https://www.cavatica.org/"
+          target="_blank"
+          sx={{ textDecoration: 'none' }}
+        >
+          CAVATICA
+        </Link>
+      </Typography>
+      .<br />
+      <br />
+      This is just the beginning. Future integrations will further expand
+      resources for data analysis and collaboration.
+    </>
+  )
   return (
     <>
       <ImageCardGridWithLinks
@@ -52,6 +81,21 @@ export default function HomePage() {
       >
         <ELGettingStarted />
         <ELContributeYourData />
+        <PortalFeatureHighlights
+          image={analyzetheclouds}
+          title="Analyze on the Cloud"
+          buttonText="Learn About Our Analysis Platforms"
+          summaryText={styledPortalFeatureHighlightsSummaryText}
+          link="/Analysis Platforms"
+        />
+        <PortalFeatureHighlights
+          image={computationaltools}
+          title="Computational Tools"
+          buttonText="Check out our Computational Tools"
+          summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
+          reverseOrder={true}
+          link="/Explore/Computational Tools"
+        />
       </SectionLayout>
     </>
   )
