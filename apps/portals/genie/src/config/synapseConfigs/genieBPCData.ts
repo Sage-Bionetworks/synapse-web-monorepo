@@ -1,4 +1,4 @@
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 import { genieBPCSql } from '../resources'
 
 const rgbIndex = 0

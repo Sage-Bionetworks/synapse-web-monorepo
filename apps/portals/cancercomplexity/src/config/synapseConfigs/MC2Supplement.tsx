@@ -1,5 +1,6 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { StandaloneQueryWrapper } from 'synapse-react-client'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+
 import { mc2SupplementSql } from '../resources'
 
 const rgbIndex = 8

@@ -1,9 +1,7 @@
-import {
-  CardConfiguration,
-  GenericCardSchema,
-  QueryWrapperPlotNavProps,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { CardConfiguration } from 'synapse-react-client/components/CardContainerLogic/index'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { computationalSql, defaultSearchConfiguration } from '../resources'
 
 const computationalSchema: GenericCardSchema = {

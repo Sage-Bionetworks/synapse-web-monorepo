@@ -1,18 +1,16 @@
-import { CSSProperties, useEffect, useState } from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
-import {
-  GraphItem,
-  SynapseClient,
-  SynapseConstants,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
+import Plotly from 'plotly.js-basic-dist'
+import { CSSProperties, useEffect, useState } from 'react'
 import { PlotParams } from 'react-plotly.js'
+import createPlotlyComponent from 'react-plotly.js/factory'
+import { GraphItem } from 'synapse-react-client/components/Plot/types'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { resultToJson } from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -192,19 +190,19 @@ function StatusLineChart({
     Promise.all([collectedData, invitedData, apptScheduledData, apptMadeData])
       .then(result => {
         setPlotData({
-          collected: SynapseUtilityFunctions.resultToJson(
+          collected: resultToJson(
             result[0].headers,
             result[0].rows,
           ) as unknown as GraphItem[],
-          invited: SynapseUtilityFunctions.resultToJson(
+          invited: resultToJson(
             result[1].headers,
             result[1].rows,
           ) as unknown as GraphItem[],
-          apptScheduled: SynapseUtilityFunctions.resultToJson(
+          apptScheduled: resultToJson(
             result[2].headers,
             result[2].rows,
           ) as unknown as GraphItem[],
-          apptMade: SynapseUtilityFunctions.resultToJson(
+          apptMade: resultToJson(
             result[3].headers,
             result[3].rows,
           ) as unknown as GraphItem[],

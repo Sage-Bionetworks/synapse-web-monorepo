@@ -1,13 +1,11 @@
-import { useSearchParams } from 'react-router-dom'
-import { OAuthClientError } from './OAuthClientError'
 import { PropsWithChildren, useCallback, useEffect } from 'react'
-import {
-  ApplicationSessionManager,
-  useFramebuster,
-  SynapseConstants,
-} from 'synapse-react-client'
-import { handleErrorRedirect } from './URLUtils'
+import { useSearchParams } from 'react-router-dom'
+import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import ApplicationSessionManager from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import UniversalCookies from 'universal-cookie'
+import { OAuthClientError } from './OAuthClientError'
+import { handleErrorRedirect } from './URLUtils'
 
 const cookies = new UniversalCookies()
 function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {

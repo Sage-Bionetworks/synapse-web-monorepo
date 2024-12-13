@@ -6,7 +6,7 @@ import { Outlet, RouteObject } from 'react-router-dom'
 import { filesSql, studiesSql } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from 'src/config/synapseConfigs/datasets'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export function ToolDetailsPageDataTabLayout() {
   return (

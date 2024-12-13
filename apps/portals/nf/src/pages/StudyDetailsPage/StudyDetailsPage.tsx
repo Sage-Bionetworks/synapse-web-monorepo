@@ -8,12 +8,9 @@ import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-po
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router-dom'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SharePageLinkButton,
-  SynapseErrorType,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton/SharePageLinkButton'
+
 import { studiesSql } from '../../config/resources'
 import { columnAliases } from '../../config/synapseConfigs/commonProps'
 import {
@@ -24,6 +21,9 @@ import StudyAdditionalFilesTab from './StudyAdditionalFilesTab'
 import StudyDatasetsTab from './StudyDatasetsTab'
 import { StudyDetailsTab } from './StudyDetailsTab'
 import StudyFilesTab from './StudyFilesTab'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {

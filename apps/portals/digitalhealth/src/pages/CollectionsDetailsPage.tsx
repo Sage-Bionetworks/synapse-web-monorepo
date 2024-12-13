@@ -6,12 +6,12 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  StandaloneQueryWrapper,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+
 import columnAliases from '../config/columnAliases'
 import { studySql } from '../config/resources'
 import { dataDetailPageProps } from '../config/synapseConfigs/data'

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { SynapseComponents, SynapseHookUtils } from 'synapse-react-client'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 
 export type SurveyToastProps = {
   localStorageKey: string
@@ -16,14 +17,14 @@ const SurveyToast = (props: SurveyToastProps) => {
     surveyURL,
     surveyButtonText = 'Take The Survey',
   } = props
-  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [cookiePreferences] = useCookiePreferences()
   const [showBanner, setShowBanner] = useState(
     localStorage.getItem(localStorageKey) === null,
   )
   return !showBanner ? (
     <></>
   ) : (
-    <SynapseComponents.FullWidthAlert
+    <FullWidthAlert
       isGlobal={true}
       onClose={() => {
         if (cookiePreferences.functionalAllowed) {

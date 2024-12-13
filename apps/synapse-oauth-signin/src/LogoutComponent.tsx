@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { SynapseClient, useSynapseContext } from 'synapse-react-client'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 
 export function LogoutComponent() {
   const { accessToken } = useSynapseContext()

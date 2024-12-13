@@ -15,7 +15,7 @@ import {
   STUDY_TABLE_COLUMN_NAMES,
   studyCardConfiguration,
 } from 'src/config/synapseConfigs/studies'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 
 export default function ProgramDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

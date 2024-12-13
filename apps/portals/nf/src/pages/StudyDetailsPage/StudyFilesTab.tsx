@@ -2,7 +2,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { filesPlotNavProps } from 'src/config/synapseConfigs/files'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export default function StudyFilesTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

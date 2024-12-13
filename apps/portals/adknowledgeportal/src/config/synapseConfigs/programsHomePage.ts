@@ -1,4 +1,4 @@
-import type { ProgramsProps } from 'synapse-react-client'
+import { ProgramsProps } from 'synapse-react-client/components/Programs/Programs'
 
 export const programsHomePageConfig: ProgramsProps = {
   entityId: 'syn17024173',

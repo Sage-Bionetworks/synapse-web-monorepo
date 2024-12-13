@@ -22,12 +22,13 @@ import {
   CardConfiguration,
   CardContainerLogic,
   CardLink,
-  ErrorPage,
-  GenericCardSchema,
-  NoContentAvailable,
-  SynapseConstants,
+} from 'synapse-react-client/components/CardContainerLogic/index'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { challengeProjectsSql } from '../resources'
 
 export const challengesSchema: GenericCardSchema = {

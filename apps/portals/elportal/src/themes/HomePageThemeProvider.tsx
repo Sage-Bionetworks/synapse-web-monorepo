@@ -1,7 +1,7 @@
 import { ThemeOptions, ThemeProvider, darken, useTheme } from '@mui/material'
-import { DeepPartial } from 'synapse-react-client'
 import { deepmerge } from '@mui/utils'
 import React from 'react'
+import DeepPartial from 'synapse-react-client/utils/types/DeepPartial'
 
 export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
   const theme = useTheme()

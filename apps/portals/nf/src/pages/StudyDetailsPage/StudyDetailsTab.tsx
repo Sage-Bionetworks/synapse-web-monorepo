@@ -7,10 +7,8 @@ import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from 'src/config/synapseConfigs/publications'
 import { studyCardConfiguration } from 'src/config/synapseConfigs/studies'
 import { toolsCardConfiguration } from 'src/config/synapseConfigs/tools'
-import {
-  CardContainerLogic,
-  NoContentPlaceholderType,
-} from 'synapse-react-client'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { NoContentPlaceholderType } from 'synapse-react-client/components/SynapseTable/index'
 
 export function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

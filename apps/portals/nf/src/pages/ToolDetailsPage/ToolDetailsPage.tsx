@@ -10,16 +10,16 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { Outlet, RouteObject } from 'react-router-dom'
 import { toolsSql } from 'src/config/resources'
 import { toolsSchema } from 'src/config/synapseConfigs/tools'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SharePageLinkButton,
-  SynapseConstants,
-  SynapseErrorType,
-} from 'synapse-react-client'
+
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { toolDetailsPageDataTabRouteConfig } from './ToolDetailsPageDataTab'
 import ToolDetailsPageDetailsTab from './ToolDetailsPageDetailsTab'
 import ToolDetailsPageObservationsTab from './ToolDetailsPageObservationsTab'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton/SharePageLinkButton'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {

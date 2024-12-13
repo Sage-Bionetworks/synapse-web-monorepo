@@ -1,11 +1,10 @@
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  FeaturedDataTabs,
-  Goals,
-  SynapseConstants,
-  TableFeedCards,
-} from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import Goals from 'synapse-react-client/components/Goals/Goals'
+import TableFeedCards from 'synapse-react-client/components/TableFeedCards/TableFeedCards'
+
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function HomePage() {
   return (

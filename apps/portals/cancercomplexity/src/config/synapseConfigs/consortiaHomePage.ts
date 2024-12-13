@@ -1,4 +1,4 @@
-import type { ProgramsProps } from 'synapse-react-client'
+import { ProgramsProps } from 'synapse-react-client/components/Programs/index'
 
 export const consortiaHomePageConfig: ProgramsProps = {
   entityId: 'syn34267412',

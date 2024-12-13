@@ -1,5 +1,6 @@
-import type { CardLink, GenericCardSchema } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import { CardLink } from 'synapse-react-client/components/CardContainerLogic/index'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export const organizationDetailsPageLinkConfig: CardLink = {
   matchColumnName: 'abbreviation',

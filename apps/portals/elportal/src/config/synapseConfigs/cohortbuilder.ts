@@ -2,8 +2,8 @@ import {
   QueryWrapperPlotNavProps,
   QueryWrapperSynapsePlotProps,
   QueryWrapperSynapsePlotRowClickEvent,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/SqlFunctions'
 import {
   cavaticaConnectAccountURL,
   cohortBuilderFilesSql,
@@ -61,8 +61,7 @@ const getPlotConfig = (tableId: string) => {
   }
   return plotConfig
 }
-const participantsTableId =
-  SynapseUtilityFunctions.parseEntityIdFromSqlStatement(cohortBuilderSql)
+const participantsTableId = parseEntityIdFromSqlStatement(cohortBuilderSql)
 
 export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
   {

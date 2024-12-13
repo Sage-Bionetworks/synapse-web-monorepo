@@ -1,16 +1,16 @@
 import { Box, Button } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { useNavigate } from 'react-router-dom'
-import {
-  AppUtils,
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  SynapseComponents,
-  SynapseHookUtils,
-  SynapseQueries,
-  useSynapseContext,
-} from 'synapse-react-client'
+import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
+import { SageResourcesPopover } from 'synapse-react-client/components/SageResourcesPopover/index'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
+import { storeRedirectURLForOneSageLoginAndGotoURL } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/index'
+import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { RESPONSIVE_SIDE_PADDING } from '../../utils'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
@@ -55,14 +55,14 @@ export default function Navbar() {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const navigate = useNavigate()
-  const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
-  const isPortalsDropdownEnabled = SynapseQueries.useGetFeatureFlag(
+  const { data: userProfile } = useGetCurrentUserProfile()
+  const isPortalsDropdownEnabled = useGetFeatureFlag(
     FeatureFlagEnum.PORTALS_DROPDOWN,
   )
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = useRef<HTMLDivElement>(null)
 
-  const { clearSession } = AppUtils.useApplicationSessionContext()
+  const { clearSession } = useApplicationSessionContext()
 
   useEffect(() => {
     function handleClickOutside(e: Event) {
@@ -109,10 +109,8 @@ export default function Navbar() {
       hostname.includes('localhost')) &&
     !hideLogin
 
-  const oneSageUrl = SynapseHookUtils.useOneSageURL()
-  const accountSettingsUrl = SynapseHookUtils.useOneSageURL(
-    '/authenticated/myaccount',
-  )
+  const oneSageUrl = useOneSageURL()
+  const accountSettingsUrl = useOneSageURL('/authenticated/myaccount')
   const [portalResourcesAnchorEl, setPortalResourcesAnchorEl] =
     useState<HTMLElement | null>(null)
   const handleClosePortalResources = () => {
@@ -262,7 +260,7 @@ export default function Navbar() {
               </>
             )}
           {isSignedIn && (
-            <SynapseComponents.ShowDownloadV2
+            <ShowDownloadV2
               className="nav-button nav-button-container center-content"
               to="/DownloadCart"
             />
@@ -277,7 +275,7 @@ export default function Navbar() {
               >
                 Portals
               </a>
-              <SynapseComponents.SageResourcesPopover
+              <SageResourcesPopover
                 anchorEl={portalResourcesAnchorEl}
                 onClose={handleClosePortalResources}
               />

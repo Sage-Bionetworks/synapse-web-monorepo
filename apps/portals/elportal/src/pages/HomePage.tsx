@@ -1,14 +1,12 @@
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  CardContainerLogic,
-  Goals,
-  Markdown,
-  RssFeedCards,
-  SynapseConstants,
-  UserCardListRotate,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import Goals from 'synapse-react-client/components/Goals/Goals'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import UserCardListRotate from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import { SynapseConstants } from 'synapse-react-client/umd.index'
 import { partnersSql, peopleSql } from '../config/resources'
 
 export default function HomePage() {

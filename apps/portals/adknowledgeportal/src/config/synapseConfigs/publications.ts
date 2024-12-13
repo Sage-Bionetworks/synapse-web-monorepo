@@ -1,9 +1,7 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
-import {
-  QueryWrapperPlotNavProps,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 import { publicationsSql } from '../resources'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const rgbIndex = 5
 

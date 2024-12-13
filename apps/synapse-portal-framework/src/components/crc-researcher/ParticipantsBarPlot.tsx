@@ -2,18 +2,16 @@ import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import _ from 'lodash-es'
-import {
-  GraphItem,
-  SynapseClient,
-  SynapseConstants,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+import { resultToJson } from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { PlotParams } from 'react-plotly.js'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { GraphItem } from 'synapse-react-client/components/Plot/types'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -176,7 +174,7 @@ function ParticipantsBarPlot({
     Promise.all([barPlotData])
       .then(result => {
         setBarPlotQueryData(
-          SynapseUtilityFunctions.resultToJson(
+          resultToJson(
             result[0].headers,
             result[0].rows,
           ) as unknown as GraphItem[],

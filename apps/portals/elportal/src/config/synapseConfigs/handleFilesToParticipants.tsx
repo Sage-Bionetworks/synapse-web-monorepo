@@ -2,12 +2,10 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import {
-  SynapseClient,
-  SynapseConstants,
-  SynapseUtilityFunctions,
-  CustomControlCallbackData,
-} from 'synapse-react-client'
+import { CustomControlCallbackData } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const getAllIDs = async (event: CustomControlCallbackData) => {
   const selectedFacets = event.request?.query.selectedFacets
@@ -61,14 +59,14 @@ export const handleSelectedFilesToParticipants = async (
     }
 
     sessionStorage.setItem(
-      SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
+      QUERY_FILTERS_SESSION_STORAGE_KEY(
         'cohort-builder-individuals-perspective',
       ),
       JSON.stringify([sessionStorageFilter]),
     )
   } else {
     sessionStorage.removeItem(
-      SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
+      QUERY_FILTERS_SESSION_STORAGE_KEY(
         'cohort-builder-individuals-perspective',
       ),
     )

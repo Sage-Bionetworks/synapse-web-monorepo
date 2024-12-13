@@ -7,7 +7,8 @@ import {
   searchConfiguration,
 } from 'src/config/synapseConfigs/commonProps'
 import { datasetCardConfiguration } from 'src/config/synapseConfigs/datasets'
-import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export default function OrganizationDataTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')

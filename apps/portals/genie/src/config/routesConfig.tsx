@@ -5,11 +5,9 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router-dom'
-import {
-  CardContainerLogic,
-  Markdown,
-  StandaloneQueryWrapper,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import GenieHomePage from '../pages/GenieHomePage'
 import routeControlWrapperProps from './explorePageRoutes'
 import { dataReleasesSql } from './resources'

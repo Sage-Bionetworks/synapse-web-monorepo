@@ -1,16 +1,17 @@
-import { ReactElement } from 'react'
-import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
-import Layout from '../Layout'
-import { Link, Typography, Box } from '@mui/material'
+import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import pluralize from 'pluralize'
+import { ReactElement } from 'react'
+import FeaturedToolsList from 'synapse-react-client/components/FeaturedToolsList/FeaturedToolsList'
+import WideButton from 'synapse-react-client/components/styled/WideButton'
 import { ReactComponent as AnimalModels } from '../assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '../assets/antibodies.svg'
 import { ReactComponent as Biobanks } from '../assets/biobanks.svg'
 import { ReactComponent as CellLines } from '../assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from '../assets/plasmids-reagents.svg'
-import PopularSearches from '../PopularSearches'
-import pluralize from 'pluralize'
 import Ecosystem from '../csbc-home-page/Ecosystem'
+import Layout from '../Layout'
+import PopularSearches from '../PopularSearches'
 import Search from '../Search'
 
 type Category = {
@@ -171,13 +172,13 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           })}
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
@@ -243,13 +244,13 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           />
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
@@ -297,7 +298,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             }}
           >
             {submitToolButtons.map(button => (
-              <SynapseComponents.WideButton
+              <WideButton
                 key={button.label}
                 sx={{
                   ...wideButtonSx,
@@ -310,7 +311,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                 target="_blank"
               >
                 {button.label}
-              </SynapseComponents.WideButton>
+              </WideButton>
             ))}
           </Box>
         </div>

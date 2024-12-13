@@ -1,19 +1,21 @@
 import { Alert } from '@mui/material'
 import {
-  AppUtils,
   ChallengeDataDownload,
   ChallengeDataDownloadProps,
-  SynapseQueries,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/ChallengeDataDownload/index'
+import { useGetEntityChallenge } from 'synapse-react-client/synapse-queries/entity/useGetEntityChallenge'
+import { useGetIsUserMemberOfTeam } from 'synapse-react-client/synapse-queries/team/useTeamMembers'
+import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
+import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
 
-const ChallengeSubmissionWrapper = (props: ChallengeDataDownloadProps) => {
+function ChallengeSubmissionWrapper(props: ChallengeDataDownloadProps) {
   const { parentContainerId } = props
-  const projectId = AppUtils.useQuerySearchParam('id')
-  const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId!, {
+  const projectId = useQuerySearchParam('id')
+  const { data: challenge } = useGetEntityChallenge(projectId!, {
     enabled: !!projectId,
   })
-  const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
-  const { data: teamMembership } = SynapseQueries.useGetIsUserMemberOfTeam(
+  const { data: userProfile } = useGetCurrentUserProfile()
+  const { data: teamMembership } = useGetIsUserMemberOfTeam(
     challenge?.participantTeamId!,
     userProfile?.ownerId!,
     {

@@ -1,9 +1,10 @@
-import { memo } from 'react'
-import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
-import Versions from '../components/Versions'
-import { SynapseConstants, ExperimentalMode } from 'synapse-react-client'
-import { usePortalContext } from './PortalContext'
 import { Box, darken, Typography, useTheme } from '@mui/material'
+import { memo } from 'react'
+import ExperimentalMode from 'synapse-react-client/components/ExperimentalMode/ExperimentalMode'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import Versions from '../components/Versions'
+import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
+import { usePortalContext } from './PortalContext'
 
 function Footer() {
   const { footerConfig, logoFooterConfig } = usePortalContext()

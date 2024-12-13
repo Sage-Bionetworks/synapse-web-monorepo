@@ -1,12 +1,11 @@
 import { Fragment } from 'react'
-import {
-  MarkdownSynapse,
+import MarkdownCollapse, {
   MarkdownCollapseProps,
-  MarkdownCollapse,
-  NoContentAvailable,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/Markdown/MarkdownCollapse'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { HeadlineWithLinkDerivedFromEntityId } from '../HeadlineWithLink'
 import { useColumnDataMarkdownProps } from './useColumnDataMarkdownProps'
+import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
 
 type MarkdownSynapseFromColumnDataProps = {
   /**

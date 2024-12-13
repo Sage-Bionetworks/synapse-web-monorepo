@@ -2,11 +2,11 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+
 import { initiativesSql, studiesSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import { initiativeCardConfiguration } from '../config/synapseConfigs/initiatives'

@@ -1,8 +1,6 @@
-import {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { CardConfiguration } from 'synapse-react-client/components/CardContainerLogic/index'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { defaultSearchConfiguration, studiesSql } from '../resources'
 
 export const studiesRgbIndex = 0

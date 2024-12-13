@@ -1,7 +1,8 @@
-import { SynapseConstants, SynapseUtilityFunctions } from 'synapse-react-client'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
-import { SynapseQueries } from 'synapse-react-client'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export type PopularSearchesProps = {
   sql: string
@@ -16,7 +17,7 @@ function PopularSearches({
   onGoToExploreToolsWithFullTextSearch,
 }: PopularSearchesProps) {
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  const entityId = parseEntityIdFromSqlStatement(sql)
   const request: QueryBundleRequest = {
     partMask,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -27,7 +28,7 @@ function PopularSearches({
     },
   }
   const { data: queryResultResponse, isLoading } =
-    SynapseQueries.useGetQueryResultBundleWithAsyncStatus(request)
+    useGetQueryResultBundleWithAsyncStatus(request)
 
   const rowSet = queryResultResponse?.responseBody?.queryResult?.queryResults
 

@@ -1,12 +1,13 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { SynapseConstants, SynapseClient } from 'synapse-react-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { PlotParams } from 'react-plotly.js'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import SynapseClient from 'synapse-react-client/synapse-client'
 
 const Plot = createPlotlyComponent(Plotly)
 

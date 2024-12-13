@@ -1,4 +1,4 @@
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { cavaticaConnectAccountURL, dataSql } from '../resources'
 import { STUDY_TABLE_COLUMN_NAMES } from './studies'
 

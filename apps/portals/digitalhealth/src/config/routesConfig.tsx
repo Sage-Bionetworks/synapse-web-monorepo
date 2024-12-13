@@ -4,7 +4,8 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router-dom'
 import CollectionsDetailsPage from 'src/pages/CollectionsDetailsPage'
-import { MarkdownSynapse } from 'synapse-react-client'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+
 import HomePage from '../pages/HomePage'
 import explorePageRoutes from './explorePageRoutes'
 

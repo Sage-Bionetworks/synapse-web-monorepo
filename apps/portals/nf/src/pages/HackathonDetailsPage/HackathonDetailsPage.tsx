@@ -10,7 +10,7 @@ import { Outlet } from 'react-router-dom'
 import { hackathonsSql } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { hackathonCardConfiguration } from 'src/config/synapseConfigs/hackathons'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import HackathonBackgroundResultsTab from './HackathonBackgroundResultsTab'
 import HackathonMethodologyTab from './HackathonMethodologyTab'
 

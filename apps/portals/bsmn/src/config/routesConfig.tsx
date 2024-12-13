@@ -4,12 +4,11 @@ import Header from '@sage-bionetworks/synapse-portal-framework/components/Header
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router-dom'
-import {
-  Goals,
-  MarkdownSynapse,
-  SynapseConstants,
-  UserCardListGroups,
-} from 'synapse-react-client'
+import Goals from 'synapse-react-client/components/Goals/Goals'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import UserCardListGroups from 'synapse-react-client/components/UserCardList/UserCardListGroups/index'
+
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ProjectDetailsPage } from '../pages/ProjectDetailsPage'
 import StudyDetailsPage from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'

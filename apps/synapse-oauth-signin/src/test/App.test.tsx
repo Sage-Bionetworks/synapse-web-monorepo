@@ -10,10 +10,8 @@ import {
 import userEvent from '@testing-library/user-event'
 import { rest } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
-import {
-  defaultQueryClientConfig,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   ACCESS_CODE_PROVIDED_BY_SERVER,

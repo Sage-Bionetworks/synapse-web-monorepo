@@ -3,13 +3,11 @@ import Header from '@sage-bionetworks/synapse-portal-framework/components/Header
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { dataSql, peopleSql } from 'src/config/resources'
 import programsHomePageConfig from 'src/config/synapseConfigs/programsHomePage'
-import {
-  Programs,
-  FeaturedDataTabs,
-  UserCardListRotate,
-  SynapseConstants,
-  RssFeedCards,
-} from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import Programs from 'synapse-react-client/components/Programs/Programs'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import UserCardListRotate from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function HomePage() {
   return (

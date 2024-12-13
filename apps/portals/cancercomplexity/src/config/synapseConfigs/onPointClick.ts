@@ -1,13 +1,13 @@
+import { ClickCallbackParams } from 'synapse-react-client/components/Plot/types'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper/index'
 import {
-  publicationSql,
   datasetsSql,
   filesSql,
   grantsSql,
-  toolsSql,
   projectsSql,
+  publicationSql,
+  toolsSql,
 } from '../resources'
-import type { ClickCallbackParams } from 'synapse-react-client'
-import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client'
 
 const sqlAndEntityMap: {
   [value: string]: string

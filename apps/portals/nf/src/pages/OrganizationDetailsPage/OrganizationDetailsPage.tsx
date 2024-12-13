@@ -8,9 +8,10 @@ import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-por
 import { Outlet, RouteObject } from 'react-router-dom'
 import { fundersSql } from 'src/config/resources'
 import { organizationCardSchema } from 'src/config/synapseConfigs/organizations'
-import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
-import OrganizationDetailsTab from './OrganizationDetailsTab'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import OrganizationDataTab from './OrganizationDataTab'
+import OrganizationDetailsTab from './OrganizationDetailsTab'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {

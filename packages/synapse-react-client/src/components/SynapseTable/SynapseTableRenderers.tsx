@@ -15,7 +15,6 @@ import { useAtom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
 import { useCallback } from 'react'
 import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
-
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'

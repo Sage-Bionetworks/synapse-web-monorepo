@@ -13,8 +13,8 @@ import {
   StudyDetailsPage,
   studyDetailsPageChildRoutes,
 } from 'src/pages/StudyDetailsPage'
-import { SynapseFormWrapper } from 'synapse-react-client'
 import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import SynapseFormWrapper from 'synapse-react-client/components/SynapseForm/SynapseFormWrapper'
 import { explorePageRoutes } from './explorePageRoutes'
 import { experimentalModelsSql, modelADStrainsSelectedFacet } from './resources'
 

@@ -1,10 +1,13 @@
-import { Link, Box, Skeleton } from '@mui/material'
+import { Box, Link, Skeleton } from '@mui/material'
+import { ChallengeDetailPage } from 'synapse-react-client/components/ChallengeDetailPage/index'
+import useGetEntityBundle from 'synapse-react-client/synapse-queries/entity/useEntityBundle'
+import { useGetEntityChallenge } from 'synapse-react-client/synapse-queries/entity/useGetEntityChallenge'
+import { useGetTeamMemberCount } from 'synapse-react-client/synapse-queries/team/useTeamMembers'
 import {
-  AppUtils,
-  ChallengeDetailPage,
-  SynapseQueries,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'synapse-react-client/utils/functions/getEndpoint'
+import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
 
 /**
  * This is the Challenge Registration button.  This includes:
@@ -14,9 +17,9 @@ import {
  * @returns
  */
 const ChallengeDetailPageWrapper = () => {
-  const projectId = AppUtils.useQuerySearchParam('id')
+  const projectId = useQuerySearchParam('id')
   const { data: entityBundle, isLoading: isEntityBundleLoading } =
-    SynapseQueries.useGetEntityBundle(
+    useGetEntityBundle(
       projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
       undefined,
       {
@@ -27,7 +30,7 @@ const ChallengeDetailPageWrapper = () => {
       },
     )
   const { data: challenge, isLoading: isChallengeLoading } =
-    SynapseQueries.useGetEntityChallenge(
+    useGetEntityChallenge(
       projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
       {
         enabled: !!projectId,
@@ -35,7 +38,7 @@ const ChallengeDetailPageWrapper = () => {
     )
 
   const { data: teamMemberCount, isLoading: isTeamMemberCountLoading } =
-    SynapseQueries.useGetTeamMemberCount(challenge?.participantTeamId ?? '', {
+    useGetTeamMemberCount(challenge?.participantTeamId ?? '', {
       enabled: !!challenge,
     })
   if (isEntityBundleLoading || isChallengeLoading || isTeamMemberCountLoading) {
@@ -74,9 +77,8 @@ const ChallengeDetailPageWrapper = () => {
                     <Link
                       target="_blank"
                       rel="noreferrer"
-                      href={`${SynapseUtilityFunctions.getEndpoint(
-                        SynapseUtilityFunctions.BackendDestinationEnum
-                          .PORTAL_ENDPOINT,
+                      href={`${getEndpoint(
+                        BackendDestinationEnum.PORTAL_ENDPOINT,
                       )}Team:${challenge?.participantTeamId}`}
                       sx={{
                         color: 'white',

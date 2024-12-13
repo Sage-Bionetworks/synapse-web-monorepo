@@ -1,17 +1,18 @@
 import { Link } from '@mui/material'
 import { useState } from 'react'
-import { SynapseComponents, SynapseHookUtils } from 'synapse-react-client'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 const EL_BETA_LAUNCH_LOCALSTORAGE_KEY =
   'org.sagebionetworks.security.cookies.portal.elbetalaunch.dismissed'
 const ELBetaLaunchBanner = () => {
-  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [cookiePreferences] = useCookiePreferences()
   const [showBanner, setShowBanner] = useState(
     localStorage.getItem(EL_BETA_LAUNCH_LOCALSTORAGE_KEY) === null,
   )
   return !showBanner ? (
     <></>
   ) : (
-    <SynapseComponents.FullWidthAlert
+    <FullWidthAlert
       isGlobal={true}
       onClose={() => {
         if (cookiePreferences.functionalAllowed) {
