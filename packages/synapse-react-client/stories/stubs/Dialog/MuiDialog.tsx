@@ -21,10 +21,16 @@ export interface DialogProps extends MuiDialogProps {
 
 export const Dialog = (props: DialogProps) => {
   const { title, content, helpText, ...rest } = props
+
   return (
     <MuiDialog {...rest}>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          alignItems={'center'}
+          gap={'5px'}
+          fontSize={{ xs: '18px', md: 'unset' }}
+        >
           {title}
           {helpText && <HelpPopover markdownText={helpText} />}
           <Box sx={{ flexGrow: 1 }} />
