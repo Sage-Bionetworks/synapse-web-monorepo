@@ -30,12 +30,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
           component="img"
           image={image}
           sx={{
-            height: {
-              xs: '250px',
-              sm: '400px',
-              md: '450px',
-              xl: '627.563px',
-            },
+            maxHeight: '627.563px',
             borderRadius: '12px',
             objectFit: 'cover',
             width: '100%',
@@ -68,6 +63,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
               whiteSpace: 'nowrap',
               padding: '6px 24px',
               fontWeight: '600',
+              fontSize: '16px',
             }}
           >
             {buttonText}
