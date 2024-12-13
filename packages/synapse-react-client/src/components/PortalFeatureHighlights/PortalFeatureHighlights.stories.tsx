@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
 import PortalFeatureHighlights from './PortalFeatureHighlights'
-import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
