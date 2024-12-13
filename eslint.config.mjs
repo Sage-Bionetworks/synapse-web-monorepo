@@ -80,8 +80,8 @@ export default tseslint.config(
         },
       ],
       '@typescript-eslint/no-redundant-type-constituents': 'warn',
-      'barrel/avoid-barrel-files': ["warn",   {
-        "amountOfExportsToConsiderModuleAsBarrel": 5
+      'barrel/avoid-barrel-files': ['warn', {
+        'amountOfExportsToConsiderModuleAsBarrel': 5,
       }],
     },
   },
