@@ -2,7 +2,6 @@ import { version } from '../package.json'
 import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
 import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
 import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
-import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
 import TwoFactorAuthSettingsPanel from './components/Authentication/TwoFactorAuthSettingsPanel'
@@ -57,7 +56,6 @@ import PlotlyWrapper from './components/PlotlyWrapper'
 import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import ProgrammaticTableDownload from './components/ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
-import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import ProvenanceGraph from './components/ProvenanceGraph/ProvenanceGraph'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { SchemaDrivenAnnotationEditor } from './components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
@@ -69,7 +67,6 @@ import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEdit
 import SubscriptionPage from './components/SubscriptionPage'
 import SynapseChat from './components/SynapseChat/SynapseChat'
 import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
-import { SynapseHomepage } from './components/SynapseHomepage'
 import {
   SynapseHomepageV2,
   SynapsePlansPage,
@@ -126,12 +123,9 @@ const SynapseComponents = {
   HasAccess,
   EvaluationCard,
   EvaluationEditorPage,
-  AccessTokenPage,
   AccountLevelBadges,
   TermsAndConditions,
   PageProgress,
-  ProjectViewCarousel,
-  SynapseHomepage,
   SynapseHomepageV2,
   SynapsePlansPage,
   SynapseFooter,
