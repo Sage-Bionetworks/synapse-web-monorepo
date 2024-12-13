@@ -1,8 +1,8 @@
+import { Box, Paper, Typography } from '@mui/material'
+import { AccessTokenPage } from 'synapse-react-client/components/AccessTokenPage/index'
+import { BackButton } from './BackButton'
 import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
-import { Box, Paper, Typography } from '@mui/material'
-import { BackButton } from './BackButton'
-import { AccessTokenPage } from 'synapse-react-client'
 import { SourceAppProvider, SYNAPSE_SOURCE_APP_ID } from './useSourceApp'
 
 export function PersonalAccessTokensPageInternal() {

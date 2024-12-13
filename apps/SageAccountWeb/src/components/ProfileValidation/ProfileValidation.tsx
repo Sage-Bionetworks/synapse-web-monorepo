@@ -1,11 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseConstants,
-  SynapseContextUtils,
-} from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import {
@@ -34,6 +29,9 @@ import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { BackButton } from '../BackButton'
 import { useSourceApp } from '../useSourceApp'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
   'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
@@ -281,10 +279,8 @@ function BodyControlFactory(args: {
   }
 }
 
-export type ProfileValidationProps = {}
-
-export const ProfileValidation = (props: ProfileValidationProps) => {
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+export function ProfileValidation() {
+  const { accessToken } = useSynapseContext()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
   const [profile, setProfile] = useState<UserProfile>()

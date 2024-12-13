@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { AppContextProvider } from '../AppContext'
 import LoginPage from '../LoginPage'
 import { MemoryRouter } from 'react-router-dom'
-import { FullContextProvider } from 'synapse-react-client'
+import { FullContextProvider } from 'synapse-react-client/utils/context/FullContextProvider'
 
 describe('App initialization tests', () => {
   it.skip('renders a branded experience', async () => {

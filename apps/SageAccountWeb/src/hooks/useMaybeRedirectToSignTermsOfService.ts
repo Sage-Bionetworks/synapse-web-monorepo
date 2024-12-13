@@ -1,10 +1,8 @@
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import {
-  storeLastPlace,
-  useApplicationSessionContext,
-} from 'synapse-react-client'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { storeLastPlace } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 
 type UseMaybeRedirectToSignTermsOfServiceReturn = {
   // if true, the user may be redirected (or has already been redirected) to sign the ToS

@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useState } from 'react'
-import { TermsAndConditions } from 'synapse-react-client'
+import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ReturnToAppButton } from './ReturnToAppButton'

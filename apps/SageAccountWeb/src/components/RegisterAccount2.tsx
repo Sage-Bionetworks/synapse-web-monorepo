@@ -1,7 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { displayToast, SynapseClient } from 'synapse-react-client'
 import {
   AliasType,
   EmailValidationSignedToken,
@@ -9,10 +8,10 @@ import {
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import SynapseClient from 'synapse-react-client/synapse-client'
 
-export type RegisterAccount2Props = {}
-
-export const RegisterAccount2 = (props: RegisterAccount2Props) => {
+export function RegisterAccount2() {
   const [isLoading, setIsLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')

@@ -6,10 +6,8 @@ import {
   FormControlProps,
 } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
-import {
-  StyledOuterContainer as _StyledOuterContainer,
-  StyledFormControl as _StyledFormControl,
-} from 'synapse-react-client'
+import { StyledFormControl as _StyledFormControl } from 'synapse-react-client/components/styled/StyledFormControl'
+import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/components/styled/LeftRightPanel'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> =
   _StyledOuterContainer

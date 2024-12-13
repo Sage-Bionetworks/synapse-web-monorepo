@@ -1,5 +1,5 @@
 import { Box, Container, Paper } from '@mui/material'
-import { WebhookDashboard } from 'synapse-react-client'
+import WebhookDashboard from 'synapse-react-client/components/Webhook/WebhookDashboard'
 import { BackButton } from './BackButton'
 import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'

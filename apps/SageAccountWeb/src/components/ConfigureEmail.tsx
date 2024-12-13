@@ -13,12 +13,13 @@ import {
   Typography,
 } from '@mui/material'
 import { SyntheticEvent, useEffect, useState } from 'react'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
+import SynapseClient from 'synapse-react-client/synapse-client'
 import {
-  displayToast,
-  SynapseClient,
-  SynapseQueries,
-  useSynapseContext,
-} from 'synapse-react-client'
+  useGetCurrentUserProfile,
+  useGetNotificationEmail,
+} from 'synapse-react-client/synapse-queries/user/useUserBundle'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 
 export type ConfigureEmailProps = {
@@ -28,9 +29,9 @@ export type ConfigureEmailProps = {
 export const ConfigureEmail = (props: ConfigureEmailProps) => {
   const { accessToken } = useSynapseContext()
   const { data: currentProfile, refetch: refetchCurrentProfile } =
-    SynapseQueries.useGetCurrentUserProfile()
+    useGetCurrentUserProfile()
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
-    SynapseQueries.useGetNotificationEmail()
+    useGetNotificationEmail()
   const [newEmail, setNewEmail] = useState('')
   const sendEmailNotifications =
     currentProfile?.notificationSettings?.sendEmailNotifications ?? true

@@ -1,12 +1,9 @@
 import { BadgeOutlined } from '@mui/icons-material'
-import { Box, SxProps, Typography } from '@mui/material'
-import { useSourceApp } from './useSourceApp'
+import { Box, Link, SxProps, Typography } from '@mui/material'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { useAppContext } from '../AppContext'
-import {
-  SynapseClient,
-  useApplicationSessionContext,
-} from 'synapse-react-client'
-import { Link } from '@mui/material'
+import { useSourceApp } from './useSourceApp'
 
 function AccountSettingsTopBar() {
   const sourceApp = useSourceApp()

@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useAppContext } from '../AppContext'
-import {
-  displayToast,
-  SynapseClient,
-  UserOrTeamBadge,
-} from 'synapse-react-client'
 import { Navigate } from 'react-router-dom'
 import {
   isJoinTeamSignedToken,
@@ -16,6 +11,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
 import { StyledOuterContainer } from './StyledComponents'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import UserOrTeamBadge from 'synapse-react-client/components/UserOrTeamBadge/UserOrTeamBadge'
 
 export function JoinTeamPage() {
   const context = useAppContext()

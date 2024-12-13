@@ -1,30 +1,29 @@
-import { SyntheticEvent, useState } from 'react'
-import {
-  displayToast,
-  TermsAndConditions,
-  IconSvg,
-  SynapseContextUtils,
-  SynapseQueries,
-} from 'synapse-react-client'
-import { SourceAppLogo } from './SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
+import { SyntheticEvent, useState } from 'react'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import {
+  useSignTermsOfService,
+  useTermsOfServiceInfo,
+} from 'synapse-react-client/synapse-queries/termsOfService/useTermsOfService'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { SourceAppLogo } from './SourceApp'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
+import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { useSourceApp } from './useSourceApp'
 
-export type TermsOfUsePageProps = {}
-
-export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
+export function TermsOfUsePage() {
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+  const { accessToken } = useSynapseContext()
   const sourceApp = useSourceApp()
 
-  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
-  const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
+  const { mutate: signTermsOfService } = useSignTermsOfService()
+  const { data: tosInfo } = useTermsOfServiceInfo()
 
   const onSignTermsOfUse = async (event: SyntheticEvent) => {
     event.preventDefault()

@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import './App.scss'
+import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
+import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import {
-  CookiesNotification,
-  processRedirectURLInOneSage,
   SynapseContextConsumer,
   SynapseContextType,
   useSynapseContext,
-} from 'synapse-react-client'
-import './App.scss'
+} from 'synapse-react-client/utils/context/SynapseContext'
 import { useAppContext } from './AppContext'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
 import { AccountSettings } from './components/AccountSettings'

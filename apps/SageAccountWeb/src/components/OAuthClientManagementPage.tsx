@@ -2,7 +2,7 @@ import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { OAuthClientManagement } from 'synapse-react-client'
+import { OAuthManagement as OAuthClientManagement } from 'synapse-react-client/components/OAuthClientManagement/OAuthManagement'
 import { SourceAppProvider, SYNAPSE_SOURCE_APP_ID } from './useSourceApp'
 
 export function OAuthClientManagementPageInternal() {

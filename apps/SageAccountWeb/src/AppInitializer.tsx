@@ -1,11 +1,8 @@
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useEffect, useState } from 'react'
-
-import {
-  SynapseConstants,
-  SynapseUtilityFunctions,
-  useFramebuster,
-} from 'synapse-react-client'
+import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { hex2ascii } from 'synapse-react-client/utils/functions/StringUtils'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
 import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
@@ -50,12 +47,12 @@ function AppInitializer(props: { children?: ReactNode }) {
     if (searchParamSignedToken) {
       localStorage.setItem('signedToken', searchParamSignedToken)
       const searchParamToken = JSON.parse(
-        SynapseUtilityFunctions.hex2ascii(searchParamSignedToken),
+        hex2ascii(searchParamSignedToken),
       ) as SignedTokenInterface
       setSignedToken(searchParamToken)
     } else if (localStorageSignedToken) {
       const localStorageParamToken = JSON.parse(
-        SynapseUtilityFunctions.hex2ascii(localStorageSignedToken),
+        hex2ascii(localStorageSignedToken),
       ) as SignedTokenInterface
       setSignedToken(localStorageParamToken)
     }

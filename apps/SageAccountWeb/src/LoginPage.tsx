@@ -1,21 +1,21 @@
 import { Box, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useLastLoginInfoState } from 'synapse-react-client/components/Authentication/LastLoginInfo'
+import { LoginMethod } from 'synapse-react-client/components/Authentication/LoginMethod'
+import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
+import SystemUseNotification from 'synapse-react-client/components/SystemUseNotification/SystemUseNotification'
 import {
-  LoginMethod,
-  StandaloneLoginForm,
-  SynapseConstants,
-  SystemUseNotification,
-  storeLastPlace,
   restoreLastPlace,
-  useLastLoginInfoState,
-  useApplicationSessionContext,
-} from 'synapse-react-client'
-import { backButtonSx } from './components/BackButton.js'
-import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
+  storeLastPlace,
+} from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { backButtonSx } from './components/BackButton'
+import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
-} from './components/StyledComponents.js'
+} from './components/StyledComponents'
 import { useSourceApp } from './components/useSourceApp'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 

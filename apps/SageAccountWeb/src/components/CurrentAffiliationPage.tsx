@@ -1,22 +1,20 @@
-import { useEffect, useState } from 'react'
-import { SourceAppLogo } from './SourceApp'
 import { TextField, Typography } from '@mui/material'
-import { LeftRightPanel } from './LeftRightPanel'
-import { StyledFormControl } from './StyledComponents'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseQueries,
-  useSynapseContext,
-} from 'synapse-react-client'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { LeftRightPanel } from './LeftRightPanel'
 import { ContinueButton } from './ProfileValidation/ContinueButton'
+import { SourceAppLogo } from './SourceApp'
+import { StyledFormControl } from './StyledComponents'
 import { useSourceApp } from './useSourceApp'
 
 export const CurrentAffiliationPage = () => {
   const sourceApp = useSourceApp()
   const { accessToken } = useSynapseContext()
-  const { data: currentUserProfile } = SynapseQueries.useGetCurrentUserProfile()
+  const { data: currentUserProfile } = useGetCurrentUserProfile()
   const [newAffiliation, setNewAffiliation] = useState(
     currentUserProfile?.company,
   )

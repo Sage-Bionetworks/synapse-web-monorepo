@@ -1,17 +1,15 @@
 import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
 import { FormEvent, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ChangePasswordWithToken,
-  displayToast,
-  SynapseClientError,
-  SynapseQueries,
-} from 'synapse-react-client'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
+import { ChangePasswordWithToken } from 'synapse-react-client/components/ChangePassword/index'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
+import { useResetPassword } from 'synapse-react-client/synapse-queries/auth/useResetPassword'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 export type ResetPasswordProps = {
   returnToUrl: string
@@ -42,7 +40,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
   const [hasInitiatedResetPassword, setHasInitiatedResetPassword] =
     useState(false)
-  const { mutate, isPending } = SynapseQueries.useResetPassword({
+  const { mutate, isPending } = useResetPassword({
     onSuccess: () => {
       setHasInitiatedResetPassword(true)
       displayToast(
