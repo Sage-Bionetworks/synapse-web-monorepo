@@ -56,6 +56,7 @@ function OrientationBanner(props: OrientationBannerProps) {
 
   const theme = useTheme()
   const defaultSx = {
+    display: { xs: 'none', md: 'unset' },
     backgroundColor: '#F9FAFB',
     border: 'none',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
@@ -82,7 +83,10 @@ function OrientationBanner(props: OrientationBannerProps) {
         }
         setShowBanner(false)
       }}
-      sx={{ ...defaultSx, ...sx }}
+      sx={{
+        ...defaultSx,
+        ...sx,
+      }}
     />
   )
 }
