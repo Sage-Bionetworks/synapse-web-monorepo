@@ -1,4 +1,3 @@
-import React from 'react'
 import EntityActionMenu, {
   ActionConfiguration,
   ActionConfigurationMap,

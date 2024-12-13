@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import '../stories/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'

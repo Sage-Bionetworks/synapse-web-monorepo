@@ -1,4 +1,3 @@
-import React from 'react'
 import QueryWrapperPlotNav from '../../QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StandaloneQueryWrapper from '../../StandaloneQueryWrapper/StandaloneQueryWrapper'
 

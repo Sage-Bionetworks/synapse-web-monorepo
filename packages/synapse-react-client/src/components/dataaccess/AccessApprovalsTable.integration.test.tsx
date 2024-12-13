@@ -1,4 +1,3 @@
-import React from 'react'
 import { rest, server } from '../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
 import {

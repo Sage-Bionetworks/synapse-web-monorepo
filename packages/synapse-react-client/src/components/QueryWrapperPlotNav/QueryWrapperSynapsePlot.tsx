@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { SynapsePlot } from '../Plot'
 import { QueryContextType, useQueryContext } from '../QueryContext'
 import {

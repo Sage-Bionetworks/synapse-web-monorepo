@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../synapse-queries'
@@ -24,7 +24,7 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 
-export const OAuthManagement: React.FunctionComponent = () => {
+export function OAuthManagement() {
   const { accessToken } = useSynapseContext()
   const [isShowingCreateClientModal, setIsShowingCreateClientModal] =
     useState(false)

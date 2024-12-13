@@ -1,5 +1,5 @@
 import { Button, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { useGetModerators } from '../../synapse-queries/forum/useForum'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
@@ -20,11 +20,7 @@ export type ForumPageProps = {
 
 const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
 
-export const ForumPage: React.FC<ForumPageProps> = ({
-  forumId,
-  limit,
-  onClickLink,
-}) => {
+export function ForumPage({ forumId, limit, onClickLink }: ForumPageProps) {
   const [showThreadModal, setShowThreadModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showDeletedThread, setShowDeletedThread] = useState(false)

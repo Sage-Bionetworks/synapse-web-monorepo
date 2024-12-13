@@ -1,4 +1,4 @@
-import React from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/system'
@@ -11,7 +11,7 @@ export type TimelinePlotSpeciesSelectorProps = {
   sql: string
   additionalFilters?: QueryFilter[]
   species?: string | null
-  setSpecies: React.Dispatch<React.SetStateAction<string | null | undefined>>
+  setSpecies: Dispatch<SetStateAction<string | null | undefined>>
 }
 export const TimelinePlotSpeciesSelector = ({
   sql,

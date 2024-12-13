@@ -1,5 +1,4 @@
-import { Map } from 'immutable'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
@@ -8,14 +7,17 @@ import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
+import { EntitySelectionMapType } from '../useEntitySelection'
 import { VersionSelectionType } from '../VersionSelectionType'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
+import { ReferenceDetails } from './configurations/ReferenceDetails'
 import { SearchDetails } from './configurations/SearchDetails'
 import { DetailsView } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {
+  REFERENCE_LIST, // Provide references to show in the DetailsList. Incompatible with pagination
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
   PARENT_CONTAINER, // retrieve the children for a given entity ID
   USER_PROJECTS, // retrieve the user's projects (using the parameters)
@@ -26,6 +28,8 @@ export enum EntityDetailsListDataConfigurationType {
 
 export type EntityDetailsListDataConfiguration = {
   type: EntityDetailsListDataConfigurationType
+  /** Defined if type is REFERENCE_LIST */
+  referenceList?: Reference[]
   /** Defined if type is HEADER_LIST */
   headerList?: Pick<EntityFinderHeader, 'id' | 'name' | 'type'>[]
   /** Defined if type is PARENT_CONTAINER */
@@ -45,7 +49,7 @@ export type EntityDetailsListSharedProps = {
   selectColumnType: 'checkbox' | 'none'
   enableSelectAll: boolean
   visibleTypes: EntityType[]
-  selected: Map<string, number>
+  selected: EntitySelectionMapType
   selectableTypes: EntityType[]
   isIdSelected: (header: EntityFinderHeader) => boolean
   isSelectable: (header: EntityFinderHeader) => boolean
@@ -57,9 +61,10 @@ export type EntityDetailsListProps = EntityDetailsListSharedProps & {
   configuration: EntityDetailsListDataConfiguration
 }
 
-export const EntityDetailsList: React.FunctionComponent<
-  EntityDetailsListProps
-> = ({ configuration, ...sharedProps }) => {
+export function EntityDetailsList({
+  configuration,
+  ...sharedProps
+}: EntityDetailsListProps) {
   /**
    * This component simply uses the data configuration prop to determine which configuration component
    * to use. Each configuration component has its own logic to utilize different Synapse APIs.
@@ -99,6 +104,13 @@ export const EntityDetailsList: React.FunctionComponent<
                 sharedProps.isIdSelected,
                 sharedProps.isSelectable,
               )}
+            />
+          )
+        case EntityDetailsListDataConfigurationType.REFERENCE_LIST:
+          return (
+            <ReferenceDetails
+              {...sharedProps}
+              references={config.referenceList!}
             />
           )
         case EntityDetailsListDataConfigurationType.USER_FAVORITES:

@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import {
   useGetEntityBundle,
   useGetEntityChildren,
@@ -30,7 +30,7 @@ import { useGetDOIAssociation } from '../../../../synapse-queries/doi/useDOI'
 export type EntityProperty = {
   key: string
   title: string
-  value: React.ReactNode
+  value: ReactNode
 }
 
 /**

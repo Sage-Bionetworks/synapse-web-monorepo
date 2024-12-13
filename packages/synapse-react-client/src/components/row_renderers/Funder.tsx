@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, MouseEvent } from 'react'
 import WideButton from '../styled/WideButton'
 
 export type FunderProps = {
@@ -6,13 +6,13 @@ export type FunderProps = {
   schema?: any
 }
 
-export default class Funder extends React.Component<FunderProps, never> {
+export default class Funder extends Component<FunderProps, never> {
   constructor(props: FunderProps) {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)
   }
   public handleLinkClick =
-    (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    (link: string) => (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       window.open(link, '_blank')
     }

@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const ColumnsDark = () => (
   <svg
     data-icon="columns-dark"

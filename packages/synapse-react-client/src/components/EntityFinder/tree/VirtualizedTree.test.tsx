@@ -3,7 +3,6 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { VariableSizeNodePublicState } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
@@ -17,7 +16,7 @@ import {
   TreeData,
 } from './VirtualizedTree'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import { WritableDeep } from 'type-fest'
 
 describe('VirtualizedTree tests', () => {
@@ -30,7 +29,7 @@ describe('VirtualizedTree tests', () => {
     const getNextPageOfChildren = jest.fn()
     const setSelectedId = jest.fn()
     const treeNodeType = EntityTreeNodeType.SINGLE_PANE
-    const selected = Map<string, number>()
+    const selected = Map<string, Reference>()
     const selectableTypes = [EntityType.FOLDER]
     const autoExpand = jest.fn().mockReturnValue(true)
     const defaultHeight = 50
@@ -191,7 +190,7 @@ describe('VirtualizedTree tests', () => {
     it('For Single Pane tree, selected if the ID is in the selected map', () => {
       const treeNodeType = EntityTreeNodeType.SINGLE_PANE
       const id = 'syn123'
-      let selected = Map<string, number>()
+      let selected = Map<string, Reference>()
       const node: EntityHeaderNode = {
         id: id,
         name: 'A Custom Folder Name',
@@ -215,7 +214,10 @@ describe('VirtualizedTree tests', () => {
 
       expect(isSelected).toBe(false)
 
-      selected = Map<string, number>().set(id, 1)
+      selected = Map<string, Reference>().set(id, {
+        targetId: id,
+        targetVersionNumber: 1,
+      })
       isSelected = getNodeData({
         node,
         nestingLevel,
@@ -340,7 +342,7 @@ describe('VirtualizedTree tests', () => {
       const mockItemSize = jest.fn().mockReturnValue(50)
       const mockFetchNextPage = jest.fn()
       const selectableTypes = [EntityType.FOLDER]
-      const selected = Map<string, number>()
+      const selected = Map<string, Reference>()
       const rootNodeConfiguration: RootNodeConfiguration = {
         show: true,
         nodeText: 'Projects',
@@ -604,7 +606,7 @@ describe('VirtualizedTree tests', () => {
 
       expect(mockFetchNextPage).not.toHaveBeenCalled()
 
-      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(screen.getByRole('button', { name: 'Expand' }))
 
       await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
     })
@@ -717,7 +719,7 @@ describe('VirtualizedTree tests', () => {
       })
 
       // Should start in unexpanded state
-      await screen.findByText('▸')
+      await screen.findByRole('button', { name: 'Expand' })
 
       // `isSelected` changes. This could happen via props, see SWC-6205
       const newProps: WritableDeep<

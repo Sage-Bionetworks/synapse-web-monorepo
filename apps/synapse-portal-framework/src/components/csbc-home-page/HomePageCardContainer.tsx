@@ -1,4 +1,3 @@
-import React from 'react'
 import HomePageCard, { HomePageCardProps } from './HomePageCard'
 
 export type HomePageCardContainerProps = {

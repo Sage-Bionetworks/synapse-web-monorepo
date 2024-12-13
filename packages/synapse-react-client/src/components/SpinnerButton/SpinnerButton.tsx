@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   LoginAwareButton,
   LoginAwareButtonProps,
@@ -9,10 +9,7 @@ export type SpinnerButtonProps = LoginAwareButtonProps & {
   showSpinner?: boolean
 }
 
-const SpinnerButton: React.FC<SpinnerButtonProps> = ({
-  showSpinner = false,
-  ...props
-}: SpinnerButtonProps) => {
+function SpinnerButton({ showSpinner = false, ...props }: SpinnerButtonProps) {
   const [width, setWidth] = useState(0)
   const elementRef = useRef<HTMLDivElement>(null)
 

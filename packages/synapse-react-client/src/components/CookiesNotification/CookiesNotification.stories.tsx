@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
 import CookiesNotification from './CookiesNotification'
 import UniversalCookies from 'universal-cookie'
 import { COOKIES_AGREEMENT_COOKIE_KEY } from '../../utils/hooks/useCookiePreferences'

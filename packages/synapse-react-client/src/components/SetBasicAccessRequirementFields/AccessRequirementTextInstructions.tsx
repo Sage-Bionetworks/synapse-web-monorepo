@@ -4,7 +4,7 @@ import {
   AccessRequirement,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { getOldAccessRequirementInstructions } from './GovernanceUtils'
 
@@ -14,9 +14,9 @@ type AccessRequirementTextInstructionsProps = {
   allowDelete?: boolean
 }
 
-export const AccessRequirementTextInstructions: React.FunctionComponent<
-  AccessRequirementTextInstructionsProps
-> = (props: AccessRequirementTextInstructionsProps) => {
+export function AccessRequirementTextInstructions(
+  props: AccessRequirementTextInstructionsProps,
+) {
   const { accessRequirement, onConfirmDelete, allowDelete = false } = props
 
   const [open, setOpen] = useState<boolean>(false)

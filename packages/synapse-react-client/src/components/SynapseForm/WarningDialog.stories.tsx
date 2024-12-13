@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
 import { WarningDialog, WarningDialogProps } from './WarningDialog'
 import { fn } from '@storybook/test'
 

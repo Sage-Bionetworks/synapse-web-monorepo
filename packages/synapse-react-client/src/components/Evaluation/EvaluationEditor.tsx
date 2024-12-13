@@ -1,6 +1,6 @@
 import { Alert, Button } from '@mui/material'
 import { Col, Dropdown, Form, Row } from 'react-bootstrap'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
@@ -24,14 +24,12 @@ export type EvaluationEditorProps = {
 /**
  * Edits basic properties of an Evaluation
  */
-export const EvaluationEditor: React.FunctionComponent<
-  EvaluationEditorProps
-> = ({
+export function EvaluationEditor({
   evaluationId,
   entityId,
   onDeleteSuccess,
   onSaveSuccess,
-}: EvaluationEditorProps) => {
+}: EvaluationEditorProps) {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
   }
@@ -214,9 +212,10 @@ type EvaluationEditorDropdownProps = {
   onDelete?: () => void
 }
 
-const EvaluationEditorDropdown: React.FunctionComponent<
-  EvaluationEditorDropdownProps
-> = ({ onClick, onDelete }) => {
+function EvaluationEditorDropdown({
+  onClick,
+  onDelete,
+}: EvaluationEditorDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   return (

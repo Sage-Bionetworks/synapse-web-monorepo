@@ -1,13 +1,13 @@
-import React from 'react'
 import { TextField } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { Dispatch, SetStateAction } from 'react'
 import { useGetFeatureFlag } from '../../synapse-queries'
 
 type TableNameFormProps = {
   name: string
-  setName: React.Dispatch<React.SetStateAction<string>>
+  setName: Dispatch<SetStateAction<string>>
   description: string | undefined
-  setDescription: React.Dispatch<React.SetStateAction<string | undefined>>
+  setDescription: Dispatch<SetStateAction<string | undefined>>
 }
 
 /**

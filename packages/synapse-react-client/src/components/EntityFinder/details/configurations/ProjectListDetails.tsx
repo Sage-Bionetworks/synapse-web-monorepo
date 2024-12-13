@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetProjectsInfinite } from '../../../../synapse-queries/user/useProjects'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { ProjectHeader } from '@sage-bionetworks/synapse-types'
@@ -20,9 +19,10 @@ export function toEntityHeader(
   }
 }
 
-export const ProjectListDetails: React.FunctionComponent<
-  ProjectListDetailsProps
-> = ({ projectsParams, ...sharedProps }) => {
+export function ProjectListDetails({
+  projectsParams,
+  ...sharedProps
+}: ProjectListDetailsProps) {
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetProjectsInfinite(projectsParams, { throwOnError: true })
 

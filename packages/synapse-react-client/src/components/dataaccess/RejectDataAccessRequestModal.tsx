@@ -1,5 +1,4 @@
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { useUpdateDataAccessSubmissionState } from '../../synapse-queries'
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'

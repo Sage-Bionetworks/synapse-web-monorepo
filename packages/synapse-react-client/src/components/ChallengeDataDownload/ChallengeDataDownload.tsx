@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
@@ -51,10 +51,10 @@ export function ChallengeDataDownload({
   )
 
   const onAddClick = useCallback(() => {
-    const entities = selectedEntities.toArray().map(entity => {
+    const entities = Array.from(selectedEntities.values()).map(reference => {
       return {
-        fileEntityId: entity[0],
-        versionNumber: entity[1],
+        fileEntityId: reference.targetId,
+        versionNumber: reference.targetVersionNumber,
       }
     })
     addBatchToDownloadList(entities)

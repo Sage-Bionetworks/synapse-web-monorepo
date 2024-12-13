@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { ReactNode } from 'react'
 import { ResourceAccessItem } from './ResourceAccessItem'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
@@ -39,7 +39,7 @@ export type AclEditorProps = {
    */
   canRemoveEntry?: boolean | ((resourceAccess: ResourceAccess) => boolean)
   isLoading?: boolean
-  emptyText: React.ReactNode
+  emptyText: ReactNode
   onAddPrincipalToAcl: (id: number) => void
   updateResourceAccessItem: ReturnType<
     typeof useUpdateAcl

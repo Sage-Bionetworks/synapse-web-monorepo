@@ -1,4 +1,5 @@
-import React from 'react'
+import { Component, MouseEvent } from 'react'
+
 const CHAR_COUNT_CUTOFF = 400
 
 type ShowMoreState = {
@@ -10,10 +11,7 @@ export type ShowMoreProps = {
   maxCharacterCount?: number
 }
 
-export default class ShowMore extends React.Component<
-  ShowMoreProps,
-  ShowMoreState
-> {
+export default class ShowMore extends Component<ShowMoreProps, ShowMoreState> {
   constructor(props: ShowMoreProps) {
     super(props)
     this.state = {
@@ -22,7 +20,7 @@ export default class ShowMore extends React.Component<
     this.toggleShowMore = this.toggleShowMore.bind(this)
   }
 
-  public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
+  public toggleShowMore(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
     this.setState({
       showMore: true,
@@ -65,7 +63,7 @@ export default class ShowMore extends React.Component<
       </a>
     )
     return (
-      <React.Fragment>
+      <>
         <span>
           {previewText}
           <span className={this.state.showMore ? '' : 'SRC-hidden'}>
@@ -73,7 +71,7 @@ export default class ShowMore extends React.Component<
           </span>
         </span>
         {!this.state.showMore && showMoreButton}
-      </React.Fragment>
+      </>
     )
   }
 }

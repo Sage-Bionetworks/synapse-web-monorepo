@@ -3,7 +3,7 @@ import BaseTable, {
   Column,
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
@@ -17,7 +17,6 @@ import {
   isContainerType,
   isVersionableEntityType,
 } from '../../utils/functions/EntityTypeUtils'
-import { NO_VERSION_NUMBER } from '../EntityFinder/EntityFinder'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import {
   CellRendererProps,
@@ -50,7 +49,7 @@ const ROW_HEIGHT = 46
  *
  * @param param0
  */
-export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
+export function ChallengeDataTable({
   entities,
   isLoading,
   hasNextPage,
@@ -70,7 +69,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
   getChildrenInfiniteRequestObject,
   totalEntities,
   setCurrentContainer,
-}) => {
+}: DetailsViewProps) {
   const queryClient = useQueryClient()
 
   const { accessToken, keyFactory } = useSynapseContext()
@@ -130,14 +129,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
                   return selected.has(e.id)
                 })
                 .map(e => {
-                  const selectedVersion = selected.get(e.id)
-                  return {
-                    targetId: e.id,
-                    targetVersionNumber:
-                      selectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : selectedVersion,
-                  }
+                  return selected.get(e.id)!
                 }),
             )
           } else {
@@ -231,13 +223,12 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
         // only include entities that should not be hidden
         const entityType = getEntityTypeFromHeader(entity)
 
-        const currentSelectedVersion = selected.get(entity.id)
+        const currentSelectedVersion = selected.get(
+          entity.id,
+        )?.targetVersionNumber
         let versionNumber: number | undefined = undefined
         if ('versionNumber' in entity) {
-          if (
-            currentSelectedVersion != null &&
-            currentSelectedVersion !== NO_VERSION_NUMBER
-          ) {
+          if (currentSelectedVersion != null) {
             // if a version is selected, the row should show that version's data
             versionNumber = currentSelectedVersion
           } else if (versionSelection === VersionSelectionType.REQUIRED) {
@@ -406,10 +397,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
 
                   toggleSelection({
                     targetId: id,
-                    targetVersionNumber:
-                      currentSelectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : currentSelectedVersion,
+                    targetVersionNumber: currentSelectedVersion,
                   })
                 }
               },

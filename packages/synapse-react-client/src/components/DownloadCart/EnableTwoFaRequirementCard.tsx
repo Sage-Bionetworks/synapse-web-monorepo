@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { EASY_DIFFICULTY } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'

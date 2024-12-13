@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -43,9 +43,7 @@ const LIST_COLUMN_TYPES: ColumnType[] = [
   ColumnTypeEnum.STRING_LIST,
 ]
 
-const SubsectionRowRenderer: React.FunctionComponent<
-  SubsectionRowRendererProps
-> = ({
+function SubsectionRowRenderer({
   sql,
   searchParams,
   sqlOperator,
@@ -55,7 +53,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
   columnNameIsSectionTitle = false,
   limit,
   additionalFiltersSessionStorageKey,
-}) => {
+}: SubsectionRowRendererProps) {
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()

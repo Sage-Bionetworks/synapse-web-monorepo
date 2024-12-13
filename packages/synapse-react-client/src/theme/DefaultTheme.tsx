@@ -8,7 +8,6 @@ import {
 import { typographyOptions } from './typography/Typography'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
-import React from 'react'
 import {
   CheckCircleTwoTone,
   ErrorTwoTone,

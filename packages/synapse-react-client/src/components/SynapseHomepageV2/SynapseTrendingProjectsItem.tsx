@@ -1,5 +1,4 @@
 import { Box, Typography, SxProps, useTheme } from '@mui/material'
-import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetEntityHeader } from '../../synapse-queries'
 import { NavigateNext } from '@mui/icons-material'
@@ -25,16 +24,14 @@ export const trendingProjectsGridTemplateColumns: SxProps = {
   },
 }
 
-export const SynapseTrendingProjectItem: React.FunctionComponent<
-  SynapseTrendingProjectItemProps
-> = ({
+export function SynapseTrendingProjectItem({
   rank,
   rowValues,
   entityIdColIndex,
   nUniqueUsersColIndex,
   egressSizeGbColIndex,
   isMobileView,
-}) => {
+}: SynapseTrendingProjectItemProps) {
   const theme = useTheme()
   const entityId = rowValues[entityIdColIndex]
   const egressSize = rowValues[egressSizeGbColIndex]

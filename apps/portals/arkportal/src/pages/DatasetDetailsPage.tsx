@@ -4,7 +4,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import {
   CardContainerLogic,
   DatasetJsonLdScript,
@@ -12,7 +11,10 @@ import {
 } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql } from '../config/resources'
-import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  datasetColumnAliases,
+} from '../config/synapseConfigs/datasets'
 
 export function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -23,6 +25,8 @@ export function DatasetDetailsPage() {
         sql={datasetsSql}
         isHeader
         searchParams={searchParams}
+        columnAliases={datasetColumnAliases}
+        secondaryLabelLimit={4}
       />
       <DetailsPage
         sql={datasetsSql}

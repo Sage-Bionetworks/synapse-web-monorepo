@@ -4,7 +4,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { MOCK_FILE_ENTITY_ID } from '../../mocks/entity/mockFileEntity'
 import { server } from '../../mocks/msw/server'
 import {

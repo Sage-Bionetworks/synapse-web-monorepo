@@ -1,4 +1,3 @@
-import React from 'react'
 import { WithContext, Dataset } from 'schema-dts'
 import useJsonLdScriptElement from '../utils/hooks/useJsonLdScriptElement'
 import MarkdownIt from 'markdown-it'
@@ -31,13 +30,11 @@ const getPlainText = (html: string): string => {
 /**
  * This component will add a Dataset json ld script tag to the page when rendered.
  */
-export const DatasetJsonLdScript: React.FunctionComponent<
-  DatasetJsonLdScriptProps
-> = ({
+export function DatasetJsonLdScript({
   entityId: entityIdFromProps,
   version: versionFromProps,
   searchParams,
-}) => {
+}: DatasetJsonLdScriptProps) {
   let entityId: string
   let version: number | undefined
   if (entityIdFromProps) {

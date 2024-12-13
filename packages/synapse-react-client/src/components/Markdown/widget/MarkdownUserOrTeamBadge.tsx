@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetUserGroupHeaderWithAlias } from '../../../synapse-queries'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
 

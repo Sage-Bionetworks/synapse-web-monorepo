@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetPresignedUrlContent } from '../../synapse-queries/file/useFiles'
 import { MB } from '../../utils/SynapseConstants'
 import {

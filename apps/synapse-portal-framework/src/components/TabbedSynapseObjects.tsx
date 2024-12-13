@@ -1,9 +1,9 @@
 import { Box, Tab, Tabs } from '@mui/material'
-import React, { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 export type TabConfig = {
   label: string
-  element: React.ReactNode
+  element: ReactNode
 }
 
 export type TabbedSynapseObjectsProps = {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { ReleaseCardLarge } from './ReleaseCardLarge'
 import { ReleaseCardMedium } from './ReleaseCardMedium'
 import { ReleaseCardConfig } from './ReleaseCardTypes'
@@ -23,9 +22,7 @@ export type ReleaseCardProps = {
  * as well as statistics columns and columns for defining a button to explore data
  * as defined in the releaseCardConfig
  */
-export const ReleaseCard: React.FunctionComponent<ReleaseCardProps> = (
-  props: ReleaseCardProps,
-) => {
+export function ReleaseCard(props: ReleaseCardProps) {
   const { releaseCardConfig, ...rest } = props
   switch (releaseCardConfig.cardSize) {
     case 'large':

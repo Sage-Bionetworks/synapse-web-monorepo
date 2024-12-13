@@ -1,10 +1,10 @@
-import React from 'react'
 import {
   AccessTimeFilled,
   CheckTwoTone,
   LockTwoTone,
 } from '@mui/icons-material'
 import Skeleton from '@mui/material/Skeleton'
+import { ReactNode } from 'react'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
 import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 
@@ -41,7 +41,7 @@ export default function AccessApprovalCheckMark({
 }: CheckMarkProps) {
   const theme = useTheme()
   let backgroundColor: string | undefined = undefined
-  let icon: React.ReactNode = <></>
+  let icon: ReactNode = <></>
 
   switch (status) {
     case RequirementItemStatus.COMPLETE:

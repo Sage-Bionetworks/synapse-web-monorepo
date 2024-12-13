@@ -1,5 +1,11 @@
 import { Collapse } from '@mui/material'
-import React from 'react'
+import {
+  Component,
+  createRef,
+  FormEvent,
+  RefObject,
+  SyntheticEvent,
+} from 'react'
 import { CSSTransition } from 'react-transition-group'
 import {
   ColumnModel,
@@ -49,9 +55,9 @@ type InternalSearchProps = SearchV2Props & {
   columnModels: ColumnModel[] | undefined
 }
 
-class _Search extends React.Component<InternalSearchProps, SearchState> {
-  public searchFormRef: React.RefObject<HTMLFormElement>
-  public radioFormRef: React.RefObject<HTMLFormElement>
+class _Search extends Component<InternalSearchProps, SearchState> {
+  public searchFormRef: RefObject<HTMLFormElement>
+  public radioFormRef: RefObject<HTMLFormElement>
 
   constructor(props: InternalSearchProps) {
     super(props)
@@ -61,8 +67,8 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
       searchText: '',
       columnName: this.props.defaultColumn ?? '',
     }
-    this.searchFormRef = React.createRef()
-    this.radioFormRef = React.createRef()
+    this.searchFormRef = createRef()
+    this.radioFormRef = createRef()
   }
 
   componentDidMount() {
@@ -88,7 +94,7 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
     document.removeEventListener('click', this.handleClickOutsideForm)
   }
 
-  handleClickOutsideForm = (event: React.SyntheticEvent) => {
+  handleClickOutsideForm = (event: SyntheticEvent) => {
     if (
       // @ts-ignore
       !this.searchFormRef.current?.contains(event?.target) &&
@@ -107,7 +113,7 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
     }
   }
 
-  public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
+  public search = (event: SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
     const { searchText } = this.state
@@ -194,7 +200,7 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
     executeQueryRequest(lastQueryRequestDeepClone)
   }
 
-  public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  public handleChange = (event: FormEvent<HTMLInputElement>) => {
     this.setState({
       searchText: event.currentTarget.value,
     })

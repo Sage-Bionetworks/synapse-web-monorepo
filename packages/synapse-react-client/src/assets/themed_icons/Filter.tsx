@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Filter = () => (
   <svg
     data-icon="filter"

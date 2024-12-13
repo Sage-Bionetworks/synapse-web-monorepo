@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Checkbox, FormControlLabel, Radio } from '@mui/material'
 
 type EnumFacetFilterOptionProps = {

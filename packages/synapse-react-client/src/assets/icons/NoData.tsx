@@ -1,5 +1,3 @@
-import React from 'react'
-
 const svg = (
   <span className="file-dotted">
     <svg

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, MouseEvent } from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
@@ -18,14 +18,14 @@ export type DatasetProps = {
   queryVisualizationContext: QueryVisualizationContextType
 }
 
-class Dataset extends React.Component<DatasetProps, never> {
+class Dataset extends Component<DatasetProps, never> {
   constructor(props: DatasetProps) {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)
   }
 
   public handleLinkClick =
-    (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    (link: string) => (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       window.open(
         `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`,

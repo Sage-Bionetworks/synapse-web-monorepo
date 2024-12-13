@@ -11,14 +11,12 @@ import {
   useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import React from 'react'
+import { cloneElement, PropsWithChildren, ReactElement, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
-export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
+export function ReturnToAppButton({ children }: PropsWithChildren) {
   const theme = useTheme()
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
   const onClose = () => setOpen(false)
   const redirectFn = () => {
     window.location.assign('/authenticated/myaccount')
@@ -28,7 +26,7 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
       Cancel Validation
     </Button>
   ) : (
-    React.cloneElement(children as React.ReactElement, {
+    cloneElement(children as ReactElement, {
       onClick: () => setOpen(true),
     })
   )

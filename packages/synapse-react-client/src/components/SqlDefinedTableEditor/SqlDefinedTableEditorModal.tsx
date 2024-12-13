@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import SqlDefinedTableEditor from './SqlDefinedTableEditor'
 import { useGetEntity, useUpdateEntity } from '../../synapse-queries'

@@ -1,6 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
-import React from 'react'
 import { EvaluationEditor, EvaluationEditorProps } from './EvaluationEditor'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EVALUATION, EVALUATION_BY_ID } from '../../utils/APIConstants'

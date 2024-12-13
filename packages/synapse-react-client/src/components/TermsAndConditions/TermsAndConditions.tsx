@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LoadingItem, tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
 import { Button, Link } from '@mui/material'
@@ -15,12 +15,12 @@ export type TermsAndConditionsProps = {
   hideLinkToFullTC?: boolean
 }
 
-const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
+function TermsAndConditions({
   termsAndConditionsTableID = 'syn51718002',
   termsAndConditionsTableVersion = '5',
   onFormChange,
   hideLinkToFullTC = false,
-}) => {
+}: TermsAndConditionsProps) {
   const [tcList, setTcList] = useState<tcItem[]>([])
   // Fetch the table data
   const { data, isLoading } = useGetFullTableQueryResults(
