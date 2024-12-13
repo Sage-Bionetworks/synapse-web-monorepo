@@ -23,6 +23,7 @@ import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+
 import {
   AddFileToDownloadListRenderer,
   BadgeIconsRenderer,

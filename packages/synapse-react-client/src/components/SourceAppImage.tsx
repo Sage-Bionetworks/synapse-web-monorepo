@@ -3,7 +3,7 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import Skeleton from '@mui/material/Skeleton'
-import { useGetStablePresignedUrl } from '../synapse-queries'
+import { useGetStablePresignedUrl } from '../synapse-queries/file/useFiles'
 
 export type SourceAppImageProps = {
   sourceAppConfigTableID: string

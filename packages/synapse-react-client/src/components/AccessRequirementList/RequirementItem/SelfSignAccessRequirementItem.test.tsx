@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseClient, SynapseContextType } from '../../../index'
+import SynapseClient from '../../../synapse-client'
+import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import {
   AccessApproval,
   AccessRequirementStatus,

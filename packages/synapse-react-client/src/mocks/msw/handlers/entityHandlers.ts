@@ -33,7 +33,8 @@ import {
   mockUploadDestinations,
 } from '../../mock_upload_destination'
 import { mockSchemaBinding } from '../../mockSchema'
-import { SynapseApiResponse } from '../handlers'
+
+import { SynapseApiResponse } from '../SynapseApiResponse'
 
 function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
   const normalizedPassedIds = entityIds.map(normalizeSynPrefix)

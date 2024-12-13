@@ -1,25 +1,22 @@
-import {
-  SynapseQueries,
-  DiscussionThread,
-  ForumPage,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Box, IconButton } from '@mui/material'
+import { DiscussionThread } from 'synapse-react-client/components/Forum/DiscussionThread'
+import { ForumPage } from 'synapse-react-client/components/Forum/ForumPage'
+import { useGetEntityForum } from 'synapse-react-client/synapse-queries/entity/useGetEntityForum'
+import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 const ProjectDiscussionForum = () => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const entityId = urlSearchParams.get('id') ?? ''
-  const threadIdSearchParamKey: string =
-    SynapseUtilityFunctions.getIgnoredQueryFilterSearchParamKey(
-      'threadId',
-      'forum',
-    )
+  const threadIdSearchParamKey: string = getIgnoredQueryFilterSearchParamKey(
+    'threadId',
+    'forum',
+  )
   const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
   const location = useLocation()
   const navigate = useNavigate()
-  const { data: forum } = SynapseQueries.useGetEntityForum(entityId)
+  const { data: forum } = useGetEntityForum(entityId)
   const updateThreadId = (threadId?: string) => {
     const searchParams = new URLSearchParams(location.search)
     if (threadId) {

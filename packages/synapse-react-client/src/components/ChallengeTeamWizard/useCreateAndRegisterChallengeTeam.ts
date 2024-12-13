@@ -1,16 +1,14 @@
-import {
-  useCreateTeam,
-  useInviteUserToTeam,
-  useRegisterTeamForChallenge,
-} from '../../synapse-queries'
-import { useCallback, useMemo } from 'react'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ChallengeTeam,
   CreateTeamRequest,
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { useCallback, useMemo } from 'react'
+import { useRegisterTeamForChallenge } from '../../synapse-queries/challenge/useChallenge'
+import { useCreateTeam } from '../../synapse-queries/team/useTeam'
+import { useInviteUserToTeam } from '../../synapse-queries/team/useTeamMembers'
 
 /**
  * Hook that in one call will

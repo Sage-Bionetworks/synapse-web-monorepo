@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -24,16 +25,13 @@ import {
 import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
-} from '../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { DAY_IN_MS } from '../../utils/SynapseConstants'
 import { UploadDocumentField } from '../AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import {
-  AccessRequirementWikiInstructions,
-  AccessorRequirements,
-} from '../SetBasicAccessRequirementFields'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { AccessorRequirements } from '../SetBasicAccessRequirementFields/AccessorRequirements'
+import { AccessRequirementWikiInstructions } from '../SetBasicAccessRequirementFields/AccessRequirementWikiInstructions'
 
 export const DUC_TEMPLATE_UPLOAD_ERROR =
   'There was an error uploading the DUC template. '

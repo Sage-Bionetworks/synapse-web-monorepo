@@ -1,9 +1,10 @@
-import type {
+import {
   CardConfiguration,
-  GenericCardSchema,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
-import { SynapseConstants, TargetEnum } from 'synapse-react-client'
+  TargetEnum,
+} from 'synapse-react-client/components/CardContainerLogic/index'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import columnAliases from '../columnAliases'
 import { studySql } from '../resources'
 import { iconOptions } from './iconOptions'

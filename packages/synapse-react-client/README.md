@@ -97,7 +97,7 @@ In this example, make sure that your `node_modules` folder is in your Dart Sass 
 
 ## Adding a new component and Publishing a new version of SRC
 
-To expose a component from the library you must export it from [index.ts](src/index.ts). Ideally, your component will get its own subfolder within `src/components/`, which will contain an `index.ts` file that exports the public API of the component (typically the component and its props type). In `src/components/index.ts`, you can then export the contents of the new subfolder.
+Within the monorepo, you can import from a file/folder such as 'synapse-react-client/components/MyComponent'.
 
 To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). Note that certain dependencies are not included in the UMD bundle. See the config used to build the bundle, `vite.config.umd.ts`, for more details.
 

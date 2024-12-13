@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useGetAccessRequirements } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { EASY_DIFFICULTY } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import WideButton from '../../components/styled/WideButton'
-import { useGetAccessRequirements } from '../../synapse-queries'
+
 import { useGetTwoFactorEnrollmentStatus } from '../../synapse-queries/auth/useTwoFactorEnrollment'
 
 export type EnableTwoFaRequirementCardProps = {

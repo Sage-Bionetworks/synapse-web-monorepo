@@ -10,7 +10,7 @@ import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/compon
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router-dom'
-import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   cavaticaConnectAccountURL,
   dataOnStudiesPageSql,
@@ -23,6 +23,7 @@ import {
   studyCardConfiguration,
   studyColumnAliases,
 } from '../config/synapseConfigs/studies'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 
 export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {

@@ -1,3 +1,4 @@
+import { KeyFactory } from '../../synapse-queries/KeyFactory'
 import ChangePassword, {
   ChangePasswordProps,
   PASSWORD_CHANGED_SUCCESS_MESSAGE,
@@ -18,10 +19,13 @@ import {
   getRequires2FAChangePasswordHandler,
   getSuccessfulChangePasswordHandler,
 } from '../../mocks/msw/handlers/changePasswordHandlers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
-import { SynapseContextType } from '../../utils'
-import { KeyFactory } from '../../synapse-queries'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
+
 import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
 import {
   BEGIN_RESET_2FA_BUTTON_TEXT,

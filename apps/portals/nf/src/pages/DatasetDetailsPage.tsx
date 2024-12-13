@@ -9,13 +9,12 @@ import {
   datasetCardConfiguration,
   datasetsRgbIndex,
 } from 'src/config/synapseConfigs/datasets'
-import {
-  CardContainerLogic,
-  DatasetJsonLdScript,
-  ErrorPage,
-  QueryWrapperPlotNav,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import { DatasetJsonLdScript } from 'synapse-react-client/components/DatasetJsonLdScript'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export default function DatasetDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()

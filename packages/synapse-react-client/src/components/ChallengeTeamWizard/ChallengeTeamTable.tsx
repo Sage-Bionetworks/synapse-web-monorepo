@@ -5,12 +5,15 @@ import { Team } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import {
-  useGetAllOpenMembershipInvitations,
   useGetChallengeTeamList,
-  useGetCurrentUserProfile,
   useGetTeamList,
-} from '../../synapse-queries'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+} from '../../synapse-queries/team/useTeamList'
+import { useGetAllOpenMembershipInvitations } from '../../synapse-queries/team/useTeamMembers'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 

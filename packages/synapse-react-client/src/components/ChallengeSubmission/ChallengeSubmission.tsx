@@ -1,14 +1,3 @@
-import { useEffect, useState } from 'react'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityACL,
-  useGetEntityAlias,
-  useGetEntityChallenge,
-  useGetEntityPermissions,
-  useGetUserSubmissionTeams,
-  useUpdateEntityACL,
-} from '../../synapse-queries'
-import { useSynapseContext } from '../../utils'
 import {
   ACCESS_TYPE,
   Challenge,
@@ -19,11 +8,22 @@ import {
   ResourceAccess,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
-import { useGetTeam } from '../../synapse-queries/team/useTeam'
+import { useEffect, useState } from 'react'
 import { createEntity } from '../../synapse-client'
-import SubmissionDirectoryList from './SubmissionDirectoryList'
+import {
+  useGetEntityACL,
+  useGetEntityAlias,
+  useGetEntityPermissions,
+  useUpdateEntityACL,
+} from '../../synapse-queries/entity/useEntity'
+import { useGetEntityChallenge } from '../../synapse-queries/entity/useGetEntityChallenge'
+import { useGetTeam } from '../../synapse-queries/team/useTeam'
+import { useGetUserSubmissionTeams } from '../../synapse-queries/user/useGetUserTeams'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import ChallengeSubmissionStepper from './ChallengeSubmissionStepper'
+import SubmissionDirectoryList from './SubmissionDirectoryList'
 
 export type EntityItem = Entity & {
   repositoryName?: string

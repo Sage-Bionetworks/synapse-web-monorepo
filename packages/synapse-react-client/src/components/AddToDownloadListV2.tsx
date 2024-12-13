@@ -3,7 +3,7 @@ import { useSynapseContext } from '../utils/context/SynapseContext'
 import { displayToast } from './ToastMessage/ToastMessage'
 import { Link, Tooltip } from '@mui/material'
 import { useAddFileToDownloadList } from '../synapse-queries/download/useDownloadList'
-import { useGetEntity } from '../synapse-queries'
+import { useGetEntity } from '../synapse-queries/entity/useEntity'
 
 export type AddToDownloadListV2Props = {
   entityId: string

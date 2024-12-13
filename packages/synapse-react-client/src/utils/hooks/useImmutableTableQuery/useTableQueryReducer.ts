@@ -4,7 +4,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMemo, useReducer, useState } from 'react'
 import * as React from 'react'
-import { UniqueFacetIdentifier } from '../../types'
+import { UniqueFacetIdentifier } from '../../types/UniqueFacetIdentifier'
 import { cloneDeep, isEqual } from 'lodash-es'
 import {
   queryRequestsHaveSameTotalResults,

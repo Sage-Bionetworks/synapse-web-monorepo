@@ -20,7 +20,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetModerators(

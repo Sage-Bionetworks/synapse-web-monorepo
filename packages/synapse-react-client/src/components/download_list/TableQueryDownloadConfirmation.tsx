@@ -1,12 +1,11 @@
 import { useMemo } from 'react'
-import { SynapseConstants, useSynapseContext } from '../../utils'
-import {
-  useAddQueryToDownloadList,
-  useGetQueryResultBundleWithAsyncStatus,
-} from '../../synapse-queries'
+import { useAddQueryToDownloadList } from '../../synapse-queries/download/useDownloadList'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries/entity/useGetQueryResultBundle'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'

@@ -11,6 +11,12 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
+import {
+  useGetDataAccessRequestForUpdate,
+  useUpdateDataAccessRequest,
+} from '../../../../synapse-queries/dataaccess/useAccessRequirements'
+import { useSubmitDataAccessRequest } from '../../../../synapse-queries/dataaccess/useDataAccessSubmission'
+import { useGetCurrentUserProfile } from '../../../../synapse-queries/user/useUserBundle'
 import IconSvg from '../../../IconSvg/IconSvg'
 import {
   Alert,
@@ -26,12 +32,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import {
-  useGetCurrentUserProfile,
-  useGetDataAccessRequestForUpdate,
-  useSubmitDataAccessRequest,
-  useUpdateDataAccessRequest,
-} from '../../../../synapse-queries'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import TextField from '../../../TextField/TextField'
 import DataAccessRequestAccessorsEditor, {
@@ -42,7 +42,7 @@ import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
 import { deepEquals } from '@rjsf/utils'
-import { useSynapseContext } from '../../../../utils'
+import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement

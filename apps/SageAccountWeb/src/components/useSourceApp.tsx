@@ -1,5 +1,5 @@
-import { sourceAppConfigTableID } from '../resources'
-import { SourceAppConfig } from './SourceAppConfigs'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { useLocalStorageValue } from '@react-hookz/web'
 import {
   createContext,
   PropsWithChildren,
@@ -7,15 +7,16 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { getSearchParam } from '../URLUtils'
-import { useLocalStorageValue } from '@react-hookz/web'
+import { useLastLoginInfoState } from 'synapse-react-client/components/Authentication/LastLoginInfo'
+import defaultMuiThemeOptions from 'synapse-react-client/theme/DefaultTheme'
 import {
-  SynapseHookUtils,
-  SynapseTheme,
-  useLastLoginInfoState,
-} from 'synapse-react-client'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+  STATIC_SOURCE_APP_CONFIG,
+  useSourceAppConfigs,
+} from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
+import { sourceAppConfigTableID } from '../resources'
 import { sageAccountWebThemeOverrides } from '../style/theme'
+import { getSearchParam } from '../URLUtils'
+import { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppContextType = SourceAppConfig
 
@@ -27,7 +28,7 @@ export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
  * This must be exported to use the context in class components.
  */
 export const SourceAppContext = createContext<SourceAppContextType>(
-  SynapseHookUtils.STATIC_SOURCE_APP_CONFIG,
+  STATIC_SOURCE_APP_CONFIG,
 )
 
 export type SourceAppContextProviderProps = PropsWithChildren<{
@@ -83,12 +84,10 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const sourceAppId = idFromProps ?? idFromLocalStorage
 
-  const sourceAppConfigs = SynapseHookUtils.useSourceAppConfigs(
-    sourceAppConfigTableID,
-  )
+  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
   const defaultSageSourceApp =
     sourceAppConfigs?.find(config => config.appId === SYNAPSE_SOURCE_APP_ID) ??
-    SynapseHookUtils.STATIC_SOURCE_APP_CONFIG
+    STATIC_SOURCE_APP_CONFIG
 
   // PORTALS-2746: Find target source app.  Fallback to synapse.org source app if target not found.
   const sourceApp = sourceAppConfigs?.find(
@@ -106,18 +105,11 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const theme = useMemo(() => {
     if (sourceApp?.palette) {
-      return createTheme(
-        SynapseTheme.defaultMuiThemeOptions,
-        sageAccountWebThemeOverrides,
-        {
-          palette: sourceApp.palette,
-        },
-      )
+      return createTheme(defaultMuiThemeOptions, sageAccountWebThemeOverrides, {
+        palette: sourceApp.palette,
+      })
     } else {
-      return createTheme(
-        SynapseTheme.defaultMuiThemeOptions,
-        sageAccountWebThemeOverrides,
-      )
+      return createTheme(defaultMuiThemeOptions, sageAccountWebThemeOverrides)
     }
   }, [sourceApp?.palette])
 
@@ -133,7 +125,7 @@ export function useSourceApp(): SourceAppContextType {
   const context = useContext(SourceAppContext)
   if (context === undefined) {
     console.error('useSourceApp must be used within a SourceAppProvider')
-    return SynapseHookUtils.STATIC_SOURCE_APP_CONFIG
+    return STATIC_SOURCE_APP_CONFIG
   }
   return context
 }

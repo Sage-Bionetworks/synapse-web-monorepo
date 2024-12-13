@@ -1,6 +1,7 @@
+import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
 import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
 import { Avatar, Box, Skeleton, Stack, Typography } from '@mui/material'
-import { useGetEntityBundle } from '../../../../synapse-queries'
+
 import FavoriteButton from '../../../favorites/FavoriteButton'
 import ConditionalWrapper from '../../../utils/ConditionalWrapper'
 import EntityActionMenu, {

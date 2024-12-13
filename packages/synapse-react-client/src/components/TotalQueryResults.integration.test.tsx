@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { SynapseConstants } from '../utils'
+import * as SynapseConstants from '../utils/SynapseConstants'
 import { QueryVisualizationWrapper } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
 import TotalQueryResults, { TotalQueryResultsProps } from './TotalQueryResults'
 import { createWrapper } from '../testutils/TestingLibraryUtils'

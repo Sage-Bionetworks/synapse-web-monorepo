@@ -1,31 +1,31 @@
+import { Alert, Box, Button, Tooltip, Typography } from '@mui/material'
+import { noop } from 'lodash-es'
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { useGetEntityChallenge } from '../../synapse-queries/entity/useGetEntityChallenge'
+import {
+  useAddMemberToTeam,
+  useGetMembershipStatus,
+} from '../../synapse-queries/team/useTeamMembers'
+import { useGetUserSubmissionTeams } from '../../synapse-queries/user/useGetUserTeams'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { DialogBase } from '../DialogBase'
+import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   CreateChallengeTeam,
   CreateChallengeTeamHandle,
 } from './CreateChallengeTeam'
-import { SelectChallengeTeam } from './SelectChallengeTeam'
-import { RegistrationSuccessful } from './RegistrationSuccessful'
 import {
   MembershipRequestForm,
   MembershipRequestFormHandle,
 } from './MembershipRequestForm'
-import { useSynapseContext } from '../../utils'
-import {
-  useAddMemberToTeam,
-  useGetCurrentUserProfile,
-  useGetEntityChallenge,
-  useGetMembershipStatus,
-  useGetUserSubmissionTeams,
-} from '../../synapse-queries'
-import { Alert, Box, Button, Tooltip, Typography } from '@mui/material'
-import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
-import { noop } from 'lodash-es'
-import { DialogBase } from '../DialogBase'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   AcceptMembershipInvitationButton,
   OpenMembershipInvitation,
 } from './OpenMembershipInvitation'
+import { RegistrationSuccessful } from './RegistrationSuccessful'
+import { SelectChallengeTeam } from './SelectChallengeTeam'
 
 enum ChallengeTeamWizardStep {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',

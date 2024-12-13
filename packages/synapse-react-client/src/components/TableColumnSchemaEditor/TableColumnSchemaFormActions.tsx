@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material'
 import { Healing, North, South } from '@mui/icons-material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import pluralize from 'pluralize'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

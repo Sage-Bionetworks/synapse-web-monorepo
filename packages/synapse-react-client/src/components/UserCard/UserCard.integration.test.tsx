@@ -7,7 +7,7 @@ import UserCardContextMenu, {
   UserCardContextMenuProps,
 } from './UserCardContextMenu'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { PROFILE_IMAGE_PREVIEW } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,

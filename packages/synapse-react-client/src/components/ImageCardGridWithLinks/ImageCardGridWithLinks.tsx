@@ -8,7 +8,8 @@ import {
   Card,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
-import { SynapseConstants } from '../../utils'
+import { useGetStablePresignedUrl } from '../../synapse-queries/file/useFiles'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -19,7 +20,6 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
 
 const BORDER_RADIUS = '6px'
 

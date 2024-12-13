@@ -1,14 +1,4 @@
 import { Collapse as MockCollapse } from '@mui/material'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { Suspense } from 'react'
-import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
-import { RangeValues } from '../Range'
-import RangeSlider from '../RangeSlider/RangeSlider'
-import {
-  DEFAULT_PAGE_SIZE,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -16,14 +6,28 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { server } from '../../../mocks/msw/server'
-import { QueryContextType, QueryWrapper, useQueryContext } from '../../../index'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
+import { Suspense } from 'react'
+import {
+  QueryContextType,
+  useQueryContext,
+} from '../../../components/QueryContext/QueryContext'
+import { QueryWrapper } from '../../../components/QueryWrapper/QueryWrapper'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
-import { cloneDeep } from 'lodash-es'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
+import { server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import {
+  DEFAULT_PAGE_SIZE,
+  VALUE_NOT_SET,
+} from '../../../utils/SynapseConstants'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { RangeValues } from '../Range'
+import RangeSlider from '../RangeSlider/RangeSlider'
+import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
 
 let capturedOnApplyClicked: ((values: RangeValues) => void) | undefined
 

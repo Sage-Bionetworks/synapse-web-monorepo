@@ -11,7 +11,7 @@ import {
   challengeTitleLinkConfig,
 } from './pages/ChallengeDetailsPage'
 import { challengeProjectsSql } from './resources'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 
 const routes: RouteObject[] = [
   {

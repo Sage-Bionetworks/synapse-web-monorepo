@@ -17,14 +17,12 @@ import {
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from 'src/config/synapseConfigs/datasets'
 import { publicationsV2CardConfiguration } from 'src/config/synapseConfigs/publications'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  StandaloneQueryWrapper,
-  SubsectionRowRenderer,
-  SynapseConstants,
-  UserCardListRotate,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import SubsectionRowRenderer from 'synapse-react-client/components/SubsectionRowRenderer/SubsectionRowRenderer'
+import UserCardListRotate from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function ToolDetailsPageDetailsTab() {
   const { value: resourceId } = useDetailsPageContext('resourceId')

@@ -8,11 +8,9 @@ import {
 } from 'src/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from 'src/config/synapseConfigs/publications'
 import { studyCardConfiguration } from 'src/config/synapseConfigs/studies'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export default function OrganizationDetailsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')

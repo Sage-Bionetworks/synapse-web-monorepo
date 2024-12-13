@@ -1,11 +1,12 @@
 import { http, HttpResponse } from 'msw'
-import { SynapseUtilityFunctions } from 'synapse-react-client'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'synapse-react-client/utils/functions/getEndpoint'
 
 const handlers = [
   http.post(
-    `${SynapseUtilityFunctions.getEndpoint(
-      SynapseUtilityFunctions.BackendDestinationEnum.REPO_ENDPOINT,
-    )}/auth/v1/2fa/disable`,
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/auth/v1/2fa/disable`,
     () => {
       return new HttpResponse(null, {
         status: 204,

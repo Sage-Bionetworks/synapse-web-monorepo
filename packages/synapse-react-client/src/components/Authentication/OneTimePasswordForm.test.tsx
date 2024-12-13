@@ -1,4 +1,4 @@
-import { SynapseContextType } from '../../utils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'

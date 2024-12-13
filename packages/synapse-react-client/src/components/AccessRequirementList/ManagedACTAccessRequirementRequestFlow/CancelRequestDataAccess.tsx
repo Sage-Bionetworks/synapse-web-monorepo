@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Renewal, Request } from '@sage-bionetworks/synapse-types'
+import { useUpdateDataAccessRequest } from '../../../synapse-queries/dataaccess/useAccessRequirements'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
@@ -13,7 +14,6 @@ import {
   Typography,
 } from '@mui/material'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useUpdateDataAccessRequest } from '../../../synapse-queries'
 
 export type CancelRequestDataAccessProps = {
   /* The data access request with unsaved changes */

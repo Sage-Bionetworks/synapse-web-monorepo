@@ -56,33 +56,31 @@ import { ReactComponent as mouseSvg } from '../../assets/icons/mouse.svg'
 import { ReactComponent as chart2Svg } from '../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../assets/icons/file.svg'
 import { ReactComponent as institutionSvg } from '../../assets/icons/institution.svg'
-import {
-  Challenge,
-  Program,
-  Project,
-  Publication,
-  Study,
-  ToolClinical,
-  ToolComputational,
-  ToolExperimental,
-  Database,
-  Explore,
-  Search,
-  Chart,
-  Filter,
-  Download,
-  Expand,
-  Collapse,
-  Close,
-  SortUp,
-  SortDown,
-  Settings,
-  Columns,
-  ColumnsDark,
-  VerticalDots,
-  ExternalLink,
-  SqlEditorIcon,
-} from '../../assets/themed_icons'
+import { Challenge } from '../../assets/themed_icons/Challenge'
+import { Program } from '../../assets/themed_icons/Program'
+import { Project } from '../../assets/themed_icons/Project'
+import { Publication } from '../../assets/themed_icons/Publication'
+import { Study } from '../../assets/themed_icons/Study'
+import { ToolClinical } from '../../assets/themed_icons/ToolClinical'
+import { ToolComputational } from '../../assets/themed_icons/ToolComputational'
+import { ToolExperimental } from '../../assets/themed_icons/ToolExperimental'
+import { Database } from '../../assets/themed_icons/Database'
+import { Explore } from '../../assets/themed_icons/Explore'
+import { Search } from '../../assets/themed_icons/Search'
+import { Chart } from '../../assets/themed_icons/Chart'
+import { Filter } from '../../assets/themed_icons/Filter'
+import { Download } from '../../assets/themed_icons/Download'
+import { Expand } from '../../assets/themed_icons/Expand'
+import { Collapse } from '../../assets/themed_icons/Collapse'
+import { Close } from '../../assets/themed_icons/Close'
+import { SortUp } from '../../assets/themed_icons/SortUp'
+import { SortDown } from '../../assets/themed_icons/SortDown'
+import { Settings } from '../../assets/themed_icons/Settings'
+import { Columns } from '../../assets/themed_icons/Columns'
+import { ColumnsDark } from '../../assets/themed_icons/ColumnsDark'
+import { VerticalDots } from '../../assets/themed_icons/VerticalDots'
+import { ExternalLink } from '../../assets/themed_icons/ExternalLink'
+import { SqlEditorIcon } from '../../assets/themed_icons/SqlEditorIcon'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type IconOptions = Record<string, string | ComponentType<any>>

@@ -1,5 +1,6 @@
 import { RouteObject } from 'react-router-dom'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+
 import { individualsQueryWrapperPlotNavProps } from './synapseConfigs/people'
 import { projectsQueryWrapperPlotNavProps } from './synapseConfigs/projects'
 import { publicationsQueryWrapperPlotNavProps } from './synapseConfigs/publications'

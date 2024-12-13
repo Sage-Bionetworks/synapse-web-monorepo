@@ -19,7 +19,6 @@ import {
   SubmissionState,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
 import {
   MOCK_AR_ETAG,
   MOCK_NEWLY_CREATED_AR_ID,
@@ -31,6 +30,7 @@ import {
 } from '../../accessRequirement/mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 
 const accessRequirementStatuses: Map<string, AccessRequirementStatus> =
   new Map()

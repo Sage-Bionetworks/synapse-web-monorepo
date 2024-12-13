@@ -1,6 +1,7 @@
 import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { SynapseConstants } from '../../utils'
+import { useGetFullTableQueryResults } from '../../synapse-queries/entity/useGetQueryResultBundle'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   FacetColumnRequest,
   QueryBundleRequest,
@@ -8,10 +9,10 @@ import {
   Row,
 } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
+
 import { Skeleton } from '@mui/material'
 import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import { QueryContextType } from '../QueryContext'
+import { QueryContextType } from '../QueryContext/QueryContext'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {

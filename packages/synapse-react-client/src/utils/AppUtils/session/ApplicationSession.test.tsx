@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react'
+import SynapseClient from '../../../synapse-client'
 import ApplicationSessionManager, {
   ApplicationSessionManagerProps,
 } from './ApplicationSessionManager'
@@ -6,11 +7,6 @@ import {
   ApplicationSessionContextType,
   useApplicationSessionContext,
 } from './ApplicationSessionContext'
-import {
-  defaultQueryClientConfig,
-  FullContextProvider,
-  SynapseClient,
-} from '../../../index'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { MemoryRouter } from 'react-router-dom'
@@ -28,6 +24,9 @@ import {
   MOCK_CONTEXT_VALUE,
 } from '../../../mocks/MockSynapseContext'
 import { QueryClient } from '@tanstack/query-core'
+import FullContextProvider, {
+  defaultQueryClientConfig,
+} from '../../../utils/context/FullContextProvider'
 
 function render(props?: ApplicationSessionManagerProps) {
   const queryClient = new QueryClient(defaultQueryClientConfig)

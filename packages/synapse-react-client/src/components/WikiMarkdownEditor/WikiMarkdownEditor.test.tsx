@@ -14,7 +14,10 @@ import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { WIKI_PAGE_ID } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import {
   ERROR_SAVING_WIKI,
   NAVIGATE_AWAY_CONFIRMATION_MESSAGE,

@@ -3,7 +3,7 @@ import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/
 import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
 import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
 import { Box, Link, Typography } from '@mui/material'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
 import EntityDOIInfo from './EntityDOIInfo'
 

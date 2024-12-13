@@ -2,11 +2,9 @@ import {
   ResourceAccess,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import {
-  useGetCurrentUserProfile,
-  useGetUserGroupHeaders,
-  useSendMessage,
-} from '../../synapse-queries'
+import { useSendMessage } from '../../synapse-queries/message/useMessage'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
+import { useGetUserGroupHeaders } from '../../synapse-queries/user/useUserGroupHeader'
 import { PUBLIC_PRINCIPAL_IDS } from '../../utils/SynapseConstants'
 import { displayToast } from '../ToastMessage'
 import { useCallback } from 'react'

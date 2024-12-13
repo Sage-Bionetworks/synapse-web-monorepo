@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
-import { SynapseQueries, Map } from 'synapse-react-client'
+import { useGetEntityChallenge } from 'synapse-react-client/synapse-queries/entity/useGetEntityChallenge'
+import Map from 'synapse-react-client/components/GoogleMap/GoogleMap'
 
 type ChallengeParticipantGoogleMapProps = {
   projectId: string
@@ -9,7 +10,7 @@ function ChallengeParticipantGoogleMap(
 ) {
   const { projectId } = props
 
-  const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId)
+  const { data: challenge } = useGetEntityChallenge(projectId)
   if (challenge && challenge.participantTeamId) {
     return (
       <Box sx={{ height: '500px' }}>

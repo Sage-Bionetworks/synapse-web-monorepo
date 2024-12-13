@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
+import {
+  useGetEntity,
+  useUpdateEntity,
+} from '../../synapse-queries/entity/useEntity'
 import ConfirmationDialog from '../ConfirmationDialog'
 import SqlDefinedTableEditor from './SqlDefinedTableEditor'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import { MaterializedView, VirtualTable } from '@sage-bionetworks/synapse-types'
 import { Alert } from '@mui/material'

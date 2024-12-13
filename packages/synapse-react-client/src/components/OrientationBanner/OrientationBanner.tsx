@@ -6,34 +6,10 @@ import FullWidthAlert, {
 import Illustrations from '../../assets/illustrations'
 import { useCookiePreferences } from '../../utils/hooks/useCookiePreferences'
 import { ReactNode, useState } from 'react'
-
-const OrientationBannerNameStrings = [
-  'Challenges',
-  'CohortBuilder',
-  'DataAccessManagement',
-  'Datasets',
-  'Discussions',
-  'Docker',
-  'Favorites',
-  'Files',
-  'Following',
-  'Projects',
-  'Tables',
-  'Teams',
-  'TrashCan',
-  'Wikis',
-  'Donate',
-] as const
-export type OrientationBannerName =
-  (typeof OrientationBannerNameStrings)[number]
-
-export function getOrientationBannerKey(name: OrientationBannerName) {
-  return 'orientation_banner_' + name.toLowerCase() + '_dismissed'
-}
-
-export const ORIENTATION_BANNER_KEYS = OrientationBannerNameStrings.map(el =>
-  getOrientationBannerKey(el),
-)
+import {
+  ORIENTATION_BANNER_NAME_TO_KEY,
+  OrientationBannerName,
+} from '../../utils/SynapseConstants'
 
 export interface OrientationBannerProps {
   name: OrientationBannerName
@@ -49,7 +25,7 @@ function OrientationBanner(props: OrientationBannerProps) {
     props
   const [cookiePreferences] = useCookiePreferences()
 
-  const storageBannerId = getOrientationBannerKey(name)
+  const storageBannerId = ORIENTATION_BANNER_NAME_TO_KEY[name]
   const [showBanner, setShowBanner] = useState(
     localStorage.getItem(storageBannerId) === null,
   )

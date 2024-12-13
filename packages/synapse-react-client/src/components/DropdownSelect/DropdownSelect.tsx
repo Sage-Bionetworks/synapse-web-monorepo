@@ -11,7 +11,7 @@ import {
   Paper,
   Popper,
 } from '@mui/material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 
 export type DropdownSelectProps = ButtonGroupProps & {
   options: string[]

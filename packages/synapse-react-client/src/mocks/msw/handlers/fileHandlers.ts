@@ -9,7 +9,8 @@ import { rest } from 'msw'
 import { FILE, FILE_HANDLE_BATCH } from '../../../utils/APIConstants'
 import { MOCK_FILE_HANDLE_ID, mockFileHandles } from '../../mock_file_handle'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
-import { SynapseApiResponse } from '../handlers'
+
+import { SynapseApiResponse } from '../SynapseApiResponse'
 
 export function getFileHandlers(backendOrigin: string) {
   return [

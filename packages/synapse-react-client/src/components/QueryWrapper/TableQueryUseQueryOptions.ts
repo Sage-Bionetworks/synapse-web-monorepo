@@ -1,8 +1,8 @@
 import {
-  LockedColumn,
-  SynapseClientError,
-  useSynapseContext,
-} from '../../utils'
+  getInfiniteQueryResultBundleOptions,
+  tableQueryUseQueryDefaults,
+} from '../../synapse-queries/entity/useGetQueryResultBundle'
+import { LockedColumn } from '../../utils/types/LockedColumn'
 import { useMemo } from 'react'
 import {
   partitionQueryBundleRequestIntoRowsAndMetadata,
@@ -17,16 +17,14 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import {
-  getInfiniteQueryResultBundleOptions,
-  KeyFactory,
-  tableQueryUseQueryDefaults,
-} from '../../synapse-queries'
-import {
   InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { KeyFactory } from '../../synapse-queries/KeyFactory'
 
 export type TableQueryUseQueryOptions = {
   rowDataQueryOptions: UseQueryOptions<

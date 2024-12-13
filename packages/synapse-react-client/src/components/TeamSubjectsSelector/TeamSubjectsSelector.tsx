@@ -16,7 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useMemo, useState } from 'react'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { TeamBadgeOrError } from './TeamBadgeOrError'
 
 export type TeamSubjectsSelectorProps = {

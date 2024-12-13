@@ -7,7 +7,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../utils'
+import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { server } from '../../../mocks/msw/server'
 import {

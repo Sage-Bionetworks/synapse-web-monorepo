@@ -2,13 +2,13 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
-import { useGetEntity } from '../../synapse-queries'
-import { SynapseConstants } from '../../utils'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import {
   getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
   SQLOperator,
-} from '../../utils/functions'
+} from '../../utils/functions/SqlFunctions'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { CardConfiguration } from '../CardContainerLogic'
@@ -17,7 +17,7 @@ import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
-import { QueryContextType, useQueryContext } from '../QueryContext'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,

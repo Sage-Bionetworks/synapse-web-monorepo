@@ -1,5 +1,5 @@
 import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
-import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
+import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { EntityLink } from '../EntityLink'
 import { Alert, List, ListItem, Typography } from '@mui/material'
 import pluralize from 'pluralize'

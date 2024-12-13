@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Popover, Typography, useTheme } from '@mui/material'
-import { useSourceAppConfigs } from '../../utils/hooks'
+import { useSourceAppConfigs } from '../../utils/hooks/useSourceAppConfigs'
 
 export type SageResourcesPopoverProps = {
   sourceAppConfigTableID?: string

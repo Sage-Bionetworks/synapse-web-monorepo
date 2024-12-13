@@ -1,11 +1,12 @@
 import { RouteObject } from 'react-router-dom'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+
 import {
   dataQueryWrapperPlotNavProps,
   publicationsQueryWrapperPlotNavProps,
   studiesQueryWrapperPlotNavProps,
   toolsQueryWrapperPlotNavProps,
 } from './synapseConfigs'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 const routeButtonControlProps: RouteObject[] = [
   {

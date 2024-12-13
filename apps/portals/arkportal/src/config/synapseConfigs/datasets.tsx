@@ -1,10 +1,10 @@
-import type {
+import {
   CardConfiguration,
-  GenericCardSchema,
   LabelLinkConfig,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+} from 'synapse-react-client/components/CardContainerLogic/index'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
 import experimentalDataSvg from '../style/experimentalData.svg?url'

@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { NoContentPlaceholderType } from '../SynapseTable'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'

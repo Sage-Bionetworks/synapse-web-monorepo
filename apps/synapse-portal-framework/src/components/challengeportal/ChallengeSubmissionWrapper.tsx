@@ -1,12 +1,13 @@
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { AppUtils, ChallengeSubmission } from 'synapse-react-client'
+import { ChallengeSubmission } from 'synapse-react-client/components/ChallengeSubmission/index'
+import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
 
 export type ChallengeSubmissionWrapperProps = {
   entityType?: EntityType.DOCKER_REPO | EntityType.FILE
 }
 
 const ChallengeSubmissionWrapper = (props: ChallengeSubmissionWrapperProps) => {
-  const projectId = AppUtils.useQuerySearchParam('id')
+  const projectId = useQuerySearchParam('id')
   if (projectId) {
     return (
       <ChallengeSubmission

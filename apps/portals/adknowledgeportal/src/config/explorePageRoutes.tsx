@@ -1,4 +1,7 @@
 import { RouteObject } from 'react-router-dom'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { programsSql } from './resources'
 import { computationalToolsQueryWrapperPlotNavProps } from './synapseConfigs/computational_tools'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
@@ -10,11 +13,6 @@ import { publicationsQueryWrapperPlotNavProps } from './synapseConfigs/publicati
 import { results } from './synapseConfigs/results'
 import { studiesQueryWrapperPlotNavProps } from './synapseConfigs/studies'
 import { targetEnablingResourcesQueryWrapperPlotNavProps } from './synapseConfigs/target_enabling_resources'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
 
 export const explorePageRoutes: RouteObject[] = [
   {

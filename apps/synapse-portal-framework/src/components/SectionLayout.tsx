@@ -1,7 +1,7 @@
 import { Box, Container, ContainerProps } from '@mui/material'
 import { PropsWithChildren, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { HelpPopover } from 'synapse-react-client'
+import { HelpPopover } from 'synapse-react-client/components/HelpPopover/index'
 import { scrollToWithOffset } from '../utils'
 
 type SectionLayoutProps = PropsWithChildren<{

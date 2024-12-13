@@ -1,5 +1,6 @@
 import { RouteObject } from 'react-router-dom'
-import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 import { datasetCollectionsCardContainerLogicProps } from './synapseConfigs/datasetcollections'
 import { datasetQueryWrapperPlotNavProps } from './synapseConfigs/datasets'

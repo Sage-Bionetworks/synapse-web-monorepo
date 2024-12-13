@@ -11,10 +11,11 @@ import {
   styled,
   Typography,
 } from '@mui/material'
+import { useGetNotificationEmail } from '../../synapse-queries/user/useUserBundle'
 import { StyledOuterContainer } from '../styled/LeftRightPanel'
 import { StyledComponent } from '@emotion/styled'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { useGetNotificationEmail } from '../../synapse-queries'
+
 import { toCanvas } from 'qrcode'
 import TextField from '../TextField/TextField'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

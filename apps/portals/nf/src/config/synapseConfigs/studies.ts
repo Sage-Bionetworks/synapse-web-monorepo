@@ -1,9 +1,9 @@
-import type {
+import {
   CardConfiguration,
   ColumnIconConfigs,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+} from 'synapse-react-client/components/CardContainerLogic/index'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { studiesSql } from '../resources'
 import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
 import studyActiveSvg from '../style/study-active.svg?url'

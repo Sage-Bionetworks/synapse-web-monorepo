@@ -10,7 +10,7 @@ import { FormData } from '@sage-bionetworks/synapse-types'
 import SynapseForm from './SynapseForm'
 import { StatusEnum } from './types'
 import { getFileEntityData } from './SynapseFormUtils'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken

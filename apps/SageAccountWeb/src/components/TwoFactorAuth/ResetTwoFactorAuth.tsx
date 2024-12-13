@@ -1,21 +1,19 @@
 import { Alert, Box, Button, Typography } from '@mui/material'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  displayToast,
-  PasswordField,
-  StandaloneLoginForm,
-  SynapseQueries,
-  useApplicationSessionContext,
-  useQuerySearchParam,
-} from 'synapse-react-client'
-import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import PasswordField from 'synapse-react-client/components/Authentication/PasswordField'
+import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
+import { useDisableTwoFactorAuthWithResetToken } from 'synapse-react-client/synapse-queries/auth/useTwoFactorEnrollment'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 import { hexDecodeAndDeserialize } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { LeftRightPanel } from '../LeftRightPanel'
 import { SourceAppLogo } from '../SourceApp'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 
 export function ResetTwoFactorAuth() {
   const navigate = useNavigate()
@@ -53,7 +51,7 @@ export function ResetTwoFactorAuth() {
     isPending,
     error,
     reset: resetDisable2FAMutation,
-  } = SynapseQueries.useDisableTwoFactorAuthWithResetToken({
+  } = useDisableTwoFactorAuthWithResetToken({
     onSuccess: () => {
       displayToast('2FA has been successfully disabled on your account.')
       navigate('/authenticated/myaccount')

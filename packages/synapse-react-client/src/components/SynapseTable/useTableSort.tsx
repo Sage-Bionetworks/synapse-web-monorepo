@@ -1,4 +1,4 @@
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useMemo } from 'react'
 import { SortingState, Updater } from '@tanstack/react-table'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'

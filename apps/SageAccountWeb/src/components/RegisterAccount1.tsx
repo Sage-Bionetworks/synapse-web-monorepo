@@ -1,4 +1,3 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -8,26 +7,26 @@ import {
   useTheme,
 } from '@mui/material'
 import {
-  displayToast,
-  IconSvg,
-  LastLoginInfo,
-  RegisterPageLogoutPrompt,
-  SynapseClient,
-  SynapseConstants,
-  useApplicationSessionContext,
-  useLastLoginInfo,
-  useSynapseContext,
-} from 'synapse-react-client'
-import {
   AliasType,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
-import { SourceAppLogo } from './SourceApp'
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { EmailConfirmationPage } from './EmailConfirmationPage'
-import GoogleLogo from '../assets/g-logo.png'
+import LastLoginInfo, {
+  useLastLoginInfo,
+} from 'synapse-react-client/components/Authentication/LastLoginInfo'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/index'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { useAppContext } from '../AppContext'
+import GoogleLogo from '../assets/g-logo.png'
 import { BackButton } from './BackButton'
+import { EmailConfirmationPage } from './EmailConfirmationPage'
+import { SourceAppLogo } from './SourceApp'
 import {
   StyledFormControl,
   StyledInnerContainer,

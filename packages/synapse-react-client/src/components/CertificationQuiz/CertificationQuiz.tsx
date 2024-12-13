@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import SynapseClient from '../../synapse-client'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   QuizResponse,
@@ -17,7 +18,6 @@ import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
 import {
   useGetPassingRecord,

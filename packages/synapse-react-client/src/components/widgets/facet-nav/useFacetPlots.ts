@@ -8,7 +8,7 @@ import {
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { useMemo, useCallback } from 'react'
 import { FacetNavPanelProps } from './FacetNavPanel'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import { useSuspenseQuery } from '@tanstack/react-query'
 

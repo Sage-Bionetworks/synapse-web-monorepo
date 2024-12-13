@@ -4,7 +4,7 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import {
   FacetColumnRequest,

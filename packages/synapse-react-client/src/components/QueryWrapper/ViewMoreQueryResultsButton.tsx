@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Box } from '@mui/material'
 import WideButton from '../styled/WideButton'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export type ViewMoreQueryResultsButtonProps = {

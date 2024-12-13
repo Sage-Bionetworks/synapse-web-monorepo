@@ -4,7 +4,7 @@ import {
   useAddFavorite,
   useIsFavorite,
   useRemoveFavorite,
-} from '../../synapse-queries'
+} from '../../synapse-queries/user/useFavorites'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
 

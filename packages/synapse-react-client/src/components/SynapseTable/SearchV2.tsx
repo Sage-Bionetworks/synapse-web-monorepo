@@ -17,13 +17,13 @@ import {
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { QueryContextType } from '../QueryContext'
+import { QueryContextType } from '../QueryContext/QueryContext'
 import IconSvg from '../IconSvg/IconSvg'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-  LockedColumn,
-} from '../../utils'
+} from '../../utils/types/IsType'
+import { LockedColumn } from '../../utils/types/LockedColumn'
 import { useQuery } from '@tanstack/react-query'
 
 type SearchState = {

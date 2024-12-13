@@ -1,5 +1,5 @@
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import mockSyn26438037Counts from '../../mocks/query/syn26438037Counts.json'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

@@ -9,15 +9,11 @@ import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../../assets/icons/SynapseLogoName'
 import SynapseClient from '../../synapse-client'
-import {
-  useGetCurrentUserBundle,
-  useGetDownloadListStatistics,
-  useSearchAccessSubmissionsInfinite,
-} from '../../synapse-queries'
-import {
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  useSynapseContext,
-} from '../../utils'
+import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
+import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
+import { storeRedirectURLForOneSageLoginAndGotoURL } from '../../utils/AppUtils/AppUtils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'

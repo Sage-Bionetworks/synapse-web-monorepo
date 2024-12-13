@@ -10,13 +10,14 @@ import {
   SortField,
 } from '@sage-bionetworks/synapse-types'
 import { Dropdown, Table } from 'react-bootstrap'
+import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries/download/useDownloadList'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries'
+
 import { useInView } from 'react-intersection-observer'
 import SynapseClient from '../../synapse-client'
 import dayjs from 'dayjs'
 import SortIcon from '../../assets/icons/Sort'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'

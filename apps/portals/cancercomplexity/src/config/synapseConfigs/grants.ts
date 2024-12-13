@@ -1,11 +1,10 @@
-import {
-  CardConfiguration,
-  GenericCardSchema,
-  IconOptions,
-  QueryWrapperPlotNavProps,
-  SynapseComponents,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { CardConfiguration } from 'synapse-react-client/components/CardContainerLogic/index'
+import { GenericCardSchema } from 'synapse-react-client/components/GenericCard/GenericCard'
+import { IconOptions } from 'synapse-react-client/components/Icon/Icon'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import ProjectIcon from 'synapse-react-client/assets/themed_icons/Project'
+
 import { grantsSql } from '../resources'
 
 const rgbIndex = 3
@@ -28,7 +27,7 @@ export const grantsSchema: GenericCardSchema = {
 
 // TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
 const iconOptions: IconOptions = {
-  Grant: SynapseComponents.ProjectIcon as unknown as string,
+  Grant: ProjectIcon as unknown as string,
 }
 
 export const grantsCardConfiguration: CardConfiguration = {

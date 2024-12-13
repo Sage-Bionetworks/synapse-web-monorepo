@@ -3,7 +3,8 @@
  */
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { ProjectStorageUsage } from '@sage-bionetworks/synapse-types'
 
 export function useProjectStorageUsage(

@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 import { useState } from 'react'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import {
   DiscussionReplyBundle,
@@ -8,10 +10,6 @@ import {
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import IconSvg from '../IconSvg/IconSvg'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityBundle,
-} from '../../synapse-queries'
 import {
   useDeleteReply,
   useGetReply,

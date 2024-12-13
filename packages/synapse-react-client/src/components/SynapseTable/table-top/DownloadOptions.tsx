@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { useGetEntity } from '../../../synapse-queries/entity/useEntity'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import { isDataset } from '../../../utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '../../../utils'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { Tooltip } from '@mui/material'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
@@ -17,7 +18,7 @@ import {
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
 import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
+
 import { Table } from '@sage-bionetworks/synapse-types'
 
 export type DownloadOptionsProps = {

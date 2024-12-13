@@ -1,6 +1,6 @@
-import { columnAliases } from './commonProps'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { filesSql } from '../resources'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import { columnAliases } from './commonProps'
 
 const rgbIndex = 1
 export const visibleColumnCount = 7

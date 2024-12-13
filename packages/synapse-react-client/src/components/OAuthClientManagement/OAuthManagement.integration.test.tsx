@@ -9,7 +9,7 @@ import {
   useDeleteOAuthClient,
   useGetOAuthClientInfinite,
   useUpdateOAuthClient,
-} from '../../synapse-queries'
+} from '../../synapse-queries/oauth/useOAuthClient'
 import { server } from '../../mocks/msw/server'
 import { mockClientList1, mockClientList2 } from '../../mocks/oauth/MockClient'
 

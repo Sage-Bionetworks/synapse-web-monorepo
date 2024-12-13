@@ -9,8 +9,8 @@ import {
 } from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext'
-import IconSvg from '../IconSvg'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import IconSvg from '../IconSvg/IconSvg'
 
 export type SqlEditorProps = {
   helpMessage?: string

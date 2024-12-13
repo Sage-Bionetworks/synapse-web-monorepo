@@ -1,13 +1,13 @@
 import { Box, Typography } from '@mui/material'
 import useLogin from '../../utils/hooks/useLogin'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { OAuth2State } from '../../utils/types/OAuth2State'
 import LoginForm from './LoginForm'
 import LoginFlowBackButton from './LoginFlowBackButton'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from './Constants'
-import { OAuth2State } from '../../utils'
 
 export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string

@@ -1,5 +1,5 @@
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'

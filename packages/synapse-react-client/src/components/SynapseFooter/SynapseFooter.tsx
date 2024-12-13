@@ -1,4 +1,4 @@
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 import { Box, Button, Typography } from '@mui/material'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'

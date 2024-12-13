@@ -9,7 +9,7 @@ import {
 import IconCopy from '../../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { UserProfile } from '@sage-bionetworks/synapse-types'

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { TwoFactorBackupCodes } from 'synapse-react-client'
+import TwoFactorBackupCodes from 'synapse-react-client/components/Authentication/TwoFactorBackupCodes'
 
 /**
  * Shows a page used to regenerate 2FA backup codes.

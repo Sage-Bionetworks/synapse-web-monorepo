@@ -1,5 +1,6 @@
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import TermsAndConditions from './TermsAndConditions'
-import { SynapseClient, SynapseContextType } from '../../index'
+import SynapseClient from '../../synapse-client'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import mockSyn51718002 from '../../mocks/query/syn51718002.json'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

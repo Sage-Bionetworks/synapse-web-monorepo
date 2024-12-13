@@ -1,5 +1,6 @@
 import SynapseClient from '../../synapse-client'
-import { SynapseConstants, useSynapseContext } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'

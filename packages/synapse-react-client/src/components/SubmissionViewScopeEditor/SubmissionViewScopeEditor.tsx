@@ -2,7 +2,7 @@ import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import { useGetEvaluation } from '../../synapse-queries/evaluation/useEvaluation'
 import { Box, IconButton, Skeleton, Typography } from '@mui/material'
-import IconSvg from '../IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { Alert } from '@mui/material'
 import { Link } from '@mui/material'
 

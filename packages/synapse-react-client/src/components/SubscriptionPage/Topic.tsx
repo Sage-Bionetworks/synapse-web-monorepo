@@ -1,5 +1,5 @@
 import { Button, Link, Skeleton, Stack } from '@mui/material'
-import IconSvg, { IconName } from '../IconSvg'
+import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
 
 export type TopicProps = {

@@ -34,7 +34,7 @@ import {
   useCreateAccessRequirement,
   useGetAccessRequirements,
   useUpdateAccessRequirement,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
 import TeamSubjectsSelector from '../TeamSubjectsSelector'

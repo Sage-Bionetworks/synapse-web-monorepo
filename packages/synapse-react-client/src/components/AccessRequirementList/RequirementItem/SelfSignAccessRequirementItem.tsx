@@ -1,4 +1,13 @@
 import { useState } from 'react'
+import {
+  useCreateAccessApproval,
+  useGetAccessRequirementStatus,
+  useGetAccessRequirementWikiPageKey,
+} from '../../../synapse-queries/dataaccess/useAccessRequirements'
+import {
+  useGetCurrentUserBundle,
+  useGetCurrentUserProfile,
+} from '../../../synapse-queries/user/useUserBundle'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
   ApprovalState,
@@ -8,13 +17,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
-import {
-  useCreateAccessApproval,
-  useGetAccessRequirementStatus,
-  useGetAccessRequirementWikiPageKey,
-  useGetCurrentUserBundle,
-  useGetCurrentUserProfile,
-} from '../../../synapse-queries'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import { isTermsOfUseAccessRequirement } from '../../../utils/types/IsType'

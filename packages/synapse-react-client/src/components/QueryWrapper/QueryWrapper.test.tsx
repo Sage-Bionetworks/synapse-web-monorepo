@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
-import { QueryContextType, useQueryContext } from '../QueryContext'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import {

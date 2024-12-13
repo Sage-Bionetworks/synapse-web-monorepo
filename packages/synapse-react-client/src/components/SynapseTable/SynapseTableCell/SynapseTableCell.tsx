@@ -21,10 +21,10 @@ import {
   MarkdownLink,
 } from '../../CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
+import { SynapseCardLabel } from '../../GenericCard/SynapseCardLabel'
 import EntityIdList from './EntityIdList'
 import { EntityLink } from '../../EntityLink'
 import EvaluationIdRenderer from './EvaluationIdRenderer'
-import { SynapseCardLabel } from '../../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
 import UserIdList from './UserIdList'
 import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
@@ -33,8 +33,8 @@ import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
 import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
 import Linkify from '../../GenericCard/Linkify'
-import { useGetEntity } from '../../../synapse-queries'
-import { useQueryContext } from '../../QueryContext'
+import { useGetEntity } from '../../../synapse-queries/entity/useEntity'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType

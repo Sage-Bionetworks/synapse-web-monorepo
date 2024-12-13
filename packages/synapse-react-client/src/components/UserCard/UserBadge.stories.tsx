@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { UserBadge } from './UserBadge'
 
 const meta = {

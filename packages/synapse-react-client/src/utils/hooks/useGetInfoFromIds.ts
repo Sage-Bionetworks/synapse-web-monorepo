@@ -1,7 +1,7 @@
 import { chunk, uniq, without } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseConstants } from '../index'
+import * as SynapseConstants from '../SynapseConstants'
 import {
   getEntityHeaders,
   getEvaluations,

@@ -1,12 +1,10 @@
 import { ReactNode } from 'react'
 import {
-  useGetEntityBundle,
-  useGetEntityChildren,
-} from '../../../../synapse-queries'
-import {
   EntityRefCollectionView,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
+import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
+import { useGetEntityChildren } from '../../../../synapse-queries/entity/useGetEntityChildren'
 import {
   isContainerType,
   isEntityRefCollectionView,

@@ -1,9 +1,11 @@
 import { ReactNode, useState } from 'react'
 import { Box, Divider, Link, Stack, Typography } from '@mui/material'
-import { useGetEntityBundle } from '../../../../synapse-queries'
+import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
+import { useGetFeatureFlag } from '../../../../synapse-queries/featureflags/useGetFeatureFlag'
+
 import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'
-import { useGetFeatureFlag } from '../../../../synapse-queries'
+
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 export type TitleBarPropertiesProps = {
   entityId: string

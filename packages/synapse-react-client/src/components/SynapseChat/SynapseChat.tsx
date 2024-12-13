@@ -20,7 +20,7 @@ import {
   TraceEvent,
 } from '@sage-bionetworks/synapse-types'
 import { TextField } from '@mui/material'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import AccessLevelMenu from './AccessLevelMenu'
 import { displayToast } from '../ToastMessage'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

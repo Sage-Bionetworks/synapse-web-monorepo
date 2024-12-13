@@ -11,12 +11,14 @@ import DatasetDetailsPage from 'src/pages/DatasetDetailsPage'
 import { hackathonDetailsPageRoutesConfig } from 'src/pages/HackathonDetailsPage/HackathonDetailsPage'
 import { organizationsDetailsPageRoute } from 'src/pages/OrganizationDetailsPage/OrganizationDetailsPage'
 import { toolDetailsPageRoutesConfig } from 'src/pages/ToolDetailsPage/ToolDetailsPage'
-import { DynamicForm, SharePageLinkButton } from 'synapse-react-client'
+import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton/SharePageLinkButton'
+
 import HomePage from '../pages/HomePage'
 import InitiativeDetailsPage from '../pages/InitiativeDetailsPage'
 import { studyDetailsPageRoute } from '../pages/StudyDetailsPage/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { popularSearchesSql, toolsSql } from './resources'
+import DynamicForm from 'synapse-react-client/components/DynamicForm/DynamicForm'
 
 const routes: RouteObject[] = [
   {

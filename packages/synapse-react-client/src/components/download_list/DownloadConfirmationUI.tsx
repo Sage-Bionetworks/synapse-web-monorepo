@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { Alert, AlertProps, Box, Button, Typography } from '@mui/material'
-import { useSynapseContext } from '../../utils'
+import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SignInButton from '../SignInButton'
 import DownloadDetails from './DownloadDetails'
-import { useGetDownloadListStatistics } from '../../synapse-queries'
 
 enum StatusEnum {
   LOADING_INFO,

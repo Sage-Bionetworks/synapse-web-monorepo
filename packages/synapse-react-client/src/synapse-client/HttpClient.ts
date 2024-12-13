@@ -1,4 +1,7 @@
-import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client/util/fetchWithExponentialTimeout'
 
 /**

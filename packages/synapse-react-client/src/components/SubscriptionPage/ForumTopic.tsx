@@ -2,14 +2,14 @@ import {
   Subscription,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
-import Topic from './Topic'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { useGetForumMetadata } from '../../synapse-queries/forum/useForum'
-import { useGetEntity } from '../../synapse-queries'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import Topic from './Topic'
 
 export type SubscriptionItemProps = {
   subscription: Subscription

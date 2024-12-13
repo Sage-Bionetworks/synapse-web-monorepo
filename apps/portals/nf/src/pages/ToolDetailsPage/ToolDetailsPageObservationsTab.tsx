@@ -2,13 +2,12 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { observationsSql } from 'src/config/resources'
-import {
-  TimelinePlot,
-  CardContainerLogic,
-  SynapseConstants,
-  Markdown,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import TimelinePlot from 'synapse-react-client/components/TimelinePlot/TimelinePlot'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function ToolDetailsPageObservationsTab() {
   return (

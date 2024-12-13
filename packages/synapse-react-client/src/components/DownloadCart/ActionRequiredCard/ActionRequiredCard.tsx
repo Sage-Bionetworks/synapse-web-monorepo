@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 import { ReactNode } from 'react'
-import Icon from '../../Icon'
+import Icon from '../../Icon/Icon'
 import { StyledComponent } from '@emotion/styled'
 
 export type ActionRequiredCardProps =

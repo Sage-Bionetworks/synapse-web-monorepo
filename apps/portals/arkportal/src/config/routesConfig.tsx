@@ -4,7 +4,10 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router-dom'
-import { Goals, JsonLdScript, MarkdownSynapse } from 'synapse-react-client'
+import Goals from 'synapse-react-client/components/Goals/Goals'
+import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+
 import { DatasetDetailsPage } from '../pages/DatasetDetailsPage'
 import { ProgramsDetailPage } from '../pages/ProgramDetailsPage'
 import { ProjectDetailsPage } from '../pages/ProjectDetailsPage'

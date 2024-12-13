@@ -6,25 +6,32 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert'
+import { StyledOuterContainer } from 'synapse-react-client/components/styled/LeftRightPanel'
+import UserCard from 'synapse-react-client/components/UserCard/UserCard'
+import SynapseClient from 'synapse-react-client/synapse-client'
 import {
-  AppUtils,
-  FullWidthAlert,
+  useConsentToOAuth2Request,
+  useGetHasUserAuthorizedOAuthClient,
+  useGetOAuth2Client,
+  useGetOAuth2RequestDescription,
+} from 'synapse-react-client/synapse-queries/auth/useOIDC'
+import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
+import {
+  getCookieDomain,
   storeRedirectURLForOneSageLoginAndGotoURL,
-  StyledOuterContainer,
-  SynapseClient,
-  SynapseClientError,
-  SynapseConstants,
-  SynapseHookUtils,
-  SynapseQueries,
-  UserCard,
-  useSynapseContext,
-} from 'synapse-react-client'
+} from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
@@ -48,8 +55,7 @@ function redirectToURL(redirectURL: string) {
 }
 
 export function OAuth2Form() {
-  const { clearSession, hasInitializedSession } =
-    AppUtils.useApplicationSessionContext()
+  const { clearSession, hasInitializedSession } = useApplicationSessionContext()
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
 
@@ -64,7 +70,7 @@ export function OAuth2Form() {
   // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
   const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
 
-  const oneSageURL = SynapseHookUtils.useOneSageURL()
+  const oneSageURL = useOneSageURL()
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
@@ -90,7 +96,7 @@ export function OAuth2Form() {
   }, [onError, searchParams])
 
   const { data: oauthClientInfo, isLoading: isLoadingClientInfo } =
-    SynapseQueries.useGetOAuth2Client(clientId!, {
+    useGetOAuth2Client(clientId!, {
       enabled: Boolean(clientId),
     })
 
@@ -99,7 +105,7 @@ export function OAuth2Form() {
     data: profile,
     error: fetchProfileError,
     isLoading: isLoadingProfile,
-  } = SynapseQueries.useGetCurrentUserProfile({
+  } = useGetCurrentUserProfile({
     enabled: isLoggedIn,
   })
 
@@ -178,52 +184,50 @@ export function OAuth2Form() {
   }, [isHandlingSignInFromExternalIdP, onError, searchParams])
 
   const { data: hasUserAuthorizedOAuthClient } =
-    SynapseQueries.useGetHasUserAuthorizedOAuthClient(
+    useGetHasUserAuthorizedOAuthClient(
       oidcAuthorizationRequestFromSearchParams!,
       {
         enabled: Boolean(oidcAuthorizationRequestFromSearchParams),
       },
     )
 
-  const { mutate: consentToRequest } = SynapseQueries.useConsentToOAuth2Request(
-    {
-      onSuccess: accessCode => {
-        if (!accessCode || !accessCode.access_code) {
-          onError(
-            new Error(
-              'Something went wrong - the access code is missing from the Synapse call.',
-            ),
-          )
-          return
-        }
-        // done!  redirect with access code.
-        setShowPendingRedirectUI(true)
-        const redirectUri = searchParams.get('redirect_uri')!
-        cookies.remove(
-          SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
-          {
-            path: '/',
-            domain: AppUtils.getCookieDomain(),
-          },
+  const { mutate: consentToRequest } = useConsentToOAuth2Request({
+    onSuccess: accessCode => {
+      if (!accessCode || !accessCode.access_code) {
+        onError(
+          new Error(
+            'Something went wrong - the access code is missing from the Synapse call.',
+          ),
         )
+        return
+      }
+      // done!  redirect with access code.
+      setShowPendingRedirectUI(true)
+      const redirectUri = searchParams.get('redirect_uri')!
+      cookies.remove(
+        SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+        {
+          path: '/',
+          domain: getCookieDomain(),
+        },
+      )
 
-        const redirectSearchParams = new URLSearchParams()
-        const state = searchParams.get('state')
-        if (state) {
-          redirectSearchParams.set('state', encodeURIComponent(state))
-        }
-        redirectSearchParams.set(
-          'code',
-          encodeURIComponent(accessCode.access_code),
-        )
+      const redirectSearchParams = new URLSearchParams()
+      const state = searchParams.get('state')
+      if (state) {
+        redirectSearchParams.set('state', encodeURIComponent(state))
+      }
+      redirectSearchParams.set(
+        'code',
+        encodeURIComponent(accessCode.access_code),
+      )
 
-        redirectToURL(`${redirectUri}?${redirectSearchParams.toString()}`)
-      },
-      onError: e => {
-        onError(e)
-      },
+      redirectToURL(`${redirectUri}?${redirectSearchParams.toString()}`)
     },
-  )
+    onError: e => {
+      onError(e)
+    },
+  })
 
   const onConsent = useCallback(() => {
     sendGTagEvent('UserConsented')
@@ -262,12 +266,9 @@ export function OAuth2Form() {
   }
 
   const { data: oidcRequestDescription, error: oidcRequestDescriptionError } =
-    SynapseQueries.useGetOAuth2RequestDescription(
-      oidcAuthorizationRequestFromSearchParams!,
-      {
-        enabled: Boolean(oidcAuthorizationRequestFromSearchParams),
-      },
-    )
+    useGetOAuth2RequestDescription(oidcAuthorizationRequestFromSearchParams!, {
+      enabled: Boolean(oidcAuthorizationRequestFromSearchParams),
+    })
 
   useEffect(() => {
     if (oidcRequestDescription) {

@@ -13,7 +13,7 @@ import {
   useDeleteAccessRequirementACL,
   useGetAccessRequirementACL,
   useUpdateAccessRequirementACL,
-} from '../../synapse-queries'
+} from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AclEditor } from '../AclEditor/AclEditor'

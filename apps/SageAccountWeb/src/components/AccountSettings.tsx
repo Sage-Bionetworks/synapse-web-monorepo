@@ -21,19 +21,16 @@ import {
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
-import {
-  ChangePassword,
-  CookiePreferencesDialog,
-  displayToast,
-  IconSvg,
-  SynapseClient,
-  SynapseConstants,
-  SynapseHookUtils,
-  SynapseQueries,
-  TwoFactorAuthSettingsPanel,
-  useApplicationSessionContext,
-  useSynapseContext,
-} from 'synapse-react-client'
+import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
+import ChangePassword from 'synapse-react-client/components/ChangePassword/index'
+import { CookiePreferencesDialog } from 'synapse-react-client/components/CookiesNotification/index'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
+import { getUseUtcTimeFromCookie } from 'synapse-react-client/synapse-client/SynapseClient'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import UniversalCookies from 'universal-cookie'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
@@ -41,6 +38,8 @@ import { ProfileAvatar } from './ProfileAvatar'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import { StyledFormControl } from './StyledComponents'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -92,19 +91,17 @@ export const AccountSettings = () => {
   const webhooksRef = useRef<HTMLDivElement>(null)
   const cookieManagementRef = useRef<HTMLDivElement>(null)
   const signOutSectionRef = useRef<HTMLDivElement>(null)
-  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [cookiePreferences] = useCookiePreferences()
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
     useState(false)
 
   const { clearSession } = useApplicationSessionContext()
 
-  const showWebhooks = SynapseQueries.useGetFeatureFlag(
-    FeatureFlagEnum.WEBHOOKS_UI,
-  )
+  const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
 
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
-    SynapseClient.getUseUtcTimeFromCookie().toString(),
+    getUseUtcTimeFromCookie().toString(),
   )
   const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {

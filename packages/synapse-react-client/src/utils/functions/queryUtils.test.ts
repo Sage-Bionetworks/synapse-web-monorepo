@@ -34,7 +34,8 @@ import mockDataset from '../../mocks/entity/mockDataset'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import mockDatasetCollection from '../../mocks/entity/mockDatasetCollection'
 import * as SynapseConstants from '../SynapseConstants'
-import { LockedColumn, UniqueFacetIdentifier } from '../types'
+import { LockedColumn } from '../types/LockedColumn'
+import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
 import mockQueryResponseData from '../../mocks/mockQueryResponseData'
 
 describe('facet support', () => {

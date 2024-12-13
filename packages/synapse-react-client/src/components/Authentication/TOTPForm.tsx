@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import { MuiOtpInput } from 'mui-one-time-password-input'
-import { UseLoginReturn } from '../../utils/hooks'
+import { UseLoginReturn } from '../../utils/hooks/useLogin'
 
 const TOTP_LENGTH = 6
 const DIGIT_CHARACTERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']

@@ -5,7 +5,7 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { SynapseConstants } from '../../../utils'
+import * as SynapseConstants from '../../../utils/SynapseConstants'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { truncate } from './FacetPlotLegendUtils'

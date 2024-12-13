@@ -8,10 +8,8 @@ import {
   mockExternalS3UploadDestination,
   mockSynapseStorageUploadDestination,
 } from '../../mocks/mock_upload_destination'
-import {
-  useGetDefaultUploadDestination,
-  useGetEntity,
-} from '../../synapse-queries/index'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { useGetDefaultUploadDestination } from '../../synapse-queries/file/useUploadDestination'
 import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {

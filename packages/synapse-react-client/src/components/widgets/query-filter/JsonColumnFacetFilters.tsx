@@ -6,7 +6,7 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { RangeFacetFilter } from './RangeFacetFilter'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 export type JsonColumnFacetFiltersProps = {

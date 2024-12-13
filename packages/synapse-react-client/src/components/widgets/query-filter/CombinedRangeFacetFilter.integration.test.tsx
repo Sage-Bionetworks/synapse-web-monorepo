@@ -23,7 +23,10 @@ import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
 import { cloneDeep } from 'lodash-es'
-import { QueryContextType, useQueryContext } from '../../QueryContext'
+import {
+  QueryContextType,
+  useQueryContext,
+} from '../../QueryContext/QueryContext'
 import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 let capturedOnApplyClicked:

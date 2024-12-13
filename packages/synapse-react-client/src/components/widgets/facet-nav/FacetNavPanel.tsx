@@ -5,7 +5,7 @@ import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
-import { SynapseConstants } from '../../../utils'
+import * as SynapseConstants from '../../../utils/SynapseConstants'
 import SynapseClient from '../../../synapse-client'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import {
@@ -24,7 +24,7 @@ import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 
 const Plot = createPlotlyComponent(Plotly)
 

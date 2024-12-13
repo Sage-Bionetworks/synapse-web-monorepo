@@ -1,5 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom'
-import { MuiContainer, CertificationQuiz as Quiz } from 'synapse-react-client'
+import Quiz from 'synapse-react-client/components/CertificationQuiz/CertificationQuiz'
+import MuiContainer from 'synapse-react-client/components/MuiContainer'
 import ReturnArrow from '../assets/ReturnArrow.svg?url'
 import { Link, Paper } from '@mui/material'
 

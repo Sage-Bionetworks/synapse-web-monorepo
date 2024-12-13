@@ -5,14 +5,15 @@ import {
   TooltipVisualProps,
 } from '../widgets/ElementWithTooltip'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
-import { SynapseConstants, useSynapseContext } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { getFullQueryTableResults } from '../../synapse-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
-import { resultToJson } from '../../utils/functions'
+import { resultToJson } from '../../utils/functions/SqlFunctions'
 import {
   BarPlotColors,
   ClickCallbackParams,

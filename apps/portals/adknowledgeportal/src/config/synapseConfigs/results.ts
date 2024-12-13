@@ -1,4 +1,4 @@
-import { MarkdownSynapseProps } from 'synapse-react-client'
+import { MarkdownSynapseProps } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 export const results: {
   props: MarkdownSynapseProps

@@ -2,7 +2,10 @@ import { Component, MouseEvent } from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
-import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
+import {
+  GenericCardSchema,
+  getValueOrMultiValue,
+} from '../GenericCard/GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
 import { Button } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'

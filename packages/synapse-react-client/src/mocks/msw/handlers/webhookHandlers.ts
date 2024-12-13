@@ -2,7 +2,8 @@ import { ListUserWebhooksResponse } from '@sage-bionetworks/synapse-client/gener
 import { Webhook } from '@sage-bionetworks/synapse-client/generated/models/Webhook'
 import { WebhookVerificationStatus } from '@sage-bionetworks/synapse-client/generated/models/WebhookVerificationStatus'
 import { rest } from 'msw'
-import { SynapseApiResponse } from '../handlers'
+
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 export const webhookService = new BasicMockedCrudService<Webhook, 'id'>({

@@ -1,5 +1,6 @@
 import { Link, Typography } from '@mui/material'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleResults,
   ObjectType,
@@ -29,7 +30,7 @@ import {
 } from 'react'
 import xss from 'xss'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError, SynapseContext } from '../../utils'
+import { SynapseContext } from '../../utils/context/SynapseContext'
 import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'

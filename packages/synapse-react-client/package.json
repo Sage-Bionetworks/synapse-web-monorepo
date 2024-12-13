@@ -246,7 +246,6 @@
     "test:coverage": "jest --coverage",
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
-    "build:js": "vite build",
     "build:umd": "vite build -c vite.config.umd.ts",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",

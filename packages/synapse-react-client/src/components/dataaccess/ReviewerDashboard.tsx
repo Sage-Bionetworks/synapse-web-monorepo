@@ -14,7 +14,7 @@ import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundl
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import OrientationBanner from '../OrientationBanner'
+import OrientationBanner from '../OrientationBanner/OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'

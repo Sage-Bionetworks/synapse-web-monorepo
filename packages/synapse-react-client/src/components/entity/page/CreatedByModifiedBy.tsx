@@ -6,11 +6,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { useGetEntity } from '../../../synapse-queries/entity/useEntity'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries/entity/useGetQueryResultBundle'
 import { BUNDLE_MASK_LAST_UPDATED_ON } from '../../../utils/SynapseConstants'
-import {
-  useGetEntity,
-  useGetQueryResultBundleWithAsyncStatus,
-} from '../../../synapse-queries'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,

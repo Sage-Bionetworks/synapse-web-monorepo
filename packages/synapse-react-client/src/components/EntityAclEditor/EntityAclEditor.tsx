@@ -7,6 +7,14 @@ import {
   useMemo,
   useState,
 } from 'react'
+import {
+  useCreateEntityACL,
+  useDeleteEntityACL,
+  useSuspenseGetEntityBenefactorACL,
+  useUpdateEntityACL,
+} from '../../synapse-queries/entity/useEntity'
+import { useSuspenseGetEntityBundle } from '../../synapse-queries/entity/useEntityBundle'
+import { useSuspenseGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import OpenData from './OpenData'
 import { AclEditor, AclEditorProps } from '../AclEditor/AclEditor'
@@ -27,20 +35,15 @@ import {
   ResourceAccess,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
-import {
-  useCreateEntityACL,
-  useDeleteEntityACL,
-  useSuspenseGetEntityBenefactorACL,
-  useSuspenseGetCurrentUserProfile,
-  useSuspenseGetEntityBundle,
-  useUpdateEntityACL,
-} from '../../synapse-queries'
 import { Alert, Link, Stack } from '@mui/material'
 import { InheritanceMessage } from './InheritanceMessage'
 import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
 import { resourceAccessListIsEqual } from '../../utils/functions/AccessControlListUtils'
 import useNotifyNewACLUsers from './useNotifyNewACLUsers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { getDisplayNameFromProfile } from '../../utils/functions/DisplayUtils'
 import { AclEditorSkeleton } from '../AclEditor/AclEditorSkeleton'
 import { SynapseErrorBoundary } from '../error'

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { SynapsePlot } from '../Plot'
-import { QueryContextType, useQueryContext } from '../QueryContext'
+import { SynapsePlot } from '../Plot/SynapsePlot'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 import {
   QueryWrapperPlotNavCustomPlotParams,
   SynapsePlotWidgetParams,

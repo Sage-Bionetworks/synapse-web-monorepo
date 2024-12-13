@@ -5,7 +5,7 @@ import {
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import * as DownloadDetailsModule from './DownloadDetails'
 
 const DOWNLOAD_DETAILS_TEST_ID = 'DownloadDetails'

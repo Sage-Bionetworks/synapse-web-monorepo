@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import { useGetModerators } from '../../synapse-queries/forum/useForum'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'

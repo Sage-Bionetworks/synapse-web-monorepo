@@ -13,9 +13,9 @@ import {
   IconButton,
   styled,
 } from '@mui/material'
-import { useOneSageURL } from '../../utils/hooks'
+import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SageResourcesPopover from '../SageResourcesPopover'
 
 const LOGIN_LINK = '/LoginPlace:0'

@@ -1,5 +1,5 @@
-import { SynapseConstants } from '../../utils'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,

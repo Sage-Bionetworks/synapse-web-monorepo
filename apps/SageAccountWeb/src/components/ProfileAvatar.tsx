@@ -1,19 +1,17 @@
-import Slider from '@mui/material/Slider'
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Box, IconButton, SxProps } from '@mui/material'
-import {
-  ConfirmationDialog,
-  displayToast,
-  IconSvg,
-  SynapseClient,
-  useSynapseContext,
-} from 'synapse-react-client'
-import Cropper, { Area } from 'react-easy-crop'
 import Person from '@mui/icons-material/Person'
+import { Box, IconButton, SxProps } from '@mui/material'
+import Slider from '@mui/material/Slider'
 import {
   FileUploadComplete,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import Cropper, { Area } from 'react-easy-crop'
+import { ConfirmationDialog } from 'synapse-react-client/components/ConfirmationDialog/ConfirmationDialog'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { getCroppedImg } from './CropImage'
 
 export type ProfileAvatarProps = {

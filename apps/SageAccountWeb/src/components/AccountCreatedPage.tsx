@@ -1,3 +1,5 @@
+import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useSourceAppConfigs } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 import { SourceAppLogo } from './SourceApp'
 import { Button, Grid, Link, Typography } from '@mui/material'
 import { AppContextConsumer } from '../AppContext'
@@ -5,20 +7,12 @@ import { Link as RouterLink } from 'react-router-dom'
 import { LeftRightPanel } from './LeftRightPanel'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
 import { useSourceApp } from './useSourceApp'
-import {
-  SynapseHookUtils,
-  processRedirectURLInOneSage,
-} from 'synapse-react-client'
 import { sourceAppConfigTableID } from '../resources'
 
-export type AccountCreatedPageProps = {}
-
-export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
+export function AccountCreatedPage() {
   const membershipInvitation = useMembershipInvitationTokenHandler()
   const sourceApp = useSourceApp()
-  const sourceAppConfigs = SynapseHookUtils.useSourceAppConfigs(
-    sourceAppConfigTableID,
-  )
+  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
   return (
     <>
       <AppContextConsumer>

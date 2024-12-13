@@ -1,29 +1,30 @@
-import { SynapseConstants, UniqueFacetIdentifier } from '../../utils'
+import {
+  QueryBundleRequest,
+  SortDirection,
+} from '@sage-bionetworks/synapse-types'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
-import {
-  QueryBundleRequest,
-  SortDirection,
-} from '@sage-bionetworks/synapse-types'
-import { GenericCardSchema } from '../GenericCard'
-import { IconSvgProps } from '../IconSvg'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { LockedColumn } from '../../utils/types/LockedColumn'
+import { UniqueFacetIdentifier } from '../../utils/types/UniqueFacetIdentifier'
+import ColumnFilter from '../ColumnFilter/ColumnFilter'
+import { GenericCardSchema } from '../GenericCard/GenericCard'
+import { IconOptions } from '../Icon/Icon'
+import { IconSvgProps } from '../IconSvg/IconSvg'
+import QuerySortSelector from '../QuerySortSelector'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
-import QuerySortSelector from '../QuerySortSelector'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { IconOptions } from '../Icon/Icon'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { ReleaseCardConfig } from '../ReleaseCard'
-import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import ColumnFilter from '../ColumnFilter/ColumnFilter'
-import { LockedColumn } from '../../utils'
+import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import { ReleaseCardConfig } from '../ReleaseCard'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.

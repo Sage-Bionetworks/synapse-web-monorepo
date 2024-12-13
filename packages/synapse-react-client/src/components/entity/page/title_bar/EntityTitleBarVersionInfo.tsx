@@ -1,4 +1,4 @@
-import { useGetEntityBundle } from '../../../../synapse-queries'
+import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
 import {
   isEntityRefCollectionView,
   isTable,

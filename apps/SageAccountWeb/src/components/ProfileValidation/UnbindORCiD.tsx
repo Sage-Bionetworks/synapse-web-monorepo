@@ -1,10 +1,5 @@
 import { SyntheticEvent } from 'react'
 import {
-  SynapseClient,
-  SynapseConstants,
-  SynapseContextUtils,
-} from 'synapse-react-client'
-import {
   Button,
   Dialog,
   DialogActions,
@@ -12,6 +7,9 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export const unbindORCiD = async (
   event: SyntheticEvent,
@@ -43,7 +41,7 @@ export type UnbindORCiDDialogProps = {
 }
 
 export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+  const { accessToken } = useSynapseContext()
   return (
     <Dialog open={props.show} maxWidth="sm">
       <DialogTitle>Unlink ORCID?</DialogTitle>

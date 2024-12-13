@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   Alert,
@@ -18,11 +19,11 @@ import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
   useUpdateOAuthClient,
-} from '../../synapse-queries'
+} from '../../synapse-queries/oauth/useOAuthClient'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { useDebouncedEffect } from '../../utils/hooks'
+import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export const defaultUserInfoSignedResponseAlgorithm = 'JSON'

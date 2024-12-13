@@ -2,7 +2,7 @@ import TOTPForm from './TOTPForm'
 import { Alert, Button, Link, Typography } from '@mui/material'
 import RecoveryCodeForm from './RecoveryCodeForm'
 import { TwoFactorAuthOtpType } from '@sage-bionetworks/synapse-types'
-import { UseLoginReturn } from '../../utils/hooks'
+import { UseLoginReturn } from '../../utils/hooks/useLogin'
 
 export type ONE_TIME_PASSWORD_STEP =
   | 'VERIFICATION_CODE'

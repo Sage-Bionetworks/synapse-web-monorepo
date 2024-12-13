@@ -1,9 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 import SynapseClient from '../../synapse-client'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { useGetRestrictionInformation } from '../../synapse-queries'
+import { useGetRestrictionInformation } from '../../synapse-queries/dataaccess/useRestrictionInformation'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
+
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessRequirement,
   RestrictableObjectType,

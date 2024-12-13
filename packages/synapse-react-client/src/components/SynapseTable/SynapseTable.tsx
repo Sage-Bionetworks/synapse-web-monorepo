@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   ColumnTypeEnum,
   Row,
@@ -9,7 +10,7 @@ import {
 import { LabelLinkConfig } from '../CardContainerLogic'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import {
   isEntityViewOrDataset,
   isFileViewOrDataset,
@@ -36,7 +37,6 @@ import { usePrefetchResourcesInTable } from './usePrefetchTableData'
 import { useAtomValue } from 'jotai'
 import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
-import { useGetEntity } from '../../synapse-queries'
 
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,

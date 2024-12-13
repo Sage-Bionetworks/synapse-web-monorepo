@@ -7,7 +7,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../utils/functions/getEndpoint'
-import { useGetEntity, useGetEntityHeader } from '../synapse-queries'
+import { useGetEntity } from '../synapse-queries/entity/useEntity'
+import { useGetEntityHeader } from '../synapse-queries/entity/useGetEntityHeaders'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'

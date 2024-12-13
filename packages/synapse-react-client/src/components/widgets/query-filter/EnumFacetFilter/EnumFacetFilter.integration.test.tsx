@@ -8,9 +8,8 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import { SynapseConstants } from '../../../../utils'
+import * as SynapseConstants from '../../../../utils/SynapseConstants'
 import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
-import { QueryContextType, useQueryContext } from '../../../../index'
 import userEvent from '@testing-library/user-event'
 import { server } from '../../../../mocks/msw/server'
 import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
@@ -26,6 +25,10 @@ import {
   mockUserProfileData2,
 } from '../../../../mocks/user/mock_user_profile'
 import { registerTableQueryResult } from '../../../../mocks/msw/handlers/tableQueryService'
+import {
+  QueryContextType,
+  useQueryContext,
+} from '../../../../components/QueryContext/QueryContext'
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },

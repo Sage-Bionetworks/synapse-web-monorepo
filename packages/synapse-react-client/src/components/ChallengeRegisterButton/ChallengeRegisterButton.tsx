@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { Box } from '@mui/material'
+import { useGetEntityChallenge } from '../../synapse-queries/entity/useGetEntityChallenge'
+import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
+import { useGetUserSubmissionTeams } from '../../synapse-queries/user/useGetUserTeams'
+import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityChallenge,
-  useGetIsUserMemberOfTeam,
-  useGetUserSubmissionTeams,
-} from '../../synapse-queries'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export interface ChallengeRegisterButtonProps {
   projectId: string

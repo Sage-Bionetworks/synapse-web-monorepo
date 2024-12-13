@@ -1,5 +1,5 @@
 import { Button, SxProps } from '@mui/material'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export type TermsAndConditionsLinkProps = {
   sx?: SxProps

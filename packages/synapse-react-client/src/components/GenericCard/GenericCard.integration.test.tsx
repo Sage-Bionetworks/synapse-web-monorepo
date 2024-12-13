@@ -29,13 +29,15 @@ import * as FileHandleLinkModule from '../widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
 import { GenericCardProps } from './GenericCard'
 import GenericCard, {
-  CARD_SHORT_DESCRIPTION_CSS,
   GenericCardSchema,
   getColumnIndex,
   getLinkParams,
+} from './GenericCard'
+import {
+  CARD_SHORT_DESCRIPTION_CSS,
   LongDescription,
   ShortDescription,
-} from './index'
+} from './CollapsibleDescription'
 
 const renderComponent = (
   props: GenericCardProps,

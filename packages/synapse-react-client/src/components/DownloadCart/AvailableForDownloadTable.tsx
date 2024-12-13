@@ -1,4 +1,4 @@
-import { useSynapseContext } from '../../utils'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import DownloadListTable, { DownloadListTableProps } from './DownloadListTable'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 

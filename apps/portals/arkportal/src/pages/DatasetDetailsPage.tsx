@@ -4,11 +4,10 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  DatasetJsonLdScript,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import { DatasetJsonLdScript } from 'synapse-react-client/components/DatasetJsonLdScript'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+
 import columnAliases from '../config/columnAliases'
 import { datasetsSql } from '../config/resources'
 import {

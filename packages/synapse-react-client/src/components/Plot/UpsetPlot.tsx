@@ -15,7 +15,7 @@ import UpSetJS, {
 } from '@upsetjs/react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'

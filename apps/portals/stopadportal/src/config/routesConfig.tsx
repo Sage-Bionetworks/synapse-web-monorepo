@@ -2,11 +2,9 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { RouteObject } from 'react-router-dom'
-import {
-  Markdown,
-  SynapseFormSubmissionGrid,
-  SynapseFormWrapper,
-} from 'synapse-react-client'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import SynapseFormSubmissionGrid from 'synapse-react-client/components/SynapseForm/SynapseFormSubmissionGrid'
+import SynapseFormWrapper from 'synapse-react-client/components/SynapseForm/SynapseFormWrapper'
 
 const routes: RouteObject[] = [
   {

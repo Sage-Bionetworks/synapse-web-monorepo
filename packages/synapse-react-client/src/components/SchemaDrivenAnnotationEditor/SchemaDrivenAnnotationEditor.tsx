@@ -12,15 +12,15 @@ import {
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import AddToList from '../../assets/icons/AddToList'
 import {
+  useGetJson,
+  useUpdateViaJson,
+} from '../../synapse-queries/entity/useEntity'
+import { useGetSchemaBinding } from '../../synapse-queries/entity/useEntityBoundSchema'
+import { useGetSchema } from '../../synapse-queries/entity/useSchema'
+import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import {
-  useGetJson,
-  useGetSchema,
-  useGetSchemaBinding,
-  useUpdateViaJson,
-} from '../../synapse-queries'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ENTITY_CONCRETE_TYPE,

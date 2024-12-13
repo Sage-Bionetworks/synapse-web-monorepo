@@ -25,14 +25,13 @@ import {
   studyColumnAliases,
   studyRgbIndex,
 } from 'src/config/synapseConfigs/studies'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  MarkdownCollapse,
-  QueryWrapperPlotNav,
-  RssFeedCards,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import MarkdownCollapse from 'synapse-react-client/components/Markdown/MarkdownCollapse'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import studyHeaderSvg from '../config/style/study-header.svg?url'
 
 const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [

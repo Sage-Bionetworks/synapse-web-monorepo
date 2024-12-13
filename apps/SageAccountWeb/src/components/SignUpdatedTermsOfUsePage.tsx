@@ -9,29 +9,30 @@ import {
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/MarkdownGithub'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/index'
 import {
-  displayToast,
-  GovernanceMarkdownGithub,
+  useSignTermsOfService,
+  useTermsOfServiceInfo,
+  useTermsOfServiceStatus,
+} from 'synapse-react-client/synapse-queries/termsOfService/useTermsOfService'
+import {
   processRedirectURLInOneSage,
   restoreLastPlace,
-  SynapseContextUtils,
-  SynapseQueries,
-} from 'synapse-react-client'
+} from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { StyledOuterContainer } from './StyledComponents'
 
 export function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
-  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
+  const { accessToken } = useSynapseContext()
+  const { mutate: signTermsOfService } = useSignTermsOfService()
   const navigate = useNavigate()
-  const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
-  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
-    accessToken,
-    {
-      enabled: !!accessToken,
-    },
-  )
+  const { data: tosInfo } = useTermsOfServiceInfo()
+  const { data: tosStatus } = useTermsOfServiceStatus(accessToken, {
+    enabled: !!accessToken,
+  })
 
   const redirectAfterSignOrSkip = () => {
     const didRedirect = restoreLastPlace(navigate)

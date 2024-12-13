@@ -2,7 +2,8 @@ import { WithContext, Dataset } from 'schema-dts'
 import useJsonLdScriptElement from '../utils/hooks/useJsonLdScriptElement'
 import MarkdownIt from 'markdown-it'
 import dayjs from 'dayjs'
-import { useGetEntityBundle, useGetWikiPage } from '../synapse-queries'
+import { useGetEntityBundle } from '../synapse-queries/entity/useEntityBundle'
+import { useGetWikiPage } from '../synapse-queries/wiki/useWiki'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 
 const md = MarkdownIt({ html: true })

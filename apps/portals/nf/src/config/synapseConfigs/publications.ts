@@ -1,12 +1,9 @@
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
-import { columnAliases } from './commonProps'
-
 import { Direction } from '@sage-bionetworks/synapse-types'
+import { CardConfiguration } from 'synapse-react-client/components/CardContainerLogic/index'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { publicationsSql } from '../resources'
+import { columnAliases } from './commonProps'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD

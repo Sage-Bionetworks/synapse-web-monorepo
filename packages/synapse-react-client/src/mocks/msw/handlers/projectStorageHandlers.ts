@@ -1,6 +1,9 @@
 import { rest } from 'msw'
 import { PROJECT_STORAGE_USAGE } from '../../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../utils/functions/getEndpoint'
 import {
   mockProjectStorageUsageOverLimit,
   mockProjectStorageUsageUnderLimit,

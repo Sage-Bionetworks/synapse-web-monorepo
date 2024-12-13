@@ -8,13 +8,13 @@ import {
   PaginatedIds,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
 import {
   mockDiscussionThreadBundles,
   mockForums,
 } from '../../discussion/mock_discussion'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import mockProject from '../../entity/mockProject'
+import { SynapseApiResponse } from '../SynapseApiResponse'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const forumService = new BasicMockedCrudService<Forum, 'id'>({

@@ -12,7 +12,7 @@ import {
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import {
   EnumFacetFilter,
   FacetValueSortConfig,

@@ -16,7 +16,7 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/index'
+} from '../../utils/functions/getEndpoint'
 import * as ToastMessageModule from '../ToastMessage/ToastMessage'
 import WebhookDashboard from './WebhookDashboard'
 

@@ -39,11 +39,9 @@ import {
   TARGET_ENABLING_RESOURCES_COLUMN_NAMES,
   targetEnablingResourcesCardConfiguration,
 } from 'src/config/synapseConfigs/target_enabling_resources'
-import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

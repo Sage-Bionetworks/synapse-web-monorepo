@@ -1,8 +1,12 @@
 import { Box, Typography, SxProps, useTheme } from '@mui/material'
+import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { useGetEntityHeader } from '../../synapse-queries'
+
 import { NavigateNext } from '@mui/icons-material'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 import { ReactComponent as EgressIcon } from '../../assets/homepage/egress.svg'
 
 import { ReactComponent as UsersIcon } from '../../assets/homepage/users.svg'

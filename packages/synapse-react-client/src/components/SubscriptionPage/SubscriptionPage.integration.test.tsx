@@ -1,9 +1,10 @@
-import userEvent from '@testing-library/user-event'
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { SubscriptionPage, SynapseClient } from '../../index'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { server } from '../../mocks/msw/server'
+import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import SubscriptionPage from './SubscriptionPage'
 
 function setUp() {
   const user = userEvent.setup()

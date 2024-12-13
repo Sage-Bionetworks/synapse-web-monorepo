@@ -12,12 +12,14 @@ import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import {
   useDeleteEntity,
-  useGetEntityBundle,
-  useGetFeatureFlag,
   useGetJson,
+} from '../../synapse-queries/entity/useEntity'
+import {
   useGetSchemaBinding,
   useGetValidationResults,
-} from '../../synapse-queries'
+} from '../../synapse-queries/entity/useEntityBoundSchema'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+import { useGetFeatureFlag } from '../../synapse-queries/featureflags/useGetFeatureFlag'
 import { PUBLIC_PRINCIPAL_IDS } from '../../utils/SynapseConstants'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,

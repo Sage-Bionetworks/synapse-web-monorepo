@@ -3,7 +3,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ReadonlyDeep } from 'type-fest'
 import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
-import { LockedColumn } from '../../utils'
+import { LockedColumn } from '../../utils/types/LockedColumn'
 
 export type QueryContextType = {
   isInfinite: boolean

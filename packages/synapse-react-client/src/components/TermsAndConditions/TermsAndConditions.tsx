@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useGetFullTableQueryResults } from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { LoadingItem, tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
 import { Button, Link } from '@mui/material'
@@ -6,7 +7,6 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   URL_TERMS_CONDITIONS_AGREEMENT,
 } from '../../utils/SynapseConstants'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void

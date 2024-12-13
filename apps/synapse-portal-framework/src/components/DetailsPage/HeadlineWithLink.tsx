@@ -1,6 +1,8 @@
 import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
-import { HelpPopover, IconSvg, SynapseQueries } from 'synapse-react-client'
+import { HelpPopover } from 'synapse-react-client/components/HelpPopover/index'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { useGetEntityHeader } from 'synapse-react-client/synapse-queries/entity/useGetEntityHeaders'
 
 export function HeadlineWithLinkDerivedFromEntityId(props: {
   id: string
@@ -9,9 +11,7 @@ export function HeadlineWithLinkDerivedFromEntityId(props: {
 }) {
   const { entityTitlePrepend = '', ...rest } = props
 
-  const { data: entityHeader, isLoading } = SynapseQueries.useGetEntityHeader(
-    props.id,
-  )
+  const { data: entityHeader, isLoading } = useGetEntityHeader(props.id)
 
   if (isLoading) {
     return <Skeleton width={300} />

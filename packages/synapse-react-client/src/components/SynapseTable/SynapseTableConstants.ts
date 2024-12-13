@@ -1,4 +1,4 @@
-import { IconName } from '../IconSvg'
+import { IconName } from '../IconSvg/IconSvg'
 
 export const TOOLTIP_DELAY_SHOW = 500
 export const SELECT_ALL = 'SELECT_ALL'

@@ -3,7 +3,8 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   computationalSql,
   peopleSql,

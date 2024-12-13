@@ -1,4 +1,4 @@
-import { QueryContextType } from '../QueryContext'
+import { QueryContextType } from '../QueryContext/QueryContext'
 import { useQuery } from '@tanstack/react-query'
 import { hasFacetedSelectColumn as hasFacetedSelectColumnUtil } from '../../utils/functions/queryUtils'
 

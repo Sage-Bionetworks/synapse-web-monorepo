@@ -3,7 +3,7 @@ import {
   ResourceAccess,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 
 /**
  * Utility type to combine a ResourceAccess and the associated UserGroupHeader for that principalId.
