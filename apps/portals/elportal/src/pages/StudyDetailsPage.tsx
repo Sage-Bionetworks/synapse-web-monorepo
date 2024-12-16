@@ -18,6 +18,7 @@ import {
   studiesSql,
 } from '../config/resources'
 import studyHeaderSvg from '../config/style/study-header.svg?url'
+import { DATA_TABLE_COLUMN_NAMES } from '../config/synapseConfigs/dataTable'
 import {
   studiesRgbIndex,
   studyCardConfiguration,
@@ -150,10 +151,10 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     shouldDeepLink={false}
                     defaultShowPlots={false}
                     lockedColumn={{
-                      columnName: 'study',
+                      columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                       value: value!,
                     }}
-                    searchParams={{ study: value! }}
+                    searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
                     hideQueryCount
                   />
                 )}
@@ -191,10 +192,10 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     sql={dataSql}
                     shouldDeepLink={false}
                     lockedColumn={{
-                      columnName: 'study',
+                      columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                       value: value!,
                     }}
-                    searchParams={{ study: value! }}
+                    searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
                     hideQueryCount
                   />
                 )}
