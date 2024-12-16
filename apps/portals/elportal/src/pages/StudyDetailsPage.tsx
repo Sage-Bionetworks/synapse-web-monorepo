@@ -155,6 +155,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                       value: value!,
                     }}
                     searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
+                    fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
                     hideQueryCount
                   />
                 )}
@@ -181,11 +182,11 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                       showDownloadColumn: true,
                       columnLinks: [
                         {
-                          matchColumnName: 'study',
+                          matchColumnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                           isMarkdown: false,
                           baseURL: 'Explore/Studies/DetailsPage',
                           URLColumnName: 'studyKey',
-                          wrapValueWithParens: true,
+                          wrapValueWithParens: false,
                         },
                       ],
                     }}
@@ -195,6 +196,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                       columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                       value: value!,
                     }}
+                    fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
                     searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
                     hideQueryCount
                   />
