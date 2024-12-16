@@ -221,7 +221,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   return (
     <div className={`FacetFilterControls`}>
-      {combineRangeFacetConfig && (
+      {combineRangeFacetConfig && combinedRangeFacets.length >= 2 && (
         <CombinedRangeFacetFilter
           facetResults={combinedRangeFacets as FacetColumnResultRange[]}
           label={combineRangeFacetConfig.label}
