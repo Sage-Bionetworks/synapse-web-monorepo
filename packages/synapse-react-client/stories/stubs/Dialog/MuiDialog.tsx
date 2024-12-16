@@ -20,6 +20,7 @@ export interface DialogProps extends MuiDialogProps {
 
 export const Dialog = (props: DialogProps) => {
   const { title, content, helpText, ...rest } = props
+
   return (
     <MuiDialog {...rest}>
       <DialogTitle>

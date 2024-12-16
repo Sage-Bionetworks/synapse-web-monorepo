@@ -104,6 +104,17 @@ export const DialogBase = ({
       onClose={() => onCancel()}
       sx={sx}
       {...DialogProps}
+      PaperProps={{
+        sx: theme => ({
+          [theme.breakpoints.down('sm')]: {
+            margin: 0,
+            width: '100%',
+            height: '100%',
+            maxHeight: 'unset',
+            padding: '16px',
+          },
+        }),
+      }}
     >
       <DialogBaseTitle
         title={title}
