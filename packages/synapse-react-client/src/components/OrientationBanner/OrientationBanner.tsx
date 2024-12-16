@@ -1,11 +1,13 @@
-import { useTheme } from '@mui/material'
+import { Theme } from '@mui/material'
+import { SxProps } from '@mui/system'
+import { ReactNode, useState } from 'react'
+import Illustrations from '../../assets/illustrations'
+import { spreadSx } from '../../theme/spreadSx'
+import { useCookiePreferences } from '../../utils/hooks/useCookiePreferences'
 import FullWidthAlert, {
   AlertButtonConfig,
   FullWidthAlertProps,
 } from '../FullWidthAlert/FullWidthAlert'
-import Illustrations from '../../assets/illustrations'
-import { useCookiePreferences } from '../../utils/hooks/useCookiePreferences'
-import { ReactNode, useState } from 'react'
 
 const OrientationBannerNameStrings = [
   'Challenges',
@@ -54,9 +56,10 @@ function OrientationBanner(props: OrientationBannerProps) {
     localStorage.getItem(storageBannerId) === null,
   )
 
-  const theme = useTheme()
-  const defaultSx = {
-    display: { xs: 'none', md: 'unset' },
+  const defaultSx: SxProps<Theme> = theme => ({
+    [theme.breakpoints.down('md')]: {
+      display: 'none',
+    },
     backgroundColor: '#F9FAFB',
     border: 'none',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
@@ -65,7 +68,7 @@ function OrientationBanner(props: OrientationBannerProps) {
     paddingLeft: 4,
     '.MuiAlert-icon': { mr: 5 },
     '.MuiAlertTitle-root': { color: theme.palette.grey[1000] },
-  }
+  })
   const BannerIllustration = Illustrations[name]
 
   return (
@@ -83,10 +86,7 @@ function OrientationBanner(props: OrientationBannerProps) {
         }
         setShowBanner(false)
       }}
-      sx={{
-        ...defaultSx,
-        ...sx,
-      }}
+      sx={spreadSx(defaultSx, sx)}
     />
   )
 }

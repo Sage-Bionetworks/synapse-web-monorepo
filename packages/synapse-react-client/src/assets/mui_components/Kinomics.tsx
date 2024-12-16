@@ -1,15 +1,15 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
+import { spreadSx } from '../../theme/spreadSx'
 
 const Kinomics = (props: SvgIconProps) => {
   const { sx } = props
   return (
     <SvgIcon
       {...props}
-      sx={{
-        ...sx,
+      sx={spreadSx(sx, {
         fill: 'none',
         stroke: 'currentColor',
-      }}
+      })}
     >
       <path
         d="M17.2604 5.74075C17.0511 5.81088 16.9361 5.99345 16.6968 6.05053C16.1772 6.15587 15.9853 6.68058 15.7507 7.0974C14.9952 8.40577 14.4245 9.80329 14.0259 11.2576C13.8857 11.7868 13.6594 12.2877 13.3729 12.7624C13.2145 13.0245 13.0776 13.2781 13.1969 13.5802"

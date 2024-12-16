@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { MouseEventHandler, ReactNode, useEffect } from 'react'
+import { spreadSx } from '../../theme/spreadSx'
 
 export type AlertButtonConfig = {
   text: string
@@ -118,17 +119,19 @@ function FullWidthAlert(props: FullWidthAlertProps) {
   const alert = (
     <Alert
       severity={variantToSeverity(variant)}
-      sx={{
-        width: '100%',
-        my: '10px',
-        '.MuiAlert-message': {
-          flexGrow: 1,
+      sx={spreadSx(
+        {
+          width: '100%',
+          my: '10px',
+          '.MuiAlert-message': {
+            flexGrow: 1,
+          },
+          '.MuiAlert-icon': {
+            display: { xs: 'none', sm: 'flex' },
+          },
         },
-        '.MuiAlert-icon': {
-          display: { xs: 'none', sm: 'flex' },
-        },
-        ...sx,
-      }}
+        sx,
+      )}
       className="FullWidthAlert"
       onClose={onClose}
       icon={icon}
