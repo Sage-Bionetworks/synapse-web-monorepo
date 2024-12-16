@@ -1,4 +1,4 @@
-import React, { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 
 import ExperimentalMode from './ExperimentalMode'
 

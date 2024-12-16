@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { useAtom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { useGetEntityHeader } from '../../synapse-queries'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'

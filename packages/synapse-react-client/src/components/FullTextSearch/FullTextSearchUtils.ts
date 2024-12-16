@@ -5,7 +5,7 @@ import {
   QueryBundleRequest,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import React from 'react'
+import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 

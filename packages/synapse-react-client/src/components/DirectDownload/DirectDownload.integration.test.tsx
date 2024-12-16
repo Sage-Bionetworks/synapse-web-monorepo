@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

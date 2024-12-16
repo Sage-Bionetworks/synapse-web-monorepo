@@ -1,5 +1,5 @@
 import pluralize from 'pluralize'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 
 export type ExpandGraphNodeDataProps = {

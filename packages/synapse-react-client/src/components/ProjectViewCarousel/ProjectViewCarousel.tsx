@@ -3,7 +3,7 @@ import { SynapseConstants, useSynapseContext } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Carousel from '../Carousel/Carousel'
 import { ProjectViewCard } from './ProjectViewCard'
 import { ErrorBanner } from '../error/ErrorBanner'
@@ -34,9 +34,7 @@ enum ExpectedColumns {
  * projectDisplayName, projectDescription, projectImageFileName. The projectImageFileName must
  * be an attachment on the project's root wiki page.
  */
-export const ProjectViewCarousel: React.FunctionComponent<
-  ProjectViewCarouselProps
-> = ({ entityId }) => {
+export function ProjectViewCarousel({ entityId }: ProjectViewCarouselProps) {
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,

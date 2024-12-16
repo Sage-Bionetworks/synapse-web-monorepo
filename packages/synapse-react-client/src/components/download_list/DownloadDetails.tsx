@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import dayjs from 'dayjs'

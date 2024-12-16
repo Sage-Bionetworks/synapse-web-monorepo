@@ -4,7 +4,6 @@ import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/compon
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import { Markdown } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
@@ -87,6 +86,18 @@ const routes: RouteObject[] = [
               ownerId="syn27229419"
               wikiId="622372"
               loadingSkeletonRowCount={10}
+            />
+          </SectionLayout>
+        ),
+      },
+      {
+        path: 'Contribute Data',
+        element: (
+          <SectionLayout title={'Contribute Data'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621277"
+              loadingSkeletonRowCount={15}
             />
           </SectionLayout>
         ),

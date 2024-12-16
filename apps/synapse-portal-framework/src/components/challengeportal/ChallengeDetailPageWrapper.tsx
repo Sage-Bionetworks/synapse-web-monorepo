@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link, Box, Skeleton } from '@mui/material'
 import {
   AppUtils,

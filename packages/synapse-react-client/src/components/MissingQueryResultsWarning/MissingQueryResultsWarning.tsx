@@ -1,5 +1,4 @@
 import { WarningSharp } from '@mui/icons-material'
-import React from 'react'
 import { SynapseConstants } from '../../utils'
 import { isEntityRefCollectionView } from '../../utils/functions/EntityTypeUtils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
@@ -23,9 +22,9 @@ export type MissingQueryResultsWarningProps = {
  * If possible, this component will render a warning message if results may be missing from the query due to user permissions or
  * entities being deleted. If not possible, it will render an empty fragment.
  */
-const MissingQueryResultsWarning: React.FunctionComponent<
-  MissingQueryResultsWarningProps
-> = ({ entity }) => {
+function MissingQueryResultsWarning({
+  entity,
+}: MissingQueryResultsWarningProps) {
   // Currently, Datasets and Dataset collections are the only table type for which we can reliably get this info.
   // Other cases will need a new service, tracked by PLFM-7046
   const isMissingResultsCalculable = entity && isEntityRefCollectionView(entity)

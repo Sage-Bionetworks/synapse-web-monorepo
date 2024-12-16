@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { DropdownMenu } from './DropdownMenu'
 import IconSvg from '../IconSvg/IconSvg'

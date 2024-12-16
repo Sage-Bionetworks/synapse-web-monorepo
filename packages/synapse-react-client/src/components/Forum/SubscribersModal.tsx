@@ -1,4 +1,3 @@
-import React from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
@@ -12,12 +11,12 @@ export type SubscribersModalProps = {
   handleModal: (a: boolean) => void
 }
 
-export const SubscribersModal: React.FC<SubscribersModalProps> = ({
+export function SubscribersModal({
   id,
   objectType,
   showModal,
   handleModal,
-}) => {
+}: SubscribersModalProps) {
   const { data: subscribers } = useGetSubscribers({ objectId: id, objectType })
 
   return (

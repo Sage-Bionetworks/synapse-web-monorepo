@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import { Button, SxProps } from '@mui/material'
 import {
   displayToast,
@@ -16,7 +16,7 @@ export type ORCiDButtonProps = {
 }
 
 export const onBindToORCiD = (
-  event: React.SyntheticEvent,
+  event: SyntheticEvent,
   setIsLoading: (isLoading: boolean) => void,
   redirectAfter?: string,
 ) => {

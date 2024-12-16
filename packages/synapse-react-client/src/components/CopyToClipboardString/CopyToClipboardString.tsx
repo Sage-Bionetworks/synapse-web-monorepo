@@ -1,5 +1,5 @@
-import React from 'react'
 import { Stack, Tooltip, Typography, TypographyProps } from '@mui/material'
+import { SyntheticEvent, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type CopyToClipboardStringProps = {
@@ -12,9 +12,9 @@ export type CopyToClipboardStringProps = {
  */
 export function CopyToClipboardString(props: CopyToClipboardStringProps) {
   const { value, typographyVariant = 'smallText1' } = props
-  const [tooltipText, setTooltipText] = React.useState('Copy to clipboard')
+  const [tooltipText, setTooltipText] = useState('Copy to clipboard')
 
-  const copyToClipboard = (event: React.SyntheticEvent) => {
+  const copyToClipboard = (event: SyntheticEvent) => {
     event.preventDefault()
 
     // use the Clipboard API

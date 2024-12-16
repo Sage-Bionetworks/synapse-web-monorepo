@@ -1,5 +1,4 @@
 import { Box, Link, Typography } from '@mui/material'
-import React from 'react'
 import { LinkProps } from '@mui/material'
 
 export type SynapseLinksColumnProps = {
@@ -11,9 +10,10 @@ export type SynapseLink = {
   props: LinkProps
 }
 
-export const SynapseLinksColumn: React.FunctionComponent<
-  SynapseLinksColumnProps
-> = ({ category, synapseLinks }) => {
+export function SynapseLinksColumn({
+  category,
+  synapseLinks,
+}: SynapseLinksColumnProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       <Typography

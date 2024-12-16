@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEntity } from '../../synapse-queries'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ImageFileHandle } from './ImageFileHandle'

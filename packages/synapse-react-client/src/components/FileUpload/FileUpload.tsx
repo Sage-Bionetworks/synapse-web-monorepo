@@ -1,5 +1,5 @@
-import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
+import { ChangeEvent, useRef } from 'react'
 import {
   uploadFile,
   ProgressCallback,
@@ -18,7 +18,7 @@ export type FileUploadProps = {
   onComplete?: (response: UploadCallbackResp) => void
 }
 
-export const FileUpload: React.FC<FileUploadProps> = props => {
+export function FileUpload(props: FileUploadProps) {
   const {
     id,
     buttonProps = { variant: 'contained' },
@@ -27,7 +27,7 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
     onComplete,
   } = props
   const { accessToken } = useSynapseContext()
-  const hiddenFileInput = React.useRef<HTMLInputElement>(null)
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   const clickHandler = () => {
     if (hiddenFileInput?.current!) {
@@ -35,7 +35,7 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
     }
   }
 
-  const changeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       if (onUploadStart) {
         onUploadStart()

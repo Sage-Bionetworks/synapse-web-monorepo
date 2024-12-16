@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import MarkdownSynapse from './MarkdownSynapse'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

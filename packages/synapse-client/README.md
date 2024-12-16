@@ -19,7 +19,7 @@ Once you have new models built, tests and type-checking on the full project shou
 
 ## Upgrading the openapi-generator version and overriding templates
 
-The current version of openapi-generator can be set by changing the version number set in the `pnpm configure` script.
+The current version of openapi-generator can be set by running `openapi-generator-cli version-manager set <version-number>`.
 When the version is changed, our template overrides should be updated.
 
 To copy all the base template files into the `./out` directory, run the following command:

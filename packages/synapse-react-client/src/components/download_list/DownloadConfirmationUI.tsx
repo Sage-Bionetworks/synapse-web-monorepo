@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Alert, AlertProps, Box, Button, Typography } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import SignInButton from '../SignInButton'

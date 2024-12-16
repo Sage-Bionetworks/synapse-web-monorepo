@@ -1,4 +1,3 @@
-import React from 'react'
 import FeaturedToolsList from './FeaturedToolsList'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn26344826Json from '../../mocks/query/syn26344826.json'

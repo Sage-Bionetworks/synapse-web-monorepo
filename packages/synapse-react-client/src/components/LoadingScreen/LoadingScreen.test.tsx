@@ -1,4 +1,3 @@
-import React from 'react'
 import { BlockingLoader, BlockingLoaderProps } from './LoadingScreen'
 import { render, screen } from '@testing-library/react'
 

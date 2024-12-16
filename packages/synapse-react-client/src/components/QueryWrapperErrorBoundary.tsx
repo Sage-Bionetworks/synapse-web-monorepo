@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { PropsWithChildren, useCallback, useMemo } from 'react'
 import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { EntityActionsRequired } from './AccessRequirement/EntityActionsRequired'
@@ -14,7 +14,7 @@ import SqlEditor from './SynapseTable/SqlEditor'
  */
 export function QueryWrapperErrorBoundary({
   children,
-}: React.PropsWithChildren<Record<never, never>>) {
+}: PropsWithChildren<Record<never, never>>) {
   const { getCurrentQueryRequest, onViewSharingSettingsClicked } =
     useQueryContext()
   const { entityId } = useMemo(

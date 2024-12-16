@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import RecentPublicationsGrid from './RecentPublicationsGrid'
 import { BrowserRouter } from 'react-router-dom'
-import React from 'react'
 
 const meta = {
   title: 'Home Page/RecentPublicationsGrid',
@@ -21,7 +20,7 @@ export const Demo: Story = {
     </BrowserRouter>
   ),
   args: {
-    sql: 'SELECT * FROM syn51407023 ORDER BY "publicationDate" DESC LIMIT 6',
+    sql: 'SELECT * FROM syn51407023',
     buttonLink: 'Explore/Publications',
     buttonLinkText: 'See More Publications',
     summaryText:

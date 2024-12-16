@@ -1,13 +1,13 @@
 import { Box, Typography } from '@mui/material'
+import { ReactNode } from 'react'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import React from 'react'
 import { useGetFileBatch } from '../../../synapse-queries/file/useFiles'
 
 export type DownloadDocumentTemplateProps = {
-  title: React.ReactNode
-  description: React.ReactNode
+  title: ReactNode
+  description: ReactNode
   fileHandleAssociation: FileHandleAssociation
   downloadButtonText: string
 }

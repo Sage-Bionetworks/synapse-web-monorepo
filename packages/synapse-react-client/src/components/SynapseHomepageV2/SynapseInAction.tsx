@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
@@ -8,9 +7,7 @@ export type SynapseInActionProps = {
   tableId: string
 }
 
-export const SynapseInAction: React.FunctionComponent<SynapseInActionProps> = ({
-  tableId,
-}) => {
+export function SynapseInAction({ tableId }: SynapseInActionProps) {
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: tableId,
     query: {

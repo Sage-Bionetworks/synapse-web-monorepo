@@ -1,5 +1,4 @@
 import { Box, Button, Typography } from '@mui/material'
-import React from 'react'
 import ChallengeTeamTable from './ChallengeTeamTable'
 import { Stack } from '@mui/system'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'

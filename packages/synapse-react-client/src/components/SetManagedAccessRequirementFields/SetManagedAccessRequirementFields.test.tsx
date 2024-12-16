@@ -7,7 +7,7 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
-import React from 'react'
+import { createRef } from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
@@ -90,7 +90,7 @@ const overrideGetWikiPageHandler = (wikiPage: WikiPage) => {
 }
 
 function renderComponent(props: SetManagedAccessRequirementFieldsProps) {
-  const ref = React.createRef<SetManagedAccessRequirementFieldsHandle>()
+  const ref = createRef<SetManagedAccessRequirementFieldsHandle>()
   const component = render(
     <SetManagedAccessRequirementFields ref={ref} {...props} />,
     {

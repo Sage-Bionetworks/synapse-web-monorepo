@@ -1,14 +1,14 @@
-import React, { FunctionComponent } from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem, BarPlotColors, PlotStyle } from './types'
 import _ from 'lodash-es'
+import Plotly from 'plotly.js-basic-dist'
+import { CSSProperties } from 'react'
+import createPlotlyComponent from 'react-plotly.js/factory'
+import { BarPlotColors, GraphItem, PlotStyle } from './types'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type BarPlotProps = {
   isTop: boolean
-  style?: React.CSSProperties
+  style?: CSSProperties
   plotData: GraphItem[]
   layoutConfig: Partial<Plotly.Layout>
   optionsConfig: Partial<Plotly.Config>
@@ -85,12 +85,12 @@ function getLayout(
 }
 
 const DEFAULT_BARPLOT_PLOTSTYLE: PlotStyle = { backgroundColor: 'transparent' }
-const DEFAULT_BARPLOT_STYLE: React.CSSProperties = {
+const DEFAULT_BARPLOT_STYLE: CSSProperties = {
   width: '100%',
   height: '100%',
 }
 
-const BarPlot: FunctionComponent<BarPlotProps> = ({
+function BarPlot({
   plotData,
   optionsConfig,
   isTop,
@@ -101,7 +101,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   plotStyle = DEFAULT_BARPLOT_PLOTSTYLE,
   style = DEFAULT_BARPLOT_STYLE,
   onClick,
-}: BarPlotProps) => {
+}: BarPlotProps) {
   return (
     <Plot
       style={style}

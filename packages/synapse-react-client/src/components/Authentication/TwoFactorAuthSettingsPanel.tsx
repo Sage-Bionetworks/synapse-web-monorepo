@@ -1,5 +1,5 @@
 import { Box, Button, Typography, Stack, Skeleton } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm'
 import {

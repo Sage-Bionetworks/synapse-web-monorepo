@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo } from 'react'
+import { useState, Suspense, useCallback, useMemo } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
   facetObjectMatchesDefinition,
@@ -165,7 +165,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   }, [combineRangeFacetConfig, facets, jsonFacetsGroupedByColumn])
 
   // Controls which facet columns are shown/hidden by clicking on chips. NOTE: One column may have multiple facets (e.g. JSON subcolumn facets)
-  const [facetColumnsShown, setFacetColumnsShown] = React.useState<Set<string>>(
+  const [facetColumnsShown, setFacetColumnsShown] = useState<Set<string>>(
     getDefaultShownFacetFilters(
       allFacetColumns,
       lastRequest.query.selectedFacets,
@@ -221,7 +221,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   return (
     <div className={`FacetFilterControls`}>
-      {combineRangeFacetConfig && (
+      {combineRangeFacetConfig && combinedRangeFacets.length >= 2 && (
         <CombinedRangeFacetFilter
           facetResults={combinedRangeFacets as FacetColumnResultRange[]}
           label={combineRangeFacetConfig.label}

@@ -1,6 +1,6 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { IconButton, SxProps } from '@mui/material'
-import React from 'react'
+import { MouseEventHandler } from 'react'
 import {
   Link as RouterLink,
   LinkProps as RouterLinkProps,
@@ -8,7 +8,7 @@ import {
 
 type StyleProps = { sx?: SxProps }
 type BackLinkProps = { to: RouterLinkProps['to'] }
-type BackButtonProps = { onClick: React.MouseEventHandler<HTMLButtonElement> }
+type BackButtonProps = { onClick: MouseEventHandler<HTMLButtonElement> }
 
 export type BackButtonLinkProps = StyleProps & (BackLinkProps | BackButtonProps)
 
@@ -24,10 +24,10 @@ export const backButtonSx = {
   },
 }
 
-export const BackButton: React.FC<BackButtonLinkProps> = ({
+export function BackButton({
   sx = backButtonSx,
   ...otherProps
-}) => {
+}: BackButtonLinkProps) {
   return (
     <>
       {'onClick' in otherProps ? (

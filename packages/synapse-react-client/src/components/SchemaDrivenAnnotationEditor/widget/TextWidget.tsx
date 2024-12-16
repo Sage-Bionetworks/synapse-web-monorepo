@@ -1,5 +1,4 @@
 import { Widget, WidgetProps } from '@rjsf/utils'
-import React from 'react'
 
 /**
  * This TextWidget is almost identical to the rjsf TextWidget, except we handle numbers like strings to prevent issues if

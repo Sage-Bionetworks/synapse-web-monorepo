@@ -1,4 +1,4 @@
-import React, { useId } from 'react'
+import { PropsWithChildren, ReactNode, useId } from 'react'
 import {
   Box,
   Button,
@@ -8,17 +8,18 @@ import {
   TooltipProps,
   Typography,
 } from '@mui/material'
+import { spreadSx } from '../../theme/spreadSx'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import LightTooltip from '../styled/LightTooltip'
 import { atom, useAtom } from 'jotai'
 
-export type MarkdownPopoverProps = React.PropsWithChildren<{
+export type MarkdownPopoverProps = PropsWithChildren<{
   contentProps: MarkdownSynapseProps
   sx?: TooltipProps['sx']
   placement?: TooltipProps['placement']
   showCloseButton?: boolean
   actionButton?: {
-    content: React.ReactNode
+    content: ReactNode
     color?: ButtonProps['color']
     variant?: ButtonProps['variant']
     onClick: () => void
@@ -42,7 +43,7 @@ const buttonBoxSx = {
 // Register a global atom to track which popover is open, to ensure only one is shown at any given time
 const openMarkdownPopoverAtom = atom<string | null>(null)
 
-export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
+export function MarkdownPopover({
   children,
   contentProps,
   placement = 'bottom-start',
@@ -52,7 +53,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   maxWidth = '500px',
   minWidth = '300px',
   containerSx,
-}: MarkdownPopoverProps) => {
+}: MarkdownPopoverProps) {
   const id = useId()
   const [openMarkdownPopoverId, setOpenMarkdownPopoverId] = useAtom(
     openMarkdownPopoverAtom,
@@ -97,13 +98,12 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
       title={content}
       placement={placement}
       open={show}
-      sx={{
-        ...sx,
+      sx={spreadSx(sx, {
         [`& .${tooltipClasses.tooltip}`]: {
           maxWidth: { maxWidth },
           minWidth: { minWidth },
         },
-      }}
+      })}
     >
       <Box
         role="button"

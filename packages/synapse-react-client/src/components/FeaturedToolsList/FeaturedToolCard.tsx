@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React from 'react'
+import { HTMLAttributes } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import ShowMore from '../ShowMore'
 
@@ -13,9 +13,7 @@ export type FeaturedToolCardProps = {
   url?: string
 }
 
-export const FeaturedToolCard: React.FunctionComponent<
-  FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
-> = ({
+export function FeaturedToolCard({
   id,
   name,
   description,
@@ -24,7 +22,7 @@ export const FeaturedToolCard: React.FunctionComponent<
   date,
   url,
   ...domProps
-}) => {
+}: FeaturedToolCardProps & HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...domProps}

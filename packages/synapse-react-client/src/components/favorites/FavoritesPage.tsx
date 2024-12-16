@@ -9,7 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
 import { useGetFavorites } from '../../synapse-queries/user/useFavorites'
 import { useSynapseContext } from '../../utils/context/SynapseContext'

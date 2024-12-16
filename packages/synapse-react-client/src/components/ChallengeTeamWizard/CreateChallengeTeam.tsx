@@ -1,4 +1,11 @@
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react'
 import { Alert, Box, Typography } from '@mui/material'
 import TextField from '../TextField'
 import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
@@ -21,171 +28,165 @@ export type CreateChallengeTeamHandle = {
   submit: () => void
 }
 
-export const CreateChallengeTeam = React.forwardRef(
-  function CreateChallengeTeam(
-    props: CreateChallengeTeamProps,
-    ref: React.ForwardedRef<CreateChallengeTeamHandle>,
-  ) {
-    const { challengeId, onCanSubmitChange = noop, onFinished = noop } = props
-    const [team, setTeam] = useState<CreateTeamRequest>({
-      name: '',
-      description: '',
-    })
-    const [invitationMessage, setInvitationMessage] = useState('')
-    const [rawInvitees, setRawInvitees] = useState('')
+export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
+  props: CreateChallengeTeamProps,
+  ref: ForwardedRef<CreateChallengeTeamHandle>,
+) {
+  const { challengeId, onCanSubmitChange = noop, onFinished = noop } = props
+  const [team, setTeam] = useState<CreateTeamRequest>({
+    name: '',
+    description: '',
+  })
+  const [invitationMessage, setInvitationMessage] = useState('')
+  const [rawInvitees, setRawInvitees] = useState('')
 
-    const handleTeamUpdate = (update: Partial<Team>) => {
-      const updatedTeam: CreateTeamRequest = { ...team, ...update }
-      setTeam(updatedTeam)
-    }
+  const handleTeamUpdate = (update: Partial<Team>) => {
+    const updatedTeam: CreateTeamRequest = { ...team, ...update }
+    setTeam(updatedTeam)
+  }
 
-    const { inviteesParseResult, parsedInvitees } = useMemo(() => {
-      const inviteesParseResult = parse<string[]>(rawInvitees, {
-        delimiter: ',',
-        transform(value) {
-          return value.trim()
-        },
-      })
-      const parsedInvitees: string[] = inviteesParseResult.data[0] || []
-
-      return { inviteesParseResult, parsedInvitees }
-    }, [rawInvitees])
-
-    const numberOfInvitees = parsedInvitees.length
-    const tooManyInvitees = numberOfInvitees > INVITEE_LIMIT
-
-    const formDataIsValid = Boolean(
-      team && team.name && team.name.length > 1 && !tooManyInvitees,
-    )
-
-    useEffect(() => {
-      onCanSubmitChange(formDataIsValid)
-    }, [formDataIsValid, onCanSubmitChange])
-
-    const {
-      createAndRegisterTeam,
-      isPending: mutationIsPending,
-      errors,
-    } = useCreateAndRegisterChallengeTeam()
-
-    useImperativeHandle(
-      ref,
-      () => {
-        return {
-          submit() {
-            if (!formDataIsValid) {
-              console.warn(
-                'Attempted to submit when form data was not valid. Nothing will happen.',
-              )
-              return
-            }
-            createAndRegisterTeam(
-              team,
-              challengeId,
-              parsedInvitees,
-              invitationMessage,
-            )
-              .then(([newTeam]) => {
-                onFinished(newTeam.id)
-              })
-              .catch(() => {
-                // The hook will return errors, so no need to handle them here
-              })
-          },
-        }
+  const { inviteesParseResult, parsedInvitees } = useMemo(() => {
+    const inviteesParseResult = parse<string[]>(rawInvitees, {
+      delimiter: ',',
+      transform(value) {
+        return value.trim()
       },
-      [
-        formDataIsValid,
-        parsedInvitees,
-        createAndRegisterTeam,
-        team,
-        challengeId,
-        invitationMessage,
-        onFinished,
-      ],
-    )
+    })
+    const parsedInvitees: string[] = inviteesParseResult.data[0] || []
 
-    return (
-      <Box>
-        <Typography variant="body1" sx={{ lineHeight: '20px' }}>
-          Create a new team for this Challenge!
-        </Typography>
+    return { inviteesParseResult, parsedInvitees }
+  }, [rawInvitees])
+
+  const numberOfInvitees = parsedInvitees.length
+  const tooManyInvitees = numberOfInvitees > INVITEE_LIMIT
+
+  const formDataIsValid = Boolean(
+    team && team.name && team.name.length > 1 && !tooManyInvitees,
+  )
+
+  useEffect(() => {
+    onCanSubmitChange(formDataIsValid)
+  }, [formDataIsValid, onCanSubmitChange])
+
+  const {
+    createAndRegisterTeam,
+    isPending: mutationIsPending,
+    errors,
+  } = useCreateAndRegisterChallengeTeam()
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        submit() {
+          if (!formDataIsValid) {
+            console.warn(
+              'Attempted to submit when form data was not valid. Nothing will happen.',
+            )
+            return
+          }
+          createAndRegisterTeam(
+            team,
+            challengeId,
+            parsedInvitees,
+            invitationMessage,
+          )
+            .then(([newTeam]) => {
+              onFinished(newTeam.id)
+            })
+            .catch(() => {
+              // The hook will return errors, so no need to handle them here
+            })
+        },
+      }
+    },
+    [
+      formDataIsValid,
+      parsedInvitees,
+      createAndRegisterTeam,
+      team,
+      challengeId,
+      invitationMessage,
+      onFinished,
+    ],
+  )
+
+  return (
+    <Box>
+      <Typography variant="body1" sx={{ lineHeight: '20px' }}>
+        Create a new team for this Challenge!
+      </Typography>
+      <TextField
+        id="name"
+        label="Team Name"
+        value={team.name}
+        fullWidth
+        autoFocus
+        required
+        onChange={event => handleTeamUpdate({ name: event.target.value })}
+        disabled={mutationIsPending}
+      />
+      <Box display="flex">
         <TextField
-          id="name"
-          label="Team Name"
-          value={team.name}
+          id="description"
+          label={
+            <Box display="flex" gap={2}>
+              <Box>Team Description</Box>
+            </Box>
+          }
+          value={team.description}
           fullWidth
-          autoFocus
-          required
-          onChange={event => handleTeamUpdate({ name: event.target.value })}
+          multiline
+          rows={4}
+          onChange={event =>
+            handleTeamUpdate({ description: event.target.value })
+          }
           disabled={mutationIsPending}
         />
-        <Box display="flex">
-          <TextField
-            id="description"
-            label={
-              <Box display="flex" gap={2}>
-                <Box>Team Description</Box>
-              </Box>
-            }
-            value={team.description}
-            fullWidth
-            multiline
-            rows={4}
-            onChange={event =>
-              handleTeamUpdate({ description: event.target.value })
-            }
-            disabled={mutationIsPending}
-          />
-        </Box>
-        <Box display="flex">
-          <TextField
-            id="message"
-            label={
-              <Box display="flex" gap={2}>
-                <Box>Recruitment Message</Box>
-              </Box>
-            }
-            value={invitationMessage}
-            fullWidth
-            multiline
-            rows={4}
-            onChange={event => setInvitationMessage(event.target.value)}
-            disabled={mutationIsPending}
-          />
-        </Box>
+      </Box>
+      <Box display="flex">
         <TextField
-          id="invitees"
-          label="Emails of Additional Members to Invite (max 3)"
-          placeholder="Enter emails separated by comma"
-          value={rawInvitees}
+          id="message"
+          label={
+            <Box display="flex" gap={2}>
+              <Box>Recruitment Message</Box>
+            </Box>
+          }
+          value={invitationMessage}
           fullWidth
-          onChange={event => setRawInvitees(event.target.value)}
+          multiline
+          rows={4}
+          onChange={event => setInvitationMessage(event.target.value)}
           disabled={mutationIsPending}
         />
-        {(tooManyInvitees ||
-          !isEmpty(inviteesParseResult.errors) ||
-          errors) && (
-          <Alert severity="error">
-            {tooManyInvitees && (
-              <Typography variant={'body1'}>
-                {TOO_MANY_INVITEES_ERROR}
-              </Typography>
-            )}
-            {inviteesParseResult.errors.map((error, index) => (
-              <Typography key={index} variant={'body1'}>
-                {error.message}
+      </Box>
+      <TextField
+        id="invitees"
+        label="Emails of Additional Members to Invite (max 3)"
+        placeholder="Enter emails separated by comma"
+        value={rawInvitees}
+        fullWidth
+        onChange={event => setRawInvitees(event.target.value)}
+        disabled={mutationIsPending}
+      />
+      {(tooManyInvitees || !isEmpty(inviteesParseResult.errors) || errors) && (
+        <Alert severity="error">
+          {tooManyInvitees && (
+            <Typography variant={'body1'}>{TOO_MANY_INVITEES_ERROR}</Typography>
+          )}
+          {inviteesParseResult.errors.map((error, index) => (
+            <Typography key={index} variant={'body1'}>
+              {error.message}
+            </Typography>
+          ))}
+          {errors &&
+            errors.map(error => (
+              <Typography key={error.reason} variant={'body1'}>
+                {error.reason}
               </Typography>
             ))}
-            {errors &&
-              errors.map(error => (
-                <Typography key={error.reason} variant={'body1'}>
-                  {error.reason}
-                </Typography>
-              ))}
-          </Alert>
-        )}
-      </Box>
-    )
-  },
-)
+        </Alert>
+      )}
+    </Box>
+  )
+})

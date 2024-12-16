@@ -1,4 +1,3 @@
-import React from 'react'
 import { Skeleton, Stack } from '@mui/material'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 

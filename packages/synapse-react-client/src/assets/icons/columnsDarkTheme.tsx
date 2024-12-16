@@ -1,4 +1,3 @@
-import React from 'react'
 export default (
   <svg
     className="SRC-column-dark-theme"

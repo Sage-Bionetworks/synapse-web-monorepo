@@ -6,7 +6,8 @@ export const projectsSql = 'SELECT * FROM syn51209786'
 export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'
 export const topPublicationsSql =
   'SELECT * FROM syn51407023 ORDER BY "publicationDate" DESC LIMIT 6'
-export const studiesSql = 'SELECT * FROM syn51523775 ORDER BY isFeatured DESC'
+export const studiesSql =
+  'SELECT * FROM syn51523775 ORDER BY isFeatured DESC, dataStatus ASC, studyName ASC'
 export const speciesSql = 'SELECT * FROM syn53406593 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'
 export const upsetPlotSql = 'SELECT files, assay FROM syn51581771'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
   Box,
@@ -58,7 +58,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
   const { visibleOnPrintClassName, hiddenOnPrintClassName } =
     useMediaPrintOnly()
 
-  const copyCodesToClipboard = React.useCallback(() => {
+  const copyCodesToClipboard = useCallback(() => {
     const codes = (recoveryCodes?.codes || []).join('\n')
     navigator.clipboard.writeText(codes).then(() => {
       displayToast('Recovery codes copied to clipboard', 'success')

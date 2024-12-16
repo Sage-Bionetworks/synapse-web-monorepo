@@ -1,4 +1,3 @@
-import React from 'react'
 import { Action } from '@sage-bionetworks/synapse-types'
 import { useGetEntityActionsRequired } from '../../synapse-queries'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
@@ -9,9 +8,7 @@ export type EntityActionsRequiredProps = {
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
-export const EntityActionsRequired: React.FunctionComponent<
-  EntityActionsRequiredProps
-> = props => {
+export function EntityActionsRequired(props: EntityActionsRequiredProps) {
   const { entityId, onViewSharingSettingsClicked } = props
   const { data: actionRequiredList } = useGetEntityActionsRequired(entityId)
   const actions = actionRequiredList?.actions

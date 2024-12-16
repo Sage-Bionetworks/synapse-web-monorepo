@@ -1,4 +1,3 @@
-import React from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 import {

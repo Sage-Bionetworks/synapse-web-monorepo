@@ -37,8 +37,7 @@
     "get-spec:staging": "npx tsx src/codegen/downloadSpec.ts --stack staging && pnpm format-spec",
     "get-spec:production": "npx tsx src/codegen/downloadSpec.ts --stack production && pnpm format-spec",
     "get-spec": "pnpm get-spec:production",
-    "configure": "openapi-generator-cli version-manager set 7.8.0",
-    "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); pnpm configure && rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS",
+    "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS",
     "build": "pnpm tsc --build",
     "test": "vitest",
     "lint": "eslint src"

@@ -4,6 +4,7 @@ import EntityFinder from './EntityFinder'
 import { FinderScope } from './tree/EntityTree'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { VersionSelectionType } from './VersionSelectionType'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/EntityFinder',
@@ -24,18 +25,13 @@ export const DualPane: Story = {
   args: {
     treeOnly: false,
     initialScope: FinderScope.CURRENT_PROJECT,
-    projectId: 'syn23567475',
-    initialContainer: 'syn24183903',
+    projectId: 'syn5550376',
+    initialContainer: 'syn5550376',
     selectMultiple: true,
     visibleTypesInList: Object.values(EntityType),
     versionSelection: VersionSelectionType.TRACKED,
-    onSelectedChange: selected => {
-      console.log('Selection changed:', selected)
-    },
+    onSelectedChange: fn(),
     selectableTypes: Object.values(EntityType),
-    selectedCopy: count => {
-      return `${count} Item${count > 1 ? 's' : ''} Selected`
-    },
   },
 }
 
@@ -43,8 +39,8 @@ export const SinglePane: Story = {
   args: {
     treeOnly: true,
     initialScope: FinderScope.CURRENT_PROJECT,
-    projectId: 'syn23567475',
-    initialContainer: 'syn24183903',
+    projectId: 'syn5550376',
+    initialContainer: 'syn5550376',
     selectMultiple: false,
     visibleTypesInTree: [
       EntityType.PROJECT,
@@ -52,9 +48,7 @@ export const SinglePane: Story = {
       EntityType.TABLE,
     ],
     versionSelection: VersionSelectionType.DISALLOWED,
-    onSelectedChange: selected => {
-      console.log('Selection changed:', selected)
-    },
+    onSelectedChange: fn(),
     selectableTypes: [EntityType.PROJECT, EntityType.FOLDER],
   },
 }

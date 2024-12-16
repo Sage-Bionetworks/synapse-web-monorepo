@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import {
   Backdrop,
   Box,
@@ -24,10 +24,10 @@ type SynapseSpinnerProps = {
   margin?: string // the margin, default auto
 }
 
-export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
+export function SynapseSpinner({
   size = 20,
   margin = 'auto',
-}) => {
+}: SynapseSpinnerProps) {
   return (
     <div
       role={'progressbar'}
@@ -50,14 +50,14 @@ export type BlockingLoaderProps = {
   hintText?: string
   headlineText?: string
 }
-export const BlockingLoader: React.FC<BlockingLoaderProps> = ({
+export function BlockingLoader({
   show,
   currentProgress,
   onCancel,
   totalProgress,
   headlineText,
   hintText,
-}) => {
+}: BlockingLoaderProps) {
   useEffect(() => {
     document.body.style.cursor = show ? 'wait' : 'default'
     return () => {

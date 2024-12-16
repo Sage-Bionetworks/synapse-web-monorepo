@@ -5,7 +5,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import mockTableEntityData, {
