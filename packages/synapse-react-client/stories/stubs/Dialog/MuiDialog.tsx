@@ -25,12 +25,7 @@ export const Dialog = (props: DialogProps) => {
   return (
     <MuiDialog {...rest}>
       <DialogTitle>
-        <Stack
-          direction="row"
-          alignItems={'center'}
-          gap={'5px'}
-          fontSize={{ xs: '18px', md: 'unset' }}
-        >
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
           {helpText && <HelpPopover markdownText={helpText} />}
           <Box sx={{ flexGrow: 1 }} />
