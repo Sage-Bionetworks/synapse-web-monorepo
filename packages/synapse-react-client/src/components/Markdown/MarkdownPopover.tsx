@@ -8,6 +8,7 @@ import {
   TooltipProps,
   Typography,
 } from '@mui/material'
+import { spreadSx } from '../../theme/spreadSx'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import LightTooltip from '../styled/LightTooltip'
 import { atom, useAtom } from 'jotai'
@@ -97,13 +98,12 @@ export function MarkdownPopover({
       title={content}
       placement={placement}
       open={show}
-      sx={{
-        ...sx,
+      sx={spreadSx(sx, {
         [`& .${tooltipClasses.tooltip}`]: {
           maxWidth: { maxWidth },
           minWidth: { minWidth },
         },
-      }}
+      })}
     >
       <Box
         role="button"
