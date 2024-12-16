@@ -104,22 +104,15 @@ export const DialogBase = ({
       sx={sx}
       {...DialogProps}
       PaperProps={{
-        // sx: theme => ({
-        //   [theme.breakpoints.down('sm')]: {
-        //     margin: 0,
-        //     width: '100%',
-        //     height: '100%',
-        //     maxHeight: 'unset',
-        //     padding: '16px',
-        //   },
-        // }),
-        sx: {
-          margin: { xs: 0, md: 'initial' },
-          width: { xs: '100%', md: 'initial' },
-          height: { xs: '100%', md: 'initial' },
-          maxHeight: { xs: 'unset', md: 'initial' },
-          padding: { xs: '16px', md: '44px' },
-        },
+        sx: theme => ({
+          [theme.breakpoints.down('sm')]: {
+            margin: 0,
+            width: '100%',
+            height: '100%',
+            maxHeight: 'unset',
+            padding: '16px',
+          },
+        }),
       }}
     >
       <DialogBaseTitle
