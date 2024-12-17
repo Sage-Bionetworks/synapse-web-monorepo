@@ -64,13 +64,15 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
           variant="contained"
           component={Link}
           to={link || ''}
-          sx={{
-            minWidth: '265px',
+          sx={theme => ({
+            [theme.breakpoints.up('sm')]: {
+              width: 'fit-content',
+            },
             whiteSpace: 'nowrap',
             padding: '6px 24px',
             fontWeight: '600',
             fontSize: '16px',
-          }}
+          })}
         >
           {buttonText}
         </Button>
