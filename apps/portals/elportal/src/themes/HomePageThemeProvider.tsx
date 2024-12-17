@@ -27,15 +27,13 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
             boxShadow: 'none !important',
             animationTimingFunction: 'ease-out',
             animationDuration: '64ms',
+            // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
+            color: '#FFF !important',
             '&:hover': {
               backgroundColor: darken(theme.palette.primary.main, 0.2),
-              // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
-              color: '#FFF !important',
             },
             '&:focus': {
               textDecoration: 'none',
-              // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
-              color: '#FFF !important',
             },
           },
         },
