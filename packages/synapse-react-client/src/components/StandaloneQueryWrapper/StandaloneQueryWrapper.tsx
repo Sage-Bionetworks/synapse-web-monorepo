@@ -1,34 +1,34 @@
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { SynapseConstants } from '../../utils'
+import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions/SqlFunctions'
-import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
-import { QueryContextConsumer } from '../QueryContext/QueryContext'
-import TopLevelControls, {
-  TopLevelControlsProps,
-} from '../SynapseTable/TopLevelControls/TopLevelControls'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
-import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
-import TotalQueryResults from '../TotalQueryResults'
-import SqlEditor from '../SynapseTable/SqlEditor'
+import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import { isTable } from '../../utils/functions/EntityTypeUtils'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import {
   Operator,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
+import SqlEditor from '../SynapseTable/SqlEditor'
+import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
+import TopLevelControls, {
+  TopLevelControlsProps,
+} from '../SynapseTable/TopLevelControls/TopLevelControls'
+import TotalQueryResults from '../TotalQueryResults'
 
 type StandaloneQueryWrapperOwnProps = {
   sql: string
@@ -117,11 +117,21 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     )
 
   const { data: entity } = useGetEntity(entityId)
+
+  /**
+   * Fully re-render the uncontrolled QueryWrapper component when the initial query changes. This eliminates a class of
+   * bugs where our 'derived' state (the current query), which should be reset, is out of sync with props.
+   *
+   * See https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+   */
+  const queryWrapperKey =
+    JSON.stringify(derivedQueryRequestFromSearchParams) + componentKey
+
   return (
     <QueryWrapper
       {...rest}
       initQueryRequest={derivedQueryRequestFromSearchParams}
-      key={componentKey}
+      key={queryWrapperKey}
     >
       <QueryVisualizationWrapper
         rgbIndex={rgbIndex}

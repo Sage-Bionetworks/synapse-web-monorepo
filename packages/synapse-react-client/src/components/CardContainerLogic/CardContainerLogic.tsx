@@ -211,8 +211,21 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
       SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
   }
 
+  /**
+   * Fully re-render the uncontrolled QueryWrapper component when the initial query changes. This eliminates a class of
+   * bugs where our 'derived' state (the current query), which should be reset, is out of sync with props.
+   *
+   * See https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+   */
+  const queryWrapperKey = JSON.stringify(initQueryRequest)
+
   return (
-    <QueryWrapper {...props} initQueryRequest={initQueryRequest} isInfinite>
+    <QueryWrapper
+      {...props}
+      initQueryRequest={initQueryRequest}
+      isInfinite
+      key={queryWrapperKey}
+    >
       <QueryVisualizationWrapper
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
