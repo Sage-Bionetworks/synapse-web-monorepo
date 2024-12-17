@@ -7,6 +7,7 @@ import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
 import UserTeams from './UserTeams'
+import { Box } from '@mui/system'
 
 type UserProfileLinkConfig = {
   name: 'Projects' | 'Teams' | 'Challenges'
@@ -50,7 +51,14 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
         {userProfile && <>{userProfile?.userName}&apos;s Items</>}
         {!userProfile && <Skeleton width="75%" />}
       </Typography>
-      <div className="Tabs">
+      <Box
+        className="Tabs"
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            flexDirection: 'column',
+          },
+        })}
+      >
         {userProfileLinksConfig.map(config => {
           return (
             <div
@@ -69,7 +77,7 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
             </div>
           )
         })}
-      </div>
+      </Box>
       <div className="TabContent">
         <SynapseErrorBoundary>
           {
