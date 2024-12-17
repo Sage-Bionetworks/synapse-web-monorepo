@@ -64,7 +64,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid
       key={pub.rowId}
-      height={{ xs: 'auto', sm: '275px' }}
+      height={{ xs: 'auto', sm: 'initial' }}
       minWidth={{ xs: '280px', lg: 'initial' }}
       maxWidth={{ xs: '450px', lg: 'initial' }}
     >

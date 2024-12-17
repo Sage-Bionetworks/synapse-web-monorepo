@@ -32,6 +32,11 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
               // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
               color: '#FFF !important',
             },
+            '&:focus': {
+              textDecoration: 'none',
+              // TODO: Bootstrap 3 link color applies to all a:hover elements. Remove this override when Bootstrap 3 is removed
+              color: '#FFF !important',
+            },
           },
         },
       },
