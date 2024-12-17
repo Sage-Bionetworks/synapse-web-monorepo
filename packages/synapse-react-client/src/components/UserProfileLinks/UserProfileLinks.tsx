@@ -56,14 +56,20 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
         sx={theme => ({
           [theme.breakpoints.down('sm')]: {
             flexDirection: 'column',
+            gap: '8px',
           },
         })}
       >
         {userProfileLinksConfig.map(config => {
           return (
-            <div
+            <Box
               className="Tab"
               role="tab"
+              sx={theme => ({
+                [theme.breakpoints.down('sm')]: {
+                  minHeight: '45px',
+                },
+              })}
               key={config.name}
               onClick={e => {
                 e.stopPropagation()
@@ -74,7 +80,7 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
               <Typography variant="buttonLink">
                 <IconSvg icon={config.iconName} /> {config.name}
               </Typography>
-            </div>
+            </Box>
           )
         })}
       </Box>
