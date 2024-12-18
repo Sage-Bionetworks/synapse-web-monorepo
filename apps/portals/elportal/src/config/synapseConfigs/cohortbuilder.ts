@@ -117,6 +117,7 @@ export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
 export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Data',
+  showAccessColumnHeader: true,
   showExportToCavatica: true,
   fileIdColumnName: 'id',
   fileNameColumnName: 'name',
