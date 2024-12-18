@@ -1,4 +1,10 @@
-import { Typography, Button, Box, Skeleton } from '@mui/material'
+import {
+  Typography,
+  Button,
+  Box,
+  Skeleton,
+  Link as MuiLink,
+} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -8,6 +14,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
+import { DOI_REGEX } from '../../utils/functions/RegularExpressions'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -18,6 +25,14 @@ export type RecentPublicationsGridProps = {
 
 type PublicationCardProps = {
   pub: Row
+}
+
+const convertDoiToLink = (doi: string) => {
+  doi = doi.trim()
+  if (DOI_REGEX.test(doi)) {
+    return `https://dx.doi.org/${doi}`
+  }
+  return ''
 }
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
@@ -45,6 +60,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     JOURNAL = 'Journal',
     TITLE = 'Title',
     PUBLICATION_DATE = 'publicationDate',
+    DOI = 'DOI',
   }
 
   const categoryColIndex = getFieldIndex(
@@ -60,6 +76,9 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     ExpectedColumns.PUBLICATION_DATE,
     queryResultBundle,
   )
+  const doiColIndex = getFieldIndex(ExpectedColumns.DOI, queryResultBundle)
+
+  console.log('doi', doiColIndex)
 
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid
@@ -96,7 +115,21 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                 padding: '20px 0px',
               }}
             >
-              {pub.values[titleColIndex]}
+              <MuiLink
+                href={convertDoiToLink(pub.values[doiColIndex] || '')}
+                target="_blank"
+                sx={{
+                  color: 'inherit',
+                  textDecoration: 'none',
+                  fontWeight: 'inherit',
+                  '&:hover': {
+                    color: '#1C9F87',
+                    textDecoration: 'none',
+                  },
+                }}
+              >
+                {pub.values[titleColIndex]}
+              </MuiLink>
             </Typography>
             <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
               <Typography
