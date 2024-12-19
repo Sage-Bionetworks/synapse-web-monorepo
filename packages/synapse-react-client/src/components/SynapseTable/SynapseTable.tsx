@@ -146,8 +146,7 @@ export function SynapseTable(props: SynapseTableProps) {
       directDownloadColumn,
       {
         ...accessColumn,
-        header:
-          showAccessColumn && showAccessColumnHeader ? 'Access' : undefined,
+        header: showAccessColumn && showAccessColumnHeader ? 'Access' : '',
       },
       ...(selectColumns.map((selectColumn, index) => {
         return columnHelper.accessor(row => row.values[index], {
