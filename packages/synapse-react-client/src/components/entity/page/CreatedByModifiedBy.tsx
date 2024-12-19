@@ -103,7 +103,15 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
   }
 
   return (
-    <Box sx={{ bgcolor: 'grey.100', py: '10px' }}>
+    <Box
+      sx={theme => ({
+        bgcolor: 'grey.100',
+        py: '10px',
+        [theme.breakpoints.down('sm')]: {
+          p: '24px 40px',
+        },
+      })}
+    >
       <Breadcrumbs
         separator={<Separator />}
         sx={{
