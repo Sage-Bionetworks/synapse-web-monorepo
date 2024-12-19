@@ -1,4 +1,4 @@
-import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
+import { Card, IconButton, Skeleton, Tooltip, SxProps } from '@mui/material'
 import {
   MutableRefObject,
   SyntheticEvent,
@@ -77,6 +77,13 @@ export function UserCardMedium({
     setMenuAnchorEl(null)
   }
   const [showModal, setShowModal] = useState(false)
+
+  const userCardMediumBaseStyles: SxProps = {
+    height: '120px',
+    width: ['-webkit-fill-available', '-moz-available', '100%'],
+    paddingLeft: '25px',
+    minWidth: '350px',
+  }
 
   const copyToClipboardRef = useRef<HTMLParagraphElement>(null)
 
@@ -243,7 +250,20 @@ export function UserCardMedium({
 
   if (!isLarge) {
     return (
-      <Card className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</Card>
+      <Card
+        className={`SRC-userCard`}
+        sx={theme => ({
+          ...userCardMediumBaseStyles,
+          [theme.breakpoints.down('sm')]: {
+            minWidth: 'unset',
+            maxWidth: '300px',
+            width: '100%',
+            padding: '0 10px',
+          },
+        })}
+      >
+        {mediumCard}
+      </Card>
     )
   }
   // else return medium card inside large component
