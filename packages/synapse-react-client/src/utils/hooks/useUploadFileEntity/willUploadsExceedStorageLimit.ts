@@ -8,9 +8,12 @@ import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-types'
  */
 export function willUploadsExceedStorageLimit(
   files: ArrayLike<File>,
-  usage: ProjectStorageLocationUsage,
+  usage: ProjectStorageLocationUsage | undefined,
   pendingUploadsInBytes: number,
 ): boolean {
+  if (usage == null) {
+    return false
+  }
   if (usage.isOverLimit) {
     return true
   }

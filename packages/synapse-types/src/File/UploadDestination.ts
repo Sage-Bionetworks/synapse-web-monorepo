@@ -17,7 +17,7 @@ export interface UploadDestination {
   uploadType: UploadType
   /* If set, the client should show this banner every time an upload is initiated */
   banner?: string
-  projectStorageLocationUsage: ProjectStorageLocationUsage
+  projectStorageLocationUsage?: ProjectStorageLocationUsage
 }
 
 /**

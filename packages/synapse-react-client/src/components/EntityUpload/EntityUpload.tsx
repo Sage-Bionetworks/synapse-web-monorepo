@@ -119,7 +119,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
   ).length
 
   function uploadFileList(fileList: ArrayLike<File>) {
-    if (uploadDestination?.projectStorageLocationUsage.isOverLimit) {
+    if (uploadDestination?.projectStorageLocationUsage?.isOverLimit) {
       displayToast(
         'Cannot upload files because the storage limit has been exceeded.',
         'danger',
@@ -145,7 +145,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
   return (
     <div>
       <EntityUploadPromptDialog activePrompts={activePrompts} />
-      {uploadDestination && (
+      {uploadDestination?.projectStorageLocationUsage && (
         <ProjectStorageLimitAlert
           usage={uploadDestination.projectStorageLocationUsage}
           didUploadsExceedLimit={didUploadsExceedStorageLimit}
@@ -164,7 +164,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
           textAlign: 'center',
-          ...(uploadDestination?.projectStorageLocationUsage.isOverLimit
+          ...(uploadDestination?.projectStorageLocationUsage?.isOverLimit
             ? disabledUploadPaneSx
             : {}),
         }}
