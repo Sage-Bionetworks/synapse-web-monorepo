@@ -55,7 +55,6 @@ type QueryWrapperPlotNavOwnProps = {
   /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
   isInfinite?: boolean
   sql: string
-  showAccessColumnHeader?: boolean
   limit?: number
   shouldDeepLink?: boolean
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
@@ -141,7 +140,6 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
   | 'initialLimit'
-  | 'showAccessColumnHeader'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -150,7 +148,6 @@ type QueryWrapperPlotNavContentsProps = Pick<
 function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   const {
     tableConfiguration,
-    showAccessColumnHeader,
     name,
     cardConfiguration,
     facetsToPlot,
@@ -261,7 +258,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 hideDownload={hideDownload}
                 cardConfiguration={cardConfiguration}
                 initialLimit={initialLimit}
-                showAccessColumnHeader={showAccessColumnHeader}
               />
               {showExportMetadata && (
                 <ModalDownload

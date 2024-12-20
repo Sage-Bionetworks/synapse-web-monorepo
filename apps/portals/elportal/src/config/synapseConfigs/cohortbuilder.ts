@@ -117,7 +117,6 @@ export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
 export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Data',
-  showAccessColumnHeader: true,
   showExportToCavatica: true,
   fileIdColumnName: 'id',
   fileNameColumnName: 'name',
@@ -130,6 +129,7 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
   tableConfiguration: {
     showAccessColumn: true,
+    showAccessColumnHeader: true,
     showDownloadColumn: true,
     columnLinks: [
       {
