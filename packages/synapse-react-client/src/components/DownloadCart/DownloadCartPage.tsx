@@ -85,7 +85,13 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
               </Button>
             </Tooltip>
           </div>
-          <Typography className="description" variant="body1">
+          <Typography
+            className="description"
+            variant="body1"
+            sx={{
+              display: { xs: 'none', md: 'unset' },
+            }}
+          >
             Your added files can be found in the tabs below. Files requiring
             actions before download are listed in the Access Actions Required
             tab, while those ready for download can be found in the Download
