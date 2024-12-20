@@ -14,7 +14,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
-import { DOI_REGEX } from '../../utils/functions/RegularExpressions'
+import { convertDoiToLink } from '../../utils/functions/DoiUtils'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -25,14 +25,6 @@ export type RecentPublicationsGridProps = {
 
 type PublicationCardProps = {
   pub: Row
-}
-
-const convertDoiToLink = (doi: string) => {
-  doi = doi.trim()
-  if (DOI_REGEX.test(doi)) {
-    return `https://dx.doi.org/${doi}`
-  }
-  return ''
 }
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
@@ -78,8 +70,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   )
   const doiColIndex = getFieldIndex(ExpectedColumns.DOI, queryResultBundle)
 
-  console.log('doi', doiColIndex)
-
   const PublicationCard = ({ pub }: PublicationCardProps) => (
     <Grid
       key={pub.rowId}
@@ -123,7 +113,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
                   textDecoration: 'none',
                   fontWeight: 'inherit',
                   '&:hover': {
-                    color: '#1C9F87',
                     textDecoration: 'none',
                   },
                 }}
