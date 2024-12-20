@@ -158,7 +158,7 @@ export function SynapseTable(props: SynapseTableProps) {
         })
       }) ?? []),
     ],
-    [selectColumns],
+    [selectColumns, showAccessColumn],
   )
 
   const prependColumnVisibility: VisibilityState = useMemo(
