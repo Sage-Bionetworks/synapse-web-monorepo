@@ -5,6 +5,14 @@ import { normalizeSynPrefix } from './EntityTypeUtils'
 // note - had to add an escape character for the second and third forward slash in the regex above
 export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/i
 
+export function convertDoiToLink(doi: string) {
+  doi = doi.trim()
+  if (DOI_REGEX.test(doi)) {
+    return `https://dx.doi.org/${doi}`
+  }
+  return ''
+}
+
 /**
  * Checks for a Synapse ID, with or without a version number.
  * Captures the synId and version number into capture groups.

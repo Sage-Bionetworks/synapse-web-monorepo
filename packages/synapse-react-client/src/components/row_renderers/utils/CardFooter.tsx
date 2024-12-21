@@ -1,7 +1,7 @@
 import { Component, Fragment } from 'react'
 import IconSVG from '../../IconSvg/IconSvg'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
-import { DOI_REGEX } from '../../../utils/functions/RegularExpressions'
+import { convertDoiToLink } from '../../../utils/functions/RegularExpressions'
 
 type State = {
   isShowMoreOn: boolean
@@ -58,13 +58,15 @@ class CardFooter extends Component<CardFooterProps, State> {
       return value
     }
     value = value.trim()
-    if (value.match(DOI_REGEX)) {
+    const doiLink = convertDoiToLink(value)
+
+    if (doiLink) {
       return (
         <a
           data-search-handle={columnName}
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://dx.doi.org/${value}`}
+          href={doiLink}
         >
           {value}
         </a>

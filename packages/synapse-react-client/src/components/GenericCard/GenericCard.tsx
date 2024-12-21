@@ -5,10 +5,7 @@ import {
   isTableEntity,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import {
-  DOI_REGEX,
-  SYNAPSE_ENTITY_ID_REGEX,
-} from '../../utils/functions/RegularExpressions'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import {
   ColumnModel,
   ColumnType,
@@ -45,6 +42,7 @@ import {
 } from './CollapsibleDescription'
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
+import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type KeyToAlias = {
   key: string
@@ -272,13 +270,14 @@ export function getLinkParams(
 ) {
   link = link.trim()
   let href = link
+  const doiLink = convertDoiToLink(href)
   let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
     href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
-  } else if (link.match(DOI_REGEX)) {
+  } else if (doiLink) {
     defaultTarget = TargetEnum.NEW_WINDOW
-    href = `https://dx.doi.org/${link}`
+    href = doiLink
   } else if (!cardLinkConfig) {
     defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
