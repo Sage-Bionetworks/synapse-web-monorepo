@@ -144,6 +144,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                     }}
                     availableFacets={['metadataType', 'dataType', 'assay']}
@@ -179,6 +180,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                       columnLinks: [
                         {
