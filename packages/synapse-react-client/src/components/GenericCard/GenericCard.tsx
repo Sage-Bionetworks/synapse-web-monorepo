@@ -42,7 +42,7 @@ import {
 } from './CollapsibleDescription'
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
-import { convertDoiToLink } from '../../utils/functions/DoiUtils'
+import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type KeyToAlias = {
   key: string

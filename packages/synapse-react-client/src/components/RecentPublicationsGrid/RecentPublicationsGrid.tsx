@@ -14,7 +14,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
-import { convertDoiToLink } from '../../utils/functions/DoiUtils'
+import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type RecentPublicationsGridProps = {
   sql: string
