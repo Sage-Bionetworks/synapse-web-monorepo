@@ -256,9 +256,7 @@ export function UserCardMedium({
           ...userCardMediumBaseStyles,
           [theme.breakpoints.down('sm')]: {
             minWidth: 'unset',
-            maxWidth: '300px',
-            width: '100%',
-            padding: '0 10px',
+            padding: '0 16px',
           },
         })}
       >
