@@ -102,7 +102,12 @@ export const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
-      sx={sx}
+      sx={theme => ({
+        ...sx,
+        [theme.breakpoints.down('sm')]: {
+          width: '100vw',
+        },
+      })}
       {...DialogProps}
       PaperProps={{
         sx: theme => ({
