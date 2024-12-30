@@ -3,6 +3,7 @@ import {
   RecentPublicationsGrid,
   ImageCardGridWithLinks,
   PortalFeatureHighlights,
+  FeaturedResearch,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -45,6 +46,7 @@ export default function HomePage() {
         title="What We Do"
         summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
       />
+      <FeaturedResearch />
       {/* Commented out for release (see EC-485) */}
       {/*<div className={'home-bg-dark'}>*/}
       {/*<SectionLayout*/}
