@@ -1,4 +1,4 @@
-import { Box, Link, Stack, Typography } from '@mui/material'
+import { Box, CardMedia, Link, Stack, Typography } from '@mui/material'
 
 export type FeaturedResearchProps = {
   affiliation: string
@@ -11,6 +11,65 @@ export type FeaturedResearchProps = {
 }
 
 type Card = FeaturedResearchProps
+
+const FeaturedResearchCard = (card: Card) => (
+  <Box
+    display={'flex'}
+    gap={'30px'}
+    borderBottom={'1px solid #EAECEE'}
+    padding={'24px 0'}
+    sx={{
+      flexDirection: {
+        xs: 'column',
+        sm: 'row',
+      },
+    }}
+  >
+    <Stack useFlexGap gap={'10px'}>
+      <Typography
+        fontSize={'14px'}
+        lineHeight={'normal'}
+        fontWeight={500}
+        color={'grey.600'}
+      >
+        {card.affiliation}
+      </Typography>
+      <Typography variant="headline2" fontSize={'21px'}>
+        {card.title}
+      </Typography>
+      <Stack direction={'row'} useFlexGap gap={'16px'} alignItems={'center'}>
+        <Typography
+          variant="overline"
+          fontSize={'14px'}
+          whiteSpace={'nowrap'}
+          sx={{
+            backgroundColor: 'grey.300',
+            borderRadius: '3px',
+            padding: '4px 8px',
+            border: 'none',
+            lineHeight: 'initial',
+          }}
+        >
+          {card.tags[0]}
+        </Typography>
+        <Typography lineHeight={'normal'} color={'grey.600'}>
+          {card.affiliation}
+        </Typography>
+      </Stack>
+    </Stack>
+    <CardMedia
+      component="img"
+      image="https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_3x2.jpg"
+      alt="National Geographic Image"
+      sx={{
+        width: '140px',
+        height: '93.8px',
+        borderRadius: '6px',
+        objectFit: 'cover',
+      }}
+    />
+  </Box>
+)
 
 function FeaturedResearch(props: FeaturedResearchProps) {
   // order date by descending
@@ -27,7 +86,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
         'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_3x2.jpg',
     },
     {
-      affiliation: 'Some University 1',
+      affiliation: 'Some Place 1',
       publishedDate: '2024-12-18',
       title: '10 Tips for Better Coding',
       description:
@@ -37,7 +96,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
       image: 'https://example.com/images/better-coding.jpg',
     },
     {
-      affiliation: 'Some University 2',
+      affiliation: 'Some Place 2',
       publishedDate: '2024-12-15',
       title: 'Understanding Quantum Computing',
       description:
@@ -47,7 +106,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
       image: 'https://example.com/images/quantum-computing.jpg',
     },
     {
-      affiliation: 'Some University 3',
+      affiliation: 'Some Place 3',
       publishedDate: '2024-12-12',
       title: 'The Rise of Green Energy',
       description:
@@ -57,7 +116,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
       image: 'https://example.com/images/green-energy.jpg',
     },
     {
-      affiliation: 'Some University 4',
+      affiliation: 'Some Place 4',
       publishedDate: '2024-12-10',
       title: 'The Art of Mindfulness',
       description:
@@ -71,59 +130,6 @@ function FeaturedResearch(props: FeaturedResearchProps) {
   const topCard = dummyData[0]
   const remainingCards = dummyData.slice(1)
 
-  const FeaturedResearchCard = (card: Card) => (
-    <Stack
-      useFlexGap
-      gap={'30px'}
-      direction={'row'}
-      borderBottom={"1px solid var('grey.300', #EAECEE)"}
-    >
-      <Stack useFlexGap gap={'10px'}>
-        <Typography
-          fontSize={'14px'}
-          lineHeight={'normal'}
-          fontWeight={500}
-          color={'grey.600'}
-        >
-          {card.affiliation}
-        </Typography>
-        <Typography variant="headline2" fontSize={'21px'}>
-          {card.title}
-        </Typography>
-        <Stack direction={'row'} useFlexGap gap={'16px'}>
-          <Typography
-            variant="overline"
-            fontSize={'14px'}
-            whiteSpace={'nowrap'}
-            sx={{
-              backgroundColor: 'grey.300',
-              borderRadius: '3px',
-              padding: '4px 8px',
-              border: 'none',
-              lineHeight: 'initial',
-            }}
-          >
-            {card.tags[0]}
-          </Typography>
-          <Typography lineHeight={'normal'} color={'grey.600'}>
-            {topCard.affiliation}
-          </Typography>
-        </Stack>
-      </Stack>
-      <Box
-        width="140px"
-        height="93.8px"
-        borderRadius="6px"
-        sx={{
-          backgroundImage:
-            "url('https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_3x2.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-    </Stack>
-  )
-
   return (
     <Box
       sx={{
@@ -133,7 +139,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
         padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <Box>
+      <div>
         <Box
           width="100%"
           height={{ xs: '250px', sm: '400px', lg: '600.3px', xl: '800px' }}
@@ -146,7 +152,13 @@ function FeaturedResearch(props: FeaturedResearchProps) {
             marginBottom: '30px',
           }}
         />
-        <Stack direction="row" useFlexGap gap={'10px'} paddingBottom={'20px'}>
+        <Stack
+          direction="row"
+          useFlexGap
+          gap={'10px'}
+          paddingBottom={'20px'}
+          alignItems={'center'}
+        >
           <Typography
             fontSize={'14px'}
             lineHeight={'normal'}
@@ -173,7 +185,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
           </Typography>
           <Link href={topCard.link}>Read more</Link>
         </Stack>
-      </Box>
+      </div>
       <Box
         display="flex"
         flexDirection="column"
