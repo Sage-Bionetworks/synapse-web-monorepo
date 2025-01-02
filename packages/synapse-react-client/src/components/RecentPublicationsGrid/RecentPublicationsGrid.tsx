@@ -25,7 +25,101 @@ export type RecentPublicationsGridProps = {
 
 type PublicationCardProps = {
   pub: Row
+  isLoading: boolean
+  categoryColIndex: number
+  titleColIndex: number
+  journalColIndex: number
+  publicationDateColIndex: number
+  doiColIndex: number
 }
+
+const PublicationCard = ({
+  pub,
+  isLoading,
+  categoryColIndex,
+  titleColIndex,
+  journalColIndex,
+  publicationDateColIndex,
+  doiColIndex,
+}: PublicationCardProps) => (
+  <Grid
+    key={pub.rowId}
+    height={{ xs: 'auto', sm: 'initial' }}
+    minWidth={{ xs: '280px', lg: 'initial' }}
+    maxWidth={{ xs: '450px', lg: 'initial' }}
+  >
+    <Box sx={{ height: '100%' }}>
+      {isLoading ? (
+        <Skeleton variant="rectangular" height={275} width="100%" />
+      ) : (
+        <div>
+          {pub.values[categoryColIndex] && (
+            <Typography
+              variant="overline"
+              fontSize={'14px'}
+              sx={{
+                backgroundColor: 'grey.300',
+                borderRadius: '3px',
+                padding: '4px 8px',
+                border: 'none',
+                lineHeight: 'initial',
+              }}
+            >
+              {pub.values[categoryColIndex]}
+            </Typography>
+          )}
+          <Typography
+            variant="headline2"
+            color="grey.1000"
+            fontSize={'21px'}
+            sx={{
+              padding: '20px 0px',
+            }}
+          >
+            <MuiLink
+              href={convertDoiToLink(pub.values[doiColIndex] || '')}
+              target="_blank"
+              sx={{
+                color: 'inherit',
+                textDecoration: 'none',
+                fontWeight: 'inherit',
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+              }}
+            >
+              {pub.values[titleColIndex]}
+            </MuiLink>
+          </Typography>
+          <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              fontSize={'14px'}
+              fontStyle={'italic'}
+              lineHeight={1.35}
+            >
+              {pub.values[journalColIndex]}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              fontSize={'14px'}
+              lineHeight={1.35}
+              paddingBottom={{ xs: 0, md: '35px' }}
+            >
+              {pub.values[publicationDateColIndex] &&
+                formatDate(
+                  dayjs(Number(pub.values[publicationDateColIndex])),
+                  'MMMM, YYYY',
+                )}
+            </Typography>
+          </Box>
+        </div>
+      )}
+    </Box>
+  </Grid>
+)
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
@@ -70,86 +164,6 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   )
   const doiColIndex = getFieldIndex(ExpectedColumns.DOI, queryResultBundle)
 
-  const PublicationCard = ({ pub }: PublicationCardProps) => (
-    <Grid
-      key={pub.rowId}
-      height={{ xs: 'auto', sm: 'initial' }}
-      minWidth={{ xs: '280px', lg: 'initial' }}
-      maxWidth={{ xs: '450px', lg: 'initial' }}
-    >
-      <Box sx={{ height: '100%' }}>
-        {isLoading ? (
-          <Skeleton variant="rectangular" height={275} width="100%" />
-        ) : (
-          <div>
-            {pub.values[categoryColIndex] && (
-              <Typography
-                variant="overline"
-                fontSize={'14px'}
-                sx={{
-                  backgroundColor: 'grey.300',
-                  borderRadius: '3px',
-                  padding: '4px 8px',
-                  border: 'none',
-                  lineHeight: 'initial',
-                }}
-              >
-                {pub.values[categoryColIndex]}
-              </Typography>
-            )}
-            <Typography
-              variant="headline2"
-              color="grey.1000"
-              fontSize={'21px'}
-              sx={{
-                padding: '20px 0px',
-              }}
-            >
-              <MuiLink
-                href={convertDoiToLink(pub.values[doiColIndex] || '')}
-                target="_blank"
-                sx={{
-                  color: 'inherit',
-                  textDecoration: 'none',
-                  fontWeight: 'inherit',
-                  '&:hover': {
-                    textDecoration: 'none',
-                  },
-                }}
-              >
-                {pub.values[titleColIndex]}
-              </MuiLink>
-            </Typography>
-            <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
-              <Typography
-                variant="body1"
-                color="grey.700"
-                fontSize={'14px'}
-                fontStyle={'italic'}
-                lineHeight={1.35}
-              >
-                {pub.values[journalColIndex]}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="grey.700"
-                fontSize={'14px'}
-                lineHeight={1.35}
-                paddingBottom={{ xs: 0, md: '35px' }}
-              >
-                {pub.values[publicationDateColIndex] &&
-                  formatDate(
-                    dayjs(Number(pub.values[publicationDateColIndex])),
-                    'MMMM, YYYY',
-                  )}
-              </Typography>
-            </Box>
-          </div>
-        )}
-      </Box>
-    </Grid>
-  )
-
   return (
     <Box
       sx={{
@@ -183,7 +197,16 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           })}
         >
           {dataRows.map(pub => (
-            <PublicationCard pub={pub} key={pub.rowId} />
+            <PublicationCard
+              pub={pub}
+              key={pub.rowId}
+              isLoading={isLoading}
+              categoryColIndex={categoryColIndex}
+              titleColIndex={titleColIndex}
+              journalColIndex={journalColIndex}
+              publicationDateColIndex={publicationDateColIndex}
+              doiColIndex={doiColIndex}
+            />
           ))}
         </Box>
       </Box>
