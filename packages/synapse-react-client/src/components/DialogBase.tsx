@@ -106,20 +106,18 @@ export const DialogBase = ({
         ...sx,
         [theme.breakpoints.down('sm')]: {
           width: '100vw',
+          '.MuiDialog-container > .MuiPaper-root': {
+            [theme.breakpoints.down('sm')]: {
+              padding: '33px',
+              margin: 0,
+              width: '100%',
+              height: '100%',
+              maxHeight: 'unset',
+            },
+          },
         },
       })}
       {...DialogProps}
-      PaperProps={{
-        sx: theme => ({
-          [theme.breakpoints.down('sm')]: {
-            margin: 0,
-            width: '100%',
-            height: '100%',
-            maxHeight: 'unset',
-            padding: '16px',
-          },
-        }),
-      }}
     >
       <DialogBaseTitle
         title={title}
