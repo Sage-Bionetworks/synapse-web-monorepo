@@ -168,7 +168,7 @@ export function UserCardMedium({
           )}
         </p>
         {(position || company) && (
-          <p className={`${isLarge ? 'SRC-blackText' : ''}`}>
+          <p>
             {position} {position ? ' / ' : ''} {company}
           </p>
         )}
@@ -242,12 +242,7 @@ export function UserCardMedium({
   // when the component is large we have to set the click handler to wrap both the top and bottom portion
   return (
     <Card>
-      <div
-        className={`SRC-userCard`}
-        style={{ backgroundColor: 'transparent' }}
-      >
-        {mediumCard}
-      </div>
+      <div className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</div>
       {isLarge && (
         <UserCardLarge userProfile={userProfile} isCertified={isCertified} />
       )}
