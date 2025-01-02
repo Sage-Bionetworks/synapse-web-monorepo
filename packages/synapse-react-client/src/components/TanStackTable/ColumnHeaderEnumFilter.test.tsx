@@ -1,10 +1,12 @@
-import React from 'react'
+import { upperFirst } from 'lodash-es'
 import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   createColumnHelper,
   getCoreRowModel,
+  Table,
   useReactTable,
+  getFacetedUniqueValues as defaultGetFacetedUniqueValues,
 } from '@tanstack/react-table'
 import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 import { userEvent } from '@storybook/testing-library'
@@ -14,18 +16,49 @@ type TestTableRow = {
   multiSelectWithCounts: string
   singleSelect: string
   numeric: number
+  defaultClientSideFacetCalculation: string
 }
 
 const columnHelper = createColumnHelper<TestTableRow>()
+
+function getFacetedUniqueValues(table: Table<TestTableRow>, columnId: string) {
+  if (columnId === 'multiSelect') {
+    return () =>
+      new Map([
+        ['foo', 0],
+        ['bar', 0],
+      ])
+  }
+  if (columnId === 'multiSelectWithCounts') {
+    return () =>
+      new Map([
+        ['alpha', 20],
+        ['beta', 10],
+      ])
+  }
+  if (columnId === 'singleSelect') {
+    return () =>
+      new Map([
+        ['java', 0],
+        ['c#', 0],
+        ['python', 0],
+      ])
+  }
+  if (columnId === 'numeric') {
+    return () =>
+      new Map([
+        [2023, 0],
+        [2024, 0],
+      ])
+  }
+  return defaultGetFacetedUniqueValues()(table as Table<unknown>, columnId)
+}
 
 const columns = [
   columnHelper.accessor('multiSelect', {
     meta: {
       filterVariant: 'enumeration',
-      enumValues: [
-        { value: 'foo', displayText: 'Foo' },
-        { value: 'bar', displayText: 'Bar' },
-      ],
+      getDisplayText: value => upperFirst(value),
       enableMultipleSelect: true,
     },
     enableColumnFilter: true,
@@ -33,10 +66,15 @@ const columns = [
   columnHelper.accessor('multiSelectWithCounts', {
     meta: {
       filterVariant: 'enumeration',
-      enumValues: [
-        { value: 'alpha', displayText: 'α', count: 20 },
-        { value: 'beta', displayText: 'β', count: 10 },
-      ],
+      getDisplayText: (value: string) => {
+        if (value === 'alpha') {
+          return 'α'
+        }
+        if (value === 'beta') {
+          return 'β'
+        }
+        return ''
+      },
       enableMultipleSelect: true,
     },
     enableColumnFilter: true,
@@ -44,11 +82,7 @@ const columns = [
   columnHelper.accessor('singleSelect', {
     meta: {
       filterVariant: 'enumeration',
-      enumValues: [
-        { value: 'java', displayText: 'java' },
-        { value: 'c#', displayText: 'c#' },
-        { value: 'python', displayText: 'python' },
-      ],
+      getDisplayText: value => value,
       enableMultipleSelect: false,
     },
     enableColumnFilter: true,
@@ -56,10 +90,15 @@ const columns = [
   columnHelper.accessor('numeric', {
     meta: {
       filterVariant: 'enumeration',
-      enumValues: [
-        { value: 2023, displayText: '2023' },
-        { value: 2024, displayText: '2024' },
-      ],
+      getDisplayText: value => value.toString(),
+      enableMultipleSelect: true,
+    },
+    enableColumnFilter: true,
+  }),
+  columnHelper.accessor('defaultClientSideFacetCalculation', {
+    meta: {
+      filterVariant: 'enumeration',
+      getDisplayText: value => value,
       enableMultipleSelect: true,
     },
     enableColumnFilter: true,
@@ -69,9 +108,32 @@ const columns = [
 function ColumnHeaderEnumFilterTestComponent(props: { columnId: string }) {
   const { columnId } = props
   const table = useReactTable({
-    data: [],
+    data: [
+      {
+        defaultClientSideFacetCalculation: 'blue',
+        multiSelect: '',
+        multiSelectWithCounts: '',
+        singleSelect: '',
+        numeric: 0,
+      },
+      {
+        defaultClientSideFacetCalculation: 'red',
+        multiSelect: '',
+        multiSelectWithCounts: '',
+        singleSelect: '',
+        numeric: 0,
+      },
+      {
+        defaultClientSideFacetCalculation: 'blue',
+        multiSelect: '',
+        multiSelectWithCounts: '',
+        singleSelect: '',
+        numeric: 0,
+      },
+    ],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues,
   })
   const column = table.getColumn(columnId)!
   return <ColumnHeaderEnumFilter column={column} title={columnId} />
@@ -144,8 +206,7 @@ describe('ColumnHeaderEnumFilter', () => {
     screen.getByText('(10)')
   })
 
-  // TODO: For some reason, the HTML checked state does not update for this case. Seems to work fine testing manually.
-  it.skip('renders enumerated values, multiselect off', async () => {
+  it('renders enumerated values, multiselect off', async () => {
     const columnIdUnderTest = 'singleSelect'
     const { user } = renderComponent(columnIdUnderTest)
     const button = screen.getByRole('button', {
@@ -227,5 +288,20 @@ describe('ColumnHeaderEnumFilter', () => {
     expect(selectAllCheckbox).toBeChecked()
     expect(numericOption1).not.toBeChecked()
     expect(numericOption2).not.toBeChecked()
+  })
+
+  it('works with the default getFacetedUniqueValues implementation', async () => {
+    const columnIdUnderTest = 'defaultClientSideFacetCalculation'
+    const { user } = renderComponent(columnIdUnderTest)
+    const button = screen.getByRole('button', {
+      name: `Filter by ${columnIdUnderTest}`,
+    })
+    await user.click(button)
+
+    // Verify that the counts appear
+    screen.getByRole('checkbox', { name: 'blue' })
+    screen.getByText('(2)')
+    screen.getByRole('checkbox', { name: 'red' })
+    screen.getByText('(1)')
   })
 })

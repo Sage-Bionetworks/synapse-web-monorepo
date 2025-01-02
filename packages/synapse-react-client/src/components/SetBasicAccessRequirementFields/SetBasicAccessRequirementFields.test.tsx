@@ -4,7 +4,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
+import { createRef } from 'react'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import {
   mockACTAccessRequirement,
@@ -62,7 +62,7 @@ function overrideUpdateAccessRequirementHandlerWithError() {
 }
 
 function renderComponent(props: SetBasicAccessRequirementFieldsProps) {
-  const ref = React.createRef<SetBasicAccessRequirementFieldsHandle>()
+  const ref = createRef<SetBasicAccessRequirementFieldsHandle>()
   const component = render(
     <SetBasicAccessRequirementFields ref={ref} {...props} />,
     {

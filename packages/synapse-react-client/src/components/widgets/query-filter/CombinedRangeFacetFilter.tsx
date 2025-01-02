@@ -1,5 +1,5 @@
 import { Skeleton } from '@mui/material'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   ColumnType,
   FacetColumnResultRange,
@@ -37,9 +37,11 @@ export type CombinedRangeFacetFilterProps = {
                        
 
 */
-export const CombinedRangeFacetFilter: React.FunctionComponent<
-  CombinedRangeFacetFilterProps
-> = ({ facetResults, label, columnType }: CombinedRangeFacetFilterProps) => {
+export function CombinedRangeFacetFilter({
+  facetResults,
+  label,
+  columnType,
+}: CombinedRangeFacetFilterProps) {
   const { getCurrentQueryRequest, setRangeFacetValue, removeSelectedFacet } =
     useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()

@@ -1,14 +1,8 @@
 import {
-  InfiniteData,
-  QueryKey,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+  DiscussionSearchRequest,
+  DiscussionSearchResponse,
+} from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils'
 import {
   DiscussionFilter,
   DiscussionThreadBundle,
@@ -17,6 +11,16 @@ import {
   PaginatedIds,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query'
+import SynapseClient from '../../synapse-client'
+import { useSynapseContext } from '../../utils'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetModerators(
@@ -91,5 +95,47 @@ export function useGetForumThreadsInfinite<
     },
     initialPageParam: undefined,
     getNextPageParam: getNextPageParamForPaginatedResults,
+  })
+}
+
+export function useSearchForumInfinite<
+  TData = InfiniteData<DiscussionSearchResponse>,
+>(
+  forumId: string,
+  discussionSearchRequest: Omit<DiscussionSearchRequest, 'nextPageToken'>,
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      DiscussionSearchResponse,
+      SynapseClientError,
+      TData,
+      DiscussionSearchResponse,
+      QueryKey,
+      DiscussionSearchRequest['nextPageToken']
+    >
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useInfiniteQuery<
+    DiscussionSearchResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    DiscussionSearchRequest['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.getForumSearchQueryKey(
+      forumId,
+      discussionSearchRequest,
+    ),
+    queryFn: context =>
+      synapseClient.discussionServicesClient.postRepoV1ForumForumIdSearch({
+        forumId,
+        discussionSearchRequest: {
+          ...discussionSearchRequest,
+          nextPageToken: context.pageParam,
+        },
+      }),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
   })
 }

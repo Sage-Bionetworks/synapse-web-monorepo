@@ -6,7 +6,7 @@ import BaseTable, {
 } from '@sage-bionetworks/react-base-table'
 import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
-import React, { useEffect, useMemo, useState } from 'react'
+import { SetStateAction, useEffect, useMemo, useState } from 'react'
 import { SkeletonTable } from '../../Skeleton'
 import {
   convertToEntityType,
@@ -212,7 +212,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   >()
 
   const setDatasetToUpdate = (
-    dataset: React.SetStateAction<
+    dataset: SetStateAction<
       RequiredProperties<EntityRefCollectionView, 'items'> | undefined
     >,
   ) => {

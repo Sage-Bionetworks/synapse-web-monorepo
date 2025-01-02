@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
@@ -13,13 +13,13 @@ const container = document.getElementById('accountWebRoot')
 const root = createRoot(container!)
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <BrowserRouter>
       <AppWrapper>
         <App />
       </AppWrapper>
     </BrowserRouter>
-  </React.StrictMode>,
+  </StrictMode>,
 )
 
 // If you want your app to work offline and load faster, you can change

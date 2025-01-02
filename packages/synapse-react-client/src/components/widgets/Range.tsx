@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import dayjs from 'dayjs'
 
 type ControlType = 'number' | 'date'
@@ -79,7 +79,7 @@ export function Range(props: RangeProps) {
           key="range_min"
           type={props.type}
           value={values.min}
-          onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
             setValues({ min: target.value, max: values.max })
           }
         />
@@ -89,7 +89,7 @@ export function Range(props: RangeProps) {
           key="range_max"
           type={props.type}
           value={values.max}
-          onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
             setValues({ min: values.min, max: target.value })
           }
         />

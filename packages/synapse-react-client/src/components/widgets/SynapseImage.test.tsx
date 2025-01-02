@@ -1,4 +1,3 @@
-import React from 'react'
 import SynapseImage from './SynapseImage'
 import { render } from '@testing-library/react'
 

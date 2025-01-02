@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import {
   Alert,
   AlertProps,
@@ -10,6 +9,8 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
+import { MouseEventHandler, ReactNode, useEffect } from 'react'
+import { spreadSx } from '../../theme/spreadSx'
 
 export type AlertButtonConfig = {
   text: string
@@ -18,9 +19,7 @@ export type AlertButtonConfig = {
 } & (
   | // "onClick" or "href", but not both
   {
-      onClick?:
-        | ((e?: React.MouseEvent<HTMLElement, MouseEvent>) => void)
-        | (() => void)
+      onClick?: MouseEventHandler<HTMLButtonElement>
     }
   | { href?: string }
 )
@@ -31,14 +30,14 @@ export interface FullWidthAlertProps {
   variant?: FullWidthAlertVariant
   show?: boolean
   title?: string
-  description?: React.ReactNode
+  description?: ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
   tertiaryButtonConfig?: AlertButtonConfig
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
-  icon?: React.ReactNode
+  icon?: ReactNode
   sx?: AlertProps['sx']
   globalAlertSx?: AlertProps['sx']
 }
@@ -60,6 +59,9 @@ function ButtonFromConfig(props: {
         >
           <Button
             variant={variant}
+            sx={{
+              width: { xs: '100%', md: 'initial' },
+            }}
             color="primary"
             disabled={config.isDisabled}
             onClick={e => {
@@ -117,14 +119,19 @@ function FullWidthAlert(props: FullWidthAlertProps) {
   const alert = (
     <Alert
       severity={variantToSeverity(variant)}
-      sx={{
-        width: '100%',
-        my: '10px',
-        '.MuiAlert-message': {
-          flexGrow: 1,
+      sx={spreadSx(
+        {
+          width: '100%',
+          my: '10px',
+          '.MuiAlert-message': {
+            flexGrow: 1,
+          },
+          '.MuiAlert-icon': {
+            display: { xs: 'none', sm: 'flex' },
+          },
         },
-        ...sx,
-      }}
+        sx,
+      )}
       className="FullWidthAlert"
       onClose={onClose}
       icon={icon}
@@ -133,6 +140,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'start', sm: 'center' }}
         spacing={{ xs: 1, sm: 2 }}
+        gap={{ xs: '8px', sm: 'initial' }}
         display="flex"
         justifyContent="space-between"
       >
@@ -145,14 +153,20 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           tertiaryButtonConfig) && (
           <Stack
             spacing={{ xs: 1, lg: 2 }}
-            direction={{
-              xs: 'column-reverse',
-              sm: 'column',
-              lg: 'row',
-            }}
+            direction={{ xs: 'row', sm: 'column', lg: 'row' }}
             alignItems="center"
             display="flex"
             flexShrink={0}
+            sx={theme => ({
+              gap: { xs: '8px', sm: 'initial' },
+              flexWrap: { xs: 'wrap', sm: 'nowrap' },
+              width: { xs: '100%', sm: 'initial' },
+              [theme.breakpoints.down('sm')]: {
+                '& > *': {
+                  flexGrow: 1,
+                },
+              },
+            })}
           >
             {tertiaryButtonConfig && (
               <ButtonFromConfig config={tertiaryButtonConfig} variant="text" />

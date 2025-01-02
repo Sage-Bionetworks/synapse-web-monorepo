@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type ExpandableContentProps = {

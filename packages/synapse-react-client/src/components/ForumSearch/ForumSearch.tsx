@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import { forumSearch, getEntity } from '../../synapse-client/SynapseClient'
+import SearchIcon from '@mui/icons-material/Search'
 import {
-  DiscussionSearchResponse,
-  Match,
-} from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import DiscussionSearchResult from '../Forum/DiscussionSearchResult'
-import { Entity } from '@sage-bionetworks/synapse-types'
-import { Button, Typography } from '@mui/material'
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { Match } from '@sage-bionetworks/synapse-client'
+import { useEffect, useState } from 'react'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
+import { useSearchForumInfinite } from '../../synapse-queries/forum/useForum'
+import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import DiscussionSearchResult from '../Forum/DiscussionSearchResult'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import { Project } from '@sage-bionetworks/synapse-types'
 
 const NoSearchResultComponent = () => {
   return (
-    <div className="text-center">
-      <NoSearchResults
-        className="no-search-results"
-        display="block"
-        height="181px"
-        sx={{ pt: '40px', pb: '10px' }}
-      />
+    <Box textAlign={'center'}>
+      <NoSearchResults height="181px" sx={{ pt: '40px', pb: '10px' }} />
       <Typography variant="body1">No results with this query</Typography>
       <Typography variant="body1Italic">
         Search the full text of posts, replies, and titles
       </Typography>
-    </div>
+    </Box>
   )
 }
 
@@ -37,83 +37,79 @@ export type ForumSearchProps = {
 
 export const ForumSearch = (props: ForumSearchProps) => {
   const { onSearchResultsVisible } = props
-  const { accessToken } = useSynapseContext()
   const [searchInput, setSearchInput] = useState<string>('')
-  const [searchResult, setSearchResult] = useState<DiscussionSearchResponse>()
-  const [matchList, setMatchList] = useState<Match[]>()
-  const [entity, setEntity] = useState<Entity | undefined>()
-  const [noSearchResult, setNoSearchResult] = useState(false)
+  const [lastSearchTerm, setLastSearchTerm] = useState<string>('')
+  const [isShowingResults, setIsShowingResults] = useState(false)
 
-  const onSearch = async () => {
-    if (onSearchResultsVisible) {
-      onSearchResultsVisible(true)
+  const { data: entity } = useGetEntity<Project>(props.projectId!, undefined, {
+    enabled: !!props.projectId,
+  })
+
+  const {
+    data: infiniteData,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    error,
+  } = useSearchForumInfinite(
+    props.forumId,
+    { searchString: lastSearchTerm },
+    { enabled: !!lastSearchTerm },
+  )
+
+  useEffect(() => {
+    if (error) {
+      displayToast(error.reason as string, 'danger')
     }
-    try {
-      setSearchResult(undefined)
-      setNoSearchResult(false)
-      const searchResponse = await forumSearch(
-        {
-          searchString: searchInput,
-          nextPageToken: undefined,
-        },
-        props.forumId,
-        accessToken,
-      )
-      if (searchResponse.matches.length == 0) {
-        setNoSearchResult(true)
-      }
-      setSearchResult(searchResponse)
-      setMatchList(searchResponse.matches)
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    }
-  }
+  }, [error])
+
+  const searchResults: Match[] =
+    infiniteData?.pages.flatMap(page => page.matches ?? []) ?? []
+
+  const noSearchResult =
+    !isLoading && lastSearchTerm && searchResults.length == 0
 
   const onResetSearch = () => {
-    if (onSearchResultsVisible) {
-      onSearchResultsVisible(false)
-    }
+    setIsShowingResults(false)
     setSearchInput('')
-    setSearchResult(undefined)
-    setNoSearchResult(false)
-    setMatchList(undefined)
+  }
+
+  function onSearch() {
+    setLastSearchTerm(searchInput)
+    setIsShowingResults(true)
   }
 
   useEffect(() => {
-    const fetchEntity = async () => {
-      if (props.projectId) {
-        const entity = await getEntity(accessToken, props.projectId)
-        setEntity(entity)
-      }
+    if (onSearchResultsVisible) {
+      onSearchResultsVisible(isShowingResults)
     }
-    fetchEntity()
-  }, [accessToken, props.projectId])
-
-  const onLoadMore = async () => {
-    const searchResponse = await forumSearch(
-      {
-        searchString: searchInput,
-        nextPageToken: searchResult?.nextPageToken,
-      },
-      props.forumId,
-      accessToken,
-    )
-    setSearchResult(searchResponse)
-    if (matchList) {
-      setMatchList([...matchList, ...searchResponse.matches])
-    }
-  }
+  }, [isShowingResults, onSearchResultsVisible])
 
   return (
     <div className="ForumSearch">
       <div>
-        <span className="SearchIcon">
-          <IconSvg icon="search" />
-        </span>
-        <input
-          role="textbox"
+        <TextField
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            endAdornment: searchInput && (
+              <InputAdornment position="end">
+                <IconButton
+                  size={'small'}
+                  onClick={() => {
+                    onResetSearch()
+                  }}
+                >
+                  <IconSvg icon="clear" wrap={false} />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
           type="search"
-          className={`SearchBar  ${searchResult ? 'SearchBarResult' : ''}`}
           placeholder="Search discussions"
           value={searchInput}
           onChange={event => {
@@ -125,56 +121,60 @@ export const ForumSearch = (props: ForumSearchProps) => {
             }
           }}
         />
-        {searchInput && (
-          <button
-            className="ClearSearchIcon"
-            onClick={() => {
-              onResetSearch()
-            }}
-          >
-            <IconSvg icon="clear" />
-          </button>
-        )}
       </div>
-      {noSearchResult && (
+      {isShowingResults && (
         <>
-          {props.projectId && (
-            <Typography variant="body1Italic" className="NoResultsText">
-              No results for &quot;{searchInput}&quot; in {entity?.name}
-            </Typography>
+          {noSearchResult && (
+            <>
+              {props.projectId && entity && (
+                <Typography variant="body1Italic" className="NoResultsText">
+                  No results for &quot;{lastSearchTerm}&quot; in {entity?.name}
+                </Typography>
+              )}
+              <NoSearchResultComponent />
+            </>
           )}
-          <NoSearchResultComponent />
-        </>
-      )}
-      {matchList && (
-        <>
-          {props.projectId && !noSearchResult && (
-            <Typography variant="body1Italic" className="ResultsText">
-              Results for &quot;{searchInput}&quot; in {entity?.name}
-            </Typography>
+          {searchResults && (
+            <>
+              {props.projectId && !noSearchResult && (
+                <Typography
+                  variant="body1Italic"
+                  className="ResultsText"
+                  my={2}
+                  mx={1}
+                >
+                  Results for &quot;{lastSearchTerm}&quot; in {entity?.name}:
+                </Typography>
+              )}
+              {searchResults.map(match => (
+                <div
+                  key={`${match.forumId}-${match.threadId}-${match.replyId}`}
+                >
+                  <DiscussionSearchResult
+                    threadId={match.threadId!}
+                    replyId={match.replyId}
+                  />
+                </div>
+              ))}
+            </>
           )}
-          {matchList.map(match => (
-            <div key={`${match.forumId}-${match.threadId}-${match.replyId}`}>
-              <DiscussionSearchResult
-                threadId={match.threadId}
-                replyId={match.replyId}
-              />
-            </div>
-          ))}
+          {hasNextPage && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={isFetchingNextPage}
+              onClick={() => {
+                fetchNextPage()
+              }}
+              sx={{
+                mx: 1,
+                mt: 2,
+              }}
+            >
+              Load more
+            </Button>
+          )}
         </>
-      )}
-      {searchResult?.nextPageToken && (
-        <div className="text-center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              onLoadMore()
-            }}
-          >
-            Load more
-          </Button>
-        </div>
       )}
     </div>
   )

@@ -1,5 +1,4 @@
 import { Box, Container, Paper } from '@mui/material'
-import React from 'react'
 import { WebhookDashboard } from 'synapse-react-client'
 import { BackButton } from './BackButton'
 import { SourceAppLogo } from './SourceApp'

@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, Fragment } from 'react'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
@@ -201,10 +201,10 @@ function SynapseTableCell(props: SynapseTableCellProps) {
                 <>{val}</>
               )
             return (
-              <React.Fragment key={val}>
+              <Fragment key={val}>
                 {textRenderer}
                 {index !== jsonData.length - 1 ? ', ' : ''}
-              </React.Fragment>
+              </Fragment>
             )
           })}
         </p>
@@ -274,4 +274,4 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   return <p className={isBold}>{columnValue}</p>
 }
 
-export default React.memo(SynapseTableCell)
+export default memo(SynapseTableCell)

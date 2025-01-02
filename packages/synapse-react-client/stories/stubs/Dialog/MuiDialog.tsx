@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -15,12 +14,13 @@ import IconSvg from '../../../src/components/IconSvg/IconSvg'
 
 export interface DialogProps extends MuiDialogProps {
   title: string
-  content: React.ReactNode
+  content: ReactNode
   helpText?: string
 }
 
 export const Dialog = (props: DialogProps) => {
   const { title, content, helpText, ...rest } = props
+
   return (
     <MuiDialog {...rest}>
       <DialogTitle>

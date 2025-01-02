@@ -1,4 +1,4 @@
-import React from 'react'
+import { SyntheticEvent } from 'react'
 import {
   SynapseClient,
   SynapseConstants,
@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 
 export const unbindORCiD = async (
-  event: React.SyntheticEvent,
+  event: SyntheticEvent,
   orcid: string | undefined,
   accessToken: string | undefined,
   setShow: (show: boolean) => void,

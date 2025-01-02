@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetPresignedUrlContent } from '../../synapse-queries/file/useFiles'
 import { MB } from '../../utils/SynapseConstants'
 import {
@@ -9,6 +8,7 @@ import {
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from './PreviewRendererType'
+import PdfPreview from './PdfPreview'
 
 const MAX_FILE_SIZE = 30 * MB
 
@@ -51,6 +51,13 @@ export default function FileHandleContentRenderer(
   if (previewType === PreviewRendererType.HTML) {
     return (
       <HtmlPreview rawHtml={content!} createdByUserId={fileHandle.createdBy} />
+    )
+  } else if (previewType === PreviewRendererType.PDF) {
+    return (
+      <PdfPreview
+        fileHandle={fileHandle}
+        fileHandleAssociation={fileHandleAssociation}
+      />
     )
   } else {
     if (previewType !== PreviewRendererType.NONE) {

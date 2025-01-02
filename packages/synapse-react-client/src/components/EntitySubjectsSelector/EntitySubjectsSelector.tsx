@@ -6,7 +6,7 @@ import {
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { isEqual, uniqWith } from 'lodash-es'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import EntityHeaderTable, { EntityHeaderTableProps } from '../EntityHeaderTable'
 
 export const REMOVE_BUTTON_TEXT = 'Mark for Removal from AR'
@@ -19,9 +19,7 @@ export type EntitySubjectsSelectorProps = {
   onUpdateEntityIDsTextbox: EntityHeaderTableProps['onUpdateEntityIDsTextbox']
 }
 
-const EntitySubjectsSelector: React.FunctionComponent<
-  EntitySubjectsSelectorProps
-> = (props: EntitySubjectsSelectorProps) => {
+function EntitySubjectsSelector(props: EntitySubjectsSelectorProps) {
   const { subjects, onUpdate, onUpdateEntityIDsTextbox } = props
 
   const references = useMemo(() => {

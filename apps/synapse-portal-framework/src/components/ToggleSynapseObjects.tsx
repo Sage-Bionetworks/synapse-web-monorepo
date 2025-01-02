@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { IconName } from 'synapse-react-client'
 import { SynapseComponents } from 'synapse-react-client'
 import Switch from 'react-switch'

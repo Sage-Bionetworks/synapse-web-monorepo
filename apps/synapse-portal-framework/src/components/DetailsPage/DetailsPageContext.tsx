@@ -1,6 +1,6 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash'
-import React, { useContext } from 'react'
+import { createContext, PropsWithChildren, ReactNode, useContext } from 'react'
 import { getColumnIndex } from 'synapse-react-client'
 
 type DetailsPageContextType = {
@@ -8,13 +8,13 @@ type DetailsPageContextType = {
   rowData?: Row
 }
 
-export const DetailsPageContext = React.createContext({})
+export const DetailsPageContext = createContext({})
 
 /*
  * Stores query data for the object specified on a DetailsPage
  */
 export function DetailsPageContextProvider(
-  props: React.PropsWithChildren<{ value: DetailsPageContextType }>,
+  props: PropsWithChildren<{ value: DetailsPageContextType }>,
 ) {
   const { value, children } = props
   return (
@@ -75,7 +75,7 @@ type DetailsPageContextConsumerProps = {
   children: (value: {
     context: DetailsPageContextType
     value?: string | null
-  }) => React.ReactNode
+  }) => ReactNode
   columnName?: string
 }
 
@@ -93,7 +93,6 @@ export function DetailsPageContextConsumer(
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
         const value = getValue(context, columnName)
-        console.log(context, value)
         return children({ context, value })
       }}
     </DetailsPageContext.Consumer>

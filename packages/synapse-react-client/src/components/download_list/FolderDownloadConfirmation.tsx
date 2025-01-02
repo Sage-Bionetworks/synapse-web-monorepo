@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSynapseContext } from '../../utils'
 import {
   useAddQueryToDownloadList,

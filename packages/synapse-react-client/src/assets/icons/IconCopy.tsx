@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const IconCopy = (props: React.SVGProps<SVGSVGElement>) => (
+const IconCopy = (props: SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
     className={`Icon-Copy ${props.className ?? ''}`}

@@ -1,9 +1,10 @@
-import React from 'react'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import { useGetEvaluation } from '../../synapse-queries/evaluation/useEvaluation'
 import { Box, IconButton, Skeleton, Typography } from '@mui/material'
 import IconSvg from '../IconSvg'
+import { Alert } from '@mui/material'
+import { Link } from '@mui/material'
 
 type SubmissionViewScopeItemProps = {
   evaluationId: string
@@ -12,9 +13,28 @@ type SubmissionViewScopeItemProps = {
 
 function SubmissionViewScopeItem(props: SubmissionViewScopeItemProps) {
   const { evaluationId, onRemove } = props
-  const { data: evaluation, isLoading } = useGetEvaluation(evaluationId)
+  const {
+    data: evaluation,
+    isLoading,
+    isError,
+    error,
+  } = useGetEvaluation(evaluationId)
   if (isLoading) {
     return <Skeleton width={'100%'} />
+  }
+  if (isError) {
+    return (
+      <Alert severity="error">
+        <Typography>{error.reason}</Typography>
+        <Link
+          onClick={e => {
+            onRemove()
+          }}
+        >
+          Remove from scope
+        </Link>
+      </Alert>
+    )
   }
   return (
     <Box

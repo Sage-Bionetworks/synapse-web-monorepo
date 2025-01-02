@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import ForumSearch from './ForumSearch'
 
@@ -12,6 +13,6 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     forumId: '1032',
-    onSearchResultsVisible: visible => alert(`Is visible? ${visible}`),
+    onSearchResultsVisible: fn(),
   },
 }

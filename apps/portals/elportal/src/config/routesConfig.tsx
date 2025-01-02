@@ -1,14 +1,13 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ELBetaLaunchBanner from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBetaLaunchBanner'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBrowseToolsPage'
-import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import { Markdown } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
+import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
   studyDetailsPageRoutes,
@@ -29,9 +28,13 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'HomepageV2',
         element: (
           <HomePageThemeProvider>
-            <HomePage />
+            <HomePageV2 />
           </HomePageThemeProvider>
         ),
       },
@@ -89,7 +92,15 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Contribute Data',
-        element: <ELContributeYourData />,
+        element: (
+          <SectionLayout title={'Contribute Data'}>
+            <Markdown
+              ownerId="syn27229419"
+              wikiId="621277"
+              loadingSkeletonRowCount={15}
+            />
+          </SectionLayout>
+        ),
       },
     ],
   },

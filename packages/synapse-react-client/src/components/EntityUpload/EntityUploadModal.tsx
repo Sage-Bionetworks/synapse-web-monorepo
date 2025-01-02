@@ -1,5 +1,11 @@
 import { Box, Button, Tab, Tabs } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  useRef,
+  useState,
+  KeyboardEvent,
+} from 'react'
 import { UploaderState } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
 import { displayToast } from '../ToastMessage/ToastMessage'
@@ -17,9 +23,9 @@ enum UploadTab {
   LinkToURL,
 }
 
-export const EntityUploadModal = React.forwardRef(function EntityUploadModal(
+export const EntityUploadModal = forwardRef(function EntityUploadModal(
   props: EntityUploadModalProps,
-  ref: React.ForwardedRef<EntityUploadHandle>,
+  ref: ForwardedRef<EntityUploadHandle>,
 ) {
   const { entityId, open, onClose } = props
   const [tabValue, setTabValue] = useState<UploadTab>(UploadTab.UploadFile)
@@ -51,7 +57,7 @@ export const EntityUploadModal = React.forwardRef(function EntityUploadModal(
   return (
     <DialogBase
       DialogProps={{
-        onKeyUp: (e: React.KeyboardEvent) => {
+        onKeyUp: (e: KeyboardEvent) => {
           if (e.key === 'Enter') {
             onFinish()
           }

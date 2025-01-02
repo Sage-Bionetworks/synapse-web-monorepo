@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import { MuiOtpInput } from 'mui-one-time-password-input'
 import { UseLoginReturn } from '../../utils/hooks'
@@ -13,7 +13,7 @@ type TOTPFormProps = {
 
 export default function TOTPForm(props: TOTPFormProps) {
   const { onSubmit, loginIsPending } = props
-  const [verificationCode, setVerificationCode] = React.useState('')
+  const [verificationCode, setVerificationCode] = useState('')
   return (
     <Box>
       <MuiOtpInput

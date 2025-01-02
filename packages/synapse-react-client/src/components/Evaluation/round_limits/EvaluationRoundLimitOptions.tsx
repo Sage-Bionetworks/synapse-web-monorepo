@@ -1,5 +1,4 @@
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { FormControl, FormGroup } from 'react-bootstrap'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 
@@ -19,11 +18,13 @@ export const LIMIT_TYPE_DISPLAY_NAME: Partial<
   MONTHLY: 'Monthly Limit',
 }
 
-export const EvaluationRoundLimitOptions: React.FunctionComponent<
-  EvaluationRoundLimitOptionsProps
-> = ({ limitInput, allSelectedTypes, onChange }) => {
+export function EvaluationRoundLimitOptions({
+  limitInput,
+  allSelectedTypes,
+  onChange,
+}: EvaluationRoundLimitOptionsProps) {
   return (
-    <React.Fragment>
+    <>
       <FormGroup className="limit-type">
         <label>Limit Type</label>
         <FormControl
@@ -69,6 +70,6 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<
           }}
         />
       </FormGroup>
-    </React.Fragment>
+    </>
   )
 }

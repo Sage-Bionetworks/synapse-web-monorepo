@@ -1,4 +1,3 @@
-import React from 'react'
 import EntityPageTitleBar, {
   EntityPageTitleBarProps,
 } from './EntityPageTitleBar'

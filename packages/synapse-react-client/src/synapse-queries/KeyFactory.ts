@@ -1,4 +1,9 @@
-import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
+import {
+  DiscussionSearchRequest,
+  EntityLookupRequest,
+} from '@sage-bionetworks/synapse-client'
+import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
+import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-client/generated/models/PrincipalAliasRequest'
 import {
   AccessApprovalSearchRequest,
   AccessRequirementSearchRequest,
@@ -44,8 +49,6 @@ import {
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '../utils/SynapseConstants'
-import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
-import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-client/generated/models/PrincipalAliasRequest'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */
@@ -618,6 +621,18 @@ export class KeyFactory {
     })
   }
 
+  public getForumSearchQueryKey(
+    forumId: string,
+    discussionSearchRequest: DiscussionSearchRequest,
+  ) {
+    return this.getKey(
+      'forumthread',
+      'search',
+      forumId,
+      discussionSearchRequest,
+    )
+  }
+
   public getAllRepliesQueryKey(threadId: string) {
     return this.getKey('reply', threadId)
   }
@@ -728,6 +743,9 @@ export class KeyFactory {
 
   public getTeamMembersQueryKey(teamId: string) {
     return this.getKey('team', teamId, 'membersList')
+  }
+  public getTeamMemberCountQueryKey(teamId: string) {
+    return this.getKey('team', teamId, 'memberCount')
   }
 
   public getIsUserMemberOfTeamQueryKey(teamId: string, userId: string) {

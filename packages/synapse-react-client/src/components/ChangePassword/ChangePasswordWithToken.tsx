@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Alert, Button, TextField } from '@mui/material'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
@@ -31,7 +31,7 @@ export default function ChangePasswordWithToken(
     },
   })
 
-  const handleChangePassword = (clickEvent: React.FormEvent<HTMLElement>) => {
+  const handleChangePassword = (clickEvent: FormEvent<HTMLElement>) => {
     clickEvent.preventDefault()
     if (newPassword !== confirmPassword) {
       displayToast('Passwords do not match.', 'danger')

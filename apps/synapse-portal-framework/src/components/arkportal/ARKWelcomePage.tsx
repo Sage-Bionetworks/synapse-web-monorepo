@@ -1,5 +1,4 @@
 import Layout from '../../components/Layout'
-import React from 'react'
 import { Typography } from '@mui/material'
 import logoPath from './assets/arklogomark.png'
 

@@ -1,10 +1,10 @@
-import React from 'react'
 import { Link } from '@mui/material'
+import { CSSProperties } from 'react'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 
 export type SignInProps = {
   className?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 // An event listener for the class SRC_SIGN_IN_CLASS is needed to trigger a download
 // modal

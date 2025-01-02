@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -118,7 +118,7 @@ export const RegisterAccount1 = () => {
     }
   }
 
-  const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
+  const onSendRegistrationInfo = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!email) {
       displayToast('Please provide a valid email and try again.', 'danger')
@@ -136,7 +136,7 @@ export const RegisterAccount1 = () => {
     }
   }
 
-  const onSignUpWithGoogle = async (event: React.SyntheticEvent) => {
+  const onSignUpWithGoogle = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
       displayToast('Please provide a user name and try again.', 'danger')

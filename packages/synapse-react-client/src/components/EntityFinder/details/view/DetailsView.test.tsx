@@ -1,40 +1,35 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { Map } from 'immutable'
-import React from 'react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { toEntityHeader } from '../../../../src/components/EntityFinder/details/configurations/ProjectListDetails'
-import {
-  DetailsView,
-  DetailsViewProps,
-} from '../../../../src/components/EntityFinder/details/view/DetailsView'
-import { NO_VERSION_NUMBER } from '../../../../src/components/EntityFinder/EntityFinder'
-import { EntityFinderHeader } from '../../../../src/components/EntityFinder/EntityFinderHeader'
-import { VersionSelectionType } from '../../../../src/components/EntityFinder/VersionSelectionType'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
-import { ENTITY_ID_VERSIONS } from '../../../../src/utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../src/utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
 import {
   Direction,
   EntityHeader,
   EntityType,
   PaginatedResults,
+  Reference,
   SortBy,
+  VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
-import { mockProjectHeader } from '../../../../src/mocks/entity/mockEntity'
-import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
-import { rest, server } from '../../../../src/mocks/msw/server'
-import { MOCK_USER_ID } from '../../../../src/mocks/user/mock_user_profile'
-import * as EntityBadgeModule from '../../../../src/components/EntityBadgeIcons/EntityBadgeIcons'
-import { getEntityBundleHandler } from '../../../../src/mocks/msw/handlers/entityHandlers'
-import { mockFileHandle } from '../../../../src/mocks/mock_file_handle'
-import { calculateFriendlyFileSize } from '../../../../src/utils/functions/calculateFriendlyFileSize'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Map } from 'immutable'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import * as EntityBadgeModule from '../../../../components/EntityBadgeIcons/EntityBadgeIcons'
+import { mockProjectHeader } from '../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import { mockFileHandle } from '../../../../mocks/mock_file_handle'
+import { rest, server } from '../../../../mocks/msw/server'
+import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import { ENTITY_ID_VERSIONS } from '../../../../utils/APIConstants'
+import { SynapseContextType } from '../../../../utils/context/SynapseContext'
+import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../utils/functions/getEndpoint'
+import { EntityFinderHeader } from '../../EntityFinderHeader'
+import { VersionSelectionType } from '../../VersionSelectionType'
+import { toEntityHeader } from '../configurations/ProjectListDetails'
+import { DetailsView, DetailsViewProps } from './DetailsView'
 
 const mockEntityBadgeIcons = jest
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
@@ -46,7 +41,7 @@ const mockFileEntityHeader = mockFileEntityData.entityHeader
 jest.mock(
   'react-virtualized-auto-sizer',
   () =>
-    ({ children }) =>
+    ({ children }: { children: any }) =>
       children({ height: 600, width: 1200 }),
 )
 
@@ -70,10 +65,10 @@ function generateFileHeader(id: number): EntityHeader {
   }
 }
 
-const entityHeaders: EntityFinderHeader[] = [
-  mockFileEntityHeader!,
+const entityHeaders = [
+  mockFileEntityHeader,
   toEntityHeader(mockProjectHeader),
-]
+] satisfies EntityFinderHeader[]
 
 const versionResult: PaginatedResults<VersionInfo> = {
   totalNumberOfResults: 2,
@@ -128,6 +123,8 @@ const defaultProps: DetailsViewProps = {
   noResultsPlaceholder: <></>,
   enableSelectAll: true,
   setCurrentContainer: mockSetCurrentContainer,
+  isIdSelected: jest.fn(),
+  isSelectable: jest.fn(),
 }
 
 function renderComponent(
@@ -196,8 +193,8 @@ describe('DetailsView tests', () => {
 
       it('Creates a row with the selected appearance', async () => {
         renderComponent({
-          selected: Map<string, number>([
-            [entityHeaders[0].id, NO_VERSION_NUMBER],
+          selected: Map<string, Reference>([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
           visibleTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
@@ -397,8 +394,8 @@ describe('DetailsView tests', () => {
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
           {
-            targetId: entityHeaders[0].id,
-            targetVersionNumber: entityHeaders[0].versionNumber,
+            targetId: mockFileEntityHeader.id,
+            targetVersionNumber: mockFileEntityHeader.versionNumber,
           },
           // Project is versionless, so should still have undefined version number
           { targetId: entityHeaders[1].id, targetVersionNumber: undefined },
@@ -410,7 +407,9 @@ describe('DetailsView tests', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
-        selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+        selected: Map([
+          [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+        ]),
         hasNextPage: false,
         selectColumnType: 'checkbox',
       })
@@ -431,8 +430,8 @@ describe('DetailsView tests', () => {
         enableSelectAll: true,
         selectAllIsChecked: true, // !
         selected: Map([
-          [entityHeaders[0].id, NO_VERSION_NUMBER],
-          [entityHeaders[1].id, NO_VERSION_NUMBER],
+          [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          [entityHeaders[1].id, { targetId: entityHeaders[1].id }],
         ]),
         hasNextPage: false,
         selectColumnType: 'checkbox',
@@ -524,8 +523,8 @@ describe('DetailsView tests', () => {
       await userEvent.click(rows[FILE_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
-        targetId: entityHeaders[0].id,
-        targetVersionNumber: entityHeaders[0].versionNumber,
+        targetId: mockFileEntityHeader.id,
+        targetVersionNumber: mockFileEntityHeader.versionNumber,
       })
     })
 
@@ -596,7 +595,9 @@ describe('DetailsView tests', () => {
     describe('renders the correct checkbox state', () => {
       it('rendered checkbox is checked if selected', async () => {
         renderComponent({
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
           selectColumnType: 'checkbox',
         })
 
@@ -624,7 +625,9 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
         })
 
         await screen.findByRole('listbox')
@@ -639,20 +642,24 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
           versionSelection: VersionSelectionType.TRACKED,
         })
 
         await screen.findByText('Always Latest Version')
       })
 
-      it('Always Latest Version text does not appear when versionSelection is UNTRACKED', async () => {
+      it('Always Latest Version text does not appear when versionSelection is UNTRACKED', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
           versionSelection: VersionSelectionType.UNTRACKED,
         })
 
@@ -667,7 +674,9 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
           versionSelection: VersionSelectionType.REQUIRED,
         })
 
@@ -683,8 +692,8 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map<string, number>([
-            [entityHeaders[0].id, NO_VERSION_NUMBER],
+          selected: Map<string, Reference>([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
         })
         const versionSelectBox = await screen.findByRole('listbox')
@@ -727,7 +736,9 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
         })
         expect(await screen.findByRole('listbox')).toBeDefined()
 
@@ -760,7 +771,13 @@ describe('DetailsView tests', () => {
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
           selected: Map([
-            [entityHeaders[0].id, versionResult.results[1].versionNumber],
+            [
+              entityHeaders[0].id,
+              {
+                targetId: entityHeaders[0].id,
+                targetVersionNumber: versionResult.results[1].versionNumber,
+              },
+            ],
           ]),
         })
         expect(await screen.findByRole('listbox')).toBeDefined()
@@ -793,7 +810,9 @@ describe('DetailsView tests', () => {
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
-          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          selected: Map([
+            [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
+          ]),
           versionSelection: VersionSelectionType.REQUIRED,
         })
         expect(await screen.findByRole('listbox')).toBeDefined()
@@ -840,7 +859,7 @@ describe('DetailsView tests', () => {
       const fileSize = calculateFriendlyFileSize(mockFileHandle.contentSize)
       expect(screen.findByText(fileSize)).toBeDefined()
     })
-    it('Project row does not contain MD5 or add to download cart', async () => {
+    it('Project row does not contain MD5 or add to download cart', () => {
       mockAllIsIntersecting(true)
       renderComponent({
         visibleTypes: [EntityType.PROJECT],

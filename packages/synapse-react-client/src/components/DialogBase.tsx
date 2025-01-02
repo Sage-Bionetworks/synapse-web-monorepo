@@ -11,7 +11,8 @@ import {
   Stack,
   SxProps,
 } from '@mui/material'
-import React from 'react'
+import { ReactNode } from 'react'
+
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
 
 const EMPTY_OBJECT = {}
@@ -24,10 +25,10 @@ export type CloseButtonProps = {
 export const CLOSE_BUTTON_LABEL = 'close'
 const DEFAULT_CLOSEBUTTON_SX: SxProps = { color: 'grey.700' }
 
-export const CloseButton: React.FC<CloseButtonProps> = ({
+export function CloseButton({
   sx = DEFAULT_CLOSEBUTTON_SX,
   onClick,
-}) => {
+}: CloseButtonProps) {
   return (
     <IconButton sx={sx} onClick={onClick} aria-label={CLOSE_BUTTON_LABEL}>
       <CloseIcon />
@@ -36,7 +37,7 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
 }
 
 export type DialogBaseTitleProps = {
-  title: React.ReactNode
+  title: ReactNode
   titleHelpPopoverProps?: HelpPopoverProps
   hasCloseButton?: boolean
   onCancel: () => void
@@ -65,8 +66,8 @@ export function DialogBaseTitle(props: DialogBaseTitleProps) {
 
 export type DialogBaseProps = DialogBaseTitleProps & {
   open: boolean
-  content: React.ReactNode
-  actions?: React.ReactNode
+  content: ReactNode
+  actions?: ReactNode
   className?: string
   onCancel: () => void
   maxWidth?: DialogProps['maxWidth']
@@ -103,6 +104,17 @@ export const DialogBase = ({
       onClose={() => onCancel()}
       sx={sx}
       {...DialogProps}
+      PaperProps={{
+        sx: theme => ({
+          [theme.breakpoints.down('sm')]: {
+            margin: 0,
+            width: '100%',
+            height: '100%',
+            maxHeight: 'unset',
+            padding: '16px',
+          },
+        }),
+      }}
     >
       <DialogBaseTitle
         title={title}

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
@@ -10,9 +9,7 @@ type DivColorTextProps = {
   color: string
 }
 
-const DivWithColorText: React.FunctionComponent<DivColorTextProps> = ({
-  color,
-}) => {
+function DivWithColorText({ color }: DivColorTextProps) {
   return (
     <div>
       <Box
@@ -36,7 +33,7 @@ const DivWithColorText: React.FunctionComponent<DivColorTextProps> = ({
   )
 }
 
-const ColorPaletteInspector: React.FunctionComponent = () => {
+function ColorPaletteInspector() {
   return (
     <div>
       <h2>Odd Palette</h2>

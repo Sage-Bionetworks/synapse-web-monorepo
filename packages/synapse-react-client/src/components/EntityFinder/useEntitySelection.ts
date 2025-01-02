@@ -1,7 +1,10 @@
-import { useCallback, useReducer } from 'react'
-import { Map } from 'immutable'
 import { Reference } from '@sage-bionetworks/synapse-types'
-import { NO_VERSION_NUMBER } from './EntityFinder'
+import { Map } from 'immutable'
+import { isEqual } from 'lodash-es'
+import { useCallback, useReducer } from 'react'
+
+// Represents the selection type. The key is the entity ID. Only one version of an entity can be chosen at a time.
+export type EntitySelectionMapType = Map<string, Reference>
 
 export function useEntitySelection(selectMultiple: boolean) {
   /**
@@ -11,15 +14,12 @@ export function useEntitySelection(selectMultiple: boolean) {
    * @returns a boolean array of length equal to entities.length denoting selection status
    */
   const isSelected = useCallback(
-    (entity: Reference, selected: Map<string, number>): boolean => {
+    (entity: Reference, selected: EntitySelectionMapType): boolean => {
       const match = selected.get(entity.targetId)
       if (match == null) {
         return false
       }
-      if (match === NO_VERSION_NUMBER) {
-        return entity.targetVersionNumber === undefined
-      }
-      return match === entity.targetVersionNumber
+      return isEqual(entity, match)
     },
     [],
   )
@@ -32,9 +32,9 @@ export function useEntitySelection(selectMultiple: boolean) {
    */
   const entitySelectionReducer = useCallback(
     (
-      selected: Map<string, number>,
+      selected: EntitySelectionMapType,
       toggledReferences: Reference | Reference[],
-    ): Map<string, number> => {
+    ): EntitySelectionMapType => {
       const newSelected = selected.withMutations(map => {
         // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
         if (!Array.isArray(toggledReferences)) {
@@ -49,10 +49,7 @@ export function useEntitySelection(selectMultiple: boolean) {
             if (!selectMultiple) {
               map.clear()
             }
-            map.set(
-              toggledReference.targetId,
-              toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
-            )
+            map.set(toggledReference.targetId, toggledReference)
           }
         })
       })
@@ -62,5 +59,5 @@ export function useEntitySelection(selectMultiple: boolean) {
     [isSelected, selectMultiple],
   )
 
-  return useReducer(entitySelectionReducer, Map<string, number>())
+  return useReducer(entitySelectionReducer, Map<string, Reference>())
 }

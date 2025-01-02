@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef } from 'react'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import {
   CreateChallengeTeam,
@@ -32,7 +32,7 @@ const mockUseCreateAndRegisterTeam = jest
 
 function renderComponent() {
   const user = userEvent.setup()
-  const ref = React.createRef<CreateChallengeTeamHandle>()
+  const ref = createRef<CreateChallengeTeamHandle>()
   const mockOnCanSubmitChange = jest.fn()
   const mockOnFinished = jest.fn()
 

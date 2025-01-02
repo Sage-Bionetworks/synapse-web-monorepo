@@ -7,7 +7,7 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, Collapse, IconButton, Tooltip } from '@mui/material'
 import { HelpOutline } from '@mui/icons-material'
 import { useAdditionalPropertyContext } from './AdditionalPropertyContext'

@@ -2,7 +2,8 @@ import {
   QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import React, { useMemo, useReducer, useState } from 'react'
+import { useMemo, useReducer, useState } from 'react'
+import * as React from 'react'
 import { UniqueFacetIdentifier } from '../../types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import {

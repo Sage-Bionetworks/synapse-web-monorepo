@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const AccessDataAnywhere = (props: React.SVGProps<SVGSVGElement>) => (
+const AccessDataAnywhere = (props: SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
     version="1.1"

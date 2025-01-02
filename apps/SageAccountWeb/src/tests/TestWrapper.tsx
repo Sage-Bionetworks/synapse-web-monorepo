@@ -1,8 +1,8 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import { MemoryRouter, MemoryRouterProps } from 'react-router-dom'
 import AppWrapper from '../AppWrapper'
 
-export type TestWrapperProps = React.PropsWithChildren<{
+export type TestWrapperProps = PropsWithChildren<{
   memoryRouterProps?: MemoryRouterProps
 }>
 

@@ -1,10 +1,11 @@
-import React from 'react'
 import {
   AccessTimeFilled,
   CheckTwoTone,
   LockTwoTone,
 } from '@mui/icons-material'
 import Skeleton from '@mui/material/Skeleton'
+import { ReactNode } from 'react'
+import { spreadSx } from '../../theme/spreadSx'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
 import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 
@@ -41,7 +42,7 @@ export default function AccessApprovalCheckMark({
 }: CheckMarkProps) {
   const theme = useTheme()
   let backgroundColor: string | undefined = undefined
-  let icon: React.ReactNode = <></>
+  let icon: ReactNode = <></>
 
   switch (status) {
     case RequirementItemStatus.COMPLETE:
@@ -67,10 +68,12 @@ export default function AccessApprovalCheckMark({
   return (
     <AccessApprovalCheckMarkContainer
       data-testid={`AccessApprovalCheckMark-${status}`}
-      sx={{
-        backgroundColor: backgroundColor,
-        ...sx,
-      }}
+      sx={spreadSx(
+        {
+          backgroundColor: backgroundColor,
+        },
+        sx,
+      )}
     >
       <ConditionalWrapper
         condition={status === RequirementItemStatus.LOADING}

@@ -1,7 +1,6 @@
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import {
   CardContainerLogic,
   Goals,
@@ -9,9 +8,8 @@ import {
   RssFeedCards,
   SynapseConstants,
   UserCardListRotate,
-  RecentPublicationsGrid,
 } from 'synapse-react-client'
-import { partnersSql, peopleSql, topPublicationsSql } from '../config/resources'
+import { partnersSql, peopleSql } from '../config/resources'
 
 export default function HomePage() {
   return (
@@ -67,14 +65,7 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <RecentPublicationsGrid
-          sql={topPublicationsSql}
-          buttonLink="Explore/Publications"
-          buttonLinkText="See More Publications"
-          summaryText="Never miss a new finding from the frontiers of aging research."
-        />
-      </SectionLayout>
+
       {/*<div className={'home-bg-dark'}>*/}
       {/*  <SectionLayout ContainerProps={{ className: 'home-spacer' }}>*/}
       {/*    <FeaturedDataTabs*/}

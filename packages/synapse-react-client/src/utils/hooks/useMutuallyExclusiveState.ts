@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
+import * as React from 'react'
 
 /**
  * Given a React state setter and a "mutually exclusive" setter, return a state setter that will always

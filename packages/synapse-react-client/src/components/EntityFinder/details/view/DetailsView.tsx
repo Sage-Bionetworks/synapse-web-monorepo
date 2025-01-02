@@ -3,7 +3,7 @@ import BaseTable, {
   Column,
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   getEntityTypeFromHeader,
@@ -20,7 +20,6 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
-import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -57,7 +56,7 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   sort?: { sortBy: SortBy; sortDirection: Direction }
   /** If sortable, `setSort` will be invoked when the user tries to change the sort */
   setSort?: (soryBy: SortBy, sortDirection: Direction) => void
-  noResultsPlaceholder?: React.ReactElement
+  noResultsPlaceholder?: ReactElement
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
   /** This request object is only used to tell react-query to cancel fetching all children at once. */
@@ -88,7 +87,7 @@ export type EntityFinderTableViewRowData = EntityFinderHeader & {
  *
  * @param param0
  */
-export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
+export function DetailsView({
   entities,
   isLoading,
   hasNextPage,
@@ -108,7 +107,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   getChildrenInfiniteRequestObject,
   totalEntities,
   setCurrentContainer,
-}) => {
+}: DetailsViewProps) {
   const queryClient = useQueryClient()
 
   const { accessToken, keyFactory: queryClientKeyFactory } = useSynapseContext()
@@ -165,16 +164,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   // An entity may be in the list and unselected because it isn't of a selectable type
                   return selected.has(e.id)
                 })
-                .map(e => {
-                  const selectedVersion = selected.get(e.id)
-                  return {
-                    targetId: e.id,
-                    targetVersionNumber:
-                      selectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : selectedVersion,
-                  }
-                }),
+                .map(e => selected.get(e.id)!),
             )
           } else {
             // Not all of the items are selected, so we will select all
@@ -271,13 +261,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         // only include entities that should not be hidden
         const entityType = getEntityTypeFromHeader(entity)
 
-        const currentSelectedVersion = selected.get(entity.id)
+        const currentSelectedVersion = selected.get(
+          entity.id,
+        )?.targetVersionNumber
         let versionNumber: number | undefined = undefined
         if ('versionNumber' in entity) {
-          if (
-            currentSelectedVersion != null &&
-            currentSelectedVersion !== NO_VERSION_NUMBER
-          ) {
+          if (currentSelectedVersion != null) {
             // if a version is selected, the row should show that version's data
             versionNumber = currentSelectedVersion
           } else if (versionSelection === VersionSelectionType.REQUIRED) {
@@ -453,10 +442,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
                   toggleSelection({
                     targetId: id,
-                    targetVersionNumber:
-                      currentSelectedVersion === NO_VERSION_NUMBER
-                        ? undefined
-                        : currentSelectedVersion,
+                    targetVersionNumber: currentSelectedVersion,
                   })
                 }
               },

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,

@@ -1,4 +1,3 @@
-import React from 'react'
 import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
 import {

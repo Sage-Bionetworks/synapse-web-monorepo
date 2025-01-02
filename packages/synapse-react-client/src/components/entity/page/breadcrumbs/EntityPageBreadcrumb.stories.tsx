@@ -1,5 +1,5 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { SyntheticEvent } from 'react'
 import EntityPageBreadcrumbs from './EntityPageBreadcrumbs'
 
 const meta: Meta = {
@@ -17,7 +17,7 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const preventDefaultHandler = (e: React.SyntheticEvent) => {
+const preventDefaultHandler = (e: SyntheticEvent) => {
   e.preventDefault()
 }
 

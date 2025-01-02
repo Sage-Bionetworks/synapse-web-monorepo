@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { UsedURL } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
 import { ProvenanceExternalIcon } from './ProvenanceExternalIcon'

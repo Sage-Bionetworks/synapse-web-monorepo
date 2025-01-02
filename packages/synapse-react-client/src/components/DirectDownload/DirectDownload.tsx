@@ -1,4 +1,4 @@
-import React from 'react'
+import { forwardRef } from 'react'
 import {
   BatchFileRequest,
   ExternalFileHandle,
@@ -36,7 +36,7 @@ type DirectDownloadIconProps = {
   iconSvgPropOverrides?: Partial<IconSvgProps>
 }
 
-const DirectDownloadIcon = React.forwardRef<
+const DirectDownloadIcon = forwardRef<
   HTMLButtonElement,
   DirectDownloadIconProps
 >(function DirectDownloadIcon(props: DirectDownloadIconProps, ref) {

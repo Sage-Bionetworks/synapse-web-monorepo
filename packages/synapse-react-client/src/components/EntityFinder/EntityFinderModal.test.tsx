@@ -7,7 +7,6 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import * as EntityFinderModule from './EntityFinder'
 import {
   EntityFinderModal,
@@ -35,7 +34,6 @@ const defaultProps: EntityFinderModalProps = {
     visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
     selectableTypes: Object.values(EntityType),
     treeOnly: false,
-    selectedCopy: 'Chosen Entities',
   },
   show: true,
   title: 'Entity Finder Modal Title',

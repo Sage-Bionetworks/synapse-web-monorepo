@@ -1,7 +1,7 @@
 import { Collapse as MockCollapse } from '@mui/material'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
 import { RangeValues } from '../Range'
 import RangeSlider from '../RangeSlider/RangeSlider'

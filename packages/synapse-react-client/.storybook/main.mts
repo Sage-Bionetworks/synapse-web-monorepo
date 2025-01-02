@@ -31,7 +31,7 @@ const config: StorybookConfig = {
     checkOptions: {},
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
-      // @ts-ignore - speeds up storybook build time
+      // @ts-expect-error - speeds up storybook build time
       allowSyntheticDefaultImports: false,
       // speeds up storybook build time
       esModuleInterop: false,
@@ -49,7 +49,7 @@ const config: StorybookConfig = {
 
   staticDirs: ['../public'],
 
-  async viteFinal(config, { configType }) {
+  viteFinal(config, { configType }) {
     let base,
       plugins = undefined
     // Fix deployment to github pages

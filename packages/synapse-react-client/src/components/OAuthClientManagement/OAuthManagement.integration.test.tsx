@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
-import React from 'react'
 import { OAuthManagement } from './OAuthManagement'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { formatDate } from '../../utils/functions/DateFormatter'
