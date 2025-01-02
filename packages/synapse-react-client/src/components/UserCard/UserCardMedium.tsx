@@ -145,28 +145,18 @@ export function UserCardMedium({
       <div className="SRC-cardContent">
         <p className="SRC-eqHeightRow SRC-userCardName">
           {/*
-              if its a medium component the header should be clickable (unless disableLink is set),
-              if its large then it should NOT be clickable
-            */}
-          {/* make SRC-whiteText overridable with a good name! */}
-          {isLarge || disableLink ? (
-            <span
-              className={isLarge ? 'SRC-primary-action-color' : 'SRC-blackText'}
-            >
-              {name}
-            </span>
-          ) : (
-            // consolidate click events
-            <a
-              href={linkLocation}
-              target={openLinkInNewTab ? '_blank' : ''}
-              rel={openLinkInNewTab ? 'noreferrer' : ''}
-              tabIndex={0}
-              className={'SRC-hand-cursor'}
-            >
-              {name}
-            </a>
-          )}
+              make the header clickable for all cards
+              consolidate click events
+          */}
+          <a
+            href={linkLocation}
+            target={openLinkInNewTab ? '_blank' : ''}
+            rel={openLinkInNewTab ? 'noreferrer' : ''}
+            tabIndex={0}
+            className={'SRC-hand-cursor'}
+          >
+            {name}
+          </a>
           {isValidated && (
             <Tooltip
               title="This user profile has been validated."
@@ -253,7 +243,7 @@ export function UserCardMedium({
   return (
     <Card>
       <div
-        className={`SRC-userCard SRC-userCardMediumUp`}
+        className={`SRC-userCard`}
         style={{ backgroundColor: 'transparent' }}
       >
         {mediumCard}
