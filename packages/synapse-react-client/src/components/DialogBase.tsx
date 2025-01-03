@@ -12,8 +12,8 @@ import {
   SxProps,
 } from '@mui/material'
 import { ReactNode } from 'react'
-
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
+import { spreadSx } from '../theme/spreadSx'
 
 const EMPTY_OBJECT = {}
 
@@ -102,21 +102,18 @@ export const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
-      sx={theme => ({
-        ...sx,
+      sx={spreadSx(sx, theme => ({
         [theme.breakpoints.down('sm')]: {
           width: '100vw',
           '.MuiDialog-container > .MuiPaper-root': {
-            [theme.breakpoints.down('sm')]: {
-              padding: '33px',
-              margin: 0,
-              width: '100%',
-              height: '100%',
-              maxHeight: 'unset',
-            },
+            padding: '33px',
+            margin: 0,
+            width: '100%',
+            height: '100%',
+            maxHeight: 'unset',
           },
         },
-      })}
+      }))}
       {...DialogProps}
     >
       <DialogBaseTitle
