@@ -157,7 +157,7 @@ describe('ChangePassword tests', () => {
     )
 
     const currentPassword = 'currentPassword'
-    const newPassword = 'newPassword'
+    const newPassword = 'newPa$$w0rd'
 
     const {
       user,
@@ -170,6 +170,29 @@ describe('ChangePassword tests', () => {
 
     expect(usernameField).not.toBeInTheDocument() //logged in, username should not be present
     await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, 'abc')
+    expect(
+      screen.getByText('A valid password must be at least 8 characters long'),
+    ).toBeInTheDocument()
+    await user.clear(newPasswordField)
+    await user.type(newPasswordField, '12345678')
+    expect(
+      screen.getByText('A valid password must include letters'),
+    ).toBeInTheDocument()
+    await user.clear(newPasswordField)
+    await user.type(newPasswordField, 'abcdefgh')
+    expect(
+      screen.getByText('A valid password must include digits (0-9)'),
+    ).toBeInTheDocument()
+    await user.clear(newPasswordField)
+    await user.type(newPasswordField, 'abcd1234')
+    expect(
+      screen.getByText(
+        'A valid password must include special characters ~!@#$%^&*_-+=`|\\(){}[]:;"\'<>,.?/',
+      ),
+    ).toBeInTheDocument()
+
+    await user.clear(newPasswordField)
     await user.type(newPasswordField, newPassword)
     await user.type(confirmPasswordField, newPassword)
 
