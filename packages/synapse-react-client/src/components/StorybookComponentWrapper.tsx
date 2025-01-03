@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
 import { ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import SynapseClient, {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
@@ -72,6 +73,7 @@ export function StorybookComponentWrapper(props: {
     }
     parameters: {
       stack?: SynapseStack
+      withRouter?: boolean
     }
   }
 }) {
@@ -119,7 +121,7 @@ export function StorybookComponentWrapper(props: {
     [accessToken, currentStack, storybookContext.args.isAuthenticated],
   )
 
-  return (
+  const wrappedStory = (
     <Suspense fallback={'global suspense loading...'}>
       <QueryClientProvider client={storybookQueryClient}>
         <SynapseContextProvider
@@ -135,6 +137,19 @@ export function StorybookComponentWrapper(props: {
       </QueryClientProvider>
     </Suspense>
   )
+
+  if (!storybookContext.parameters.withRouter) {
+    return wrappedStory
+  }
+
+  const router = createMemoryRouter([
+    {
+      path: '/',
+      element: wrappedStory,
+    },
+  ])
+
+  return <RouterProvider router={router} />
 }
 
 export default StorybookComponentWrapper

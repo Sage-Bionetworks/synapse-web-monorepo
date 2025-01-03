@@ -14,6 +14,7 @@ const meta: Meta<typeof ChangePassword> = {
   component: ChangePassword,
   parameters: {
     stack: 'mock',
+    withRouter: true,
   },
   decorators: [
     Story => {
