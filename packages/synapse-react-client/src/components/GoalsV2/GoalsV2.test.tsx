@@ -1,7 +1,6 @@
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { server } from '../../mocks/msw/server'
+import { server, rest } from '../../mocks/msw/server'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import GoalsV2 from './GoalsV2'
 import {

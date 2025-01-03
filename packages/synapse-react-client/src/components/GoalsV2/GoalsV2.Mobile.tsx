@@ -1,4 +1,3 @@
-import React from 'react'
 import { GoalsV2DataProps } from './GoalsV2'
 import ExpandableContent from '../home_page/ExpandableContent'
 import QueryCount from '../QueryCount/QueryCount'

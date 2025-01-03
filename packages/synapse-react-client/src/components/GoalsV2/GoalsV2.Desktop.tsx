@@ -1,4 +1,3 @@
-import React from 'react'
 import { GoalsV2DataProps } from './GoalsV2'
 import QueryCount from '../QueryCount/QueryCount'
 import IconButton from '@mui/material/IconButton'
