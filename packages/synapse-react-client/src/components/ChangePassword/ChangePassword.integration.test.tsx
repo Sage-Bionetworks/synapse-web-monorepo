@@ -175,12 +175,12 @@ describe('ChangePassword tests', () => {
       screen.getByText('A valid password must be at least 8 characters long'),
     ).toBeInTheDocument()
     await user.clear(newPasswordField)
-    await user.type(newPasswordField, '12345678')
+    await user.type(newPasswordField, '1234567$')
     expect(
       screen.getByText('A valid password must include letters'),
     ).toBeInTheDocument()
     await user.clear(newPasswordField)
-    await user.type(newPasswordField, 'abcdefgh')
+    await user.type(newPasswordField, 'abcdefg$')
     expect(
       screen.getByText('A valid password must include digits (0-9)'),
     ).toBeInTheDocument()
