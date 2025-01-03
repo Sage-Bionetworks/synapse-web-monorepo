@@ -175,8 +175,7 @@ export function UserCardMedium({
         {!hideEmail && (
           <p
             ref={copyToClipboardRef}
-            className={`${isLarge ? 'SRC-blackText' : ''}
-              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
+            className={`SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
               email,
@@ -190,9 +189,7 @@ export function UserCardMedium({
             tabIndex={0}
           >
             <span style={{ paddingRight: '5px', paddingBottom: '2px' }}>
-              <a className={`link ${isLarge ? 'SRC-blackText' : ''}`}>
-                {`${userName}@synapse.org`}
-              </a>
+              <a className={`link`}>{`${userName}@synapse.org`}</a>
             </span>
             <IconCopy />
           </p>
@@ -204,7 +201,6 @@ export function UserCardMedium({
             rel="noopener noreferrer"
             style={{ width: 'fit-content' }}
             tabIndex={0}
-            className={isLarge ? 'SRC-blackText' : ''}
           >
             View ORCID
           </a>
