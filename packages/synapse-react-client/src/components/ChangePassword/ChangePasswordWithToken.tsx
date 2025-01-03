@@ -57,7 +57,6 @@ export default function ChangePasswordWithToken(
           <TextField
             fullWidth
             required
-            error={!!newPasswordError}
             helperText={newPasswordError}
             type="password"
             id="newPassword"

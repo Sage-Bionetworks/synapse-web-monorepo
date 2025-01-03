@@ -109,7 +109,6 @@ export default function ChangePassword(props: ChangePasswordProps) {
           <TextField
             fullWidth
             required
-            error={!!newPasswordError}
             helperText={newPasswordError}
             margin={'normal'}
             type="password"
