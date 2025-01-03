@@ -28,7 +28,10 @@ describe('GoalsV2', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SynapseContextProvider synapseContext={mockSynapseContext}>
-          <GoalsV2 entityId="syn22315959" />
+          <GoalsV2
+            entityId="syn22315959"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
         </SynapseContextProvider>
       </QueryClientProvider>,
     )
@@ -38,11 +41,43 @@ describe('GoalsV2', () => {
     })
   })
 
+  test('images do not display on fetch failure', async () => {
+    server.use(
+      rest.get(
+        'https://repo-prod.prod.sagebase.org/repo/v1/entity/:entityId/table/query/async/get/:token',
+        (req, res, ctx) => {
+          return res(
+            ctx.status(500),
+            ctx.json({ message: 'Internal Server Error' }),
+          )
+        },
+      ),
+    )
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SynapseContextProvider synapseContext={mockSynapseContext}>
+          <GoalsV2
+            entityId="synxyz"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
+        </SynapseContextProvider>
+      </QueryClientProvider>,
+    )
+
+    await waitFor(() => {
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    })
+  })
+
   test('displays assets when fetch is successful', async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SynapseContextProvider synapseContext={mockSynapseContext}>
-          <GoalsV2 entityId="syn22315959" />
+          <GoalsV2
+            entityId="syn22315959"
+            dataLink="https://eliteportal.synapse.org/Explore/Data"
+          />
         </SynapseContextProvider>
       </QueryClientProvider>,
     )

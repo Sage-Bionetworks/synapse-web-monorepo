@@ -19,6 +19,7 @@ import { Box, Link, Typography, Button, darken } from '@mui/material'
 
 export type GoalsV2Props = {
   entityId: string
+  dataLink: string
 }
 
 export type GoalsV2DataProps = {
@@ -42,7 +43,7 @@ enum ExpectedColumns {
 const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
-  const { entityId } = props
+  const { entityId, dataLink } = props
   const { accessToken } = useSynapseContext()
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
@@ -125,30 +126,59 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   )
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
+  const goalsDataArray: GoalsV2DataProps[] = []
+
+  queryResultBundle?.queryResult!.queryResults.rows.forEach((el, index) => {
+    const values = el.values as string[]
+    if (values.some(value => value === null)) {
+      console.warn('Row has null value(s) when no nulls expected')
+    }
+    const tableId =
+      tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+    let countSql
+    if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
+      countSql = values[countSqlColumnIndex]
+    } else if (tableId) {
+      countSql = `SELECT * FROM ${tableId}`
+    }
+    const title = values[titleColumnIndex]
+    const summary = values[summaryColumnIndex]
+    const link = values[linkColumnIndex]
+    const asset = assets?.[index] ?? ''
+    const goalsV2DataProps: GoalsV2DataProps = {
+      countSql,
+      title,
+      summary,
+      link,
+      asset,
+    }
+    goalsDataArray.push(goalsV2DataProps)
+  })
+
   return (
     <Box
       sx={{
-        flex: '1 1 auto',
         backgroundColor: 'rgba(0, 128, 0, 0.05)',
-        zIndex: 0,
         height: '560px',
         padding: '80px',
       }}
     >
       <Box
         sx={{
-          flex: '1 1 auto',
-          zIndex: 1,
           textAlign: 'center',
           paddingBottom: '30px',
         }}
       >
         <Typography
           variant="headline1"
-          style={{ color: 'black', fontFamily: 'Merriweather', fontSize: '32' }}
+          style={{
+            color: 'grey.1000',
+            fontFamily: 'Merriweather',
+            fontSize: '32px',
+          }}
           sx={{
             pt: '30px',
-            mb: '10px',
+            mb: '40px',
             mx: 'auto',
             width: 'max-content',
             borderTop: '3px solid rgba(128, 128, 128, 0.25)',
@@ -157,7 +187,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           What's in the Portal?
         </Typography>
         <Link
-          href="https://eliteportal.synapse.org/Explore/Data"
+          href={dataLink}
           target="_blank"
           rel="noopener noreferrer"
           fontFamily="Lato"
@@ -165,11 +195,15 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           fontStyle="semi-bold"
         >
           <Button
+            href={dataLink}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="contained"
             sx={{
               backgroundColor: '#5BA998',
               border: '1px solid white',
               boxShadow: 'none',
+              borderRadius: '5px',
               '&:hover': {
                 backgroundColor: darken('#5BA998', 0.05),
                 boxShadow: 'none',
@@ -181,49 +215,15 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         </Link>
       </Box>
       {error && <ErrorBanner error={error} />}
-      <div className={`GoalsV2${showDesktop ? '__Desktop' : ''}`}>
-        {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
-          const values = el.values as string[]
-          if (values.some(value => value === null)) {
-            // We cast values above assuming there are no null values, emit a warning just in case.
-            console.warn('Row has null value(s) when no nulls expected')
-          }
-          const tableId =
-            tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
-          let countSql
-          if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
-            countSql = values[countSqlColumnIndex]
-          } else if (tableId) {
-            countSql = `SELECT * FROM ${tableId}`
-          }
-          const title = values[titleColumnIndex]
-          const summary = values[summaryColumnIndex]
-          const link = values[linkColumnIndex]
-          // assume that we recieve assets in order of rows and there is an asset for each item
-          // can revisit if this isn't the case.
-          const asset = assets?.[index] ?? ''
-          const goalsV2DataProps: GoalsV2DataProps = {
-            countSql,
-            title,
-            summary,
-            link,
-            asset,
-          }
+      <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
+        {goalsDataArray.map((row, index) => {
           return showDesktop ? (
-            <Box
-              sx={{
-                display: 'grid',
-              }}
-            >
-              <GoalsV2Desktop {...goalsV2DataProps} />
+            <Box sx={{ display: 'grid' }}>
+              <GoalsV2Desktop key={index} {...row} />
             </Box>
           ) : (
-            <Box
-              sx={{
-                display: 'grid',
-              }}
-            >
-              <GoalsV2Mobile {...goalsV2DataProps} />
+            <Box sx={{ display: 'grid' }}>
+              <GoalsV2Mobile key={index} {...row} />
             </Box>
           )
         })}
