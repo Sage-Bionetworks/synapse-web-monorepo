@@ -18,6 +18,9 @@ export default function ChangePassword(props: ChangePasswordProps) {
   const { redirectToRoute, hideReset2FA = false } = props
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
+  const [newPasswordError, setNewPasswordError] = useState<string | undefined>(
+    undefined,
+  )
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [userName, setUserName] = useState<string>('')
   const { accessToken } = useSynapseContext()
@@ -41,6 +44,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
     isPending: changePasswordIsPending,
     handleChangePasswordWithCurrentPassword,
     error,
+    validatePassword,
   } = useChangePasswordFormState({
     hideReset2FA,
   })
@@ -105,11 +109,17 @@ export default function ChangePassword(props: ChangePasswordProps) {
           <TextField
             fullWidth
             required
+            error={!!newPasswordError}
+            helperText={newPasswordError}
             margin={'normal'}
             type="password"
             id="newPassword"
             label={'New password'}
-            onChange={e => setNewPassword(e.target.value)}
+            onChange={e => {
+              const error = validatePassword(e.target.value)
+              setNewPasswordError(error)
+              setNewPassword(e.target.value)
+            }}
             value={newPassword}
           />
           <TextField
