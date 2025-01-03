@@ -1,8 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
+import { server } from '../../mocks/msw/server'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import GoalsV2 from './GoalsV2'
 import {
@@ -19,44 +18,6 @@ const mockSynapseContext: Partial<SynapseContextType> = {
 }
 
 const queryClient = new QueryClient()
-
-const server = setupServer(
-  rest.post(
-    'https://repo-prod.prod.sagebase.org/repo/v1/entity/:entityId/table/query/async/start',
-    (req, res, ctx) => {
-      return res(
-        ctx.json<{ token: string }>({
-          token: 'mockToken',
-        }),
-      )
-    },
-  ),
-  rest.get(
-    'https://repo-prod.prod.sagebase.org/repo/v1/entity/:entityId/table/query/async/get/:token',
-    (req, res, ctx) => {
-      return res(
-        ctx.json({
-          queryResult: {
-            queryResults: {
-              rows: [
-                {
-                  values: [
-                    'syn22315959',
-                    'SELECT COUNT(*) FROM syn22315959',
-                    'Sample Title',
-                    'Sample Summary',
-                    'https://example.com',
-                    '12345',
-                  ],
-                },
-              ],
-            },
-          },
-        }),
-      )
-    },
-  ),
-)
 
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
