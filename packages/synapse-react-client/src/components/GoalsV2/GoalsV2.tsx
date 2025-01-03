@@ -15,7 +15,7 @@ import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Box, Link, Typography, Button, darken } from '@mui/material'
+import { Box, Typography, Button, darken } from '@mui/material'
 
 export type GoalsV2Props = {
   entityId: string
