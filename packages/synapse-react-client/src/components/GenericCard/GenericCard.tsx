@@ -1,14 +1,11 @@
-import React from 'react'
+import { Component, CSSProperties } from 'react'
 import { SynapseConstants, SynapseContext } from '../../utils'
 import {
   isDatasetCollection,
   isTableEntity,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import {
-  DOI_REGEX,
-  SYNAPSE_ENTITY_ID_REGEX,
-} from '../../utils/functions/RegularExpressions'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import {
   ColumnModel,
   ColumnType,
@@ -45,6 +42,7 @@ import {
 } from './CollapsibleDescription'
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
+import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type KeyToAlias = {
   key: string
@@ -194,10 +192,7 @@ export const getColumnIndex = (
 }
 
 // SWC-6115: special rendering of the version column (for Views)
-export const VersionLabel: React.FC<{
-  synapseId: string
-  version: string
-}> = props => {
+export function VersionLabel(props: { synapseId: string; version: string }) {
   const { synapseId, version } = props
   return (
     <span>
@@ -275,13 +270,14 @@ export function getLinkParams(
 ) {
   link = link.trim()
   let href = link
+  const doiLink = convertDoiToLink(href)
   let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
     href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
-  } else if (link.match(DOI_REGEX)) {
+  } else if (doiLink) {
     defaultTarget = TargetEnum.NEW_WINDOW
-    href = `https://dx.doi.org/${link}`
+    href = doiLink
   } else if (!cardLinkConfig) {
     defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
@@ -298,7 +294,7 @@ export function getLinkParams(
 /**
  * Renders a card from a table query
  */
-class _GenericCard extends React.Component<GenericCardPropsInternal> {
+class _GenericCard extends Component<GenericCardPropsInternal> {
   static contextType = SynapseContext
 
   constructor(props: GenericCardPropsInternal) {
@@ -465,7 +461,7 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
 
     const showFooter = values.length > 0
 
-    const style: React.CSSProperties = {
+    const style: CSSProperties = {
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,

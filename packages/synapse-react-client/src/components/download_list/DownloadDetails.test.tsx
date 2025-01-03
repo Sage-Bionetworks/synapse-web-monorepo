@@ -1,4 +1,3 @@
-import React from 'react'
 import DownloadDetails, { DownloadDetailsProps } from './DownloadDetails'
 import { act, render, screen } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

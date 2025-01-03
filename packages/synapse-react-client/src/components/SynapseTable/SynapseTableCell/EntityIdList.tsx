@@ -1,4 +1,3 @@
-import React from 'react'
 import { EntityLink } from '../../EntityLink'
 import { useGetEntityHeaders } from '../../../synapse-queries'
 

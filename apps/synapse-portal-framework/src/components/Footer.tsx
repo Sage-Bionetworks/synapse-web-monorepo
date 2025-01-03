@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo } from 'react'
 import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
 import Versions from '../components/Versions'
 import { SynapseConstants, ExperimentalMode } from 'synapse-react-client'
@@ -106,4 +106,4 @@ function Footer() {
   )
 }
 
-export default React.memo(Footer)
+export default memo(Footer)

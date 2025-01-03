@@ -1,5 +1,5 @@
 import { Alert } from '@mui/material'
-import React, { useState } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
@@ -11,9 +11,10 @@ export type CreateProjectModalProps = {
   onClose: () => void
 }
 
-export const CreateProjectModal: React.FunctionComponent<
-  CreateProjectModalProps
-> = ({ isShowingModal = false, onClose }) => {
+export function CreateProjectModal({
+  isShowingModal = false,
+  onClose,
+}: CreateProjectModalProps) {
   const { accessToken } = useSynapseContext()
   const [projectName, setProjectName] = useState<string>('')
   const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
@@ -53,7 +54,7 @@ export const CreateProjectModal: React.FunctionComponent<
           setProjectName(event.target.value)
         }}
         inputProps={{
-          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === 'Enter') {
               if (projectName !== '') {
                 onCreateProject()

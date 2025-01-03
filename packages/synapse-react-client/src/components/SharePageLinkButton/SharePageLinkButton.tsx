@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { displayToast } from '../ToastMessage'
 import IconSvg from '../IconSvg'
@@ -10,9 +10,11 @@ export type SharePageLinkButtonProps = {
   buttonProps?: ButtonProps
 }
 
-export const SharePageLinkButton: React.FunctionComponent<
-  SharePageLinkButtonProps
-> = ({ shortIoPublicApiKey, domain = 'sageb.io', buttonProps }) => {
+export function SharePageLinkButton({
+  shortIoPublicApiKey,
+  domain = 'sageb.io',
+  buttonProps,
+}: SharePageLinkButtonProps) {
   const copyToClipboard = useCallback((value: string) => {
     navigator.clipboard.writeText(value).then(() => {
       displayToast('Page URL copied to the clipboard', 'success')

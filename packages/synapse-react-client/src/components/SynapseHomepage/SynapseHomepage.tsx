@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Grid, Link, Typography } from '@mui/material'
 import RLogo from '../../assets/icons/RLogo'
 import Python from '../../assets/icons/Python'
@@ -27,9 +26,7 @@ const buttonSx = {
   textAlign: 'center',
 }
 
-export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
-  projectViewId,
-}) => {
+export function SynapseHomepage({ projectViewId }: SynapseHomepageProps) {
   const { accessToken } = useSynapseContext()
   const LOGIN_LINK = '/LoginPlace:0'
   const registrationLink = useOneSageURL('/register1')

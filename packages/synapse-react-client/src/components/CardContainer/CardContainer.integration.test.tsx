@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import React from 'react'
 import { CardContainer, CardContainerProps } from './CardContainer'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'

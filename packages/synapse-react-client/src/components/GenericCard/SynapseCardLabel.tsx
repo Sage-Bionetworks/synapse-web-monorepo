@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -6,6 +5,7 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import { Link, Tooltip } from '@mui/material'
+import { CSSProperties, Fragment } from 'react'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -39,7 +39,7 @@ type SynapseCardLabelProps = {
   rowData: Row['values']
   rowId?: string
 }
-export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
+export function SynapseCardLabel(props: SynapseCardLabelProps) {
   const {
     value,
     columnName,
@@ -67,7 +67,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   }
 
   let newClassName = className
-  const style: React.CSSProperties = {}
+  const style: CSSProperties = {}
   if (isHeader) {
     newClassName = className?.concat(' ', 'SRC-lightLink')
   }
@@ -77,11 +77,11 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       <p>
         {strList.map((val: string, index: number) => {
           return (
-            <React.Fragment key={val}>
+            <Fragment key={val}>
               <UserBadge userId={val} className={newClassName} />
               {/* \u00a0 is a nbsp; */}
               {index < strList.length - 1 && ',\u00a0\u00a0'}
-            </React.Fragment>
+            </Fragment>
           )
         })}
       </p>
@@ -113,11 +113,11 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         <p>
           {strList.map((el, index) => {
             return (
-              <React.Fragment key={el}>
+              <Fragment key={el}>
                 <MarkdownSynapse key={el} renderInline={true} markdown={el} />
                 {/* \u00a0 is a nbsp; */}
                 {index < strList.length - 1 && ',\u00a0\u00a0'}
-              </React.Fragment>
+              </Fragment>
             )
           })}
         </p>
@@ -131,12 +131,12 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         <p>
           {strList.map((el, index) => {
             return (
-              <React.Fragment key={el}>
+              <Fragment key={el}>
                 <EntityColumnImage entityId={el} />
 
                 {/* \u00a0 is a nbsp; */}
                 {index < strList.length - 1 && ',\u00a0\u00a0'}
-              </React.Fragment>
+              </Fragment>
             )
           })}
         </p>
@@ -171,7 +171,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
             <p>
               {split.map((el, index) => {
                 return (
-                  <React.Fragment key={el}>
+                  <Fragment key={el}>
                     <Link
                       href={href ?? undefined}
                       target={linkTarget ?? TargetEnum.NEW_WINDOW}
@@ -185,7 +185,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
-                  </React.Fragment>
+                  </Fragment>
                 )
               })}
             </p>
@@ -223,7 +223,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
             }
 
             return (
-              <React.Fragment key={el}>
+              <Fragment key={el}>
                 <Link
                   href={href}
                   key={el}
@@ -236,7 +236,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}
-              </React.Fragment>
+              </Fragment>
             )
           })}
         </p>

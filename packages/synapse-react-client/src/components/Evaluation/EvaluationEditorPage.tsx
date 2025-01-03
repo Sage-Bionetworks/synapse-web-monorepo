@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { EvaluationEditor } from './EvaluationEditor'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
 import { Alert, Button } from '@mui/material'
@@ -15,13 +15,11 @@ export type EvaluationEditorPageProps = {
 /**
  * Combined editor that allows editing an Evaluation's data and also it's associated rounds (once the Evaluation exists on Synapse)
  */
-export const EvaluationEditorPage: React.FunctionComponent<
-  EvaluationEditorPageProps
-> = ({
+export function EvaluationEditorPage({
   evaluationId,
   entityId,
   onDeleteSuccess,
-}: EvaluationEditorPageProps) => {
+}: EvaluationEditorPageProps) {
   const [savedEvaluationId, setSavedEvaluationId] = useState<
     string | undefined
   >(evaluationId)
@@ -61,7 +59,7 @@ export const EvaluationEditorPage: React.FunctionComponent<
  * I believe adopting this alternative would add unnecessary complexity,
  * forcing EvaluationRoundEditorList to handle undefined `evaluationId`.
  */
-const FakeEvaluationRoundEditorList: React.FunctionComponent = () => {
+function FakeEvaluationRoundEditorList() {
   const [showEvaluationNotExistAlert, setShowEvaluationNotExistAlert] =
     useState<boolean>(false)
 

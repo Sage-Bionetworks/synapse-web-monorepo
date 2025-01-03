@@ -18,7 +18,7 @@ import {
   VerificationState,
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -42,9 +42,7 @@ import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import { StyledFormControl } from './StyledComponents'
 
-const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
-  isComplete,
-}) => {
+function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
     <div className="item-completion">
       {isComplete ? (
@@ -203,7 +201,7 @@ export const AccountSettings = () => {
     }
   }, [hash])
 
-  const handleScroll = (ref: React.RefObject<HTMLDivElement>) => {
+  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
   const isRequestValidationButtonDisabled =

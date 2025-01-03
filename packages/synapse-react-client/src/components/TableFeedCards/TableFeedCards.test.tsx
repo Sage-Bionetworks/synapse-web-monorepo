@@ -1,4 +1,3 @@
-import React from 'react'
 import TableFeedCards from './TableFeedCards'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn23519444Json from '../../mocks/query/syn23519444.json'

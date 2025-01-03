@@ -9,7 +9,6 @@ import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import React from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import {
@@ -19,6 +18,7 @@ import {
   studiesSql,
 } from '../config/resources'
 import studyHeaderSvg from '../config/style/study-header.svg?url'
+import { DATA_TABLE_COLUMN_NAMES } from '../config/synapseConfigs/dataTable'
 import {
   studiesRgbIndex,
   studyCardConfiguration,
@@ -144,6 +144,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                     }}
                     availableFacets={['metadataType', 'dataType', 'assay']}
@@ -151,10 +152,11 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     shouldDeepLink={false}
                     defaultShowPlots={false}
                     lockedColumn={{
-                      columnName: 'study',
+                      columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                       value: value!,
                     }}
-                    searchParams={{ study: value! }}
+                    searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
+                    fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
                     hideQueryCount
                   />
                 )}
@@ -178,24 +180,26 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                       columnLinks: [
                         {
-                          matchColumnName: 'study',
+                          matchColumnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                           isMarkdown: false,
                           baseURL: 'Explore/Studies/DetailsPage',
                           URLColumnName: 'studyKey',
-                          wrapValueWithParens: true,
+                          wrapValueWithParens: false,
                         },
                       ],
                     }}
                     sql={dataSql}
                     shouldDeepLink={false}
                     lockedColumn={{
-                      columnName: 'study',
+                      columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
                       value: value!,
                     }}
-                    searchParams={{ study: value! }}
+                    fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
+                    searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
                     hideQueryCount
                   />
                 )}

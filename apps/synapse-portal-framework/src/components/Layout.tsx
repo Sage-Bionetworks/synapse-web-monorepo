@@ -1,7 +1,7 @@
 import { Container } from '@mui/material'
-import React from 'react'
+import { PropsWithChildren } from 'react'
 
-type LayoutProps = React.PropsWithChildren<{
+type LayoutProps = PropsWithChildren<{
   containerClassName?: string
   outsideContainerClassName?: string
 }>

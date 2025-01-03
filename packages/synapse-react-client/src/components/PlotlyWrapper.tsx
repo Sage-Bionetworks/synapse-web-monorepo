@@ -1,5 +1,5 @@
 import Plotly from 'plotly.js-basic-dist'
-import React from 'react'
+import { CSSProperties } from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 
 // We must use the createPlotlyComponent factory method because we use plotly.js-basic-dist and not plotly.js
@@ -12,10 +12,10 @@ export type PlotlyWrapperProps = {
   useResizeHandler?: boolean
   className?: string
   containerWidth?: number
-  plotStyle?: React.CSSProperties
+  plotStyle?: CSSProperties
 }
 
-const PlotlyWrapper: React.FC<PlotlyWrapperProps> = props => {
+function PlotlyWrapper(props: PlotlyWrapperProps) {
   const {
     data,
     layout,

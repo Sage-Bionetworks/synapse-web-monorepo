@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import SynapseClient from '../../synapse-client'

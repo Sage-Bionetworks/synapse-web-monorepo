@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import TeamSubjectsSelector from './TeamSubjectsSelector'
 
 const meta: Meta<typeof TeamSubjectsSelector> = {

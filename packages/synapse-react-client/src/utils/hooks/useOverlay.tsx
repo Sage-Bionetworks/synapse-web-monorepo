@@ -1,10 +1,4 @@
-import React, {
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { Fade, Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
 
 function resetTimer(timer: NodeJS.Timeout | null) {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { Link } from '@mui/material'
 import { InfoTwoTone } from '@mui/icons-material'

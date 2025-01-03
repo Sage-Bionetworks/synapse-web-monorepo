@@ -1,7 +1,8 @@
 import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGetEntity } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
 import {
@@ -26,8 +27,10 @@ import {
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import { SynapseTableConfiguration } from '../SynapseTable'
-import { NoContentPlaceholderType } from '../SynapseTable'
+import {
+  NoContentPlaceholderType,
+  SynapseTableConfiguration,
+} from '../SynapseTable'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
 import TopLevelControls, {
@@ -40,9 +43,8 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import { RowSetView } from './RowSetView'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
-import { useQuery } from '@tanstack/react-query'
+import { RowSetView } from './RowSetView'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -164,7 +166,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     initialLimit,
   } = props
   const queryContext = useQueryContext()
-  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
+  const [showExportMetadata, setShowExportMetadata] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
   const { isLoading: isLoadingQueryMetadata } = useQuery(
@@ -271,9 +273,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   )
 }
 
-const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
-  props: QueryWrapperPlotNavProps,
-) => {
+function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const {
     searchParams,
     sql,
@@ -310,6 +310,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   const remount = () => {
     setComponentKey(componentKey + 1)
   }
+
   const { data: entity } = useGetEntity(entityId, versionNumber)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
@@ -328,11 +329,19 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   const isFullTextSearchEnabled =
     (entity && isTable(entity) && entity.isSearchEnabled) ?? false
 
+  /**
+   * Fully re-render the uncontrolled QueryWrapper component when the initial query changes. This eliminates a class of
+   * bugs where our 'derived' state (the current query), which should be reset, is out of sync with props.
+   *
+   * See https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+   */
+  const queryWrapperKey = `${JSON.stringify(initQueryRequest)}-${componentKey}`
+
   return (
     <QueryWrapper
       {...props}
       initQueryRequest={initQueryRequest}
-      key={componentKey}
+      key={queryWrapperKey}
       isInfinite={isInfinite}
     >
       <QueryVisualizationWrapper

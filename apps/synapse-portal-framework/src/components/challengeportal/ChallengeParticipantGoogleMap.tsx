@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import * as React from 'react'
 import { SynapseQueries, Map } from 'synapse-react-client'
 
 type ChallengeParticipantGoogleMapProps = {

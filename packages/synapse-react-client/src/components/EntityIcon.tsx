@@ -1,5 +1,5 @@
-import React from 'react'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { CSSProperties, Fragment } from 'react'
 import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 import IconSvg, {
   IconName,
@@ -29,14 +29,14 @@ const getIconTypeForEntity = (type: EntityType): IconName | '' => {
 
 type EntityTypeIconProps = {
   type: EntityType
-  style?: React.CSSProperties
+  style?: CSSProperties
   className?: string
   includeTooltip?: boolean
 }
 
-export const EntityTypeIcon: React.FC<
-  Omit<IconSvgProps, 'icon'> & EntityTypeIconProps
-> = props => {
+export function EntityTypeIcon(
+  props: Omit<IconSvgProps, 'icon'> & EntityTypeIconProps,
+) {
   const { type, style, className, includeTooltip = true, ...rest } = props
   if (!type) {
     return <></>
@@ -44,7 +44,7 @@ export const EntityTypeIcon: React.FC<
   const iconType = getIconTypeForEntity(type)
   if (iconType === '') {
     console.warn('Could not retrieve icon for Entity with type: ', type)
-    return <React.Fragment />
+    return <Fragment />
   }
 
   const label = includeTooltip ? entityTypeToFriendlyName(type) : undefined

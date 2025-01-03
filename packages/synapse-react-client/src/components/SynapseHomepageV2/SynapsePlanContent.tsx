@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as PlanItemIcon } from '../../assets/homepage/plan-item.svg'
 import { darkTextColor } from './SynapseHomepageV2'
@@ -8,9 +7,11 @@ export type SynapsePlanContentProps = {
   items: string[]
   asteriskNote?: string
 }
-export const SynapsePlanContent: React.FunctionComponent<
-  SynapsePlanContentProps
-> = ({ category, items, asteriskNote }) => {
+export function SynapsePlanContent({
+  category,
+  items,
+  asteriskNote,
+}: SynapsePlanContentProps) {
   return (
     <>
       <Typography

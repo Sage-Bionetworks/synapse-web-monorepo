@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Study = () => (
   <svg
     data-icon="study"

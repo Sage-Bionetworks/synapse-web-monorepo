@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
+import { createRef } from 'react'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import mockProject from '../../mocks/entity/mockProject'
 import {
@@ -72,7 +72,7 @@ const mockUseUploadFileEntitiesReturn = {
 describe('EntityUpload', () => {
   function renderComponent(propOverrides: Partial<EntityUploadProps> = {}) {
     const user = userEvent.setup()
-    const ref = React.createRef<EntityUploadHandle>()
+    const ref = createRef<EntityUploadHandle>()
     const result = render(
       <EntityUpload
         ref={ref}

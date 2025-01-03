@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import IconSvg, { IconSvgProps } from './IconSvg/IconSvg'
 import { merge } from 'lodash-es'
 
@@ -18,7 +18,7 @@ const defaultCommonIconProps: IconListProps['commonIconProps'] = {
   sx: { fontSize: '24px' },
 }
 
-const IconList: React.FunctionComponent<IconListProps> = props => {
+function IconList(props: IconListProps) {
   const {
     iconConfigs,
     iconNames,

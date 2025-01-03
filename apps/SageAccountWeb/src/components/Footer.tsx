@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import { memo } from 'react'
 import { ExperimentalMode } from 'synapse-react-client'
 
 function Footer() {
@@ -22,4 +22,4 @@ function Footer() {
   )
 }
 
-export default React.memo(Footer)
+export default memo(Footer)

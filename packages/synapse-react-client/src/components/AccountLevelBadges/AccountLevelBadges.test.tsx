@@ -1,6 +1,5 @@
 import { UserBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import React from 'react'
 import {
   mockUserBundle,
   mockUserProfileData,

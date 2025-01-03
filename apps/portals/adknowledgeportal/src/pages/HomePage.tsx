@@ -1,7 +1,6 @@
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import { dataSql, peopleSql } from 'src/config/resources'
 import programsHomePageConfig from 'src/config/synapseConfigs/programsHomePage'
 import {

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Breadcrumbs,
@@ -6,6 +5,8 @@ import {
   SxProps,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { BUNDLE_MASK_LAST_UPDATED_ON } from '../../../utils/SynapseConstants'
 import {
@@ -30,6 +31,11 @@ export type CreatedByModifiedByProps = {
 }
 
 function Separator() {
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  if (isSmallScreen) {
+    return null
+  }
   return (
     <Typography variant={'breadcrumb1'} sx={{ color: 'grey.700' }}>
       /
@@ -104,14 +110,25 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
   }
 
   return (
-    <Box sx={{ bgcolor: 'grey.100', py: '10px' }}>
+    <Box
+      sx={theme => ({
+        bgcolor: 'grey.100',
+        py: '10px',
+        [theme.breakpoints.down('sm')]: {
+          p: '24px 40px',
+        },
+      })}
+    >
       <Breadcrumbs
         separator={<Separator />}
-        sx={{
+        sx={theme => ({
           '& .MuiBreadcrumbs-ol': {
             justifyContent: 'center',
+            [theme.breakpoints.down('sm')]: {
+              gap: '4px',
+            },
           },
-        }}
+        })}
       >
         <ConditionalWrapper condition={!entity} wrapper={Skeleton}>
           <Typography

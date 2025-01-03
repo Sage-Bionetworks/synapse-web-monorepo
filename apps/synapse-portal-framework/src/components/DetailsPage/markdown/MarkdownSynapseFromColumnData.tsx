@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react'
 import {
   MarkdownSynapse,
   MarkdownCollapseProps,
@@ -66,7 +66,7 @@ export function MarkdownSynapseFromColumnData(
 
   return propsArray.map(splitComponentProps => {
     return (
-      <React.Fragment key={JSON.stringify(splitComponentProps)}>
+      <Fragment key={JSON.stringify(splitComponentProps)}>
         {showEntityTitle && (
           <>
             <HeadlineWithLinkDerivedFromEntityId
@@ -83,7 +83,7 @@ export function MarkdownSynapseFromColumnData(
             {...MarkdownCollapseProps}
           />
         )}
-      </React.Fragment>
+      </Fragment>
     )
   })
 }

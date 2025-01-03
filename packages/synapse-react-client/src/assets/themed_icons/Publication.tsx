@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Publication = () => (
   <svg width="61" height="76" xmlns="http://www.w3.org/2000/svg">
     <path

@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import UserCardList, { UserCardListProps } from './UserCardList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../utils'

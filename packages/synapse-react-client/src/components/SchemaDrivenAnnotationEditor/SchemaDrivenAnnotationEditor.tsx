@@ -1,7 +1,14 @@
 import Form from '@rjsf/mui'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import AddToList from '../../assets/icons/AddToList'
 import {
@@ -62,7 +69,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** May be used to directly provide a JSON Schema to use for the form */
   validationSchema?: JSONSchema7
   /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. */
-  formRef?: React.RefObject<RJSF>
+  formRef?: RefObject<RJSF>
   /** Provide live input validation. This can cause performance degradation. By default, liveValidate will be true if an entity with a schema and existing annotations is being edited */
   liveValidate?: boolean
   /** Invoked after a successful form submission */
@@ -136,17 +143,17 @@ export function SchemaDrivenAnnotationEditor(
   const ref = formRefFromParent ?? localRef
 
   // Client-side validation errors
-  const [validationError, setValidationError] = React.useState<
+  const [validationError, setValidationError] = useState<
     RJSFValidationError[] | undefined
   >(undefined)
 
   // Errors from the backend response
-  const [submissionError, setSubmissionError] = React.useState<
+  const [submissionError, setSubmissionError] = useState<
     SynapseClientError | undefined
   >(undefined)
-  const [showSubmissionError, setShowSubmissionError] = React.useState(false)
+  const [showSubmissionError, setShowSubmissionError] = useState(false)
 
-  const [showConfirmation, setShowConfirmation] = React.useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
 
   const { data } = useGetJson(
     entityId!,
@@ -165,9 +172,9 @@ export function SchemaDrivenAnnotationEditor(
   const annotations = data?.annotations
 
   // Annotation fields fetched and modified via the form
-  const [formData, setFormData] = React.useState<
-    Record<string, unknown> | undefined
-  >(undefined)
+  const [formData, setFormData] = useState<Record<string, unknown> | undefined>(
+    undefined,
+  )
 
   /**
    * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.

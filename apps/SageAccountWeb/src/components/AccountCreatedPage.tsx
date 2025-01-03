@@ -1,4 +1,3 @@
-import React from 'react'
 import { SourceAppLogo } from './SourceApp'
 import { Button, Grid, Link, Typography } from '@mui/material'
 import { AppContextConsumer } from '../AppContext'

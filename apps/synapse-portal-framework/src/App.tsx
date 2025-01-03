@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router-dom'
 import {
   CookiesNotification,

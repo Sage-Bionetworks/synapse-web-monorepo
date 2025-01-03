@@ -1,7 +1,7 @@
-import React from 'react'
+import { Component, Fragment } from 'react'
 import IconSVG from '../../IconSvg/IconSvg'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
-import { DOI_REGEX } from '../../../utils/functions/RegularExpressions'
+import { convertDoiToLink } from '../../../utils/functions/RegularExpressions'
 
 type State = {
   isShowMoreOn: boolean
@@ -16,7 +16,7 @@ type CardFooterProps = {
   className?: string
 }
 
-class CardFooter extends React.Component<CardFooterProps, State> {
+class CardFooter extends Component<CardFooterProps, State> {
   constructor(props: CardFooterProps) {
     super(props)
     this.state = {
@@ -58,13 +58,15 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       return value
     }
     value = value.trim()
-    if (value.match(DOI_REGEX)) {
+    const doiLink = convertDoiToLink(value)
+
+    if (doiLink) {
       return (
         <a
           data-search-handle={columnName}
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://dx.doi.org/${value}`}
+          href={doiLink}
         >
           {value}
         </a>
@@ -114,7 +116,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
         )
       }
       return (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           <tr className={'SRC-cardRowMobile ' + hideClass}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}>
               {columnName}
@@ -128,7 +130,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
               {value}
             </td>
           </tr>
-        </React.Fragment>
+        </Fragment>
       )
     })
   }

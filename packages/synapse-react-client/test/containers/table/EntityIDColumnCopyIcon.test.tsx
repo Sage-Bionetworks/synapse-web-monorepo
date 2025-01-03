@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIDColumnCopyIcon from '../../../src/components/SynapseTable/EntityIDColumnCopyIcon'
 import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'

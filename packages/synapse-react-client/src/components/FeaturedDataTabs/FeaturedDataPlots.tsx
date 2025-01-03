@@ -1,4 +1,3 @@
-import React from 'react'
 import QueryPerFacetPlotsCard, {
   QueryPerFacetPlotsCardProps,
 } from './QueryPerFacetPlotsCard'
@@ -20,9 +19,7 @@ export type FeaturedDataPlotsProps = {
   explorePagePath?: string
 }
 
-const FeaturedDataPlots: React.FunctionComponent<
-  FeaturedDataPlotsProps
-> = props => {
+function FeaturedDataPlots(props: FeaturedDataPlotsProps) {
   const { configs, rgbIndex, sql } = props
   // What mode are we in?  Either every card has a different selected facet (requiring a different query),
   // or we're showing the facet counts for a single query.  This controls the layout, and how the cards are populated.

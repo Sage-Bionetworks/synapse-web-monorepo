@@ -442,6 +442,7 @@ a.SRC-whiteText {
 }
 @media (max-width: 555px) {
   .SRC-grid-item {
+    width: 100%;
     flex-basis: 100%;
   }
 }

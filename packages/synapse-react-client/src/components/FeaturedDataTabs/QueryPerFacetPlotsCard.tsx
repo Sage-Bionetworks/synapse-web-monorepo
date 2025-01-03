@@ -1,4 +1,3 @@
-import React from 'react'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
@@ -49,9 +48,7 @@ function getQueryRequest(
     },
   }
 }
-const QueryPerFacetPlotsCard: React.FunctionComponent<
-  QueryPerFacetPlotsCardProps
-> = props => {
+function QueryPerFacetPlotsCard(props: QueryPerFacetPlotsCardProps) {
   const {
     title,
     description,
@@ -68,8 +65,21 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<
     selectFacetColumnName,
     selectFacetColumnValue,
   )
+
+  /**
+   * Fully re-render the uncontrolled QueryWrapper component when the initial query changes. This eliminates a class of
+   * bugs where our 'derived' state (the current query), which should be reset, is out of sync with props.
+   *
+   * See https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+   */
+  const queryWrapperKey = JSON.stringify(initQueryRequest)
+
   return (
-    <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+    <QueryWrapper
+      {...rest}
+      initQueryRequest={initQueryRequest}
+      key={queryWrapperKey}
+    >
       <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
         <QueryWrapperErrorBoundary>
           <FacetPlotsCard

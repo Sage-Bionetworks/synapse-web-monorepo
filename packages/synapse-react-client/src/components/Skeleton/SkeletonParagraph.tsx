@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import Skeleton from '@mui/material/Skeleton'
 import { times } from 'lodash-es'
 
@@ -11,23 +11,23 @@ export type SkeletonParagraphProps = {
 /**
  * Skeleton component designed to mimic a paragraph.
  */
-export const SkeletonParagraph: React.FC<SkeletonParagraphProps> = ({
+export function SkeletonParagraph({
   numRows = 5,
   rowHeight,
   className,
-}) => {
+}: SkeletonParagraphProps) {
   const [skeletons, setSkeletons] = useState<JSX.Element[]>([])
 
   useEffect(() => {
     const elements: JSX.Element[] = []
     times(numRows, i => {
       elements.push(
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <Skeleton
             height={rowHeight}
             width={i === numRows - 1 ? '35%' : '100%'}
           ></Skeleton>
-        </React.Fragment>,
+        </Fragment>,
       )
     })
     setSkeletons(elements)

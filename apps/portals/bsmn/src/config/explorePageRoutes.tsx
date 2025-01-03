@@ -1,4 +1,3 @@
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import { QueryWrapperPlotNav } from 'synapse-react-client'
 import { individualsQueryWrapperPlotNavProps } from './synapseConfigs/people'

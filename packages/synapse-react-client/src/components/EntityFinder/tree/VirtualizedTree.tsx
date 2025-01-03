@@ -1,8 +1,7 @@
 import { Skeleton, Tooltip, Typography } from '@mui/material'
-import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import {
@@ -31,6 +30,8 @@ import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { UserBadge } from '../../UserCard/UserBadge'
 import { useQueryClient } from '@tanstack/react-query'
+import { EntitySelectionMapType } from '../useEntitySelection'
+import { ChevronRight, ExpandMore } from '@mui/icons-material'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */
@@ -154,7 +155,7 @@ export const getNodeData = (config: {
   getNextPageOfChildren: () => Promise<void>
   setSelectedId: (entityId: string) => void
   treeNodeType: EntityTreeNodeType
-  selected: Map<string, number>
+  selected: EntitySelectionMapType
   selectableTypes: EntityType[]
   autoExpand: (entityId: string) => boolean
   defaultHeight: number
@@ -251,6 +252,7 @@ export function Node(
 
   // We only use this for pagination nodes. If the pagination node comes into view, then immediately call `getNextPageOfChildren`
   const { ref, inView } = useInView()
+
   useEffect(() => {
     if (isPaginationNode(node) && inView) {
       getNextPageOfChildren()
@@ -290,7 +292,7 @@ export function Node(
     return <></>
   }
 
-  let tooltipContent: React.ReactNode = ''
+  let tooltipContent: ReactNode = ''
   if (isEntityHeaderNode(node)) {
     tooltipContent = (
       <div style={{ textAlign: 'center' }}>
@@ -323,6 +325,8 @@ export function Node(
     )
   }
 
+  const ExpandIcon = isOpen ? ExpandMore : ChevronRight
+
   return (
     <div
       className={`Node ${
@@ -344,16 +348,21 @@ export function Node(
       }}
     >
       {!isLeaf && (
-        <button
-          className="ExpandButton"
-          type="button"
-          onClick={event => {
-            event.stopPropagation()
-            toggleExpand()
-          }}
-        >
-          {isLoading ? <SynapseSpinner size={10} /> : isOpen ? '▾' : '▸'}
-        </button>
+        <>
+          {isLoading ? (
+            <SynapseSpinner size={10} />
+          ) : (
+            <button
+              aria-label={isOpen ? 'Collapse' : 'Expand'}
+              onClick={event => {
+                event.stopPropagation()
+                toggleExpand()
+              }}
+            >
+              <ExpandIcon className="ExpandButton" />
+            </button>
+          )}
+        </>
       )}
       {treeNodeType === EntityTreeNodeType.SINGLE_PANE && ( // SWC-5592
         <div className="EntityIcon">
@@ -363,11 +372,11 @@ export function Node(
         </div>
       )}
 
-      <div className="EntityName" ref={ref}>
-        <Tooltip title={tooltipContent} placement="right">
+      <Tooltip title={tooltipContent} placement="right">
+        <div className="EntityName" ref={ref}>
           {nodeText}
-        </Tooltip>
-      </div>
+        </div>
+      </Tooltip>
 
       {treeNodeType === EntityTreeNodeType.SINGLE_PANE && (
         <EntityBadgeIcons
@@ -475,7 +484,7 @@ export type VirtualizedTreeProps = Readonly<{
   treeNodeType: EntityTreeNodeType
   rootNodeConfiguration: RootNodeConfiguration
   setSelectedId: (entityId: string) => void
-  selected: Map<string, number>
+  selected: EntitySelectionMapType
   /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when treeNodeType is DUAL_PANE */
   currentContainer?: string | 'root' | null
   autoExpand: (entityId: string) => boolean

@@ -1,6 +1,6 @@
-import React from 'react'
+import { SVGProps } from 'react'
 
-const Python = (props: React.SVGProps<SVGSVGElement>) => (
+const Python = (props: SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
     className={`SRC-python-icon ${props.className ?? ''}`}

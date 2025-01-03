@@ -6,7 +6,6 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep, noop } from 'lodash-es'
-import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   DatasetItemsEditor,

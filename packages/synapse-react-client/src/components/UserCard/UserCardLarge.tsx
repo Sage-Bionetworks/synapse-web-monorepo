@@ -1,4 +1,3 @@
-import React from 'react'
 import CertifiedUserIcon from '../../assets/icons/CertifiedUser'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 

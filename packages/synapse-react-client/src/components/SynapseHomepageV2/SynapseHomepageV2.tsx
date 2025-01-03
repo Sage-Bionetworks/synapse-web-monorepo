@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -82,9 +81,7 @@ export type SynapseHomepageV2Props = {
   gotoPlace: (href: string) => void
 }
 
-export const SynapseHomepageV2: React.FunctionComponent<
-  SynapseHomepageV2Props
-> = ({ gotoPlace }) => {
+export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
   const theme = useTheme()
   const tinyView = useMediaQuery('(max-width:385px)')
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))

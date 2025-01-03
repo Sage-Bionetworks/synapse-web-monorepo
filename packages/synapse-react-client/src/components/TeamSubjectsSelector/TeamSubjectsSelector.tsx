@@ -15,7 +15,7 @@ import {
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import IconSvg from '../IconSvg'
 import { TeamBadgeOrError } from './TeamBadgeOrError'
 
@@ -35,9 +35,7 @@ export const REMOVE_TEXT = 'Remove from Access Requirement'
 export const HELP_TEXT = 'Enter Team IDs (i.e. 123, 456)'
 const teamIdsStringDefault = ''
 
-const TeamSubjectsSelector: React.FunctionComponent<
-  TeamSubjectsSelectorProps
-> = (props: TeamSubjectsSelectorProps) => {
+function TeamSubjectsSelector(props: TeamSubjectsSelectorProps) {
   const { subjects, onUpdate, onUpdateTeamIDsTextbox = noop } = props
   const [teamIdsString, setTeamIdsString] =
     useState<string>(teamIdsStringDefault)

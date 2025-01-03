@@ -1,4 +1,3 @@
-import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { styled } from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'

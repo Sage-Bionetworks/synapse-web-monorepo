@@ -3,7 +3,7 @@ import { Box, Link, Radio, Tooltip } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Team } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   useGetAllOpenMembershipInvitations,
   useGetChallengeTeamList,

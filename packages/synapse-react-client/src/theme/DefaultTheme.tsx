@@ -8,7 +8,6 @@ import {
 import { typographyOptions } from './typography/Typography'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
-import React from 'react'
 import {
   CheckCircleTwoTone,
   ErrorTwoTone,
@@ -256,14 +255,14 @@ export const defaultMuiThemeOptions: ThemeOptions = {
       },
     },
     MuiDialog: {
-      defaultProps: {
-        PaperProps: {
-          sx: theme => ({
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '.MuiDialog-container > .MuiPaper-root': {
             borderRadius: '0px',
             padding: theme.spacing(5.5),
             alignSelf: 'flex-start',
-          }),
-        },
+          },
+        }),
       },
     },
     MuiDialogTitle: {

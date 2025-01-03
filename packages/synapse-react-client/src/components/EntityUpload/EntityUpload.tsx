@@ -11,7 +11,15 @@ import {
 } from '@mui/material'
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
+import {
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  MouseEvent,
+  forwardRef,
+  ForwardedRef,
+} from 'react'
 import { FixedSizeList } from 'react-window'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/index'
 import {
@@ -55,9 +63,9 @@ const disabledUploadPaneSx: SxProps = {
   filter: 'opacity(33%)',
 }
 
-export const EntityUpload = React.forwardRef(function EntityUpload(
+export const EntityUpload = forwardRef(function EntityUpload(
   props: EntityUploadProps,
-  ref: React.ForwardedRef<EntityUploadHandle>,
+  ref: ForwardedRef<EntityUploadHandle>,
 ) {
   const { entityId, onStateChange = noop } = props
 
@@ -95,7 +103,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   const folderInputRef = useRef<HTMLInputElement>(null)
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (isFileEntity) {
       fileInputRef.current!.click()
     } else {
@@ -111,7 +119,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   ).length
 
   function uploadFileList(fileList: ArrayLike<File>) {
-    if (uploadDestination?.projectStorageLocationUsage.isOverLimit) {
+    if (uploadDestination?.projectStorageLocationUsage?.isOverLimit) {
       displayToast(
         'Cannot upload files because the storage limit has been exceeded.',
         'danger',
@@ -137,7 +145,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
   return (
     <div>
       <EntityUploadPromptDialog activePrompts={activePrompts} />
-      {uploadDestination && (
+      {uploadDestination?.projectStorageLocationUsage && (
         <ProjectStorageLimitAlert
           usage={uploadDestination.projectStorageLocationUsage}
           didUploadsExceedLimit={didUploadsExceedStorageLimit}
@@ -156,7 +164,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
           textAlign: 'center',
-          ...(uploadDestination?.projectStorageLocationUsage.isOverLimit
+          ...(uploadDestination?.projectStorageLocationUsage?.isOverLimit
             ? disabledUploadPaneSx
             : {}),
         }}
@@ -212,7 +220,7 @@ export const EntityUpload = React.forwardRef(function EntityUpload(
                   uploadFileList(e.target.files)
                 }
               }}
-              // @ts-expect-error - webkitdirectory is not included in the React.InputHTMLAttributes type
+              // @ts-expect-error - webkitdirectory is not included in the InputHTMLAttributes type
               webkitdirectory="true"
             />
 

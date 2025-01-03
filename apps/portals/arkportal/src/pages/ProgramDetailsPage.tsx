@@ -1,17 +1,18 @@
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  DetailsPageContextConsumer,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import React from 'react'
-import { datasetCardConfiguration } from 'src/config/synapseConfigs/datasets'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { datasetCardConfiguration, datasetColumnAliases } from 'src/config/synapseConfigs/datasets'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'
-import {
-  programsCardConfiguration,
-  programSchema,
-  programsRgbIndex,
-} from '../config/synapseConfigs/programs'
+import { programsCardConfiguration, programSchema, programsRgbIndex } from '../config/synapseConfigs/programs'
 import { projectsCardConfiguration } from '../config/synapseConfigs/projects'
 
 export function ProgramsDetailPage() {
@@ -60,6 +61,8 @@ export function ProgramsDetailPage() {
                       {...datasetCardConfiguration}
                       sql={datasetsSql}
                       searchParams={{ program: value! }}
+                      columnAliases={datasetColumnAliases}
+                      secondaryLabelLimit={4}
                     />
                   )}
                 </DetailsPageContextConsumer>

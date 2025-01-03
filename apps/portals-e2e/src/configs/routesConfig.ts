@@ -29,7 +29,7 @@ const routesConfig: RouteConfig = {
   },
   cancercomplexity: {
     buttons: ['Home', 'Explore', 'Sign In'],
-    links: ['Intranet', 'News', 'Help'],
+    links: ['News', 'Help'],
   },
   challengeportal: {
     buttons: ['Home'],

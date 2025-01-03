@@ -7,12 +7,12 @@ import {
   Typography,
 } from '@mui/material'
 import FormHelperText from '@mui/material/FormHelperText'
-import React, { useId, useState } from 'react'
+import { ChangeEvent, ReactNode, useId, useState } from 'react'
 
 // TODO: In MUI v6, use TextFieldProps and only add `minWords` and `maxWords`.
 export type TextFieldWithWordLimitProps = InputProps & {
-  label?: React.ReactNode
-  helperText?: React.ReactNode
+  label?: ReactNode
+  helperText?: ReactNode
   minWords?: number
   maxWords?: number
 }
@@ -21,7 +21,7 @@ export function getWordCount(s: string) {
   return (
     s
       .trim()
-      .split(/\s+/)
+      .split(/\W+/)
       // remove empty string(s)
       .filter(s => !!s).length
   )
@@ -83,7 +83,7 @@ export default function TextFieldWithWordLimit(
   const wordCount =
     typeof value === 'string' ? getWordCount(value) : trackedWordCount
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value
     setTrackedWordCount(getWordCount(newValue))
     onChange?.(event)

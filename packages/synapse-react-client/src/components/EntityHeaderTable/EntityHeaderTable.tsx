@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import { Fragment, useState, useMemo, useCallback, useEffect } from 'react'
 import {
   useReactTable,
   ColumnFiltersState,
@@ -351,13 +351,13 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         {table.getHeaderGroups().map(headerGroup =>
           headerGroup.headers.map(header => {
             return header.isPlaceholder ? null : (
-              <React.Fragment key={header.column.id}>
+              <Fragment key={header.column.id}>
                 {header.column.getCanFilter() && showFilterControls ? (
                   <Box sx={{ flexGrow: 1 }}>
                     <Filter column={header.column} table={table} />
                   </Box>
                 ) : null}
-              </React.Fragment>
+              </Fragment>
             )
           }),
         )}

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetAllDownloadListActionsRequired } from '../../synapse-queries'
 import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'

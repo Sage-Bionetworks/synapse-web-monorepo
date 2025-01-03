@@ -1,4 +1,3 @@
-import React from 'react'
 import SynapseImage, { SynapseImageProps } from '../../widgets/SynapseImage'
 import { useWikiContext } from '../SynapseWikiContext'
 

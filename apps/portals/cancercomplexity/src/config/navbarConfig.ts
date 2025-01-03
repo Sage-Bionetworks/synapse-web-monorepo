@@ -45,10 +45,6 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
-      name: 'Intranet',
-      path: 'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0',
-    },
-    {
       name: 'News',
       path: 'https://news.cancercomplexity.synapse.org/',
     },

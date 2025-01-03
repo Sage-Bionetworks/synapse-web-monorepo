@@ -1,4 +1,3 @@
-import React from 'react'
 import { ProgramsDataProps } from './Programs'
 import ExpandableContent from '../home_page/ExpandableContent'
 import LargeButton from '../../components/styled/LargeButton'

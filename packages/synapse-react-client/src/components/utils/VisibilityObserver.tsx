@@ -1,7 +1,7 @@
 /** Originally from YamUI.  May need to alter to update to later versions of react-intersection-observer (which does the heavy lifting).
  * This component has the option to provide an outOfView renderer, which might be useful in the future.
  */
-import React from 'react'
+import { Component, ReactNode, RefObject } from 'react'
 import { InView } from 'react-intersection-observer'
 
 export interface BaseComponentProps {
@@ -16,7 +16,7 @@ export interface NestableBaseComponentProps extends BaseComponentProps {
   /**
    * Elements to be rendered as children of this component.
    */
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 export interface VisibilityObserverProps extends BaseComponentProps {
@@ -34,12 +34,12 @@ export interface VisibilityObserverProps extends BaseComponentProps {
    * Render prop to return child content when the component is visible in the viewport. Once the component
    * has been in view it will always use this render prop, even when scrolled back out of view.
    */
-  renderInView?: () => React.ReactNode
+  renderInView?: () => ReactNode
 
   /**
    * Render prop to return child content before the component becomes visible in the viewport.
    */
-  renderOutOfView?: () => React.ReactNode
+  renderOutOfView?: () => ReactNode
 
   /**
    * Wrapper element tag name.
@@ -67,7 +67,7 @@ export interface VisibilityObserverState {
  * on viewport visibility. It will render the `renderOutOfView` prop until it is scrolled into view, then will
  * always render the `renderInView` prop instead. Callbacks will always be triggered on visibility changes.
  */
-export default class VisibilityObserver extends React.Component<
+export default class VisibilityObserver extends Component<
   VisibilityObserverProps,
   VisibilityObserverState
 > {
@@ -95,7 +95,7 @@ export default class VisibilityObserver extends React.Component<
   private getObserverChildren = (renderProps: {
     inView: boolean
     entry: IntersectionObserverEntry | undefined
-    ref: React.RefObject<any> | ((node?: Element | null) => void)
+    ref: RefObject<any> | ((node?: Element | null) => void)
   }) => {
     const { renderInView, renderOutOfView } = this.props
     const shouldRenderAsInView = renderProps.inView || this.state.hasBeenInView

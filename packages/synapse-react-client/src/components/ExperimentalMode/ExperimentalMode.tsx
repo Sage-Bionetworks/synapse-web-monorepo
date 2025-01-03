@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
@@ -15,9 +14,7 @@ const experimentalModeText =
 export type ExperimentalModeProps = {
   onExperimentalModeToggle?: (newValue: boolean) => void
 }
-const ExperimentalMode: React.FunctionComponent<ExperimentalModeProps> = ({
-  onExperimentalModeToggle,
-}) => {
+function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()

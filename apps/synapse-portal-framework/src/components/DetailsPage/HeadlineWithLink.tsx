@@ -1,5 +1,5 @@
 import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { HelpPopover, IconSvg, SynapseQueries } from 'synapse-react-client'
 
 export function HeadlineWithLinkDerivedFromEntityId(props: {
@@ -19,7 +19,7 @@ export function HeadlineWithLinkDerivedFromEntityId(props: {
   return (
     <HeadlineWithLink
       {...rest}
-      title={`${props.entityTitlePrepend}${entityHeader?.name}`}
+      title={`${entityTitlePrepend}${entityHeader?.name ?? ''}`}
     />
   )
 }

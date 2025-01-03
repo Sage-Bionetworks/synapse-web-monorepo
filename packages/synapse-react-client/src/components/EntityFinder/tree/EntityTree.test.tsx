@@ -1,13 +1,4 @@
 import '@testing-library/jest-dom'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import React, { useState } from 'react'
-import { EntityDetailsListDataConfigurationType } from '../../../../src/components/EntityFinder/details/EntityDetailsList'
-import {
-  EntityTree,
-  EntityTreeContainer,
-  EntityTreeProps,
-  FinderScope,
-} from '../../../../src/components/EntityFinder/tree/EntityTree'
 import {
   EntityHeader,
   EntityPath,
@@ -15,32 +6,43 @@ import {
   PaginatedResults,
   ProjectHeader,
   ProjectHeaderList,
+  Reference,
 } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Map } from 'immutable'
+import failOnConsole from 'jest-fail-on-console'
+import { useState } from 'react'
+import { EntityDetailsListDataConfigurationType } from '../../../../src/components/EntityFinder/details/EntityDetailsList'
+import {
+  EntityTree,
+  EntityTreeContainer,
+  EntityTreeProps,
+  FinderScope,
+} from '../../../../src/components/EntityFinder/tree/EntityTree'
 import * as VirtualizedTreeModule from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
 import {
   EntityTreeNodeType,
   VirtualizedTreeProps,
 } from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
+import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
+import { mockProjects } from '../../../../src/mocks/entity'
+import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
+import mockProject from '../../../../src/mocks/entity/mockProject'
 import { rest, server } from '../../../../src/mocks/msw/server'
-import failOnConsole from 'jest-fail-on-console'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../src/utils/functions/getEndpoint'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import {
   ENTITY_HEADERS,
   ENTITY_PATH,
   FAVORITES,
   PROJECTS,
 } from '../../../../src/utils/APIConstants'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
-import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
-import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
-import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
-import mockProject from '../../../../src/mocks/entity/mockProject'
-import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
-import { mockProjects } from '../../../../src/mocks/entity'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../src/utils/functions/getEndpoint'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -61,9 +63,10 @@ const mockSetDetailsViewConfiguration = jest.fn()
 const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
-const defaultProps: EntityTreeProps = {
-  // We use JS arrays rather than Immutable.Map so we can easily inspect it in
-  selectedEntities: [],
+const defaultProps = {
+  currentContainer: mockProject.id,
+  setCurrentContainer: jest.fn(),
+  selectedEntities: Map<string, Reference>(),
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: mockProject.id,
   initialContainer: mockProject.id,
@@ -75,30 +78,32 @@ const defaultProps: EntityTreeProps = {
   treeNodeType: EntityTreeNodeType.SINGLE_PANE,
   showScopeAsRootNode: true,
   selectableTypes: Object.values(EntityType),
-}
+} satisfies EntityTreeProps
 
-const projectsPage1: Partial<ProjectHeader>[] = [
+const projectsPage1: ProjectHeader[] = [
   {
-    id: mockProjects[0].id,
+    id: mockProjects[0].id!,
     name: 'Project 1',
     modifiedOn: 'today',
     modifiedBy: 100000,
+    lastActivity: new Date().toISOString(),
   },
 ]
 
-const projectsPage2: Partial<ProjectHeader>[] = [
+const projectsPage2: ProjectHeader[] = [
   {
-    id: mockProjects[1].id,
+    id: mockProjects[1].id!,
     name: 'Project 2',
     modifiedOn: 'today',
     modifiedBy: 100000,
+    lastActivity: new Date().toISOString(),
   },
 ]
 
 const favorites: PaginatedResults<EntityHeader> = {
   results: [
     {
-      id: mockFolderEntity.id,
+      id: mockFolderEntity.id!,
       name: 'Favorite 1 - A Folder',
       modifiedOn: 'today',
       modifiedBy: '100000',
@@ -131,38 +136,17 @@ const entityPath: EntityPath = {
     {
       id: 'syn4489',
       name: 'The root entity that is never seen',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
       type: 'org.sagebionetworks.repo.model.Folder',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
     },
     {
-      id: mockProjects[3].id,
+      id: mockProjects[3].id!,
       name: 'Project in entity path',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
       type: 'org.sagebionetworks.repo.model.Project',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
     },
     {
-      id: mockFolderEntity.id,
+      id: mockFolderEntity.id!,
       name: 'Folder in entity path',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
       type: 'org.sagebionetworks.repo.model.Folder',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
     },
   ],
 }
@@ -493,9 +477,11 @@ describe('EntityTree tests', () => {
             show: true,
           },
           autoExpand: expect.any(Function),
-          selected: [],
+          selected: Map<string, Reference>(),
           setSelectedId: expect.any(Function),
           visibleTypes: defaultProps.visibleTypes,
+          treeNodeType: defaultProps.treeNodeType,
+          selectableTypes: defaultProps.selectableTypes,
         }),
         {},
       )
@@ -508,8 +494,14 @@ describe('EntityTree tests', () => {
 
     await waitFor(() => expect(mockToggleSelection).toBeCalled())
 
+    const newSelectionMap = Map<string, Reference>().set(newSelectedId, {
+      targetId: newSelectedId,
+    })
+
     // The wrapping component that controls the selection should be updated via callback, changing the prop
-    renderComponent({ selectedEntities: [{ targetId: newSelectedId }] })
+    renderComponent({
+      selectedEntities: newSelectionMap,
+    })
 
     await waitFor(() => {
       expect(mockSetDetailsViewConfiguration).toBeCalled()
@@ -525,9 +517,10 @@ describe('EntityTree tests', () => {
           },
           autoExpand: expect.any(Function),
           selectableTypes: defaultProps.selectableTypes,
-          selected: [{ targetId: newSelectedId }],
+          selected: newSelectionMap,
           setSelectedId: expect.any(Function),
           visibleTypes: defaultProps.visibleTypes,
+          treeNodeType: defaultProps.treeNodeType,
         }),
         {},
       )

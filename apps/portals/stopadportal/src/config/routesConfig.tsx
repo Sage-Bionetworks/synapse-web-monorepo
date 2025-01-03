@@ -1,7 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import React from 'react'
 import { RouteObject } from 'react-router-dom'
 import {
   Markdown,

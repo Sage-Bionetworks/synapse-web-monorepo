@@ -1,13 +1,12 @@
-import { Box, Link, Button, Typography, darken } from '@mui/material'
-import React from 'react'
+import { Box, Link, Button, Typography } from '@mui/material'
 import backgroundSpotsLeft from './assets/dot_blob_top_left.png'
 import backgroundSpotsRight from './assets/dot_blob_bottom_right.png'
 
-const ELContributeYourData: React.FC = () => {
+function ELContributeYourData() {
   return (
     <Box
       sx={{
-        backgroundColor: '#5BA998',
+        backgroundColor: 'primary.main',
         display: 'grid',
         gridTemplateColumns: '33% 33% 33%',
         position: 'relative',
@@ -68,13 +67,7 @@ const ELContributeYourData: React.FC = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: '#5BA998',
               border: '1px solid white',
-              boxShadow: 'none',
-              '&:hover': {
-                backgroundColor: darken('#5BA998', 0.05),
-                boxShadow: 'none',
-              },
             }}
           >
             Start Contributing

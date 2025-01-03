@@ -1,5 +1,11 @@
 import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import {
+  MutableRefObject,
+  SyntheticEvent,
+  useRef,
+  useState,
+  MouseEvent,
+} from 'react'
 import IconCopy from '../../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
@@ -35,11 +41,11 @@ export type UserCardMediumProps = {
  */
 const copyToClipboard =
   (
-    ref: React.MutableRefObject<HTMLElement | null>,
+    ref: MutableRefObject<HTMLElement | null>,
     value: string,
     onCopy: () => void,
   ) =>
-  (event: React.SyntheticEvent) => {
+  (event: SyntheticEvent) => {
     event.preventDefault()
 
     // use the Clipboard API
@@ -49,7 +55,7 @@ const copyToClipboard =
     })
   }
 
-export const UserCardMedium: React.FC<UserCardMediumProps> = ({
+export function UserCardMedium({
   userProfile,
   menuActions,
   isLarge = false,
@@ -61,12 +67,10 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   isValidated,
   isCertified,
   isLoadingAvatar,
-}) => {
-  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
-    null,
-  )
+}: UserCardMediumProps) {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
   const isContextMenuOpen = Boolean(menuAnchorEl)
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
     setMenuAnchorEl(event.currentTarget)
   }
   const handleMenuClose = () => {
@@ -117,7 +121,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     />
   )
   const mediumCard = (
-    <React.Fragment>
+    <>
       {!hideEmail && (
         <ToastMessage
           show={showModal}
@@ -141,26 +145,18 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       <div className="SRC-cardContent">
         <p className="SRC-eqHeightRow SRC-userCardName">
           {/*
-              if its a medium component the header should be clickable (unless disableLink is set),
-              if its large then it should NOT be clickable
-            */}
-          {/* make SRC-whiteText overridable with a good name! */}
-          {isLarge || disableLink ? (
-            <span className={isLarge ? 'SRC-whiteText' : 'SRC-blackText'}>
-              {name}
-            </span>
-          ) : (
-            // consolidate click events
-            <a
-              href={linkLocation}
-              target={openLinkInNewTab ? '_blank' : ''}
-              rel={openLinkInNewTab ? 'noreferrer' : ''}
-              tabIndex={0}
-              className={'SRC-hand-cursor'}
-            >
-              {name}
-            </a>
-          )}
+              make the header clickable for all cards
+              consolidate click events
+          */}
+          <a
+            href={linkLocation}
+            target={openLinkInNewTab ? '_blank' : ''}
+            rel={openLinkInNewTab ? 'noreferrer' : ''}
+            tabIndex={0}
+            className={'SRC-hand-cursor'}
+          >
+            {name}
+          </a>
           {isValidated && (
             <Tooltip
               title="This user profile has been validated."
@@ -172,15 +168,14 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
           )}
         </p>
         {(position || company) && (
-          <p className={`${isLarge ? 'SRC-whiteText' : ''}`}>
+          <p>
             {position} {position ? ' / ' : ''} {company}
           </p>
         )}
         {!hideEmail && (
           <p
             ref={copyToClipboardRef}
-            className={`${isLarge ? 'SRC-whiteText' : ''}
-              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
+            className={`SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
               email,
@@ -194,9 +189,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             tabIndex={0}
           >
             <span style={{ paddingRight: '5px', paddingBottom: '2px' }}>
-              <a className={`link ${isLarge ? 'SRC-whiteText' : ''}`}>
-                {`${userName}@synapse.org`}
-              </a>
+              <a className={`link`}>{`${userName}@synapse.org`}</a>
             </span>
             <IconCopy />
           </p>
@@ -208,7 +201,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             rel="noopener noreferrer"
             style={{ width: 'fit-content' }}
             tabIndex={0}
-            className={isLarge ? 'SRC-whiteText' : ''}
           >
             View ORCID
           </a>
@@ -216,7 +208,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       </div>
       {/* conditionally render menu actions, if there are no actions then we don't show the button */}
       {menuActions && menuActions.length > 0 && (
-        <React.Fragment>
+        <>
           <IconButton
             role="menu"
             tabIndex={0}
@@ -232,25 +224,34 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             onClose={handleMenuClose}
             open={isContextMenuOpen}
           />
-        </React.Fragment>
+        </>
       )}
-    </React.Fragment>
+    </>
   )
 
   if (!isLarge) {
     return (
-      <Card className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</Card>
+      <Card
+        className={`SRC-userCard SRC-userCardMediumUp`}
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            '&.SRC-userCard': {
+              minWidth: 'unset',
+              padding: '0 16px',
+              width: '100%',
+            },
+          },
+        })}
+      >
+        {mediumCard}
+      </Card>
     )
   }
   // else return medium card inside large component
   // when the component is large we have to set the click handler to wrap both the top and bottom portion
   return (
     <Card>
-      <div
-        className={`SRC-primary-background-color SRC-userCard SRC-userCardMediumUp`}
-      >
-        {mediumCard}
-      </div>
+      <div className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</div>
       {isLarge && (
         <UserCardLarge userProfile={userProfile} isCertified={isCertified} />
       )}
@@ -258,7 +259,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   )
 }
 
-export const LoadingUserCardMedium: React.FunctionComponent = () => {
+export function LoadingUserCardMedium() {
   return (
     <Card
       className="SRC-userCard SRC-userCardMediumUp"

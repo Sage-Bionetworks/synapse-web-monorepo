@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSynapseContext } from '../../utils'
 import {
   ColumnTypeEnum,
@@ -41,6 +41,7 @@ import { useGetEntity } from '../../synapse-queries'
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,
   | 'showAccessColumn'
+  | 'showAccessColumnHeader'
   | 'showDownloadColumn'
   | 'hideDownload'
   | 'showDirectDownloadColumn'
@@ -56,6 +57,7 @@ export type SynapseTableProps = {
 
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
+  showAccessColumnHeader?: boolean
   /** @deprecated use showDirectDownloadColumn */
   showDownloadColumn?: boolean
   /** @deprecated use hideAddToDownloadListColumn */
@@ -76,6 +78,7 @@ export function SynapseTable(props: SynapseTableProps) {
     rowSet,
     isLoadingNewPage,
     showAccessColumn,
+    showAccessColumnHeader,
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
     columnLinks,
@@ -141,7 +144,10 @@ export function SynapseTable(props: SynapseTableProps) {
       rowSelectionColumn,
       addToDownloadListColumn,
       directDownloadColumn,
-      accessColumn,
+      {
+        ...accessColumn,
+        header: showAccessColumn && showAccessColumnHeader ? 'Access' : '',
+      },
       ...(selectColumns.map((selectColumn, index) => {
         return columnHelper.accessor(row => row.values[index], {
           id: selectColumn.name,
@@ -152,7 +158,7 @@ export function SynapseTable(props: SynapseTableProps) {
         })
       }) ?? []),
     ],
-    [selectColumns],
+    [selectColumns, showAccessColumn],
   )
 
   const prependColumnVisibility: VisibilityState = useMemo(

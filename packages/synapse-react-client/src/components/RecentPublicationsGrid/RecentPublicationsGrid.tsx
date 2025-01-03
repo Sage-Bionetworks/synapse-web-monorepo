@@ -1,12 +1,11 @@
-import React from 'react'
 import {
-  Grid,
-  CardContent,
   Typography,
   Button,
   Box,
   Skeleton,
+  Link as MuiLink,
 } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -15,6 +14,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
+import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -25,11 +25,107 @@ export type RecentPublicationsGridProps = {
 
 type PublicationCardProps = {
   pub: Row
+  isLoading: boolean
+  categoryColIndex: number
+  titleColIndex: number
+  journalColIndex: number
+  publicationDateColIndex: number
+  doiColIndex: number
 }
+
+const PublicationCard = ({
+  pub,
+  isLoading,
+  categoryColIndex,
+  titleColIndex,
+  journalColIndex,
+  publicationDateColIndex,
+  doiColIndex,
+}: PublicationCardProps) => (
+  <Grid
+    key={pub.rowId}
+    height={{ xs: 'auto', sm: 'initial' }}
+    minWidth={{ xs: '280px', lg: 'initial' }}
+    maxWidth={{ xs: '450px', lg: 'initial' }}
+  >
+    <Box sx={{ height: '100%' }}>
+      {isLoading ? (
+        <Skeleton variant="rectangular" height={275} width="100%" />
+      ) : (
+        <div>
+          {pub.values[categoryColIndex] && (
+            <Typography
+              variant="overline"
+              fontSize={'14px'}
+              sx={{
+                backgroundColor: 'grey.300',
+                borderRadius: '3px',
+                padding: '4px 8px',
+                border: 'none',
+                lineHeight: 'initial',
+              }}
+            >
+              {pub.values[categoryColIndex]}
+            </Typography>
+          )}
+          <Typography
+            variant="headline2"
+            color="grey.1000"
+            fontSize={'21px'}
+            sx={{
+              padding: '20px 0px',
+            }}
+          >
+            <MuiLink
+              href={convertDoiToLink(pub.values[doiColIndex] || '')}
+              target="_blank"
+              sx={{
+                color: 'inherit',
+                textDecoration: 'none',
+                fontWeight: 'inherit',
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+              }}
+            >
+              {pub.values[titleColIndex]}
+            </MuiLink>
+          </Typography>
+          <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              fontSize={'14px'}
+              fontStyle={'italic'}
+              lineHeight={1.35}
+            >
+              {pub.values[journalColIndex]}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="grey.700"
+              fontSize={'14px'}
+              lineHeight={1.35}
+              paddingBottom={{ xs: 0, md: '35px' }}
+            >
+              {pub.values[publicationDateColIndex] &&
+                formatDate(
+                  dayjs(Number(pub.values[publicationDateColIndex])),
+                  'MMMM, YYYY',
+                )}
+            </Typography>
+          </Box>
+        </div>
+      )}
+    </Box>
+  </Grid>
+)
 
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
+
   const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
@@ -46,13 +142,17 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
 
   enum ExpectedColumns {
-    TAG = 'Tag',
+    CATEGORY = 'Category',
     JOURNAL = 'Journal',
     TITLE = 'Title',
     PUBLICATION_DATE = 'publicationDate',
+    DOI = 'DOI',
   }
 
-  const tagColIndex = getFieldIndex(ExpectedColumns.TAG, queryResultBundle)
+  const categoryColIndex = getFieldIndex(
+    ExpectedColumns.CATEGORY,
+    queryResultBundle,
+  )
   const journalColIndex = getFieldIndex(
     ExpectedColumns.JOURNAL,
     queryResultBundle,
@@ -62,106 +162,66 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
     ExpectedColumns.PUBLICATION_DATE,
     queryResultBundle,
   )
-
-  const PublicationCard = ({ pub }: PublicationCardProps) => (
-    <Grid item xs={12} sm={6} md={4} key={pub.rowId}>
-      <Box sx={{ height: '100%' }}>
-        {isLoading ? (
-          <Skeleton variant="rectangular" height={250} width="100%" />
-        ) : (
-          <CardContent>
-            <Box display={'flex'} gap={'6px'} flexWrap={'wrap'}>
-              {pub.values[tagColIndex] &&
-                JSON.parse(pub.values[tagColIndex] as string).map(
-                  (tag: string, index: number) => (
-                    <Typography
-                      key={index}
-                      variant="overline"
-                      sx={{
-                        backgroundColor: 'grey.300',
-                        borderRadius: '3px',
-                        padding: '4px 8px',
-                        border: 'none',
-                        lineHeight: 'initial',
-                      }}
-                    >
-                      {tag}
-                    </Typography>
-                  ),
-                )}
-            </Box>
-            <Typography
-              variant="headline2"
-              color="grey.1000"
-              sx={{
-                padding: '20px 0px',
-              }}
-            >
-              {pub.values[titleColIndex]}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="grey.700"
-              sx={{
-                fontStyle: 'italic',
-                fontSize: '14px',
-              }}
-            >
-              {pub.values[journalColIndex]}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="grey.700"
-              sx={{ fontSize: '14px' }}
-            >
-              {pub.values[publicationDateColIndex] &&
-                formatDate(
-                  dayjs(Number(pub.values[publicationDateColIndex])),
-                  'MMMM, YYYY',
-                )}
-            </Typography>
-          </CardContent>
-        )}
-      </Box>
-    </Grid>
-  )
+  const doiColIndex = getFieldIndex(ExpectedColumns.DOI, queryResultBundle)
 
   return (
     <Box
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '3fr 1fr' },
-        gap: { xs: '38px', md: '80px' },
+        height: { xs: 'auto', md: 'initial' },
+        gap: { xs: '24px', md: '80px' },
+        padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <Grid
-        container
-        spacing={2}
+      <Box
         sx={{
           order: { xs: 1, md: 0 },
         }}
       >
-        <Grid container spacing={2}>
+        <Box
+          sx={theme => ({
+            display: 'grid',
+            gap: '32px',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(auto-fill, minmax(280px, 1fr))',
+              lg: 'repeat(auto-fill, minmax(255px, 1fr))',
+              xl: 'repeat(auto-fill, minmax(322px, 1fr))',
+            },
+            [theme.breakpoints.down('sm')]: {
+              '& > :nth-of-type(n+4)': {
+                display: 'none',
+              },
+            },
+          })}
+        >
           {dataRows.map(pub => (
-            <PublicationCard pub={pub} key={pub.rowId} />
+            <PublicationCard
+              pub={pub}
+              key={pub.rowId}
+              isLoading={isLoading}
+              categoryColIndex={categoryColIndex}
+              titleColIndex={titleColIndex}
+              journalColIndex={journalColIndex}
+              publicationDateColIndex={publicationDateColIndex}
+              doiColIndex={doiColIndex}
+            />
           ))}
-        </Grid>
-      </Grid>
-      <Box
-        sx={{
-          padding: {
-            xs: '0 16px',
-            md: 0,
-          },
-        }}
-      >
+        </Box>
+      </Box>
+      <Box>
         <Box
           display="flex"
           flexDirection="column"
           gap="16px"
-          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
+          sx={{
+            borderTop: '3px solid',
+            borderColor: 'grey.400',
+            padding: '30px 0',
+          }}
         >
-          <Typography variant="headline2" paddingTop="26px" color="grey.1000">
+          <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>
             Recently Published
           </Typography>
           <Typography
@@ -178,6 +238,8 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               sx={{
                 whiteSpace: 'nowrap',
                 alignSelf: 'flex-start',
+                padding: '6px 24px',
+                fontWeight: 600,
               }}
             >
               {buttonLinkText}

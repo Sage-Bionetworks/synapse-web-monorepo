@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -50,7 +50,7 @@ const synapseQuickLinks: SynapseSettingLink[] = [
   },
 ]
 
-function Navbar() {
+export default function Navbar() {
   const { navbarConfig, logoHeaderConfig } = usePortalContext()
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -60,7 +60,7 @@ function Navbar() {
     FeatureFlagEnum.PORTALS_DROPDOWN,
   )
   const [showMenu, setShowMenu] = useState(false)
-  const openBtnRef = React.useRef<HTMLDivElement>(null)
+  const openBtnRef = useRef<HTMLDivElement>(null)
 
   const { clearSession } = AppUtils.useApplicationSessionContext()
 
@@ -119,7 +119,7 @@ function Navbar() {
     setPortalResourcesAnchorEl(null)
   }
   return (
-    <React.Fragment>
+    <>
       <Box
         component={'nav'}
         className={
@@ -310,8 +310,6 @@ function Navbar() {
         </div>
       </Box>
       <div className="spacer" />
-    </React.Fragment>
+    </>
   )
 }
-
-export default Navbar

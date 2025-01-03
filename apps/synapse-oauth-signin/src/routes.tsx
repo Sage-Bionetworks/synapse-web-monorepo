@@ -1,4 +1,3 @@
-import React from 'react'
 import App, { AppProps } from './App'
 import { LoginComponent } from './LoginComponent'
 import { LogoutComponent } from './LogoutComponent'

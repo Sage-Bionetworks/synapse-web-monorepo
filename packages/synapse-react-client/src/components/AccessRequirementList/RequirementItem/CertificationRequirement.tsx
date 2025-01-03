@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'

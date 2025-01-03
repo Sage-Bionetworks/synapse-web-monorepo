@@ -1,9 +1,9 @@
-import React, { useRef } from 'react'
+import { CSSProperties, useRef } from 'react'
 import { getColor } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../../utils/hooks'
-import { Avatar as MUIAvatar, Skeleton, SxProps } from '@mui/material'
+import { Avatar as MUIAvatar, Skeleton, SxProps, useTheme } from '@mui/material'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -19,15 +19,16 @@ export type AvatarProps = {
   className?: string
 }
 
-export const Avatar: React.FunctionComponent<AvatarProps> = ({
+export function Avatar({
   userProfile,
   avatarSize = 'LARGE',
   imageURL,
   showCardOnHover = false,
   isLoadingAvatar = false,
   className,
-}) => {
+}: AvatarProps) {
   const target = useRef(null)
+  const theme = useTheme()
 
   const mediumUserCard = (
     <UserCardMedium userProfile={userProfile} imageURL={imageURL} />
@@ -62,6 +63,11 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
         fontSize: '26px',
         width: '80px',
         height: '80px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '21px',
+          width: '45px',
+          height: '45px',
+        },
       }
       break
     default:
@@ -72,7 +78,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
 
   const hasProfileImage = !!imageURL
 
-  const conditionalStyles: React.CSSProperties = hasProfileImage
+  const conditionalStyles: CSSProperties = hasProfileImage
     ? {
         backgroundImage: `url(${imageURL})`,
       }

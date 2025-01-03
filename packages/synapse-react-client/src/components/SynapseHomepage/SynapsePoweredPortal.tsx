@@ -1,5 +1,3 @@
-import React from 'react'
-
 export type SynapsePoweredPortalProps = {
   name: string
   description: string
@@ -7,9 +5,12 @@ export type SynapsePoweredPortalProps = {
   logoUrl: string
 }
 
-export const SynapsePoweredPortal: React.FunctionComponent<
-  SynapsePoweredPortalProps
-> = ({ name, description, url, logoUrl }) => {
+export function SynapsePoweredPortal({
+  name,
+  description,
+  url,
+  logoUrl,
+}: SynapsePoweredPortalProps) {
   return (
     <div className="PoweredBySynapseItem">
       <div className="PoweredBySynapseItemGrid">
