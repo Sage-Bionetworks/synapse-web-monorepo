@@ -11,24 +11,19 @@ export default function GoalsV2Mobile({
   title,
 }: GoalsV2DataProps) {
   const titleElement = (
-    <div className="GoalsV2__Mobile__Header">
+    <div>
       {countSql && (
-        <span className="GoalsV2__Mobile__Header__Count">
+        <span>
           <QueryCount parens={false} query={{ sql: countSql }} />
         </span>
       )}
-      <span className="GoalsV2__Mobile__Header__Title"> {title} </span>
+      <span> {title} </span>
     </div>
   )
   const content = (
-    <div className="GoalsV2__Mobile__Content">
+    <div>
       <p>{summary}</p>
-      <Button
-        variant="contained"
-        color="secondary"
-        className="GoalsV2__Mobile__Content__Link"
-        href={link}
-      >
+      <Button variant="contained" color="secondary" href={link}>
         Explore
       </Button>
     </div>
