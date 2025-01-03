@@ -173,7 +173,6 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           variant="headline1"
           style={{
             color: 'grey.1000',
-            fontFamily: 'Merriweather',
             fontSize: '32px',
           }}
           sx={{
@@ -194,11 +193,11 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           sx={{
             backgroundColor: '#5BA998',
             border: '1px solid white',
-            boxShadow: 'none',
+            boxShadow: 'none !important',
             borderRadius: '5px',
             '&:hover': {
               backgroundColor: darken('#5BA998', 0.05),
-              boxShadow: 'none',
+              boxShadow: 'none !important',
             },
           }}
         >
