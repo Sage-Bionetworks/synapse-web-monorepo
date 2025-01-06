@@ -94,6 +94,9 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         }
         const files = await getFiles(batchFileRequest, accessToken)
         setError(undefined)
+        {
+          /* TODO - handle case where presigned URL expires */
+        }
         setAssets(
           files.requestedFiles
             .filter(el => el.preSignedURL !== undefined)
@@ -126,34 +129,32 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   )
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
-  const goalsDataArray: GoalsV2DataProps[] = []
-
-  queryResultBundle?.queryResult!.queryResults.rows.forEach((el, index) => {
-    const values = el.values as string[]
-    if (values.some(value => value === null)) {
-      console.warn('Row has null value(s) when no nulls expected')
-    }
-    const tableId =
-      tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
-    let countSql
-    if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
-      countSql = values[countSqlColumnIndex]
-    } else if (tableId) {
-      countSql = `SELECT * FROM ${tableId}`
-    }
-    const title = values[titleColumnIndex]
-    const summary = values[summaryColumnIndex]
-    const link = values[linkColumnIndex]
-    const asset = assets?.[index] ?? ''
-    const goalsV2DataProps: GoalsV2DataProps = {
-      countSql,
-      title,
-      summary,
-      link,
-      asset,
-    }
-    goalsDataArray.push(goalsV2DataProps)
-  })
+  const goalsDataArray: GoalsV2DataProps[] =
+    queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
+      const values = el.values as string[]
+      if (values.some(value => value === null)) {
+        console.warn('Row has null value(s) when no nulls expected')
+      }
+      const tableId =
+        tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+      let countSql
+      if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
+        countSql = values[countSqlColumnIndex]
+      } else if (tableId) {
+        countSql = `SELECT * FROM ${tableId}`
+      }
+      const title = values[titleColumnIndex]
+      const summary = values[summaryColumnIndex]
+      const link = values[linkColumnIndex]
+      const asset = assets?.[index] ?? ''
+      return {
+        countSql,
+        title,
+        summary,
+        link,
+        asset,
+      }
+    }) ?? []
 
   return (
     <Box
