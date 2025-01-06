@@ -1,27 +1,57 @@
+import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
+import { SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
 import { useGetEntityChildrenInfinite } from '../../../../synapse-queries/entity/useGetEntityChildren'
-import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
-import { EntityDetailsListSharedProps } from '../EntityDetailsList'
-import { DetailsView } from '../view/DetailsView'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+import { DetailsView, DetailsViewColumn } from '../view/DetailsView'
 
 type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
+}
+
+const sortableColumns = [
+  DetailsViewColumn.NAME,
+  DetailsViewColumn.CREATED_ON,
+  DetailsViewColumn.MODIFIED_ON,
+]
+
+function convertColumnToSortBy(column: DetailsViewColumn): SortBy | undefined {
+  switch (column) {
+    case DetailsViewColumn.NAME:
+      return SortBy.NAME
+    case DetailsViewColumn.CREATED_ON:
+      return SortBy.CREATED_ON
+    case DetailsViewColumn.MODIFIED_ON:
+      return SortBy.MODIFIED_ON
+  }
+
+  return undefined
 }
 
 export function EntityChildrenDetails({
   parentContainerId,
   ...sharedProps
 }: EntityChildrenDetailsProps) {
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
-  const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
+  const [sortingState, setSortingState] = useState<SortingState>([
+    {
+      id: DetailsViewColumn.NAME,
+      desc: false,
+    },
+  ])
 
   const getChildrenInfiniteRequestObject = {
     parentId: parentContainerId,
     includeTotalChildCount: true,
     includeTypes: sharedProps.visibleTypes,
-    sortBy: sortBy,
-    sortDirection: sortDirection,
+    sortBy: sortingState[0]
+      ? convertColumnToSortBy(sortingState[0].id as DetailsViewColumn)
+      : undefined,
+    sortDirection: sortingState[0]
+      ? sortingState[0].desc
+        ? Direction.DESC
+        : Direction.ASC
+      : undefined,
   }
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject, {
@@ -47,11 +77,11 @@ export function EntityChildrenDetails({
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
-      sort={{ sortBy, sortDirection }}
-      setSort={(newSortBy, newSortDirection) => {
-        setSortBy(newSortBy)
-        setSortDirection(newSortDirection)
-      }}
+      enableSorting={true}
+      enableMultiSort={false}
+      sortableColumns={sortableColumns}
+      sorting={sortingState}
+      onSortingChange={setSortingState}
       selectAllIsChecked={selectAllCheckboxState}
       getChildrenInfiniteRequestObject={getChildrenInfiniteRequestObject}
       totalEntities={totalEntities}

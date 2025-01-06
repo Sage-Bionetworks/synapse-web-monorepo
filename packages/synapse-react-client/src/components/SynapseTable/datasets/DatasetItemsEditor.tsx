@@ -1,35 +1,44 @@
-import { Alert, Button, Checkbox, Skeleton, Typography } from '@mui/material'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
-import BaseTable, {
-  AutoResizer,
-  ColumnShape,
-} from '@sage-bionetworks/react-base-table'
-import { isEqual, upperFirst } from 'lodash-es'
-import pluralize from 'pluralize'
-import { SetStateAction, useEffect, useMemo, useState } from 'react'
-import { SkeletonTable } from '../../Skeleton'
 import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-  isDataset,
-  isDatasetCollection,
-} from '../../../utils/functions/EntityTypeUtils'
-import {
-  useGetEntity,
-  useGetEntityPath,
-  useUpdateEntity,
-} from '../../../synapse-queries'
-import { useSet } from '../../../utils/hooks'
+  Alert,
+  Button,
+  Checkbox,
+  Skeleton,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import {
   EntityRef,
   EntityRefCollectionView,
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  Table,
+  useReactTable,
+} from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { isEqual, upperFirst } from 'lodash-es'
+import pluralize from 'pluralize'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import WideButton from '../../../components/styled/WideButton'
+import {
+  useGetEntity,
+  useGetEntityPath,
+  useUpdateEntity,
+} from '../../../synapse-queries'
 import { RequiredProperties } from '../../../utils'
 import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+  isDataset,
+  isDatasetCollection,
+} from '../../../utils/functions/EntityTypeUtils'
+import { useSet } from '../../../utils/hooks'
+import {
   BadgeIconsRenderer,
-  CellRendererProps,
   CreatedOnRenderer,
   DatasetEditorCheckboxRenderer,
   DatasetEditorVersionRenderer,
@@ -43,9 +52,134 @@ import { EntityFinderModal } from '../../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../../EntityFinder/VersionSelectionType'
 import { BlockingLoader } from '../../LoadingScreen/LoadingScreen'
+import { SkeletonTable } from '../../Skeleton'
 import WarningDialog from '../../SynapseForm/WarningDialog'
+import ColumnHeader from '../../TanStackTable/ColumnHeader'
+import StyledVirtualTanStackTable from '../../TanStackTable/StyledVirtualTanStackTable'
 import { displayToast } from '../../ToastMessage'
-import WideButton from '../../../components/styled/WideButton'
+
+export type DatasetItemsEditorTableData = EntityRef & {
+  isSelected: boolean
+  setSelected: (value: boolean) => void
+}
+
+enum DatasetItemsEditorColumn {
+  ERROR_STATE = 'errorState',
+  SELECTED = 'isSelected',
+  NAME = 'name',
+  ENTITY_ID = 'entityId',
+  BADGES = 'badges',
+  VERSION = 'version',
+  CREATED_ON = 'createdOn',
+  MODIFIED_ON = 'modifieddOn',
+  MODIFIED_BY = 'modifiedBy',
+  PROJECT = 'project',
+}
+
+const columnHelper = createColumnHelper<DatasetItemsEditorTableData>()
+function getColumns(
+  opts: SelectAllCheckboxRendererProps & {
+    changeVersionOnItem: (entityId: string, newVersion: number) => void
+  },
+) {
+  const {
+    datasetToUpdate,
+    selectedIds,
+    clearSelectedIds,
+    addSelectedId,
+    allItemsAreSelected,
+    changeVersionOnItem,
+  } = opts
+  return [
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.ERROR_STATE,
+      minSize: 35,
+      maxSize: 35,
+      size: 35,
+      enableResizing: false,
+      header: () => null,
+      cell: EntityErrorRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.SELECTED,
+      minSize: 40,
+      maxSize: 40,
+      size: 40,
+      enableResizing: false,
+      header: () => (
+        <SelectAllCheckboxRenderer
+          datasetToUpdate={datasetToUpdate}
+          selectedIds={selectedIds}
+          clearSelectedIds={clearSelectedIds}
+          addSelectedId={addSelectedId}
+          allItemsAreSelected={allItemsAreSelected}
+        />
+      ),
+      cell: DatasetEditorCheckboxRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.NAME,
+      minSize: 50,
+      size: 300,
+      header: props => <ColumnHeader {...props} title={'Name'} />,
+      cell: EntityNameRenderer,
+    }),
+    columnHelper.accessor(DatasetItemsEditorColumn.ENTITY_ID, {
+      minSize: 50,
+      size: 130,
+      header: props => <ColumnHeader {...props} title={'ID'} />,
+      enableColumnFilter: false,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.BADGES,
+      minSize: 80,
+      size: 80,
+      enableResizing: true,
+      cell: BadgeIconsRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.VERSION,
+      minSize: 150,
+      size: 150,
+      header: props => <ColumnHeader {...props} title={'Version'} />,
+      cell: props => (
+        <DatasetEditorVersionRenderer
+          {...props}
+          toggleSelection={datasetItem => {
+            changeVersionOnItem(datasetItem.entityId, datasetItem.versionNumber)
+          }}
+        />
+      ),
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.CREATED_ON,
+      header: props => <ColumnHeader {...props} title={'Created On'} />,
+      size: 220,
+      minSize: 170,
+      cell: CreatedOnRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.MODIFIED_ON,
+      header: props => <ColumnHeader {...props} title={'Modified On'} />,
+      size: 220,
+      minSize: 170,
+      cell: ModifiedOnRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.MODIFIED_BY,
+      header: props => <ColumnHeader {...props} title={'Modified By'} />,
+      size: 250,
+      enableResizing: true,
+      cell: ModifiedByRenderer,
+    }),
+    columnHelper.display({
+      id: DatasetItemsEditorColumn.PROJECT,
+      header: props => <ColumnHeader {...props} title={'Size'} />,
+      size: 300,
+      cell: ProjectRenderer,
+    }),
+  ]
+}
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
   if (isDataset(entity)) {
@@ -109,6 +243,7 @@ export function getCopy(entity?: EntityRefCollectionView) {
     PRECONDITION_FAILED_MESSAGE: `Re-retrieve the ${displayName} to get the latest changes. Your current changes will be lost.`,
     PRECONDITION_FAILED_TITLE: `${displayName} updated since last fetched`,
     PRECONDITION_FAILED_ACTION: `Retrieve ${displayName}`,
+    NO_CHANGES_MADE: `You have not made any changes to the ${displayName}.`,
   }
 }
 
@@ -187,22 +322,73 @@ export type DatasetItemsEditorProps = {
   onClose?: () => void
 }
 
-export type DatasetItemsEditorTableData = EntityRef & {
-  isSelected: boolean
-  setSelected: (value: boolean) => void
+const ROW_HEIGHT = 48
+
+type SelectAllCheckboxRendererProps = {
+  datasetToUpdate: RequiredProperties<EntityRefCollectionView, 'items'>
+  selectedIds: Omit<Set<string>, 'add' | 'delete' | 'clear'>
+  addSelectedId: (...items: string[]) => void
+  clearSelectedIds: () => void
+  allItemsAreSelected: boolean
 }
 
-const ROW_HEIGHT = 42
-const TABLE_HEIGHT = 350
+const SelectAllCheckboxRenderer = (props: SelectAllCheckboxRendererProps) => {
+  const {
+    datasetToUpdate,
+    clearSelectedIds,
+    allItemsAreSelected,
+    addSelectedId,
+  } = props
+  const isChecked = allItemsAreSelected
+
+  return (
+    <Checkbox
+      inputProps={{ 'aria-label': 'Select All' }}
+      checked={isChecked}
+      disabled={datasetToUpdate.items.length === 0}
+      onChange={() => {
+        if (isChecked) {
+          clearSelectedIds()
+        } else {
+          addSelectedId(...datasetToUpdate.items.map(item => item.entityId))
+        }
+      }}
+    />
+  )
+}
+
+function NoItemsPlaceholder(props: {
+  titleCopy: string
+  buttonCopy: string
+  onButtonClick: () => void
+}) {
+  const { titleCopy, buttonCopy, onButtonClick } = props
+  return (
+    <div className="NoItemsPlaceholder">
+      <Typography variant={'headline3'}>{titleCopy}</Typography>
+      <WideButton
+        variant="contained"
+        color="primary"
+        onClick={onButtonClick}
+        startIcon={<AddCircleTwoToneIcon />}
+        sx={{ mt: 2 }}
+      >
+        {buttonCopy}
+      </WideButton>
+    </div>
+  )
+}
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose, onUnsavedChangesChange } = props
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningDialog, setShowWarningDialog] = useState<boolean>(false)
-  const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
-  // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
-  const [datasetToUpdate, _setDatasetToUpdate] =
+
+  // The current 'client state' of dataset that the user is currently editing. Updates to this state are not saved until the user clicks 'Save'.
+  const [datasetToUpdate, setDatasetToUpdate] =
     useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
+
+  // The previous value of the datasetToUpdate variable. This is used to calculate a summary of bulk actions since the last update to the unsaved dataset state.
   const [previousDatasetToUpdate, setPreviousDatasetToUpdate] =
     useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
 
@@ -211,20 +397,17 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     { close: () => void } | undefined
   >()
 
-  const setDatasetToUpdate = (
-    dataset: SetStateAction<
-      RequiredProperties<EntityRefCollectionView, 'items'> | undefined
-    >,
-  ) => {
-    setHasChangedSinceLastSave(true)
-    _setDatasetToUpdate(dataset)
-  }
-
-  const { data: fetchedDataset, refetch } = useGetEntity<
+  const { data: datasetOnServer, refetch: refetchDataset } = useGetEntity<
     RequiredProperties<EntityRefCollectionView, 'items'>
   >(entityId, undefined, {
     staleTime: Infinity,
   })
+
+  const hasChangedSinceLastSave = Boolean(
+    datasetOnServer &&
+      datasetToUpdate &&
+      !isEqual(datasetOnServer, datasetToUpdate),
+  )
 
   const {
     ADD_ITEMS,
@@ -240,18 +423,18 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     PRECONDITION_FAILED_ACTION,
     ENTITY_FINDER_POPOVER,
     ENTITY_FINDER_PROMPT,
-  } = useMemo(() => getCopy(fetchedDataset), [fetchedDataset])
+    NO_CHANGES_MADE,
+  } = useMemo(() => getCopy(datasetOnServer), [datasetOnServer])
 
   useEffect(() => {
-    if (fetchedDataset) {
+    if (datasetOnServer) {
       // SWC-5876: Dataset Items may be undefined. This has the same inherent meaning as the empty list, so we'll just change it to save us some null checks.
-      if (fetchedDataset.items == null) {
-        fetchedDataset.items = []
+      if (datasetOnServer.items == null) {
+        datasetOnServer.items = []
       }
-      setDatasetToUpdate(fetchedDataset)
-      setHasChangedSinceLastSave(false)
+      setDatasetToUpdate(datasetOnServer)
     }
-  }, [fetchedDataset])
+  }, [datasetOnServer])
 
   const {
     set: selectedIds,
@@ -264,10 +447,15 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   )
 
   useEffect(() => {
-    if (onUnsavedChangesChange) {
+    if (datasetToUpdate && datasetOnServer && onUnsavedChangesChange) {
       onUnsavedChangesChange(hasChangedSinceLastSave)
     }
-  }, [hasChangedSinceLastSave, onUnsavedChangesChange])
+  }, [
+    datasetOnServer,
+    datasetToUpdate,
+    hasChangedSinceLastSave,
+    onUnsavedChangesChange,
+  ])
 
   // We get the project ID to show the "Current Project" context in the Entity Finder.
   const { data: path } = useGetEntityPath(entityId)
@@ -283,7 +471,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }
       },
       onSuccess: () => {
-        setHasChangedSinceLastSave(false)
+        // The query should automatically be invalidated, but just in case
+        void refetchDataset()
+
         if (onSave) {
           onSave()
         } else {
@@ -300,7 +490,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             primaryButtonConfig: {
               text: PRECONDITION_FAILED_ACTION,
               onClick: () => {
-                refetch()
+                void refetchDataset()
               },
             },
           })
@@ -342,17 +532,23 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetToUpdate])
 
-  const tableData = datasetToUpdate?.items.map((item: EntityRef) => {
-    return {
-      ...item,
-      isSelected: selectedIds.has(item.entityId),
-      setSelected: (value: boolean) => {
-        return value
-          ? addSelectedId(item.entityId)
-          : removeSelectedId(item.entityId)
-      },
-    }
-  })
+  const tableData = useMemo(
+    () =>
+      datasetToUpdate?.items.map(
+        (item: EntityRef): DatasetItemsEditorTableData => {
+          return {
+            ...item,
+            isSelected: selectedIds.has(item.entityId),
+            setSelected: (value: boolean) => {
+              return value
+                ? addSelectedId(item.entityId)
+                : removeSelectedId(item.entityId)
+            },
+          }
+        },
+      ) ?? [],
+    [addSelectedId, datasetToUpdate?.items, removeSelectedId, selectedIds],
+  )
 
   function addItemsToDataset(itemsToAdd: Reference[]) {
     setDatasetToUpdate(datasetToUpdate => {
@@ -365,6 +561,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           datasetToUpdate.items,
           refToDatasetItem,
         )
+
+        if (updatedItems.length == 0 && newItems.length == 0) {
+          // No items were added or updated, so don't update the state variable.
+          return datasetToUpdate
+        }
+
         const items = [...unchangedItems, ...updatedItems, ...newItems]
 
         return {
@@ -402,176 +604,59 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     }))
   }
 
-  const DatasetItemVersionRenderer = (
-    props: CellRendererProps<DatasetItemsEditorTableData>,
-  ) => {
-    return (
-      <DatasetEditorVersionRenderer
-        {...props}
-        toggleSelection={datasetItem => {
-          changeVersionOnItem(datasetItem.entityId, datasetItem.versionNumber)
-        }}
-      />
-    )
-  }
-
-  type SelectAllCheckboxRendererProps = {
-    datasetToUpdate: RequiredProperties<EntityRefCollectionView, 'items'>
-    selectedIds: Omit<Set<string>, 'add' | 'delete' | 'clear'>
-    addSelectedId: (...items: string[]) => void
-    clearSelectedIds: () => void
-    allItemsAreSelected: boolean
-  }
-  const SelectAllCheckboxRenderer = (props: SelectAllCheckboxRendererProps) => {
-    const { datasetToUpdate, clearSelectedIds, addSelectedId } = props
-    const isChecked = allItemsAreSelected
-
-    return datasetToUpdate ? (
-      <div
-        data-testid="Select All"
-        style={{ cursor: 'pointer' }}
-        onClick={() => {
-          if (isChecked) {
-            clearSelectedIds()
-          } else {
-            addSelectedId(...datasetToUpdate.items.map(item => item.entityId))
-          }
-        }}
-      >
-        <Checkbox
-          inputProps={{ 'aria-label': 'Select All' }}
-          checked={isChecked}
-          disabled={datasetToUpdate.items.length === 0}
-          onChange={() => {
-            // no-op
-          }}
-        />
-      </div>
-    ) : (
-      <></>
-    )
-  }
-
-  const renderedSelectAllCheckbox = datasetToUpdate ? (
-    <SelectAllCheckboxRenderer
-      datasetToUpdate={datasetToUpdate}
-      selectedIds={selectedIds}
-      clearSelectedIds={clearSelectedIds}
-      addSelectedId={addSelectedId}
-      allItemsAreSelected={allItemsAreSelected}
-    />
-  ) : (
-    <></>
-  )
-
-  const defaultColumns: ColumnShape<DatasetItemsEditorTableData>[] = [
-    {
-      key: 'errorState',
-      width: 30,
-      cellRenderer: EntityErrorRenderer,
-    },
-    {
-      key: 'isSelected',
-      width: 40,
-      dataKey: 'isSelected',
-      headerRenderer: renderedSelectAllCheckbox,
-      cellRenderer: DatasetEditorCheckboxRenderer,
-    },
-    {
-      key: 'name',
-      width: 350,
-      dataKey: 'entityId',
-      title: 'Name',
-      resizable: true,
-      cellRenderer: EntityNameRenderer,
-    },
-    {
-      key: 'status',
-      width: 80,
-      resizable: true,
-      cellRenderer: BadgeIconsRenderer,
-    },
-    {
-      key: 'id',
-      width: 140,
-      title: 'ID',
-      dataKey: 'entityId',
-      resizable: true,
-    },
-    {
-      key: 'version',
-      width: 150,
-      title: 'Version',
-      dataKey: 'entityId',
-      cellRenderer: DatasetItemVersionRenderer,
-    },
-    {
-      key: 'createdOn',
-      width: 200,
-      title: 'Created On',
-      dataKey: 'entityId',
-      resizable: true,
-      cellRenderer: CreatedOnRenderer,
-    },
-    {
-      key: 'modifiedOn',
-      width: 200,
-      title: 'Modified On',
-      dataKey: 'entityId',
-      resizable: true,
-
-      cellRenderer: ModifiedOnRenderer,
-    },
-    {
-      key: 'modifiedBy',
-      width: 250,
-      title: 'Modified By',
-      dataKey: 'entityId',
-      resizable: true,
-
-      cellRenderer: ModifiedByRenderer,
-    },
-    {
-      key: 'projectId',
-      width: 300,
-      title: 'Project',
-      dataKey: 'entityId',
-      resizable: true,
-
-      cellRenderer: ProjectRenderer,
-    },
-  ]
-
-  const totalColumnWidth = defaultColumns.reduce((totalWidth, column) => {
-    return totalWidth + column.width
-  }, 0)
-
-  function NoItemsPlaceholder() {
-    return (
-      <div className="NoItemsPlaceholder">
-        <Typography variant={'headline3'}>
-          {NO_ITEMS_IN_THIS_DATASET}
-        </Typography>
-        <WideButton
-          variant="contained"
-          color="primary"
-          onClick={() => setShowEntityFinder(true)}
-          startIcon={<AddCircleTwoToneIcon />}
-          sx={{ mt: 2 }}
-        >
-          {ADD_ITEMS}
-        </WideButton>
-      </div>
-    )
-  }
-
   const selectableTypes: EntityType[] | undefined = useMemo(() => {
-    if (fetchedDataset) {
-      return getSelectableTypes(fetchedDataset)
+    if (datasetOnServer) {
+      return getSelectableTypes(datasetOnServer)
     } else {
       return undefined
     }
-  }, [fetchedDataset])
+  }, [datasetOnServer])
+
+  const columns = useMemo(() => {
+    if (!datasetToUpdate) {
+      return []
+    }
+    return getColumns({
+      datasetToUpdate,
+      selectedIds,
+      clearSelectedIds,
+      addSelectedId,
+      allItemsAreSelected,
+      changeVersionOnItem,
+    })
+  }, [
+    addSelectedId,
+    allItemsAreSelected,
+    clearSelectedIds,
+    datasetToUpdate,
+    selectedIds,
+  ])
+
+  const table: Table<DatasetItemsEditorTableData> =
+    useReactTable<DatasetItemsEditorTableData>({
+      data: tableData,
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+      columnResizeMode: 'onChange',
+      // There are no backend sort controls. The server only provides ID/version, and a dataset could be up to 10k items,
+      // so client side sorting is non-trivial. We may consider fetching all entity headers upon user request.
+      enableSorting: false,
+    })
+
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  const rowVirtualizer = useVirtualizer({
+    count: tableData?.length ?? 0,
+    estimateSize: () => ROW_HEIGHT, // estimate row height for accurate scrollbar dragging
+    getScrollElement: () => tableContainerRef.current,
+    // measure dynamic row height, except in firefox because it measures table border height incorrectly
+    measureElement:
+      typeof window !== 'undefined' &&
+      navigator.userAgent.indexOf('Firefox') === -1
+        ? element => element?.getBoundingClientRect().height
+        : undefined,
+    overscan: 5,
+  })
 
   return (
     <div className="DatasetEditor">
@@ -651,34 +736,35 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </Button>
       </div>
       <div className="DatasetEditorTableContainer">
-        {datasetToUpdate ? (
-          datasetToUpdate.items.length === 0 ? (
-            <NoItemsPlaceholder></NoItemsPlaceholder>
-          ) : (
-            <AutoResizer height={TABLE_HEIGHT}>
-              {({ height, width }: { height: number; width: number }) => (
-                <BaseTable
-                  classPrefix="DatasetEditorTable"
-                  data={tableData}
-                  height={height}
-                  width={width > totalColumnWidth ? width : totalColumnWidth}
-                  rowHeight={ROW_HEIGHT}
-                  overscanRowCount={5}
-                  columns={defaultColumns}
-                  rowClassName={'DatasetEditorRow'}
-                  rowProps={({ rowData }) => {
-                    return {
-                      'aria-selected': rowData.isSelected,
-                    }
-                  }}
-                  headerCellProps={{
-                    role: 'columnheader',
-                  }}
-                ></BaseTable>
-              )}
-            </AutoResizer>
-          )
-        ) : (
+        {datasetToUpdate && datasetToUpdate.items.length === 0 && (
+          <NoItemsPlaceholder
+            titleCopy={NO_ITEMS_IN_THIS_DATASET}
+            buttonCopy={ADD_ITEMS}
+            onButtonClick={() => setShowEntityFinder(true)}
+          />
+        )}
+        {datasetToUpdate && datasetToUpdate.items.length > 0 && (
+          <StyledVirtualTanStackTable<DatasetItemsEditorTableData>
+            styledTableContainerProps={{
+              className: 'DatasetEditorTable',
+              ref: tableContainerRef,
+              height: '350px',
+            }}
+            table={table}
+            rowVirtualizer={rowVirtualizer}
+            slotProps={{
+              Tr: {
+                className: `DatasetEditorRow`,
+                style: {
+                  alignItems: 'center',
+                  height: `${ROW_HEIGHT}px`,
+                  maxHeight: `${ROW_HEIGHT}px`,
+                },
+              },
+            }}
+          />
+        )}
+        {!datasetToUpdate && (
           <SkeletonTable
             className="DatasetItemsEditorSkeleton"
             numRows={8}
@@ -705,14 +791,18 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           Cancel
         </Button>
 
-        <Button
-          disabled={!datasetToUpdate}
-          variant="contained"
-          color="primary"
-          onClick={() => mutate(datasetToUpdate!)}
-        >
-          Save
-        </Button>
+        <Tooltip title={!hasChangedSinceLastSave && NO_CHANGES_MADE}>
+          <div>
+            <Button
+              disabled={!datasetToUpdate || !hasChangedSinceLastSave}
+              variant="contained"
+              color="primary"
+              onClick={() => mutate(datasetToUpdate!)}
+            >
+              Save
+            </Button>
+          </div>
+        </Tooltip>
       </div>
     </div>
   )

@@ -1,9 +1,12 @@
+import {
+  EntityType,
+  GetProjectsParameters,
+  Reference,
+  SearchQuery,
+} from '@sage-bionetworks/synapse-types'
 import { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
-import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
@@ -55,6 +58,10 @@ export type EntityDetailsListSharedProps = {
   isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
+  /** Show the column with a button to immediately download a FileEntity. */
+  showDirectDownloadColumn?: boolean
+  /** Hide the column to add a file to the download list. Hidden by default if no FileEntities can be shown */
+  hideAddToDownloadListColumn?: boolean
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {
@@ -72,7 +79,7 @@ export function EntityDetailsList({
    * such as pagination and sorting.
    *
    * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
-   * to support different 'Row' components, determining the correct one determined at this level.
+   * to support different 'Row' components, with the correct component determined at this level.
    */
 
   const [component, setComponent] = useState(<></>)

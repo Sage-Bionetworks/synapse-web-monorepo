@@ -72,6 +72,7 @@ export default function StyledVirtualTanStackTable<T = unknown>(
         rowTransform={row => table.getRowModel().rows[row.index]}
         fullWidth={fullWidth}
         styledTableContainerProps={{
+          noStripedRows: true,
           ...styledTableContainerProps,
           style: {
             overflow: 'auto', //our scrollable table container

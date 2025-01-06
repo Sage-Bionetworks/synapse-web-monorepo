@@ -27,6 +27,14 @@
     overflow-x: auto;
 
     .DatasetEditorTable {
+      td > * {
+        max-width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        display: block;
+      }
+
       p {
         margin-bottom: unset;
       }
@@ -65,10 +73,3 @@
     font-size: large;
   }
 }
-
-$table-prefix: DatasetEditorTable;
-$table-font-size: 14px;
-$header-background-color: map.get(SRC.$colors, 'gray-200');
-$row-hovered-background-color: unset;
-$table-padding-left: 5px;
-@import '@sage-bionetworks/react-base-table/es/BaseTable';

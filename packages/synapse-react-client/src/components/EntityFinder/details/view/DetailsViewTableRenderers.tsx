@@ -1,55 +1,41 @@
 import { Checkbox, IconButton, Skeleton, Tooltip } from '@mui/material'
-import BaseTable, {
-  CallOrReturn,
-  ColumnShape,
-  SortOrder,
-} from '@sage-bionetworks/react-base-table'
+import {
+  EntityRef,
+  EntityType,
+  FileHandle,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import { useMutation } from '@tanstack/react-query'
+import { CellContext } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { ReactNode, SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
-import SortIcon from '../../../../assets/icons/Sort'
-import { formatDate } from '../../../../utils/functions/DateFormatter'
-import { isTableType } from '../../../../utils/functions/EntityTypeUtils'
+import { useAddFileToDownloadList } from '../../../../synapse-queries'
 import {
   useGetEntity,
   useGetVersionsInfinite,
 } from '../../../../synapse-queries/entity/useEntity'
 import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
-import {
-  EntityRef,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
+import { useSynapseContext } from '../../../../utils'
+import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
+import { formatDate } from '../../../../utils/functions/DateFormatter'
+import { isTableType } from '../../../../utils/functions/EntityTypeUtils'
+import FileEntityDirectDownload from '../../../DirectDownload/FileEntityDirectDownload'
+import { displayFilesWereAddedToDownloadListSuccess } from '../../../download_list/DownloadConfirmationUtils'
 import { EntityBadgeIcons } from '../../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
 import { DatasetItemsEditorTableData } from '../../../SynapseTable/datasets/DatasetItemsEditor'
+import { displayToast } from '../../../ToastMessage'
+import { UserBadge } from '../../../UserCard/UserBadge'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
-import { UserBadge } from '../../../UserCard/UserBadge'
-import { displayFilesWereAddedToDownloadListSuccess } from '../../../download_list/DownloadConfirmationUtils'
-import { displayToast } from '../../../ToastMessage'
-import { useAddFileToDownloadList } from '../../../../synapse-queries'
-import { useSynapseContext } from '../../../../utils'
-import { FileHandleWithPreview } from '../../../ChallengeDataDownload/Renderers'
-import { useMutation } from '@tanstack/react-query'
 
-// TODO: Consider sharing logic with SynapseTableCell.tsx
-
-export type CellRendererProps<T> = {
-  cellData: any
-  columns: ColumnShape<T>[]
-  column: ColumnShape<T>
-  columnIndex: number
-  rowData: T
-  rowIndex: number
-  container: BaseTable<T>
-  isScrolling?: boolean
+export type FileHandleWithPreview = FileHandle & {
+  isPreview?: boolean
 }
-
-export type CellRenderer<T> = CallOrReturn<ReactNode, CellRendererProps<T>>
 
 /**
  * The data across tables may differ, but it has entity ID and version, then it can use many of these renderers
@@ -59,36 +45,20 @@ export type EntityIdAndVersionNumber = {
   versionNumber?: number
 }
 
-export const CustomSortIndicator = ({
-  className,
-  sortOrder,
-}: {
-  className: string
-  sortOrder: SortOrder
-}) => {
-  return (
-    <SortIcon
-      className={className}
-      active={true}
-      role="button"
-      style={{ height: '20px', marginLeft: 'auto' }}
-      direction={sortOrder}
-    />
-  )
-}
-
 /**
  * Renders Entity Badges using the entity bundle.
  * @param props
  * @returns
  */
 export function BadgeIconsRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
+  const { row } = props
+
   return (
     <EntityBadgeIcons
-      entityId={props.rowData.entityId}
-      versionNumber={props.rowData.versionNumber}
+      entityId={row.original.entityId}
+      versionNumber={row.original.versionNumber}
       showHasDiscussionThread={false}
       showHasWiki={false}
       showUnlink={false}
@@ -110,11 +80,12 @@ export function DateRenderer({ cellData }: { cellData?: string }) {
  * @returns
  */
 export function ModifiedOnRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
+  const { row } = props
   const { data: bundle, isLoading } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    row.original.entityId,
+    row.original.versionNumber,
   )
 
   if (isLoading) {
@@ -130,11 +101,12 @@ export function ModifiedOnRenderer<T extends EntityIdAndVersionNumber>(
  * @returns
  */
 export function CreatedOnRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
+  const { row } = props
   const { data: bundle, isLoading } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    row.original.entityId,
+    row.original.versionNumber,
   )
 
   if (isLoading) {
@@ -145,11 +117,11 @@ export function CreatedOnRenderer<T extends EntityIdAndVersionNumber>(
 }
 
 export function EntityNameRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
   const { data: bundle, isLoading } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    props.row.original.entityId,
+    props.row.original.versionNumber,
   )
   if (isLoading) {
     return <Skeleton width={200} />
@@ -167,11 +139,11 @@ export function EntityNameRenderer<T extends EntityIdAndVersionNumber>(
 }
 
 export function ProjectRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
   const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    props.row.original.entityId,
+    props.row.original.versionNumber,
   )
   const { data: project, isLoading: isLoadingProjectEntity } = useGetEntity(
     entityBundle?.path.path[1].id ?? '',
@@ -200,11 +172,12 @@ export function UserBadgeRenderer({ cellData }: { cellData?: string }) {
  * @returns
  */
 export function ModifiedByRenderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) {
+  const { row } = props
   const { data: bundle, isLoading } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    row.original.entityId,
+    row.original.versionNumber,
   )
 
   if (isLoading) {
@@ -222,33 +195,38 @@ export function LoadingRenderer() {
   )
 }
 
-export const DetailsViewCheckboxRenderer: ColumnShape<EntityFinderTableViewRowData>['cellRenderer'] =
-  props => {
-    const { rowData } = props
-    const { isSelected, isDisabled } = rowData
-    return (
-      !isDisabled && (
-        <Checkbox
-          inputProps={{ 'aria-label': `Select ${rowData.entityId}` }}
-          checked={isSelected}
-          onChange={() => {
-            // no-op
-          }}
-        />
-      )
-    )
+export function DetailsViewCheckboxRenderer<
+  T extends { entityId: string; isSelected: boolean; isDisabled?: boolean },
+>(props: CellContext<T, any>) {
+  const { row } = props
+  const { entityId, isSelected, isDisabled } = row.original
+
+  if (isDisabled) {
+    return null
   }
 
-export const TypeIconRenderer: ColumnShape<EntityFinderTableViewRowData>['cellRenderer'] =
-  props => {
-    const { cellData } = props
-    return (
-      <EntityTypeIcon
-        className="EntityFinderTableCellEntityIcon"
-        type={cellData as EntityType}
-      />
-    )
-  }
+  return (
+    <Checkbox
+      inputProps={{ 'aria-label': `Select ${entityId}` }}
+      checked={isSelected}
+      onChange={() => {
+        // no-op
+      }}
+    />
+  )
+}
+
+export function TypeIconRenderer(
+  props: CellContext<EntityFinderTableViewRowData, EntityType>,
+) {
+  const { getValue } = props
+  return (
+    <EntityTypeIcon
+      className="EntityFinderTableCellEntityIcon"
+      type={getValue()}
+    />
+  )
+}
 
 export function EmptyRenderer({
   noResultsPlaceholder,
@@ -262,12 +240,13 @@ export function EmptyRenderer({
   )
 }
 
-export function MD5Renderer<T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+export function MD5Renderer(
+  props: CellContext<EntityFinderTableViewRowData, unknown>,
 ) {
+  const { row } = props
   const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
+    row.original.entityId,
+    row.original.versionNumber,
   )
   const { mutate: copyMd5ToClipboard } = useMutation({
     mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
@@ -286,6 +265,7 @@ export function MD5Renderer<T extends EntityIdAndVersionNumber>(
   return (
     <Tooltip title="Click to copy MD5 to your clipboard" placement="right">
       <button
+        className="md5Button"
         aria-label="MD5"
         onClick={event => {
           event.stopPropagation()
@@ -298,14 +278,12 @@ export function MD5Renderer<T extends EntityIdAndVersionNumber>(
   )
 }
 
-export function AddFileToDownloadListRenderer<
-  T extends EntityIdAndVersionNumber,
->(props: CellRendererProps<T>) {
-  const { entityId, versionNumber } = props.rowData
-  const { data: bundle } = useGetEntityBundle(
-    props.rowData.entityId,
-    props.rowData.versionNumber,
-  )
+export function AddFileToDownloadListRenderer(
+  props: CellContext<EntityFinderTableViewRowData, unknown>,
+) {
+  const { row } = props
+  const { entityId, versionNumber } = row.original
+  const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
   const { downloadCartPageUrl } = useSynapseContext()
 
@@ -335,13 +313,18 @@ export function AddFileToDownloadListRenderer<
   )
 }
 
-export const DatasetEditorVersionRenderer = ({
-  rowData,
-  toggleSelection,
-}: CellRendererProps<DatasetItemsEditorTableData> & {
+type DatasetEditorVersionRendererProps = CellContext<
+  DatasetItemsEditorTableData,
+  unknown
+> & {
   toggleSelection: (entity: EntityRef) => void
-}) => {
-  const { entityId, versionNumber } = rowData
+}
+
+export function DatasetEditorVersionRenderer(
+  props: DatasetEditorVersionRendererProps,
+) {
+  const { row, toggleSelection } = props
+  const { entityId, versionNumber } = row.original
 
   const {
     data: versionData,
@@ -358,7 +341,7 @@ export const DatasetEditorVersionRenderer = ({
   )
   useEffect(() => {
     if (!currentVersionHasBeenRetrieved && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+      void fetchNextPage()
     }
   }, [
     currentVersionHasBeenRetrieved,
@@ -453,21 +436,21 @@ function getLatestVersionText(
   return `${versionDisplay} Version`
 }
 
-export const DetailsViewVersionRenderer = ({
-  rowData,
-  versionSelection,
-  toggleSelection,
-}: CellRendererProps<EntityFinderTableViewRowData> & {
+export const DetailsViewVersionRenderer = (props: {
+  context: CellContext<EntityFinderTableViewRowData, any>
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
 }) => {
+  const { context, toggleSelection, versionSelection } = props
+  const { row } = context
+
   const {
     id,
     entityType,
     isVersionableEntity,
     isSelected,
     currentSelectedVersion,
-  } = rowData
+  } = row.original
 
   const NO_VERSION_NUMBER_OPTION_VALUE = -1
 
@@ -562,8 +545,8 @@ export function DatasetEditorCheckboxRenderer<
     isDisabled?: boolean
     setSelected: (newValue: boolean) => void
   },
->(props: CellRendererProps<T>) {
-  const { isSelected, isDisabled, setSelected, entityId } = props.rowData
+>(props: CellContext<T, any>) {
+  const { isSelected, isDisabled, setSelected, entityId } = props.row.original
   return (
     !isDisabled && (
       <Checkbox
@@ -579,9 +562,9 @@ export function DatasetEditorCheckboxRenderer<
 }
 
 export const EntityErrorRenderer = <T extends EntityIdAndVersionNumber>(
-  props: CellRendererProps<T>,
+  props: CellContext<T, any>,
 ) => {
-  const { entityId, versionNumber } = props.rowData
+  const { entityId, versionNumber } = props.row.original
   const { error, isError } = useGetEntity(entityId, versionNumber)
 
   let message = error?.reason
@@ -607,4 +590,39 @@ export const EntityErrorRenderer = <T extends EntityIdAndVersionNumber>(
       </Tooltip>
     )
   }
+}
+
+export function SizeRenderer(
+  props: CellContext<EntityFinderTableViewRowData, unknown>,
+) {
+  const { row } = props
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    row.original.entityId,
+    row.original.versionNumber,
+  )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+  const file = bundle?.fileHandles.find(
+    (file: FileHandleWithPreview) => file.isPreview !== true,
+  )
+  const friendlySize = file?.contentSize
+    ? calculateFriendlyFileSize(file?.contentSize)
+    : ''
+  return <span>{friendlySize}</span>
+}
+
+// TODO: In the challenge portal, this is shown instead of add to download cart
+export function DirectDownloadRenderer(
+  props: CellContext<EntityFinderTableViewRowData, unknown>,
+) {
+  const { row } = props
+  return (
+    <FileEntityDirectDownload
+      entityId={row.original.entityId}
+      entityVersionNumber={row.original.versionNumber}
+      stopPropagation={true}
+    />
+  )
 }

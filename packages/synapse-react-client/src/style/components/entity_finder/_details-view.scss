@@ -3,12 +3,6 @@
 @use '../../abstracts/mixins' as SrcMixins;
 @use '../../../template_style/form' as Form;
 
-$table-prefix: DetailsViewTable;
-$table-font-size: 14px;
-$header-background-color: white;
-$row-hovered-background-color: unset;
-@import '@sage-bionetworks/react-base-table/es/BaseTable';
-
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
     height: $-finder-height - $-breadcrumb-height;
@@ -43,8 +37,13 @@ $row-hovered-background-color: unset;
   height: 45px;
   transition: background-color 200ms ease-in;
 
-  &.isEven {
-    // Don't use nth child because the virtual rows can switch
+  // Select odd rows (data-index ends in an odd number)
+  // Don't use nth child because the virtual rows can switch indicies, causing style to flip for the same cell
+  &[data-index$='1'],
+  &[data-index$='3'],
+  &[data-index$='5'],
+  &[data-index$='7'],
+  &[data-index$='9'] {
     background: SRC.$background-color-gray;
   }
 
@@ -82,9 +81,11 @@ $row-hovered-background-color: unset;
     width: 20px;
   }
 
-  .nameColumnCell {
+  td > * {
+    max-width: 100%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    display: block;
   }
 }

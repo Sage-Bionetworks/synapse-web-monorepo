@@ -1,34 +1,35 @@
 import {
+  EntityRef,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import {
   render,
   screen,
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { cloneDeep, noop } from 'lodash-es'
+import { cloneDeep, noop, uniqueId } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
+import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../utils'
+import { ENTITY_ID } from '../../../utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
+import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
+import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
+import { displayToast } from '../../ToastMessage'
+import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
 import {
   DatasetItemsEditor,
   DatasetItemsEditorProps,
   getCopy,
 } from './DatasetItemsEditor'
-import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
-import { displayToast } from '../../ToastMessage'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_ID } from '../../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
-import { SynapseContextType } from '../../../utils'
-import {
-  EntityRef,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
-import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
-import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
-import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
+
 const mockDatasetEntity = mockDatasetEntityData.entity
 const mockDatasetCollectionEntity = mockDatasetCollectionData.entity
 const mockFileEntity = mockFileEntityData.entity
@@ -39,14 +40,6 @@ const datasetCollectionCopy = getCopy(mockDatasetCollectionEntity)
 const mockEntityBadgeIcons = jest
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
   .mockImplementation(() => <></>)
-
-jest.mock(
-  'react-virtualized-auto-sizer',
-  () =>
-    // @ts-expect-error -- types are hard
-    ({ children }) =>
-      children({ height: 450, width: 1200 }),
-)
 
 jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {
   return noop
@@ -112,7 +105,6 @@ async function addItemsViaEntityFinder() {
 
   // The entity finder should be automatically closed.
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 }
 
 async function selectIndividualItem(id: string) {
@@ -178,7 +170,7 @@ async function clickCancel() {
 }
 
 async function clickSelectAll() {
-  await userEvent.click(await screen.findByTestId('Select All'))
+  await userEvent.click(await screen.findByLabelText('Select All'))
 }
 
 async function verifyNoneSelected() {
@@ -219,8 +211,27 @@ const successfulUpdateHandler = rest.put(
     ':entityId',
   )}`,
   async (req, res, ctx) => {
-    updatedEntityCaptor(req.body)
-    return res(ctx.status(200), ctx.json(req.body))
+    const requestBody = await req.json()
+    updatedEntityCaptor(requestBody)
+
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+          ':entityId',
+        )}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              ...requestBody,
+              etag: 'new-etag-' + uniqueId(),
+            }),
+          )
+        },
+      ),
+    )
+
+    return res(ctx.status(200), ctx.json(requestBody))
   },
 )
 
@@ -241,6 +252,21 @@ const unsuccessfulUpdateHandler = rest.put(
 )
 
 describe('Dataset Items Editor tests', () => {
+  // Stub for getBoundingClientRect, required by @tanstack/react-virtual to work in tests
+  jest
+    .spyOn(Element.prototype, 'getBoundingClientRect')
+    .mockImplementation(() => ({
+      width: 1200,
+      height: 600,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    }))
+
   // Handle the msw lifecycle:
   beforeAll(() => {
     mockAllIsIntersecting(false)
@@ -285,6 +311,7 @@ describe('Dataset Items Editor tests', () => {
 
     // Assertions are captured in the helper function:
     await addItemsViaEntityFinder()
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
   })
 
   it('Updates the entity when Save is clicked', async () => {
@@ -305,6 +332,7 @@ describe('Dataset Items Editor tests', () => {
     )
 
     await addItemsViaEntityFinder()
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
     await clickSave()
 
@@ -411,6 +439,7 @@ describe('Dataset Items Editor tests', () => {
 
     // Add two items
     await addItemsViaEntityFinder()
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
     await screen.findByText('2 Files', { exact: true })
 
@@ -530,15 +559,14 @@ describe('Dataset Items Editor tests', () => {
     )
   })
 
-  /**
-   * TODO: This test passes on its own but fails in the suite.
-   * We're calling resetHandlers and clearAllMocks, so I have no idea why it isn't working.
-   */
-  it.skip('Handles an error on Save by displaying a toast and not calling the callback', async () => {
+  it('Handles an error on Save by displaying a toast and not calling the callback', async () => {
     const getDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getDatasetHandler, unsuccessfulUpdateHandler)
+    mockEntityFinderToAddItems([mockFileReference])
 
     await renderComponent()
+
+    await addItemsViaEntityFinder()
 
     await clickSave()
 
@@ -577,6 +605,7 @@ describe('Dataset Items Editor tests', () => {
       await renderComponent()
 
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       await clickCancel()
 
@@ -605,6 +634,7 @@ describe('Dataset Items Editor tests', () => {
       await renderComponent()
 
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       await clickCancel()
 
@@ -654,6 +684,7 @@ describe('Dataset Items Editor tests', () => {
       // Add same item with same version to dataset
       mockEntityFinderToAddItems([mockFileReference])
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).not.toHaveBeenCalledWith(true)
 
       // Verify toast showing change is not called
       expect(mockToastFn).not.toHaveBeenCalled()
@@ -669,6 +700,7 @@ describe('Dataset Items Editor tests', () => {
       // Add identical item to existing dataset with different version
       mockEntityFinderToAddItems([mockFileReference])
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       // Verify toast shows no item has been added and 1 has updated
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -688,6 +720,7 @@ describe('Dataset Items Editor tests', () => {
       // Add item to dataset
       mockEntityFinderToAddItems([mockFileReference])
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       // Verify one item has been added to dataset
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -742,6 +775,8 @@ describe('Dataset Items Editor tests', () => {
       )
 
       await addItemsViaEntityFinder()
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
+
       // Verify that the Entity Finder is configured to select Datasets
       expect(mockEntityFinder).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -758,14 +793,14 @@ describe('Dataset Items Editor tests', () => {
       const expectedDatasetCollectionItems = [mockDatasetReference].map(
         referenceToDatasetItem,
       )
-      await waitFor(() =>
-        expect(updatedEntityCaptor).toHaveBeenCalledWith(
-          expect.objectContaining({ items: expectedDatasetCollectionItems }),
-        ),
-      )
 
       await waitFor(() => {
+        expect(updatedEntityCaptor).toHaveBeenCalledWith(
+          expect.objectContaining({ items: expectedDatasetCollectionItems }),
+        )
         expect(mockOnSaveFn).toHaveBeenCalled()
+
+        // Verify the 'unsaved changes' flag was reset
         expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
       })
     })
