@@ -7,7 +7,11 @@ import {
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
-import { topPublicationsSql, whatWeDoSql } from '../config/resources'
+import {
+  topPublicationsSql,
+  whatWeDoSql,
+  featuredResearchSql,
+} from '../config/resources'
 import { Link, Typography } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
@@ -46,7 +50,7 @@ export default function HomePage() {
         title="What We Do"
         summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
       />
-      <FeaturedResearch />
+      <FeaturedResearch sql={featuredResearchSql} />
       {/* Commented out for release (see EC-485) */}
       {/*<div className={'home-bg-dark'}>*/}
       {/*<SectionLayout*/}

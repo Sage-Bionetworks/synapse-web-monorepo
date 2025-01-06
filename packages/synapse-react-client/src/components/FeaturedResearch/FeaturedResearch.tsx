@@ -1,6 +1,13 @@
 import { Box, CardMedia, Link, Stack, Typography } from '@mui/material'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
+import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 
 export type FeaturedResearchProps = {
+  sql: string
+}
+
+export type FeaturedResearchCardProps = {
   affiliation: string
   publishedDate: string
   title: string
@@ -10,7 +17,7 @@ export type FeaturedResearchProps = {
   image: string
 }
 
-type Card = FeaturedResearchProps
+type Card = FeaturedResearchCardProps
 
 const FeaturedResearchCard = (card: Card) => (
   <Box
@@ -72,6 +79,29 @@ const FeaturedResearchCard = (card: Card) => (
 )
 
 function FeaturedResearch(props: FeaturedResearchProps) {
+  const { sql } = props
+
+  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+
+  console.log('sql', sql, 'eid', entityId)
+
+  const queryBundleRequest: QueryBundleRequest = {
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    query: {
+      sql,
+    },
+  }
+  const { data: queryResultBundle, isLoading } =
+    useGetQueryResultBundle(queryBundleRequest)
+
+  const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
+
+  console.log('drow', dataRows, 'qresult', queryResultBundle)
+
   // order date by descending
   const dummyData = [
     {
