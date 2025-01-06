@@ -1,0 +1,1 @@
+import{O as e}from"./VerificationSubmission-DL9jxYsQ.js";import{M as o}from"./mockFileEntity-D58p9TaB.js";import{d as t,e as a}from"./mockWiki-CP-bzihK.js";import{h as m}from"./mockAccessRequirements-BYL7-5Vj.js";const i={ownerObjectType:e.ENTITY,ownerObjectId:o,wikiPageId:t.id},s={...i,wikiPageId:a.id},y=[...m,i,s];export{s as a,y as b,i as m};
