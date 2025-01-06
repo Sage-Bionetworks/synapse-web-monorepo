@@ -15,7 +15,7 @@ import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Box, Typography, Button, darken } from '@mui/material'
+import { Box, Typography, Button } from '@mui/material'
 
 export type GoalsV2Props = {
   entityId: string
@@ -159,7 +159,6 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   return (
     <Box
       sx={{
-        backgroundColor: 'rgba(0, 128, 0, 0.05)',
         height: '560px',
         padding: '80px',
       }}
@@ -172,16 +171,14 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       >
         <Typography
           variant="headline1"
-          style={{
-            color: 'grey.1000',
-            fontSize: '32px',
-          }}
           sx={{
             pt: '30px',
             mb: '40px',
             mx: 'auto',
             width: 'max-content',
             borderTop: '3px solid rgba(128, 128, 128, 0.25)',
+            color: 'grey.1000',
+            fontSize: '32px',
           }}
         >
           What's in the Portal?
@@ -191,16 +188,6 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           target="_blank"
           rel="noopener noreferrer"
           variant="contained"
-          sx={{
-            backgroundColor: '#5BA998',
-            border: '1px solid white',
-            boxShadow: 'none !important',
-            borderRadius: '5px',
-            '&:hover': {
-              backgroundColor: darken('#5BA998', 0.05),
-              boxShadow: 'none !important',
-            },
-          }}
         >
           Start Exploring Data
         </Button>
