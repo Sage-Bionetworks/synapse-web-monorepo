@@ -8,7 +8,6 @@ import {
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
-import { BrowserRouter } from 'react-router-dom'
 const meta: Meta<typeof ChangePassword> = {
   title: 'Authentication/ChangePassword/WithCurrentPassword',
   component: ChangePassword,
@@ -20,13 +19,11 @@ const meta: Meta<typeof ChangePassword> = {
     Story => {
       return (
         <>
-          <BrowserRouter>
-            This story uses mock server responses. You may need to refresh the
-            page to reset the mock server responses.
-            <Paper sx={{ my: 4, p: 4, mx: 'auto', width: '600px' }}>
-              <Story />
-            </Paper>
-          </BrowserRouter>
+          This story uses mock server responses. You may need to refresh the
+          page to reset the mock server responses.
+          <Paper sx={{ my: 4, p: 4, mx: 'auto', width: '600px' }}>
+            <Story />
+          </Paper>
         </>
       )
     },
