@@ -50,3 +50,28 @@ export function normalizeNumericId(id: string | number): number {
     return parseInt(id)
   }
 }
+
+// Used for client-side validation.  Note, the server has the final say.  Integration tested in ChangePassword.integration.test.tsx
+// See https://github.com/Sage-Bionetworks/Synapse-Repository-Services/blob/develop/services/repository-managers/src/main/java/org/sagebionetworks/repo/manager/password/PasswordValidatorImpl.java#L47 for rules
+export function validatePassword(newPassword: string) {
+  if (newPassword.trim().length < 8) {
+    return 'A valid password must be at least 8 characters long'
+  }
+  const hasLetter = /[a-zA-Z]/.test(newPassword) // Checks for at least one letter
+  if (!hasLetter) {
+    return 'A valid password must include letters'
+  }
+
+  const hasNumber = /\d/.test(newPassword) // Checks for at least one number
+  if (!hasNumber) {
+    return 'A valid password must include digits (0-9)'
+  }
+
+  const hasSpecialChar = /[~!@#$%^&*_\-+=`|\\(){}[\]:;"'<>,.?/]/.test(
+    newPassword,
+  ) // Checks for at least one special character
+  if (!hasSpecialChar) {
+    return 'A valid password must include special characters ~!@#$%^&*_-+=`|\\(){}[]:;"\'<>,.?/'
+  }
+  return undefined
+}
