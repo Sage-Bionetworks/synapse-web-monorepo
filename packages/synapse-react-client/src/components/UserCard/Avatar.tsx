@@ -3,7 +3,7 @@ import { getColor } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../../utils/hooks'
-import { Avatar as MUIAvatar, Skeleton, SxProps } from '@mui/material'
+import { Avatar as MUIAvatar, Skeleton, SxProps, useTheme } from '@mui/material'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -28,6 +28,7 @@ export function Avatar({
   className,
 }: AvatarProps) {
   const target = useRef(null)
+  const theme = useTheme()
 
   const mediumUserCard = (
     <UserCardMedium userProfile={userProfile} imageURL={imageURL} />
@@ -62,6 +63,11 @@ export function Avatar({
         fontSize: '26px',
         width: '80px',
         height: '80px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '21px',
+          width: '45px',
+          height: '45px',
+        },
       }
       break
     default:

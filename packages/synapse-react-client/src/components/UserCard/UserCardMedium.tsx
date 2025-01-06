@@ -243,7 +243,20 @@ export function UserCardMedium({
 
   if (!isLarge) {
     return (
-      <Card className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</Card>
+      <Card
+        className={`SRC-userCard SRC-userCardMediumUp`}
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            '&.SRC-userCard': {
+              minWidth: 'unset',
+              padding: '0 16px',
+              width: '100%',
+            },
+          },
+        })}
+      >
+        {mediumCard}
+      </Card>
     )
   }
   // else return medium card inside large component
