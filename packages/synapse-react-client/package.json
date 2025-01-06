@@ -68,7 +68,7 @@
     "dayjs": "^1.11.10",
     "downshift": "^6.1.12",
     "immutable": "4.1.0",
-    "jotai": "^2.7.0",
+    "jotai": "^2.10.4",
     "json-rules-engine": "^4.1.0",
     "katex": "^0.16.10",
     "lodash-es": "^4.17.21",
