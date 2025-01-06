@@ -18,7 +18,7 @@ export type StyledTableContainerProps = BoxProps & {
 
 export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
   styled(Box, {
-    shouldForwardProp: prop => prop !== 'density' && prop !== 'striped',
+    shouldForwardProp: prop => prop !== 'density' && prop !== 'noStripedRows',
   })<StyledTableContainerProps>(
     ({ theme, density = 'default', noStripedRows = false }) => ({
       overflow: 'auto',
