@@ -772,7 +772,7 @@ function init_markdown_it(
         },
       })
     }
-    // sendLinksToNewWindow()
+    sendLinksToNewWindow()
     initLinkify()
     initMarkdownTableStyle()
     md.inline.ruler.at('link', link)

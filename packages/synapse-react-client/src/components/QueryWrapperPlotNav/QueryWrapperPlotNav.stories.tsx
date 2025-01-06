@@ -65,7 +65,8 @@ export const DataCatalogCards: Story = {
     sql: 'SELECT * FROM syn61609402',
     defaultShowPlots: false,
     defaultShowSearchBox: true,
-    shouldDeepLink: true,
+    hideCopyToClipboard: true,
+    hideDownload: true,
     columnAliases: {
       id: 'On Synapse',
     },
