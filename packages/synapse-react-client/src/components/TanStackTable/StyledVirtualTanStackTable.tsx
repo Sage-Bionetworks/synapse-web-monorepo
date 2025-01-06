@@ -5,7 +5,8 @@ import { mergeSlotProps } from '../../utils/slots/SlotUtils'
 import StyledTanStackTable, {
   StyledTanStackTableProps,
 } from './StyledTanStackTable'
-import { TrProps } from './TableBody'
+
+import { TrProps } from './types'
 
 type StyledVirtualTanStackTableProps<T = unknown> = Omit<
   StyledTanStackTableProps<T, VirtualItem>,
@@ -20,6 +21,9 @@ const RowVirtualizerContext = React.createContext<
   Virtualizer<any, any> | undefined
 >(undefined)
 
+/**
+ * A table row component modified to be used with @tanstack/react-virtual.
+ */
 export function VirtualizedTr<TData = unknown>(
   props: TrProps<TData, VirtualItem>,
 ) {

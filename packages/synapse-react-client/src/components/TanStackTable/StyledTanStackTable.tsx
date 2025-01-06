@@ -9,55 +9,14 @@ import {
   getColumnSizeCssVariable,
   getHeaderSizeCssVariable,
 } from './TanStackTableUtils'
-
-type StyledTanStackTableSlots<
-  TData = unknown,
-  TRowData = Row<TData>,
-> = TableBodyProps<TData, TRowData>['slots'] & {
-  Table?: React.ElementType<
-    React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLTableElement>,
-      HTMLTableElement
-    >
-  >
-  Thead?: React.ElementType<
-    React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLTableSectionElement>,
-      HTMLTableSectionElement
-    >
-  >
-  Th?: React.ElementType<
-    React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLTableCellElement>,
-      HTMLTableCellElement
-    >
-  >
-}
-
-type SlotProps<TData = unknown, TRowData = Row<TData>> = TableBodyProps<
-  TData,
-  TRowData
->['slotProps'] & {
-  Table?: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableElement>,
-    HTMLTableElement
-  >
-  Thead?: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableSectionElement>,
-    HTMLTableSectionElement
-  >
-  Th?: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLTableCellElement>,
-    HTMLTableCellElement
-  >
-}
+import { StyledTanStackTableSlotProps, StyledTanStackTableSlots } from './types'
 
 export type StyledTanStackTableProps<TData = unknown, TRowType = Row<TData>> = {
   table: Table<TData>
   styledTableContainerProps?: StyledTableContainerProps
   fullWidth?: boolean
   slots?: StyledTanStackTableSlots<TData, TRowType>
-  slotProps?: SlotProps<TData, TRowType>
+  slotProps?: StyledTanStackTableSlotProps<TData, TRowType>
 } & Pick<TableBodyProps<TData, TRowType>, 'rows' | 'rowTransform'>
 
 /**
