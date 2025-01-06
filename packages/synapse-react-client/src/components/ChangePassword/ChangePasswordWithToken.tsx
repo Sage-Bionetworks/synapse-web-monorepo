@@ -3,6 +3,7 @@ import { Alert, Button, TextField } from '@mui/material'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
+import { validatePassword } from '../../utils/functions/StringUtils'
 
 type ChangePasswordWithTokenProps = {
   passwordChangeToken: PasswordResetSignedToken
@@ -25,7 +26,6 @@ export default function ChangePasswordWithToken(
     isPending: changePasswordIsPending,
     handleChangePasswordWithResetToken,
     error,
-    validatePassword,
   } = useChangePasswordFormState({
     onChangePasswordSuccess: () => {
       setNewPassword('')

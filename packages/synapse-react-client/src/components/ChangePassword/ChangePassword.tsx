@@ -5,6 +5,7 @@ import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
 import { useSynapseContext } from '../../utils'
+import { validatePassword } from '../../utils/functions/StringUtils'
 
 export const PASSWORD_CHANGED_SUCCESS_MESSAGE =
   'Your password was successfully changed.'
@@ -44,7 +45,6 @@ export default function ChangePassword(props: ChangePasswordProps) {
     isPending: changePasswordIsPending,
     handleChangePasswordWithCurrentPassword,
     error,
-    validatePassword,
   } = useChangePasswordFormState({
     hideReset2FA,
   })

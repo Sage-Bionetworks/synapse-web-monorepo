@@ -98,30 +98,7 @@ export default function useChangePasswordFormState(
     },
     [changePassword],
   )
-  // Used for client-side validation.  Note, the server has the final say
-  // See https://github.com/Sage-Bionetworks/Synapse-Repository-Services/blob/develop/services/repository-managers/src/main/java/org/sagebionetworks/repo/manager/password/PasswordValidatorImpl.java#L47 for rules
-  const validatePassword = useCallback((newPassword: string) => {
-    if (newPassword.trim().length < 8) {
-      return 'A valid password must be at least 8 characters long'
-    }
-    const hasLetter = /[a-zA-Z]/.test(newPassword) // Checks for at least one letter
-    if (!hasLetter) {
-      return 'A valid password must include letters'
-    }
 
-    const hasNumber = /\d/.test(newPassword) // Checks for at least one number
-    if (!hasNumber) {
-      return 'A valid password must include digits (0-9)'
-    }
-
-    const hasSpecialChar = /[~!@#$%^&*_\-+=`|\\(){}[\]:;"'<>,.?/]/.test(
-      newPassword,
-    ) // Checks for at least one special character
-    if (!hasSpecialChar) {
-      return 'A valid password must include special characters ~!@#$%^&*_-+=`|\\(){}[]:;"\'<>,.?/'
-    }
-    return undefined
-  }, [])
   const handleChangePasswordWithOtp = useCallback(
     (newPassword: string, code: string, otpType: TwoFactorAuthOtpType) => {
       if (twoFactorAuthErrorResponse) {
@@ -234,6 +211,5 @@ export default function useChangePasswordFormState(
     TwoFactorAuthPrompt: TwoFactorAuthPrompt,
     handleChangePasswordWithCurrentPassword,
     handleChangePasswordWithResetToken,
-    validatePassword,
   }
 }
