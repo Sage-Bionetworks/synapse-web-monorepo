@@ -1,3 +1,4 @@
+import { styled } from '@mui/material'
 import { Cell, Row, Table } from '@tanstack/react-table'
 import { identity } from 'lodash-es'
 import { memo } from 'react'
@@ -72,6 +73,11 @@ type TableBodyPropsRowOverride<
   'rows' | 'rowTransform'
 >
 
+// Simple wrapper around 'tr' to prevent forwarding invalid HTML attributes
+const TableRow = styled('tr', {
+  shouldForwardProp: prop => prop !== 'row' && prop !== 'tableRow',
+})({})
+
 export type TableBodyProps<TData = unknown, TRowType = Row<TData>> = {
   /** The table instance */
   table: Table<TData>
@@ -98,7 +104,7 @@ export function TableBody<TData = unknown, TRowType = Row<TData>>(
 
   const {
     Tbody = 'tbody',
-    Tr = 'tr',
+    Tr = TableRow,
     TableCellRenderer = DefaultTableCellRenderer<TData>,
   } = slots
   const { Tbody: tbodySlotProps = {}, Tr: _trSlotProps = {} } = slotProps
