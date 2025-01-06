@@ -9,7 +9,7 @@ import {
   getFacetedUniqueValues as defaultGetFacetedUniqueValues,
 } from '@tanstack/react-table'
 import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
-import { userEvent } from '@storybook/testing-library'
+import { userEvent } from '@testing-library/user-event'
 
 type TestTableRow = {
   multiSelect: string
@@ -139,7 +139,7 @@ function ColumnHeaderEnumFilterTestComponent(props: { columnId: string }) {
   return <ColumnHeaderEnumFilter column={column} title={columnId} />
 }
 
-function renderComponent<TData = unknown, TValue = unknown>(columnId: string) {
+function renderComponent(columnId: string) {
   const user = userEvent.setup()
   render(<ColumnHeaderEnumFilterTestComponent columnId={columnId} />, {
     wrapper: createWrapper(),
