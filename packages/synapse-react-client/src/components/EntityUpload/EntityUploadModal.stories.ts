@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
-import { EntityUploadModal } from './EntityUploadModal'
+import { EntityUploadModal, EntityUploadModalProps } from './EntityUploadModal'
 
-const meta = {
+const meta: Meta<EntityUploadModalProps> = {
   title: 'Synapse/Upload/EntityUploadModal',
   component: EntityUploadModal,
   args: {

@@ -2,9 +2,9 @@ import { Box, Button, Tab, Tabs } from '@mui/material'
 import {
   ForwardedRef,
   forwardRef,
+  KeyboardEvent,
   useRef,
   useState,
-  KeyboardEvent,
 } from 'react'
 import { UploaderState } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
@@ -12,7 +12,7 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import { EntityUpload, EntityUploadHandle } from './EntityUpload'
 import { LinkToURL, LinkToURLHandle } from './LinkToURL'
 
-type EntityUploadModalProps = {
+export type EntityUploadModalProps = {
   entityId: string
   open: boolean
   onClose: () => void

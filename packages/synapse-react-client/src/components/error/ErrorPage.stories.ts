@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ErrorPage, { SynapseErrorType } from './ErrorPage'
 import { fn } from '@storybook/test'
+import ErrorPage, { ErrorPageProps, SynapseErrorType } from './ErrorPage'
 
-const meta = {
+const meta: Meta<ErrorPageProps> = {
   title: 'Synapse/ErrorPage',
   args: {
     gotoPlace: fn(),
