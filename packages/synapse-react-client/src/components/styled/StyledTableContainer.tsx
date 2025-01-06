@@ -10,7 +10,7 @@ export type StyledTableContainerProps = BoxProps & {
   /**
    * Controls whether the rows of the table are striped using CSS. For virtualized tables, this should be set to false, since the
    * row even/oddness is not guaranteed to be consistent as DOM nodes are loaded and unloaded.
-   * @default true
+   * @default false
    */
   noStripedRows?: boolean
   ['data-testid']?: string
