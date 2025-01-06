@@ -1,25 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EntityFinderModal } from './EntityFinderModal'
-import {
-  SinglePane as EntityFinderSinglePane,
-  DualPane as EntityFinderDualPane,
-} from './EntityFinder.stories'
 import { fn } from '@storybook/test'
+import {
+  DualPane as EntityFinderDualPane,
+  SinglePane as EntityFinderSinglePane,
+} from './EntityFinder.stories'
+import { EntityFinderModal } from './EntityFinderModal'
 
-const meta = {
+const meta: Meta<typeof EntityFinderModal> = {
   title: 'Synapse/EntityFinderModal',
   component: EntityFinderModal,
   args: {
     onConfirm: fn(),
     onCancel: fn(),
-  },
-  argTypes: {
-    versionSelection: {
-      options: ['REQUIRED', 'DISABLED', 'TRACKED', 'UNTRACKED'],
-      control: {
-        type: 'select',
-      },
-    },
   },
 } satisfies Meta
 export default meta
