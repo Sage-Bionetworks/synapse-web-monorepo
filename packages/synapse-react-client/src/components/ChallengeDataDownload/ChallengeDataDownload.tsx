@@ -85,7 +85,6 @@ export function ChallengeDataDownload({
         <EntityChildrenDetails
           parentContainerId={parentContainerId}
           {...sharedProps}
-          // TODO: replace the AddToDownloadList column with direct download column
         />
       </Box>
       <Box mt={4}>
