@@ -16,6 +16,9 @@ const sortableColumns = [
   DetailsViewColumn.MODIFIED_ON,
 ]
 
+/**
+ * Translates TanStack table's SortBy state to the SortBy used in the Synapse getEntityChildren API
+ */
 function convertColumnToSortBy(column: DetailsViewColumn): SortBy | undefined {
   switch (column) {
     case DetailsViewColumn.NAME:

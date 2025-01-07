@@ -613,7 +613,6 @@ export function SizeRenderer(
   return <span>{friendlySize}</span>
 }
 
-// TODO: In the challenge portal, this is shown instead of add to download cart
 export function DirectDownloadRenderer(
   props: CellContext<EntityFinderTableViewRowData, unknown>,
 ) {
