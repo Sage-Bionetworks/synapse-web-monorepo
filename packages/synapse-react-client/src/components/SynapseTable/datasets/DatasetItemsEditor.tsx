@@ -756,7 +756,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
               Tr: {
                 className: `DatasetEditorRow`,
                 style: {
-                  alignItems: 'center',
                   height: `${ROW_HEIGHT}px`,
                   maxHeight: `${ROW_HEIGHT}px`,
                 },

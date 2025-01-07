@@ -302,17 +302,17 @@ function getColumns(opts: {
     columnHelper.display({
       id: DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
       header: () => null,
-      size: 40,
-      minSize: 40,
+      size: 45,
+      minSize: 45,
       enableSorting: false,
       enableResizing: false,
       cell: AddFileToDownloadListRenderer,
     }),
     columnHelper.display({
       id: DetailsViewColumn.DIRECT_DOWNLOAD,
-      header: () => null,
-      size: 40,
-      minSize: 40,
+      header: props => <ColumnHeader {...props} title={'Actions'} />,
+      size: 75,
+      minSize: 75,
       enableSorting: false,
       enableResizing: false,
       cell: DirectDownloadRenderer,
@@ -339,6 +339,8 @@ const determineRowAppearance = (args: {
     return 'default'
   }
 }
+
+const DEFAULT_HIDDEN_COLUMNS = [DetailsViewColumn.DIRECT_DOWNLOAD]
 
 /**
  * Displays a list of entities in a table.
@@ -371,8 +373,7 @@ export function DetailsView(props: DetailsViewProps) {
     getChildrenInfiniteRequestObject,
     totalEntities,
     setCurrentContainer,
-    hideAddToDownloadListColumn = false,
-    showDirectDownloadColumn = false,
+    hiddenColumns = DEFAULT_HIDDEN_COLUMNS,
   } = props
   const queryClient = useQueryClient()
 
@@ -588,6 +589,16 @@ export function DetailsView(props: DetailsViewProps) {
     ],
   )
 
+  const hideColumnOverrides = useMemo(() => {
+    return hiddenColumns.reduce(
+      (acc: Partial<Record<DetailsViewColumn, boolean>>, column) => {
+        acc[column] = false
+        return acc
+      },
+      {},
+    )
+  }, [hiddenColumns])
+
   const table: Table<EntityFinderTableViewRowData> =
     useReactTable<EntityFinderTableViewRowData>({
       data: tableData,
@@ -606,11 +617,13 @@ export function DetailsView(props: DetailsViewProps) {
             versionSelection !== VersionSelectionType.DISALLOWED,
           [DetailsViewColumn.SIZE]: visibleTypes.includes(EntityType.FILE),
           [DetailsViewColumn.MD5]: visibleTypes.includes(EntityType.FILE),
-          [DetailsViewColumn.ADD_TO_DOWNLOAD_CART]:
-            !hideAddToDownloadListColumn &&
-            visibleTypes.includes(EntityType.FILE),
-          [DetailsViewColumn.DIRECT_DOWNLOAD]:
-            showDirectDownloadColumn && visibleTypes.includes(EntityType.FILE),
+          [DetailsViewColumn.ADD_TO_DOWNLOAD_CART]: visibleTypes.includes(
+            EntityType.FILE,
+          ),
+          [DetailsViewColumn.DIRECT_DOWNLOAD]: visibleTypes.includes(
+            EntityType.FILE,
+          ),
+          ...hideColumnOverrides,
         },
       },
     })

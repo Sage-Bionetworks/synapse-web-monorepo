@@ -40,6 +40,7 @@ export function VirtualizedTr<TData = unknown>(
         position: 'absolute',
         transform: `translateY(${virtualItem.start}px)`, //this should always be a `style` as it changes on scroll
         width: '100%',
+        alignItems: 'center',
       }}
     />
   )

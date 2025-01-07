@@ -6,6 +6,7 @@ import { useAddFileBatchToDownloadList } from '../../synapse-queries'
 import { useSynapseContext } from '../../utils'
 import { EntityChildrenDetails } from '../EntityFinder/details/configurations/EntityChildrenDetails'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
+import { DetailsViewColumn } from '../EntityFinder/details/view/DetailsView'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import { useEntitySelection } from '../EntityFinder/useEntitySelection'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
@@ -70,8 +71,13 @@ export function ChallengeDataDownload({
     isIdSelected,
     isSelectable: () => true,
     toggleSelection,
-    showDirectDownloadColumn: true,
-    hideAddToDownloadListColumn: true,
+    hiddenColumns: [
+      DetailsViewColumn.BADGES,
+      DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
+      DetailsViewColumn.CREATED_ON,
+      DetailsViewColumn.VERSION,
+      DetailsViewColumn.MODIFIED_BY,
+    ],
   }
   return (
     <>

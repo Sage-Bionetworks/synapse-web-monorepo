@@ -75,6 +75,7 @@
     @include SrcMixins.normalLink();
     // Add cursor: pointer in case the link is in a disabled (unselectable) row
     cursor: pointer;
+    width: fit-content;
   }
 
   .EntityFinderTableCellEntityIcon svg {

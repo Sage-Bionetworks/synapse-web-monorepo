@@ -17,7 +17,7 @@ import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { ReferenceDetails } from './configurations/ReferenceDetails'
 import { SearchDetails } from './configurations/SearchDetails'
-import { DetailsView } from './view/DetailsView'
+import { DetailsView, DetailsViewColumn } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {
   REFERENCE_LIST, // Provide references to show in the DetailsList. Incompatible with pagination
@@ -58,10 +58,8 @@ export type EntityDetailsListSharedProps = {
   isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
-  /** Show the column with a button to immediately download a FileEntity. */
-  showDirectDownloadColumn?: boolean
-  /** Hide the column to add a file to the download list. Hidden by default if no FileEntities can be shown */
-  hideAddToDownloadListColumn?: boolean
+  /** Chosen columns to hide. Defaults to just the DirectDownload column. */
+  hiddenColumns?: DetailsViewColumn[]
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {
