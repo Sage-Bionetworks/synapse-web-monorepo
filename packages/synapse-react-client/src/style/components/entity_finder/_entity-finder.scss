@@ -36,11 +36,9 @@ $-splitter-width: 12px;
     &__MainPanel.MainPanelDualPane,
     &__MainPanel.MainPanelSearch,
     .MainPanelSelected {
-      // TODO: we removed react-base-table. What now?
-      // Hack to make the dialog responsive to the width of the entity finder
-      // We may be able to remove this if we remove/replace the EntityFinder's `AutoSizer` component with something other
-      // than the 'react-base-table' implementation
-      width: 85vw;
+      // Within a MUI Dialog, set the non-tree-only content width to the smaller of 1450px and 85% of the viewport width
+      // This prevents the dialog from resizing when switching between dual pane and search/selected tab modes
+      width: min(1450px, 85vw);
     }
   }
 }
