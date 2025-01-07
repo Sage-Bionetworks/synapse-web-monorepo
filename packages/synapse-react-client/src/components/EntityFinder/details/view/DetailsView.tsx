@@ -31,28 +31,27 @@ import {
   isContainerType,
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
-import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
+import {
+  BlockingLoader,
+  SynapseSpinner,
+} from '../../../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../../TanStackTable/StyledVirtualTanStackTable'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { EntitySelectionMapType } from '../../useEntitySelection'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
-import {
-  AddFileToDownloadListRenderer,
-  BadgeIconsRenderer,
-  CreatedOnRenderer,
-  DetailsViewCheckboxRenderer,
-  DetailsViewVersionRenderer,
-  DirectDownloadRenderer,
-  EmptyRenderer,
-  LoadingRenderer,
-  MD5Renderer,
-  ModifiedByRenderer,
-  ModifiedOnRenderer,
-  SizeRenderer,
-  TypeIconRenderer,
-} from './DetailsViewTableRenderers'
+import { AddFileToDownloadListCell } from './table/AddToDownloadListCell'
+import { CreatedOnCell } from './table/CreatedOnCell'
+import { EntityBadgeIconsCell } from './table/EntityBadgeIconsCell'
+import { EntityFinderCheckboxCell } from './table/EntityFinderCheckboxCell'
+import { EntityFinderVersionCell } from './table/EntityFinderVersionCell'
+import { EntityTypeCell } from './table/EntityTypeCell'
+import { FileEntityDirectDownloadCell } from './table/FileEntityDirectDownloadCell'
+import { FileEntityMD5Cell } from './table/FileEntityMD5Cell'
+import { FileEntitySizeCell } from './table/FileEntitySizeCell'
+import { ModifiedByCell } from './table/ModifiedByCell'
+import { ModifiedOnCell } from './table/ModifiedOnCell'
 import { VersionColumnHeader } from './VersionColumnHeader'
 
 /**
@@ -202,7 +201,7 @@ function getColumns(opts: {
           onSelectAll={onSelectAll}
         />
       ),
-      cell: DetailsViewCheckboxRenderer,
+      cell: EntityFinderCheckboxCell,
     }),
 
     columnHelper.accessor(DetailsViewColumn.ENTITY_TYPE, {
@@ -211,7 +210,7 @@ function getColumns(opts: {
       size: 45,
       header: () => null,
       enableResizing: false,
-      cell: TypeIconRenderer,
+      cell: EntityTypeCell,
       meta: {
         textAlign: 'center',
       },
@@ -236,7 +235,7 @@ function getColumns(opts: {
       maxSize: 75,
       size: 75,
       header: () => null,
-      cell: BadgeIconsRenderer,
+      cell: EntityBadgeIconsCell,
     }),
     columnHelper.accessor(DetailsViewColumn.ID, {
       size: 130,
@@ -251,7 +250,7 @@ function getColumns(opts: {
       size: 200,
       header: () => <VersionColumnHeader versionSelection={versionSelection} />,
       cell: context => (
-        <DetailsViewVersionRenderer
+        <EntityFinderVersionCell
           versionSelection={versionSelection}
           toggleSelection={toggleSelection}
           context={context}
@@ -262,7 +261,7 @@ function getColumns(opts: {
       header: props => <ColumnHeader {...props} title={'Created On'} />,
       size: 220,
       minSize: 170,
-      cell: CreatedOnRenderer,
+      cell: CreatedOnCell,
       enableColumnFilter: false,
       enableSorting: sortableColumns.includes(DetailsViewColumn.CREATED_ON),
     }),
@@ -271,14 +270,14 @@ function getColumns(opts: {
       size: 220,
       minSize: 170,
       enableColumnFilter: false,
-      cell: ModifiedOnRenderer,
+      cell: ModifiedOnCell,
       enableSorting: sortableColumns.includes(DetailsViewColumn.MODIFIED_ON),
     }),
     columnHelper.accessor(DetailsViewColumn.MODIFIED_BY, {
       header: props => <ColumnHeader {...props} title={'Modified By'} />,
       size: 250,
       enableResizing: true,
-      cell: ModifiedByRenderer,
+      cell: ModifiedByCell,
       enableColumnFilter: false,
       enableSorting: sortableColumns.includes(DetailsViewColumn.MODIFIED_BY),
     }),
@@ -289,7 +288,7 @@ function getColumns(opts: {
       minSize: 85,
       enableSorting: false,
       enableResizing: true,
-      cell: SizeRenderer,
+      cell: FileEntitySizeCell,
     }),
     columnHelper.display({
       id: DetailsViewColumn.MD5,
@@ -297,7 +296,7 @@ function getColumns(opts: {
       size: 200,
       enableSorting: false,
       enableResizing: true,
-      cell: MD5Renderer,
+      cell: FileEntityMD5Cell,
     }),
     columnHelper.display({
       id: DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
@@ -306,7 +305,7 @@ function getColumns(opts: {
       minSize: 45,
       enableSorting: false,
       enableResizing: false,
-      cell: AddFileToDownloadListRenderer,
+      cell: AddFileToDownloadListCell,
     }),
     columnHelper.display({
       id: DetailsViewColumn.DIRECT_DOWNLOAD,
@@ -315,7 +314,7 @@ function getColumns(opts: {
       minSize: 75,
       enableSorting: false,
       enableResizing: false,
-      cell: DirectDownloadRenderer,
+      cell: FileEntityDirectDownloadCell,
     }),
   ]
 }
@@ -734,9 +733,15 @@ export function DetailsView(props: DetailsViewProps) {
           }}
         />
       )}
-      {isLoading && <LoadingRenderer />}
+      {isLoading && (
+        <div className="EntityFinderDetailsViewPlaceholder">
+          <SynapseSpinner size={30} />
+        </div>
+      )}
       {!isLoading && entities.length === 0 && (
-        <EmptyRenderer noResultsPlaceholder={noResultsPlaceholder} />
+        <div className="EntityFinderDetailsViewPlaceholder">
+          {noResultsPlaceholder || <div>Empty</div>}
+        </div>
       )}
     </div>
   )

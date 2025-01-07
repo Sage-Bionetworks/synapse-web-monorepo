@@ -68,8 +68,6 @@ export type EntityBadgeIconsProps = {
   onUnlinkError?: (error: unknown) => void
   /** Whether or not the badges (e.g. Annotations) can trigger opening a modal on click */
   canOpenModal: boolean
-  /** Whether this component should render a ReactTooltip or if an external component is managing it */
-  renderTooltipComponent: boolean
 }
 
 /**

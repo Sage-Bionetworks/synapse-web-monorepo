@@ -37,17 +37,14 @@ import {
   isDatasetCollection,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSet } from '../../../utils/hooks'
-import {
-  BadgeIconsRenderer,
-  CreatedOnRenderer,
-  DatasetEditorCheckboxRenderer,
-  DatasetEditorVersionRenderer,
-  EntityErrorRenderer,
-  EntityNameRenderer,
-  ModifiedByRenderer,
-  ModifiedOnRenderer,
-  ProjectRenderer,
-} from '../../EntityFinder/details/view/DetailsViewTableRenderers'
+import { EntityBadgeIconsCell } from '../../EntityFinder/details/view/table/EntityBadgeIconsCell'
+import { CreatedOnCell } from '../../EntityFinder/details/view/table/CreatedOnCell'
+import { EntityNameCell } from '../../EntityFinder/details/view/table/EntityNameCell'
+import { ModifiedByCell } from '../../EntityFinder/details/view/table/ModifiedByCell'
+import { DatasetEditorCheckboxCell } from './DatasetEditorCheckboxCell'
+import { DatasetEditorVersionCell } from './DatasetEditorVersionCell'
+import { ModifiedOnCell } from '../../EntityFinder/details/view/table/ModifiedOnCell'
+import { ParentProjectCell } from '../../EntityFinder/details/view/table/ParentProjectCell'
 import { EntityFinderModal } from '../../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../../EntityFinder/VersionSelectionType'
@@ -57,6 +54,7 @@ import WarningDialog from '../../SynapseForm/WarningDialog'
 import ColumnHeader from '../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../TanStackTable/StyledVirtualTanStackTable'
 import { displayToast } from '../../ToastMessage'
+import { EntityFetchErrorCell } from './EntityFetchErrorCell'
 
 export type DatasetItemsEditorTableData = EntityRef & {
   isSelected: boolean
@@ -98,7 +96,7 @@ function getColumns(
       size: 35,
       enableResizing: false,
       header: () => null,
-      cell: EntityErrorRenderer,
+      cell: EntityFetchErrorCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.SELECTED,
@@ -115,14 +113,14 @@ function getColumns(
           allItemsAreSelected={allItemsAreSelected}
         />
       ),
-      cell: DatasetEditorCheckboxRenderer,
+      cell: DatasetEditorCheckboxCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.NAME,
       minSize: 50,
       size: 300,
       header: props => <ColumnHeader {...props} title={'Name'} />,
-      cell: EntityNameRenderer,
+      cell: EntityNameCell,
     }),
     columnHelper.accessor(DatasetItemsEditorColumn.ENTITY_ID, {
       minSize: 50,
@@ -135,7 +133,7 @@ function getColumns(
       minSize: 80,
       size: 80,
       enableResizing: true,
-      cell: BadgeIconsRenderer,
+      cell: EntityBadgeIconsCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.VERSION,
@@ -143,7 +141,7 @@ function getColumns(
       size: 150,
       header: props => <ColumnHeader {...props} title={'Version'} />,
       cell: props => (
-        <DatasetEditorVersionRenderer
+        <DatasetEditorVersionCell
           {...props}
           toggleSelection={datasetItem => {
             changeVersionOnItem(datasetItem.entityId, datasetItem.versionNumber)
@@ -156,27 +154,27 @@ function getColumns(
       header: props => <ColumnHeader {...props} title={'Created On'} />,
       size: 220,
       minSize: 170,
-      cell: CreatedOnRenderer,
+      cell: CreatedOnCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.MODIFIED_ON,
       header: props => <ColumnHeader {...props} title={'Modified On'} />,
       size: 220,
       minSize: 170,
-      cell: ModifiedOnRenderer,
+      cell: ModifiedOnCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.MODIFIED_BY,
       header: props => <ColumnHeader {...props} title={'Modified By'} />,
       size: 250,
       enableResizing: true,
-      cell: ModifiedByRenderer,
+      cell: ModifiedByCell,
     }),
     columnHelper.display({
       id: DatasetItemsEditorColumn.PROJECT,
       header: props => <ColumnHeader {...props} title={'Size'} />,
       size: 300,
-      cell: ProjectRenderer,
+      cell: ParentProjectCell,
     }),
   ]
 }
