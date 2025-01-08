@@ -62,14 +62,11 @@ const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
 export const DataCatalogCards: Story = {
   args: {
     name: 'Data Catalog',
-    sql: 'SELECT * FROM syn61609402',
+    sql: "SELECT * FROM syn61609402 where includedInDataCatalog = 'true'",
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     hideCopyToClipboard: true,
     hideDownload: true,
-    columnAliases: {
-      id: 'On Synapse',
-    },
     cardConfiguration: {
       type: GENERIC_CARD,
       secondaryLabelLimit: 4,
