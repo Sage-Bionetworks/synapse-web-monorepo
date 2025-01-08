@@ -801,6 +801,17 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         >
           Featured datasets
         </p>
+        <div
+          class="MuiBox-root css-15v321u"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-a2zga5-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            View More Datasets
+          </button>
+        </div>
       </div>
       <div
         class="MuiBox-root css-pd3cje"
