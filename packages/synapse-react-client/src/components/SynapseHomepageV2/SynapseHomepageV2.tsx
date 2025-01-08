@@ -460,6 +460,27 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
               Featured datasets
             </Typography>
             <SynapseFeaturedDatasets sourceTable={featuredDatasetsTable} />
+            <Box sx={{ p: '20px 10px' }}>
+              <Button
+                size="large"
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  gotoPlace('/DataCatalog:0')
+                }}
+                sx={{
+                  m: 'auto',
+                  display: 'block',
+                  p: '5px 25px',
+                  width: {
+                    xs: '100%',
+                    md: 'auto',
+                  },
+                }}
+              >
+                View More Datasets
+              </Button>
+            </Box>
           </Box>
           <Box
             sx={{
