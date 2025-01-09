@@ -213,7 +213,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
             <Typography variant="smallText1" sx={{ marginTop: '20px' }}>
               Your <strong>password</strong> needs to be at least 8 letters. We
               recommend using a strong, unique <strong>password</strong> of
-              between 16-32 characters. You can use letters, numbers, and
+              between 8-32 characters. You can use letters, numbers, and
               punctuation marks.
             </Typography>
           </div>

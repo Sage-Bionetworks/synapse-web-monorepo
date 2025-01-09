@@ -385,7 +385,6 @@ export function Node(
           showHasWiki={false}
           showUnlink={false}
           canOpenModal={false}
-          renderTooltipComponent={true}
         />
       )}
     </div>
