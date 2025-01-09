@@ -36,7 +36,7 @@ export default tseslint.config(
     },
     rules: {
       'react/prop-types': [0],
-      'react/no-unstable-nested-components': 'warn',
+      'react/no-unstable-nested-components': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': [
         'warn',

@@ -1,28 +1,106 @@
-import { useMemo, useState } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
-import { useGetOAuthClientInfinite } from '../../synapse-queries'
-import { CreateOAuthModal } from './CreateOAuthClient'
-import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
-import WarningDialog from '../SynapseForm/WarningDialog'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
-import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
-import { displayToast } from '../ToastMessage'
-import { DialogBase } from '../DialogBase'
-import { Box, Button, Link } from '@mui/material'
 import { AddCircleTwoTone } from '@mui/icons-material'
+import { Box, Button, Link } from '@mui/material'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   Table,
   useReactTable,
 } from '@tanstack/react-table'
+import dayjs from 'dayjs'
+import { useMemo, useState } from 'react'
+import SynapseClient from '../../synapse-client'
+import { useGetOAuthClientInfinite } from '../../synapse-queries'
+import { useSynapseContext } from '../../utils'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
+import { DialogBase } from '../DialogBase'
+import WarningDialog from '../SynapseForm/WarningDialog'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { displayToast } from '../ToastMessage'
+import { CreateOAuthModal } from './CreateOAuthClient'
 
 const columnHelper = createColumnHelper<OAuthClient>()
+function getColumns(columnOptions: {
+  setIsShowingVerification: (value: boolean) => void
+  setSelectedClient: (value: OAuthClient) => void
+  setIsShowingSecretWarning: (value: boolean) => void
+  setIsEdit: (value: boolean) => void
+  setIsShowingCreateClientModal: (value: boolean) => void
+}) {
+  const {
+    setIsShowingVerification,
+    setSelectedClient,
+    setIsShowingSecretWarning,
+    setIsEdit,
+    setIsShowingCreateClientModal,
+  } = columnOptions
+  return [
+    columnHelper.accessor('createdOn', {
+      header: props => <ColumnHeader {...props} title={'Created'} />,
+      cell: info => formatDate(dayjs(info.getValue())),
+    }),
+    columnHelper.accessor('modifiedOn', {
+      header: props => <ColumnHeader {...props} title={'Modified'} />,
+      cell: info => formatDate(dayjs(info.getValue())),
+    }),
+    columnHelper.accessor('client_id', {
+      header: props => <ColumnHeader {...props} title={'ID'} />,
+    }),
+    columnHelper.accessor('client_name', {
+      header: props => <ColumnHeader {...props} title={'Client'} />,
+    }),
+    columnHelper.accessor('verified', {
+      header: props => <ColumnHeader {...props} title={'Verified'} />,
+      cell: ({ getValue }) =>
+        getValue() ? (
+          'Yes'
+        ) : (
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => setIsShowingVerification(true)}
+          >
+            Submit Verification
+          </Button>
+        ),
+    }),
+    columnHelper.display({
+      id: 'generateSecret',
+      header: props => <ColumnHeader {...props} title={'App Secret'} />,
+      cell: ({ row }) => (
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setSelectedClient(row.original)
+            setIsShowingSecretWarning(true)
+          }}
+          size="small"
+        >
+          Generate Secret
+        </Button>
+      ),
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: props => <ColumnHeader {...props} title={'Actions'} />,
+      cell: ({ row }) => (
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setSelectedClient(row.original)
+            setIsEdit(true)
+            setIsShowingCreateClientModal(true)
+          }}
+          size="small"
+        >
+          Edit
+        </Button>
+      ),
+    }),
+  ]
+}
 
 export function OAuthManagement() {
   const { accessToken } = useSynapseContext()
@@ -61,71 +139,15 @@ export function OAuthManagement() {
     }
   }
 
-  const columns: ColumnDef<OAuthClient, any>[] = useMemo(
-    () => [
-      columnHelper.accessor('createdOn', {
-        header: props => <ColumnHeader {...props} title={'Created'} />,
-        cell: info => formatDate(dayjs(info.getValue())),
+  const columns = useMemo(
+    () =>
+      getColumns({
+        setIsShowingVerification,
+        setSelectedClient,
+        setIsShowingSecretWarning,
+        setIsEdit,
+        setIsShowingCreateClientModal,
       }),
-      columnHelper.accessor('modifiedOn', {
-        header: props => <ColumnHeader {...props} title={'Modified'} />,
-        cell: info => formatDate(dayjs(info.getValue())),
-      }),
-      columnHelper.accessor('client_id', {
-        header: props => <ColumnHeader {...props} title={'ID'} />,
-      }),
-      columnHelper.accessor('client_name', {
-        header: props => <ColumnHeader {...props} title={'Client'} />,
-      }),
-      columnHelper.accessor('verified', {
-        header: props => <ColumnHeader {...props} title={'Verified'} />,
-        cell: ({ getValue }) =>
-          getValue() ? (
-            'Yes'
-          ) : (
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setIsShowingVerification(true)}
-            >
-              Submit Verification
-            </Button>
-          ),
-      }),
-      {
-        id: 'generateSecret',
-        header: props => <ColumnHeader {...props} title={'App Secret'} />,
-        cell: ({ row }) => (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setSelectedClient(row.original)
-              setIsShowingSecretWarning(true)
-            }}
-            size="small"
-          >
-            Generate Secret
-          </Button>
-        ),
-      },
-      {
-        id: 'actions',
-        header: props => <ColumnHeader {...props} title={'Actions'} />,
-        cell: ({ row }) => (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setSelectedClient(row.original)
-              setIsEdit(true)
-              setIsShowingCreateClientModal(true)
-            }}
-            size="small"
-          >
-            Edit
-          </Button>
-        ),
-      },
-    ],
     [],
   )
 
