@@ -1,12 +1,12 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Box, IconButton } from '@mui/material'
+import { useLocation, useNavigate } from 'react-router'
 import {
-  SynapseQueries,
   DiscussionThread,
   ForumPage,
+  SynapseQueries,
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Box, IconButton } from '@mui/material'
 
 const ProjectDiscussionForum = () => {
   const urlSearchParams = new URLSearchParams(window.location.search)

@@ -7,9 +7,9 @@ import {
   NavLink,
   Outlet,
   RouteObject,
-  RouterProvider,
   useParams,
-} from 'react-router-dom'
+} from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
@@ -128,24 +128,10 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
     if (useMemoryRouter) {
       return createMemoryRouter(routes, {
         basename: routerBaseName,
-        future: {
-          v7_relativeSplatPath: true,
-          v7_fetcherPersist: true,
-          v7_normalizeFormMethod: true,
-          v7_partialHydration: true,
-          v7_skipActionErrorRevalidation: true,
-        },
       })
     } else {
       return createBrowserRouter(routes, {
         basename: routerBaseName,
-        future: {
-          v7_relativeSplatPath: true,
-          v7_fetcherPersist: true,
-          v7_normalizeFormMethod: true,
-          v7_partialHydration: true,
-          v7_skipActionErrorRevalidation: true,
-        },
       })
     }
   }, [useMemoryRouter, routes, routerBaseName])
@@ -154,9 +140,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
     return <SynapseSpinner size={50} />
   }
 
-  return (
-    <RouterProvider router={router} future={{ v7_startTransition: true }} />
-  )
+  return <RouterProvider router={router} />
 }
 
 function SubmissionPageRouteRenderer() {

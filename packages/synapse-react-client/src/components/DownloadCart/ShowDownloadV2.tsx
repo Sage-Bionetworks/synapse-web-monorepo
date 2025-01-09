@@ -1,11 +1,11 @@
+import { Link as MuiLink, Tooltip } from '@mui/material'
 import { useEffect } from 'react'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
+import { Link } from 'react-router'
 import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip, Link as MuiLink } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 
 export type ShowDownloadV2Props = {
   to: string

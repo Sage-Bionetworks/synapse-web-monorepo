@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import ExploreWrapper from './ExploreWrapper'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 
 describe('ExploreWrapper', () => {
   const props = {

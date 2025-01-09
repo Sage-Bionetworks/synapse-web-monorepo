@@ -1,17 +1,16 @@
+import { Typography } from '@mui/material'
+import { SubmissionState, TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from './AccessRequestSubmissionTable'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 
 export const getReviewerFilterID = (selected: string | null) => {
   if (selected && selected !== ACT_TEAM_ID.toString()) {

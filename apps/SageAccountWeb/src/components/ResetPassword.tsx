@@ -1,13 +1,13 @@
 import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
+import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   ChangePasswordWithToken,
   displayToast,
   SynapseClientError,
   SynapseQueries,
 } from 'synapse-react-client'
-import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'

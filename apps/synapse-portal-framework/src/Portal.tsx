@@ -2,7 +2,8 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { CookiesProvider } from 'react-cookie'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 import { defaultQueryClientConfig, SynapseTheme } from 'synapse-react-client'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
@@ -11,15 +12,7 @@ const queryClient = new QueryClient(defaultQueryClientConfig)
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
-  const router = createBrowserRouter(props.routeConfig, {
-    future: {
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_skipActionErrorRevalidation: true,
-    },
-  })
+  const router = createBrowserRouter(props.routeConfig)
   const theme = useMemo(
     () => createTheme(SynapseTheme.mergeTheme({ palette })),
     [palette],
@@ -30,12 +23,7 @@ function Portal(props: PortalProps) {
       <CookiesProvider>
         <ThemeProvider theme={theme}>
           <QueryClientProvider client={queryClient}>
-            <RouterProvider
-              router={router}
-              future={{
-                v7_startTransition: true,
-              }}
-            />
+            <RouterProvider router={router} />
           </QueryClientProvider>
         </ThemeProvider>
       </CookiesProvider>

@@ -1,8 +1,8 @@
 import { Box, Button } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   AppUtils,
   storeRedirectURLForOneSageLoginAndGotoURL,

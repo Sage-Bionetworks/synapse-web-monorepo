@@ -13,7 +13,7 @@
     "pluralize": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.28.1",
+    "react-router": "^7.1.1",
     "synapse-react-client": "workspace:*",
     "vite": "^5.4.3"
   },

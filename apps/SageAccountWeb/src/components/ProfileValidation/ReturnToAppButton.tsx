@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Box,
   Button,
@@ -10,9 +11,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
 import { cloneElement, PropsWithChildren, ReactElement, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router'
 
 export function ReturnToAppButton({ children }: PropsWithChildren) {
   const theme = useTheme()

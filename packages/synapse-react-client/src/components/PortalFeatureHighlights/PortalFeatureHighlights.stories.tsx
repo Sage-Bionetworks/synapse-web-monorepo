@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { MemoryRouter } from 'react-router'
 import PortalFeatureHighlights from './PortalFeatureHighlights'
-import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
   title: 'Home Page/PortalFeatureHighlights',

@@ -1,14 +1,14 @@
-import { PropsWithChildren } from 'react'
-import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 import { StyledEngineProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { PropsWithChildren } from 'react'
+import { useNavigate } from 'react-router'
 import {
   ApplicationSessionManager,
   SynapseToastContainer,
 } from 'synapse-react-client'
-import { SourceAppProvider } from './components/useSourceApp'
 import AppInitializer from './AppInitializer'
-import { useNavigate } from 'react-router-dom'
+import { SourceAppProvider } from './components/useSourceApp'
+import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
 
 const queryClient = new QueryClient({
   defaultOptions: {
