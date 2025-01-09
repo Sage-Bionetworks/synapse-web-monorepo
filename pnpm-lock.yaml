@@ -136,9 +136,9 @@ importers:
       react-easy-crop:
         specifier: ^5.0.7
         version: 5.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -299,9 +299,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -348,9 +348,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -397,9 +397,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -449,9 +449,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -501,9 +501,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -553,9 +553,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -614,9 +614,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -663,9 +663,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -721,9 +721,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -773,9 +773,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -849,9 +849,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -1039,9 +1039,9 @@ importers:
       react-plotly.js:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1526,9 +1526,9 @@ importers:
       react-reflex:
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-router-dom:
-        specifier: ^6.28.1
-        version: 6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-select:
         specifier: ^5.8.0
         version: 5.8.0(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1856,7 +1856,7 @@ importers:
         version: 1.0.1
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.23.3)(postcss@8.4.39)
+        version: 10.0.1(browserslist@4.23.2)(postcss@8.4.39)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -1925,7 +1925,7 @@ importers:
     dependencies:
       '@vitest/coverage-v8':
         specifier: ^1.6.0
-        version: 1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))
+        version: 1.6.0(vitest@1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0))
       '@vitest/ui':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
@@ -4331,10 +4331,6 @@ packages:
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0 || ^5.0.0
 
-  '@remix-run/router@1.21.0':
-    resolution: {integrity: sha512-xfSkCAchbdG5PnbrKqFWwia4Bi61nH+wm8wLEqfHDyp7Y3dZzgqS2itV8i4gAq9pC2HsTpwyBC6Ds8VHZ96JlA==}
-    engines: {node: '>=14.0.0'}
-
   '@restart/context@2.1.4':
     resolution: {integrity: sha512-INJYZQJP7g+IoDUh/475NlGiTeMfwTXUEr3tmRneckHIxNolGOW9CTq83S8cxq0CgJwwcMzMJFchxvlwe7Rk8Q==}
     peerDependencies:
@@ -6713,6 +6709,10 @@ packages:
   cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
+
+  cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
 
   copyfiles@2.4.1:
     resolution: {integrity: sha512-fereAvAvxDrQDOXybk3Qu3dPbOoKoysFMWtkY3mv5BsL8//OSZVL5DCLYqgRfY5cWirgRzlC+WSrxp6Bo3eNZg==}
@@ -9966,18 +9966,15 @@ packages:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
-  react-router-dom@6.28.1:
-    resolution: {integrity: sha512-YraE27C/RdjcZwl5UCqF/ffXnZDxpJdk9Q6jw38SZHjXs7NNdpViq2l2c7fO7+4uWaEfcwfGCv3RSg4e1By/fQ==}
-    engines: {node: '>=14.0.0'}
+  react-router@7.1.1:
+    resolution: {integrity: sha512-39sXJkftkKWRZ2oJtHhCxmoCrBCULr/HAH4IT5DHlgu/Q0FCPV0S4Lx+abjDTx/74xoZzNYDYbOZWlJjruyuDQ==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
-
-  react-router@6.28.1:
-    resolution: {integrity: sha512-2omQTA3rkMljmrvvo6WtewGdVh45SpL9hGiCI9uUrwGGfNFDIvGK4gYJsKlJoNVi6AQZcopSCballL+QGOm7fA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: '>=16.8'
+      react: '>=18'
+      react-dom: '>=18'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
 
   react-select-event@5.5.1:
     resolution: {integrity: sha512-goAx28y0+iYrbqZA2FeRTreHHs/ZtSuKxtA+J5jpKT5RHPCbVZJ4MqACfPnWyFXsEec+3dP5bCrNTxIX8oYe9A==}
@@ -10367,6 +10364,9 @@ packages:
   set-cookie-parser@2.6.0:
     resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
 
+  set-cookie-parser@2.7.1:
+    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
+
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
     engines: {node: '>= 0.4'}
@@ -10735,11 +10735,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  terser@5.31.2:
-    resolution: {integrity: sha512-LGyRZVFm/QElZHy/CPr/O4eNZOZIzsrQ92y4v9UJe/pFJjypje2yI3C2FmPtvUEnhadlSbmG2nXtdcjHOjCfxw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   terser@5.37.0:
     resolution: {integrity: sha512-B8wRRkmre4ERucLM/uXx4MOV5cbnOlVAqUst+1+iLKPI0dOgFO28f84ptoQt9HEI537PMzfYa/d+GEPKTRXmYA==}
     engines: {node: '>=10'}
@@ -10942,6 +10937,9 @@ packages:
 
   tty-browserify@0.0.1:
     resolution: {integrity: sha512-C3TaO7K81YvjCgQH9Q1S3R3P3BtN3RIM8n+OvX4il1K1zgE8ZhI0op7kClgkxtutIE8hQrcrHBXvIheqKUUCxw==}
+
+  turbo-stream@2.4.0:
+    resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -14608,8 +14606,6 @@ snapshots:
       immutable: 4.3.5
       redux: 5.0.1
 
-  '@remix-run/router@1.21.0': {}
-
   '@restart/context@2.1.4(react@18.2.0)':
     dependencies:
       react: 18.2.0
@@ -16265,25 +16261,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2))':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@bcoe/v8-coverage': 0.2.3
-      debug: 4.3.5
-      istanbul-lib-coverage: 3.2.2
-      istanbul-lib-report: 3.0.1
-      istanbul-lib-source-maps: 5.0.4
-      istanbul-reports: 3.1.7
-      magic-string: 0.30.10
-      magicast: 0.3.4
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2)
-    transitivePeerDependencies:
-      - supports-color
-
   '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -16300,6 +16277,25 @@ snapshots:
       strip-literal: 2.1.0
       test-exclude: 6.0.0
       vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 0.2.3
+      debug: 4.3.5
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.4
+      istanbul-reports: 3.1.7
+      magic-string: 0.30.10
+      magicast: 0.3.4
+      picocolors: 1.0.1
+      std-env: 3.7.0
+      strip-literal: 2.1.0
+      test-exclude: 6.0.0
+      vitest: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -17443,6 +17439,8 @@ snapshots:
   cookie@0.4.2: {}
 
   cookie@0.5.0: {}
+
+  cookie@1.0.2: {}
 
   copyfiles@2.4.1:
     dependencies:
@@ -21242,6 +21240,11 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
+  postcss-browser-comments@4.0.0(browserslist@4.23.2)(postcss@8.4.39):
+    dependencies:
+      browserslist: 4.23.2
+      postcss: 8.4.39
+
   postcss-browser-comments@4.0.0(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
       browserslist: 4.23.3
@@ -21254,6 +21257,14 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.39
       ts-node: 10.9.2(@types/node@20.14.10)(typescript@5.5.2)
+
+  postcss-normalize@10.0.1(browserslist@4.23.2)(postcss@8.4.39):
+    dependencies:
+      '@csstools/normalize.css': 12.1.1
+      browserslist: 4.23.2
+      postcss: 8.4.39
+      postcss-browser-comments: 4.0.0(browserslist@4.23.2)(postcss@8.4.39)
+      sanitize.css: 13.0.0
 
   postcss-normalize@10.0.1(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
@@ -21600,17 +21611,15 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  react-router-dom@6.28.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-router@7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@remix-run/router': 1.21.0
+      '@types/cookie': 0.6.0
+      cookie: 1.0.2
       react: 18.2.0
+      set-cookie-parser: 2.7.1
+      turbo-stream: 2.4.0
+    optionalDependencies:
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.28.1(react@18.2.0)
-
-  react-router@6.28.1(react@18.2.0):
-    dependencies:
-      '@remix-run/router': 1.21.0
-      react: 18.2.0
 
   react-select-event@5.5.1:
     dependencies:
@@ -22147,6 +22156,8 @@ snapshots:
 
   set-cookie-parser@2.6.0: {}
 
+  set-cookie-parser@2.7.1: {}
+
   set-function-length@1.2.2:
     dependencies:
       define-data-property: 1.1.4
@@ -22558,14 +22569,6 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
-  terser@5.31.2:
-    dependencies:
-      '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
-      commander: 2.20.3
-      source-map-support: 0.5.21
-    optional: true
-
   terser@5.37.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
@@ -22775,6 +22778,8 @@ snapshots:
       fsevents: 2.3.3
 
   tty-browserify@0.0.1: {}
+
+  turbo-stream@2.4.0: {}
 
   type-check@0.4.0:
     dependencies:
@@ -23028,24 +23033,6 @@ snapshots:
 
   validate.io-number@1.0.3: {}
 
-  vite-node@1.6.0(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2):
-    dependencies:
-      cac: 6.7.14
-      debug: 4.3.5
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      vite: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-    transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-
   vite-node@1.6.0(@types/node@20.14.10)(sass@1.77.6)(terser@5.37.0):
     dependencies:
       cac: 6.7.14
@@ -23153,17 +23140,6 @@ snapshots:
       - supports-color
       - typescript
 
-  vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2):
-    dependencies:
-      esbuild: 0.21.5
-      postcss: 8.4.39
-      rollup: 4.21.2
-    optionalDependencies:
-      '@types/node': 20.14.10
-      fsevents: 2.3.3
-      sass: 1.77.6
-      terser: 5.31.2
-
   vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.37.0):
     dependencies:
       esbuild: 0.21.5
@@ -23185,42 +23161,6 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.77.6
       terser: 5.37.0
-
-  vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.31.2):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.3
-      chai: 4.4.1
-      debug: 4.3.5
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.10
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.8.0
-      tinypool: 0.8.4
-      vite: 5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-      vite-node: 1.6.0(@types/node@20.14.10)(sass@1.77.6)(terser@5.31.2)
-      why-is-node-running: 2.2.2
-    optionalDependencies:
-      '@types/node': 20.14.10
-      '@vitest/ui': 1.6.0(vitest@1.6.0)
-      jsdom: 21.1.2
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
 
   vitest@1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0):
     dependencies:

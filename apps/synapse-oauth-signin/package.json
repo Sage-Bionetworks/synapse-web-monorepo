@@ -18,7 +18,7 @@
     "react-bootstrap": "^1.6.8",
     "react-cookie": "4.0.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.28.1",
+    "react-router": "^7.1.1",
     "sass": "^1.71.1",
     "synapse-react-client": "workspace:*",
     "universal-cookie": "^4.0.4"

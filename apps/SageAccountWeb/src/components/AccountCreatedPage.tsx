@@ -1,15 +1,15 @@
-import { SourceAppLogo } from './SourceApp'
 import { Button, Grid, Link, Typography } from '@mui/material'
-import { AppContextConsumer } from '../AppContext'
-import { Link as RouterLink } from 'react-router-dom'
-import { LeftRightPanel } from './LeftRightPanel'
-import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
-import { useSourceApp } from './useSourceApp'
+import { Link as RouterLink } from 'react-router'
 import {
-  SynapseHookUtils,
   processRedirectURLInOneSage,
+  SynapseHookUtils,
 } from 'synapse-react-client'
+import { AppContextConsumer } from '../AppContext'
+import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
 import { sourceAppConfigTableID } from '../resources'
+import { LeftRightPanel } from './LeftRightPanel'
+import { SourceAppLogo } from './SourceApp'
+import { useSourceApp } from './useSourceApp'
 
 export type AccountCreatedPageProps = {}
 

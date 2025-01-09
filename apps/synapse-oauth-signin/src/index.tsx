@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 import { getRoutes } from './routes'
 import * as serviceWorker from './serviceWorker'
 
@@ -9,24 +10,11 @@ import 'katex/dist/katex.css'
 
 const container = document.getElementById('rootPanel')
 const root = createRoot(container!)
-const router = createBrowserRouter(getRoutes(), {
-  future: {
-    v7_relativeSplatPath: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-    v7_skipActionErrorRevalidation: true,
-  },
-})
+const router = createBrowserRouter(getRoutes())
 
 root.render(
   <StrictMode>
-    <RouterProvider
-      router={router}
-      future={{
-        v7_startTransition: true,
-      }}
-    />
+    <RouterProvider router={router} />
   </StrictMode>,
 )
 
