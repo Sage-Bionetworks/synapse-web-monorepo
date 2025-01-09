@@ -14,6 +14,7 @@ function Portal(props: PortalProps) {
   const router = createBrowserRouter(props.routeConfig, {
     future: {
       v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
     },
   })
   const theme = useMemo(

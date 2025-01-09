@@ -130,6 +130,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
         basename: routerBaseName,
         future: {
           v7_relativeSplatPath: true,
+          v7_fetcherPersist: true,
         },
       })
     } else {
@@ -137,6 +138,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
         basename: routerBaseName,
         future: {
           v7_relativeSplatPath: true,
+          v7_fetcherPersist: true,
         },
       })
     }
