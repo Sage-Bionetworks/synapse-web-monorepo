@@ -146,7 +146,9 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
     return <SynapseSpinner size={50} />
   }
 
-  return <RouterProvider router={router} />
+  return (
+    <RouterProvider router={router} future={{ v7_startTransition: true }} />
+  )
 }
 
 function SubmissionPageRouteRenderer() {
