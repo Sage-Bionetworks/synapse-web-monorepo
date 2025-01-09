@@ -64,15 +64,24 @@ export function RowSetView(props: RowSetViewProps) {
       <Box
         className={`RowSetView`}
         sx={theme => ({
-          '& .SRC-imageThumbnail': {
-            width: compact ? '64px' : 'initial',
-          },
-          [theme.breakpoints.up('md')]: {
-            maxWidth: compact ? '60vw' : 'initial',
-          },
-          [theme.breakpoints.up('xl')]: {
-            maxWidth: compact ? '40vw' : 'initial',
-          },
+          ...(compact && {
+            '& .SRC-imageThumbnail': {
+              display: 'flex',
+              alignItems: 'center',
+              maxWidth: '80px',
+            },
+            [theme.breakpoints.up('lg')]: {
+              '& > div': {
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '30px',
+                marginTop: '30px',
+              },
+              '& .SRC-portalCard': {
+                margin: '0',
+              },
+            },
+          }),
         })}
       >
         {isLoading && (

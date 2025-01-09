@@ -160,8 +160,8 @@ $text-color-lighter: #898989;
     }
   }
   .SRC-imageThumbnail {
-    display: flex;
-    align-items: center;
+    display: inline-block;
+    width: 25%;
     vertical-align: top;
     padding-right: 15px;
     max-width: 215px;
@@ -173,9 +173,6 @@ $text-color-lighter: #898989;
       width: auto;
       margin: auto;
       display: block;
-    }
-    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
-      padding-top: 40px;
     }
   }
 
