@@ -88,9 +88,10 @@ const FeaturedResearchCard = ({
     <Box
       display={'flex'}
       gap={'30px'}
-      borderBottom={'1px solid #EAECEE'}
+      borderBottom={'1px solid'}
       padding={'24px 0'}
       sx={{
+        borderColor: 'grey.300',
         flexDirection: {
           xs: 'column',
           sm: 'row',
@@ -122,18 +123,20 @@ const FeaturedResearchCard = ({
           </Link>
         </Typography>
         <Stack direction={'row'} useFlexGap gap={'16px'} alignItems={'center'}>
-          <Typography
-            variant="overline"
-            fontSize={'14px'}
-            sx={{
-              backgroundColor: 'grey.300',
-              borderRadius: '3px',
-              padding: '4px 8px',
-              lineHeight: 'initial',
-            }}
-          >
-            {parseTags(tagsColIndex, research)?.[0] || ''}
-          </Typography>
+          {parseTags(tagsColIndex, research)[0] && (
+            <Typography
+              variant="overline"
+              fontSize={'14px'}
+              sx={{
+                backgroundColor: 'grey.300',
+                borderRadius: '3px',
+                padding: '4px 8px',
+                lineHeight: 'initial',
+              }}
+            >
+              {parseTags(tagsColIndex, research)[0] || ''}
+            </Typography>
+          )}
           <Typography lineHeight={'normal'} color={'grey.600'}>
             {research.values[publicationDateColIndex] &&
               formatDate(
@@ -203,19 +206,21 @@ const FeaturedResearchTopCard = ({
         paddingBottom={'20px'}
         alignItems={'start'}
       >
-        <Typography
-          fontSize={'14px'}
-          lineHeight={'normal'}
-          sx={{
-            fontWeight: 700,
-            backgroundColor: 'primary.main',
-            color: '#FFFF',
-            padding: '3px 8px',
-            borderRadius: '3px',
-          }}
-        >
-          {parseTags(tagsColIndex, research)?.[0] || ''}
-        </Typography>
+        {parseTags(tagsColIndex, research)[0] && (
+          <Typography
+            fontSize={'14px'}
+            lineHeight={'normal'}
+            sx={{
+              fontWeight: 700,
+              backgroundColor: 'primary.main',
+              color: '#FFFF',
+              padding: '3px 8px',
+              borderRadius: '3px',
+            }}
+          >
+            {parseTags(tagsColIndex, research)[0] || ''}
+          </Typography>
+        )}
         <Typography lineHeight={'normal'} color={'grey.600'}>
           {research.values[affiliationColIndex] ?? ''}
         </Typography>
