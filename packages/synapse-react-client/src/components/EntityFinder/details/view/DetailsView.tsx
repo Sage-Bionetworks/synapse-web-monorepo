@@ -159,9 +159,7 @@ function SelectAllCheckboxRenderer(props: {
       checked={checked}
       disabled={disabled}
       onChange={() => {
-        if (!disabled) {
-          onSelectAll()
-        }
+        onSelectAll()
       }}
     />
   )
