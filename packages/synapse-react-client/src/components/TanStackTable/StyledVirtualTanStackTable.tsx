@@ -40,6 +40,7 @@ export function VirtualizedTr<TData = unknown>(
         position: 'absolute',
         transform: `translateY(${virtualItem.start}px)`, //this should always be a `style` as it changes on scroll
         width: '100%',
+        alignItems: 'center',
       }}
     />
   )
@@ -72,6 +73,7 @@ export default function StyledVirtualTanStackTable<T = unknown>(
         rowTransform={row => table.getRowModel().rows[row.index]}
         fullWidth={fullWidth}
         styledTableContainerProps={{
+          noStripedRows: true,
           ...styledTableContainerProps,
           style: {
             overflow: 'auto', //our scrollable table container

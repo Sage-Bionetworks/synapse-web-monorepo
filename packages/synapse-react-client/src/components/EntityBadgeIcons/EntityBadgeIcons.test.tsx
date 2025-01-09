@@ -1,26 +1,3 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import {
-  EntityBadgeIcons,
-  EntityBadgeIconsProps,
-} from '../../src/components/EntityBadgeIcons/EntityBadgeIcons'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import mockFileEntityData from '../../src/mocks/entity/mockFileEntity'
-import { rest, server } from '../../src/mocks/msw/server'
-import userEvent from '@testing-library/user-event'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../src/utils/functions/getEndpoint'
-import {
-  ENTITY_ID,
-  ENTITY_SCHEMA_BINDING,
-  ENTITY_SCHEMA_VALIDATION,
-} from '../../src/utils/APIConstants'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-} from '../../src/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   Annotations,
@@ -28,16 +5,36 @@ import {
   EntityJson,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import {
   mockSchemaBinding,
   mockSchemaValidationResults,
-} from '../../src/mocks/mockSchema'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+} from '../../mocks/mockSchema'
 import {
   getEntityBundleHandler,
   getEntityJsonHandler,
-} from '../../src/mocks/msw/handlers/entityHandlers'
-import { getFeatureFlagsOverride } from '../../src/mocks/msw/handlers/featureFlagHandlers'
+} from '../../mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { rest, server } from '../../mocks/msw/server'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import {
+  ENTITY_ID,
+  ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
+} from '../../utils/APIConstants'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+} from '../../utils/SynapseConstants'
+import { EntityBadgeIcons, EntityBadgeIconsProps } from './EntityBadgeIcons'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle
@@ -47,7 +44,6 @@ const defaultProps: EntityBadgeIconsProps = {
   onUnlink: jest.fn(),
   onUnlinkError: jest.fn(),
   canOpenModal: true,
-  renderTooltipComponent: true,
 }
 
 const convertAnnotationsToEntityJson = (
@@ -55,19 +51,18 @@ const convertAnnotationsToEntityJson = (
 ): Partial<EntityJson> => {
   const entityJson: Partial<EntityJson> = {}
   for (const key in annotations) {
-    if (annotations.hasOwnProperty(key)) {
+    if (Object.hasOwn(annotations, key)) {
       entityJson[key] = annotations[key].value
     }
   }
   return entityJson
 }
 
-async function renderComponent(wrapperProps?: SynapseContextType) {
-  await act(() => {
-    render(<EntityBadgeIcons {...defaultProps} />, {
-      wrapper: createWrapper(wrapperProps),
-    })
+function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
+  render(<EntityBadgeIcons {...defaultProps} />, {
+    wrapper: createWrapper(wrapperProps),
   })
+
   mockAllIsIntersecting(true)
 }
 
@@ -89,11 +84,11 @@ describe('EntityBadgeIcons tests', () => {
         annotations,
       ),
     )
-    await renderComponent()
+    renderComponent()
     const icon = await screen.findByTestId('annotations-icon')
     await userEvent.hover(icon)
     for (const annotation of Object.entries(
-      mockFileEntityBundle.annotations!.annotations,
+      mockFileEntityBundle.annotations.annotations,
     )) {
       await screen.findByText(annotation[0])
       await screen.findByText(annotation[1].value.join(', '))
@@ -123,7 +118,7 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    await renderComponent()
+    renderComponent()
     await screen.findByTestId('is-public-icon')
   })
   it('Shows the private icon when anonymous is not in the ACL', async () => {
@@ -141,7 +136,7 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    await renderComponent()
+    renderComponent()
     await screen.findByTestId('is-private-icon')
   })
 
@@ -160,26 +155,27 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    await renderComponent()
+    renderComponent()
     await screen.findByTestId('sharing-settings-icon')
   })
 
   it('Shows the wiki icon', async () => {
-    await renderComponent()
+    renderComponent()
     await screen.findByTestId('wiki-icon')
   })
 
   it('Shows the discussion thread icon', async () => {
-    await renderComponent()
+    renderComponent()
     await screen.findByTestId('discussion-icon')
   })
 
   describe('Unlink', () => {
-    it('Does not show the icon on non-links', async () => {
+    it('Does not show the icon on non-links', () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
         entityType: EntityType.FILE,
         permissions: {
+          ...mockFileEntityBundle.permissions,
           canDelete: true,
         },
       }
@@ -190,15 +186,16 @@ describe('EntityBadgeIcons tests', () => {
           bundle,
         ),
       )
-      await renderComponent()
+      renderComponent()
       expect(screen.queryByTestId('unlink-icon')).toBeNull()
     })
 
-    it('Does not show the icon if no permission to delete', async () => {
+    it('Does not show the icon if no permission to delete', () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
         entityType: EntityType.LINK,
         permissions: {
+          ...mockFileEntityBundle.permissions,
           canDelete: false,
         },
       }
@@ -208,7 +205,7 @@ describe('EntityBadgeIcons tests', () => {
           bundle,
         ),
       )
-      await renderComponent()
+      renderComponent()
       expect(screen.queryByTestId('unlink-icon')).toBeNull()
     })
 
@@ -217,6 +214,7 @@ describe('EntityBadgeIcons tests', () => {
         ...mockFileEntityBundle,
         entityType: EntityType.LINK,
         permissions: {
+          ...mockFileEntityBundle.permissions,
           canDelete: true,
         },
       }
@@ -226,7 +224,7 @@ describe('EntityBadgeIcons tests', () => {
           bundle,
         ),
       )
-      await renderComponent()
+      renderComponent()
       await screen.findByTestId('unlink-icon')
     })
     it('Calls the success callback on success', async () => {
@@ -234,6 +232,7 @@ describe('EntityBadgeIcons tests', () => {
         ...mockFileEntityBundle,
         entityType: EntityType.LINK,
         permissions: {
+          ...mockFileEntityBundle.permissions,
           canDelete: true,
         },
       }
@@ -252,7 +251,7 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
       )
-      await renderComponent()
+      renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
       await userEvent.click(unlinkButton)
@@ -272,6 +271,7 @@ describe('EntityBadgeIcons tests', () => {
         ...mockFileEntityBundle,
         entityType: EntityType.LINK,
         permissions: {
+          ...mockFileEntityBundle.permissions,
           canDelete: true,
         },
       }
@@ -291,7 +291,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      await renderComponent()
+      renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
       await userEvent.click(unlinkButton)
@@ -329,7 +329,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      await renderComponent({ isInExperimentalMode: true, utcTime: true })
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -369,7 +369,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      await renderComponent({ isInExperimentalMode: true, utcTime: true })
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -391,6 +391,8 @@ describe('EntityBadgeIcons tests', () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
         annotations: {
+          id: MOCK_FILE_ENTITY_ID,
+          etag: 'etag',
           annotations: {}, // !
         },
       }
@@ -427,7 +429,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      await renderComponent({ isInExperimentalMode: true, utcTime: true })
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -438,7 +440,7 @@ describe('EntityBadgeIcons tests', () => {
       await screen.findByText('Missing Annotations')
     })
 
-    it('Does not fetch validation results if there is no bound schema', async () => {
+    it('Does not fetch validation results if there is no bound schema', () => {
       const onSchemaValidationFetched = jest.fn()
 
       server.use(
@@ -475,7 +477,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      await renderComponent({ isInExperimentalMode: true, utcTime: true })
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
       expect(onSchemaValidationFetched).not.toHaveBeenCalled()
     })
   })

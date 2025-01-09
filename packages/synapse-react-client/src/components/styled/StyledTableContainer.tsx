@@ -23,6 +23,9 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
     ({ theme, density = 'default', noStripedRows = false }) => ({
       overflow: 'auto',
       paddingLeft: '2px',
+      ['thead > tr']: {
+        backgroundColor: theme.palette.grey[200],
+      },
       th: {
         height: '38px',
         backgroundColor: theme.palette.grey[200],

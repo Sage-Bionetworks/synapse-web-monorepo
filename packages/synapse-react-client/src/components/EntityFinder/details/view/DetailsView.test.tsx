@@ -1,11 +1,9 @@
 import '@testing-library/jest-dom'
 import {
-  Direction,
   EntityHeader,
   EntityType,
   PaginatedResults,
   Reference,
-  SortBy,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -29,21 +27,13 @@ import {
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { toEntityHeader } from '../configurations/ProjectListDetails'
-import { DetailsView, DetailsViewProps } from './DetailsView'
+import { DetailsView, DetailsViewColumn, DetailsViewProps } from './DetailsView'
 
 const mockEntityBadgeIcons = jest
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
   .mockImplementation(() => <></>)
 
 const mockFileEntityHeader = mockFileEntityData.entityHeader
-
-// Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
-jest.mock(
-  'react-virtualized-auto-sizer',
-  () =>
-    ({ children }: { children: any }) =>
-      children({ height: 600, width: 1200 }),
-)
 
 const mockToggleSelection = jest.fn()
 const mockFetchNextPage = jest.fn()
@@ -118,8 +108,10 @@ const defaultProps: DetailsViewProps = {
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
   isFetchingNextPage: false,
-  sort: undefined,
-  setSort: mockSetSort,
+  enableSorting: false,
+  enableMultiSort: false,
+  sorting: undefined,
+  onSortingChange: mockSetSort,
   noResultsPlaceholder: <></>,
   enableSelectAll: true,
   setCurrentContainer: mockSetCurrentContainer,
@@ -137,6 +129,21 @@ function renderComponent(
 }
 
 describe('DetailsView tests', () => {
+  // Stub for getBoundingClientRect, required by @tanstack/react-virtual to work in tests
+  jest
+    .spyOn(Element.prototype, 'getBoundingClientRect')
+    .mockImplementation(() => ({
+      width: 1200,
+      height: 600,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    }))
+
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -187,8 +194,8 @@ describe('DetailsView tests', () => {
         ).not.toBeInTheDocument()
 
         // Nothing is disabled
-        expect(rows[FILE_INDEX]).not.toBeDisabled()
-        expect(rows[PROJECT_INDEX]).not.toBeDisabled()
+        expect(rows[FILE_INDEX + 1]).not.toBeDisabled()
+        expect(rows[PROJECT_INDEX + 1]).not.toBeDisabled()
       })
 
       it('Creates a row with the selected appearance', async () => {
@@ -202,12 +209,18 @@ describe('DetailsView tests', () => {
 
         const rows = await screen.findAllByRole('row')
         // One row is selected -- the file
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-selected', 'true')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-selected', 'false')
+        expect(rows[FILE_INDEX + 1]).toHaveAttribute('aria-selected', 'true')
+        expect(rows[PROJECT_INDEX + 1]).toHaveAttribute(
+          'aria-selected',
+          'false',
+        )
 
         // Nothing is disabled
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
+        expect(rows[FILE_INDEX + 1]).toHaveAttribute('aria-disabled', 'false')
+        expect(rows[PROJECT_INDEX + 1]).toHaveAttribute(
+          'aria-disabled',
+          'false',
+        )
       })
 
       it('Creates a row with the disabled appearance', async () => {
@@ -225,8 +238,11 @@ describe('DetailsView tests', () => {
         ).not.toBeInTheDocument()
 
         // One row is disabled (the file)
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'true')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
+        expect(rows[FILE_INDEX + 1]).toHaveAttribute('aria-disabled', 'true')
+        expect(rows[PROJECT_INDEX + 1]).toHaveAttribute(
+          'aria-disabled',
+          'false',
+        )
       })
     })
   })
@@ -245,7 +261,7 @@ describe('DetailsView tests', () => {
       entities: manyEntities,
     })
 
-    expect(mockFetchNextPage).not.toHaveBeenCalled()
+    expect(mockFetchNextPage).toHaveBeenCalledTimes(1)
 
     const fewEntities = []
     for (let i = 0; i < 2; i++) {
@@ -259,7 +275,7 @@ describe('DetailsView tests', () => {
       entities: fewEntities,
     })
 
-    await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
+    await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalledTimes(2))
   })
 
   describe('Conditionally hiding columns', () => {
@@ -292,35 +308,53 @@ describe('DetailsView tests', () => {
   describe('Sort functionality', () => {
     it('requests to sort descending on new SortBy', async () => {
       renderComponent({
-        sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
-        setSort: mockSetSort,
+        enableSorting: true,
+        sortableColumns: [
+          DetailsViewColumn.NAME,
+          DetailsViewColumn.CREATED_ON,
+          DetailsViewColumn.MODIFIED_ON,
+        ],
+        sorting: [{ id: DetailsViewColumn.CREATED_ON, desc: false }],
+        onSortingChange: mockSetSort,
       })
 
       await userEvent.click(screen.getAllByRole('button')[0])
 
-      expect(mockSetSort).toBeCalledWith(SortBy.NAME, Direction.ASC)
+      expect(mockSetSort).toBeCalledWith(expect.any(Function))
     })
 
     it('toggles from descending to ascending on same SortBy', async () => {
       renderComponent({
-        sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
-        setSort: mockSetSort,
+        enableSorting: true,
+        sortableColumns: [
+          DetailsViewColumn.NAME,
+          DetailsViewColumn.CREATED_ON,
+          DetailsViewColumn.MODIFIED_ON,
+        ],
+        sorting: [{ id: DetailsViewColumn.CREATED_ON, desc: false }],
+        onSortingChange: mockSetSort,
       })
 
       await userEvent.click(screen.getAllByRole('button')[2])
 
-      expect(mockSetSort).toBeCalledWith(SortBy.CREATED_ON, Direction.DESC)
+      expect(mockSetSort).toBeCalledWith(expect.any(Function))
     })
 
     it('toggles from ascending to descending on same SortBy', async () => {
       renderComponent({
-        sort: { sortBy: SortBy.MODIFIED_ON, sortDirection: Direction.DESC },
-        setSort: mockSetSort,
+        enableSorting: true,
+        sortableColumns: [
+          DetailsViewColumn.NAME,
+          DetailsViewColumn.CREATED_ON,
+          DetailsViewColumn.MODIFIED_ON,
+        ],
+        sorting: [{ id: DetailsViewColumn.MODIFIED_ON, desc: true }],
+        onSortingChange: mockSetSort,
       })
 
       await userEvent.click(screen.getAllByRole('button')[3])
 
-      expect(mockSetSort).toBeCalledWith(SortBy.MODIFIED_ON, Direction.ASC)
+      expect(mockSetSort).toBeCalledWith(expect.any(Function))
     })
   })
 
@@ -352,8 +386,8 @@ describe('DetailsView tests', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
-        entities: [],
         hasNextPage: false,
+        selectableTypes: [EntityType.DATASET],
         selectColumnType: 'checkbox',
       })
       await screen.findByRole('checkbox', { checked: false })
@@ -368,7 +402,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       await waitFor(() =>
@@ -388,7 +422,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       await waitFor(() =>
@@ -414,7 +448,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       // Only the project is toggled because the file is already selected
@@ -437,7 +471,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       // Both items are unselected and should be deselected, so they are both toggled
@@ -463,7 +497,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       // Only the file is toggled because the project is unselectable
@@ -486,7 +520,7 @@ describe('DetailsView tests', () => {
         selectColumnType: 'checkbox',
       })
 
-      const selectAll = await screen.findByTestId('Select All')
+      const selectAll = await screen.findByLabelText('Select All')
       expect(mockToggleSelection).not.toHaveBeenCalled()
       await userEvent.click(selectAll)
       // Only the file is toggled because the project is hidden
@@ -506,7 +540,7 @@ describe('DetailsView tests', () => {
       renderComponent()
 
       const rows = await screen.findAllByRole('row')
-      await userEvent.click(rows[FILE_INDEX])
+      await userEvent.click(rows[FILE_INDEX + 1])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[0].id,
@@ -520,7 +554,7 @@ describe('DetailsView tests', () => {
       })
 
       const rows = await screen.findAllByRole('row')
-      await userEvent.click(rows[FILE_INDEX])
+      await userEvent.click(rows[FILE_INDEX + 1])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: mockFileEntityHeader.id,
@@ -535,7 +569,7 @@ describe('DetailsView tests', () => {
 
       // Click the project--projects don't have versions
       const rows = await screen.findAllByRole('row')
-      await userEvent.click(rows[PROJECT_INDEX])
+      await userEvent.click(rows[PROJECT_INDEX + 1])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[1].id,
@@ -551,7 +585,7 @@ describe('DetailsView tests', () => {
 
       // Per props, File is a disabled type
       const rows = await screen.findAllByRole('row')
-      await userEvent.click(rows[FILE_INDEX])
+      await userEvent.click(rows[FILE_INDEX + 1])
 
       expect(mockToggleSelection).not.toBeCalled()
     })
@@ -595,6 +629,7 @@ describe('DetailsView tests', () => {
     describe('renders the correct checkbox state', () => {
       it('rendered checkbox is checked if selected', async () => {
         renderComponent({
+          enableSelectAll: false,
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
