@@ -12,6 +12,7 @@ const root = createRoot(container!)
 const router = createBrowserRouter(getRoutes(), {
   future: {
     v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
   },
 })
 
