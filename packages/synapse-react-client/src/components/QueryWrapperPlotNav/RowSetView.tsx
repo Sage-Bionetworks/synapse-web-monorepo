@@ -70,15 +70,21 @@ export function RowSetView(props: RowSetViewProps) {
               alignItems: 'center',
               maxWidth: '80px',
             },
-            [theme.breakpoints.up('lg')]: {
+            [theme.breakpoints.up('md')]: {
               '& > div': {
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
+                gridTemplateColumns: 'repeat(2, 1fr)',
                 gap: '30px',
                 marginTop: '30px',
               },
               '& .SRC-portalCard': {
                 margin: '0',
+              },
+            },
+            [theme.breakpoints.up('xl')]: {
+              '& > div': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
               },
             },
           }),
