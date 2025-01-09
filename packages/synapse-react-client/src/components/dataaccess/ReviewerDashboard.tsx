@@ -126,9 +126,19 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
 
   const router = useMemo(() => {
     if (useMemoryRouter) {
-      return createMemoryRouter(routes, { basename: routerBaseName })
+      return createMemoryRouter(routes, {
+        basename: routerBaseName,
+        future: {
+          v7_relativeSplatPath: true,
+        },
+      })
     } else {
-      return createBrowserRouter(routes, { basename: routerBaseName })
+      return createBrowserRouter(routes, {
+        basename: routerBaseName,
+        future: {
+          v7_relativeSplatPath: true,
+        },
+      })
     }
   }, [useMemoryRouter, routes, routerBaseName])
 

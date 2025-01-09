@@ -11,7 +11,11 @@ const queryClient = new QueryClient(defaultQueryClientConfig)
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
-  const router = createBrowserRouter(props.routeConfig)
+  const router = createBrowserRouter(props.routeConfig, {
+    future: {
+      v7_relativeSplatPath: true,
+    },
+  })
   const theme = useMemo(
     () => createTheme(SynapseTheme.mergeTheme({ palette })),
     [palette],
