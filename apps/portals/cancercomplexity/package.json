@@ -4,13 +4,13 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@mui/material": "^5.15.13",
     "katex": "^0.16.10",
-    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "^6.28.1",
     "synapse-react-client": "workspace:*",
     "vite": "^5.4.3"
   },

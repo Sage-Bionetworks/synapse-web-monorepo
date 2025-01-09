@@ -103,7 +103,7 @@
     "react-plotly.js": "^2.6.0",
     "react-popper": "^2.3.0",
     "react-reflex": "^4.2.6",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "^6.28.1",
     "react-select": "^5.8.0",
     "react-sizeme": "^3.0.2",
     "react-switch": "^7.0.0",
