@@ -9,7 +9,11 @@ import 'katex/dist/katex.css'
 
 const container = document.getElementById('rootPanel')
 const root = createRoot(container!)
-const router = createBrowserRouter(getRoutes())
+const router = createBrowserRouter(getRoutes(), {
+  future: {
+    v7_relativeSplatPath: true,
+  },
+})
 
 root.render(
   <StrictMode>

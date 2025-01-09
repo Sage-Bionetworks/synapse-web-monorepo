@@ -14,7 +14,7 @@ const root = createRoot(container!)
 
 root.render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <AppWrapper>
         <App />
       </AppWrapper>
