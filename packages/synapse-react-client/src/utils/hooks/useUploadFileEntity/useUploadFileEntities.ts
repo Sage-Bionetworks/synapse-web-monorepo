@@ -96,6 +96,8 @@ export type UseUploadFileEntitiesReturn = {
   initiateUpload: (args: InitiateUploadArgs) => void
   activeUploadCount: number
   uploadProgress: FileUploadProgress[]
+  /** True when files can be uploaded. */
+  isUploadReady: boolean
 }
 
 // Limit the number of concurrent uploads to avoid overwhelming the browser
@@ -140,6 +142,8 @@ export function useUploadFileEntities(
     // Do not refetch the storage location usage to avoid double-counting the size of new uploads against the limit.
     staleTime: Infinity,
   })
+
+  const isUploadReady = Boolean(containerOrEntityId && uploadDestination)
 
   const storageLocationId =
     uploadDestination?.storageLocationId || SYNAPSE_STORAGE_LOCATION_ID
@@ -358,10 +362,16 @@ export function useUploadFileEntities(
 
   const initiateUpload = useCallback(
     (args: InitiateUploadArgs) => {
+      if (uploadDestination == null) {
+        console.error(
+          'Upload destination was not loaded, or failed to load! Aborting upload.',
+        )
+        return
+      }
       if (
         willUploadsExceedStorageLimit(
           args.map(arg => arg.file),
-          uploadDestination!.projectStorageLocationUsage,
+          uploadDestination.projectStorageLocationUsage,
           bytesPendingUpload,
         )
       ) {
@@ -466,6 +476,7 @@ export function useUploadFileEntities(
       initiateUpload: initiateUpload,
       activePrompts: activePrompts,
       uploadProgress: uploadProgress,
+      isUploadReady,
     }
   }, [
     state,
@@ -475,5 +486,6 @@ export function useUploadFileEntities(
     initiateUpload,
     activePrompts,
     uploadProgress,
+    isUploadReady,
   ])
 }
