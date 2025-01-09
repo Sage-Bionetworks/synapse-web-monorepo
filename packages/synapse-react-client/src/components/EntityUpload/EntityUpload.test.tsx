@@ -67,16 +67,19 @@ const mockUseUploadFileEntitiesReturn = {
   activeUploadCount: 0,
   uploadProgress: [],
   initiateUpload: jest.fn(),
+  isUploadReady: true,
 } satisfies UseUploadFileEntitiesReturn
 
 describe('EntityUpload', () => {
   function renderComponent(propOverrides: Partial<EntityUploadProps> = {}) {
     const user = userEvent.setup()
     const ref = createRef<EntityUploadHandle>()
+    const mockOnUploadReady = jest.fn()
     const result = render(
       <EntityUpload
         ref={ref}
         entityId={mockProject.entity.id}
+        onUploadReady={mockOnUploadReady}
         {...propOverrides}
       />,
       {
@@ -84,7 +87,7 @@ describe('EntityUpload', () => {
       },
     )
 
-    return { user, ref, result }
+    return { user, ref, result, mockOnUploadReady }
   }
 
   beforeEach(() => {
@@ -330,8 +333,10 @@ describe('EntityUpload', () => {
     })
   })
 
-  it('supports upload via programmatic handle', () => {
-    const { ref } = renderComponent()
+  it('supports upload via programmatic handle', async () => {
+    const { ref, mockOnUploadReady } = renderComponent()
+
+    await waitFor(() => expect(mockOnUploadReady).toHaveBeenCalled())
 
     const filesToUpload = [
       new File(['contents'], 'file1.txt'),
@@ -348,6 +353,19 @@ describe('EntityUpload', () => {
         { file: filesToUpload[1], rootContainerId: mockProject.entity.id },
       ],
     )
+  })
+
+  it('does not call onUploadReady if not ready for upload', async () => {
+    const hookReturnValue = {
+      ...mockUseUploadFileEntitiesReturn,
+      isUploadReady: false,
+    } satisfies UseUploadFileEntitiesReturn
+
+    mockUseUploadFileEntities.mockReturnValue(hookReturnValue)
+    const { ref, mockOnUploadReady } = renderComponent()
+
+    await waitFor(() => expect(ref.current).toBeDefined())
+    expect(mockOnUploadReady).not.toHaveBeenCalled()
   })
 
   it('passes didUploadsExceedStorageLimit = true to ProjectStorageLimitAlert when onStorageLimitExceeded is invoked', async () => {
