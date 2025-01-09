@@ -12,10 +12,11 @@ import {
   QueryBundleRequest,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { useGetStablePresignedUrl } from '../../synapse-queries'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
+import * as SynapseConstants from '../../utils/SynapseConstants'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 
@@ -145,7 +146,7 @@ const FeaturedResearchCard = ({
       <CardMedia
         component="img"
         image={url}
-        alt="Research Card Image"
+        aria-hidden="true"
         sx={{
           flexShrink: 0,
           width: '140px',
@@ -188,10 +189,9 @@ const FeaturedResearchTopCard = ({
       <CardMedia
         component="img"
         image={url}
-        alt="Top Research Card Image"
+        aria-hidden="true"
         sx={{
           objectFit: 'cover',
-          maxHeight: { xs: '300px', md: '600.3px' },
           borderRadius: '10px',
           marginBottom: '30px',
         }}
@@ -250,7 +250,7 @@ const FeaturedResearchTopCard = ({
 function FeaturedResearch(props: FeaturedResearchProps) {
   const { sql } = props
 
-  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -325,9 +325,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
           />
         )}
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
+      <Stack
         gap="16px"
         sx={{
           borderTop: '3px solid',
@@ -353,7 +351,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
             linkColIndex={linkColIndex}
           />
         ))}
-      </Box>
+      </Stack>
     </Box>
   )
 }

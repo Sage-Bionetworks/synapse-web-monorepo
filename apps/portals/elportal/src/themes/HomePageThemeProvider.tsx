@@ -47,6 +47,11 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
           },
         },
       },
+      MuiStack: {
+        defaultProps: {
+          useFlexGap: true,
+        },
+      },
     },
   }
   const mergedTheme = deepmerge(theme, homePageOverrides)
