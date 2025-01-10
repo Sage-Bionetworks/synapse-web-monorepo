@@ -32,7 +32,7 @@ export const getIgnoredQueryFilterSearchParamKey = (
 }
 
 // Special search parameter key that will automatically apply a FTS search term to a Query Wrapper if present
-export const FTS_SEARCH_PARAM_KEY = 'FTS_SEARCH_TERM'
+export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
 
 /**
  * Look in local storage for a set of QueryFilters to apply.  In addition, given the search params,
@@ -66,7 +66,7 @@ export const getAdditionalFilters = (
       Object.keys(searchParams || {})
         .filter(key => !isQueryWrapperKey(key))
         .map(key => {
-          if (key == FTS_SEARCH_PARAM_KEY) {
+          if (key == FTS_SEARCH_TERM) {
             const filter: TextMatchesQueryFilter = {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
