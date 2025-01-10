@@ -55,6 +55,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'fileNameColumnName'
     | 'fileVersionColumnName'
     | 'onQueryResultBundleChange'
+    | 'shouldDeepLink'
   > &
   Pick<QueryWrapperPlotNavProps, 'cardConfiguration' | 'tableConfiguration'>
 
@@ -107,6 +108,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
       : NoContentPlaceholderType.STATIC,
     cardConfiguration,
     tableConfiguration,
+    shouldDeepLink,
     ...rest
   } = props
 
@@ -122,7 +124,6 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
       searchParams,
       sqlOperator,
     )
-
   const { data: entity } = useGetEntity(entityId)
 
   /**
@@ -133,11 +134,11 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
    */
   const queryWrapperKey =
     JSON.stringify(derivedQueryRequestFromSearchParams) + componentKey
-
   return (
     <QueryWrapper
       {...rest}
       initQueryRequest={derivedQueryRequestFromSearchParams}
+      shouldDeepLink={shouldDeepLink}
       key={queryWrapperKey}
     >
       <QueryVisualizationWrapper
