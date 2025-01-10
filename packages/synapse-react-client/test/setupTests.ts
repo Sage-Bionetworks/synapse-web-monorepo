@@ -6,11 +6,22 @@ import { ResizeObserver } from '@juggle/resize-observer'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
 import { faker } from '@faker-js/faker'
 import { configure } from '@testing-library/dom'
+import { TextEncoder, TextDecoder } from 'node:util'
 
 // Set a constant seed for faker so the generated data doesn't change
 beforeAll(() => {
   faker.seed(12345)
 })
+
+
+// Add polyfills for react-router - https://github.com/remix-run/react-router/issues/12363
+if (!global.TextEncoder) {
+  global.TextEncoder = TextEncoder
+}
+
+if (!global.TextDecoder) {
+  global.TextDecoder = TextDecoder
+}
 
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,
