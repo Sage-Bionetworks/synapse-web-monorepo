@@ -1,7 +1,7 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Outlet, useLocation, useMatch } from 'react-router-dom'
+import { Outlet, useLocation, useMatch } from 'react-router'
 import { OrientationBanner } from 'synapse-react-client'
 import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,

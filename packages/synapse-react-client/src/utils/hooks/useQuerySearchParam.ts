@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 /**
  * If defined, get the query search parameter value for the given parameter name

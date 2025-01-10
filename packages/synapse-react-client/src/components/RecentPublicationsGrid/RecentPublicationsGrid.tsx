@@ -1,19 +1,18 @@
 import {
-  Typography,
-  Button,
   Box,
-  Skeleton,
+  Button,
   Link as MuiLink,
+  Skeleton,
+  Typography,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
+import { Link } from 'react-router'
+import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { Row } from '@sage-bionetworks/synapse-types'
-import { Link } from 'react-router-dom'
+import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 
 export type RecentPublicationsGridProps = {

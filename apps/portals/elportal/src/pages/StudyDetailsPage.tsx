@@ -6,11 +6,11 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import {
   cavaticaConnectAccountURL,

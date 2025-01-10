@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useMatches } from 'react-router-dom'
+import { useMatches } from 'react-router'
 
 /**
  * Uses the current routes to set the document title. The title will only be set when routes change, so if placed high

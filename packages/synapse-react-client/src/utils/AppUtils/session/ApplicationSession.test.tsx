@@ -1,33 +1,33 @@
-import { renderHook, waitFor } from '@testing-library/react'
-import ApplicationSessionManager, {
-  ApplicationSessionManagerProps,
-} from './ApplicationSessionManager'
-import {
-  ApplicationSessionContextType,
-  useApplicationSessionContext,
-} from './ApplicationSessionContext'
-import {
-  defaultQueryClientConfig,
-  FullContextProvider,
-  SynapseClient,
-} from '../../../index'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { MemoryRouter } from 'react-router-dom'
-import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
-import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import {
   ErrorResponseCode,
   TermsOfServiceState,
   TermsOfServiceStatus,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
+import { QueryClient } from '@tanstack/query-core'
+import { renderHook, waitFor } from '@testing-library/react'
 import dayjs from 'dayjs'
+import { MemoryRouter } from 'react-router'
+import {
+  defaultQueryClientConfig,
+  FullContextProvider,
+  SynapseClient,
+} from '../../../index'
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '../../../mocks/MockSynapseContext'
-import { QueryClient } from '@tanstack/query-core'
+import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
+import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
+import {
+  ApplicationSessionContextType,
+  useApplicationSessionContext,
+} from './ApplicationSessionContext'
+import ApplicationSessionManager, {
+  ApplicationSessionManagerProps,
+} from './ApplicationSessionManager'
 
 function render(props?: ApplicationSessionManagerProps) {
   const queryClient = new QueryClient(defaultQueryClientConfig)

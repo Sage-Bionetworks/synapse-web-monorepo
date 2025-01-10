@@ -1,7 +1,7 @@
-import { Link as RouterLink } from 'react-router-dom'
-import { MuiContainer, CertificationQuiz as Quiz } from 'synapse-react-client'
-import ReturnArrow from '../assets/ReturnArrow.svg?url'
 import { Link, Paper } from '@mui/material'
+import { Link as RouterLink } from 'react-router'
+import { CertificationQuiz as Quiz, MuiContainer } from 'synapse-react-client'
+import ReturnArrow from '../assets/ReturnArrow.svg?url'
 
 export const CertificationQuiz = () => {
   return (

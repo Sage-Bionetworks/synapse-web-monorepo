@@ -1,7 +1,7 @@
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import dayjs from 'dayjs'
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import SynapseClient from '../../../synapse-client'
 import { useTermsOfServiceStatus } from '../../../synapse-queries/termsOfService/useTermsOfService'
 import { SynapseContextProvider, SynapseContextType } from '../../context'

@@ -3,7 +3,7 @@ import ARKWelcomePage from '@sage-bionetworks/synapse-portal-framework/component
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
 import { Goals, JsonLdScript, MarkdownSynapse } from 'synapse-react-client'
 import { DatasetDetailsPage } from '../pages/DatasetDetailsPage'
 import { ProgramsDetailPage } from '../pages/ProgramDetailsPage'

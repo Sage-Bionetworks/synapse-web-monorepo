@@ -1,15 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import RecentPublicationsGrid, {
-  RecentPublicationsGridProps,
-} from './RecentPublicationsGrid'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { render, screen, waitFor } from '@testing-library/react'
+import { createMemoryRouter, RouterProvider } from 'react-router'
+import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import RecentPublicationsGrid, {
+  RecentPublicationsGridProps,
+} from './RecentPublicationsGrid'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
