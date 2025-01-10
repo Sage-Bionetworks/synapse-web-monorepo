@@ -22,7 +22,7 @@ import {
   onIndividualThemeBarPlotPointClick,
   onPointClick,
 } from './synapseConfigs/onPointClick'
-import { CCKPSearchPage, searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
+import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 
 const routes: RouteObject[] = [
   {
