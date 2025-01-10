@@ -145,7 +145,7 @@ This project can be built as a umd bundle. It produces four files
 
 ## Testing Synapse React Client (SRC) in Synapse Web Client (SWC)
 
-This guide explains how to test changes made in the Synapse React Client (SRC) on the Synapse Web Client (SWC).
+This guide explains how to test changes made in the Synapse React Client (SRC) on the Synapse Web Client (SWC) using **Chrome DevTools**.
 
 1. Make Your Changes in SRC
 
