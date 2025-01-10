@@ -46,7 +46,7 @@ export function PortalSearchTabs(props: PortalSearchTabUIProps) {
                 {title}{' '}
                 {count !== undefined && (
                   <Chip
-                    label={30}
+                    label={count}
                     size="small"
                     sx={{
                       backgroundColor: 'grey.100',

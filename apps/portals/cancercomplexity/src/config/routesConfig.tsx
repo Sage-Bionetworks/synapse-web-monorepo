@@ -238,7 +238,6 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Search',
-        element: <CCKPSearchPage />,
         children: searchPageChildRoutes,
       },
     ],

@@ -64,7 +64,12 @@ export const getAdditionalFilters = (
       key.startsWith('QueryWrapper') || key.startsWith('__')
     additionalFilters = additionalFilters.concat(
       Object.keys(searchParams || {})
-        .filter(key => !isQueryWrapperKey(key))
+        .filter(
+          key =>
+            !isQueryWrapperKey(key) &&
+            searchParams[key] != undefined &&
+            searchParams[key].trim() != '',
+        )
         .map(key => {
           if (key == FTS_SEARCH_TERM) {
             const filter: TextMatchesQueryFilter = {

@@ -1,17 +1,25 @@
+import { SxProps, Box } from '@mui/material'
 import { useSearchParams } from 'react-router-dom'
 import { StandaloneQueryWrapper } from 'synapse-react-client'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client'
 
+export type SearchParamAwareStandaloneQueryWrapperProps = {
+  sx: SxProps
+  standaloneQueryWrapperProps: StandaloneQueryWrapperProps
+}
 export function SearchParamAwareStandaloneQueryWrapper(
-  props: StandaloneQueryWrapperProps,
+  props: SearchParamAwareStandaloneQueryWrapperProps,
 ) {
+  const { sx, standaloneQueryWrapperProps } = props
   const [searchParams] = useSearchParams()
 
   return (
-    <StandaloneQueryWrapper
-      {...props}
-      searchParams={Object.fromEntries(searchParams.entries())}
-    />
+    <Box sx={sx}>
+      <StandaloneQueryWrapper
+        {...standaloneQueryWrapperProps}
+        searchParams={Object.fromEntries(searchParams.entries())}
+      />
+    </Box>
   )
 }
 

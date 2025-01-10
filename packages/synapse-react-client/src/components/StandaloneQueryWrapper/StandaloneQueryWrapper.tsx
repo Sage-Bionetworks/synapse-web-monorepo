@@ -51,7 +51,10 @@ type StandaloneQueryWrapperOwnProps = {
   > &
   Pick<
     QueryWrapperProps,
-    'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
+    | 'fileIdColumnName'
+    | 'fileNameColumnName'
+    | 'fileVersionColumnName'
+    | 'onQueryResultBundleChange'
   > &
   Pick<QueryWrapperPlotNavProps, 'cardConfiguration' | 'tableConfiguration'>
 
