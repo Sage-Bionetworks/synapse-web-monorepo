@@ -18,6 +18,7 @@ import {
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import {
   Operator,
+  QueryWrapperPlotNavProps,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
@@ -51,7 +52,8 @@ type StandaloneQueryWrapperOwnProps = {
   Pick<
     QueryWrapperProps,
     'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
-  >
+  > &
+  Pick<QueryWrapperPlotNavProps, 'cardConfiguration' | 'tableConfiguration'>
 
 export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
   SearchParams &
@@ -100,6 +102,8 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     noContentPlaceholderType = showTopLevelControls
       ? NoContentPlaceholderType.INTERACTIVE
       : NoContentPlaceholderType.STATIC,
+    cardConfiguration,
+    tableConfiguration,
     ...rest
   } = props
 
@@ -184,12 +188,19 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+
                       <RowSetView
-                        tableConfiguration={{
-                          showAccessColumn: showAccessColumn,
-                          hideAddToDownloadListColumn,
-                          ...rest,
-                        }}
+                        tableConfiguration={
+                          cardConfiguration
+                            ? undefined
+                            : {
+                                ...tableConfiguration, // if exist, use tableConfiguration property
+                                showAccessColumn: showAccessColumn,
+                                hideAddToDownloadListColumn,
+                                ...rest,
+                              }
+                        }
+                        cardConfiguration={cardConfiguration} // if exist, use the cardConfiguration property
                       />
                     </>
                   )

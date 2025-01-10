@@ -3,13 +3,11 @@ import {
   PortalSearchTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
 import { PortalFullTextSearchField } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalFullTextSearchField'
-
+import { SearchParamAwareStandaloneQueryWrapper } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/SearchParamAwareStandaloneQueryWrapper'
 import { Box } from '@mui/material'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { grantQueryWrapperPlotNavProps } from 'src/config/synapseConfigs/grants'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Grants',
@@ -25,13 +23,16 @@ export const searchPageChildRoutes: RouteObject[] = [
   },
   {
     path: searchPageTabs[0].path,
-    element: <QueryWrapperPlotNav {...grantQueryWrapperPlotNavProps} />,
+    element: (
+      <SearchParamAwareStandaloneQueryWrapper
+        {...grantQueryWrapperPlotNavProps}
+      />
+    ),
   },
 ]
 
 export function CCKPSearchPage(props: React.PropsWithChildren) {
   const { children } = props
-  const searchParams = useGetPortalComponentSearchParams()
   // on search field value update, update the special search parameter FTS_SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
