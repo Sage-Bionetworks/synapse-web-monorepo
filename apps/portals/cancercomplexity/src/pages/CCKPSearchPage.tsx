@@ -8,11 +8,17 @@ import { Box } from '@mui/material'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { grantQueryWrapperPlotNavProps } from 'src/config/synapseConfigs/grants'
+import { peopleQueryWrapperPlotNavProps } from 'src/config/synapseConfigs'
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Grants',
     path: 'Grants',
     tooltip: 'Search Grants',
+  },
+  {
+    title: 'People',
+    path: 'People',
+    tooltip: 'Search People',
   },
 ]
 
@@ -26,6 +32,14 @@ export const searchPageChildRoutes: RouteObject[] = [
     element: (
       <SearchParamAwareStandaloneQueryWrapper
         {...grantQueryWrapperPlotNavProps}
+      />
+    ),
+  },
+  {
+    path: searchPageTabs[1].path,
+    element: (
+      <SearchParamAwareStandaloneQueryWrapper
+        {...peopleQueryWrapperPlotNavProps}
       />
     ),
   },
