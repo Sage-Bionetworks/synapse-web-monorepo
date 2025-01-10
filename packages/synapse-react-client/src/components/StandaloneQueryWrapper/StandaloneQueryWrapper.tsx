@@ -63,7 +63,7 @@ export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
   Operator &
   StandaloneQueryWrapperOwnProps
 
-const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
+export const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
   return {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |

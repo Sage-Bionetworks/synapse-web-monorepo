@@ -1,25 +1,46 @@
-import { SxProps, Box } from '@mui/material'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { StandaloneQueryWrapper } from 'synapse-react-client'
+import { QueryWrapper, StandaloneQueryWrapper } from 'synapse-react-client'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client'
+import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
 
 export type SearchParamAwareStandaloneQueryWrapperProps = {
-  sx: SxProps
+  isVisible: boolean
   standaloneQueryWrapperProps: StandaloneQueryWrapperProps
 }
 export function SearchParamAwareStandaloneQueryWrapper(
   props: SearchParamAwareStandaloneQueryWrapperProps,
 ) {
-  const { sx, standaloneQueryWrapperProps } = props
+  const { isVisible, standaloneQueryWrapperProps } = props
   const [searchParams] = useSearchParams()
+  const searchParamsRecords = useMemo(() => {
+    if (searchParams) {
+      return Object.fromEntries(searchParams.entries())
+    }
+    return undefined
+  }, [searchParams])
 
-  return (
-    <Box sx={sx}>
+  // if is visible, render a StandaloneQueryWrapper.
+  // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)
+  if (isVisible) {
+    return (
       <StandaloneQueryWrapper
         {...standaloneQueryWrapperProps}
-        searchParams={Object.fromEntries(searchParams.entries())}
+        searchParams={searchParamsRecords}
       />
-    </Box>
+    )
+  }
+  //else
+  const { sql } = standaloneQueryWrapperProps
+  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
+  derivedQueryRequestFromSearchParams.query.additionalFilters =
+    getAdditionalFilters(undefined, searchParamsRecords, undefined)
+  return (
+    <QueryWrapper
+      {...standaloneQueryWrapperProps}
+      initQueryRequest={derivedQueryRequestFromSearchParams}
+    ></QueryWrapper>
   )
 }
 
