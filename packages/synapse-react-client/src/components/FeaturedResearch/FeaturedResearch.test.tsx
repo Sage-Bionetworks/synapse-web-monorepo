@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react'
 import FeaturedResearch, { FeaturedResearchProps } from './FeaturedResearch'
+import { screen, render, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import {
@@ -7,7 +7,6 @@ import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
 import { SynapseClient } from '../../index'
 
@@ -70,7 +69,7 @@ describe('FeaturedResearch Tests', () => {
               '1726164997000',
               '["tag1_1", "tag1_2"]',
               'affiliation 1',
-              '149976034',
+              '151525812',
               'https://mockurl.com/data-release-1',
               '2',
             ],
@@ -83,7 +82,7 @@ describe('FeaturedResearch Tests', () => {
               '1726164997000',
               '["tag2_1"]',
               'affiliation 2',
-              '149976044',
+              '151468828',
               'https://mockurl.com/data-release-2',
               '2',
             ],
@@ -129,12 +128,12 @@ describe('FeaturedResearch Tests', () => {
 
   const mockFileResult = [
     {
-      fileHandleId: '149976034',
-      preSignedURL: 'https://mockurl.com/orangecat.jpeg',
+      fileHandleId: '151525812',
+      preSignedURL: 'https://mockurl.com/cat1.jpeg',
     },
     {
-      fileHandleId: '149976044',
-      preSignedURL: 'https://mockurl.com/tabbycat.jpeg',
+      fileHandleId: '151468828',
+      preSignedURL: 'https://mockurl.com/cat2.jpeg',
     },
   ]
 
@@ -150,14 +149,8 @@ describe('FeaturedResearch Tests', () => {
     )
   })
 
-  const renderWithRouter = (props: FeaturedResearchProps) => {
-    const router = createMemoryRouter([
-      {
-        path: '/',
-        element: <FeaturedResearch {...props} />,
-      },
-    ])
-    return render(<RouterProvider router={router} />, {
+  function renderComponent(props: FeaturedResearchProps) {
+    return render(<FeaturedResearch {...props} />, {
       wrapper: createWrapper(),
     })
   }
@@ -166,7 +159,7 @@ describe('FeaturedResearch Tests', () => {
     mockUseGetQueryResultBundle.mockReturnValue(
       getUseQuerySuccessMock(mockQueryResult),
     )
-    renderWithRouter(mockProps)
+    renderComponent(mockProps)
 
     await waitFor(() =>
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
@@ -185,7 +178,7 @@ describe('FeaturedResearch Tests', () => {
     expect(screen.getByText('September, 2024')).toBeInTheDocument()
 
     await waitFor(() => {
-      const images = screen.getAllByRole('img')
+      const images = document.querySelectorAll('.MuiCardMedia-root')
       expect(images).toHaveLength(2)
     })
   })
