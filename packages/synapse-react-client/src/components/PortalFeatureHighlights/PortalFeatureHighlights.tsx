@@ -1,5 +1,14 @@
-import { Box, Button, CardMedia, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  CardMedia,
+  Fade,
+  Slide,
+  Stack,
+  Typography,
+} from '@mui/material'
 import React from 'react'
+import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router'
 
 export type PortalFeatureHighlightsProps = {

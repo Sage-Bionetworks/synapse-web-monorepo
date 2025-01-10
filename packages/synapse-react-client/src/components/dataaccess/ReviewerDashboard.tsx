@@ -8,8 +8,9 @@ import {
   Outlet,
   RouteObject,
   useParams,
+  RouterProvider,
 } from 'react-router'
-import { RouterProvider } from 'react-router/dom'
+import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
@@ -140,7 +141,11 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
     return <SynapseSpinner size={50} />
   }
 
-  return <RouterProvider router={router} />
+  if (useMemoryRouter) {
+    return <RouterProvider router={router} />
+  }
+
+  return <DOMRouterProvider router={router} />
 }
 
 function SubmissionPageRouteRenderer() {
