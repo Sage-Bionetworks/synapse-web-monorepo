@@ -39,6 +39,7 @@ export function PortalFullTextSearchField() {
         '& .MuiOutlinedInput-root': {
           backgroundColor: 'white',
         },
+        mb: '20px',
       }}
     />
   )

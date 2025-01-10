@@ -13,12 +13,10 @@ export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Grants',
     path: 'Grants',
-    tooltip: 'Search Grants',
   },
   {
     title: 'People',
     path: 'People',
-    tooltip: 'Search People',
   },
 ]
 
