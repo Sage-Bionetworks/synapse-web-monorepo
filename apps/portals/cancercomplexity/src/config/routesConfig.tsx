@@ -22,6 +22,7 @@ import {
   onIndividualThemeBarPlotPointClick,
   onPointClick,
 } from './synapseConfigs/onPointClick'
+import { CCKPSearchPage, searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 
 const routes: RouteObject[] = [
   {
@@ -234,6 +235,11 @@ const routes: RouteObject[] = [
       {
         path: 'MC2Supplement',
         element: <MC2Supplement />,
+      },
+      {
+        path: 'Search',
+        element: <CCKPSearchPage />,
+        children: searchPageChildRoutes,
       },
     ],
   },
