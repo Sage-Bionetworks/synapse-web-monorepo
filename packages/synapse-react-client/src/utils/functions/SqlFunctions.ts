@@ -6,6 +6,7 @@ import {
   QueryFilter,
   Row,
   SelectColumn,
+  TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
 
@@ -29,6 +30,10 @@ export const getIgnoredQueryFilterSearchParamKey = (
 ) => {
   return `__${namespace ?? ''}_${key}`
 }
+
+// Special search parameter key that will automatically apply a FTS search term to a Query Wrapper if present
+export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
+
 /**
  * Look in local storage for a set of QueryFilters to apply.  In addition, given the search params,
  * generate a set of QueryFilters to narrow the the query to view just related data.
@@ -59,8 +64,21 @@ export const getAdditionalFilters = (
       key.startsWith('QueryWrapper') || key.startsWith('__')
     additionalFilters = additionalFilters.concat(
       Object.keys(searchParams || {})
-        .filter(key => !isQueryWrapperKey(key))
+        .filter(
+          key =>
+            !isQueryWrapperKey(key) &&
+            searchParams[key] != undefined &&
+            searchParams[key].trim() != '',
+        )
         .map(key => {
+          if (key == FTS_SEARCH_TERM) {
+            const filter: TextMatchesQueryFilter = {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+              searchExpression: searchParams[key],
+            }
+            return filter
+          }
           switch (operator) {
             case ColumnSingleValueFilterOperator.EQUAL: {
               const filter: ColumnSingleValueQueryFilter = {

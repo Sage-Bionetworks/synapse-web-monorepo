@@ -18,6 +18,7 @@ import {
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import {
   Operator,
+  QueryWrapperPlotNavProps,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
@@ -50,15 +51,20 @@ type StandaloneQueryWrapperOwnProps = {
   > &
   Pick<
     QueryWrapperProps,
-    'fileIdColumnName' | 'fileNameColumnName' | 'fileVersionColumnName'
-  >
+    | 'fileIdColumnName'
+    | 'fileNameColumnName'
+    | 'fileVersionColumnName'
+    | 'onQueryResultBundleChange'
+    | 'shouldDeepLink'
+  > &
+  Pick<QueryWrapperPlotNavProps, 'cardConfiguration' | 'tableConfiguration'>
 
 export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
   SearchParams &
   Operator &
   StandaloneQueryWrapperOwnProps
 
-const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
+export const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
   return {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -100,6 +106,9 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     noContentPlaceholderType = showTopLevelControls
       ? NoContentPlaceholderType.INTERACTIVE
       : NoContentPlaceholderType.STATIC,
+    cardConfiguration,
+    tableConfiguration,
+    shouldDeepLink,
     ...rest
   } = props
 
@@ -115,7 +124,6 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
       searchParams,
       sqlOperator,
     )
-
   const { data: entity } = useGetEntity(entityId)
 
   /**
@@ -126,11 +134,11 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
    */
   const queryWrapperKey =
     JSON.stringify(derivedQueryRequestFromSearchParams) + componentKey
-
   return (
     <QueryWrapper
       {...rest}
       initQueryRequest={derivedQueryRequestFromSearchParams}
+      shouldDeepLink={shouldDeepLink}
       key={queryWrapperKey}
     >
       <QueryVisualizationWrapper
@@ -184,12 +192,19 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+
                       <RowSetView
-                        tableConfiguration={{
-                          showAccessColumn: showAccessColumn,
-                          hideAddToDownloadListColumn,
-                          ...rest,
-                        }}
+                        tableConfiguration={
+                          cardConfiguration
+                            ? undefined
+                            : {
+                                ...tableConfiguration, // if exist, use tableConfiguration property
+                                showAccessColumn: showAccessColumn,
+                                hideAddToDownloadListColumn,
+                                ...rest,
+                              }
+                        }
+                        cardConfiguration={cardConfiguration} // if exist, use the cardConfiguration property
                       />
                     </>
                   )
