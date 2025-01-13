@@ -185,7 +185,10 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     <Typography
                       variant={'body1'}
                       component={'div'}
-                      sx={{ mb: 2 }}
+                      sx={{
+                        mb: 2,
+                        display: { xs: 'none', md: 'unset' },
+                      }}
                     >
                       <ul>
                         <li>
@@ -250,7 +253,10 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     <Typography
                       variant={'body1'}
                       component={'div'}
-                      sx={{ mb: 2 }}
+                      sx={{
+                        mb: 2,
+                        display: { xs: 'none', md: 'unset' },
+                      }}
                     >
                       <ul>
                         <li>
