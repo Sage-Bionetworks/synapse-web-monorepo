@@ -5,7 +5,7 @@ import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/compon
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { Navigate, RouteObject } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router'
 import HomePage from 'src/pages/HomePage'
 import ProgramDetailsPage from 'src/pages/ProgramDetailsPage'
 import ProjectDetailsPage from 'src/pages/ProjectDetailsPage'

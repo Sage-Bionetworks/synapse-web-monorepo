@@ -1,7 +1,7 @@
 import { CalendarTodayTwoTone } from '@mui/icons-material'
 import { Box, Button, Divider, Stack, Typography } from '@mui/material'
 import { Fragment } from 'react'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardLargeConfig, ReleaseCardStat } from './ReleaseCardTypes'
 import {

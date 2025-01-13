@@ -9,7 +9,7 @@ import {
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { useMemo } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router'
 import { BarLoader } from 'react-spinners'
 import {
   SynapseConstants,

@@ -1,12 +1,4 @@
-import { upperFirst } from 'lodash-es'
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { Table } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import SortIcon from '../../assets/icons/Sort'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
+import { Button, Stack, Typography } from '@mui/material'
 import {
   Direction,
   SubmissionReviewerFilterType,
@@ -15,10 +7,18 @@ import {
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import { upperFirst } from 'lodash-es'
+import { useMemo, useState } from 'react'
+import { Table } from 'react-bootstrap'
+import { Link } from 'react-router'
+import SortIcon from '../../assets/icons/Sort'
+import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Button, Stack, Typography } from '@mui/material'
-import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { UserBadge } from '../UserCard/UserBadge'
+import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type AccessRequestSubmissionTableProps = {
   showSubmitter?: boolean

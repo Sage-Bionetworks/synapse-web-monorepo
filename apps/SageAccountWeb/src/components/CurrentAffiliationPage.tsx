@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { SourceAppLogo } from './SourceApp'
 import { TextField, Typography } from '@mui/material'
-import { LeftRightPanel } from './LeftRightPanel'
-import { StyledFormControl } from './StyledComponents'
+import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router'
 import {
   displayToast,
   SynapseClient,
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
-import { Navigate } from 'react-router-dom'
+import { LeftRightPanel } from './LeftRightPanel'
 import { ContinueButton } from './ProfileValidation/ContinueButton'
+import { SourceAppLogo } from './SourceApp'
+import { StyledFormControl } from './StyledComponents'
 import { useSourceApp } from './useSourceApp'
 
 export const CurrentAffiliationPage = () => {

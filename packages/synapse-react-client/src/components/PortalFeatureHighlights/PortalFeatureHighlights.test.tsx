@@ -1,8 +1,8 @@
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import PortalFeatureHighlights, {
   PortalFeatureHighlightsProps,
 } from './PortalFeatureHighlights'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '@testing-library/react'
 
 describe('PortalFeatureHighlights component', () => {
   const props: PortalFeatureHighlightsProps = {

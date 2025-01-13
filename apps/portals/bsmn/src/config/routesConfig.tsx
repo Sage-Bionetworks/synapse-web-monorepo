@@ -3,7 +3,7 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
 import {
   Goals,
   MarkdownSynapse,

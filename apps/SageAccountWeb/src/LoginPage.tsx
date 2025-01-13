@@ -1,14 +1,14 @@
 import { Box, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   LoginMethod,
+  restoreLastPlace,
   StandaloneLoginForm,
+  storeLastPlace,
   SynapseConstants,
   SystemUseNotification,
-  storeLastPlace,
-  restoreLastPlace,
-  useLastLoginInfoState,
   useApplicationSessionContext,
+  useLastLoginInfoState,
 } from 'synapse-react-client'
 import { backButtonSx } from './components/BackButton.js'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'

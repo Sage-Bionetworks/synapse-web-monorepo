@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import {
   contributorsQueryWrapperPlotNavProps,

@@ -6,7 +6,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
 import DatasetDetailsPage from 'src/pages/DatasetDetailsPage'
 import { hackathonDetailsPageRoutesConfig } from 'src/pages/HackathonDetailsPage/HackathonDetailsPage'
 import { organizationsDetailsPageRoute } from 'src/pages/OrganizationDetailsPage/OrganizationDetailsPage'
