@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@sage-bionetworks/synapse-types": "workspace:*",
+    "@mui/material": "^5.15.13",
     "katex": "^0.16.10",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "react": "^18.2.0",

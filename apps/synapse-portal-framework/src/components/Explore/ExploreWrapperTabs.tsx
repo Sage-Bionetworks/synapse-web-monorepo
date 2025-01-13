@@ -9,7 +9,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
 
-function CustomScrollButton(props: TabScrollButtonProps) {
+export function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
     return <></>
   }
