@@ -18,6 +18,7 @@ export type RowSetViewProps = {
   initialLimit?: number
   hideDownload?: boolean
   multiCardList?: boolean
+  compact?: boolean
 }
 
 /**
@@ -27,7 +28,13 @@ export type RowSetViewProps = {
  * @constructor
  */
 export function RowSetView(props: RowSetViewProps) {
-  const { cardConfiguration, hideDownload, initialLimit, multiCardList } = props
+  const {
+    cardConfiguration,
+    hideDownload,
+    initialLimit,
+    multiCardList,
+    compact,
+  } = props
 
   const [initialLimitIsApplied, setInitialLimitIsApplied] = useState(
     initialLimit != null,
@@ -54,7 +61,35 @@ export function RowSetView(props: RowSetViewProps) {
 
   return (
     <SynapseErrorBoundary>
-      <div className={`RowSetView`}>
+      <Box
+        className={`RowSetView`}
+        sx={theme => ({
+          ...(compact && {
+            '& .SRC-imageThumbnail': {
+              display: 'flex',
+              alignItems: 'center',
+              maxWidth: '80px',
+            },
+            [theme.breakpoints.up('md')]: {
+              '& > div': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '30px',
+                marginTop: '30px',
+              },
+              '& .SRC-portalCard': {
+                margin: '0',
+              },
+            },
+            [theme.breakpoints.up('xl')]: {
+              '& > div': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+              },
+            },
+          }),
+        })}
+      >
         {isLoading && (
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}
@@ -103,7 +138,7 @@ export function RowSetView(props: RowSetViewProps) {
           )}
         </Suspense>
         <LastUpdatedOn />
-      </div>
+      </Box>
     </SynapseErrorBoundary>
   )
 }
