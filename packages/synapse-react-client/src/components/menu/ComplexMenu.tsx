@@ -24,12 +24,34 @@ export function ComplexMenu(props: ComplexMenuProps) {
   const { iconButtons = [], dropdownMenus = [] } = props
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <Box
+      sx={theme => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        [theme.breakpoints.down('sm')]: {
+          flexWrap: 'wrap',
+        },
+      })}
+    >
       {iconButtons.map(iconButton => {
         return <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
       })}
       {dropdownMenus.map((menuProps, index) => {
-        return <DropdownMenu key={index} {...menuProps} />
+        return (
+          <Box
+            sx={theme => ({
+              [theme.breakpoints.down('sm')]: {
+                flexGrow: 1,
+                button: {
+                  width: '100%',
+                },
+              },
+            })}
+          >
+            <DropdownMenu key={index} {...menuProps} />
+          </Box>
+        )
       })}
     </Box>
   )

@@ -47,7 +47,16 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
           backgroundColor: 'grey.100',
         }}
       >
-        <Stack direction={'row'}>
+        <Stack
+          sx={theme => ({
+            [theme.breakpoints.down('sm')]: {
+              flexDirection: 'column',
+            },
+            [theme.breakpoints.up('sm')]: {
+              flexDirection: 'row',
+            },
+          })}
+        >
           <Stack
             direction={'row'}
             alignItems={'center'}
