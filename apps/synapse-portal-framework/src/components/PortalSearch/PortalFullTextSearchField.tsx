@@ -31,8 +31,8 @@ export function PortalFullTextSearchField() {
           </InputAdornment>
         ),
       }}
+      fullWidth
       sx={{
-        width: '100%',
         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
         border: '1px solid',
         borderColor: 'grey.300',
