@@ -273,30 +273,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   )
 }
 
-export const getQueryRequest = ({
-  entityId,
-  query,
-}: {
-  entityId: string
-  query: Query
-}) => {
-  const request: QueryBundleRequest = {
-    entityId,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
-      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
-    query,
-  }
-  return request
-}
-
 function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const {
     searchParams,
@@ -336,10 +312,20 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   }
 
   const { data: entity } = useGetEntity(entityId, versionNumber)
-  const initQueryRequest: QueryBundleRequest = getQueryRequest({
+  const initQueryRequest: QueryBundleRequest = {
     entityId,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
     query,
-  })
+  }
   const isFullTextSearchEnabled =
     (entity && isTable(entity) && entity.isSearchEnabled) ?? false
 
