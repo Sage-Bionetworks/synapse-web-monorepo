@@ -57,15 +57,20 @@
         height: 100%;
         padding-bottom: 10px;
 
-        @media (max-width: 600px) {
-          font-size: 15px; // Adjust the font size for mobile devices
-        }
-
         .fileCount {
           font-weight: 300;
           margin-left: 5px;
         }
       }
+    }
+
+    @media (max-width: 768px) {
+      .nav-item .button {
+        font-size: 15px; // Adjust the font size for mobile devices
+      }
+
+      height: auto;
+      flex-direction: column; // single column for mobile devices
     }
   }
 
@@ -137,6 +142,12 @@
         }
       }
     }
+
+    @media (max-width: 768px) {
+      .subSectionOverview {
+        flex-direction: column;
+      }
+    }
   }
 
   &__explore-all {
@@ -146,6 +157,13 @@
 
   .placeholder {
     @include SrcMixins.placeholder;
+  }
+
+  @media (max-width: 768px) {
+    .pageHeader .grid {
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 
