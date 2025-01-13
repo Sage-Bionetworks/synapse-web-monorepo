@@ -28,11 +28,9 @@ export type FeaturedResearchCardProps = {
   research: Row
   entityId: string
   isLoading: boolean
-  affiliationColIndex: number
   publicationDateColIndex: number
   titleColIndex: number
   descriptionColIndex: number
-  tagsColIndex: number
   linkColIndex: number
   imageColIndex: number
 }
@@ -51,30 +49,11 @@ const useImageUrl = (fileId: string, entityId: string) => {
   return dataUrl
 }
 
-const parseTags = (
-  tagsColIndex: number,
-  research: { values: (string | null)[] },
-): string[] => {
-  try {
-    const tags = (
-      research.values[tagsColIndex]
-        ? JSON.parse(research.values[tagsColIndex] || '')
-        : []
-    ) as string[]
-    return tags
-  } catch (e) {
-    console.error(e)
-    return []
-  }
-}
-
 const FeaturedResearchCard = ({
   research,
   entityId,
-  affiliationColIndex,
   publicationDateColIndex,
   titleColIndex,
-  tagsColIndex,
   linkColIndex,
   imageColIndex,
   isLoading,
@@ -99,14 +78,6 @@ const FeaturedResearchCard = ({
       }}
     >
       <Stack useFlexGap gap={'10px'}>
-        <Typography
-          fontSize={'14px'}
-          lineHeight={'normal'}
-          fontWeight={500}
-          color={'grey.600'}
-        >
-          {research.values[affiliationColIndex]}
-        </Typography>
         <Typography variant="headline2" color="gray.1000" fontSize={'21px'}>
           <Link
             href={research.values[linkColIndex] ?? ''}
@@ -122,29 +93,13 @@ const FeaturedResearchCard = ({
             {research.values[titleColIndex]}
           </Link>
         </Typography>
-        <Stack direction={'row'} useFlexGap gap={'16px'} alignItems={'center'}>
-          {parseTags(tagsColIndex, research)[0] && (
-            <Typography
-              variant="overline"
-              fontSize={'14px'}
-              sx={{
-                backgroundColor: 'grey.300',
-                borderRadius: '3px',
-                padding: '4px 8px',
-                lineHeight: 'initial',
-              }}
-            >
-              {parseTags(tagsColIndex, research)[0] || ''}
-            </Typography>
-          )}
-          <Typography lineHeight={'normal'} color={'grey.600'}>
-            {research.values[publicationDateColIndex] &&
-              formatDate(
-                dayjs(Number(research.values[publicationDateColIndex])),
-                'MMMM, YYYY',
-              )}
-          </Typography>
-        </Stack>
+        <Typography lineHeight={'normal'} color={'grey.600'}>
+          {research.values[publicationDateColIndex] &&
+            formatDate(
+              dayjs(Number(research.values[publicationDateColIndex])),
+              'MMMM, YYYY',
+            )}
+        </Typography>
       </Stack>
       <CardMedia
         component="img"
@@ -166,10 +121,8 @@ const FeaturedResearchCard = ({
 const FeaturedResearchTopCard = ({
   research,
   entityId,
-  affiliationColIndex,
   titleColIndex,
   descriptionColIndex,
-  tagsColIndex,
   linkColIndex,
   imageColIndex,
   isLoading,
@@ -199,32 +152,6 @@ const FeaturedResearchTopCard = ({
           marginBottom: '30px',
         }}
       />
-      <Stack
-        direction="row"
-        useFlexGap
-        gap={'10px'}
-        paddingBottom={'20px'}
-        alignItems={'start'}
-      >
-        {parseTags(tagsColIndex, research)[0] && (
-          <Typography
-            fontSize={'14px'}
-            lineHeight={'normal'}
-            sx={{
-              fontWeight: 700,
-              backgroundColor: 'primary.main',
-              color: '#FFFF',
-              padding: '3px 8px',
-              borderRadius: '3px',
-            }}
-          >
-            {parseTags(tagsColIndex, research)[0] || ''}
-          </Typography>
-        )}
-        <Typography lineHeight={'normal'} color={'grey.600'}>
-          {research.values[affiliationColIndex] ?? ''}
-        </Typography>
-      </Stack>
       <Stack useFlexGap gap={'16px'}>
         <Typography variant="headline2" fontSize={'36px'} color={'grey.1000'}>
           <Link
@@ -276,8 +203,6 @@ function FeaturedResearch(props: FeaturedResearchProps) {
     TITLE = 'title',
     DESCRIPTION = 'description',
     PUBLICATION_DATE = 'publicationDate',
-    TAGS = 'tags',
-    AFFILIATION = 'affiliation',
     IMAGE = 'image',
     LINK = 'link',
   }
@@ -289,11 +214,6 @@ function FeaturedResearch(props: FeaturedResearchProps) {
   )
   const publicationDateColIndex = getFieldIndex(
     ExpectedColumns.PUBLICATION_DATE,
-    queryResultBundle,
-  )
-  const tagsColIndex = getFieldIndex(ExpectedColumns.TAGS, queryResultBundle)
-  const affiliationColIndex = getFieldIndex(
-    ExpectedColumns.AFFILIATION,
     queryResultBundle,
   )
   const imageColIndex = getFieldIndex(ExpectedColumns.IMAGE, queryResultBundle)
@@ -323,8 +243,6 @@ function FeaturedResearch(props: FeaturedResearchProps) {
             isLoading={isLoading}
             descriptionColIndex={descriptionColIndex}
             publicationDateColIndex={publicationDateColIndex}
-            tagsColIndex={tagsColIndex}
-            affiliationColIndex={affiliationColIndex}
             imageColIndex={imageColIndex}
             linkColIndex={linkColIndex}
           />
@@ -350,8 +268,6 @@ function FeaturedResearch(props: FeaturedResearchProps) {
             titleColIndex={titleColIndex}
             descriptionColIndex={descriptionColIndex}
             publicationDateColIndex={publicationDateColIndex}
-            tagsColIndex={tagsColIndex}
-            affiliationColIndex={affiliationColIndex}
             imageColIndex={imageColIndex}
             linkColIndex={linkColIndex}
           />

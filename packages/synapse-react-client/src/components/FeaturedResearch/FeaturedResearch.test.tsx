@@ -43,22 +43,12 @@ describe('FeaturedResearch Tests', () => {
             id: '3',
           },
           {
-            name: 'tags',
-            columnType: ColumnTypeEnum.STRING_LIST,
-            id: '4',
-          },
-          {
-            name: 'affiliation',
-            columnType: ColumnTypeEnum.STRING,
-            id: '5',
-          },
-          {
             name: 'image',
             columnType: ColumnTypeEnum.FILEHANDLEID,
-            id: '6',
+            id: '4',
           },
-          { name: 'link', columnType: ColumnTypeEnum.LINK, id: '7' },
-          { name: 'order', columnType: ColumnTypeEnum.INTEGER, id: '8' },
+          { name: 'link', columnType: ColumnTypeEnum.LINK, id: '5' },
+          { name: 'order', columnType: ColumnTypeEnum.INTEGER, id: '6' },
         ],
         rows: [
           {
@@ -67,8 +57,6 @@ describe('FeaturedResearch Tests', () => {
               'Title 1',
               'Description 1',
               '1726164997000',
-              '["tag1_1", "tag1_2"]',
-              'affiliation 1',
               '151525812',
               'https://mockurl.com/data-release-1',
               '2',
@@ -80,8 +68,6 @@ describe('FeaturedResearch Tests', () => {
               'Title 2',
               'Description 2',
               '1726164997000',
-              '["tag2_1"]',
-              'affiliation 2',
               '151468828',
               'https://mockurl.com/data-release-2',
               '2',
@@ -107,22 +93,12 @@ describe('FeaturedResearch Tests', () => {
         id: '3',
       },
       {
-        name: 'tags',
-        columnType: ColumnTypeEnum.STRING_LIST,
-        id: '4',
-      },
-      {
-        name: 'affiliation',
-        columnType: ColumnTypeEnum.STRING,
-        id: '5',
-      },
-      {
         name: 'image',
         columnType: ColumnTypeEnum.FILEHANDLEID,
-        id: '6',
+        id: '4',
       },
-      { name: 'link', columnType: ColumnTypeEnum.LINK, id: '7' },
-      { name: 'order', columnType: ColumnTypeEnum.INTEGER, id: '8' },
+      { name: 'link', columnType: ColumnTypeEnum.LINK, id: '5' },
+      { name: 'order', columnType: ColumnTypeEnum.INTEGER, id: '6' },
     ],
   }
 
@@ -169,12 +145,8 @@ describe('FeaturedResearch Tests', () => {
     expect(screen.getByText('Read more')).toBeInTheDocument()
     expect(screen.getByText('Title 1')).toBeInTheDocument()
     expect(screen.getByText('Description 1')).toBeInTheDocument()
-    expect(screen.getByText('tag1_1')).toBeInTheDocument()
-    expect(screen.getByText('affiliation 1')).toBeInTheDocument()
 
     expect(screen.getByText('Title 2')).toBeInTheDocument()
-    expect(screen.getByText('tag2_1')).toBeInTheDocument()
-    expect(screen.getByText('affiliation 2')).toBeInTheDocument()
     expect(screen.getByText('September, 2024')).toBeInTheDocument()
 
     await waitFor(() => {
