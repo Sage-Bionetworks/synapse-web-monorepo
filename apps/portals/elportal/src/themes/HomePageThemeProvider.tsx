@@ -21,6 +21,15 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
       },
     },
     components: {
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            '&:hover': {
+              color: '#1C9F87',
+            },
+          },
+        },
+      },
       MuiButton: {
         styleOverrides: {
           contained: {
@@ -36,6 +45,11 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
               textDecoration: 'none',
             },
           },
+        },
+      },
+      MuiStack: {
+        defaultProps: {
+          useFlexGap: true,
         },
       },
     },

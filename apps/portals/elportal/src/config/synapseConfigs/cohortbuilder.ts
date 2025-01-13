@@ -129,6 +129,7 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
   tableConfiguration: {
     showAccessColumn: true,
+    showAccessColumnHeader: true,
     showDownloadColumn: true,
     columnLinks: [
       {

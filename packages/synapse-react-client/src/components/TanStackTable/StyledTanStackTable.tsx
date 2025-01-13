@@ -1,25 +1,59 @@
+import { flexRender, Row, Table } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import { flexRender, Table } from '@tanstack/react-table'
 import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '../styled/StyledTableContainer'
-import { MemoizedTableBody, TableBody } from './TableBody'
+import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
   getHeaderSizeCssVariable,
 } from './TanStackTableUtils'
+import { StyledTanStackTableSlotProps, StyledTanStackTableSlots } from './types'
 
-type StyledTanStackTableProps<T = unknown> = {
-  table: Table<T>
+export type StyledTanStackTableProps<TData = unknown, TRowType = Row<TData>> = {
+  table: Table<TData>
   styledTableContainerProps?: StyledTableContainerProps
   fullWidth?: boolean
-}
+  slots?: StyledTanStackTableSlots<TData, TRowType>
+  slotProps?: StyledTanStackTableSlotProps<TData, TRowType>
+} & Pick<TableBodyProps<TData, TRowType>, 'rows' | 'rowTransform'>
 
-export default function StyledTanStackTable<T = unknown>(
-  props: StyledTanStackTableProps<T>,
-) {
-  const { table, styledTableContainerProps, fullWidth = true } = props
+/**
+ * Component that renders a styled table using @tanstack/react-table. Pass your table instance into the component and
+ * it will render the table with the appropriate headers and rows.
+ */
+export default function StyledTanStackTable<
+  TData = unknown,
+  TRowType = Row<TData>,
+>(props: StyledTanStackTableProps<TData, TRowType>) {
+  const {
+    table,
+    styledTableContainerProps,
+    fullWidth = true,
+    slots = {},
+    slotProps = {},
+  } = props
+  const {
+    Thead = 'thead',
+    Th = 'th',
+    Table = 'table',
+    ...tableBodySlots
+  } = slots
+  const {
+    Table: tableSlotProps = {},
+    Thead: theadSlotProps = {},
+    Th: thSlotProps = {},
+    ...tableBodySlotProps
+  } = slotProps
+
+  const tableBodyProps: TableBodyProps<TData, TRowType> = {
+    table,
+    slots: tableBodySlots,
+    slotProps: tableBodySlotProps,
+    rows: props.rows!,
+    rowTransform: props.rowTransform!,
+  }
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -51,19 +85,28 @@ export default function StyledTanStackTable<T = unknown>(
 
   return (
     <StyledTableContainer {...styledTableContainerProps}>
-      <table style={{ ...columnSizeVars, width: tableWidth }}>
-        <thead>
+      <Table
+        {...tableSlotProps}
+        style={{
+          ...columnSizeVars,
+          width: tableWidth,
+          ...tableSlotProps['style'],
+        }}
+      >
+        <Thead {...theadSlotProps}>
           {table.getHeaderGroups().map(headerGroup => {
             return (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <th
+                  <Th
                     key={header.id}
                     colSpan={header.colSpan}
+                    {...thSlotProps}
                     style={{
                       width: `calc(var(${getHeaderSizeCssVariable(
                         header.id,
                       )}) * 1px)`,
+                      ...thSlotProps['style'],
                     }}
                   >
                     {header.isPlaceholder
@@ -81,14 +124,14 @@ export default function StyledTanStackTable<T = unknown>(
                         onTouchStart={header.getResizeHandler()}
                       />
                     )}
-                  </th>
+                  </Th>
                 ))}
               </tr>
             )
           })}
-        </thead>
-        <TableBodyElement table={table} />
-      </table>
+        </Thead>
+        <TableBodyElement<TData, TRowType> {...tableBodyProps} />
+      </Table>
     </StyledTableContainer>
   )
 }

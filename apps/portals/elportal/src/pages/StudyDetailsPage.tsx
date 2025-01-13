@@ -7,6 +7,7 @@ import {
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
+import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router-dom'
@@ -49,63 +50,71 @@ export const studyDetailsPageRoutes: RouteObject[] = [
   {
     path: studyDetailsPageTabConfig[0].path,
     element: (
-      <DetailsPageContent
-        content={[
-          {
-            id: 'Study Description',
-            title: 'Study Description',
-            element: (
-              <MarkdownSynapseFromColumnData columnName={'studyDescription'} />
-            ),
-          },
-          {
-            id: 'Acknowledgement',
-            title: 'Acknowledgement',
-            element: (
-              <MarkdownSynapseFromColumnData columnName={'ackContext'} />
-            ),
-          },
-          {
-            id: 'acknowledgementFull',
-            element: (
-              <MarkdownSynapseFromColumnData
-                columnName={'acknowledgment'}
-                MarkdownCollapseProps={{
-                  textDescription: 'full statement',
-                  showCopyPlainText: true,
-                }}
-              />
-            ),
-          },
-          {
-            id: 'Methods',
-            title: 'Methods',
-            element: <MarkdownSynapseFromColumnData columnName={'methods'} />,
-          },
-          {
-            id: 'Related Studies',
-            title: 'Related Studies',
-            element: (
-              <DetailsPageContextConsumer columnName={'relatedStudies'}>
-                {({ value }) => {
-                  if (!value) {
-                    return null
-                  }
+      <>
+        <DetailsPageContent
+          content={[
+            {
+              id: 'Study Description',
+              title: 'Study Description',
+              element: (
+                <MarkdownSynapseFromColumnData
+                  columnName={'studyDescription'}
+                />
+              ),
+            },
+            {
+              id: 'Acknowledgement',
+              title: 'Acknowledgement',
+              element: (
+                <MarkdownSynapseFromColumnData columnName={'ackContext'} />
+              ),
+            },
+            {
+              id: 'acknowledgementFull',
+              element: (
+                <MarkdownSynapseFromColumnData
+                  columnName={'acknowledgment'}
+                  MarkdownCollapseProps={{
+                    textDescription: 'full statement',
+                    showCopyPlainText: true,
+                  }}
+                />
+              ),
+            },
+            {
+              id: 'Methods',
+              title: 'Methods',
+              element: <MarkdownSynapseFromColumnData columnName={'methods'} />,
+            },
+            {
+              id: 'Related Studies',
+              title: 'Related Studies',
+              element: (
+                <DetailsPageContextConsumer columnName={'relatedStudies'}>
+                  {({ value }) => {
+                    if (!value) {
+                      return null
+                    }
 
-                  return (
-                    <CardContainerLogic
-                      sqlOperator={ColumnSingleValueFilterOperator.IN}
-                      sql={studiesSql}
-                      {...studyCardConfiguration}
-                      searchParams={{ id: value }}
-                    />
-                  )
-                }}
-              </DetailsPageContextConsumer>
-            ),
-          },
-        ]}
-      />
+                    return (
+                      <CardContainerLogic
+                        sqlOperator={ColumnSingleValueFilterOperator.IN}
+                        sql={studiesSql}
+                        {...studyCardConfiguration}
+                        searchParams={{ id: value }}
+                      />
+                    )
+                  }}
+                </DetailsPageContextConsumer>
+              ),
+            },
+          ]}
+        />
+        <RedirectToURL
+          toURL="/Explore/Studies/DetailsPage/StudyDetails?studyKey=LLFS"
+          search="studyKey=LLFS_Metabolomics"
+        />
+      </>
     ),
   },
   {
@@ -144,6 +153,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                     }}
                     availableFacets={['metadataType', 'dataType', 'assay']}
@@ -179,6 +189,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     isRowSelectionUIFloating={false}
                     tableConfiguration={{
                       showAccessColumn: true,
+                      showAccessColumnHeader: true,
                       showDownloadColumn: true,
                       columnLinks: [
                         {

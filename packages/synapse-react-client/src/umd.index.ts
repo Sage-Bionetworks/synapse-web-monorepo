@@ -30,7 +30,6 @@ import PlotlyWrapper from './components/PlotlyWrapper'
 import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
-import { SynapseHomepage } from './components/SynapseHomepage'
 import {
   SynapseHomepageV2,
   SynapsePlansPage,
@@ -125,7 +124,6 @@ const SynapseComponents = {
   TermsAndConditions,
   PageProgress,
   ProjectViewCarousel,
-  SynapseHomepage,
   SynapseHomepageV2,
   SynapsePlansPage,
   SynapseFooter,

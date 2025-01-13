@@ -34,6 +34,44 @@ export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 
 dayjs.extend(localizedFormat)
 
+function InteractiveSortIcon(props: {
+  columnSortBy: SortField
+  sort: Sort | undefined
+  setSort: React.Dispatch<React.SetStateAction<Sort | undefined>>
+}) {
+  const { columnSortBy, sort, setSort } = props
+  return (
+    <span>
+      {setSort && (
+        <SortIcon
+          role="button"
+          style={{ height: '20px' }}
+          active={sort?.field === columnSortBy}
+          direction={
+            sort?.field === columnSortBy
+              ? sort.direction === 'DESC'
+                ? Direction.DESC
+                : Direction.ASC
+              : Direction.DESC
+          }
+          onClick={() => {
+            const direction =
+              columnSortBy === sort?.field
+                ? sort.direction === 'ASC'
+                  ? 'DESC'
+                  : 'ASC'
+                : 'DESC'
+            setSort({
+              field: columnSortBy,
+              direction,
+            })
+          }}
+        />
+      )}
+    </span>
+  )
+}
+
 export type DownloadListTableProps = {
   filesStatistics: FilesStatisticsResponse
   refetchStatistics: () => Promise<any>
@@ -138,42 +176,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       console.error(err)
     }
   }
-  const InteractiveSortIcon = ({
-    columnSortBy,
-  }: {
-    columnSortBy: SortField
-  }) => {
-    return (
-      <span>
-        {setSort && (
-          <SortIcon
-            role="button"
-            style={{ height: '20px' }}
-            active={sort?.field === columnSortBy}
-            direction={
-              sort?.field === columnSortBy
-                ? sort.direction === 'DESC'
-                  ? Direction.DESC
-                  : Direction.ASC
-                : Direction.DESC
-            }
-            onClick={() => {
-              const direction =
-                columnSortBy === sort?.field
-                  ? sort.direction === 'ASC'
-                    ? 'DESC'
-                    : 'ASC'
-                  : 'DESC'
-              setSort({
-                field: columnSortBy,
-                direction,
-              })
-            }}
-          />
-        )}
-      </span>
-    )
-  }
 
   const availableFiltersArray: AvailableFilter[] = [
     undefined,
@@ -216,11 +218,19 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 <th>{/* Eligible/Ineligible icon */}</th>
                 <th>
                   Name
-                  <InteractiveSortIcon columnSortBy="fileName" />
+                  <InteractiveSortIcon
+                    columnSortBy="fileName"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   Size
-                  <InteractiveSortIcon columnSortBy="fileSize" />
+                  <InteractiveSortIcon
+                    columnSortBy="fileSize"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   SynID
@@ -231,23 +241,43 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       setCopyingAllSynapseIDs(true)
                     }}
                   />
-                  <InteractiveSortIcon columnSortBy="synId" />
+                  <InteractiveSortIcon
+                    columnSortBy="synId"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   Project
-                  <InteractiveSortIcon columnSortBy="projectName" />
+                  <InteractiveSortIcon
+                    columnSortBy="projectName"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   Added On
-                  <InteractiveSortIcon columnSortBy="addedOn" />
+                  <InteractiveSortIcon
+                    columnSortBy="addedOn"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   Created By
-                  <InteractiveSortIcon columnSortBy="createdBy" />
+                  <InteractiveSortIcon
+                    columnSortBy="createdBy"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th>
                   Created On
-                  <InteractiveSortIcon columnSortBy="createdOn" />
+                  <InteractiveSortIcon
+                    columnSortBy="createdOn"
+                    sort={sort}
+                    setSort={setSort}
+                  />
                 </th>
                 <th className="stickyColumn">Actions</th>
               </tr>

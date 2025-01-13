@@ -56,6 +56,7 @@ type QueryWrapperPlotNavOwnProps = {
   isInfinite?: boolean
   sql: string
   limit?: number
+  /** Set to true when you want the query to be saved in the URL search parameters.  If you are controlling the view (such as in PortalSearch), you'll want to set this to false */
   shouldDeepLink?: boolean
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
   onQueryChange?: (newQueryJson: string) => void
