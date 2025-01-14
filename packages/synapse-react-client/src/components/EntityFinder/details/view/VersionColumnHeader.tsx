@@ -1,3 +1,4 @@
+import { Stack } from '@mui/material'
 import { HelpPopover } from '../../../HelpPopover/HelpPopover'
 import { VersionSelectionType } from '../../VersionSelectionType'
 
@@ -29,13 +30,13 @@ export function VersionColumnHeader(props: {
     // this column is not shown in these cases.
   }
   return (
-    <>
-      Version
+    <Stack direction={'row'} alignItems={'center'}>
+      <span>Version</span>
       <HelpPopover
         className="SRC-margin-left-5"
         markdownText={helpCopy}
         placement="right"
       />
-    </>
+    </Stack>
   )
 }

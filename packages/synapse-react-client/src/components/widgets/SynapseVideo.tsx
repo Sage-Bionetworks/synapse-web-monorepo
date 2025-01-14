@@ -80,49 +80,45 @@ export default function SynapseVideo({ params }: SynapseVideoProps) {
     getVideo()
   }, [externalVideoUrl, params, accessToken, videoHeight, videoWidth])
 
-  const RenderVideo = () => {
-    if (synapseVideoPresignedUrl) {
-      if (accessToken) {
-        return (
-          <video
-            controls
-            src={synapseVideoPresignedUrl}
-            width={videoWidth}
-            height={videoHeight}
-            data-testid="synapse-video-url"
-          >
-            It does not support the HTML5 Video element.
-          </video>
-        )
-      } else {
-        // if not logged in, show login button
-        return (
-          <p>
-            You will need to
-            <button
-              data-testid="video-login"
-              className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
-                `}
-            >
-              Sign in
-            </button>
-            in for access to that resource.
-          </p>
-        )
-      }
-    } else if (externalVideoUrl) {
+  if (synapseVideoPresignedUrl) {
+    if (accessToken) {
       return (
-        <iframe
-          title="video frame"
-          src={externalVideoUrl}
+        <video
+          controls
+          src={synapseVideoPresignedUrl}
           width={videoWidth}
           height={videoHeight}
-        ></iframe>
+          data-testid="synapse-video-url"
+        >
+          It does not support the HTML5 Video element.
+        </video>
       )
     } else {
-      return <></>
+      // if not logged in, show login button
+      return (
+        <p>
+          You will need to
+          <button
+            data-testid="video-login"
+            className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
+                `}
+          >
+            Sign in
+          </button>
+          in for access to that resource.
+        </p>
+      )
     }
+  } else if (externalVideoUrl) {
+    return (
+      <iframe
+        title="video frame"
+        src={externalVideoUrl}
+        width={videoWidth}
+        height={videoHeight}
+      ></iframe>
+    )
+  } else {
+    return <></>
   }
-
-  return <RenderVideo />
 }

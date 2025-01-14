@@ -1,9 +1,12 @@
+import {
+  EntityType,
+  GetProjectsParameters,
+  Reference,
+  SearchQuery,
+} from '@sage-bionetworks/synapse-types'
 import { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
-import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
@@ -14,7 +17,7 @@ import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { ReferenceDetails } from './configurations/ReferenceDetails'
 import { SearchDetails } from './configurations/SearchDetails'
-import { DetailsView } from './view/DetailsView'
+import { DetailsView, DetailsViewColumn } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {
   REFERENCE_LIST, // Provide references to show in the DetailsList. Incompatible with pagination
@@ -55,6 +58,8 @@ export type EntityDetailsListSharedProps = {
   isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
+  /** Chosen columns to hide. Defaults to just the DirectDownload column. */
+  hiddenColumns?: DetailsViewColumn[]
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {
@@ -72,7 +77,7 @@ export function EntityDetailsList({
    * such as pagination and sorting.
    *
    * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
-   * to support different 'Row' components, determining the correct one determined at this level.
+   * to support different 'Row' components, with the correct component determined at this level.
    */
 
   const [component, setComponent] = useState(<></>)

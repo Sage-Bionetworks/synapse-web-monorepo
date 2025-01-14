@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { WarningDialog, WarningDialogProps } from './WarningDialog'
 import { fn } from '@storybook/test'
+import { WarningDialog, WarningDialogProps } from './WarningDialog'
 
-const meta = {
+const meta: Meta<WarningDialogProps> = {
   title: 'UI/WarningDialog',
   component: WarningDialog,
   render: args => {

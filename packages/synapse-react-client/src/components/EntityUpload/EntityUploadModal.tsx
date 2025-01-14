@@ -2,21 +2,26 @@ import { Box, Button, Tab, Tabs } from '@mui/material'
 import {
   ForwardedRef,
   forwardRef,
+  KeyboardEvent,
+  useImperativeHandle,
   useRef,
   useState,
-  KeyboardEvent,
 } from 'react'
 import { UploaderState } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { EntityUpload, EntityUploadHandle } from './EntityUpload'
+import {
+  EntityUpload,
+  EntityUploadHandle,
+  EntityUploadProps,
+} from './EntityUpload'
 import { LinkToURL, LinkToURLHandle } from './LinkToURL'
 
-type EntityUploadModalProps = {
+export type EntityUploadModalProps = {
   entityId: string
   open: boolean
   onClose: () => void
-}
+} & Pick<EntityUploadProps, 'onUploadReady'>
 
 enum UploadTab {
   UploadFile,
@@ -27,13 +32,15 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
   props: EntityUploadModalProps,
   ref: ForwardedRef<EntityUploadHandle>,
 ) {
-  const { entityId, open, onClose } = props
+  const { entityId, open, onClose, onUploadReady } = props
   const [tabValue, setTabValue] = useState<UploadTab>(UploadTab.UploadFile)
 
   const [uploadState, setUploadState] = useState<UploaderState>('LOADING')
 
   const [isLinkFormValid, setIsLinkFormValid] = useState(false)
   const linkToUrlFormRef = useRef<LinkToURLHandle>(null)
+
+  const entityUploadRef = useRef<EntityUploadHandle>(null)
 
   const disableClose =
     uploadState === 'PROMPT_USER' || uploadState === 'UPLOADING'
@@ -54,6 +61,14 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
     }
   }
 
+  useImperativeHandle(ref, () => ({
+    handleUploads: (fileList: ArrayLike<File>) => {
+      // When an upload starts via imperative handle (e.g. via drag-and-drop), switch to the upload tab
+      setTabValue(UploadTab.UploadFile)
+      entityUploadRef.current?.handleUploads(fileList)
+    },
+  }))
+
   return (
     <DialogBase
       DialogProps={{
@@ -62,6 +77,8 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
             onFinish()
           }
         },
+        // SWC-4693 - For drag-and-drop upload to be ready before the modal opens, the modal contents must be mounted
+        keepMounted: true,
       }}
       title={'Upload or Link to File'}
       open={open}
@@ -81,9 +98,10 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
           </Tabs>
           <Box display={tabValue === UploadTab.UploadFile ? 'block' : 'none'}>
             <EntityUpload
-              ref={ref}
+              ref={entityUploadRef}
               entityId={entityId}
               onStateChange={setUploadState}
+              onUploadReady={onUploadReady}
             />
           </Box>
           <Box display={tabValue === UploadTab.LinkToURL ? 'block' : 'none'}>

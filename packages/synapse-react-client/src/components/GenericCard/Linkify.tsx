@@ -18,7 +18,15 @@ const synapseIdRule: LinkifyRule = {
 }
 
 const httpRule: LinkifyRule = {
-  regex: /((ftp|http|https):\/\/[^ ",]+)/,
+  regex: /(http:\/\/[^ ",]+)/,
+  onMatch: value => value,
+}
+const httpsRule: LinkifyRule = {
+  regex: /(https:\/\/[^ ",]+)/,
+  onMatch: value => value,
+}
+const ftpRule: LinkifyRule = {
+  regex: /(ftp:\/\/[^ ",]+)/,
   onMatch: value => value,
 }
 
@@ -78,6 +86,8 @@ const cbioPortalRule: LinkifyRule = {
 
 const rules: LinkifyRule[] = [
   httpRule,
+  httpsRule,
+  ftpRule,
   synapseIdRule,
   pubMedRule,
   sciCrunchResolverRule,

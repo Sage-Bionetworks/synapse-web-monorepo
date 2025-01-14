@@ -86,6 +86,7 @@ export * from './SageResourcesPopover'
 export * from './RecentPublicationsGrid'
 export * from './ImageCardGridWithLinks'
 export * from './PortalFeatureHighlights'
+export * from './FeaturedResearch'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'

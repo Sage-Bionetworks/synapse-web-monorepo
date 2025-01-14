@@ -3,6 +3,7 @@ import { Alert, Button, TextField } from '@mui/material'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
+import { validatePassword } from '../../utils/functions/StringUtils'
 
 type ChangePasswordWithTokenProps = {
   passwordChangeToken: PasswordResetSignedToken
@@ -15,6 +16,9 @@ export default function ChangePasswordWithToken(
   const { passwordChangeToken, onSuccess } = props
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [newPasswordError, setNewPasswordError] = useState<string | undefined>(
+    undefined,
+  )
 
   const {
     promptForTwoFactorAuth,
@@ -53,11 +57,16 @@ export default function ChangePasswordWithToken(
           <TextField
             fullWidth
             required
+            helperText={newPasswordError}
             type="password"
             id="newPassword"
             name="newPassword"
             label={'New password'}
-            onChange={e => setNewPassword(e.target.value)}
+            onChange={e => {
+              const error = validatePassword(e.target.value)
+              setNewPasswordError(error)
+              setNewPassword(e.target.value)
+            }}
             value={newPassword || ''}
             sx={{ mb: 2 }}
           />

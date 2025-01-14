@@ -1,9 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ChallengeTeamWizard from './ChallengeTeamWizard'
-import mockProject from '../../mocks/entity/mockProject'
 import { fn } from '@storybook/test'
+import mockProject from '../../mocks/entity/mockProject'
+import ChallengeTeamWizard, {
+  ChallengeTeamWizardProps,
+} from './ChallengeTeamWizard'
 
-const meta = {
+const meta: Meta<ChallengeTeamWizardProps & { isAuthenticated?: boolean }> = {
   title: 'Synapse/Challenge/ChallengeTeamWizard',
   component: ChallengeTeamWizard,
   argTypes: {

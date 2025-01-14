@@ -1,34 +1,35 @@
 import {
+  EntityRef,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import {
   render,
   screen,
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { cloneDeep, noop } from 'lodash-es'
+import { cloneDeep, noop, uniqueId } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
+import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../utils'
+import { ENTITY_ID } from '../../../utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
+import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
+import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
+import { displayToast } from '../../ToastMessage'
+import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
 import {
   DatasetItemsEditor,
   DatasetItemsEditorProps,
   getCopy,
 } from './DatasetItemsEditor'
-import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
-import { displayToast } from '../../ToastMessage'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_ID } from '../../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
-import { SynapseContextType } from '../../../utils'
-import {
-  EntityRef,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
-import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
-import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
-import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
+
 const mockDatasetEntity = mockDatasetEntityData.entity
 const mockDatasetCollectionEntity = mockDatasetCollectionData.entity
 const mockFileEntity = mockFileEntityData.entity
@@ -39,14 +40,6 @@ const datasetCollectionCopy = getCopy(mockDatasetCollectionEntity)
 const mockEntityBadgeIcons = jest
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
   .mockImplementation(() => <></>)
-
-jest.mock(
-  'react-virtualized-auto-sizer',
-  () =>
-    // @ts-expect-error -- types are hard
-    ({ children }) =>
-      children({ height: 450, width: 1200 }),
-)
 
 jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {
   return noop
@@ -95,39 +88,46 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
   })
 }
 
-async function addItemsViaEntityFinder() {
+async function addItemsViaEntityFinder(
+  user: ReturnType<typeof userEvent.setup>,
+) {
   const addItemsButton = screen.getAllByRole('button', {
     name: /Add (File|Dataset)s/,
   })[0]
   // Mocked entity finder is not visible
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
-  await userEvent.click(addItemsButton)
+  await user.click(addItemsButton)
 
   // Entity finder should now be visible
   expect(screen.queryByRole('dialog')).toBeInTheDocument()
 
   // Use the entity finder to add items
-  await userEvent.click(screen.getByText(mockEntityFinderButtonText))
+  await user.click(screen.getByText(mockEntityFinderButtonText))
 
   // The entity finder should be automatically closed.
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 }
 
-async function selectIndividualItem(id: string) {
+async function selectIndividualItem(
+  id: string,
+  user: ReturnType<typeof userEvent.setup>,
+) {
   // Click the checkbox for the corresponding item
   const checkbox = await screen.findByRole('checkbox', { name: `Select ${id}` })
-  await userEvent.click(checkbox)
+  await user.click(checkbox)
 }
 
-async function removeItem(id: string) {
-  await selectIndividualItem(id)
-  await clickRemove()
+async function removeItem(
+  id: string,
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await selectIndividualItem(id, user)
+  await clickRemove(user)
 }
 
-async function clickRemove() {
-  await userEvent.click(
+async function clickRemove(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
     screen.getByRole('button', {
       name: /Remove (File|Dataset)s/,
     }),
@@ -136,22 +136,24 @@ async function clickRemove() {
 
 const mockToastFn = displayToast
 
-const mockOnUnsavedChangesFn = jest.fn()
-const mockOnSaveFn = jest.fn()
-const mockOnCloseFn = jest.fn()
-
 // Captures the JSON passed to the server via msw.
 const updatedEntityCaptor = jest.fn()
 
-const defaultProps: DatasetItemsEditorProps = {
-  entityId: mockDatasetEntityData.id,
-  onSave: mockOnSaveFn,
-  onClose: mockOnCloseFn,
-  onUnsavedChangesChange: mockOnUnsavedChangesFn,
-}
-
 async function renderComponent(wrapperProps?: SynapseContextType) {
-  const wrapper = render(<DatasetItemsEditor {...defaultProps} />, {
+  const user = userEvent.setup()
+
+  const mockOnUnsavedChangesFn = jest.fn()
+  const mockOnSaveFn = jest.fn()
+  const mockOnCloseFn = jest.fn()
+
+  const defaultProps: DatasetItemsEditorProps = {
+    entityId: mockDatasetEntityData.id,
+    onSave: mockOnSaveFn,
+    onClose: mockOnCloseFn,
+    onUnsavedChangesChange: mockOnUnsavedChangesFn,
+  }
+
+  render(<DatasetItemsEditor {...defaultProps} />, {
     wrapper: createWrapper(wrapperProps),
   })
 
@@ -164,21 +166,30 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
     ).not.toBeDisabled(),
   )
 
-  return wrapper
+  const saveButton = screen.getByRole('button', { name: 'Save' })
+
+  return {
+    user,
+    saveButton,
+    mockOnUnsavedChangesFn,
+    mockOnSaveFn,
+    mockOnCloseFn,
+  }
 }
 
-async function clickSave() {
+async function clickSave(user: ReturnType<typeof userEvent.setup>) {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
-  await userEvent.click(saveButton)
+  await waitFor(() => expect(saveButton).not.toBeDisabled())
+  await user.click(saveButton)
 }
 
-async function clickCancel() {
+async function clickCancel(user: ReturnType<typeof userEvent.setup>) {
   const saveButton = await screen.findByRole('button', { name: 'Cancel' })
-  await userEvent.click(saveButton)
+  await user.click(saveButton)
 }
 
-async function clickSelectAll() {
-  await userEvent.click(await screen.findByTestId('Select All'))
+async function clickSelectAll(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(await screen.findByLabelText('Select All'))
 }
 
 async function verifyNoneSelected() {
@@ -219,8 +230,27 @@ const successfulUpdateHandler = rest.put(
     ':entityId',
   )}`,
   async (req, res, ctx) => {
-    updatedEntityCaptor(req.body)
-    return res(ctx.status(200), ctx.json(req.body))
+    const requestBody = await req.json()
+    updatedEntityCaptor(requestBody)
+
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+          ':entityId',
+        )}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              ...requestBody,
+              etag: 'new-etag-' + uniqueId(),
+            }),
+          )
+        },
+      ),
+    )
+
+    return res(ctx.status(200), ctx.json(requestBody))
   },
 )
 
@@ -241,13 +271,28 @@ const unsuccessfulUpdateHandler = rest.put(
 )
 
 describe('Dataset Items Editor tests', () => {
+  // Stub for getBoundingClientRect, required by @tanstack/react-virtual to work in tests
+  jest
+    .spyOn(Element.prototype, 'getBoundingClientRect')
+    .mockImplementation(() => ({
+      width: 1200,
+      height: 600,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    }))
+
   // Handle the msw lifecycle:
   beforeAll(() => {
     mockAllIsIntersecting(false)
     server.listen()
   })
 
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks()
     server.resetHandlers()
   })
@@ -274,7 +319,7 @@ describe('Dataset Items Editor tests', () => {
     server.use(getEmptyDatasetHandler)
     mockEntityFinderToAddItems([mockFileReference])
 
-    await renderComponent()
+    const { user, mockOnUnsavedChangesFn } = await renderComponent()
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
@@ -284,7 +329,8 @@ describe('Dataset Items Editor tests', () => {
     )
 
     // Assertions are captured in the helper function:
-    await addItemsViaEntityFinder()
+    await addItemsViaEntityFinder(user)
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
   })
 
   it('Updates the entity when Save is clicked', async () => {
@@ -295,7 +341,8 @@ describe('Dataset Items Editor tests', () => {
     server.use(getEmptyDatasetHandler, successfulUpdateHandler)
     mockEntityFinderToAddItems([mockFileReference])
 
-    await renderComponent()
+    const { user, mockOnUnsavedChangesFn, mockOnSaveFn } =
+      await renderComponent()
     await waitFor(() =>
       expect(
         screen.getAllByRole('button', {
@@ -304,9 +351,10 @@ describe('Dataset Items Editor tests', () => {
       ).not.toBeDisabled(),
     )
 
-    await addItemsViaEntityFinder()
+    await addItemsViaEntityFinder(user)
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
-    await clickSave()
+    await clickSave(user)
 
     // Verify that items were added to the dataset passed to the update API
     const expectedDatasetItems = [mockFileReference].map(referenceToDatasetItem)
@@ -329,13 +377,13 @@ describe('Dataset Items Editor tests', () => {
         ),
       )
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user } = await renderComponent()
 
-      await clickSelectAll()
+      await clickSelectAll(user)
 
-      await clickRemove()
+      await clickRemove(user)
 
-      await clickSave()
+      await clickSave(user)
 
       // Verify that there are no dataset items
       await waitFor(() =>
@@ -353,18 +401,18 @@ describe('Dataset Items Editor tests', () => {
         ),
       )
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user } = await renderComponent()
 
       // Select one item
-      await selectIndividualItem(mockFileReference.targetId)
+      await selectIndividualItem(mockFileReference.targetId, user)
 
       // Clicking select all should select all items, since not all items are selected
-      await clickSelectAll()
+      await clickSelectAll(user)
 
       // Verify all were selected by removing the items
-      await clickRemove()
+      await clickRemove(user)
 
-      await clickSave()
+      await clickSave(user)
 
       // Verify that there are no dataset items
       await waitFor(() =>
@@ -382,12 +430,12 @@ describe('Dataset Items Editor tests', () => {
         ),
       )
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user } = await renderComponent()
 
-      await clickSelectAll()
+      await clickSelectAll(user)
 
       // Call under test -- Deselect all
-      await clickSelectAll()
+      await clickSelectAll(user)
 
       // Verify that nothing is selected.
       await verifyNoneSelected()
@@ -404,18 +452,19 @@ describe('Dataset Items Editor tests', () => {
     ]
     mockEntityFinderToAddItems(itemsToAdd)
 
-    await renderComponent()
+    const { user, mockOnUnsavedChangesFn } = await renderComponent()
 
     // Call under test--we start with no files in the dataset
     await screen.findByText('No Files', { exact: true })
 
     // Add two items
-    await addItemsViaEntityFinder()
+    await addItemsViaEntityFinder(user)
+    expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
     await screen.findByText('2 Files', { exact: true })
 
     // Remove one item
-    await removeItem('syn999')
+    await removeItem('syn999', user)
 
     await screen.findByText('1 File', { exact: true })
   })
@@ -430,7 +479,7 @@ describe('Dataset Items Editor tests', () => {
       ])
       server.use(getDatasetHandler)
 
-      await renderComponent()
+      const { user } = await renderComponent()
 
       // The Remove button should be disabled.
       await waitFor(() =>
@@ -441,7 +490,7 @@ describe('Dataset Items Editor tests', () => {
         ).toBeDisabled(),
       )
 
-      await selectIndividualItem(mockFileReference.targetId)
+      await selectIndividualItem(mockFileReference.targetId, user)
 
       // The remove item should not be disabled after making a selection
       await waitFor(() =>
@@ -460,11 +509,11 @@ describe('Dataset Items Editor tests', () => {
       ])
       server.use(getDatasetHandler, successfulUpdateHandler)
 
-      await renderComponent()
+      const { user } = await renderComponent()
 
-      await removeItem(mockFileReference.targetId)
+      await removeItem(mockFileReference.targetId, user)
 
-      await clickSave()
+      await clickSave(user)
 
       // Verify that there are no dataset items
       await waitFor(() =>
@@ -484,7 +533,7 @@ describe('Dataset Items Editor tests', () => {
       [mockFileReference].map(referenceToDatasetItem),
     )
     server.use(getDatasetHandler, successfulUpdateHandler)
-    await renderComponent()
+    const { user } = await renderComponent()
 
     // Sanity check: the selected version should not be 1 when we start.
     expect(mockFileReference.targetVersionNumber).not.toEqual(1)
@@ -500,7 +549,7 @@ describe('Dataset Items Editor tests', () => {
     )
 
     // Call under test: select a different version
-    await userEvent.selectOptions(await screen.findByRole('listbox'), '1')
+    await user.selectOptions(await screen.findByRole('listbox'), '1')
 
     // The version passed to the icons should now be v1
     await waitFor(() =>
@@ -513,7 +562,7 @@ describe('Dataset Items Editor tests', () => {
       ),
     )
 
-    await clickSave()
+    await clickSave(user)
 
     // Verify that the item has changed
     await waitFor(() =>
@@ -530,17 +579,16 @@ describe('Dataset Items Editor tests', () => {
     )
   })
 
-  /**
-   * TODO: This test passes on its own but fails in the suite.
-   * We're calling resetHandlers and clearAllMocks, so I have no idea why it isn't working.
-   */
-  it.skip('Handles an error on Save by displaying a toast and not calling the callback', async () => {
+  it('Handles an error on Save by displaying a toast and not calling the callback', async () => {
     const getDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getDatasetHandler, unsuccessfulUpdateHandler)
+    mockEntityFinderToAddItems([mockFileReference])
 
-    await renderComponent()
+    const { user, mockOnSaveFn } = await renderComponent()
 
-    await clickSave()
+    await addItemsViaEntityFinder(user)
+
+    await clickSave(user)
 
     await waitFor(() =>
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -562,9 +610,9 @@ describe('Dataset Items Editor tests', () => {
     it('Calls the correct callback when onCancel is called', async () => {
       const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getEmptyDatasetHandler)
-      await renderComponent()
+      const { user, mockOnCloseFn } = await renderComponent()
 
-      await clickCancel()
+      await clickCancel(user)
 
       expect(mockOnCloseFn).toHaveBeenCalled()
     })
@@ -574,11 +622,13 @@ describe('Dataset Items Editor tests', () => {
       server.use(getEmptyDatasetHandler)
       mockEntityFinderToAddItems([mockFileReference])
 
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn, mockOnCloseFn } =
+        await renderComponent()
 
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
-      await clickCancel()
+      await clickCancel(user)
 
       // Verify that the warning dialog appears
       const dialog = screen.getByRole('dialog')
@@ -587,9 +637,7 @@ describe('Dataset Items Editor tests', () => {
       })
 
       // Click the cancel button in the dialog
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Cancel' }),
-      )
+      await user.click(await screen.findByRole('button', { name: 'Cancel' }))
       await waitForElementToBeRemoved(dialog)
 
       // Verify the dialog is gone but onClose was not called
@@ -602,11 +650,13 @@ describe('Dataset Items Editor tests', () => {
       server.use(getEmptyDatasetHandler)
       mockEntityFinderToAddItems([mockFileReference])
 
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn, mockOnCloseFn } =
+        await renderComponent()
 
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
-      await clickCancel()
+      await clickCancel(user)
 
       // Verify that the warning dialog appears
       const dialog = screen.getByRole('dialog')
@@ -615,7 +665,7 @@ describe('Dataset Items Editor tests', () => {
       })
 
       // Click the 'Close Editor' button in the dialog
-      await userEvent.click(
+      await user.click(
         await screen.findByRole('button', { name: 'Close Editor' }),
       )
       await waitForElementToBeRemoved(dialog)
@@ -649,11 +699,12 @@ describe('Dataset Items Editor tests', () => {
         mockItem,
       ])
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn } = await renderComponent()
 
       // Add same item with same version to dataset
       mockEntityFinderToAddItems([mockFileReference])
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).not.toHaveBeenCalledWith(true)
 
       // Verify toast showing change is not called
       expect(mockToastFn).not.toHaveBeenCalled()
@@ -664,11 +715,12 @@ describe('Dataset Items Editor tests', () => {
         mockDatasetItem,
       ])
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn } = await renderComponent()
 
       // Add identical item to existing dataset with different version
       mockEntityFinderToAddItems([mockFileReference])
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       // Verify toast shows no item has been added and 1 has updated
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -683,11 +735,12 @@ describe('Dataset Items Editor tests', () => {
     it('Shows item has been added', async () => {
       const getDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn } = await renderComponent()
 
       // Add item to dataset
       mockEntityFinderToAddItems([mockFileReference])
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       // Verify one item has been added to dataset
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -704,10 +757,10 @@ describe('Dataset Items Editor tests', () => {
         mockDatasetItem,
       ])
       server.use(getDatasetHandler, successfulUpdateHandler)
-      await renderComponent()
+      const { user } = await renderComponent()
 
       // Remove item from dataset
-      await removeItem(mockDatasetItem.entityId)
+      await removeItem(mockDatasetItem.entityId, user)
 
       // Verify item has been removed from dataset
       expect(mockToastFn).toHaveBeenCalledWith(
@@ -732,7 +785,8 @@ describe('Dataset Items Editor tests', () => {
       server.use(getEmptyDatasetHandler, successfulUpdateHandler)
       mockEntityFinderToAddItems([mockDatasetReference])
 
-      await renderComponent()
+      const { user, mockOnUnsavedChangesFn, mockOnSaveFn } =
+        await renderComponent()
       await waitFor(() =>
         expect(
           screen.getAllByRole('button', {
@@ -741,7 +795,9 @@ describe('Dataset Items Editor tests', () => {
         ).not.toBeDisabled(),
       )
 
-      await addItemsViaEntityFinder()
+      await addItemsViaEntityFinder(user)
+      expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
+
       // Verify that the Entity Finder is configured to select Datasets
       expect(mockEntityFinder).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -752,20 +808,20 @@ describe('Dataset Items Editor tests', () => {
         expect.anything(),
       )
 
-      await clickSave()
+      await clickSave(user)
 
       // Verify that items were added to the collection and passed to the update API
       const expectedDatasetCollectionItems = [mockDatasetReference].map(
         referenceToDatasetItem,
       )
-      await waitFor(() =>
-        expect(updatedEntityCaptor).toHaveBeenCalledWith(
-          expect.objectContaining({ items: expectedDatasetCollectionItems }),
-        ),
-      )
 
       await waitFor(() => {
+        expect(updatedEntityCaptor).toHaveBeenCalledWith(
+          expect.objectContaining({ items: expectedDatasetCollectionItems }),
+        )
         expect(mockOnSaveFn).toHaveBeenCalled()
+
+        // Verify the 'unsaved changes' flag was reset
         expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
       })
     })
