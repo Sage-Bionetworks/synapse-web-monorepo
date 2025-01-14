@@ -346,7 +346,7 @@ a.SRC-whiteText {
   width: 100%;
   width: -webkit-fill-available; // for chrome
   width: -moz-available; // for firefox
-  padding-left: 25px;
+  padding: 0 25px;
   min-width: 350px;
 }
 
@@ -377,7 +377,7 @@ a.SRC-whiteText {
 .SRC-card-grid-row {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  column-gap: 18px;
 }
 
 .SRC-split {
@@ -389,7 +389,7 @@ a.SRC-whiteText {
 
 .SRC-grid-item {
   height: 120px;
-  flex-grow: 0;
+  flex-grow: 1;
   flex-shrink: 1;
   margin: 10px 10px;
   width: 350px;
