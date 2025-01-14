@@ -1,12 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import {
-  QueryBundleRequest,
-  FileHandleAssociation,
-  FileHandleAssociateType,
-  BatchFileRequest,
-} from '@sage-bionetworks/synapse-types'
+import React, { useState } from 'react'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
-import { getFiles } from '../../synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
@@ -14,8 +8,8 @@ import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { Box, Typography, Button } from '@mui/material'
+import useGetGoalData from '../../utils/hooks/useGetGoalData'
 
 export type GoalsV2Props = {
   entityId: string
@@ -44,7 +38,6 @@ const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   const { entityId, dataLink } = props
-  const { accessToken } = useSynapseContext()
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
@@ -60,55 +53,16 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   }
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const assetColumnIndex = getFieldIndex(
-          ExpectedColumns.ASSET,
-          queryResultBundle,
-        )
-        const assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
-          el => el.values[assetColumnIndex],
-        ) ?? []) as string[]
-        const assetFileHandleIds = assets.filter(
-          v => v != null && v !== undefined,
-        )
-        if (assetFileHandleIds.length === 0) {
-          // wait for data to load
-          return
-        }
-        const fileHandleAssociationList: FileHandleAssociation[] =
-          assetFileHandleIds.map(fileId => {
-            return {
-              associateObjectId: entityId,
-              associateObjectType: FileHandleAssociateType.TableEntity,
-              fileHandleId: fileId,
-            }
-          })
-        const batchFileRequest: BatchFileRequest = {
-          includeFileHandles: false,
-          includePreSignedURLs: true,
-          includePreviewPreSignedURLs: false,
-          requestedFiles: fileHandleAssociationList,
-        }
-        const files = await getFiles(batchFileRequest, accessToken)
-        setError(undefined)
-        {
-          /* TODO - handle case where presigned URL expires */
-        }
-        setAssets(
-          files.requestedFiles
-            .filter(el => el.preSignedURL !== undefined)
-            .map(el => el.preSignedURL!),
-        )
-      } catch (e) {
-        console.error('Error on get data', e)
-        setError(e)
-      }
-    }
-    getData()
-  }, [entityId, accessToken, queryResultBundle])
+  const { assets: goalAssets, error: goalError } = useGetGoalData(
+    entityId,
+    queryResultBundle,
+  )
+  if (goalError) {
+    setError(goalError)
+  }
+  if (goalAssets) {
+    setAssets(goalAssets)
+  }
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
