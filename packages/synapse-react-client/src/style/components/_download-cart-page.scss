@@ -130,6 +130,13 @@
 
       > *:first-child {
         border-right: 1px solid #d0d4d9;
+
+        @media (max-width: 768px) {
+          border-right: none;
+          border-bottom: 1px solid #d0d4d9;
+          padding-right: 0px;
+          padding-bottom: 15px;
+        }
       }
 
       .headlineWithHelp {
@@ -137,8 +144,20 @@
         column-gap: 10px;
         align-items: top;
 
+        @media (max-width: 768px) {
+          font-size: 16px;
+          justify-content: center;
+        }
+
         .PopoverContainer {
           height: 100%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        > *:last-child {
+          padding-left: 0px;
+          padding-top: 15px;
         }
       }
     }
@@ -146,6 +165,7 @@
     @media (max-width: 768px) {
       .subSectionOverview {
         flex-direction: column;
+        justify-content: center;
       }
     }
   }
