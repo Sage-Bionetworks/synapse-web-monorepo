@@ -89,7 +89,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
             className="description"
             variant="body1"
             sx={{
-              display: { xs: 'none', md: 'unset' },
+              display: { xs: 'none', md: 'block' },
             }}
           >
             Your added files can be found in the tabs below. Files requiring
@@ -187,7 +187,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                       component={'div'}
                       sx={{
                         mb: 2,
-                        display: { xs: 'none', md: 'unset' },
+                        display: { xs: 'none', md: 'block' },
                       }}
                     >
                       <ul>
@@ -255,7 +255,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                       component={'div'}
                       sx={{
                         mb: 2,
-                        display: { xs: 'none', md: 'unset' },
+                        display: { xs: 'none', md: 'block' },
                       }}
                     >
                       <ul>
