@@ -1,5 +1,14 @@
-import { Typography, Button, CardMedia, Stack, Box } from '@mui/material'
+import {
+  Typography,
+  Button,
+  CardMedia,
+  Stack,
+  Box,
+  Fade,
+  Slide,
+} from '@mui/material'
 import React from 'react'
+import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 
 export type PortalFeatureHighlightsProps = {
@@ -11,11 +20,14 @@ export type PortalFeatureHighlightsProps = {
   link?: string
 }
 
+const transitionTimeoutMs = 400
+
 const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
   const { reverseOrder, image, title, buttonText, summaryText, link } = props
-
+  const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
   return (
     <Box
+      ref={ref}
       sx={{
         display: 'grid',
         padding: { xs: '40px', lg: '80px' },
@@ -32,17 +44,29 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
         },
       }}
     >
-      <CardMedia
-        component="img"
-        image={image}
-        sx={{
-          gridArea: 'image',
-          borderRadius: '12px',
-          height: '100%',
-          width: '100%',
-          objectFit: 'cover',
-        }}
-      />
+      <Fade in={inView} timeout={transitionTimeoutMs}>
+        <div>
+          <Slide
+            direction={reverseOrder ? 'left' : 'right'}
+            timeout={transitionTimeoutMs}
+            in={inView}
+          >
+            <div>
+              <CardMedia
+                component="img"
+                image={image}
+                sx={{
+                  gridArea: 'image',
+                  borderRadius: '12px',
+                  height: '100%',
+                  width: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+          </Slide>
+        </div>
+      </Fade>
       <Stack
         sx={{
           gridArea: 'content',
