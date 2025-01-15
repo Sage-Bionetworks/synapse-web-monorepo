@@ -3,6 +3,7 @@ import PortalFeatureHighlights, {
 } from './PortalFeatureHighlights'
 import { MemoryRouter } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 describe('PortalFeatureHighlights component', () => {
   const props: PortalFeatureHighlightsProps = {
@@ -29,6 +30,7 @@ describe('PortalFeatureHighlights component', () => {
 
   it('renders image with correct src', () => {
     renderComponent(props)
+    mockAllIsIntersecting(true)
     const image = screen.getByRole('img')
     expect(image).toHaveAttribute('src', 'test-image.jpg')
   })
