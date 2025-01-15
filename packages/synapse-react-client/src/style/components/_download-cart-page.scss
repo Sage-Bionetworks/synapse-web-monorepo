@@ -20,6 +20,11 @@
       vertical-align: bottom;
       align-self: center;
     }
+
+    @media (max-width: 768px) {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .nav-tabs {
@@ -64,13 +69,14 @@
       }
     }
 
+    // make design adjustments for mobile
     @media (max-width: 768px) {
-      .nav-item button {
-        font-size: 15px; // Adjust the font size for mobile devices
-      }
-
       height: auto;
-      flex-direction: column; // single column for mobile devices
+      flex-direction: column;
+
+      .nav-item button {
+        font-size: 15px;
+      }
     }
   }
 
@@ -130,13 +136,6 @@
 
       > *:first-child {
         border-right: 1px solid #d0d4d9;
-
-        @media (max-width: 768px) {
-          border-right: none;
-          border-bottom: 1px solid #d0d4d9;
-          padding-right: 0px;
-          padding-bottom: 15px;
-        }
       }
 
       .headlineWithHelp {
@@ -144,28 +143,34 @@
         column-gap: 10px;
         align-items: top;
 
-        @media (max-width: 768px) {
-          font-size: 16px;
-          justify-content: center;
-        }
-
         .PopoverContainer {
           height: 100%;
         }
       }
-
-      @media (max-width: 768px) {
-        > *:last-child {
-          padding-left: 0px;
-          padding-top: 15px;
-        }
-      }
     }
 
+    // make design adjustments for mobile
     @media (max-width: 768px) {
       .subSectionOverview {
         flex-direction: column;
         justify-content: center;
+
+        .headlineWithHelp {
+          font-size: 16px;
+          justify-content: center;
+        }
+
+        > *:first-child {
+          border-right: none;
+          border-bottom: 1px solid #d0d4d9;
+          padding-right: 0px;
+          padding-bottom: 15px;
+        }
+
+        > *:last-child {
+          padding-left: 0px;
+          padding-top: 15px;
+        }
       }
     }
   }
@@ -177,13 +182,6 @@
 
   .placeholder {
     @include SrcMixins.placeholder;
-  }
-
-  @media (max-width: 768px) {
-    .pageHeader .grid {
-      display: flex;
-      flex-direction: column;
-    }
   }
 }
 
