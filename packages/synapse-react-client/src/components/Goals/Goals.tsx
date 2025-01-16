@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
@@ -36,8 +34,6 @@ const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
 export function Goals(props: GoalsProps) {
   const { entityId } = props
-  const [assets, setAssets] = useState<string[] | undefined>()
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -56,13 +52,6 @@ export function Goals(props: GoalsProps) {
     entityId,
     queryResultBundle,
   )
-  console.log(goalAssets)
-  useEffect(() => {
-    if (goalError) {
-      setError(goalError)
-    }
-    setAssets(goalAssets)
-  }, [goalAssets, goalError])
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -85,7 +74,7 @@ export function Goals(props: GoalsProps) {
 
   return (
     <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-      {error && <ErrorBanner error={error} />}
+      {goalError && <ErrorBanner error={goalError} />}
       {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {
