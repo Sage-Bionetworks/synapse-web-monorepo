@@ -1,7 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import GoalsV2Desktop from './GoalsV2.Desktop'
+import userEvent from '@testing-library/user-event'
 
 const mockProps = {
   asset: 'https://example.com/asset.jpg',
@@ -29,7 +30,7 @@ describe('GoalsV2Desktop', () => {
     expect(title).toBeInTheDocument()
   })
 
-  test('opens the link when the card is clicked', () => {
+  test('opens the link when the card is clicked', async () => {
     window.open = jest.fn()
 
     render(
@@ -39,7 +40,7 @@ describe('GoalsV2Desktop', () => {
     )
 
     const card = screen.getByRole('button', { name: /Test Title/i })
-    fireEvent.click(card)
+    await userEvent.click(card)
 
     expect(window.open).toHaveBeenCalledWith(mockProps.link)
   })
