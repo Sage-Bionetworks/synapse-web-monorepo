@@ -7,17 +7,26 @@
     max-width: 700px;
     padding-top: 10px;
   }
+
   .tabs-container {
     border-bottom: 4px solid #dcdcdc;
   }
+
   .pageHeader .grid {
     display: grid;
     grid-template-columns: auto 235px;
+
     * {
       vertical-align: bottom;
       align-self: center;
     }
+
+    @media (max-width: 768px) {
+      display: flex;
+      flex-direction: column;
+    }
   }
+
   .nav-tabs {
     border-bottom: 0px;
     padding-top: 20px;
@@ -26,14 +35,17 @@
     height: 70px;
     align-items: center;
     list-style: none;
+
     .active {
       padding-top: 5px;
       border-bottom: 5px solid;
       border-bottom-color: SRC.$secondary-action-color;
+
       button {
         color: #515359;
       }
     }
+
     .nav-item {
       font-weight: bold;
       height: 50px;
@@ -41,6 +53,7 @@
       text-transform: uppercase;
       text-align: center;
       margin-top: 4px;
+
       button {
         font-size: 18px;
         border-width: 0;
@@ -48,13 +61,25 @@
         width: 100%;
         height: 100%;
         padding-bottom: 10px;
+
         .fileCount {
           font-weight: 300;
           margin-left: 5px;
         }
       }
     }
+
+    // make design adjustments for mobile
+    @media (max-width: 768px) {
+      height: auto;
+      flex-direction: column;
+
+      .nav-item button {
+        font-size: 15px;
+      }
+    }
   }
+
   .availableForDownloadTableContainer {
     padding-top: 20px;
 
@@ -63,24 +88,30 @@
       align-items: center;
       grid-template-columns: auto 100px 148px;
       padding-bottom: 15px;
+
       .filterFilesByText {
         grid-column-start: 2;
         font-weight: 700;
       }
+
       .dropdown {
         grid-column-start: 3;
+
         button {
           width: 144px;
         }
       }
     }
   }
+
   .subSectionContainer {
     display: flex;
+
     .actionsRequiredTitle {
       padding-top: 30px;
     }
   }
+
   .subSectionOverviewContainer {
     padding: 30px 0px;
     background-color: SRC.$background-color-gray;
@@ -90,36 +121,75 @@
     .subSectionOverview {
       display: flex;
       column-gap: 10px;
+
       > * {
         &:first-child {
           padding-left: 0px;
         }
+
         &:last-child {
           padding-right: 0px;
         }
+
         padding: 0px 50px;
       }
+
       > *:first-child {
         border-right: 1px solid #d0d4d9;
       }
+
       .headlineWithHelp {
         display: flex;
         column-gap: 10px;
         align-items: top;
+
         .PopoverContainer {
           height: 100%;
         }
       }
     }
+
+    // make design adjustments for mobile
+    @media (max-width: 768px) {
+      .subSectionOverview {
+        flex-direction: column;
+        justify-content: center;
+
+        .headlineWithHelp {
+          font-size: 16px;
+          justify-content: center;
+        }
+
+        > *:first-child {
+          border-right: none;
+          border-bottom: 1px solid #d0d4d9;
+          padding-right: 0px;
+          padding-bottom: 15px;
+        }
+
+        > *:last-child {
+          padding-left: 0px;
+          padding-top: 15px;
+        }
+
+        .MuiButton-root {
+          display: flex;
+          margin: auto;
+        }
+      }
+    }
   }
+
   &__explore-all {
     text-align: center;
     padding-top: 20px;
   }
+
   .placeholder {
     @include SrcMixins.placeholder;
   }
 }
+
 .CreatePackageV2 {
   padding-bottom: 25px;
   margin-bottom: 20px;
@@ -135,6 +205,7 @@
     justify-content: center;
     align-items: center;
   }
+
   .createPackageStep {
     padding: 25px;
     display: flex;
@@ -142,7 +213,9 @@
     justify-content: center;
     align-items: center;
   }
+
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+
   .checkbox label {
     font-weight: normal;
   }
