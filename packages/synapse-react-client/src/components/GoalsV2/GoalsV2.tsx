@@ -54,8 +54,6 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
     entityId,
     queryResultBundle,
   )
-  console.log(goalAssets)
-
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
     queryResultBundle,
