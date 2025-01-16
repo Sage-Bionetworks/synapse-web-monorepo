@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
@@ -38,8 +36,6 @@ const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   const { entityId, dataLink } = props
-  const [assets, setAssets] = useState<string[] | undefined>()
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -59,12 +55,6 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
     queryResultBundle,
   )
   console.log(goalAssets)
-  useEffect(() => {
-    if (goalError) {
-      setError(goalError)
-    }
-    setAssets(goalAssets)
-  }, [goalAssets, goalError])
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -148,7 +138,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           Start Exploring Data
         </Button>
       </Box>
-      {error && <ErrorBanner error={error} />}
+      {goalError && <ErrorBanner error={goalError} />}
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
         {goalsDataArray.map((row, index) => {
           return showDesktop ? (
