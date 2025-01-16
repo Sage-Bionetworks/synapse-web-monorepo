@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -53,16 +53,18 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   }
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
+
   const { assets: goalAssets, error: goalError } = useGetGoalData(
     entityId,
     queryResultBundle,
   )
-  if (goalError) {
-    setError(goalError)
-  }
-  if (goalAssets) {
+  console.log(goalAssets)
+  useEffect(() => {
+    if (goalError) {
+      setError(goalError)
+    }
     setAssets(goalAssets)
-  }
+  }, [goalAssets, goalError])
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -100,7 +102,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       const title = values[titleColumnIndex]
       const summary = values[summaryColumnIndex]
       const link = values[linkColumnIndex]
-      const asset = assets?.[index] ?? ''
+      const asset = goalAssets?.[index] ?? ''
       return {
         countSql,
         title,
