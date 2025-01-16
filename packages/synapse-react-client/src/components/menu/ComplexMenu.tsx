@@ -1,6 +1,7 @@
-import { Box } from '@mui/material'
+import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
-import { IconSvgButton, IconSvgButtonProps } from '../IconSvgButton'
+import { IconSvgButtonProps } from '../IconSvgButton'
+import IconSvg from '../IconSvg'
 
 export type ComplexMenuProps = {
   /*
@@ -22,6 +23,8 @@ export type ComplexMenuProps = {
  */
 export function ComplexMenu(props: ComplexMenuProps) {
   const { iconButtons = [], dropdownMenus = [] } = props
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <Box
@@ -31,21 +34,51 @@ export function ComplexMenu(props: ComplexMenuProps) {
         gap: '10px',
         [theme.breakpoints.down('sm')]: {
           flexWrap: 'wrap',
+          paddingTop: '10px',
         },
       })}
     >
       {iconButtons.map(iconButton => {
-        return <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
+        return (
+          <Box
+            sx={theme => ({
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+                textAlign: 'center',
+              },
+            })}
+          >
+            <Button
+              variant="text"
+              startIcon={
+                <IconSvg
+                  icon={iconButton.icon}
+                  wrap={false}
+                  fontSize={'inherit'}
+                />
+              }
+              onClick={iconButton.onClick}
+              sx={{
+                padding: '6px 12px',
+                minWidth: 'unset',
+              }}
+            >
+              {isSmallScreen && (
+                <Typography variant="buttonLink">
+                  {iconButton.tooltipText}
+                </Typography>
+              )}
+            </Button>
+          </Box>
+        )
       })}
       {dropdownMenus.map((menuProps, index) => {
         return (
           <Box
             sx={theme => ({
               [theme.breakpoints.down('sm')]: {
-                flexGrow: 1,
-                button: {
-                  width: '100%',
-                },
+                width: '100%',
+                '.MuiButton-root': { width: '100%' },
               },
             })}
           >
