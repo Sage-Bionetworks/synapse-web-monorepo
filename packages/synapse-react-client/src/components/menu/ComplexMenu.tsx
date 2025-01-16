@@ -52,6 +52,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
               variant="text"
               startIcon={
                 <IconSvg
+                  key={iconButton.tooltipText}
                   icon={iconButton.icon}
                   wrap={false}
                   fontSize={'inherit'}
