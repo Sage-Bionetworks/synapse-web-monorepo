@@ -113,22 +113,12 @@ describe('useGetGoalData', () => {
   })
   it('should return goal data', async () => {
     const entityId = 'syn22315959'
-    let result: {
-      current: any
-      all?: (
-        | Error
-        | {
-            assets: string[] | undefined
-            error: string | SynapseClientError | undefined
-          }
-      )[]
-      error?: Error | undefined
-    }
-    await waitFor(() => {
-      result = renderHook(() => useGetGoalData(entityId, tableQueryResult), {
+    const { result } = renderHook(
+      () => useGetGoalData(entityId, tableQueryResult),
+      {
         wrapper: createWrapper(),
-      }).result
-    })
+      },
+    )
 
     await waitFor(() =>
       expect(result.current).toEqual({
