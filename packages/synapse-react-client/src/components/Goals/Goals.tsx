@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -56,12 +56,13 @@ export function Goals(props: GoalsProps) {
     entityId,
     queryResultBundle,
   )
-  if (goalError) {
-    setError(goalError)
-  }
-  if (goalAssets) {
+  console.log(goalAssets)
+  useEffect(() => {
+    if (goalError) {
+      setError(goalError)
+    }
     setAssets(goalAssets)
-  }
+  }, [goalAssets, goalError])
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -104,7 +105,7 @@ export function Goals(props: GoalsProps) {
         const link = values[linkColumnIndex]
         // assume that we recieve assets in order of rows and there is an asset for each item
         // can revisit if this isn't the case.
-        const asset = assets?.[index] ?? ''
+        const asset = goalAssets?.[index] ?? ''
         const goalsDataProps: GoalsDataProps = {
           countSql,
           title,
