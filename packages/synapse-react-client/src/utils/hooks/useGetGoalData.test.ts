@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook, waitFor } from '@testing-library/react'
 import useGetGoalData from './useGetGoalData'
 import { server } from '../../mocks/msw/server'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -7,7 +7,6 @@ import {
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClient, SynapseClientError } from '../../index'
-import { waitFor } from '@testing-library/react'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
