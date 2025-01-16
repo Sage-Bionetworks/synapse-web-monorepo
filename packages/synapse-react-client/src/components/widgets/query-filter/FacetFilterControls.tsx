@@ -221,6 +221,25 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   return (
     <div className={`FacetFilterControls`}>
+      <div>
+        <FacetFilterHeader
+          label={'Available Filters'}
+          hideCollapsible
+          isCollapsed={false}
+          onClick={noop}
+        />
+        {sortBy(allFacetColumns).map(columnName => {
+          return (
+            <FacetChip
+              key={columnName}
+              onClick={() => toggleShowFacetFilter(columnName)}
+              isChecked={facetColumnsShown.has(columnName)}
+            >
+              {getColumnDisplayName(columnName)}
+            </FacetChip>
+          )
+        })}
+      </div>
       {combineRangeFacetConfig && combinedRangeFacets.length >= 2 && (
         <CombinedRangeFacetFilter
           facetResults={combinedRangeFacets as FacetColumnResultRange[]}
@@ -262,25 +281,6 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
           )
         )
       })}
-      <div>
-        <FacetFilterHeader
-          label={'Available Facets'}
-          hideCollapsible
-          isCollapsed={false}
-          onClick={noop}
-        />
-        {sortBy(allFacetColumns).map(columnName => {
-          return (
-            <FacetChip
-              key={columnName}
-              onClick={() => toggleShowFacetFilter(columnName)}
-              isChecked={facetColumnsShown.has(columnName)}
-            >
-              {getColumnDisplayName(columnName)}
-            </FacetChip>
-          )
-        })}
-      </div>
     </div>
   )
 }
