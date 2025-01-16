@@ -115,7 +115,7 @@ const getFacetFilterControls = (page: Page) => {
 const getAvailableFacetsDiv = (page: Page) => {
   return getFacetFilterControlsPanel(page)
     .locator('> div')
-    .filter({ hasText: 'Available Facets' })
+    .filter({ hasText: 'Available Filters' })
 }
 
 const countVisibleElements = async (allCells: Locator) => {

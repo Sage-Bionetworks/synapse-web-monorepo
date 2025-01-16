@@ -1,52 +1,74 @@
+import { styled } from '@mui/material'
+import { Row, Table } from '@tanstack/react-table'
+import { identity } from 'lodash-es'
 import { memo } from 'react'
-import { Cell, flexRender, Table } from '@tanstack/react-table'
-import { getColumnSizeCssVariable } from './TanStackTableUtils'
-import ExpandableTableDataCell from '../SynapseTable/ExpandableTableDataCell'
-import { Skeleton } from '@mui/material'
+import { getSlotProps } from '../../utils/slots/SlotUtils'
+import { TableCellRenderer as DefaultTableCellRenderer } from './TableCellRenderer'
+import {
+  TableBodyPropsRowOverride,
+  TableBodySlotProps,
+  TableBodySlots,
+  TrOwnerState,
+} from './types'
 
-function CellRenderer<T = unknown>(cell: Cell<T, unknown>) {
-  const getWrapInExpandableTd =
-    cell.getContext().table.options.meta?.getWrapInExpandableTd
-  const wrapInExpandableTd =
-    getWrapInExpandableTd && getWrapInExpandableTd(cell)
-  const TableDataCellElement = wrapInExpandableTd
-    ? ExpandableTableDataCell
-    : 'td'
+// Simple wrapper around 'tr' to prevent forwarding invalid HTML attributes
+const TableRow = styled('tr', {
+  shouldForwardProp: prop => prop !== 'row' && prop !== 'tableRow',
+})({})
 
-  const renderPlaceholderData =
-    cell.getContext().table.options.meta?.renderPlaceholderData
+export type TableBodyProps<TData = unknown, TRowType = Row<TData>> = {
+  /** The table instance */
+  table: Table<TData>
+  slots?: TableBodySlots<TData, TRowType>
+  slotProps?: TableBodySlotProps<TData, TRowType>
+} & TableBodyPropsRowOverride<TData, TRowType>
+
+/**
+ * A table body component for use with @tanstack/react-table. This component renders the rows of the table.
+ * @param props
+ * @constructor
+ */
+export function TableBody<TData = unknown, TRowType = Row<TData>>(
+  props: TableBodyProps<TData, TRowType>,
+) {
+  const { table, slots = {}, slotProps = {} } = props
+
+  // By default, use TanStack Table Rows and the identity function as a transform.
+  // This can be overridden e.g. to accomplish row virtualization.
+  const {
+    rows = table.getRowModel().rows as TRowType[],
+    rowTransform = identity,
+  } = props
+
+  const {
+    Tbody = 'tbody',
+    Tr = TableRow,
+    TableCellRenderer = DefaultTableCellRenderer<TData>,
+  } = slots
+  const { Tbody: tbodySlotProps = {}, Tr: _trSlotProps = {} } = slotProps
 
   return (
-    <TableDataCellElement
-      key={cell.id}
-      style={{
-        width: `calc(var(${getColumnSizeCssVariable(cell.column.id)}) * 1px)`,
-        textAlign: cell.column.columnDef.meta?.textAlign,
-      }}
-    >
-      {renderPlaceholderData ? (
-        <p>
-          <Skeleton width={'80%'} height={'20px'} />
-        </p>
-      ) : (
-        flexRender(cell.column.columnDef.cell, cell.getContext())
-      )}
-    </TableDataCellElement>
-  )
-}
+    <Tbody {...tbodySlotProps}>
+      {rows.map((row, index) => {
+        const tableRow: Row<TData> | undefined = rowTransform(row)
 
-type TableBodyProps<T = unknown> = {
-  table: Table<T>
-}
+        const trOwnerState: TrOwnerState<TData, TRowType> = { row, tableRow }
+        const trSlotProps = getSlotProps(_trSlotProps, trOwnerState)
 
-export function TableBody<T = unknown>(props: TableBodyProps<T>) {
-  const { table } = props
-  return (
-    <tbody>
-      {table.getRowModel().rows.map(row => (
-        <tr key={row.id}>{row.getVisibleCells().map(CellRenderer)}</tr>
-      ))}
-    </tbody>
+        return (
+          <Tr
+            key={tableRow?.id ?? index}
+            {...trSlotProps}
+            row={row}
+            tableRow={tableRow}
+          >
+            {tableRow?.getVisibleCells().map((props, index) => (
+              <TableCellRenderer key={index} {...props} />
+            ))}
+          </Tr>
+        )
+      })}
+    </Tbody>
   )
 }
 

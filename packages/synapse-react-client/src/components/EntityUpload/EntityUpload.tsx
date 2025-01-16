@@ -12,13 +12,13 @@ import {
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import {
+  ForwardedRef,
+  forwardRef,
+  MouseEvent,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
-  MouseEvent,
-  forwardRef,
-  ForwardedRef,
 } from 'react'
 import { FixedSizeList } from 'react-window'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/index'
@@ -48,6 +48,8 @@ export type EntityUploadProps = {
   entityId: string
   /** Callback that is invoked when the state of the uploader changes */
   onStateChange?: (state: UploaderState) => void
+  /** Callback that is invoked when component is ready to upload */
+  onUploadReady?: () => void
 }
 
 // This padding value will be used to manipulate the appearance of a virtualized list of FileUploadProgress components
@@ -67,7 +69,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
   props: EntityUploadProps,
   ref: ForwardedRef<EntityUploadHandle>,
 ) {
-  const { entityId, onStateChange = noop } = props
+  const { entityId, onStateChange = noop, onUploadReady = noop } = props
 
   const { data: entity, isLoading: isLoadingEntity } = useGetEntity(entityId)
 
@@ -91,6 +93,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
     activePrompts,
     activeUploadCount,
     isPrecheckingUpload,
+    isUploadReady,
   } = useUploadFileEntities(entityId, accessKey, secretKey, () =>
     setDidUploadsExceedStorageLimit(true),
   )
@@ -98,6 +101,12 @@ export const EntityUpload = forwardRef(function EntityUpload(
   useEffect(() => {
     onStateChange(state)
   }, [state, onStateChange])
+
+  useEffect(() => {
+    if (isUploadReady) {
+      onUploadReady()
+    }
+  }, [isUploadReady, onUploadReady])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
@@ -119,7 +128,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
   ).length
 
   function uploadFileList(fileList: ArrayLike<File>) {
-    if (uploadDestination?.projectStorageLocationUsage.isOverLimit) {
+    if (uploadDestination?.projectStorageLocationUsage?.isOverLimit) {
       displayToast(
         'Cannot upload files because the storage limit has been exceeded.',
         'danger',
@@ -145,7 +154,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
   return (
     <div>
       <EntityUploadPromptDialog activePrompts={activePrompts} />
-      {uploadDestination && (
+      {uploadDestination?.projectStorageLocationUsage && (
         <ProjectStorageLimitAlert
           usage={uploadDestination.projectStorageLocationUsage}
           didUploadsExceedLimit={didUploadsExceedStorageLimit}
@@ -164,7 +173,7 @@ export const EntityUpload = forwardRef(function EntityUpload(
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
           textAlign: 'center',
-          ...(uploadDestination?.projectStorageLocationUsage.isOverLimit
+          ...(uploadDestination?.projectStorageLocationUsage?.isOverLimit
             ? disabledUploadPaneSx
             : {}),
         }}

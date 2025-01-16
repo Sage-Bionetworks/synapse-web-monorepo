@@ -142,3 +142,33 @@ This project can be built as a umd bundle. It produces four files
 - `synapse-react-client.development.css`.
 
 > Note - this script is run automatically as part of the build command.
+
+## Testing Synapse React Client (SRC) in Synapse Web Client (SWC)
+
+This guide explains how to test changes made in the Synapse React Client (SRC) on the Synapse Web Client (SWC) using **Chrome DevTools**.
+
+1. Make Your Changes in SRC
+
+Edit the code in the `synapse-react-client` package as needed.
+
+2. Build the UMD Files
+
+Run the following command to build the UMD files for SRC:
+
+```bash
+pnpm build:umd
+```
+
+3. Go to https://www.synapse.org in Chrome and open the **Developer Tools**.
+
+4. Locate the synapse-react-client.production.min.js file in the Network tab and right click on the file and select **Override Content**.
+
+5. Go to the **Sources** tab in Developer Tools and go to the **Overrides** section. Make sure **Enabled Local Overrides** is checked.
+
+6. Right-click cdn-www.synapse.org/generated or synapse-react-client.production.min.js and select **Open Folder** or **Open Containing Folder** respectively
+
+7. In your file explore, navigate to packages/synapse-react-client/dist/umd/ and find the updated synapse-react-client.production.min.js file. Drag and drop this file to the generated folder to replace the old synapse-react-client.production.min.js file.
+
+8. Refresh https://www.synapse.org and the site should now be using your override file.
+
+9. Repeat steps above for any SRC changes you want to see in https://www.synapse.org.

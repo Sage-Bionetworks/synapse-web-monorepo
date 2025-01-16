@@ -1,62 +1,93 @@
-import BaseTable, {
-  AutoResizer,
-  Column,
-  SortOrder,
-} from '@sage-bionetworks/react-base-table'
-import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { Checkbox, Tooltip } from '@mui/material'
+import {
+  EntityChildrenRequest,
+  EntityHeader,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
+import {
+  CellContext,
+  createColumnHelper,
+  getCoreRowModel,
+  OnChangeFn,
+  SortingState,
+  Table,
+  useReactTable,
+} from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { getEntityVersions } from '../../../../synapse-client/SynapseClient'
+import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import {
   getEntityTypeFromHeader,
   isContainerType,
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
-import { getEntityVersions } from '../../../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import {
-  Direction,
-  EntityChildrenRequest,
-  EntityHeader,
-  EntityType,
-  SortBy,
-} from '@sage-bionetworks/synapse-types'
-import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
+  BlockingLoader,
+  SynapseSpinner,
+} from '../../../LoadingScreen/LoadingScreen'
+import ColumnHeader from '../../../TanStackTable/ColumnHeader'
+import StyledVirtualTanStackTable from '../../../TanStackTable/StyledVirtualTanStackTable'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
+import { EntitySelectionMapType } from '../../useEntitySelection'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
-import {
-  AddFileToDownloadListRenderer,
-  BadgeIconsRenderer,
-  CellRendererProps,
-  CreatedOnRenderer,
-  CustomSortIndicator,
-  DetailsViewCheckboxRenderer,
-  DetailsViewVersionRenderer,
-  EmptyRenderer,
-  EntityIdAndVersionNumber,
-  LoadingRenderer,
-  MD5Renderer,
-  ModifiedByRenderer,
-  ModifiedOnRenderer,
-  TypeIconRenderer,
-} from './DetailsViewTableRenderers'
+import { AddFileToDownloadListCell } from './table/AddToDownloadListCell'
+import { CreatedOnCell } from './table/CreatedOnCell'
+import { EntityBadgeIconsCell } from './table/EntityBadgeIconsCell'
+import { EntityFinderCheckboxCell } from './table/EntityFinderCheckboxCell'
+import { EntityFinderVersionCell } from './table/EntityFinderVersionCell'
+import { EntityTypeCell } from './table/EntityTypeCell'
+import { FileEntityDirectDownloadCell } from './table/FileEntityDirectDownloadCell'
+import { FileEntityMD5Cell } from './table/FileEntityMD5Cell'
+import { FileEntitySizeCell } from './table/FileEntitySizeCell'
+import { ModifiedByCell } from './table/ModifiedByCell'
+import { ModifiedOnCell } from './table/ModifiedOnCell'
 import { VersionColumnHeader } from './VersionColumnHeader'
-import { Checkbox, Tooltip } from '@mui/material'
-import { SizeRenderer } from '../../../ChallengeDataDownload/Renderers'
 
-const MIN_TABLE_WIDTH = 1200
-const ROW_HEIGHT = 46
+/**
+ * Set of all columns that can be shown in the DetailsView
+ * Note: Some of these values are used as accessors, so ensure that those columns match the accessor key in the row data
+ */
+export enum DetailsViewColumn {
+  NAME = 'name',
+  ENTITY_TYPE = 'entityType',
+  ID = 'id',
+  CREATED_ON = 'createdOn',
+  MODIFIED_ON = 'modifiedOn',
+  MODIFIED_BY = 'modifiedBy',
+  ADD_TO_DOWNLOAD_CART = 'addToDownloadCart',
+  DIRECT_DOWNLOAD = 'directDownload',
+  SELECTED = 'selected',
+  VERSION = 'version',
+  SIZE = 'size',
+  MD5 = 'md5',
+  BADGES = 'badges',
+}
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: EntityFinderHeader[]
   isLoading: boolean
   hasNextPage?: boolean
-  fetchNextPage?: () => Promise<any>
+  fetchNextPage?: () => Promise<unknown>
   isFetchingNextPage?: boolean
-  /** The current sort of the view. If the view cannot be sorted, set this to `undefined` */
-  sort?: { sortBy: SortBy; sortDirection: Direction }
-  /** If sortable, `setSort` will be invoked when the user tries to change the sort */
-  setSort?: (soryBy: SortBy, sortDirection: Direction) => void
-  noResultsPlaceholder?: ReactElement
+  enableSorting?: boolean
+  enableMultiSort?: boolean
+  sortableColumns?: DetailsViewColumn[]
+  /** The current sort of the view. */
+  sorting?: SortingState
+  /** If enableSorting is true, `setSort` will be invoked when the user tries to change the sort */
+  onSortingChange?: OnChangeFn<SortingState>
+  noResultsPlaceholder?: ReactNode
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
   /** This request object is only used to tell react-query to cancel fetching all children at once. */
@@ -78,36 +109,269 @@ export type EntityFinderTableViewRowData = EntityFinderHeader & {
   currentSelectedVersion?: number
 }
 
+const columnHelper = createColumnHelper<EntityFinderTableViewRowData>()
+
+function NameRenderer(props: {
+  context: CellContext<EntityFinderTableViewRowData, string>
+  setCurrentContainer?: (containerId: string) => void
+}) {
+  const { context, setCurrentContainer } = props
+  const { row, getValue } = context
+  const rowName = getValue()
+  if (setCurrentContainer && isContainerType(row.original.entityType)) {
+    return (
+      <span
+        role="link"
+        className="EntityFinderTableCellContainerLink"
+        onClick={e => {
+          e.stopPropagation()
+          setCurrentContainer(row.original.id)
+        }}
+      >
+        <Tooltip title={rowName}>
+          <span className="nameColumnCell">{rowName}</span>
+        </Tooltip>
+      </span>
+    )
+  } else {
+    return (
+      <Tooltip title={rowName}>
+        <span className="nameColumnCell">{rowName}</span>
+      </Tooltip>
+    )
+  }
+}
+
+function SelectAllCheckboxRenderer(props: {
+  isVisible: boolean
+  disabled: boolean
+  checked: boolean
+  onSelectAll: () => void
+}) {
+  const { isVisible, disabled, checked, onSelectAll } = props
+  if (!isVisible) {
+    return null
+  }
+
+  return (
+    <Checkbox
+      inputProps={{ 'aria-label': 'Select All' }}
+      checked={checked}
+      disabled={disabled}
+      onChange={() => {
+        onSelectAll()
+      }}
+    />
+  )
+}
+
+function getColumns(opts: {
+  setCurrentContainer?: (containerId: string) => void
+  isSelectAllVisible: boolean
+  isSelectAllDisabled: boolean
+  isSelectAllChecked: boolean
+  onSelectAll: () => void
+  versionSelection: VersionSelectionType
+  toggleSelection: (entity: Reference | Reference[]) => void
+  sortableColumns?: DetailsViewColumn[]
+}) {
+  const {
+    setCurrentContainer,
+    isSelectAllVisible,
+    isSelectAllDisabled,
+    isSelectAllChecked,
+    onSelectAll,
+    versionSelection,
+    toggleSelection,
+    sortableColumns = [],
+  } = opts
+  return [
+    columnHelper.display({
+      id: DetailsViewColumn.SELECTED,
+      minSize: 50,
+      maxSize: 50,
+      size: 50,
+      header: () => (
+        <SelectAllCheckboxRenderer
+          isVisible={isSelectAllVisible}
+          disabled={isSelectAllDisabled}
+          checked={isSelectAllChecked}
+          onSelectAll={onSelectAll}
+        />
+      ),
+      cell: EntityFinderCheckboxCell,
+    }),
+
+    columnHelper.accessor(DetailsViewColumn.ENTITY_TYPE, {
+      minSize: 45,
+      maxSize: 45,
+      size: 45,
+      header: () => null,
+      enableResizing: false,
+      cell: EntityTypeCell,
+      meta: {
+        textAlign: 'center',
+      },
+    }),
+    columnHelper.accessor(DetailsViewColumn.NAME, {
+      size: 300,
+      enableSorting: sortableColumns.includes(DetailsViewColumn.NAME),
+      // sortable: sort != null,
+      // resizable: true,
+      header: props => <ColumnHeader {...props} title={'Name'} />,
+      cell: context => (
+        <NameRenderer
+          context={context}
+          setCurrentContainer={setCurrentContainer}
+        />
+      ),
+      enableColumnFilter: false,
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.BADGES,
+      minSize: 75,
+      maxSize: 75,
+      size: 75,
+      header: () => null,
+      cell: EntityBadgeIconsCell,
+    }),
+    columnHelper.accessor(DetailsViewColumn.ID, {
+      size: 130,
+      header: props => <ColumnHeader {...props} title={'ID'} />,
+      minSize: 130,
+      enableColumnFilter: false,
+      enableSorting: sortableColumns.includes(DetailsViewColumn.ID),
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.VERSION,
+      minSize: 150,
+      size: 200,
+      header: () => <VersionColumnHeader versionSelection={versionSelection} />,
+      cell: context => (
+        <EntityFinderVersionCell
+          versionSelection={versionSelection}
+          toggleSelection={toggleSelection}
+          context={context}
+        />
+      ),
+    }),
+    columnHelper.accessor(DetailsViewColumn.CREATED_ON, {
+      header: props => <ColumnHeader {...props} title={'Created On'} />,
+      size: 220,
+      minSize: 170,
+      cell: CreatedOnCell,
+      enableColumnFilter: false,
+      enableSorting: sortableColumns.includes(DetailsViewColumn.CREATED_ON),
+    }),
+    columnHelper.accessor(DetailsViewColumn.MODIFIED_ON, {
+      header: props => <ColumnHeader {...props} title={'Modified On'} />,
+      size: 220,
+      minSize: 170,
+      enableColumnFilter: false,
+      cell: ModifiedOnCell,
+      enableSorting: sortableColumns.includes(DetailsViewColumn.MODIFIED_ON),
+    }),
+    columnHelper.accessor(DetailsViewColumn.MODIFIED_BY, {
+      header: props => <ColumnHeader {...props} title={'Modified By'} />,
+      size: 250,
+      enableResizing: true,
+      cell: ModifiedByCell,
+      enableColumnFilter: false,
+      enableSorting: sortableColumns.includes(DetailsViewColumn.MODIFIED_BY),
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.SIZE,
+      header: props => <ColumnHeader {...props} title={'Size'} />,
+      size: 120,
+      minSize: 85,
+      enableSorting: false,
+      enableResizing: true,
+      cell: FileEntitySizeCell,
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.MD5,
+      header: props => <ColumnHeader {...props} title={'MD5'} />,
+      size: 200,
+      enableSorting: false,
+      enableResizing: true,
+      cell: FileEntityMD5Cell,
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
+      header: () => null,
+      size: 45,
+      minSize: 45,
+      enableSorting: false,
+      enableResizing: false,
+      cell: AddFileToDownloadListCell,
+    }),
+    columnHelper.display({
+      id: DetailsViewColumn.DIRECT_DOWNLOAD,
+      header: props => <ColumnHeader {...props} title={'Actions'} />,
+      size: 75,
+      minSize: 75,
+      enableSorting: false,
+      enableResizing: false,
+      cell: FileEntityDirectDownloadCell,
+    }),
+  ]
+}
+
+type DetailsViewRowAppearance = 'hidden' | 'disabled' | 'selected' | 'default'
+
+const determineRowAppearance = (args: {
+  visibleTypes: EntityType[]
+  selectableTypes: EntityType[]
+  selected: EntitySelectionMapType
+  entity: EntityFinderHeader
+}): DetailsViewRowAppearance => {
+  const { visibleTypes, selectableTypes, selected, entity } = args
+  if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
+    return 'hidden'
+  } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
+    return 'disabled'
+  } else if (selected.has(entity.id)) {
+    return 'selected'
+  } else {
+    return 'default'
+  }
+}
+
+const DEFAULT_HIDDEN_COLUMNS = [DetailsViewColumn.DIRECT_DOWNLOAD]
+
 /**
  * Displays a list of entities in a table.
  *
  * If the list of entities is paginated, the `hasNextPage` prop can be set to indicate that there is more data to load.
  * When the view is ready to load more data, the `fetchNextPage` callback will be invoked. The view is designed to handle
  * an "infinite scroll" pattern, so entities should not be removed from the list when loading the next page.
- *
- * @param param0
  */
-export function DetailsView({
-  entities,
-  isLoading,
-  hasNextPage,
-  fetchNextPage,
-  isFetchingNextPage,
-  versionSelection,
-  selectColumnType,
-  selected,
-  visibleTypes,
-  selectableTypes,
-  toggleSelection,
-  sort,
-  setSort,
-  noResultsPlaceholder,
-  enableSelectAll,
-  selectAllIsChecked = false,
-  getChildrenInfiniteRequestObject,
-  totalEntities,
-  setCurrentContainer,
-}: DetailsViewProps) {
+export function DetailsView(props: DetailsViewProps) {
+  const {
+    entities,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    versionSelection,
+    selectColumnType,
+    selected,
+    visibleTypes,
+    selectableTypes,
+    toggleSelection,
+    enableSorting,
+    enableMultiSort,
+    sortableColumns,
+    sorting,
+    onSortingChange,
+    noResultsPlaceholder,
+    enableSelectAll,
+    selectAllIsChecked = false,
+    getChildrenInfiniteRequestObject,
+    totalEntities,
+    setCurrentContainer,
+    hiddenColumns = DEFAULT_HIDDEN_COLUMNS,
+  } = props
   const queryClient = useQueryClient()
 
   const { accessToken, keyFactory: queryClientKeyFactory } = useSynapseContext()
@@ -120,7 +384,7 @@ export function DetailsView({
   const cancelQuery = () => {
     // It's likely that the user will be throttled by the Synapse backend and may be waiting a
     // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
-    queryClient.cancelQueries({
+    void queryClient.cancelQueries({
       queryKey: queryClientKeyFactory.getEntityChildrenQueryKey(
         getChildrenInfiniteRequestObject!,
         true,
@@ -128,21 +392,6 @@ export function DetailsView({
     })
     setShowLoadingScreen(false)
     setShouldSelectAll(false)
-  }
-  type DetailsViewRowAppearance = 'hidden' | 'disabled' | 'selected' | 'default'
-
-  const determineRowAppearance = (
-    entity: EntityFinderHeader,
-  ): DetailsViewRowAppearance => {
-    if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
-      return 'hidden'
-    } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
-      return 'disabled'
-    } else if (selected.has(entity.id)) {
-      return 'selected'
-    } else {
-      return 'default'
-    }
   }
 
   useEffect(() => {
@@ -152,11 +401,12 @@ export function DetailsView({
           // Show the loading screen since we must fetch data (potentially a lot) to finish the task
           setShowLoadingScreen(true)
           if (!isFetchingNextPage) {
-            fetchNextPage()
+            void fetchNextPage()
+            // The effect will re-run after fetch completes, and the next page (if it exists) will be fetched.
           }
         } else {
           if (selectAllIsChecked) {
-            // All of the items are selected, so we will deselect all
+            // All the items are selected, so we will deselect all
             toggleSelection(
               entities
                 .filter(e => {
@@ -167,7 +417,7 @@ export function DetailsView({
                 .map(e => selected.get(e.id)!),
             )
           } else {
-            // Not all of the items are selected, so we will select all
+            // Not all the items are selected, so we will select all
             toggleSelection(
               await Promise.all(
                 entities
@@ -252,119 +502,190 @@ export function DetailsView({
     shouldSelectAll,
     toggleSelection,
     visibleTypes,
+    queryClientKeyFactory,
   ])
 
-  const tableData = entities.reduce(
-    (entities: EntityFinderTableViewRowData[], entity) => {
-      const appearance = determineRowAppearance(entity)
-      if (appearance !== 'hidden') {
-        // only include entities that should not be hidden
-        const entityType = getEntityTypeFromHeader(entity)
-
-        const currentSelectedVersion = selected.get(
-          entity.id,
-        )?.targetVersionNumber
-        let versionNumber: number | undefined = undefined
-        if ('versionNumber' in entity) {
-          if (currentSelectedVersion != null) {
-            // if a version is selected, the row should show that version's data
-            versionNumber = currentSelectedVersion
-          } else if (versionSelection === VersionSelectionType.REQUIRED) {
-            // if a version is not selected, but version selection is required, the row should show the latest version's data
-            versionNumber = entity.versionNumber
-          }
-          // otherwise, show the current version's data (versionNumber is undefined)
-        }
-
-        entities.push({
-          ...entity,
-          entityId: entity.id,
-          versionNumber: versionNumber,
-          entityType: entityType,
-          isSelected: appearance === 'selected',
-          isDisabled: appearance === 'disabled',
-          isVersionableEntity: isVersionableEntityType(entityType),
-          currentSelectedVersion: currentSelectedVersion,
+  const tableData = useMemo(
+    () =>
+      entities.reduce((entities: EntityFinderTableViewRowData[], entity) => {
+        const appearance = determineRowAppearance({
+          visibleTypes,
+          selectableTypes,
+          selected,
+          entity,
         })
-      }
-      return entities
-    },
-    [],
-  )
+        if (appearance !== 'hidden') {
+          // only include entities that should not be hidden
+          const entityType = getEntityTypeFromHeader(entity)
 
-  const SelectAllCheckboxRenderer = useMemo(() => {
-    // Enabled if there's at least one visible & selectable entity, OR there's a page we haven't fetched
-    const isEnabled =
-      hasNextPage ||
-      entities.filter(
-        e =>
-          selectableTypes.includes(getEntityTypeFromHeader(e)) &&
-          visibleTypes.includes(getEntityTypeFromHeader(e)),
-      ).length > 0
-    return (
-      enableSelectAll && (
-        <div
-          data-testid="Select All"
-          style={isEnabled ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
-          onClick={() => {
-            if (isEnabled) {
-              setShouldSelectAll(true)
+          const currentSelectedVersion = selected.get(
+            entity.id,
+          )?.targetVersionNumber
+          let versionNumber: number | undefined = undefined
+          if ('versionNumber' in entity) {
+            if (currentSelectedVersion != null) {
+              // if a version is selected, the row should show that version's data
+              versionNumber = currentSelectedVersion
+            } else if (versionSelection === VersionSelectionType.REQUIRED) {
+              // if a version is not selected, but version selection is required, the row should show the latest version's data
+              versionNumber = entity.versionNumber
             }
-          }}
-        >
-          <Checkbox
-            inputProps={{ 'aria-label': 'Select All' }}
-            checked={selectAllIsChecked}
-            disabled={!isEnabled}
-            onChange={() => {
-              // no-op
-            }}
-          />
-        </div>
-      )
-    )
-  }, [
-    enableSelectAll,
-    entities,
-    hasNextPage,
-    selectAllIsChecked,
-    selectableTypes,
-    visibleTypes,
-  ])
+            // otherwise, show the current version's data (versionNumber is undefined)
+          }
 
-  const NameRenderer = useCallback(
-    (props: CellRendererProps<EntityFinderTableViewRowData>) => {
-      const rowName = props.rowData.name
-      if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
-        return (
-          <span
-            role="link"
-            className="EntityFinderTableCellContainerLink"
-            onClick={e => {
-              e.stopPropagation()
-              setCurrentContainer(props.rowData.id)
-            }}
-          >
-            <Tooltip title={rowName}>
-              <span className="nameColumnCell">{rowName}</span>
-            </Tooltip>
-          </span>
-        )
-      } else {
-        return (
-          <Tooltip title={rowName}>
-            <span className="nameColumnCell">{rowName}</span>
-          </Tooltip>
-        )
-      }
-    },
-    [setCurrentContainer],
+          entities.push({
+            ...entity,
+            entityId: entity.id,
+            versionNumber: versionNumber,
+            entityType: entityType,
+            isSelected: appearance === 'selected',
+            isDisabled: appearance === 'disabled',
+            isVersionableEntity: isVersionableEntityType(entityType),
+            currentSelectedVersion: currentSelectedVersion,
+          })
+        }
+        return entities
+      }, []),
+    [entities, selectableTypes, selected, versionSelection, visibleTypes],
   )
 
-  const sortState: Record<string, SortOrder> = {}
-  if (sort) {
-    sortState[sort.sortBy] = sort.sortDirection.toLowerCase() as SortOrder
+  const isSelectAllVisible = enableSelectAll
+
+  // Enabled if there's at least one visible & selectable entity, OR there's a page we haven't fetched
+  const isSelectAllDisabled = !(
+    hasNextPage ||
+    entities.filter(
+      e =>
+        selectableTypes.includes(getEntityTypeFromHeader(e)) &&
+        visibleTypes.includes(getEntityTypeFromHeader(e)),
+    ).length > 0
+  )
+
+  const columns = useMemo(
+    () =>
+      getColumns({
+        setCurrentContainer,
+        isSelectAllVisible: isSelectAllVisible,
+        isSelectAllDisabled: isSelectAllDisabled,
+        isSelectAllChecked: selectAllIsChecked,
+        onSelectAll: () => {
+          setShouldSelectAll(true)
+        },
+        versionSelection,
+        toggleSelection,
+        sortableColumns,
+      }),
+    [
+      isSelectAllDisabled,
+      isSelectAllVisible,
+      selectAllIsChecked,
+      setCurrentContainer,
+      sortableColumns,
+      toggleSelection,
+      versionSelection,
+    ],
+  )
+
+  const hideColumnOverrides = useMemo(() => {
+    return hiddenColumns.reduce(
+      (acc: Partial<Record<DetailsViewColumn, boolean>>, column) => {
+        acc[column] = false
+        return acc
+      },
+      {},
+    )
+  }, [hiddenColumns])
+
+  const table: Table<EntityFinderTableViewRowData> =
+    useReactTable<EntityFinderTableViewRowData>({
+      data: tableData,
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+      columnResizeMode: 'onChange',
+      manualSorting: true,
+      enableSorting,
+      enableMultiSort,
+      onSortingChange,
+      state: {
+        sorting,
+        columnVisibility: {
+          [DetailsViewColumn.SELECTED]: showSelectColumn,
+          [DetailsViewColumn.VERSION]:
+            versionSelection !== VersionSelectionType.DISALLOWED,
+          [DetailsViewColumn.SIZE]: visibleTypes.includes(EntityType.FILE),
+          [DetailsViewColumn.MD5]: visibleTypes.includes(EntityType.FILE),
+          [DetailsViewColumn.ADD_TO_DOWNLOAD_CART]: visibleTypes.includes(
+            EntityType.FILE,
+          ),
+          [DetailsViewColumn.DIRECT_DOWNLOAD]: visibleTypes.includes(
+            EntityType.FILE,
+          ),
+          ...hideColumnOverrides,
+        },
+      },
+    })
+
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  const rowVirtualizer = useVirtualizer({
+    count: totalEntities ?? table.getRowModel().rows.length,
+    estimateSize: () => 40, // estimate row height for accurate scrollbar dragging
+    getScrollElement: () => tableContainerRef.current,
+    // measure dynamic row height, except in firefox because it measures table border height incorrectly
+    measureElement:
+      typeof window !== 'undefined' &&
+      navigator.userAgent.indexOf('Firefox') === -1
+        ? element => element?.getBoundingClientRect().height
+        : undefined,
+    overscan: 5,
+  })
+
+  function onRowClick(rowData: EntityFinderTableViewRowData) {
+    const { id, isDisabled, isVersionableEntity } = rowData
+    let { currentSelectedVersion } = rowData
+    if (!isDisabled) {
+      if (
+        isVersionableEntity &&
+        versionSelection === VersionSelectionType.REQUIRED &&
+        currentSelectedVersion == null &&
+        Object.prototype.hasOwnProperty.call(rowData, 'versionNumber')
+      ) {
+        currentSelectedVersion = rowData.versionNumber
+        // Note that here we aren't handling the case where the header doesn't have a version, e.g. a search result
+        // That case is actually handled by the VersionRenderer, which has an effect that will toggle the selection after data is fetched.
+      }
+
+      toggleSelection({
+        targetId: id,
+        targetVersionNumber: currentSelectedVersion,
+      })
+    }
   }
+
+  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
+
+        //once the user has scrolled within 500px of the bottom of the table, fetch more data if we can
+        if (
+          scrollHeight - scrollTop - clientHeight < 500 &&
+          !isFetchingNextPage &&
+          hasNextPage &&
+          fetchNextPage
+        ) {
+          void fetchNextPage()
+        }
+      }
+    },
+    [fetchNextPage, isFetchingNextPage, hasNextPage],
+  )
+
+  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
+  useEffect(() => {
+    fetchMoreOnBottomReached(tableContainerRef.current)
+  }, [entities, fetchMoreOnBottomReached])
 
   return (
     <div className="EntityFinderDetailsView">
@@ -380,209 +701,46 @@ export function DetailsView({
         headlineText={'Fetching selected items'}
         onCancel={cancelQuery}
       />
-      <AutoResizer className="DetailsViewAutosizer">
-        {({ height, width }: { height: number; width: number }) => (
-          <BaseTable<EntityFinderTableViewRowData>
-            classPrefix="DetailsViewTable"
-            data={tableData}
-            height={height}
-            width={width > MIN_TABLE_WIDTH ? width : MIN_TABLE_WIDTH}
-            rowHeight={ROW_HEIGHT}
-            overscanRowCount={5}
-            // Apply classes to the rows for styling
-            rowClassName={({ rowIndex }: { rowIndex: number }) => {
-              let className = 'EntityFinderDetailsViewRow'
-              if (rowIndex % 2 === 0) {
-                // Apply a class based on index so we can get alternating colors
-                // We don't use CSSs nth-child because the rows are virtualized, so an even child might change to odd on-the-fly
-                className += ' isEven'
-              }
-              return className
-            }}
-            // Apply aria roles to the rows for a11y/styling
-            rowProps={({ rowData }) => {
-              return {
-                'aria-selected': rowData.isSelected,
-                'aria-disabled': rowData.isDisabled,
-              }
-            }}
-            headerCellProps={{
-              role: 'columnheader',
-            }}
-            // Sorting:
-            sortState={sortState}
-            components={{ SortIndicator: CustomSortIndicator }}
-            onColumnSort={({ key, order }) => {
-              if (sort && setSort) {
-                setSort(
-                  key as SortBy,
-                  order === 'asc' ? Direction.ASC : Direction.DESC,
-                )
-              }
-            }}
-            rowEventHandlers={{
-              onClick: ({ rowData }) => {
-                const { id, isDisabled, isVersionableEntity } = rowData
-                let { currentSelectedVersion } = rowData
-                if (!isDisabled) {
-                  if (
-                    isVersionableEntity &&
-                    versionSelection === VersionSelectionType.REQUIRED &&
-                    currentSelectedVersion == null &&
-                    Object.prototype.hasOwnProperty.call(
-                      rowData,
-                      'versionNumber',
-                    )
-                  ) {
-                    currentSelectedVersion = (rowData as EntityHeader)
-                      .versionNumber
-                    // Note that here we aren't handling the case where the header doesn't have a version, e.g. a search result
-                    // That case is actually handled by the VersionRenderer, which has an effect that will toggle the selection after data is fetched.
-                  }
+      {!isLoading && entities.length > 0 && (
+        <StyledVirtualTanStackTable<EntityFinderTableViewRowData>
+          styledTableContainerProps={{
+            className: 'DetailsViewTable',
+            ref: tableContainerRef,
+            height: '100%',
+          }}
+          onTableContainerScroll={target =>
+            fetchMoreOnBottomReached(target as HTMLDivElement)
+          }
+          table={table}
+          rowVirtualizer={rowVirtualizer}
+          slotProps={{
+            Tr: ownerState => {
+              const { tableRow } = ownerState
 
-                  toggleSelection({
-                    targetId: id,
-                    targetVersionNumber: currentSelectedVersion,
-                  })
-                }
-              },
-            }}
-            onEndReached={() => {
-              if (hasNextPage && fetchNextPage && !isFetchingNextPage) {
-                fetchNextPage()
+              return {
+                className: `EntityFinderDetailsViewRow`,
+                ['aria-selected']: tableRow?.original.isSelected,
+                ['aria-disabled']: tableRow?.original.isDisabled,
+                onClick: () => {
+                  if (tableRow) {
+                    onRowClick(tableRow.original)
+                  }
+                },
               }
-            }}
-            emptyRenderer={
-              isLoading
-                ? LoadingRenderer
-                : () => (
-                    <EmptyRenderer
-                      noResultsPlaceholder={noResultsPlaceholder}
-                    />
-                  )
-            }
-          >
-            {showSelectColumn && (
-              <Column<EntityFinderTableViewRowData>
-                key="isSelected"
-                title=""
-                minWidth={50}
-                maxWidth={50}
-                width={50}
-                dataKey="isSelected"
-                headerRenderer={SelectAllCheckboxRenderer}
-                cellRenderer={DetailsViewCheckboxRenderer}
-              />
-            )}
-            <Column<EntityFinderTableViewRowData>
-              key="type"
-              title=""
-              minWidth={45}
-              maxWidth={45}
-              width={45}
-              dataKey="entityType"
-              align="center"
-              cellRenderer={TypeIconRenderer}
-            />
-            <Column<EntityFinderTableViewRowData>
-              key={SortBy.NAME}
-              title="Name"
-              width={800}
-              sortable={sort != null}
-              resizable={true}
-              cellRenderer={NameRenderer}
-            />
-            <Column<EntityIdAndVersionNumber>
-              key="badge"
-              title=""
-              width={75}
-              maxWidth={75}
-              minWidth={75}
-              cellRenderer={BadgeIconsRenderer}
-            />
-            <Column<EntityFinderTableViewRowData>
-              key="id"
-              width={130}
-              dataKey="id"
-              title="ID"
-              minWidth={130}
-            />
-            {versionSelection !== VersionSelectionType.DISALLOWED && (
-              <Column<EntityFinderTableViewRowData>
-                key="version"
-                minWidth={150}
-                width={500}
-                title="Version"
-                cellRenderer={props => (
-                  <DetailsViewVersionRenderer
-                    versionSelection={versionSelection}
-                    toggleSelection={toggleSelection}
-                    {...props}
-                  />
-                )}
-                headerRenderer={
-                  <VersionColumnHeader versionSelection={versionSelection} />
-                }
-              />
-            )}
-            <Column<EntityIdAndVersionNumber>
-              key={SortBy.CREATED_ON}
-              sortable={sort != null}
-              title="Created On"
-              width={220}
-              minWidth={170}
-              cellRenderer={CreatedOnRenderer}
-            />
-            <Column<EntityIdAndVersionNumber>
-              key={SortBy.MODIFIED_ON}
-              title="Modified On"
-              width={220}
-              minWidth={170}
-              sortable={sort != null}
-              cellRenderer={ModifiedOnRenderer}
-            />
-            <Column<EntityIdAndVersionNumber>
-              key="modifiedBy"
-              title="Modified By"
-              width={500}
-              resizable
-              cellRenderer={ModifiedByRenderer}
-            />
-            {visibleTypes.includes(EntityType.FILE) && (
-              <Column<EntityFinderTableViewRowData>
-                key={'SIZE'}
-                title="Size"
-                width={200}
-                minWidth={85}
-                sortable={false}
-                resizable={true}
-                cellRenderer={SizeRenderer}
-              />
-            )}
-            {visibleTypes.includes(EntityType.FILE) && (
-              <Column<EntityFinderTableViewRowData>
-                key={'MD5'}
-                title="MD5"
-                width={200}
-                sortable={false}
-                resizable={true}
-                cellRenderer={MD5Renderer}
-              />
-            )}
-            {visibleTypes.includes(EntityType.FILE) && (
-              <Column<EntityFinderTableViewRowData>
-                key={'addToDownloadCart'}
-                title=""
-                width={40}
-                minWidth={40}
-                sortable={false}
-                resizable={true}
-                cellRenderer={AddFileToDownloadListRenderer}
-              />
-            )}
-          </BaseTable>
-        )}
-      </AutoResizer>
+            },
+          }}
+        />
+      )}
+      {isLoading && (
+        <div className="EntityFinderDetailsViewPlaceholder">
+          <SynapseSpinner size={30} />
+        </div>
+      )}
+      {!isLoading && entities.length === 0 && (
+        <div className="EntityFinderDetailsViewPlaceholder">
+          {noResultsPlaceholder || <div>Empty</div>}
+        </div>
+      )}
     </div>
   )
 }

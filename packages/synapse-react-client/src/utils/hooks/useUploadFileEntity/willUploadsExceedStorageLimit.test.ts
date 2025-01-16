@@ -87,4 +87,13 @@ describe('willUploadsExceedStorageLimit', () => {
       ),
     ).toEqual(true)
   })
+
+  test('undefined usage', () => {
+    const usage = undefined
+
+    const pendingUploadsInBytes = 0
+    expect(
+      willUploadsExceedStorageLimit([], usage, pendingUploadsInBytes),
+    ).toEqual(false)
+  })
 })

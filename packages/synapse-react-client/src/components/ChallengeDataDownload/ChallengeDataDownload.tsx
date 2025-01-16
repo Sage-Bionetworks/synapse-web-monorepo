@@ -1,15 +1,16 @@
-import { useCallback } from 'react'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
+import { Box, Button } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { useCallback } from 'react'
+import { useAddFileBatchToDownloadList } from '../../synapse-queries'
+import { useSynapseContext } from '../../utils'
+import { EntityChildrenDetails } from '../EntityFinder/details/configurations/EntityChildrenDetails'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
-import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
+import { DetailsViewColumn } from '../EntityFinder/details/view/DetailsView'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import { useEntitySelection } from '../EntityFinder/useEntitySelection'
-import { ChallengeEntityChildrenDetails } from './ChallengeEntityChildrenDetails'
-import { Box, Button } from '@mui/material'
-import { useAddFileBatchToDownloadList } from '../../synapse-queries'
+import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { displayToast } from '../ToastMessage'
-import { useSynapseContext } from '../../utils'
 
 export type ChallengeDataDownloadProps = {
   parentContainerId: string
@@ -70,11 +71,18 @@ export function ChallengeDataDownload({
     isIdSelected,
     isSelectable: () => true,
     toggleSelection,
+    hiddenColumns: [
+      DetailsViewColumn.BADGES,
+      DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
+      DetailsViewColumn.CREATED_ON,
+      DetailsViewColumn.VERSION,
+      DetailsViewColumn.MODIFIED_BY,
+    ],
   }
   return (
     <>
       <Box>
-        <ChallengeEntityChildrenDetails
+        <EntityChildrenDetails
           parentContainerId={parentContainerId}
           {...sharedProps}
         />

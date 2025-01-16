@@ -8,12 +8,12 @@ import {
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
-
 const meta: Meta<typeof ChangePassword> = {
   title: 'Authentication/ChangePassword/WithCurrentPassword',
   component: ChangePassword,
   parameters: {
     stack: 'mock',
+    withRouter: true,
   },
   decorators: [
     Story => {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export interface UseSetReturn<T> {
   set: Omit<Set<T>, 'add' | 'delete' | 'clear'>
@@ -17,23 +17,29 @@ export interface UseSetReturn<T> {
 export function useSet<T>(initialState?: T[] | Set<T>): UseSetReturn<T> {
   const [set, setSet] = useState(new Set(initialState))
 
-  function add(...items: T[]) {
-    const newSet = new Set(set)
-    for (const item of items) {
-      newSet.add(item)
-    }
-    setSet(newSet)
-  }
+  const add = useCallback(
+    (...items: T[]) => {
+      const newSet = new Set(set)
+      for (const item of items) {
+        newSet.add(item)
+      }
+      setSet(newSet)
+    },
+    [set],
+  )
 
-  function remove(item: T) {
-    const newSet = new Set(set)
-    newSet.delete(item)
-    setSet(newSet)
-  }
+  const remove = useCallback(
+    (item: T) => {
+      const newSet = new Set(set)
+      newSet.delete(item)
+      setSet(newSet)
+    },
+    [set],
+  )
 
-  function clear() {
+  const clear = useCallback(() => {
     setSet(new Set())
-  }
+  }, [])
 
   return {
     set,

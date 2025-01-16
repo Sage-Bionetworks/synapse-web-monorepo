@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import {
+  DATASET,
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
@@ -58,6 +59,28 @@ const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
   ]
   executeQueryRequest(requestCopy)
 }
+export const DataCatalogCards: Story = {
+  args: {
+    name: 'Data Catalog',
+    sql: "SELECT * FROM syn61609402 where includedInDataCatalog = 'true'",
+    defaultShowPlots: false,
+    defaultShowSearchBox: true,
+    hideCopyToClipboard: true,
+    hideDownload: true,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      secondaryLabelLimit: 4,
+      genericCardSchema: {
+        type: DATASET,
+        title: 'name',
+        subTitle: 'community',
+        description: 'description',
+        secondaryLabels: ['contributors', 'individuals', 'id', 'link'],
+      },
+    },
+  },
+}
+
 export const Cards: Story = {
   args: {
     name: 'Tools',

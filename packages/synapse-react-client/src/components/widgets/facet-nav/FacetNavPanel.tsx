@@ -308,7 +308,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
   })
 
   /* rendering functions */
-  const ChartSelectionToggle = (): JSX.Element => (
+  const chartSelectionToggle = (
     <div
       onClick={event => {
         event.stopPropagation()
@@ -383,7 +383,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
                   <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
                 </Tooltip>
               </div>
-              <ChartSelectionToggle />
+              {chartSelectionToggle}
             </>
           )}
           <Box

@@ -1,8 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import { FileUploadProgress } from './FileUploadProgress'
+import {
+  FileUploadProgress,
+  FileUploadProgressProps,
+} from './FileUploadProgress'
 
-const meta = {
+const meta: Meta<FileUploadProgressProps> = {
   title: 'Synapse/Upload/FileUploadProgress',
   component: FileUploadProgress,
   args: {

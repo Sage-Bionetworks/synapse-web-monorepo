@@ -1,9 +1,8 @@
-import { SVGProps } from 'react'
-import { SortOrder } from '@sage-bionetworks/react-base-table'
 import { Direction } from '@sage-bionetworks/synapse-types'
+import { SVGProps } from 'react'
 
 type SortIconProps = {
-  direction: Direction | SortOrder | 'ASC' | 'DESC'
+  direction: Direction | 'ASC' | 'DESC'
   active: boolean
 }
 

@@ -20,6 +20,8 @@ import Image from './Image'
 import RedirectWithQuery from './RedirectWithQuery'
 import RedirectToURL from './RedirectToURL'
 import { Navigate as Redirect } from 'react-router-dom'
+import { PortalSearchTabs } from './PortalSearch/PortalSearchTabs'
+import { PortalFullTextSearchField } from './PortalSearch/PortalFullTextSearchField'
 import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
 import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
@@ -60,6 +62,8 @@ const PortalComponents = {
   ChallengeDataDownloadWrapper,
   SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
+  PortalSearchTabs,
+  PortalFullTextSearchField,
 }
 
 export default PortalComponents
