@@ -1,6 +1,13 @@
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
-import { IconSvgButtonProps } from '../IconSvgButton'
+import { IconSvgButton, IconSvgButtonProps } from '../IconSvgButton'
 import IconSvg from '../IconSvg'
 
 export type ComplexMenuProps = {
@@ -38,15 +45,13 @@ export function ComplexMenu(props: ComplexMenuProps) {
         },
       })}
     >
-      {iconButtons.map(iconButton => {
-        return (
+      {iconButtons.map(iconButton =>
+        isSmallScreen && iconButton.tooltipText ? (
           <Box
-            sx={theme => ({
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-                textAlign: 'center',
-              },
-            })}
+            sx={{
+              width: '100%',
+              textAlign: 'center',
+            }}
           >
             <Button
               variant="text"
@@ -64,15 +69,15 @@ export function ComplexMenu(props: ComplexMenuProps) {
                 minWidth: 'unset',
               }}
             >
-              {isSmallScreen && (
-                <Typography variant="buttonLink">
-                  {iconButton.tooltipText}
-                </Typography>
-              )}
+              <Typography variant="buttonLink">
+                {iconButton.tooltipText}
+              </Typography>
             </Button>
           </Box>
-        )
-      })}
+        ) : (
+          <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
+        ),
+      )}
       {dropdownMenus.map((menuProps, index) => {
         return (
           <Box
