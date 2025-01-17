@@ -20,6 +20,7 @@ import {
   ORGANIZATION,
   PERSON,
   MOUSE,
+  TRANSLATIONAL,
   EXPLORE,
   SEARCH,
   CHART,
@@ -53,6 +54,7 @@ import { ReactComponent as DNA_TwoSvg } from '../../assets/icons/DNA_Two.svg'
 import { ReactComponent as organizationsSvg } from '../../assets/icons/organizations.svg'
 import { ReactComponent as personSvg } from '../../assets/icons/person.svg'
 import { ReactComponent as mouseSvg } from '../../assets/icons/mouse.svg'
+import { ReactComponent as translationalSvg } from '../../assets/icons/translational.svg'
 import { ReactComponent as chart2Svg } from '../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../assets/icons/file.svg'
 import { ReactComponent as institutionSvg } from '../../assets/icons/institution.svg'
@@ -121,6 +123,7 @@ const defaultIcons = {
   [ORGANIZATION]: organizationsSvg,
   [PERSON]: personSvg,
   [MOUSE]: mouseSvg,
+  [TRANSLATIONAL]: translationalSvg,
   [EXPLORE]: Explore,
   [SEARCH]: Search,
   [CHART]: Chart,

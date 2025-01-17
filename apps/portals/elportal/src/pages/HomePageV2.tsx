@@ -83,11 +83,10 @@ export default function HomePage() {
                   plotsConfig: {
                     configs: [
                       {
-                        title:
-                          'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog study',
+                        title: 'The Long Life Family Study',
                         description:
-                          'This study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS traits and five distinct definitions of longevity.',
-                        facetsToPlot: ['dataType'],
+                          'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
+                        facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'LLFS',
                         detailsPagePath:
@@ -95,11 +94,9 @@ export default function HomePage() {
                         unitDescription: 'Files',
                       },
                       {
-                        title:
-                          'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study',
-                        description:
-                          'This study provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
-                        facetsToPlot: ['dataType'],
+                        title: 'ADAMTS7 Study',
+                        description: '',
+                        facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'ADAMTS7',
                         detailsPagePath:
@@ -111,7 +108,7 @@ export default function HomePage() {
                 },
                 {
                   title: 'Translation Studies',
-                  icon: 'MOUSE',
+                  icon: 'TRANSLATIONAL',
                   explorePagePath: '/Explore/Studies',
                   exploreObjectType: 'Studies',
                   plotsConfig: {
@@ -120,7 +117,7 @@ export default function HomePage() {
                         title: 'MRGWAS',
                         description:
                           'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
-                        facetsToPlot: ['dataType'],
+                        facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'MRGWAS',
                         detailsPagePath:
@@ -131,7 +128,7 @@ export default function HomePage() {
                         title: 'Aging-PheWAS',
                         description:
                           'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
-                        facetsToPlot: ['dataType'],
+                        facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'Aging-PheWAS',
                         detailsPagePath:
