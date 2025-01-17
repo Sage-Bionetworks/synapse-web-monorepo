@@ -4,6 +4,7 @@ import {
   ImageCardGridWithLinks,
   PortalFeatureHighlights,
   FeaturedResearch,
+  Header,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -11,10 +12,12 @@ import {
   topPublicationsSql,
   whatWeDoSql,
   featuredResearchSql,
+  partnersSql2,
 } from '../config/resources'
 import { Link, Typography } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
+import headerbackground from '../assets/headerbackground.png'
 import { Box } from '@mui/material'
 
 export default function HomePage() {
@@ -45,6 +48,7 @@ export default function HomePage() {
   )
   return (
     <>
+      <Header backgroundImage={headerbackground} sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
