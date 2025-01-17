@@ -49,8 +49,16 @@ export default function HomePage() {
   const title = (
     <>
       <div>Explore the data</div>
-      <>
-        about&nbsp;
+      about&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            minHeight: '150px',
+            display: 'block',
+          },
+        })}
+      >
         <TypeAnimation
           sequence={[
             'exceptional longevity',
@@ -68,7 +76,7 @@ export default function HomePage() {
             color: '#39AC97',
           }}
         />
-      </>
+      </Box>
     </>
   )
   const subTitle =

@@ -31,15 +31,12 @@ const Header = ({
       >
         <Typography
           variant="headline2"
-          sx={theme => ({
+          sx={{
             fontWeight: 300,
             lineHeight: '130%',
             fontSize: { xs: '36px', md: '42px' },
             color: 'grey.1000',
-            [theme.breakpoints.down('sm')]: {
-              minHeight: '200px',
-            },
-          })}
+          }}
         >
           {title}
         </Typography>
@@ -63,7 +60,7 @@ const Header = ({
           href={''}
           target="_blank"
           variant="contained"
-          sx={{
+          sx={theme => ({
             whiteSpace: 'nowrap',
             alignSelf: 'flex-start',
             padding: '6px 24px',
@@ -74,7 +71,10 @@ const Header = ({
               boxShadow:
                 '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
             },
-          }}
+            [theme.breakpoints.down('sm')]: {
+              width: '100%',
+            },
+          })}
         >
           Learn more
         </Button>
