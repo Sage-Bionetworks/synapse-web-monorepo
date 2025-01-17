@@ -18,7 +18,7 @@ const Header = ({
       data-testid="HeaderContainer"
       sx={{
         background: backgroundImage,
-        padding: { xs: 0, md: '120px 80px 50px 80px' },
+        padding: { xs: 0, md: '50px 80px' },
       }}
     >
       <Stack
