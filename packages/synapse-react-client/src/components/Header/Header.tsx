@@ -3,8 +3,8 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 export type HeaderProps = {
   backgroundImage: string
   title?: React.ReactNode
-  subTitle?: string
-  description?: string
+  subTitle?: React.ReactNode
+  description?: React.ReactNode
 }
 
 const Header = ({

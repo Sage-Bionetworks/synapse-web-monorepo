@@ -73,10 +73,14 @@ export default function HomePage() {
   )
   const subTitle =
     'The open science hub for breakthroughs in lifespan and healthspan'
-  const description = `People with Exceptional Longevity (EL) can live in good health to 95,
-    100, or even beyond. The ELITE Portal brings together the latest
-    research so that we can crack the code of longevity and all live
-    longer, healthier lives.`
+  const description = (
+    <>
+      People with Exceptional Longevity (EL) can live in good health to 95, 100,
+      or even beyond. <br /> <br /> The ELITE Portal brings together the latest
+      research so that we can crack the code of longevity and all live longer,
+      healthier lives.
+    </>
+  )
   return (
     <>
       <Header
