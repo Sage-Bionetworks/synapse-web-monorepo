@@ -48,14 +48,9 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
         }}
       >
         <Stack
-          sx={theme => ({
-            [theme.breakpoints.down('sm')]: {
-              flexDirection: 'column',
-            },
-            [theme.breakpoints.up('sm')]: {
-              flexDirection: 'row',
-            },
-          })}
+          sx={{
+            flexDirection: { xs: 'column', sm: 'row' },
+          }}
         >
           <Stack
             direction={'row'}

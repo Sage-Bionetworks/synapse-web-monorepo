@@ -33,7 +33,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
         alignItems: 'center',
         gap: '10px',
         [theme.breakpoints.down('sm')]: {
-          flexWrap: 'wrap',
+          flexDirection: 'column',
           paddingTop: '10px',
         },
       })}
