@@ -45,11 +45,18 @@ const Header = ({
         </Typography>
         <Typography
           variant="headline3"
-          sx={{ fontSize: '24px', fontWeight: '400', lineHeight: '160%' }}
+          sx={{
+            fontSize: '24px',
+            fontWeight: '400',
+            lineHeight: '160%',
+            color: 'grey.1000',
+          }}
         >
           {subTitle}
         </Typography>
-        <Typography sx={{ fontSize: '18px', lineHeight: '140%' }}>
+        <Typography
+          sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
+        >
           {description}
         </Typography>
         <Button
