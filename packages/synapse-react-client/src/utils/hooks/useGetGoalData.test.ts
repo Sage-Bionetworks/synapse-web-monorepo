@@ -6,7 +6,7 @@ import {
   QueryResultBundle,
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClient, SynapseClientError } from '../../index'
+import { SynapseClient } from '../../index'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
