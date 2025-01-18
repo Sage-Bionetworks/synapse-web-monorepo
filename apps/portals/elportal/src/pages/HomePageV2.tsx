@@ -92,6 +92,7 @@ export default function HomePage() {
                         detailsPagePath:
                           '/Explore/Studies/DetailsPage?studyKey=LLFS',
                         unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
                       },
                       {
                         title: 'ADAMTS7 Study',
@@ -102,6 +103,7 @@ export default function HomePage() {
                         detailsPagePath:
                           '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
                         unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
                       },
                     ],
                   },
@@ -123,6 +125,7 @@ export default function HomePage() {
                         detailsPagePath:
                           '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
                         unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
                       },
                       {
                         title: 'Aging-PheWAS',
@@ -134,6 +137,7 @@ export default function HomePage() {
                         detailsPagePath:
                           '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
                         unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
                       },
                     ],
                   },
