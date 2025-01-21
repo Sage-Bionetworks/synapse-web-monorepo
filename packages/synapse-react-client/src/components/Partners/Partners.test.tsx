@@ -31,22 +31,31 @@ describe('ImageCardGridWithLinks Tests', () => {
           {
             name: 'organizationName',
             columnType: ColumnTypeEnum.STRING,
-            id: '81723',
+            id: '1',
           },
           {
             name: 'cardLogo',
             columnType: ColumnTypeEnum.FILEHANDLEID,
-            id: '81724',
+            id: '2',
+          },
+          {
+            name: 'website',
+            columnType: ColumnTypeEnum.FILEHANDLEID,
+            id: '3',
           },
         ],
         rows: [
           {
             rowId: 1,
-            values: ['Partner 1', '149976034'],
+            values: ['Partner 1', '149976034', 'http://somewebsite.com'],
           },
           {
             rowId: 2,
-            values: ['Partner 2', '149976034'],
+            values: ['Partner 2', '149976034', 'http://somewebsite2.com'],
+          },
+          {
+            rowId: 3,
+            values: ['Partner 3', '', 'http://somewebsite3.com'],
           },
         ],
       },
@@ -55,12 +64,17 @@ describe('ImageCardGridWithLinks Tests', () => {
       {
         name: 'organizationName',
         columnType: ColumnTypeEnum.STRING,
-        id: '81723',
+        id: '1',
       },
       {
         name: 'cardLogo',
         columnType: ColumnTypeEnum.FILEHANDLEID,
-        id: '81724',
+        id: '2',
+      },
+      {
+        name: 'website',
+        columnType: ColumnTypeEnum.LINK,
+        id: '3',
       },
     ],
   }
@@ -106,5 +120,10 @@ describe('ImageCardGridWithLinks Tests', () => {
     await waitFor(() =>
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
+
+    expect(screen.getByText('Partner 3')).toBeInTheDocument()
+
+    const partners = screen.getAllByRole('link')
+    expect(partners).toHaveLength(3)
   })
 })

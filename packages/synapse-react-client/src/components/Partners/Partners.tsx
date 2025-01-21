@@ -21,6 +21,7 @@ type Icons = {
   organizationNameColIndex: number
   websiteColIndex: number
   entityId: string
+  isLoading?: boolean
 }
 
 const useImageUrl = (fileId: string, entityId: string) => {
@@ -43,12 +44,17 @@ const RenderPartnerIcon = ({
   organizationNameColIndex,
   websiteColIndex,
   entityId,
+  isLoading,
 }: Icons) => {
   const fileId = partner.values[imageColIndex] ?? ''
   const url = useImageUrl(fileId ?? '', entityId)
 
   if (!url && !partner?.values[organizationNameColIndex]) {
     return
+  }
+
+  if (isLoading) {
+    return <Skeleton variant="rectangular" height={101} width={156} />
   }
 
   return (
@@ -154,10 +160,6 @@ const Partners = ({ sql }: PartnersProps) => {
     queryResultBundle,
   )
 
-  if (isLoading) {
-    return <Skeleton variant="rectangular" height={142} width="100%" />
-  }
-
   return (
     <Box
       sx={{
@@ -195,13 +197,15 @@ const Partners = ({ sql }: PartnersProps) => {
           },
         })}
       >
-        {dataRows?.map(partner => (
+        {dataRows?.map((partner, index) => (
           <RenderPartnerIcon
+            key={`partner-${index}`}
             partner={partner}
             imageColIndex={imageColIndex}
             organizationNameColIndex={organizationNameColIndex}
             websiteColIndex={websiteColIndex}
             entityId={entityId}
+            isLoading={isLoading}
           />
         ))}
       </Box>

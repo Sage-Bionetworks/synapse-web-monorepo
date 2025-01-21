@@ -16,7 +16,7 @@ export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
 export const partnersSql =
   'SELECT * FROM syn62661043 order by organizationName desc'
 export const partnersSql2 =
-  'SELECT * FROM syn62661043 WHERE order IS NOT NULL ORDER BY order ASC LIMIT 5'
+  'SELECT * FROM syn62661043 WHERE order IS NOT NULL ORDER BY order ASC'
 export const whatWeDoSql = 'SELECT * FROM syn64130706'
 export const featuredResearchSql =
   'SELECT * FROM syn64542019 ORDER BY order ASC'
