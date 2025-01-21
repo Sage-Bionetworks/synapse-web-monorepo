@@ -4,6 +4,7 @@ import {
   ImageCardGridWithLinks,
   PortalFeatureHighlights,
   FeaturedResearch,
+  UpsetPlot,
   PortalHomePageHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
@@ -13,6 +14,7 @@ import {
   whatWeDoSql,
   featuredResearchSql,
   dataSql,
+  upsetPlotSql,
 } from '../config/resources'
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
@@ -20,6 +22,7 @@ import computationaltools from '../assets/computationaltools.png'
 import headerbackground from '../assets/headerbackground.png'
 import { Box } from '@mui/material'
 import { FeaturedDataTabs } from 'synapse-react-client'
+import { handleUpsetPlotClick } from 'src/config/synapseConfigs/handleUpsetPlotClick'
 import { TypeAnimation } from 'react-type-animation'
 
 export default function HomePage() {
@@ -137,7 +140,24 @@ export default function HomePage() {
         }}
       >
         <ELGettingStarted />
-
+        <div className={'home-bg-dark'}>
+          <SectionLayout
+            title="Exploring the Data"
+            centerTitle
+            ContainerProps={{ className: 'home-spacer' }}
+          >
+            <UpsetPlot
+              sql={upsetPlotSql}
+              rgbIndex={0}
+              maxBarCount={20}
+              setName="# Files per assay"
+              combinationName="# individuals"
+              onClick={handleUpsetPlotClick}
+              // summaryLinkText='Explore All Data'
+              // summaryLink='/Explore/Data'
+            />
+          </SectionLayout>
+        </div>
         <div className={'home-bg-dark'}>
           <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
             <FeaturedDataTabs
