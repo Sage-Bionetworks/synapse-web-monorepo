@@ -9,7 +9,7 @@ import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/compon
 import { Outlet, RouteObject } from 'react-router-dom'
 import cckpConfigs from 'src/config/synapseConfigs'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Grants',
@@ -86,6 +86,17 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
     cckpConfigs
   const [searchPageTabsState, setSearchPageTabsState] =
     useState<PortalSearchTabConfig[]>(searchPageTabs)
+
+  const onQueryResultBundleChange = useCallback(
+    (tabIndex: number, newQueryResultBundleJSON: string) => {
+      const newCount = getQueryCount(newQueryResultBundleJSON)
+      if (searchPageTabsState[tabIndex].count !== newCount) {
+        searchPageTabs[tabIndex].count = newCount
+        setSearchPageTabsState([...searchPageTabs])
+      }
+    },
+    [searchPageTabsState],
+  )
   // on search field value update, update the special search parameter FTS_SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
@@ -96,8 +107,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...grants,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[0].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(0, newQueryResultBundleJSON)
           },
         }}
       />
@@ -106,8 +116,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...people,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[1].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(1, newQueryResultBundleJSON)
           },
         }}
       />
@@ -116,8 +125,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...publications,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[2].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(2, newQueryResultBundleJSON)
           },
         }}
       />
@@ -126,8 +134,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...datasets,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[3].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(3, newQueryResultBundleJSON)
           },
         }}
       />
@@ -136,8 +143,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...tools,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[4].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(4, newQueryResultBundleJSON)
           },
         }}
       />
@@ -146,8 +152,7 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         standaloneQueryWrapperProps={{
           ...education,
           onQueryResultBundleChange: newQueryResultBundleJSON => {
-            searchPageTabs[5].count = getQueryCount(newQueryResultBundleJSON)
-            setSearchPageTabsState([...searchPageTabs])
+            onQueryResultBundleChange(5, newQueryResultBundleJSON)
           },
         }}
       />
