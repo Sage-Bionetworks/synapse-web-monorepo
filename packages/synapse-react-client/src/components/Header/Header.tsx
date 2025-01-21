@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 export type HeaderProps = {
   backgroundImage: string
@@ -56,7 +56,8 @@ const Header = ({
         >
           {description}
         </Typography>
-        <Button
+        {/* TODO: uncomment and update this when button link is available */}
+        {/* <Button
           href={''}
           target="_blank"
           variant="contained"
@@ -77,7 +78,7 @@ const Header = ({
           })}
         >
           Learn more
-        </Button>
+        </Button> */}
       </Stack>
     </Box>
   )
