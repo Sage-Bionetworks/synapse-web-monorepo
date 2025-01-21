@@ -6,7 +6,7 @@ import { PortalFullTextSearchField } from '@sage-bionetworks/synapse-portal-fram
 import { SearchParamAwareStandaloneQueryWrapper } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/SearchParamAwareStandaloneQueryWrapper'
 import { Box } from '@mui/material'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router'
 import cckpConfigs from 'src/config/synapseConfigs'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'

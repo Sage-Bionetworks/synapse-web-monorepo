@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
 
 export function CustomScrollButton(props: TabScrollButtonProps) {
@@ -64,7 +64,9 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
             key={path}
             value={encodeURI(path)}
             label={displayName}
-            onClick={() => navigate(path)}
+            onClick={() => {
+              void navigate(path)
+            }}
             sx={{
               transition: 'all 400ms',
               fontSize: '16px',

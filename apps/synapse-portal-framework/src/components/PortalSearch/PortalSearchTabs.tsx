@@ -1,6 +1,5 @@
 import { Box, Tab, Tabs, useMediaQuery, useTheme, Chip } from '@mui/material'
-
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 import { CustomScrollButton } from '../Explore/ExploreWrapperTabs'
 export type PortalSearchTabConfig = {
   path: string
@@ -63,7 +62,7 @@ export function PortalSearchTabs(props: PortalSearchTabUIProps) {
                 </Box>
               }
               onClick={() =>
-                navigate({
+                void navigate({
                   pathname: targetPathname,
                   search: location.search,
                 })

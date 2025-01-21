@@ -1,6 +1,6 @@
 import { Query } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCard, ReleaseCardProps, ReleaseCardSchema } from './ReleaseCard'

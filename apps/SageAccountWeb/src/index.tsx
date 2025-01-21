@@ -1,9 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router'
 import App from './App'
-import { BrowserRouter } from 'react-router-dom'
-import * as serviceWorker from './serviceWorker'
 import AppWrapper from './AppWrapper'
+import * as serviceWorker from './serviceWorker'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
