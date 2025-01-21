@@ -1,5 +1,5 @@
 import { ComponentType, SVGProps } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ReactComponent as DataIconSvg } from './assets/data-icon.svg'
 import { ReactComponent as InsightIconSvg } from './assets/insight-icon.svg'
 import { ReactComponent as MethodsIconSvg } from './assets/methods-icon.svg'

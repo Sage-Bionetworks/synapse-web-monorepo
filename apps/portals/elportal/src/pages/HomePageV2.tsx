@@ -12,12 +12,14 @@ import {
   topPublicationsSql,
   whatWeDoSql,
   featuredResearchSql,
+  dataSql,
 } from '../config/resources'
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
 import headerbackground from '../assets/headerbackground.png'
 import { Box } from '@mui/material'
+import { FeaturedDataTabs } from 'synapse-react-client'
 import { TypeAnimation } from 'react-type-animation'
 
 export default function HomePage() {
@@ -119,26 +121,6 @@ export default function HomePage() {
         summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
       />
       <FeaturedResearch sql={featuredResearchSql} />
-      {/* Commented out for release (see EC-485) */}
-      {/*<div className={'home-bg-dark'}>*/}
-      {/*<SectionLayout*/}
-      {/*  title="Exploring the Data"*/}
-      {/*  centerTitle*/}
-      {/*  ContainerProps={{ className: 'home-spacer' }}*/}
-      {/*>*/}
-      {/* Commented out for release (see EC-485) */}
-      {/*  <UpsetPlot*/}
-      {/*    sql={upsetPlotSql}*/}
-      {/*    rgbIndex={0}*/}
-      {/*    maxBarCount={20}*/}
-      {/*    setName="# Files per assay"*/}
-      {/*    combinationName="# individuals"*/}
-      {/*    onClick={handleUpsetPlotClick}*/}
-      {/*    // summaryLinkText='Explore All Data'*/}
-      {/*    // summaryLink='/Explore/Data'*/}
-      {/*  />*/}
-      {/*</SectionLayout>*/}
-      {/*</div>*/}
       <Box sx={{ backgroundColor: 'grey.100' }}>
         <RecentPublicationsGrid
           sql={topPublicationsSql}
@@ -154,6 +136,84 @@ export default function HomePage() {
         }}
       >
         <ELGettingStarted />
+
+        <div className={'home-bg-dark'}>
+          <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+            <FeaturedDataTabs
+              sql={dataSql}
+              rgbIndex={3}
+              configs={[
+                {
+                  title: 'Human Studies',
+                  icon: 'PERSON',
+                  explorePagePath: '/Explore/Studies',
+                  exploreObjectType: 'Studies',
+                  plotsConfig: {
+                    configs: [
+                      {
+                        title: 'The Long Life Family Study',
+                        description:
+                          'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
+                        facetsToPlot: ['dataTypes'],
+                        selectFacetColumnName: 'Study',
+                        selectFacetColumnValue: 'LLFS',
+                        detailsPagePath:
+                          '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                        unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
+                      },
+                      {
+                        title: 'ADAMTS7 Study',
+                        description: '',
+                        facetsToPlot: ['dataTypes'],
+                        selectFacetColumnName: 'Study',
+                        selectFacetColumnValue: 'ADAMTS7',
+                        detailsPagePath:
+                          '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                        unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Translation Studies',
+                  icon: 'TRANSLATIONAL',
+                  explorePagePath: '/Explore/Studies',
+                  exploreObjectType: 'Studies',
+                  plotsConfig: {
+                    configs: [
+                      {
+                        title: 'MRGWAS',
+                        description:
+                          'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
+                        facetsToPlot: ['dataTypes'],
+                        selectFacetColumnName: 'Study',
+                        selectFacetColumnValue: 'MRGWAS',
+                        detailsPagePath:
+                          '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
+                        unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
+                      },
+                      {
+                        title: 'Aging-PheWAS',
+                        description:
+                          'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
+                        facetsToPlot: ['dataTypes'],
+                        selectFacetColumnName: 'Study',
+                        selectFacetColumnValue: 'Aging-PheWAS',
+                        detailsPagePath:
+                          '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
+                        unitDescription: 'Files',
+                        plotType: 'STACKED_HORIZONTAL_BAR',
+                      },
+                    ],
+                  },
+                },
+              ]}
+            />
+          </SectionLayout>
+        </div>
         <ELContributeYourData />
         <PortalFeatureHighlights
           image={analyzetheclouds}

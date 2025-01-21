@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { useBlocker } from 'react-router-dom'
+import { useBlocker } from 'react-router'
 
 /**
  * Component wrapper for react-router `useBlocker` hook where the blocker is passed as a render prop. Use the hook when possible.

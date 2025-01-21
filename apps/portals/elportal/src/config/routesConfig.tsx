@@ -4,7 +4,8 @@ import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/compon
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
+import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 import { Markdown } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import HomePageV2 from '../pages/HomePageV2'
@@ -14,7 +15,6 @@ import StudyDetailsPage, {
 } from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
-import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 
 const routes: RouteObject[] = [
   {

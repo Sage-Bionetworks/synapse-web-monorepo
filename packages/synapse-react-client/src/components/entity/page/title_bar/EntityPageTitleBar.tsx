@@ -47,7 +47,11 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
           backgroundColor: 'grey.100',
         }}
       >
-        <Stack direction={'row'}>
+        <Stack
+          sx={{
+            flexDirection: { xs: 'column', sm: 'row' },
+          }}
+        >
           <Stack
             direction={'row'}
             alignItems={'center'}

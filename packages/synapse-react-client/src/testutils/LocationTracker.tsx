@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 /**
  * Simple component that writes the current React Router location to an object to be used in tests.

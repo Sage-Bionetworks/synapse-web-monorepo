@@ -11,7 +11,7 @@ import {
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import {
   AppUtils,
   FullWidthAlert,

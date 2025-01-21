@@ -1,9 +1,9 @@
+import { render, screen } from '@testing-library/react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { MemoryRouter } from 'react-router'
 import PortalFeatureHighlights, {
   PortalFeatureHighlightsProps,
 } from './PortalFeatureHighlights'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '@testing-library/react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 describe('PortalFeatureHighlights component', () => {
   const props: PortalFeatureHighlightsProps = {

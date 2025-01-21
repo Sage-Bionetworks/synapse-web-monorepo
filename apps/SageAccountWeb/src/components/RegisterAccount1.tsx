@@ -1,4 +1,3 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -7,6 +6,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
+import {
+  AliasType,
+  isMembershipInvtnSignedToken,
+} from '@sage-bionetworks/synapse-types'
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
+import { Link as RouterLink, useLocation } from 'react-router'
 import {
   displayToast,
   IconSvg,
@@ -18,16 +23,11 @@ import {
   useLastLoginInfo,
   useSynapseContext,
 } from 'synapse-react-client'
-import {
-  AliasType,
-  isMembershipInvtnSignedToken,
-} from '@sage-bionetworks/synapse-types'
-import { SourceAppLogo } from './SourceApp'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { EmailConfirmationPage } from './EmailConfirmationPage'
-import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
+import GoogleLogo from '../assets/g-logo.png'
 import { BackButton } from './BackButton'
+import { EmailConfirmationPage } from './EmailConfirmationPage'
+import { SourceAppLogo } from './SourceApp'
 import {
   StyledFormControl,
   StyledInnerContainer,
