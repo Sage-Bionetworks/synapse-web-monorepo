@@ -10,7 +10,7 @@ const ELGettingStarted: React.FC = () => {
       sx={{
         backgroundColor: 'primary.main',
         display: 'grid',
-        p: '80px',
+        padding: { xs: '40px', md: '80px' },
         gridTemplateColumns: {
           xs: '100%',
           sm: '50% 50%',
@@ -96,7 +96,6 @@ export function IconSquare({ iconUrl, headline, description }) {
       sx={{
         width: '100%',
         height: '100%',
-        overflow: 'hidden',
       }}
     >
       <Box

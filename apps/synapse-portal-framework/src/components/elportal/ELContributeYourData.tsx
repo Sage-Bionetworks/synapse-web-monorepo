@@ -8,7 +8,7 @@ function ELContributeYourData() {
       sx={{
         backgroundColor: 'primary.main',
         display: 'grid',
-        gridTemplateColumns: '33% 33% 33%',
+        gridTemplateColumns: { sm: '1fr', md: '33% 33% 33%' },
         position: 'relative',
         overflow: 'hidden',
       }}
