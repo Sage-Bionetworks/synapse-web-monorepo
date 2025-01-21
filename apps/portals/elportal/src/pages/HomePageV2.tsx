@@ -51,7 +51,7 @@ export default function HomePage() {
     </>
   )
   const title = (
-    <>
+    <Box sx={{ color: 'grey.100' }}>
       <div>Explore the data</div>
       about&nbsp;
       <Box
@@ -79,7 +79,7 @@ export default function HomePage() {
             3000,
             'long-lived animal species',
             3000,
-            'longevity-asssociated genes',
+            'longevity-associated genes',
             3000,
             'comparative biogerontology',
             3000,
@@ -93,24 +93,25 @@ export default function HomePage() {
           }}
         />
       </Box>
-    </>
+    </Box>
   )
-  const subTitle =
-    'The open science hub for breakthroughs in lifespan and healthspan'
+  const subTitle = (
+    <span style={{ color: theme.palette.grey[100] }}>
+      The open science hub for breakthroughs in lifespan and healthspan
+    </span>
+  )
   const description = (
-    <>
+    <span style={{ color: theme.palette.grey[200] }}>
       People with Exceptional Longevity (EL) can live in good health to 95, 100,
       or even beyond. <br /> <br /> The ELITE Portal brings together the latest
       research so that we can crack the code of longevity and all live longer,
       healthier lives.
-    </>
+    </span>
   )
   return (
     <>
       <PortalHomePageHeader
-        backgroundCss={`linear-gradient(90deg, #F2F5F5 50.5%, rgba(255, 255, 255, 0.00) 100%), 
-        linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), 
-        url(${headerbackground}) lightgray 50% / cover no-repeat`}
+        backgroundCss={`linear-gradient(90deg, #1C3D4F 45.5%, rgba(28, 61, 79, 0.00) 100%), url(${headerbackground}) lightgray 50% / cover no-repeat`}
         title={title}
         subTitle={subTitle}
         description={description}
