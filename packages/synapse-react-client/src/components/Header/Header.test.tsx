@@ -5,7 +5,7 @@ describe('Header Component', () => {
   const props: HeaderProps = {
     backgroundCss: 'https://test.com/img.png',
     title: 'Some title',
-    link: 'Some link',
+    buttonLink: 'Some link',
     subTitle: 'Some subtitle',
     description: 'Some description',
   }
@@ -26,6 +26,6 @@ describe('Header Component', () => {
   it('Renders button', () => {
     render(<Header {...props} />)
     const button = screen.getByRole('button')
-    expect(button).toHaveAttribute('href', props.link)
+    expect(button).toHaveAttribute('href', props.buttonLink)
   })
 })

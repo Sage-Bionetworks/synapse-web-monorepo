@@ -2,7 +2,7 @@ import { Box, Stack, Typography, Button } from '@mui/material'
 
 export type HeaderProps = {
   backgroundCss: string
-  link?: string
+  buttonLink?: string
   title: React.ReactNode
   subTitle: React.ReactNode
   description: React.ReactNode
@@ -10,7 +10,7 @@ export type HeaderProps = {
 
 const Header = ({
   backgroundCss,
-  link,
+  buttonLink,
   title,
   subTitle,
   description,
@@ -58,9 +58,9 @@ const Header = ({
         >
           {description}
         </Typography>
-        {link && (
+        {buttonLink && (
           <Button
-            href={link}
+            href={buttonLink}
             target="_blank"
             variant="contained"
             role="button"
