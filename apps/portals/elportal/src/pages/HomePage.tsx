@@ -29,26 +29,6 @@ export default function HomePage() {
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn51449135'} />
       </SectionLayout>
-      {/* Commented out for release (see EC-485) */}
-      {/*<div className={'home-bg-dark'}>*/}
-      {/*<SectionLayout*/}
-      {/*  title="Exploring the Data"*/}
-      {/*  centerTitle*/}
-      {/*  ContainerProps={{ className: 'home-spacer' }}*/}
-      {/*>*/}
-      {/* Commented out for release (see EC-485) */}
-      {/*  <UpsetPlot*/}
-      {/*    sql={upsetPlotSql}*/}
-      {/*    rgbIndex={0}*/}
-      {/*    maxBarCount={20}*/}
-      {/*    setName="# Files per assay"*/}
-      {/*    combinationName="# individuals"*/}
-      {/*    onClick={handleUpsetPlotClick}*/}
-      {/*    // summaryLinkText='Explore All Data'*/}
-      {/*    // summaryLink='/Explore/Data'*/}
-      {/*  />*/}
-      {/*</SectionLayout>*/}
-      {/*</div>*/}
       <SectionLayout
         title={"What's New"}
         centerTitle
