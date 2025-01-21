@@ -13,7 +13,7 @@ import {
   whatWeDoSql,
   featuredResearchSql,
 } from '../config/resources'
-import { Link, Typography } from '@mui/material'
+import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
 import headerbackground from '../assets/headerbackground.png'
@@ -21,6 +21,8 @@ import { Box } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 
 export default function HomePage() {
+  const theme = useTheme()
+
   const styledPortalFeatureHighlightsSummaryText = (
     <>
       The portal supports secure access to leading cloud-based analysis
@@ -63,9 +65,21 @@ export default function HomePage() {
           sequence={[
             'exceptional longevity',
             3000,
+            'healthy aging',
+            3000,
+            'lifespan',
+            3000,
+            'healthspan',
+            3000,
+            'familial longevity',
+            3000,
             'centenarians',
             3000,
-            'healthy aging',
+            'long-lived animal species',
+            3000,
+            'longevity-asssociated genes',
+            3000,
+            'comparative biogerontology',
             3000,
           ]}
           wrapper="span"
@@ -73,7 +87,7 @@ export default function HomePage() {
           repeat={Infinity}
           style={{
             fontWeight: 700,
-            color: '#39AC97',
+            color: theme.palette.primary.main,
           }}
         />
       </Box>
@@ -92,7 +106,7 @@ export default function HomePage() {
   return (
     <>
       <Header
-        backgroundImage={`linear-gradient(90deg, #F2F5F5 50.5%, rgba(255, 255, 255, 0.00) 100%), 
+        backgroundCss={`linear-gradient(90deg, #F2F5F5 50.5%, rgba(255, 255, 255, 0.00) 100%), 
         linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), 
         url(${headerbackground}) lightgray 50% / cover no-repeat`}
         title={title}

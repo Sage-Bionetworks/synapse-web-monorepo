@@ -44,6 +44,10 @@ export function HomePageThemeProvider({ children }: React.PropsWithChildren) {
             },
             '&:focus': {
               textDecoration: 'none',
+              boxShadow: 'none',
+            },
+            '&:active': {
+              boxShadow: 'none',
             },
           },
         },

@@ -1,14 +1,16 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography, Button } from '@mui/material'
 
 export type HeaderProps = {
-  backgroundImage: string
-  title?: React.ReactNode
-  subTitle?: React.ReactNode
-  description?: React.ReactNode
+  backgroundCss: string
+  link?: string
+  title: React.ReactNode
+  subTitle: React.ReactNode
+  description: React.ReactNode
 }
 
 const Header = ({
-  backgroundImage,
+  backgroundCss,
+  link,
   title,
   subTitle,
   description,
@@ -17,7 +19,7 @@ const Header = ({
     <Box
       data-testid="HeaderContainer"
       sx={{
-        background: backgroundImage,
+        background: backgroundCss,
         padding: { xs: 0, md: '50px 80px' },
       }}
     >
@@ -56,29 +58,31 @@ const Header = ({
         >
           {description}
         </Typography>
-        {/* TODO: uncomment and update this when button link is available */}
-        {/* <Button
-          href={''}
-          target="_blank"
-          variant="contained"
-          sx={theme => ({
-            whiteSpace: 'nowrap',
-            alignSelf: 'flex-start',
-            padding: '6px 24px',
-            fontWeight: 600,
-            boxShadow:
-              '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-            '&:hover': {
+        {link && (
+          <Button
+            href={link}
+            target="_blank"
+            variant="contained"
+            role="button"
+            sx={theme => ({
+              whiteSpace: 'nowrap',
+              alignSelf: 'flex-start',
+              padding: '6px 24px',
+              fontWeight: 600,
               boxShadow:
                 '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-            },
-            [theme.breakpoints.down('sm')]: {
-              width: '100%',
-            },
-          })}
-        >
-          Learn more
-        </Button> */}
+              '&:hover': {
+                boxShadow:
+                  '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
+              },
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+              },
+            })}
+          >
+            Learn more
+          </Button>
+        )}
       </Stack>
     </Box>
   )
