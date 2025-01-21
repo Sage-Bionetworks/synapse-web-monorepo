@@ -7,7 +7,7 @@ import {
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import FacetPlotsCard from './FacetPlotsCard'
+import FacetPlotsCard, { FacetPlotsCardProps } from './FacetPlotsCard'
 import { chunk } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
 import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
@@ -17,7 +17,8 @@ export type SingleQueryFacetPlotsCardsProps = {
   facetsToPlot?: string[]
   columnAliases?: Record<string, string>
   sql?: string
-} & Pick<QueryVisualizationContextType, 'unitDescription'>
+} & Pick<QueryVisualizationContextType, 'unitDescription'> &
+  Pick<FacetPlotsCardProps, 'plotType'>
 
 function getQueryRequest(sql: string): QueryBundleRequest {
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -36,7 +37,14 @@ function getQueryRequest(sql: string): QueryBundleRequest {
 }
 
 function SingleQueryFacetPlotsCards(props: SingleQueryFacetPlotsCardsProps) {
-  const { sql, facetsToPlot, rgbIndex, columnAliases, unitDescription } = props
+  const {
+    sql,
+    facetsToPlot,
+    rgbIndex,
+    columnAliases,
+    unitDescription,
+    plotType,
+  } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
 
   /**
@@ -69,6 +77,7 @@ function SingleQueryFacetPlotsCards(props: SingleQueryFacetPlotsCardsProps) {
                     <FacetPlotsCard
                       key={facetName}
                       facetsToPlot={[facetName]}
+                      plotType={plotType}
                     />
                   )
                 })}

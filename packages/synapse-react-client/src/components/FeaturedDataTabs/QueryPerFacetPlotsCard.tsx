@@ -8,7 +8,7 @@ import {
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import FacetPlotsCard from './FacetPlotsCard'
+import FacetPlotsCard, { FacetPlotsCardProps } from './FacetPlotsCard'
 
 export type QueryPerFacetPlotsCardProps = {
   title?: string
@@ -19,7 +19,8 @@ export type QueryPerFacetPlotsCardProps = {
   selectFacetColumnValue: string
   sql?: string
   detailsPagePath: string
-} & Pick<QueryVisualizationContextType, 'unitDescription'>
+} & Pick<QueryVisualizationContextType, 'unitDescription'> &
+  Pick<FacetPlotsCardProps, 'plotType'>
 
 function getQueryRequest(
   sql: string,
@@ -58,6 +59,7 @@ function QueryPerFacetPlotsCard(props: QueryPerFacetPlotsCardProps) {
     selectFacetColumnName,
     selectFacetColumnValue,
     detailsPagePath,
+    plotType,
     ...rest
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(
@@ -73,7 +75,6 @@ function QueryPerFacetPlotsCard(props: QueryPerFacetPlotsCardProps) {
    * See https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
    */
   const queryWrapperKey = JSON.stringify(initQueryRequest)
-
   return (
     <QueryWrapper
       {...rest}
@@ -87,6 +88,7 @@ function QueryPerFacetPlotsCard(props: QueryPerFacetPlotsCardProps) {
             description={description}
             facetsToPlot={facetsToPlot}
             detailsPagePath={detailsPagePath}
+            plotType={plotType}
           />
         </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
