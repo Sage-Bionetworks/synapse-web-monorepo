@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
-import Header, { HeaderProps } from './Header'
+import Header, { PortalHomePageHeaderProps } from './PortalHomePageHeader'
 
 describe('Header Component', () => {
-  const props: HeaderProps = {
+  const props: PortalHomePageHeaderProps = {
     backgroundCss: 'https://test.com/img.png',
     title: 'Some title',
     buttonLink: 'Some link',

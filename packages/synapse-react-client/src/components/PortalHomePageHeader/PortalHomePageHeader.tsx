@@ -1,6 +1,6 @@
 import { Box, Stack, Typography, Button } from '@mui/material'
 
-export type HeaderProps = {
+export type PortalHomePageHeaderProps = {
   backgroundCss: string
   buttonLink?: string
   title: React.ReactNode
@@ -8,13 +8,13 @@ export type HeaderProps = {
   description: React.ReactNode
 }
 
-const Header = ({
+const PortalHomePageHeader = ({
   backgroundCss,
   buttonLink,
   title,
   subTitle,
   description,
-}: HeaderProps) => {
+}: PortalHomePageHeaderProps) => {
   return (
     <Box
       data-testid="HeaderContainer"
@@ -88,4 +88,4 @@ const Header = ({
   )
 }
 
-export default Header
+export default PortalHomePageHeader

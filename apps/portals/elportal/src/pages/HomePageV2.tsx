@@ -4,7 +4,7 @@ import {
   ImageCardGridWithLinks,
   PortalFeatureHighlights,
   FeaturedResearch,
-  Header,
+  PortalHomePageHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -105,7 +105,7 @@ export default function HomePage() {
   )
   return (
     <>
-      <Header
+      <PortalHomePageHeader
         backgroundCss={`linear-gradient(90deg, #F2F5F5 50.5%, rgba(255, 255, 255, 0.00) 100%), 
         linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), 
         url(${headerbackground}) lightgray 50% / cover no-repeat`}
