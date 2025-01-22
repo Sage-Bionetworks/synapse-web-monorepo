@@ -63,7 +63,7 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   sql: datasetsSql,
   columnAliases,
   hideDownload: true,
-  defaultVisibleFacetColumnCount: 4,
+  initialExpandedFacetControls: ['assay', 'species', 'tissue', 'theme'],
   searchConfiguration: {
     searchable: [
       'datasetName',

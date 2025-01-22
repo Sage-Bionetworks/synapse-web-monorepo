@@ -33,7 +33,7 @@ export type FacetFilterControlsProps = {
     at least one non-null value will be shown. */
   availableFacets?: string[]
   facetValueSortConfigs?: FacetValueSortConfig[]
-  defaultVisibleFacetColumnCount?: number
+  initialExpandedFacetControls?: string[]
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -106,7 +106,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   const {
     availableFacets,
     facetValueSortConfigs,
-    defaultVisibleFacetColumnCount,
+    initialExpandedFacetControls,
   } = props
   const {
     getCurrentQueryRequest,
@@ -186,7 +186,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
       getDefaultShownFacetFilters(
         allFacetColumns,
         lastRequest.query.selectedFacets,
-        defaultVisibleFacetColumnCount,
+        initialExpandedFacetControls,
       ),
     )
   }, [facets])
