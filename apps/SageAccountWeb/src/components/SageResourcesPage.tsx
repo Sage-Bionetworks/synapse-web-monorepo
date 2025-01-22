@@ -2,20 +2,20 @@ import {
   Box,
   Button,
   Grid,
+  Link,
   Paper,
   Typography,
   useTheme,
-  Link,
 } from '@mui/material'
+import { Link as RouterLink } from 'react-router'
 import { ShowMore, SynapseHookUtils } from 'synapse-react-client'
+import { sourceAppConfigTableID } from '../resources'
 import { StyledOuterContainer } from './StyledComponents'
-import { Link as RouterLink } from 'react-router-dom'
 import {
-  SYNAPSE_SOURCE_APP_ID,
   SourceAppProvider,
+  SYNAPSE_SOURCE_APP_ID,
   useSourceApp,
 } from './useSourceApp'
-import { sourceAppConfigTableID } from '../resources'
 
 export function SageResourcesPageInternal() {
   const theme = useTheme()

@@ -1,40 +1,40 @@
-import ChangePassword, {
-  ChangePasswordProps,
-  PASSWORD_CHANGED_SUCCESS_MESSAGE,
-} from './ChangePassword'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
-import { server } from '../../mocks/msw/server'
 import { noop } from 'lodash-es'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
-import SynapseClient from '../../synapse-client'
-import {
-  MOCK_USER_ID,
-  mockUserProfileData,
-} from '../../mocks/user/mock_user_profile'
 import {
   getBadRequestChangePasswordHandler,
   getRequires2FAChangePasswordHandler,
   getSuccessfulChangePasswordHandler,
 } from '../../mocks/msw/handlers/changePasswordHandlers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
-import { SynapseContextType } from '../../utils'
-import { KeyFactory } from '../../synapse-queries'
 import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
+import { server } from '../../mocks/msw/server'
+import {
+  MOCK_USER_ID,
+  mockUserProfileData,
+} from '../../mocks/user/mock_user_profile'
+import SynapseClient from '../../synapse-client'
+import { KeyFactory } from '../../synapse-queries'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../utils'
+import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
   BEGIN_RESET_2FA_BUTTON_TEXT,
   SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
   TWO_FACTOR_RESET_CONFIRMATION_TEXT,
 } from '../Authentication/OneTimePasswordForm'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
+import ChangePassword, {
+  ChangePasswordProps,
+  PASSWORD_CHANGED_SUCCESS_MESSAGE,
+} from './ChangePassword'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
 
 const mockDisplayToast = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
-jest.mock('react-router-dom', () => {
+jest.mock('react-router', () => {
   return {
     Navigate: jest.fn(({ to }) => `Redirected to ${to}`),
   }

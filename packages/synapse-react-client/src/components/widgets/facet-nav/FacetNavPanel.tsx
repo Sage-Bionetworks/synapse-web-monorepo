@@ -46,7 +46,8 @@ export type FacetNavPanelProps = {
 
 const maxLabelLength: number = 19
 
-export type PlotType = 'PIE' | 'BAR'
+// STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
+export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
 
 const layout: Partial<Plotly.Layout> = {
   showlegend: false,
@@ -159,29 +160,41 @@ export async function extractPlotDataArray(
               .replace(')', ', 0.25)'),
       )
     : colorPalette
+
+  const counts: Plotly.Datum[] = facetToPlot.facetValues.map(
+    facet => facet.count,
+  )
+  let x: Plotly.Datum[] | Plotly.Datum[][] | Plotly.TypedArray | undefined
+
+  if (plotType === 'BAR') {
+    x = facetToPlot.facetValues.map(
+      facet =>
+        labels.find(label => label.facet === facet)?.label ?? facet.value,
+    )
+  } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
+    x = counts
+  }
+
+  let y: Plotly.Datum[] | Plotly.Datum[][] | Plotly.TypedArray | undefined
+  if (plotType === 'BAR') {
+    y = facetToPlot.facetValues.map(facet => facet.count)
+  } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
+    y = Array(x?.length).fill('Proportional') // single value for every x value
+  }
+
   const singleChartData: Plotly.Data = {
-    values:
-      plotType === 'PIE'
-        ? facetToPlot.facetValues.map(facet => facet.count)
-        : undefined,
+    values: plotType === 'PIE' ? counts : undefined,
     labels: labels.map(el => el.label),
     text,
-    x:
-      plotType === 'BAR'
-        ? facetToPlot.facetValues.map(
-            facet =>
-              labels.find(label => label.facet === facet)?.label ?? facet.value,
-          )
-        : undefined,
-    y:
-      plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet => facet.count)
-        : undefined,
+    x,
+    y,
+    orientation: plotType === 'STACKED_HORIZONTAL_BAR' ? 'h' : 'v',
     // @ts-expect-error
     facetEnumerationValues: facetToPlot.facetValues.map(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
+    textposition: plotType === 'STACKED_HORIZONTAL_BAR' ? 'none' : 'inside',
     hovertemplate:
       plotType === 'PIE'
         ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
@@ -196,10 +209,9 @@ export async function extractPlotDataArray(
         : undefined,
     marker: {
       colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
-      color: plotType === 'BAR' ? selectionAwareColorPalette : undefined,
+      color: plotType === 'PIE' ? undefined : selectionAwareColorPalette,
     },
   }
-
   const result = {
     data: [singleChartData],
     labels,
@@ -236,17 +248,34 @@ export function getPlotStyle(
   plotType: PlotType,
   maxHeight: number,
 ): { width: string; height: string } {
-  const quotient = plotType === 'BAR' ? 0.8 : 0.6
-  const width = parentWidth ? parentWidth * quotient : 200
-  let height = plotType === 'PIE' ? width : width / 3
-  // max height of .PlotsContainer row col* is 200px, so the effective plot height max is around 150 unless it's expanded
-  if (height > maxHeight) {
-    height = maxHeight
+  if (parentWidth != undefined) {
+    let quotient = 1
+    switch (plotType) {
+      case 'BAR':
+        quotient = 0.8
+        break
+      case 'PIE':
+        quotient = 0.6
+        break
+      case 'STACKED_HORIZONTAL_BAR':
+        quotient = 1
+        break
+    }
+    const width = parentWidth ? parentWidth * quotient : 200
+    let height = plotType === 'PIE' ? width : width / 3
+    // max height of .PlotsContainer row col* is 200px, so the effective plot height max is around 150 unless it's expanded
+    if (height > maxHeight) {
+      height = maxHeight
+    }
+    return {
+      width: `${width}px`,
+      height: `${height}px`,
+    }
   }
-
+  //else parent width is undefined
   return {
-    width: `${width}px`,
-    height: `${height}px`,
+    width: '100%',
+    height: `${maxHeight}px`,
   }
 }
 

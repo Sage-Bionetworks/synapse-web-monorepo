@@ -1,25 +1,25 @@
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import {
   Box,
+  Card,
   CardMedia,
   Grid,
   Link,
-  Typography,
   Skeleton,
-  Card,
+  Typography,
 } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
-import { SynapseConstants } from '../../utils'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
   QueryBundleRequest,
   Row,
 } from '@sage-bionetworks/synapse-types'
+import { Link as RouterLink } from 'react-router'
+import { useGetStablePresignedUrl } from '../../synapse-queries'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
 
 const BORDER_RADIUS = '6px'
 

@@ -1,5 +1,5 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { getColumnIndex } from 'synapse-react-client'
 import { useSetCanonicalUrl } from '../../utils/useSetCanonicalUrl'
 import { useDetailsPageContext } from './DetailsPageContext'

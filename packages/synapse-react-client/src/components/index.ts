@@ -87,6 +87,7 @@ export * from './RecentPublicationsGrid'
 export * from './ImageCardGridWithLinks'
 export * from './PortalFeatureHighlights'
 export * from './FeaturedResearch'
+export * from './PortalHomePageHeader'
 export * from './Partners'
 
 // TODO: Find a better way to expose Icon components

@@ -1,10 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { IconButton, SxProps } from '@mui/material'
 import { MouseEventHandler } from 'react'
-import {
-  Link as RouterLink,
-  LinkProps as RouterLinkProps,
-} from 'react-router-dom'
+import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router'
 
 type StyleProps = { sx?: SxProps }
 type BackLinkProps = { to: RouterLinkProps['to'] }

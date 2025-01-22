@@ -1,22 +1,5 @@
-import { SyntheticEvent, useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseConstants,
-  SynapseContextUtils,
-} from 'synapse-react-client'
-import CloseIcon from '@mui/icons-material/Close'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
-import {
-  UserBundle,
-  UserProfile,
-  VerificationSubmission,
-} from '@sage-bionetworks/synapse-types'
-import { getSearchParam } from '../../URLUtils'
-import { ProfileFieldsEditor } from './ProfileFieldsEditor'
-import { VerifyIdentify } from './VerifyIdentify'
-import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Box,
   Button,
@@ -26,14 +9,31 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { SourceAppLogo } from '../SourceApp'
-import Attestation from './Attestation'
-import ThankYou from './ThankYou'
-import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
-import { ReturnToAppButton } from './ReturnToAppButton'
-import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
+import {
+  UserBundle,
+  UserProfile,
+  VerificationSubmission,
+} from '@sage-bionetworks/synapse-types'
+import { SyntheticEvent, useEffect, useState } from 'react'
+import { Navigate } from 'react-router'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseConstants,
+  SynapseContextUtils,
+} from 'synapse-react-client'
+import { getSearchParam } from '../../URLUtils'
 import { BackButton } from '../BackButton'
+import { SourceAppLogo } from '../SourceApp'
+import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
+import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { useSourceApp } from '../useSourceApp'
+import Attestation from './Attestation'
+import { ProfileFieldsEditor } from './ProfileFieldsEditor'
+import { ReturnToAppButton } from './ReturnToAppButton'
+import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
+import ThankYou from './ThankYou'
+import { VerifyIdentify } from './VerifyIdentify'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
   'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'

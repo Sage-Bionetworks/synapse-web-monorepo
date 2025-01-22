@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext } from 'react'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject } from 'react-router'
 import {
   FooterConfig,
   HomePageHeaderConfig,
