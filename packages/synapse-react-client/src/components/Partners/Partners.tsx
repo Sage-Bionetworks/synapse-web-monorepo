@@ -47,9 +47,9 @@ const RenderPartnerIcon = ({
   isLoading,
 }: Icons) => {
   const fileId = partner.values[imageColIndex] ?? ''
-  const url = useImageUrl(fileId ?? '', entityId)
+  const imageUrl = useImageUrl(fileId ?? '', entityId)
 
-  if (!url && !partner?.values[organizationNameColIndex]) {
+  if (!imageUrl && !partner?.values[organizationNameColIndex]) {
     return
   }
 
@@ -63,12 +63,14 @@ const RenderPartnerIcon = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        textDecoration: 'none',
+        '&:hover': { textDecoration: 'none' },
       }}
     >
-      {url ? (
+      {imageUrl ? (
         <CardMedia
           component="img"
-          image={url}
+          image={imageUrl}
           aria-hidden="true"
           sx={{
             width: '156px',
@@ -108,6 +110,7 @@ const RenderPartnerIcon = ({
                 fontSize: '14px',
                 fontWeight: 400,
                 lineHeight: '130%',
+                color: 'grey.900',
               }}
             >
               {partner?.values[organizationNameColIndex ?? -1]}
