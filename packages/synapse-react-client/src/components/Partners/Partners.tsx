@@ -53,11 +53,9 @@ const RenderPartnerIcon = ({
     return
   }
 
-  if (isLoading) {
-    return <Skeleton variant="rectangular" height={101} width={156} />
-  }
-
-  return (
+  return isLoading ? (
+    <Skeleton variant="rectangular" height={101} width={156} />
+  ) : (
     <Link
       href={partner.values[websiteColIndex] ?? ''}
       target="_blank"

@@ -1,6 +1,5 @@
 import Partners, { PartnersProps } from './Partners'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { screen, render, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
@@ -47,7 +46,7 @@ describe('ImageCardGridWithLinks Tests', () => {
         rows: [
           {
             rowId: 1,
-            values: ['Partner 1', '149976034', 'http://somewebsite.com'],
+            values: ['Partner 1', '149976034', 'http://somewebsite1.com'],
           },
           {
             rowId: 2,
@@ -102,28 +101,31 @@ describe('ImageCardGridWithLinks Tests', () => {
     )
   })
 
-  const renderWithRouter = (props: PartnersProps) => {
-    const router = createMemoryRouter([
-      {
-        path: '/',
-        element: <Partners {...props} />,
-      },
-    ])
-    return render(<RouterProvider router={router} />, {
+  const renderComponent = (props: PartnersProps) => {
+    return render(<Partners {...props} />, {
       wrapper: createWrapper(),
     })
   }
 
   it('fetches and displays partners', async () => {
-    renderWithRouter(mockProps)
+    renderComponent(mockProps)
 
     await waitFor(() =>
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
 
-    expect(screen.getByText('Partner 3')).toBeInTheDocument()
-
     const partners = screen.getAllByRole('link')
     expect(partners).toHaveLength(3)
+    expect(screen.getByText('Partner 3')).toBeInTheDocument()
+    expect(partners[0]).toHaveAttribute('href', 'http://somewebsite1.com')
+    expect(partners[1]).toHaveAttribute('href', 'http://somewebsite2.com')
+    expect(partners[2]).toHaveAttribute('href', 'http://somewebsite3.com')
+
+    partners.forEach((partner, index) => {
+      expect(partner).toHaveAttribute(
+        'href',
+        `http://somewebsite${index + 1}.com`,
+      )
+    })
   })
 })
