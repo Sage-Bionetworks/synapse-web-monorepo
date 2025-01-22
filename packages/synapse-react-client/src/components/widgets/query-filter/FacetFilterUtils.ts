@@ -10,9 +10,13 @@ import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 export function getDefaultShownFacetFilters(
   facetColumns: string[],
   selectedFacets?: FacetColumnRequest[],
+  defaultVisibleFacetColumnCount?: number,
 ): Set<string> {
   const columnsWithExistingFilters = (selectedFacets ?? []).map(
     fcr => fcr.columnName,
   )
-  return new Set([...facetColumns.slice(0, 3), ...columnsWithExistingFilters])
+  return new Set([
+    ...facetColumns.slice(0, defaultVisibleFacetColumnCount ?? 3),
+    ...columnsWithExistingFilters,
+  ])
 }

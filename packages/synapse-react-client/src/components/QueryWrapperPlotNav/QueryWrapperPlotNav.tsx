@@ -77,6 +77,7 @@ type QueryWrapperPlotNavOwnProps = {
    * Note: This parameter does not currently apply to the pie/bar chart visualizations, but it probably should.
    */
   facetValueSortConfigs?: FacetFilterControlsProps['facetValueSortConfigs']
+  defaultVisibleFacetColumnCount?: FacetFilterControlsProps['defaultVisibleFacetColumnCount']
   customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
@@ -128,6 +129,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'cardConfiguration'
   | 'facetsToPlot'
   | 'availableFacets'
+  | 'defaultVisibleFacetColumnCount'
   | 'facetValueSortConfigs'
   | 'hideDownload'
   | 'hideQueryCount'
@@ -154,6 +156,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     facetsToPlot,
     availableFacets,
     facetValueSortConfigs,
+    defaultVisibleFacetColumnCount,
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
@@ -242,6 +245,9 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   <FacetFilterControls
                     availableFacets={availableFacets}
                     facetValueSortConfigs={facetValueSortConfigs}
+                    defaultVisibleFacetColumnCount={
+                      defaultVisibleFacetColumnCount
+                    }
                   />
                 </>
               )}

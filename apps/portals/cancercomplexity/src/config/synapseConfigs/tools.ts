@@ -52,6 +52,7 @@ export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   name: 'Tools',
   columnAliases,
+  defaultVisibleFacetColumnCount: 4,
   searchConfiguration: {
     searchable: [
       'toolName',
