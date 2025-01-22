@@ -153,7 +153,11 @@ const FeaturedResearchTopCard = ({
         }}
       />
       <Stack useFlexGap gap={'16px'}>
-        <Typography variant="headline2" fontSize={'36px'} color={'grey.1000'}>
+        <Typography
+          variant="headline2"
+          color={'grey.1000'}
+          sx={{ fontSize: { xs: '30px', md: '36px' } }}
+        >
           <Link
             href={research.values[linkColIndex] ?? ''}
             target="_blank"
@@ -253,7 +257,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
         sx={{
           borderTop: '3px solid',
           borderColor: 'grey.400',
-          padding: '30px 0',
+          padding: '30px 0 0 0',
         }}
       >
         <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>

@@ -65,9 +65,12 @@ function ELContributeYourData() {
         >
           <Button
             variant="contained"
-            sx={{
+            sx={theme => ({
               border: '1px solid white',
-            }}
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+              },
+            })}
           >
             Start Contributing
           </Button>
