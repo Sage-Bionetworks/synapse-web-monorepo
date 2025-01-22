@@ -5,6 +5,7 @@ import {
   PortalFeatureHighlights,
   FeaturedResearch,
   UpsetPlot,
+  PortalHomePageHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -15,14 +16,18 @@ import {
   dataSql,
   upsetPlotSql,
 } from '../config/resources'
-import { Link, Typography } from '@mui/material'
+import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
+import headerbackground from '../assets/headerbackground.png'
 import { Box } from '@mui/material'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import { handleUpsetPlotClick } from 'src/config/synapseConfigs/handleUpsetPlotClick'
+import { TypeAnimation } from 'react-type-animation'
 
 export default function HomePage() {
+  const theme = useTheme()
+
   const styledPortalFeatureHighlightsSummaryText = (
     <>
       The portal supports secure access to leading cloud-based analysis
@@ -48,8 +53,72 @@ export default function HomePage() {
       resources for data analysis and collaboration.
     </>
   )
+  const title = (
+    <Box sx={{ color: 'grey.100' }}>
+      <div>Explore the data</div>
+      about&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            minHeight: '150px',
+            display: 'block',
+          },
+        })}
+      >
+        <TypeAnimation
+          sequence={[
+            'exceptional longevity',
+            3000,
+            'healthy aging',
+            3000,
+            'lifespan',
+            3000,
+            'healthspan',
+            3000,
+            'familial longevity',
+            3000,
+            'centenarians',
+            3000,
+            'long-lived animal species',
+            3000,
+            'longevity-associated genes',
+            3000,
+            'comparative biogerontology',
+            3000,
+          ]}
+          wrapper="span"
+          speed={20}
+          repeat={Infinity}
+          style={{
+            fontWeight: 700,
+            color: theme.palette.primary.main,
+          }}
+        />
+      </Box>
+    </Box>
+  )
+  const subTitle = (
+    <span style={{ color: theme.palette.grey[100] }}>
+      The open science hub for breakthroughs in lifespan and healthspan
+    </span>
+  )
+  const description = (
+    <span style={{ color: theme.palette.grey[200] }}>
+      People with Exceptional Longevity (EL) can live in good health to 95, 100,
+      or even beyond. <br /> <br /> The ELITE Portal brings together the latest
+      research so that we can crack the code of longevity and all live longer,
+      healthier lives.
+    </span>
+  )
   return (
     <>
+      <PortalHomePageHeader
+        backgroundCss={`linear-gradient(90deg, #1C3D4F 45.5%, rgba(28, 61, 79, 0.00) 100%), url(${headerbackground}) lightgray 50% / cover no-repeat`}
+        title={title}
+        subTitle={subTitle}
+        description={description}
+      />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
