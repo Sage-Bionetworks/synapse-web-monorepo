@@ -1,10 +1,8 @@
 import _, { countBy } from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
 import { CSSProperties } from 'react'
-import createPlotlyComponent from 'react-plotly.js/factory'
+import Plot from './Plot'
 import { Dictionary, GraphItem, PlotStyle } from './types'
-
-const Plot = createPlotlyComponent(Plotly)
 
 export type DotPlotProps = {
   plotData: GraphItem[]

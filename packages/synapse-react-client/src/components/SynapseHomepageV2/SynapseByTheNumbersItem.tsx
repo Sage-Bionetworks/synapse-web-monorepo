@@ -1,9 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import { Row } from '@sage-bionetworks/synapse-types'
 import Plotly, { Datum } from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
+import Plot from '../Plot/Plot'
 
-const Plot = createPlotlyComponent(Plotly)
 export type SynapseByTheNumbersItemProps = {
   title: string
   description: string

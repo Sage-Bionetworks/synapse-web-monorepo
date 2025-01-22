@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
-import PlotlyWrapper from '../PlotlyWrapper'
+import Plot from './Plot'
 import rawData from '../../mocks/distribution_data.json'
 import Plotly from 'plotly.js-basic-dist'
 
 const meta = {
-  title: 'Components/PlotlyWrapper',
-  component: PlotlyWrapper,
+  title: 'Components/PlotlyPlot',
+  component: Plot,
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -111,7 +111,6 @@ export const BarChart: Story = {
   args: {
     data: geneticsscoreData,
     layout: specialBarLayout,
-    containerWidth: 300,
     config: plotConfigs,
   },
 }
@@ -120,7 +119,6 @@ export const BoxPlot: Story = {
   args: {
     data: boxPlotData,
     layout: boxPlotLayout,
-    containerWidth: 300,
     config: plotConfigs,
     className: 'chart-boxplot',
   },
@@ -130,7 +128,6 @@ export const NoData: Story = {
   args: {
     data: [],
     layout: specialBarLayout,
-    containerWidth: 300,
     config: plotConfigs,
   },
 }

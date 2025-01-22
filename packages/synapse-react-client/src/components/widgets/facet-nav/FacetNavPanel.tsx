@@ -2,7 +2,6 @@ import { InfoOutlined } from '@mui/icons-material'
 import Plotly from 'plotly.js-basic-dist'
 import { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { SynapseConstants } from '../../../utils'
@@ -25,8 +24,7 @@ import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
 import { useQueryContext } from '../../QueryContext'
-
-const Plot = createPlotlyComponent(Plotly)
+import Plot from '../../Plot/Plot'
 
 export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (
