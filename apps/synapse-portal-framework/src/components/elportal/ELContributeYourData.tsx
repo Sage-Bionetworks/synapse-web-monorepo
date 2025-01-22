@@ -31,8 +31,7 @@ function ELContributeYourData() {
           flex: '1 1 auto',
           zIndex: 1,
           textAlign: 'center',
-          paddingTop: '100px',
-          paddingBottom: '100px',
+          padding: { xs: '100px 40px', md: '100px 0' },
         }}
       >
         <Typography
