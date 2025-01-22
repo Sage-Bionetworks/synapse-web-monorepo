@@ -11,7 +11,7 @@ import { SynapseConstants } from '../../utils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 
-export type PartnersProps = {
+export type PortalFeaturedPartnersProps = {
   sql: string
 }
 
@@ -122,7 +122,7 @@ const RenderPartnerIcon = ({
   )
 }
 
-const Partners = ({ sql }: PartnersProps) => {
+const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -214,4 +214,4 @@ const Partners = ({ sql }: PartnersProps) => {
   )
 }
 
-export default Partners
+export default PortalFeaturedPartners

@@ -1,4 +1,6 @@
-import Partners, { PartnersProps } from './Partners'
+import PortalFeaturedPartners, {
+  PortalFeaturedPartnersProps,
+} from './PortalFeaturedPartners'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { screen, render, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -14,7 +16,7 @@ jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
 describe('ImageCardGridWithLinks Tests', () => {
-  const mockProps: PartnersProps = {
+  const mockProps: PortalFeaturedPartnersProps = {
     sql: 'SELECT * FROM syn62661043',
   }
 
@@ -101,8 +103,8 @@ describe('ImageCardGridWithLinks Tests', () => {
     )
   })
 
-  const renderComponent = (props: PartnersProps) => {
-    return render(<Partners {...props} />, {
+  const renderComponent = (props: PortalFeaturedPartnersProps) => {
+    return render(<PortalFeaturedPartners {...props} />, {
       wrapper: createWrapper(),
     })
   }

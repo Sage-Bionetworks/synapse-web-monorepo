@@ -6,7 +6,7 @@ import {
   FeaturedResearch,
   UpsetPlot,
   PortalHomePageHeader,
-  Partners,
+  PortalFeaturedPartners,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -121,7 +121,7 @@ export default function HomePage() {
         subTitle={subTitle}
         description={description}
       />
-      <Partners sql={partnersSql2} />
+      <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
