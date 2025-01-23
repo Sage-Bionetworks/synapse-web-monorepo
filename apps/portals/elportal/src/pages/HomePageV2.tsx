@@ -6,6 +6,7 @@ import {
   FeaturedResearch,
   UpsetPlot,
   PortalHomePageHeader,
+  GoalsV2,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -15,6 +16,7 @@ import {
   featuredResearchSql,
   dataSql,
   upsetPlotSql,
+  goalsV2Table,
 } from '../config/resources'
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
@@ -140,6 +142,7 @@ export default function HomePage() {
         }}
       >
         <ELGettingStarted />
+        <GoalsV2 entityId={goalsV2Table} dataLink="/Explore/Data" />
         <div className={'home-bg-dark'}>
           <SectionLayout
             title="Exploring the Data"
