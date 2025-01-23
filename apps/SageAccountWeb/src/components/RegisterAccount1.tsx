@@ -163,9 +163,10 @@ export const RegisterAccount1 = () => {
   const onSignUpWithGoogle = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
-      displayToast('Please provide a user name and try again.', 'danger')
+      setUsernameInvalidReason('Please provide a user name and try again.')
       return
     }
+    setUsernameInvalidReason(null)
     setIsLoading(true)
     try {
       const aliasCheckResponse = await SynapseClient.isAliasAvailable({
@@ -340,7 +341,6 @@ export const RegisterAccount1 = () => {
                           value={username || ''}
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
-                              setUsernameInvalidReason(null)
                               void onSignUpWithGoogle(e)
                             }
                           }}
