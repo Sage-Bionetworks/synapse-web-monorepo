@@ -71,7 +71,7 @@ export function LoadingActionRequiredCard() {
     <ActionRequiredCardContainer>
       <Skeleton variant="rectangular" width={136} height={74} />
       <div>
-        <Skeleton width={320} />
+        <Skeleton width={250} />
         <Skeleton width={100} />
       </div>
       <Skeleton variant="rectangular" width={160} height={33} />
