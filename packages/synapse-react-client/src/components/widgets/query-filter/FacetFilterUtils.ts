@@ -10,9 +10,23 @@ import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 export function getDefaultShownFacetFilters(
   facetColumns: string[],
   selectedFacets?: FacetColumnRequest[],
+  initialExpandedFacetControls?: string[],
 ): Set<string> {
   const columnsWithExistingFilters = (selectedFacets ?? []).map(
     fcr => fcr.columnName,
   )
-  return new Set([...facetColumns.slice(0, 3), ...columnsWithExistingFilters])
+  if (initialExpandedFacetControls == undefined) {
+    return new Set([...facetColumns.slice(0, 3), ...columnsWithExistingFilters])
+  } else {
+    //  initialExpandedFacetControls is set, use it
+    const initialExpandedFacetControlsSet = new Set(
+      initialExpandedFacetControls,
+    )
+    return new Set([
+      ...facetColumns.filter(columnName =>
+        initialExpandedFacetControlsSet.has(columnName),
+      ),
+      ...columnsWithExistingFilters,
+    ])
+  }
 }

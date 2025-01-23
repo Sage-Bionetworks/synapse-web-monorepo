@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [main]
 env:
-  PW_ALL_BLOBS_DIR: all-blob-reports
+  PW_ALL_BLOBS_DIR: playwright-result-blob-
   PORTALS_E2E_SUBDIR: apps/portals-e2e
 concurrency:
   group: '${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}'
@@ -50,10 +50,10 @@ jobs:
         env:
           PORTAL: ${{ matrix.PORTAL }}
       - name: Upload blob report to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ env.PW_ALL_BLOBS_DIR }}
+          name: ${{ env.PW_ALL_BLOBS_DIR }}${{ matrix.PORTAL }}
           path: '${{ env.PORTALS_E2E_SUBDIR }}/blob-report'
           retention-days: 1
   merge-e2e-reports:
@@ -64,19 +64,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PW_ALL_BLOBS_DIR }}
+          pattern: ${{ env.PW_ALL_BLOBS_DIR }}*
           path: ${{ env.PORTALS_E2E_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
+          merge-multiple: true
       - name: Merge into HTML Report
         run: cd ${{ env.PORTALS_E2E_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
       - name: Upload HTML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: '${{ env.PORTALS_E2E_SUBDIR }}/playwright-report'
