@@ -6,18 +6,13 @@ import {
   Typography,
   Skeleton,
 } from '@mui/material'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  QueryBundleRequest,
-  Row,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import * as SynapseConstants from '../../utils/SynapseConstants'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
 
 export type FeaturedResearchProps = {
@@ -33,20 +28,6 @@ export type FeaturedResearchCardProps = {
   descriptionColIndex: number
   linkColIndex: number
   imageColIndex: number
-}
-
-const useImageUrl = (fileId: string, entityId: string) => {
-  const fha: FileHandleAssociation = {
-    associateObjectId: entityId,
-    associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: fileId || '',
-  }
-  const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
-    enabled: !!fileId,
-  })
-  const dataUrl = stablePresignedUrl?.dataUrl
-
-  return dataUrl
 }
 
 const FeaturedResearchCard = ({

@@ -1,15 +1,10 @@
 import { Box, Typography, CardMedia, Skeleton, Link } from '@mui/material'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  QueryBundleRequest,
-  Row,
-} from '@sage-bionetworks/synapse-types'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { SynapseConstants } from '../../utils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
+import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 
 export type PortalFeaturedPartnersProps = {
   sql: string
@@ -24,21 +19,7 @@ type Icons = {
   isLoading?: boolean
 }
 
-const useImageUrl = (fileId: string, entityId: string) => {
-  const fha: FileHandleAssociation = {
-    associateObjectId: entityId,
-    associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: fileId || '',
-  }
-  const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
-    enabled: !!fileId,
-  })
-  const dataUrl = stablePresignedUrl?.dataUrl
-
-  return dataUrl
-}
-
-const RenderPartnerIcon = ({
+const PartnerIcon = ({
   partner,
   imageColIndex,
   organizationNameColIndex,
@@ -53,9 +34,11 @@ const RenderPartnerIcon = ({
     return
   }
 
-  return isLoading ? (
-    <Skeleton variant="rectangular" height={101} width={156} />
-  ) : (
+  if (isLoading) {
+    return <Skeleton variant="rectangular" height={101} width={156} />
+  }
+
+  return (
     <Link
       href={partner.values[websiteColIndex] ?? ''}
       target="_blank"
@@ -63,8 +46,7 @@ const RenderPartnerIcon = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        textDecoration: 'none',
-        '&:hover': { textDecoration: 'none' },
+        textDecoration: 'none !important',
       }}
     >
       {imageUrl ? (
@@ -142,7 +124,7 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
 
   enum ExpectedColumns {
     CARDLOGO = 'cardLogo',
-    ORGANIZATIONNAME = 'organizationName',
+    ORGANIZATION_NAME = 'organizationName',
     WEBSITE = 'website',
   }
 
@@ -152,7 +134,7 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
   )
 
   const organizationNameColIndex = getFieldIndex(
-    ExpectedColumns.ORGANIZATIONNAME,
+    ExpectedColumns.ORGANIZATION_NAME,
     queryResultBundle,
   )
 
@@ -199,7 +181,7 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
         })}
       >
         {dataRows?.map((partner, index) => (
-          <RenderPartnerIcon
+          <PartnerIcon
             key={`partner-${index}`}
             partner={partner}
             imageColIndex={imageColIndex}
