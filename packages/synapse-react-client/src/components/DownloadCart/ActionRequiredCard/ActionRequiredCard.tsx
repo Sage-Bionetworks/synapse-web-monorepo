@@ -29,6 +29,9 @@ const ActionRequiredCardContainer: StyledComponent<PaperProps> = styled(Paper, {
   alignItems: 'center',
   gridTemplateColumns: '160px auto 200px',
   gap: theme.spacing(4),
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: '1fr', // Single column layout for mobile
+  },
 }))
 
 /**
