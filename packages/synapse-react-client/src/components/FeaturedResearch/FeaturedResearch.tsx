@@ -5,6 +5,7 @@ import {
   Stack,
   Typography,
   Skeleton,
+  Fade,
 } from '@mui/material'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
@@ -14,6 +15,9 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunction
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
+import { useInView } from 'react-intersection-observer'
+
+const transitionTimeoutMs = 400
 
 export type FeaturedResearchProps = {
   sql: string
@@ -108,6 +112,7 @@ const FeaturedResearchTopCard = ({
   imageColIndex,
   isLoading,
 }: FeaturedResearchCardProps) => {
+  const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
   const fileId = research.values[imageColIndex] ?? ''
   const url = useImageUrl(fileId || '', entityId)
   if (isLoading) {
@@ -122,17 +127,19 @@ const FeaturedResearchTopCard = ({
     )
   }
   return (
-    <div>
-      <CardMedia
-        component="img"
-        image={url}
-        aria-hidden="true"
-        sx={{
-          objectFit: 'cover',
-          borderRadius: '10px',
-          marginBottom: '30px',
-        }}
-      />
+    <Box ref={ref}>
+      <Fade in={inView} timeout={transitionTimeoutMs}>
+        <CardMedia
+          component="img"
+          image={url}
+          aria-hidden="true"
+          sx={{
+            objectFit: 'cover',
+            borderRadius: '10px',
+            marginBottom: '30px',
+          }}
+        />
+      </Fade>
       <Stack useFlexGap gap={'16px'}>
         <Typography
           variant="headline2"
@@ -160,7 +167,7 @@ const FeaturedResearchTopCard = ({
           Read more
         </Link>
       </Stack>
-    </div>
+    </Box>
   )
 }
 
