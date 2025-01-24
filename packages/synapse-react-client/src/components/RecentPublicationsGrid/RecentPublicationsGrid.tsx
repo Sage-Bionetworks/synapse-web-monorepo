@@ -234,12 +234,15 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
               variant="contained"
               to={buttonLink}
               component={Link}
-              sx={{
+              sx={theme => ({
                 whiteSpace: 'nowrap',
                 alignSelf: 'flex-start',
                 padding: '6px 24px',
                 fontWeight: 600,
-              }}
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                },
+              })}
             >
               {buttonLinkText}
             </Button>

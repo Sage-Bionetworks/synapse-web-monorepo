@@ -7,6 +7,7 @@ import {
   UpsetPlot,
   PortalHomePageHeader,
   GoalsV2,
+  PortalFeaturedPartners,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -17,6 +18,7 @@ import {
   dataSql,
   upsetPlotSql,
   goalsV2Table,
+  partnersSql2,
 } from '../config/resources'
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
@@ -121,6 +123,7 @@ export default function HomePage() {
         subTitle={subTitle}
         description={description}
       />
+      <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
