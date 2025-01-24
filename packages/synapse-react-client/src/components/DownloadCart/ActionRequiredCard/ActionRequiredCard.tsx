@@ -29,6 +29,9 @@ const ActionRequiredCardContainer: StyledComponent<PaperProps> = styled(Paper, {
   alignItems: 'center',
   gridTemplateColumns: '160px auto 200px',
   gap: theme.spacing(4),
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: '1fr', // Single column layout for mobile
+  },
 }))
 
 /**
@@ -68,7 +71,7 @@ export function LoadingActionRequiredCard() {
     <ActionRequiredCardContainer>
       <Skeleton variant="rectangular" width={136} height={74} />
       <div>
-        <Skeleton width={320} />
+        <Skeleton width={250} />
         <Skeleton width={100} />
       </div>
       <Skeleton variant="rectangular" width={160} height={33} />
