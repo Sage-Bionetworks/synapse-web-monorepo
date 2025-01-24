@@ -13,7 +13,7 @@ describe('useImageUrl tests', () => {
     jest.clearAllMocks()
   })
 
-  it('returns the dataUrl', () => {
+  it('returns dataUrl when fileId and entityId are provided and dataUrl is available', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
     const response = { dataUrl: 'https://somewebsite.com/imageofacat' }
@@ -34,7 +34,7 @@ describe('useImageUrl tests', () => {
     )
   })
 
-  it('returns undefined if no dataUrl', () => {
+  it('returns undefined if no dataUrl is available', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
 
@@ -42,5 +42,23 @@ describe('useImageUrl tests', () => {
 
     const result = useImageUrl(fileId, entityId)
     expect(result).toBeUndefined()
+  })
+
+  it('returns undefined if fileId is not provided', () => {
+    const fileId = ''
+    const entityId = 'entity123'
+
+    const result = useImageUrl(fileId, entityId)
+    expect(result).toBeUndefined()
+
+    expect(mockUseGetStablePresignedUrl).toHaveBeenCalledWith(
+      {
+        associateObjectId: entityId,
+        associateObjectType: FileHandleAssociateType.TableEntity,
+        fileHandleId: '',
+      },
+      false,
+      { enabled: false },
+    )
   })
 })
