@@ -5,7 +5,7 @@ import {
   Stack,
   Typography,
   Skeleton,
-  Grow,
+  Fade,
 } from '@mui/material'
 import {
   FileHandleAssociateType,
@@ -147,7 +147,7 @@ const FeaturedResearchTopCard = ({
   }
   return (
     <Box ref={ref}>
-      <Grow in={inView} timeout={transitionTimeoutMs}>
+      <Fade in={inView} timeout={transitionTimeoutMs}>
         <CardMedia
           component="img"
           image={url}
@@ -158,7 +158,7 @@ const FeaturedResearchTopCard = ({
             marginBottom: '30px',
           }}
         />
-      </Grow>
+      </Fade>
       <Stack useFlexGap gap={'16px'}>
         <Typography variant="headline2" fontSize={'36px'} color={'grey.1000'}>
           <Link
