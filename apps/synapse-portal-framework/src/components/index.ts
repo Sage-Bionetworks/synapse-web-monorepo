@@ -11,6 +11,7 @@ import ELBrowseToolsPage from './elportal/ELBrowseToolsPage'
 import ELBetaLaunchBanner from './elportal/ELBetaLaunchBanner'
 import ELContributeYourData from './elportal/ELContributeYourData'
 import ELGettingStarted from './elportal/ELGettingStarted'
+import ELSupportedByNIH from './elportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
@@ -51,6 +52,7 @@ const PortalComponents = {
   ELBetaLaunchBanner,
   ELContributeYourData,
   ELGettingStarted,
+  ELSupportedByNIH,
   ARKWelcomePage,
   GenieHomePageHeader,
   TabbedSynapseObjects,
