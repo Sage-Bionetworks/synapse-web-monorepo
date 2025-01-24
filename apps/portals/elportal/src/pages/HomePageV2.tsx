@@ -156,8 +156,8 @@ export default function HomePage() {
               sql={upsetPlotSql}
               rgbIndex={0}
               maxBarCount={20}
-              setName="# Files per assay"
-              combinationName="# individuals"
+              setName="Set size"
+              combinationName="Intersection size"
               onClick={handleUpsetPlotClick}
               // summaryLinkText='Explore All Data'
               // summaryLink='/Explore/Data'
