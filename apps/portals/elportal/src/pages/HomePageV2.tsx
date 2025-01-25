@@ -7,6 +7,8 @@ import {
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
+import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
+
 import {
   topPublicationsSql,
   whatWeDoSql,
@@ -102,6 +104,7 @@ export default function HomePage() {
           reverseOrder={true}
           link="/Explore/Computational Tools"
         />
+        <ELSupportedByNIH />
       </SectionLayout>
     </>
   )
