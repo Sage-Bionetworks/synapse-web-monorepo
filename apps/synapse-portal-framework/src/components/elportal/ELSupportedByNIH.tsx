@@ -6,7 +6,6 @@ const ELSupportedByNIH: React.FC = () => {
   return (
     <Box
       sx={{
-        backgroundColor: '#EDF7F3',
         display: 'grid',
         gridTemplateColumns: {
           xs: '100%',

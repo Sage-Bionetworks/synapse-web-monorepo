@@ -104,8 +104,17 @@ export default function HomePage() {
           reverseOrder={true}
           link="/Explore/Computational Tools"
         />
-        <ELSupportedByNIH />
       </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <SectionLayout
+          ContainerProps={{
+            className: 'home-spacer',
+            style: { maxWidth: '100%', padding: 0 },
+          }}
+        >
+          <ELSupportedByNIH />
+        </SectionLayout>
+      </div>
     </>
   )
 }
