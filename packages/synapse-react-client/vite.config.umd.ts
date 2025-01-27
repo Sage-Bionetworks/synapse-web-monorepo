@@ -12,7 +12,6 @@ const globalExternals = {
   'react-plotly.js': 'createPlotlyComponent',
   'rss-parser': 'Parser',
   'react-mailchimp-subscribe': 'ReactMailchimpSubscribe',
-  'react-measure': 'ReactMeasure',
   markdownit: 'markdownit',
   markdownitSynapse: 'markdownitSynapse',
   markdownitSub: 'markdownitSub',
