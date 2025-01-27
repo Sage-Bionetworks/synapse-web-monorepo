@@ -84,7 +84,8 @@ export default function HomePage() {
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
-          style: { maxWidth: '100%', padding: 0 },
+          maxWidth: false,
+          style: { padding: 0 },
         }}
       >
         <ELGettingStarted />
@@ -109,7 +110,8 @@ export default function HomePage() {
         <SectionLayout
           ContainerProps={{
             className: 'home-spacer',
-            style: { maxWidth: '100%', padding: 0 },
+            maxWidth: false,
+            style: { padding: 0 },
           }}
         >
           <ELSupportedByNIH />
