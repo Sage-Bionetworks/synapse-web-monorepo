@@ -1,6 +1,6 @@
 import { Dropdown } from 'react-bootstrap'
 import { useState, MouseEvent, PropsWithChildren } from 'react'
-import { Fade, IconButton, Menu, Tooltip } from '@mui/material'
+import { Box, Fade, IconButton, Menu, Select, Tooltip } from '@mui/material'
 import IconSvg from '../../../IconSvg'
 
 export type EnumFacetFilterDropdownProps = PropsWithChildren<{
@@ -15,20 +15,24 @@ function EnumFacetFilterSelectBox(
 ) {
   const { menuText, children } = props
 
-  const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
-  const onToggle = () => setIsShowDropdown(!isShowDropdown)
-
   return (
-    <Dropdown
+    <Select
       className={'EnumFacetFilter EnumFacetFilterSelect'}
-      show={isShowDropdown}
-      onToggle={onToggle}
+      value={menuText}
+      placeholder={'All'}
+      renderValue={() => menuText}
     >
-      <Dropdown.Toggle className="secondary-caret" variant="gray-select">
-        {menuText}
-      </Dropdown.Toggle>
-      <Dropdown.Menu>{children}</Dropdown.Menu>
-    </Dropdown>
+      <Box
+        sx={{
+          // hack to expand the dropdown menu width for this component only
+          '& .EnumFacetFilter__dropdown_menu': {
+            maxWidth: '100%',
+          },
+        }}
+      >
+        {children}
+      </Box>
+    </Select>
   )
 }
 
