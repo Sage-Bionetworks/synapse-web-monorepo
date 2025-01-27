@@ -40,11 +40,11 @@ export const Demo: Story = {
 }
 export const ElitePortalDemo: Story = {
   args: {
-    sql: 'SELECT files, assay FROM syn51581771',
+    sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
     rgbIndex: 0,
     maxBarCount: 20,
-    setName: '# Files per data type',
-    combinationName: '# Files',
+    setName: 'Set size',
+    combinationName: 'Intersection size',
     onClick: (selection, event) => {
       console.log(
         'onClick() has been called with this selection and event',

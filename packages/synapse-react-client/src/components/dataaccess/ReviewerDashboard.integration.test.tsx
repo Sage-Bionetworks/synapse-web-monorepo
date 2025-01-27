@@ -1,18 +1,18 @@
+import { UserBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ReviewerDashboard from './ReviewerDashboard'
+import { rest, server } from '../../mocks/msw/server'
+import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { USER_BUNDLE } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import * as UserAccessHistoryDashboardModule from './AccessHistoryDashboard'
 import * as AccessRequirementDashboardModule from './AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from './AccessSubmissionDashboard'
-import * as UserAccessHistoryDashboardModule from './AccessHistoryDashboard'
+import ReviewerDashboard from './ReviewerDashboard'
 
 const AR_DASHBOARD_TEST_ID = 'AccessRequirementDashboardTestId'
 const SUBMISSION_DASHBOARD_TEST_ID = 'SubmissionDashboardTestId'
@@ -57,9 +57,13 @@ function renderComponent(
       },
     ),
   )
-  return render(<ReviewerDashboard routerBaseName={'/'} />, {
-    wrapper: createWrapper(),
-  })
+
+  return render(
+    <ReviewerDashboard useMemoryRouter={true} routerBaseName={'/'} />,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 describe('ReviewerDashboard tests', () => {

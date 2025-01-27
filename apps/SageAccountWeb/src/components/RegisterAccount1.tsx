@@ -1,4 +1,3 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -8,26 +7,32 @@ import {
   useTheme,
 } from '@mui/material'
 import {
+  AliasType,
+  isMembershipInvtnSignedToken,
+} from '@sage-bionetworks/synapse-types'
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
+import { Link as RouterLink, useLocation } from 'react-router'
+import {
   displayToast,
   IconSvg,
   LastLoginInfo,
   RegisterPageLogoutPrompt,
   SynapseClient,
+  SynapseClientError,
   SynapseConstants,
   useApplicationSessionContext,
   useLastLoginInfo,
   useSynapseContext,
 } from 'synapse-react-client'
-import {
-  AliasType,
-  isMembershipInvtnSignedToken,
-} from '@sage-bionetworks/synapse-types'
-import { SourceAppLogo } from './SourceApp'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { EmailConfirmationPage } from './EmailConfirmationPage'
-import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
+import GoogleLogo from '../assets/g-logo.png'
+import {
+  VALID_USERNAME_DESCRIPTION,
+  validateAlias,
+} from '../utils/validateAlias'
 import { BackButton } from './BackButton'
+import { EmailConfirmationPage } from './EmailConfirmationPage'
+import { SourceAppLogo } from './SourceApp'
 import {
   StyledFormControl,
   StyledInnerContainer,
@@ -42,6 +47,34 @@ export enum Pages {
   GOOGLE_REGISTRATION,
 }
 
+function BackButtonForPage(props: {
+  page: Pages
+  setPage: (page: Pages) => void
+}) {
+  const { page, setPage } = props
+  switch (page) {
+    case Pages.CHOOSE_REGISTRATION:
+      return <BackButton to={'/authenticated/myaccount'} />
+    case Pages.EMAIL_REGISTRATION:
+    case Pages.GOOGLE_REGISTRATION:
+      return <BackButton onClick={() => setPage(Pages.CHOOSE_REGISTRATION)} />
+    default:
+      return <></>
+  }
+}
+
+function handleError(e: unknown) {
+  if (e instanceof SynapseClientError) {
+    displayToast(e.reason, 'danger')
+  } else if (e instanceof Error) {
+    displayToast(e.message, 'danger')
+  } else {
+    // This should never happen
+    console.error(e)
+    displayToast(JSON.stringify(e), 'danger')
+  }
+}
+
 export const RegisterAccount1 = () => {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -51,6 +84,9 @@ export const RegisterAccount1 = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
+  const [usernameInvalidReason, setUsernameInvalidReason] = useState<
+    string | null
+  >(null)
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
@@ -106,18 +142,6 @@ export const RegisterAccount1 = () => {
     borderColor: '#EAECEE',
   }
 
-  const BackButtonForPage = () => {
-    switch (page) {
-      case Pages.CHOOSE_REGISTRATION:
-        return <BackButton to={'/authenticated/myaccount'} />
-      case Pages.EMAIL_REGISTRATION:
-      case Pages.GOOGLE_REGISTRATION:
-        return <BackButton onClick={() => setPage(Pages.CHOOSE_REGISTRATION)} />
-      default:
-        return <></>
-    }
-  }
-
   const onSendRegistrationInfo = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!email) {
@@ -129,8 +153,8 @@ export const RegisterAccount1 = () => {
       const callbackUrl = `${window.location.protocol}//${window.location.host}/register2?emailValidationSignedToken=`
       await SynapseClient.registerAccountStep1({ email }, callbackUrl)
       setPage(Pages.EMAIL_REGISTRATION_THANK_YOU)
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+    } catch (e: unknown) {
+      handleError(e)
     } finally {
       setIsLoading(false)
     }
@@ -139,45 +163,40 @@ export const RegisterAccount1 = () => {
   const onSignUpWithGoogle = async (event: SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
-      displayToast('Please provide a user name and try again.', 'danger')
+      setUsernameInvalidReason('Please provide a user name and try again.')
       return
     }
+    setUsernameInvalidReason(null)
     setIsLoading(true)
     try {
       const aliasCheckResponse = await SynapseClient.isAliasAvailable({
         alias: username,
         type: AliasType.USER_NAME,
       })
-      if (!aliasCheckResponse.available) {
-        displayToast('Sorry, that username has already been taken.', 'danger')
-      } else if (!aliasCheckResponse.valid) {
-        displayToast('Sorry, that username is not valid.', 'danger')
-      } else {
-        // Looks good!  Go to Google oauth account creation flow
-        // redirect to Google login, passing the username through via the state param.
-        // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
-        localStorage.setItem(
-          SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
-          `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
-        )
-        const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
-          SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
-        }`
-        SynapseClient.oAuthUrlRequest(
-          SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
-          redirectUrl,
-          { registrationUsername: username },
-        )
-          .then((data: any) => {
-            const authUrl = data.authorizationUrl
-            window.location.assign(authUrl)
-          })
-          .catch((err: any) => {
-            displayToast(err.reason as string, 'danger')
-          })
+      try {
+        validateAlias(aliasCheckResponse)
+      } catch (e: unknown) {
+        setUsernameInvalidReason((e as Error).message)
+        return
       }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+      // Looks good!  Go to Google oauth account creation flow
+      // redirect to Google login, passing the username through via the state param.
+      // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
+      localStorage.setItem(
+        SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
+        `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
+      )
+      const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
+        SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
+      }`
+      const { authorizationUrl } = await SynapseClient.oAuthUrlRequest(
+        SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
+        redirectUrl,
+        { registrationUsername: username },
+      )
+      window.location.assign(authorizationUrl)
+    } catch (e: unknown) {
+      handleError(e)
     } finally {
       setIsLoading(false)
     }
@@ -194,7 +213,7 @@ export const RegisterAccount1 = () => {
         <Box mx={'auto'} mt={15} width={'fit-content'}>
           <RegisterPageLogoutPrompt
             onLogout={() => {
-              sessionContext.refreshSession()
+              void sessionContext.refreshSession()
             }}
             logo={<SourceAppLogo sx={{ width: '100%' }} />}
           />
@@ -210,7 +229,7 @@ export const RegisterAccount1 = () => {
           {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
-                <BackButtonForPage />
+                <BackButtonForPage page={page} setPage={setPage} />
                 <Box
                   display="flex"
                   flexDirection="column"
@@ -269,9 +288,9 @@ export const RegisterAccount1 = () => {
                             )
                           }
                           value={email || ''}
-                          onKeyPress={(e: any) => {
+                          onKeyDown={e => {
                             if (e.key === 'Enter') {
-                              onSendRegistrationInfo(e)
+                              void onSendRegistrationInfo(e)
                             }
                           }}
                         />
@@ -290,9 +309,11 @@ export const RegisterAccount1 = () => {
                       <Button
                         sx={buttonSx}
                         variant="contained"
-                        onClick={onSendRegistrationInfo}
+                        onClick={e => {
+                          void onSendRegistrationInfo(e)
+                        }}
                         type="button"
-                        disabled={email && !isLoading ? false : true}
+                        disabled={!(email && !isLoading)}
                       >
                         Continue
                       </Button>
@@ -312,11 +333,15 @@ export const RegisterAccount1 = () => {
                           id="username"
                           name="username"
                           required
-                          onChange={e => setUsername(e.target.value)}
+                          error={!!usernameInvalidReason}
+                          helperText={usernameInvalidReason}
+                          onChange={e => {
+                            setUsername(e.target.value)
+                          }}
                           value={username || ''}
-                          onKeyPress={(e: any) => {
+                          onKeyDown={e => {
                             if (e.key === 'Enter') {
-                              onSignUpWithGoogle(e)
+                              void onSignUpWithGoogle(e)
                             }
                           }}
                         />
@@ -324,9 +349,11 @@ export const RegisterAccount1 = () => {
                       <Button
                         sx={buttonSx}
                         variant="contained"
-                        onClick={onSignUpWithGoogle}
+                        onClick={e => {
+                          void onSignUpWithGoogle(e)
+                        }}
                         type="button"
-                        disabled={username && !isLoading ? false : true}
+                        disabled={!(username && !isLoading)}
                       >
                         Continue
                       </Button>
@@ -343,17 +370,26 @@ export const RegisterAccount1 = () => {
                 <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
-                {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
-                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                    Your <strong>{sourceAppName}</strong> account is also a{' '}
-                    <strong>Synapse account</strong>. You can also use it to
-                    access many other resources from Sage Bionetworks.
-                  </Typography>
+                {page !== Pages.GOOGLE_REGISTRATION && (
+                  <>
+                    {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
+                      <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                        Your <strong>{sourceAppName}</strong> account is also a{' '}
+                        <strong>Synapse account</strong>. You can also use it to
+                        access many other resources from Sage Bionetworks.
+                      </Typography>
+                    )}
+                    {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
+                      <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                        Your <strong>Synapse</strong> account can also be used
+                        to access many other resources from Sage Bionetworks.
+                      </Typography>
+                    )}
+                  </>
                 )}
-                {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
+                {page === Pages.GOOGLE_REGISTRATION && (
                   <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                    Your <strong>Synapse</strong> account can also be used to
-                    access many other resources from Sage Bionetworks.
+                    {VALID_USERNAME_DESCRIPTION}
                   </Typography>
                 )}
                 <Link
@@ -361,7 +397,7 @@ export const RegisterAccount1 = () => {
                   component={RouterLink}
                   to="/sageresources"
                 >
-                  More about Synapse account
+                  More about Synapse accounts
                 </Link>
               </Box>
             </>

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { MemoryRouter } from 'react-router'
 import ImageCardGridWithLinks from './ImageCardGridWithLinks'
-import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
   title: 'Home Page/ImageCardGridWithLinks',

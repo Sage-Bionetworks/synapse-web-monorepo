@@ -1,6 +1,8 @@
 import { Alert, Box, Button, Typography } from '@mui/material'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   displayToast,
   PasswordField,
@@ -9,13 +11,11 @@ import {
   useApplicationSessionContext,
   useQuerySearchParam,
 } from 'synapse-react-client'
-import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 import { hexDecodeAndDeserialize } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { LeftRightPanel } from '../LeftRightPanel'
 import { SourceAppLogo } from '../SourceApp'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 
 export function ResetTwoFactorAuth() {
   const navigate = useNavigate()

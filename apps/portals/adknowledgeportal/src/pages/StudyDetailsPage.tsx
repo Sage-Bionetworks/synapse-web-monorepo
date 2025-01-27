@@ -16,7 +16,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router'
 import { dataOnStudiesPageSql, dataSql, studiesSql } from 'src/config/resources'
 import { DATA_TABLE_COLUMN_NAMES } from 'src/config/synapseConfigs/data'
 import {

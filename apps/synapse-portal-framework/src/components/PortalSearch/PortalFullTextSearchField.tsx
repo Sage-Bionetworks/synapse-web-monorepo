@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import { InputAdornment, TextField } from '@mui/material'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 export function PortalFullTextSearchField() {

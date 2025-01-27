@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavigateFunction } from 'react-router-dom'
+import { NavigateFunction } from 'react-router'
 import UniversalCookies from 'universal-cookie'
 import {
   ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,

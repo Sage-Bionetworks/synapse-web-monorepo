@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@mui/material'
 import { createTheme, StyledEngineProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router'
 import {
   defaultQueryClientConfig,
   SynapseErrorBoundary,

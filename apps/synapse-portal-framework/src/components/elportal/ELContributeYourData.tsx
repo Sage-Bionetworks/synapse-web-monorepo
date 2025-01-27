@@ -8,7 +8,7 @@ function ELContributeYourData() {
       sx={{
         backgroundColor: 'primary.main',
         display: 'grid',
-        gridTemplateColumns: '33% 33% 33%',
+        gridTemplateColumns: { sm: '1fr', md: '33% 33% 33%' },
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -31,8 +31,7 @@ function ELContributeYourData() {
           flex: '1 1 auto',
           zIndex: 1,
           textAlign: 'center',
-          paddingTop: '100px',
-          paddingBottom: '100px',
+          padding: { xs: '100px 40px', md: '100px 0' },
         }}
       >
         <Typography
@@ -66,9 +65,12 @@ function ELContributeYourData() {
         >
           <Button
             variant="contained"
-            sx={{
+            sx={theme => ({
               border: '1px solid white',
-            }}
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+              },
+            })}
           >
             Start Contributing
           </Button>

@@ -2,7 +2,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { DetailsPageTabs } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router-dom'
+import { Outlet, RouteObject } from 'react-router'
 import { filesSql, studiesSql } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from 'src/config/synapseConfigs/datasets'
