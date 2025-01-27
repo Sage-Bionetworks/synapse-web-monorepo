@@ -9,6 +9,9 @@ export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
   paddingBottom: '50px',
   background: theme.styledBackground,
   backgroundSize: 'cover',
+  [theme.breakpoints.down('md')]: {
+    padding: 0,
+  },
 }))
 
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
