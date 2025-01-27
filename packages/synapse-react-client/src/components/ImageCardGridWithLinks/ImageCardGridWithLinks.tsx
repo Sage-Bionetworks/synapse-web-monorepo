@@ -85,49 +85,55 @@ const ImageCard = ({
             position: 'relative',
             borderRadius: BORDER_RADIUS,
             border: 'none',
+            transform: 'scale(1)',
+            transition: '.3s ease-in-out',
+            '&:hover': {
+              transform: 'scale(1.05)',
+              boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
+            },
           }}
         >
-          <Link
-            component={RouterLink}
-            to={card.values[linkColumnIndex] || ''}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              position: 'absolute',
-              backgroundColor: '#FFFF',
-              borderRadius: `0px 0px ${BORDER_RADIUS} 0px`,
-              textDecoration: 'none',
-              '&:hover': {
+          <Link component={RouterLink} to={card.values[linkColumnIndex] || ''}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                position: 'absolute',
+                backgroundColor: '#FFFF',
+                borderRadius: `0px 0px ${BORDER_RADIUS} 0px`,
                 textDecoration: 'none',
-              },
-              padding: '6px 10px',
-            }}
-          >
-            <Typography
-              color="grey.1000"
-              variant="headline2"
-              sx={{ fontSize: '16px' }}
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+                padding: '6px 10px',
+              }}
             >
-              {card.values[linkTextColumnIndex]}
-            </Typography>
-            <ArrowForwardIosIcon
+              <Typography
+                color="grey.1000"
+                variant="headline2"
+                sx={{ fontSize: '16px' }}
+              >
+                {card.values[linkTextColumnIndex]}
+              </Typography>
+              <ArrowForwardIosIcon
+                style={{
+                  color: 'unset',
+                  width: 16,
+                  height: 16,
+                }}
+              />
+            </Box>
+            <CardMedia
+              component="img"
+              image={dataUrl}
               style={{
-                color: 'unset',
-                width: 16,
-                height: 16,
+                height: '100%',
+                width: '100%',
+                objectFit: 'cover',
               }}
             />
           </Link>
-          <CardMedia
-            component="img"
-            image={dataUrl}
-            style={{
-              height: '100%',
-              width: '100%',
-              objectFit: 'cover',
-            }}
-          />
         </Card>
       )}
     </Grid>
