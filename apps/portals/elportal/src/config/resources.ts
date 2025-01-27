@@ -10,11 +10,14 @@ export const studiesSql =
   'SELECT * FROM syn51523775 ORDER BY isFeatured DESC, dataStatus ASC, studyName ASC'
 export const speciesSql = 'SELECT * FROM syn53406593 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'
-export const upsetPlotSql = 'SELECT files, assay FROM syn51581771'
+export const upsetPlotSql =
+  'SELECT individualID, assay FROM syn51489960.4 WHERE  metadataType IS NULL and assay IS NOT NULL'
 export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
 export const partnersSql =
   'SELECT * FROM syn62661043 order by organizationName desc'
+export const partnersSql2 =
+  'SELECT * FROM syn62661043 WHERE order IS NOT NULL ORDER BY order ASC'
 export const whatWeDoSql = 'SELECT * FROM syn64130706'
 export const featuredResearchSql =
   'SELECT * FROM syn64542019 ORDER BY order ASC'
@@ -24,3 +27,4 @@ export const defaultSearchConfiguration = {
 }
 export const cavaticaConnectAccountURL =
   'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'
+export const goalsV2Table = 'syn64618674'

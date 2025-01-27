@@ -1,20 +1,12 @@
-import { useEffect, useState } from 'react'
-import {
-  QueryBundleRequest,
-  FileHandleAssociation,
-  FileHandleAssociateType,
-  BatchFileRequest,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
-import { getFiles } from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import useGetGoalData from '../../utils/hooks/useGetGoalData'
 
 export type GoalsProps = {
   entityId: string
@@ -42,9 +34,6 @@ const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
 export function Goals(props: GoalsProps) {
   const { entityId } = props
-  const { accessToken } = useSynapseContext()
-  const [assets, setAssets] = useState<string[] | undefined>()
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -59,51 +48,10 @@ export function Goals(props: GoalsProps) {
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const assetColumnIndex = getFieldIndex(
-          ExpectedColumns.ASSET,
-          queryResultBundle,
-        )
-        const assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
-          el => el.values[assetColumnIndex],
-        ) ?? []) as string[]
-        const assetFileHandleIds = assets.filter(
-          v => v != null && v !== undefined,
-        )
-        if (assetFileHandleIds.length === 0) {
-          // wait for data to load
-          return
-        }
-        const fileHandleAssociationList: FileHandleAssociation[] =
-          assetFileHandleIds.map(fileId => {
-            return {
-              associateObjectId: entityId,
-              associateObjectType: FileHandleAssociateType.TableEntity,
-              fileHandleId: fileId,
-            }
-          })
-        const batchFileRequest: BatchFileRequest = {
-          includeFileHandles: false,
-          includePreSignedURLs: true,
-          includePreviewPreSignedURLs: false,
-          requestedFiles: fileHandleAssociationList,
-        }
-        const files = await getFiles(batchFileRequest, accessToken)
-        setError(undefined)
-        setAssets(
-          files.requestedFiles
-            .filter(el => el.preSignedURL !== undefined)
-            .map(el => el.preSignedURL!),
-        )
-      } catch (e) {
-        console.error('Error on get data', e)
-        setError(e)
-      }
-    }
-    getData()
-  }, [entityId, accessToken, queryResultBundle])
+  const { assets: goalAssets, error: goalError } = useGetGoalData(
+    entityId,
+    queryResultBundle,
+  )
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -126,7 +74,7 @@ export function Goals(props: GoalsProps) {
 
   return (
     <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-      {error && <ErrorBanner error={error} />}
+      {goalError && <ErrorBanner error={goalError} />}
       {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {
@@ -146,7 +94,7 @@ export function Goals(props: GoalsProps) {
         const link = values[linkColumnIndex]
         // assume that we recieve assets in order of rows and there is an asset for each item
         // can revisit if this isn't the case.
-        const asset = assets?.[index] ?? ''
+        const asset = goalAssets?.[index] ?? ''
         const goalsDataProps: GoalsDataProps = {
           countSql,
           title,

@@ -14,8 +14,6 @@ export const handleUpsetPlotClick = (selection: any) => {
     sql: cohortBuilderFilesSql,
     selectedFacets: [facetColumnRequest],
   }
-  const url = `/Explore/Data%20by%20Files?QueryWrapper0=${JSON.stringify(
-    query,
-  )}`
+  const url = `/Explore/Data?QueryWrapper0=${JSON.stringify(query)}`
   window.location.assign(url)
 }

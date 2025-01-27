@@ -24,7 +24,6 @@ function FeaturedDataPlots(props: FeaturedDataPlotsProps) {
   // What mode are we in?  Either every card has a different selected facet (requiring a different query),
   // or we're showing the facet counts for a single query.  This controls the layout, and how the cards are populated.
   const isQueryPerCard = configs && 'selectFacetColumnName' in configs[0]
-
   if (!isQueryPerCard) {
     return (
       <>
@@ -54,7 +53,6 @@ function FeaturedDataPlots(props: FeaturedDataPlotsProps) {
                 cssGridTemplateRows += ` [plot${index}] auto`
               },
             )
-
             return (
               <FacetPlotsCardGridContainer
                 key={rowIndex}

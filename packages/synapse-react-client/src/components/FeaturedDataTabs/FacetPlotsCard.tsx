@@ -11,6 +11,7 @@ import {
 import {
   extractPlotDataArray,
   getPlotStyle,
+  PlotType,
 } from '../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../widgets/facet-nav/useFacetPlots'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -44,6 +45,7 @@ export type FacetPlotsCardProps = {
   description?: string
   facetsToPlot?: string[]
   detailsPagePath?: string
+  plotType?: PlotType
 }
 
 const layout: Partial<Plotly.Layout> = {
@@ -93,11 +95,16 @@ function LoadingCard(props: { numPlots: number }) {
 }
 
 function FacetPlotsCard(props: FacetPlotsCardProps) {
-  const { title, description, facetsToPlot, detailsPagePath } = props
+  const {
+    title,
+    description,
+    facetsToPlot,
+    detailsPagePath,
+    plotType = 'PIE',
+  } = props
   const { accessToken } = useSynapseContext()
   const { queryMetadataQueryOptions } = useQueryContext()
   const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
-
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const facetDataArray = useMemo(() => {
@@ -108,6 +115,13 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
     return getFacets(queryMetadata, facetsToPlot)
   }, [facetsToPlot, queryMetadata])
 
+  const currentLayout: Partial<Plotly.Layout> = useMemo(() => {
+    return {
+      ...layout,
+      barmode: plotType === 'STACKED_HORIZONTAL_BAR' ? 'stack' : undefined,
+    }
+  }, [plotType])
+  const maxPlotHeight = plotType === 'STACKED_HORIZONTAL_BAR' ? 50 : 150
   const { data: facetPlotDataArray } = useSuspenseQuery({
     queryKey: ['facetPlotDataArray', facetsToPlot, facetDataArray],
     queryFn: async () => {
@@ -128,7 +142,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
             item as FacetColumnResultValues,
             getColumnType(item),
             index + 1, //individual plot rgbIndex
-            'PIE',
+            plotType,
             accessToken,
           )
           return plotData
@@ -224,9 +238,13 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
                     >
                       <Plot
                         key={`${facetsToPlot![index]}-${size.width!}`}
-                        layout={layout}
+                        layout={currentLayout}
                         data={plotData?.data ?? []}
-                        style={getPlotStyle(size.width, 'PIE', 150)}
+                        style={getPlotStyle(
+                          size.width,
+                          plotType,
+                          maxPlotHeight,
+                        )}
                         config={{ displayModeBar: false }}
                       />
                     </Box>

@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   displayToast,
   GovernanceMarkdownGithub,

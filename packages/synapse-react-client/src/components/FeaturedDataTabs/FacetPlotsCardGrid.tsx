@@ -30,29 +30,12 @@ export const FacetPlotsCardGridContainer: StyledComponent<BoxProps> = styled(
      */
     display: 'grid',
     gridTemplateRows: '[title] auto [plot0] auto',
-    gridTemplateColumns: '[col1] 32% [col2] 32% [col3] 32%',
+    justifyContent: 'center',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
     columnGap: '2%',
 
     [`.${FACET_PLOTS_CARD_CLASSNAME}`]: {
       display: 'contents',
-    },
-
-    // Since we're using display: contents, we must assign the column based on the
-    // order of the containers
-    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(1)`]: {
-      [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
-        gridColumn: 'col1',
-      },
-    },
-    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(2)`]: {
-      [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
-        gridColumn: 'col2',
-      },
-    },
-    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(3)`]: {
-      [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
-        gridColumn: 'col3',
-      },
     },
 
     [`.${FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}, .${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]:

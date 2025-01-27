@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import {
   CookiesNotification,
   processRedirectURLInOneSage,
@@ -127,15 +127,17 @@ function App() {
           element={<ResetPassword returnToUrl="/authenticated/myaccount" />}
         />
         <Route path={RESET_2FA_ROUTE} element={<ResetTwoFactorAuth />} />
-        <Route
-          path="authenticated/*"
-          element={
-            <>
-              <AuthenticatedRoutes />
-              <Footer />
-            </>
-          }
-        />
+        <Route path={'authenticated'}>
+          <Route
+            path="*"
+            element={
+              <>
+                <AuthenticatedRoutes />
+                <Footer />
+              </>
+            }
+          />
+        </Route>
         <Route path="login" element={<LoginPage returnToUrl={'/'} />} />
       </Routes>
     </div>

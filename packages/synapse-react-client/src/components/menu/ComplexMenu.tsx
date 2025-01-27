@@ -1,6 +1,7 @@
-import { Box } from '@mui/material'
+import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 import { IconSvgButton, IconSvgButtonProps } from '../IconSvgButton'
+import IconSvg from '../IconSvg'
 
 export type ComplexMenuProps = {
   /*
@@ -22,14 +23,67 @@ export type ComplexMenuProps = {
  */
 export function ComplexMenu(props: ComplexMenuProps) {
   const { iconButtons = [], dropdownMenus = [] } = props
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      {iconButtons.map(iconButton => {
-        return <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
+    <Box
+      sx={theme => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        [theme.breakpoints.down('sm')]: {
+          flexDirection: 'column',
+          paddingTop: '10px',
+        },
       })}
+    >
+      {iconButtons.map(iconButton =>
+        isSmallScreen && iconButton.tooltipText ? (
+          <Box
+            sx={{
+              width: '100%',
+              textAlign: 'center',
+            }}
+          >
+            <Button
+              variant="text"
+              startIcon={
+                <IconSvg
+                  key={iconButton.tooltipText}
+                  icon={iconButton.icon}
+                  wrap={false}
+                  fontSize={'inherit'}
+                />
+              }
+              onClick={iconButton.onClick}
+              sx={{
+                padding: '6px 12px',
+                minWidth: 'unset',
+              }}
+            >
+              <Typography variant="buttonLink">
+                {iconButton.tooltipText}
+              </Typography>
+            </Button>
+          </Box>
+        ) : (
+          <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
+        ),
+      )}
       {dropdownMenus.map((menuProps, index) => {
-        return <DropdownMenu key={index} {...menuProps} />
+        return (
+          <Box
+            sx={theme => ({
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+                '.MuiButton-root': { width: '100%' },
+              },
+            })}
+          >
+            <DropdownMenu key={index} {...menuProps} />
+          </Box>
+        )
       })}
     </Box>
   )

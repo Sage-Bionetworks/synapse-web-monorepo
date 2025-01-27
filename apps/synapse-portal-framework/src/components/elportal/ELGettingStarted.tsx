@@ -1,29 +1,61 @@
 import { Box, Button, Typography } from '@mui/material'
-import React from 'react'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
 import accessIcon from './assets/access_icon.png'
 
-const ELGettingStarted: React.FC = () => {
+export function IconSquare({ iconUrl, headline, description }) {
+  return (
+    <div>
+      <Box
+        sx={theme => ({
+          width: '100px',
+          height: '100px',
+          backgroundImage: `url(${iconUrl})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'contain',
+          [theme.breakpoints.down('sm')]: {
+            margin: 'auto',
+          },
+        })}
+      ></Box>
+      <Typography
+        variant="headline3"
+        sx={{
+          mb: '10px',
+          maxWidth: '100%',
+          color: 'white',
+          fontWeight: 400,
+        }}
+      >
+        {headline}
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          maxWidth: '100%',
+          color: 'white',
+          fontSize: '13px',
+        }}
+      >
+        {description}
+      </Typography>
+    </div>
+  )
+}
+
+const ELGettingStarted = () => {
   return (
     <Box
       sx={{
         backgroundColor: 'primary.main',
         display: 'grid',
-        p: '80px',
-        gridTemplateColumns: {
-          xs: '100%',
-          sm: '50% 50%',
-          md: '25% 25% 25% 25%',
-        },
-        gap: '10px',
-        gridAutoRows: '1fr',
+        padding: { xs: '40px', md: '80px' },
+        gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
+        gap: { xs: '50px', md: '80px' },
       }}
     >
       <Box
         sx={{
-          width: '100%',
-          height: '100%',
           borderTop: '3px solid #ffffff88',
           py: '20px',
         }}
@@ -57,79 +89,46 @@ const ELGettingStarted: React.FC = () => {
           href="https://help.eliteportal.org/help/"
           rel="noopener noreferrer"
           target="_blank"
-          sx={{
+          sx={theme => ({
             border: '1px solid white',
             padding: '6px 24px',
             fontSize: '14px',
-          }}
+            [theme.breakpoints.down('sm')]: {
+              width: '100%',
+            },
+          })}
         >
           Visit Our Help Section
         </Button>
       </Box>
-      <IconSquare
-        iconUrl={exploreIcon}
-        headline="Explore"
-        description="Get the latest data, publications, and news from the Exceptional
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '32px',
+        }}
+      >
+        <IconSquare
+          iconUrl={exploreIcon}
+          headline="Explore"
+          description="Get the latest data, publications, and news from the Exceptional
          Longevity Research community"
-      />
-      <IconSquare
-        iconUrl={accessIcon}
-        headline="Access"
-        description="Download data, review metadata, and obtain method summaries for
+        />
+        <IconSquare
+          iconUrl={accessIcon}
+          headline="Access"
+          description="Download data, review metadata, and obtain method summaries for
           the latest groundbreaking studies."
-      />
-      <IconSquare
-        iconUrl={uncoverIcon}
-        headline="Uncover"
-        description="Analyze and transform the data using translational research tools
+        />
+        <IconSquare
+          iconUrl={uncoverIcon}
+          headline="Uncover"
+          description="Analyze and transform the data using translational research tools
           and AI/ML models. Make a longevity breakthrough. Then repeat."
-      />
+        />
+      </Box>
     </Box>
   )
 }
 
 export default ELGettingStarted
-
-export function IconSquare({ iconUrl, headline, description }) {
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <Box
-        sx={{
-          width: '50%',
-          height: '50%',
-          mb: '10px',
-          backgroundImage: `url(${iconUrl})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'contain',
-        }}
-      ></Box>
-      <Typography
-        variant="headline3"
-        sx={{
-          mb: '10px',
-          maxWidth: '100%',
-          color: 'white',
-          fontWeight: 400,
-        }}
-      >
-        {headline}
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          maxWidth: '100%',
-          color: 'white',
-          fontSize: '13px',
-        }}
-      >
-        {description}
-      </Typography>
-    </Box>
-  )
-}

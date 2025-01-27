@@ -5,20 +5,19 @@ import {
   Stack,
   Typography,
   Skeleton,
+  Fade,
 } from '@mui/material'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  QueryBundleRequest,
-  Row,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import * as SynapseConstants from '../../utils/SynapseConstants'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
+import { useInView } from 'react-intersection-observer'
+
+const transitionTimeoutMs = 400
 
 export type FeaturedResearchProps = {
   sql: string
@@ -33,20 +32,6 @@ export type FeaturedResearchCardProps = {
   descriptionColIndex: number
   linkColIndex: number
   imageColIndex: number
-}
-
-const useImageUrl = (fileId: string, entityId: string) => {
-  const fha: FileHandleAssociation = {
-    associateObjectId: entityId,
-    associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: fileId || '',
-  }
-  const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
-    enabled: !!fileId,
-  })
-  const dataUrl = stablePresignedUrl?.dataUrl
-
-  return dataUrl
 }
 
 const FeaturedResearchCard = ({
@@ -127,6 +112,7 @@ const FeaturedResearchTopCard = ({
   imageColIndex,
   isLoading,
 }: FeaturedResearchCardProps) => {
+  const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
   const fileId = research.values[imageColIndex] ?? ''
   const url = useImageUrl(fileId || '', entityId)
   if (isLoading) {
@@ -141,19 +127,25 @@ const FeaturedResearchTopCard = ({
     )
   }
   return (
-    <div>
-      <CardMedia
-        component="img"
-        image={url}
-        aria-hidden="true"
-        sx={{
-          objectFit: 'cover',
-          borderRadius: '10px',
-          marginBottom: '30px',
-        }}
-      />
+    <Box ref={ref}>
+      <Fade in={inView} timeout={transitionTimeoutMs}>
+        <CardMedia
+          component="img"
+          image={url}
+          aria-hidden="true"
+          sx={{
+            objectFit: 'cover',
+            borderRadius: '10px',
+            marginBottom: '30px',
+          }}
+        />
+      </Fade>
       <Stack useFlexGap gap={'16px'}>
-        <Typography variant="headline2" fontSize={'36px'} color={'grey.1000'}>
+        <Typography
+          variant="headline2"
+          color={'grey.1000'}
+          sx={{ fontSize: { xs: '30px', md: '36px' } }}
+        >
           <Link
             href={research.values[linkColIndex] ?? ''}
             target="_blank"
@@ -175,7 +167,7 @@ const FeaturedResearchTopCard = ({
           Read more
         </Link>
       </Stack>
-    </div>
+    </Box>
   )
 }
 
@@ -253,7 +245,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
         sx={{
           borderTop: '3px solid',
           borderColor: 'grey.400',
-          padding: '30px 0',
+          padding: '30px 0 0 0',
         }}
       >
         <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>

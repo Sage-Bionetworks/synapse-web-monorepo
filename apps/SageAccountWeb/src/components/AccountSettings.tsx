@@ -20,7 +20,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import {
   ChangePassword,
   CookiePreferencesDialog,

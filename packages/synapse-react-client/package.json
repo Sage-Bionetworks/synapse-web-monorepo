@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.3.35",
+  "version": "3.3.37",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -103,7 +103,7 @@
     "react-plotly.js": "^2.6.0",
     "react-popper": "^2.3.0",
     "react-reflex": "^4.2.6",
-    "react-router-dom": "^6.27.0",
+    "react-router": "^7.1.1",
     "react-select": "^5.8.0",
     "react-sizeme": "^3.0.2",
     "react-switch": "^7.0.0",
@@ -249,8 +249,6 @@
     "build:umd": "vite build -c vite.config.umd.ts",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",
-    "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
-    "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
     "lint": "eslint src",
     "watch:js": "tsc --watch"
   },

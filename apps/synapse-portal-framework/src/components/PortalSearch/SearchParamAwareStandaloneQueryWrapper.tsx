@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { QueryWrapper, StandaloneQueryWrapper } from 'synapse-react-client'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client'
 import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
