@@ -602,6 +602,9 @@ importers:
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../../../packages/synapse-types
+      '@upsetjs/react':
+        specifier: ^1.11.0
+        version: 1.11.0(react@18.2.0)
       katex:
         specifier: ^0.16.10
         version: 0.16.10
