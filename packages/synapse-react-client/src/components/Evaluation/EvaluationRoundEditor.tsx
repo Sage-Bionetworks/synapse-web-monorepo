@@ -1,33 +1,41 @@
 import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid as Grid2,
+  TextField,
+} from '@mui/material'
+// import Grid2 from '@mui/material/Unstable_Grid2'
+import { DateTimeValidationError } from '@mui/x-date-pickers'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
   EvaluationRound,
   EvaluationRoundLimit,
 } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
-import { Alert, Button } from '@mui/material'
-import { Card, Col, Form, FormControl, FormGroup, Row } from 'react-bootstrap'
 import dayjs, { Dayjs } from 'dayjs'
-import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
-import { useListState } from '../../utils/hooks/useListState'
-import {
-  convertEvaluationRoundToInput,
-  EvaluationRoundInput,
-  EvaluationRoundLimitInput,
-} from './input_models/models'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import utc from 'dayjs/plugin/utc'
+import { upperFirst } from 'lodash-es'
+import { useEffect, useState } from 'react'
 import {
   createEvaluationRound,
   deleteEvaluationRound,
   updateEvaluationRound,
 } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
-import { ErrorBanner } from '../error/ErrorBanner'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
-import utc from 'dayjs/plugin/utc'
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import { useListState } from '../../utils/hooks/useListState'
 import DateTimePicker from '../DateTimePicker/DateTimePicker'
-import { DateTimeValidationError } from '@mui/x-date-pickers'
-import { upperFirst } from 'lodash-es'
+import { ErrorBanner } from '../error/ErrorBanner'
+import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
+import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
+import {
+  convertEvaluationRoundToInput,
+  EvaluationRoundInput,
+  EvaluationRoundLimitInput,
+} from './input_models/models'
+import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
 
 dayjs.extend(utc)
 dayjs.extend(isSameOrAfter)
@@ -245,46 +253,32 @@ export function EvaluationRoundEditor({
     evaluationRoundInput.roundStart,
   )
 
-  // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
     <div className="evaluation-round-editor">
       <Card>
-        <Card.Body>
-          <Form role="form">
-            <Row>
-              <Col>
-                <h5>
-                  ROUND STATUS
-                  {evaluationRoundInput.id &&
-                    ' (' + evaluationRoundInput.id + ')'}
-                </h5>
-              </Col>
-              <Col>
-                <EvaluationRoundEditorDropdown
-                  onDelete={onDeleteButtonClick}
-                  onSave={onSaveButtonClick}
-                />
-              </Col>
-            </Row>
+        <CardContent sx={{ p: 3 }}>
+          <form>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <h5>
+                ROUND STATUS
+                {evaluationRoundInput.id &&
+                  ' (' + evaluationRoundInput.id + ')'}
+              </h5>
+              <EvaluationRoundEditorDropdown
+                onDelete={onDeleteButtonClick}
+                onSave={onSaveButtonClick}
+              />
+            </Box>
+            <Box className="round-status" sx={{ mb: 2 }}>
+              {determineRoundStatus(
+                evaluationRoundInput.roundStart,
+                evaluationRoundInput.roundEnd,
+              )}
+            </Box>
+            <h5>DURATION</h5>
 
-            <Row className="mb-3">
-              <Col>
-                <div className="round-status">
-                  {determineRoundStatus(
-                    evaluationRoundInput.roundStart,
-                    evaluationRoundInput.roundEnd,
-                  )}
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <h5>DURATION</h5>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
+            <Grid2 container>
+              <Grid2 item xs={6}>
                 <DateTimePicker
                   label="Round Start"
                   value={startDate}
@@ -300,8 +294,8 @@ export function EvaluationRoundEditor({
                     },
                   }}
                 />
-              </Col>
-              <Col>
+              </Grid2>
+              <Grid2 item xs={6}>
                 <DateTimePicker
                   label="Round End"
                   value={endDate}
@@ -316,47 +310,32 @@ export function EvaluationRoundEditor({
                     },
                   }}
                 />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <h5 style={{ marginTop: '20px' }}>SUBMISSION LIMITS</h5>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <FormGroup>
-                  <label>Total Submissions / Round</label>
-                  <FormControl
-                    value={totalSubmissionLimit}
-                    type="text"
-                    pattern="[0-9]*"
-                    onChange={event =>
-                      setTotalSubmissionLimit(event.target.value)
-                    }
-                    // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
-                    // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
-                    // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
-                    autoComplete="new-password"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="text"
-                  color="primary"
-                  sx={{ fontSize: '16px !important' }}
-                  className="advanced-limits-link"
-                  onClick={() => setAdvancedMode(!advancedMode)}
-                >
-                  Advanced Limits
-                </Button>
-              </Col>
-            </Row>
-
+              </Grid2>
+            </Grid2>
+            <h5 style={{ marginTop: '20px' }}>SUBMISSION LIMITS</h5>
+            <TextField
+              fullWidth
+              label="Total Submissions / Round"
+              inputProps={{
+                pattern: '[0-9]*',
+              }}
+              value={totalSubmissionLimit}
+              onChange={event => setTotalSubmissionLimit(event.target.value)}
+              // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
+              // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
+              // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
+              autoComplete="new-password"
+            />
+            <Box sx={{ my: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                size={'small'}
+                onClick={() => setAdvancedMode(!advancedMode)}
+              >
+                Advanced Limits
+              </Button>
+            </Box>
             {advancedMode && (
               <EvaluationRoundLimitOptionsList
                 limitInputs={advancedLimits}
@@ -367,42 +346,35 @@ export function EvaluationRoundEditor({
             )}
 
             {error && (
-              <Row className="my-3">
-                <Col>
-                  <ErrorBanner error={error} />
-                </Col>
-              </Row>
+              <Box sx={{ my: 3 }}>
+                <ErrorBanner error={error} />
+              </Box>
             )}
 
             {showSaveSuccess && (
-              <Row className="my-3">
-                <Col>
-                  <Alert
-                    className="save-success-alert"
-                    severity="success"
-                    onClose={() => setShowSaveSuccess(false)}
-                    sx={{ mb: '20px' }}
-                  >
-                    Successfully saved.
-                  </Alert>
-                </Col>
-              </Row>
+              <Box sx={{ my: 3 }}>
+                <Alert
+                  className="save-success-alert"
+                  severity="success"
+                  onClose={() => setShowSaveSuccess(false)}
+                  sx={{ mb: '20px' }}
+                >
+                  Successfully saved.
+                </Alert>
+              </Box>
             )}
 
-            <Row className="mt-3">
-              <Col>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className="save-button float-right border-0"
-                  onClick={onSaveButtonClick}
-                >
-                  Save
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Card.Body>
+            <Box sx={{ mt: 3, textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={onSaveButtonClick}
+              >
+                Save
+              </Button>
+            </Box>
+          </form>
+        </CardContent>
       </Card>
     </div>
   )
