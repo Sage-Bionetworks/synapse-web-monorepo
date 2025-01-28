@@ -2,7 +2,8 @@
 @use '../abstracts/mixins' as SRCMixins;
 @use 'sass:map';
 
-table.DownloadListTableV2 {
+.DownloadListTableV2 {
+  height: 500px;
   white-space: pre;
   .eligibileIcon {
     color: map.get(SRC.$colors, 'gray-800');
@@ -10,51 +11,9 @@ table.DownloadListTableV2 {
   .ineligibileIcon {
     color: map.get(SRC.$colors, 'warning');
   }
-  td.ineligibleForPackagingTd:first-child {
+  .ineligibleForPackaging > td:first-of-type {
     background-color: #f9f5e7;
   }
-  thead:first-child > tr:first-child {
-    > th {
-      min-width: 120px;
-      &:first-child {
-        border-right: none;
-        min-width: unset;
-      }
-      &:nth-child(2) {
-        border-left: none;
-      }
-    }
-  }
-  tbody tr > td:nth-child(2) {
-    // file name column
-    overflow-x: hidden;
-    max-width: 570px;
-    text-overflow: ellipsis;
-  }
-
-  // Floating (sticky) Action column
-  @include SRCMixins.sticky-column();
-
-  // Download List Table specific styles to the sticky column:
-  tbody .stickyColumn .actionsContainer {
-    color: map.get(SRC.$colors, 'gray-700'); // make all icons gray-700
-    display: grid;
-    grid-template-columns: repeat(3, 40px);
-    * {
-      justify-self: center;
-    }
-    .downloadItem {
-      grid-column: 1 / span 1;
-    }
-    .programmaticAccessItem {
-      grid-column: 2 / span 1;
-    }
-    .removeItem {
-      grid-column: 3 / span 1;
-    }
-  }
-
-  @include SRCMixins.sortable-table();
 }
 .sort {
   padding-left: 5px;

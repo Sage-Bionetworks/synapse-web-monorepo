@@ -7,6 +7,7 @@ import {
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
+  getCommonPinningStyles,
   getHeaderSizeCssVariable,
 } from './TanStackTableUtils'
 import { StyledTanStackTableSlotProps, StyledTanStackTableSlots } from './types'
@@ -106,6 +107,7 @@ export default function StyledTanStackTable<
                       width: `calc(var(${getHeaderSizeCssVariable(
                         header.id,
                       )}) * 1px)`,
+                      ...getCommonPinningStyles(header.column),
                       ...thSlotProps['style'],
                     }}
                   >
