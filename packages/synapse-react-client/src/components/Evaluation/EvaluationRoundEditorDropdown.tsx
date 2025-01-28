@@ -1,7 +1,7 @@
-import { Dropdown } from 'react-bootstrap'
-import { useState } from 'react'
-import WarningDialog from '../SynapseForm/WarningDialog'
+import { Divider, IconButton, Menu, MenuItem } from '@mui/material'
+import { MouseEvent, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
+import WarningDialog from '../SynapseForm/WarningDialog'
 
 export type EvaluationRoundEditorDropdownProps = {
   onDelete: () => void
@@ -13,6 +13,14 @@ export function EvaluationRoundEditorDropdown({
   onDelete,
 }: EvaluationRoundEditorDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   return (
     <>
@@ -31,23 +39,20 @@ export function EvaluationRoundEditorDropdown({
         }}
         confirmButtonColor="error"
       />
-
-      <Dropdown className="float-right">
-        <Dropdown.Toggle
-          aria-label="Round Options"
-          variant="link"
-          className="dropdown-no-caret evaluation-round-editor-dropdown"
-        >
-          <IconSvg icon="verticalEllipsis" />
-        </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
-          <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
-            Delete
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+      <IconButton onClick={handleClick}>
+        <IconSvg icon="verticalEllipsis" wrap={false} />
+      </IconButton>
+      <Menu
+        aria-label="Round Options"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{ paper: { sx: { minWidth: '120px' } } }}
+      >
+        <MenuItem onClick={onSave}>Save</MenuItem>
+        <Divider />
+        <MenuItem onClick={() => setDeleteWarningShow(true)}>Delete</MenuItem>
+      </Menu>
     </>
   )
 }
