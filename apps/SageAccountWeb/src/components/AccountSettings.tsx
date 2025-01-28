@@ -10,6 +10,8 @@ import {
   Paper,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import {
   FeatureFlagEnum,
@@ -208,6 +210,10 @@ export const AccountSettings = () => {
     verificationState?.state == VerificationStateEnum.APPROVED ||
     verificationState?.state == VerificationStateEnum.SUBMITTED
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const formControlMargin = isMobile ? 'dense' : 'normal'
+
   return (
     <div className="account-settings-page">
       <AccountSettingsTopBar />
@@ -287,7 +293,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                     required
                   >
                     <TextField
@@ -302,7 +308,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'First name'}
@@ -316,7 +322,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Last name'}
@@ -330,7 +336,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Current position'}
@@ -344,7 +350,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Industry'}
@@ -358,7 +364,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Website'}
@@ -372,7 +378,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'City, Country'}
@@ -386,7 +392,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Institutional affiliation'}
@@ -399,7 +405,7 @@ export const AccountSettings = () => {
                   </StyledFormControl>
                   <TextField
                     fullWidth
-                    margin="normal"
+                    margin={formControlMargin}
                     label="Bio"
                     id="bio"
                     name="bio"
@@ -446,7 +452,7 @@ export const AccountSettings = () => {
                 <StyledFormControl
                   fullWidth
                   variant="standard"
-                  margin="normal"
+                  margin={formControlMargin}
                   sx={{ marginBottom: '10px' }}
                 >
                   <TextField
