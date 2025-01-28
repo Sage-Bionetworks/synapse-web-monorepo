@@ -16,7 +16,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { Box, Link } from '@mui/material'
+import { Box, Link, Button, Typography } from '@mui/material'
 import {
   CardLink,
   ColumnIconConfigs,
@@ -43,6 +43,9 @@ import {
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
+import { Stack } from '@mui/system'
+import { DialogBase } from '../DialogBase'
+import CitationPopover from '../CitationPopover'
 
 export type KeyToAlias = {
   key: string
@@ -550,7 +553,16 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
         <div className={'SRC-portalCardMain'}>
           {icon}
           <div className="SRC-cardContent">
-            <div className="SRC-type">{type}</div>
+            <Stack
+              sx={{
+                flexDirection: 'row',
+              }}
+            >
+              <div className="SRC-type">{type}</div>
+              <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
+                <CitationPopover />
+              </Box>
+            </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
