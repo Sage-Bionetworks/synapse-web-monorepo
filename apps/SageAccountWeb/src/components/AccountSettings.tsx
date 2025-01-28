@@ -213,7 +213,7 @@ export const AccountSettings = () => {
       <AccountSettingsTopBar />
       <div className="panel-wrapper-bg with-account-setting">
         <Container maxWidth="md">
-          <Box sx={{ display: 'flex', my: '60px' }}>
+          <Box sx={{ display: 'flex', my: { xs: '10px', sm: '60px' } }}>
             <Paper component="nav" className="account-setting-panel nav-panel">
               <ListItemButton
                 onClick={() => handleScroll(profileInformationRef)}
