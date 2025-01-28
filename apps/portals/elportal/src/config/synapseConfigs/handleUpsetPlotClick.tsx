@@ -5,12 +5,12 @@ import {
   COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { cohortBuilderSql } from '../resources'
+import { ISetCombination, ISetLike, ISet } from '@upsetjs/react'
 
-export const handleUpsetPlotClick = (selection: any) => {
-  //  We should use generateEncodedQueryForSelectedFacetURL, but this single facet may have multiple values (union from UpsetPlot)
-  const sets = selection.sets
-  const columnValues = [...sets.values()].map((v: any) => v.name) as string[]
-
+export const handleUpsetPlotClick = (selection: ISetLike<string> | null) => {
+  //  Gather all values (intersection from UpsetPlot), and create an additional filter for each value
+  const clickedSets = (selection as ISetCombination)?.sets.values()
+  const columnValues = clickedSets.map((v: ISet<any>) => v.name).toArray()
   const query: Query = {
     sql: cohortBuilderSql,
     additionalFilters: columnValues.map(value => {
