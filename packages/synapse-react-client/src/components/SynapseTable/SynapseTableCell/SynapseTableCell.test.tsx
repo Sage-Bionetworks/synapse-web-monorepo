@@ -31,6 +31,7 @@ import * as HasAccessModule from '../../HasAccess/HasAccessV2'
 import * as EntityLinkModule from '../../EntityLink'
 import * as UserBadgeModule from '../../UserCard/UserBadge'
 import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
+import * as EntityIdListModule from './EntityIdList'
 import { QueryWrapper } from '../../../index'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
@@ -111,6 +112,12 @@ jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
   return <div data-testid="AddToDownloadListV2" />
 })
 
+const mockEntityIdListComponent = jest
+  .spyOn(EntityIdListModule, 'default')
+  .mockImplementation(() => {
+    return <div data-testid="EntityIdList" />
+  })
+
 describe('SynapseTableCell tests', () => {
   beforeAll(() => {
     server.listen()
@@ -176,8 +183,10 @@ describe('SynapseTableCell tests', () => {
   const MOCKED_DATE_LIST = `[${MOCK_DATE_VALUE}]`
   const MOCKED_BOOLEAN_LIST = '[true, false]'
   const MOCKED_INTEGER_LIST = '[10, 11]'
+  const MOCK_ENTITYID_LIST = '["syn123", "syn124"]'
+  const EXPECTED_PARSED_ENTITYID_LIST = ['syn123', 'syn124']
 
-  const mockEntityLinkValue: string = 'syn122'
+  const mockEntityIdValue: string = 'syn122'
   const mockColumnValue: string = 'syn126'
   const mockDateValue: string = '1574268563000'
   const mockRowId = 122
@@ -193,44 +202,112 @@ describe('SynapseTableCell tests', () => {
     rowVersionNumber: mockRowVersion,
   } satisfies Partial<SynapseTableCellProps>
 
-  it('renders an entity link with an ID', async () => {
-    renderTableCell({
-      ...tableCellProps,
-      rowData: [mockEntityLinkValue],
-      columnType: ColumnTypeEnum.ENTITYID,
-      columnValue: mockEntityLinkValue,
+  describe('PORTALS-2095, SWC-7235 - Special cases for ENTITYID columns', () => {
+    it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
+      server.use(
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}/repo/v1/entity/syn16787123`,
+          (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(mockFileViewEntity))
+          },
+        ),
+      )
+      renderTableCell({
+        ...tableCellProps,
+        rowData: ['My amazing project folder'],
+        columnName: 'name',
+        columnType: ColumnTypeEnum.STRING,
+        columnValue: 'My amazing project folder',
+      })
+
+      await screen.findByTestId('EntityLink')
     })
 
-    await screen.findByTestId('EntityLink')
-    // Verify that the ID is passed
-    expect(mockEntityLink).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entity: mockEntityLinkValue,
-      }),
-      expect.anything(),
-    )
-  })
+    it('ENTITYID displays the ID when the columnName is id', async () => {
+      renderTableCell({
+        ...tableCellProps,
+        columnName: 'id',
+        rowData: [mockEntityIdValue],
+        columnType: ColumnTypeEnum.ENTITYID,
+        columnValue: mockEntityIdValue,
+      })
 
-  it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
-    server.use(
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}/repo/v1/entity/syn16787123`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
-        },
-      ),
-    )
-    renderTableCell({
-      ...tableCellProps,
-      rowData: ['My amazing project folder'],
-      columnName: 'name',
-      columnType: ColumnTypeEnum.STRING,
-      columnValue: 'My amazing project folder',
+      await screen.findByTestId('EntityLink')
+      // Verify that the ID is passed
+      expect(mockEntityLink).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity: mockEntityIdValue,
+          displayTextField: 'id',
+          showIcon: false,
+        }),
+        expect.anything(),
+      )
     })
 
-    await screen.findByTestId('EntityLink')
+    it('ENTITYID displays the entity name when the columnName is NOT id', async () => {
+      renderTableCell({
+        ...tableCellProps,
+        columnName: 'some_entity',
+        rowData: [mockEntityIdValue],
+        columnType: ColumnTypeEnum.ENTITYID,
+        columnValue: mockEntityIdValue,
+      })
+
+      await screen.findByTestId('EntityLink')
+      // Verify that the ID is passed
+      expect(mockEntityLink).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity: mockEntityIdValue,
+          displayTextField: 'name',
+          showIcon: false,
+        }),
+        expect.anything(),
+      )
+    })
+
+    it('ENTITYID_LIST displays the ID when the columnName is id', async () => {
+      renderTableCell({
+        ...tableCellProps,
+        columnName: 'id',
+        rowData: [MOCK_ENTITYID_LIST],
+        columnType: ColumnTypeEnum.ENTITYID_LIST,
+        columnValue: MOCK_ENTITYID_LIST,
+      })
+
+      await screen.findByTestId('EntityIdList')
+      // Verify that the ID is passed
+      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
+          displayTextField: 'id',
+          showIcon: false,
+        }),
+        expect.anything(),
+      )
+    })
+
+    it('ENTITYID_LIST displays the entity name when the columnName is NOT id', async () => {
+      renderTableCell({
+        ...tableCellProps,
+        columnName: 'some_entity',
+        rowData: [MOCK_ENTITYID_LIST],
+        columnType: ColumnTypeEnum.ENTITYID_LIST,
+        columnValue: MOCK_ENTITYID_LIST,
+      })
+
+      await screen.findByTestId('EntityIdList')
+      // Verify that the ID is passed
+      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
+          displayTextField: 'name',
+          showIcon: false,
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('renders a link for all authenticated users', async () => {

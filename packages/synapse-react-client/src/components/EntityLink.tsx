@@ -13,7 +13,7 @@ import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
 import ErrorChip from './error/ErrorChip'
 
-type EntityLinkProps = {
+export type EntityLinkProps = {
   entity: string | EntityHeader | Entity
   versionNumber?: number
   /** Whether the component should link to the entity page in Synapse. Link can be overriden by passing a string. Default true */
