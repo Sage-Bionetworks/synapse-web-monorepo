@@ -27,7 +27,6 @@ const ELSupportedByNIH: React.FC = () => {
         <Typography
           variant="headline2"
           sx={{
-            color: '#2225A',
             fontSize: '28px',
             mb: '20px',
           }}
