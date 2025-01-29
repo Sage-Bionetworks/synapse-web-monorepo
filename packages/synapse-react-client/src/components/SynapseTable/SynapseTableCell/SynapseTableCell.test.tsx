@@ -223,6 +223,14 @@ describe('SynapseTableCell tests', () => {
       })
 
       await screen.findByTestId('EntityLink')
+      expect(mockEntityLink).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity: String(mockRowId),
+          displayTextField: 'name',
+          showIcon: false,
+        }),
+        expect.anything(),
+      )
     })
 
     it('ENTITYID displays the ID when the columnName is id', async () => {
