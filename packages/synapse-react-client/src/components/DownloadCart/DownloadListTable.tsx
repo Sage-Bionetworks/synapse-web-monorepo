@@ -29,6 +29,7 @@ import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import { UserBadge } from '../UserCard/UserBadge'
+import DownloadListStats from './DownloadListStats'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 
@@ -75,6 +76,9 @@ function InteractiveSortIcon(props: {
 export type DownloadListTableProps = {
   filesStatistics: FilesStatisticsResponse
   refetchStatistics: () => Promise<any>
+  numBytes: number
+  numPackagableFiles: number
+  numFiles: number
 }
 
 export default function DownloadListTable(props: DownloadListTableProps) {
@@ -186,6 +190,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     <div className="bootstrap-4-backport">
       <BlockingLoader show={copyingAllSynapseIDs} />
       <div className="filterFilesContainer">
+        <DownloadListStats
+          numBytes={props.numBytes}
+          numPackagableFiles={props.numPackagableFiles}
+          numFiles={props.numFiles}
+        />
         <span className="filterFilesByText">Filter Files By</span>
         <Dropdown>
           <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
