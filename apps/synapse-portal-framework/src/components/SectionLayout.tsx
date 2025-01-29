@@ -1,5 +1,5 @@
 import { Box, Container, ContainerProps } from '@mui/material'
-import { PropsWithChildren, useRef } from 'react'
+import { PropsWithChildren, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { HelpPopover } from 'synapse-react-client'
 import { scrollToWithOffset } from '../utils'
@@ -15,7 +15,7 @@ type SectionLayoutProps = PropsWithChildren<{
 export function SectionLayout(props: SectionLayoutProps) {
   const { ContainerProps, title, centerTitle, subtitle, helpText, children } =
     props
-  const { hash } = useLocation()
+  const { hash, pathname } = useLocation()
 
   const scrollToRef = useRef(null)
   const scrollToJsx =
@@ -24,6 +24,12 @@ export function SectionLayout(props: SectionLayoutProps) {
     ) : (
       <></>
     )
+  // Scroll to top if there's no hash in the URL
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0)
+    }
+  }, [pathname, hash])
   // this delay is here to improve the location of the element, since it's position depends on the layout of other components on the page (that also need to load)
   setTimeout(() => {
     if (scrollToRef.current) {
