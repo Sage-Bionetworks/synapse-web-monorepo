@@ -383,9 +383,10 @@ export function ThemesPlot({
                     >
                       <DotPlot
                         id={`${i}`}
-                        onClick={(e: any) =>
-                          onPointClick(getClickTargetData(e, false))
-                        }
+                        onClick={(e: any) => {
+                          const { type, event } = getClickTargetData(e, false)
+                          onPointClick({ facetValue: label, type, event })
+                        }}
                         plotData={dotPlotQueryData}
                         plotStyle={dotPlot.plotStyle}
                         markerSymbols={dotPlot.markerSymbols}
