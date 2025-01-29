@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
-import NIHLogo from './assets/nih_logo.png'
+import NIHLogo from './assets/nia_logo.png'
 
 const ELSupportedByNIH: React.FC = () => {
   return (
