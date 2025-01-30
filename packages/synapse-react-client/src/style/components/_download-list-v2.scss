@@ -3,7 +3,6 @@
 @use 'sass:map';
 
 .DownloadListTableV2 {
-  height: 500px;
   white-space: pre;
   .eligibileIcon {
     color: map.get(SRC.$colors, 'gray-800');
