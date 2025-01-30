@@ -10,10 +10,10 @@ import { ISetCombination, ISet, UpSetSelectionProps } from '@upsetjs/react'
 export const handleUpsetPlotClick: UpSetSelectionProps['onClick'] =
   selection => {
     //  Gather all values (intersection from UpsetPlot), and create an additional filter for each value
-    const clickedSets = (
-      selection as ISetCombination
-    )?.sets.values() as SetIterator<ISet<any>>
-    const columnValues = clickedSets.toArray().map((v: ISet<any>) => v.name)
+    const clickedSets = Array.from(
+      (selection as ISetCombination)?.sets.values(),
+    )
+    const columnValues = clickedSets.map((v: ISet<any>) => v.name)
     const query: Query = {
       sql: cohortBuilderSql,
       additionalFilters: columnValues.map(value => {
