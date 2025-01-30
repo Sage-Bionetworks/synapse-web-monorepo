@@ -65,13 +65,17 @@ const columns = [
           .getValue()
           .filter(user => ctx.row.original.submitterId !== user.userId)
           .map(requester => (
-            <UserBadge userId={requester.userId} className="requester" />
+            <UserBadge
+              key={requester.userId}
+              userId={requester.userId}
+              className="requester"
+            />
           ))}
       </Stack>
     ),
   }),
   columnHelper.accessor('accessRequirementReviewerIds', {
-    header: props => <ColumnHeader {...props} title={'Reviewers'} />,
+    header: props => <ColumnHeader {...props} title={'Reviewer(s)'} />,
     enableSorting: false,
     cell: ctx => (
       <Stack gap={1}>
@@ -91,6 +95,7 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Created Date'} />,
     enableSorting: true,
     cell: ctx => formatDate(dayjs(ctx.getValue())),
+    sortDescFirst: true,
   }),
 ]
 
@@ -174,6 +179,7 @@ export function AccessRequestSubmissionTable({
     data: accessSubmissions,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false, // filters are handled by separate controls
     manualSorting: true,
     onSortingChange: setTableSortState,
     state: {

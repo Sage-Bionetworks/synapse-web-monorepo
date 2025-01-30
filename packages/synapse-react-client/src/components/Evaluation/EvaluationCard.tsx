@@ -181,7 +181,7 @@ function EvaluationCardDropdown({
           confirmButtonColor="error"
         />
       )}
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClick} aria-label="Options">
         <IconSvg icon="verticalEllipsis" wrap={false} />
       </IconButton>
       <Menu
@@ -200,16 +200,12 @@ function EvaluationCardDropdown({
             Modify Access
           </MenuItem>
         )}
+        {/* MUI Menu cannot have a fragment child, so we split the divider and Delete MenuItem into two separate statements */}
+        {permissions.canDelete && <Divider />}
         {permissions.canDelete && (
-          <>
-            <Divider />
-            <MenuItem
-              role="menuitem"
-              onClick={() => setDeleteWarningShow(true)}
-            >
-              Delete
-            </MenuItem>
-          </>
+          <MenuItem role="menuitem" onClick={() => setDeleteWarningShow(true)}>
+            Delete
+          </MenuItem>
         )}
       </Menu>
     </>

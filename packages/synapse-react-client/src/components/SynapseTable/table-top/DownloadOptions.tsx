@@ -2,7 +2,7 @@ import { MenuItem, Tooltip } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import { useGetEntity } from '../../../synapse-queries'
 import { useSynapseContext } from '../../../utils'
 import { isDataset } from '../../../utils/functions/EntityTypeUtils'
@@ -59,6 +59,86 @@ export function DownloadOptions(props: DownloadOptionsProps) {
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 
+  const downloadMenuItems: ReactNode[] = useMemo(() => {
+    const downloadMenuItems = []
+    if (showAddQueryToDownloadList) {
+      downloadMenuItems.push(
+        <Tooltip
+          key={'add-to-download-list'}
+          title={
+            disableDownload
+              ? 'A draft version of a dataset cannot be added to the Download Cart'
+              : null
+          }
+          placement="left"
+          enterNextDelay={300}
+          describeChild={true}
+        >
+          <MenuItem
+            className={disableDownload ? 'ignoreLink' : undefined}
+            disabled={disableDownload}
+            // If disabled, add pointer-events-auto so the tooltip still works
+            style={disableDownload ? { pointerEvents: 'auto' } : {}}
+            onClick={() =>
+              accessToken ? onDownloadFiles() : setShowLoginModal(true)
+            }
+          >
+            {getNumberOfResultsToAddToDownloadListCopy(
+              hasResettableFilters,
+              hasSelectedRows,
+              selectedRows,
+              queryMetadata?.queryCount,
+              'file',
+            )}
+          </MenuItem>
+        </Tooltip>,
+      )
+    }
+    downloadMenuItems.push(
+      <MenuItem
+        key={'export-table'}
+        onClick={() => {
+          setShowExportMetadata(true)
+        }}
+      >
+        Export Table
+      </MenuItem>,
+    )
+    downloadMenuItems.push(
+      <Tooltip
+        key={'programmatic-options'}
+        title={
+          disableDownload
+            ? 'A draft version of a dataset cannot be downloaded programmatically'
+            : null
+        }
+        placement="left"
+        enterNextDelay={300}
+        describeChild={true}
+      >
+        <MenuItem
+          className={disableDownload ? 'ignoreLink' : undefined}
+          disabled={disableDownload}
+          // If disabled, add pointer-events-auto so the tooltip still works
+          style={disableDownload ? { pointerEvents: 'auto' } : {}}
+          onClick={() => setShowProgrammaticOptions(true)}
+        >
+          Programmatic Options
+        </MenuItem>
+      </Tooltip>,
+    )
+    return downloadMenuItems
+  }, [
+    accessToken,
+    disableDownload,
+    hasResettableFilters,
+    hasSelectedRows,
+    onDownloadFiles,
+    queryMetadata?.queryCount,
+    selectedRows,
+    showAddQueryToDownloadList,
+  ])
+
   return (
     <>
       <ElementWithTooltip
@@ -66,68 +146,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
         size="lg"
         darkTheme={darkTheme}
         icon={'download'}
-        menuItems={
-          <>
-            {showAddQueryToDownloadList && (
-              <Tooltip
-                title={
-                  disableDownload
-                    ? 'A draft version of a dataset cannot be added to the Download Cart'
-                    : null
-                }
-                placement="left"
-                enterNextDelay={300}
-                describeChild={true}
-              >
-                <MenuItem
-                  className={disableDownload ? 'ignoreLink' : undefined}
-                  disabled={disableDownload}
-                  // If disabled, add pointer-events-auto so the tooltip still works
-                  style={disableDownload ? { pointerEvents: 'auto' } : {}}
-                  onClick={() =>
-                    accessToken ? onDownloadFiles() : setShowLoginModal(true)
-                  }
-                >
-                  {getNumberOfResultsToAddToDownloadListCopy(
-                    hasResettableFilters,
-                    hasSelectedRows,
-                    selectedRows,
-                    queryMetadata?.queryCount,
-                    'file',
-                  )}
-                </MenuItem>
-              </Tooltip>
-            )}
-
-            <MenuItem
-              onClick={() => {
-                setShowExportMetadata(true)
-              }}
-            >
-              Export Table
-            </MenuItem>
-            <Tooltip
-              title={
-                disableDownload
-                  ? 'A draft version of a dataset cannot be downloaded programmatically'
-                  : null
-              }
-              placement="left"
-              enterNextDelay={300}
-              describeChild={true}
-            >
-              <MenuItem
-                className={disableDownload ? 'ignoreLink' : undefined}
-                disabled={disableDownload}
-                // If disabled, add pointer-events-auto so the tooltip still works
-                style={disableDownload ? { pointerEvents: 'auto' } : {}}
-                onClick={() => setShowProgrammaticOptions(true)}
-              >
-                Programmatic Options
-              </MenuItem>
-            </Tooltip>
-          </>
-        }
+        menuItems={downloadMenuItems}
       />
       {showLoginModal && (
         <DownloadLoginModal

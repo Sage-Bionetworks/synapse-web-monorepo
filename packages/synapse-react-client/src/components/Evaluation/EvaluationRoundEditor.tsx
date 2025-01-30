@@ -257,7 +257,7 @@ export function EvaluationRoundEditor({
     <div className="evaluation-round-editor">
       <Card>
         <CardContent sx={{ p: 3 }}>
-          <form>
+          <form aria-label={'Evaluation Round Form'}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <h5>
                 ROUND STATUS

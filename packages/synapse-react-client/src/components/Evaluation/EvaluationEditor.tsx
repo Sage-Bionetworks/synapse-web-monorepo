@@ -239,11 +239,23 @@ function EvaluationEditorDropdown({
         onClose={handleMenuClose}
         slotProps={{ paper: { sx: { minWidth: '120px' } } }}
       >
-        <MenuItem onClick={onClick}>Save</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose()
+            onClick()
+          }}
+        >
+          Save
+        </MenuItem>
         {onDelete && (
           <>
             <Divider />
-            <MenuItem onClick={() => setDeleteWarningShow(true)}>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose()
+                setDeleteWarningShow(true)
+              }}
+            >
               Delete
             </MenuItem>
           </>

@@ -39,7 +39,7 @@ export function EvaluationRoundEditorDropdown({
         }}
         confirmButtonColor="error"
       />
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClick} aria-label="Round Options">
         <IconSvg icon="verticalEllipsis" wrap={false} />
       </IconButton>
       <Menu
@@ -49,9 +49,23 @@ export function EvaluationRoundEditorDropdown({
         onClose={handleClose}
         slotProps={{ paper: { sx: { minWidth: '120px' } } }}
       >
-        <MenuItem onClick={onSave}>Save</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose()
+            onSave()
+          }}
+        >
+          Save
+        </MenuItem>
         <Divider />
-        <MenuItem onClick={() => setDeleteWarningShow(true)}>Delete</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose()
+            setDeleteWarningShow(true)
+          }}
+        >
+          Delete
+        </MenuItem>
       </Menu>
     </>
   )

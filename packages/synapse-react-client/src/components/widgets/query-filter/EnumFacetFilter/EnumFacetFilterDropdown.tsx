@@ -1,4 +1,12 @@
-import { Box, Fade, IconButton, Menu, Select, Tooltip } from '@mui/material'
+import {
+  Box,
+  Fade,
+  IconButton,
+  Menu,
+  MenuItem,
+  Select,
+  Tooltip,
+} from '@mui/material'
 import { MouseEvent, PropsWithChildren, useState } from 'react'
 import IconSvg from '../../../IconSvg'
 
@@ -18,9 +26,13 @@ function EnumFacetFilterSelectBox(
     <Select
       className={'EnumFacetFilter EnumFacetFilterSelect'}
       value={menuText}
-      placeholder={'All'}
       renderValue={() => menuText}
+      onChange={() => {
+        // noop - the children will handle change events
+      }}
     >
+      {/* Hack to prevent Select warnings - add a hidden MenuItem */}
+      <MenuItem value={menuText} sx={{ display: 'none' }} />
       <Box
         sx={{
           // hack to expand the dropdown menu width for this component only
