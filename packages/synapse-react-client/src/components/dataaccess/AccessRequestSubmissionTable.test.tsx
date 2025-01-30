@@ -1,7 +1,6 @@
 import {
   AccessType,
   SubmissionReviewerFilterType,
-  SubmissionSearchRequest,
   SubmissionSearchResponse,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
