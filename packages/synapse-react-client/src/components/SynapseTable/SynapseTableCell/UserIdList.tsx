@@ -1,5 +1,5 @@
 import UserOrTeamBadge from '../../UserOrTeamBadge'
-import { Box } from '@mui/material'
+import { Stack } from '@mui/material'
 
 export type UserIdListProps = {
   userIds: string[]
@@ -9,13 +9,11 @@ function UserIdList(props: UserIdListProps) {
   const { userIds } = props
 
   return (
-    <p>
+    <Stack gap={1}>
       {userIds.map(userId => (
-        <Box key={userId}>
-          <UserOrTeamBadge principalId={userId} />
-        </Box>
+        <UserOrTeamBadge key={userId} principalId={userId} />
       ))}
-    </p>
+    </Stack>
   )
 }
 
