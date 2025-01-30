@@ -194,7 +194,8 @@ export default function HomePage() {
                       },
                       {
                         title: 'ADAMTS7 Study',
-                        description: '',
+                        description:
+                          'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
                         facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'ADAMTS7',
@@ -207,7 +208,7 @@ export default function HomePage() {
                   },
                 },
                 {
-                  title: 'Translation Studies',
+                  title: 'Translational Studies',
                   icon: 'TRANSLATIONAL',
                   explorePagePath: '/Explore/Studies',
                   exploreObjectType: 'Studies',
