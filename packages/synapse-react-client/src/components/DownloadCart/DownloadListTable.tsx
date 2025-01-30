@@ -1,4 +1,4 @@
-import { Box, Button, Tooltip } from '@mui/material'
+import { Box, Button, Select, Tooltip } from '@mui/material'
 import {
   AvailableFilter,
   DownloadListItem,
@@ -17,7 +17,6 @@ import {
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import {
   useGetAvailableFilesToDownloadInfinite,
@@ -409,28 +408,22 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     'ineligibleForPackaging',
   ]
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       <BlockingLoader show={copyingAllSynapseIDs} />
       <div className="filterFilesContainer">
         <span className="filterFilesByText">Filter Files By</span>
-        <Dropdown>
-          <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
-            {getFilterDisplayText(filter)}
-          </Dropdown.Toggle>
-          <Dropdown.Menu role="menu">
-            {availableFiltersArray.map(availableFilter => (
-              <Dropdown.Item
-                role="menuitem"
-                key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                onClick={() => {
-                  setFilter(availableFilter)
-                }}
-              >
-                {getFilterDisplayText(availableFilter)}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+        <Select native fullWidth value={getFilterDisplayText(filter)}>
+          {availableFiltersArray.map(availableFilter => (
+            <option
+              key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+              onClick={() => {
+                setFilter(availableFilter)
+              }}
+            >
+              {getFilterDisplayText(availableFilter)}
+            </option>
+          ))}
+        </Select>
       </div>
       {allRows.length > 0 && (
         <div className="DownloadListTableV2">
