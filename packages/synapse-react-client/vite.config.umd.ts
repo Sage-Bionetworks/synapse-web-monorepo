@@ -7,7 +7,6 @@ const globalExternals = {
   katex: 'katex',
   react: 'React',
   'react-dom': 'ReactDOM',
-  'react-bootstrap': 'ReactBootstrap',
   'plotly.js-basic-dist': 'Plotly',
   'react-plotly.js': 'createPlotlyComponent',
   'rss-parser': 'Parser',

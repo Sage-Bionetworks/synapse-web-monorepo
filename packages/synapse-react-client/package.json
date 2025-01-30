@@ -92,7 +92,6 @@
     "qrcode": "^1.5.3",
     "raf": "^3.4.1",
     "react-app-polyfill": "^3.0.0",
-    "react-bootstrap": "^1.6.8",
     "react-datetime": "^3.2.0",
     "react-error-boundary": "^3.1.4",
     "react-hot-toast": "2.2.0",
