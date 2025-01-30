@@ -94,7 +94,7 @@ export function EvaluationRoundEditorList({
   }
 
   return (
-    <div className="evaluation-round-editor-list bootstrap-4-backport">
+    <div className="evaluation-round-editor-list">
       <div className="evaluation-rounds">
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (

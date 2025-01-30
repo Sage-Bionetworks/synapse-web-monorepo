@@ -124,9 +124,6 @@ importers:
       react:
         specifier: 18.2.0
         version: 18.2.0
-      react-bootstrap:
-        specifier: ^1.6.8
-        version: 1.6.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-cookie:
         specifier: 4.0.0
         version: 4.0.0(react@18.2.0)
@@ -843,9 +840,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-bootstrap:
-        specifier: ^1.6.8
-        version: 1.6.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-cookie:
         specifier: 4.0.0
         version: 4.0.0(react@18.2.0)
@@ -1033,9 +1027,6 @@ importers:
       plotly.js-basic-dist:
         specifier: ^2.30.0
         version: 2.30.0
-      react-bootstrap:
-        specifier: ^1.6.8
-        version: 1.6.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-cookie:
         specifier: 4.0.0
         version: 4.0.0(react@18.2.0)
@@ -1824,9 +1815,6 @@ importers:
       jest-html-reporter:
         specifier: ^3.10.2
         version: 3.10.2(jest@29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.5.3)))(typescript@5.5.3)
-      jest-mock-promise:
-        specifier: ^1.1.12
-        version: 1.1.12
       jest-when:
         specifier: ^3.6.0
         version: 3.6.0(jest@29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.5.3)))
@@ -8538,9 +8526,6 @@ packages:
   jest-message-util@29.7.0:
     resolution: {integrity: sha512-GBEV4GRADeP+qtB2+6u61stea8mGcOT4mCtrYISZwfu9/ISHFJ/5zOMXYbpBE9RsS5+Gb63DW4FgmnKJ79Kf6w==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-
-  jest-mock-promise@1.1.12:
-    resolution: {integrity: sha512-6PPwbv+Lju8cU7XzpFITD5svsbFr96eoGxPHRO8T1lrfALhW1FAfLs55xIaJ59dz4LNMjH9hN0MR1j84ylKayA==}
 
   jest-mock@29.7.0:
     resolution: {integrity: sha512-ITOMZn+UkYS4ZFh83xYAOzWStloNzJFO2s8DWrE4lhtGD+AorgnbkiKERe4wQVBydIGPx059g6riW5Btp6Llnw==}
@@ -19685,8 +19670,6 @@ snapshots:
       slash: 3.0.0
       stack-utils: 2.0.6
 
-  jest-mock-promise@1.1.12: {}
-
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
@@ -21388,7 +21371,7 @@ snapshots:
 
   react-bootstrap@1.6.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.7
+      '@babel/runtime': 7.24.8
       '@restart/context': 2.1.4(react@18.2.0)
       '@restart/hooks': 0.4.16(react@18.2.0)
       '@types/invariant': 2.2.37

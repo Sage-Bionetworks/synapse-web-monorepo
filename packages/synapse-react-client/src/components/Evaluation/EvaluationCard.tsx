@@ -1,19 +1,29 @@
-import { useEffect, useState } from 'react'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  Evaluation,
+  UserEvaluationPermissions,
+} from '@sage-bionetworks/synapse-types'
+import { MouseEvent, useEffect, useState } from 'react'
 import {
   deleteEvaluation,
   getEvaluationPermissions,
 } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { Button } from '@mui/material'
-import { Card, Col, Dropdown, Row } from 'react-bootstrap'
-import { ErrorBanner } from '../error/ErrorBanner'
-import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import { RequiredProperties } from '../../utils'
-import WarningDialog from '../SynapseForm/WarningDialog'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
+import WarningDialog from '../SynapseForm/WarningDialog'
+import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -72,26 +82,22 @@ export function EvaluationCard({
   }
 
   return (
-    <div className="bootstrap-4-backport evaluation-card">
+    <div className="evaluation-card">
       <Card>
-        <Card.Body>
+        <CardContent sx={{ p: 3 }}>
           {error && <ErrorBanner error={error} />}
 
           {permissions && (
             <>
-              <Row>
-                <Col>
-                  <label>EVALUATION QUEUE</label>
-                </Col>
-                <Col>
-                  <EvaluationCardDropdown
-                    permissions={permissions}
-                    onDelete={onDelete}
-                    onEdit={onEdit}
-                    onModifyAccess={onModifyAccess}
-                  />
-                </Col>
-              </Row>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <label>EVALUATION QUEUE</label>
+                <EvaluationCardDropdown
+                  permissions={permissions}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  onModifyAccess={onModifyAccess}
+                />
+              </Box>
 
               <h4>
                 {evaluation.name} ({evaluation.id})
@@ -117,7 +123,7 @@ export function EvaluationCard({
               )}
             </>
           )}
-        </Card.Body>
+        </CardContent>
       </Card>
     </div>
   )
@@ -137,6 +143,15 @@ function EvaluationCardDropdown({
   onDelete,
 }: EvaluationCardDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   if (
     !(
@@ -166,39 +181,33 @@ function EvaluationCardDropdown({
           confirmButtonColor="error"
         />
       )}
-      <Dropdown className="float-right">
-        <Dropdown.Toggle
-          role="menu"
-          aria-label="Options"
-          variant="link"
-          className="dropdown-no-caret"
-        >
-          <IconSvg icon="verticalEllipsis" />
-        </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
-          {permissions.canEdit && (
-            <Dropdown.Item role="menuitem" onClick={onEdit}>
-              Edit
-            </Dropdown.Item>
-          )}
-          {permissions.canChangePermissions && (
-            <Dropdown.Item role="menuitem" onClick={onModifyAccess}>
-              Modify Access
-            </Dropdown.Item>
-          )}
-          {permissions.canDelete && (
-            <>
-              <Dropdown.Divider />
-              <Dropdown.Item
-                role="menuitem"
-                onClick={() => setDeleteWarningShow(true)}
-              >
-                Delete
-              </Dropdown.Item>{' '}
-            </>
-          )}
-        </Dropdown.Menu>
-      </Dropdown>
+      <IconButton onClick={handleClick} aria-label="Options">
+        <IconSvg icon="verticalEllipsis" wrap={false} />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{ paper: { sx: { minWidth: '120px' } } }}
+      >
+        {permissions.canEdit && (
+          <MenuItem role="menuitem" onClick={onEdit}>
+            Edit
+          </MenuItem>
+        )}
+        {permissions.canChangePermissions && (
+          <MenuItem role="menuitem" onClick={onModifyAccess}>
+            Modify Access
+          </MenuItem>
+        )}
+        {/* MUI Menu cannot have a fragment child, so we split the divider and Delete MenuItem into two separate statements */}
+        {permissions.canDelete && <Divider />}
+        {permissions.canDelete && (
+          <MenuItem role="menuitem" onClick={() => setDeleteWarningShow(true)}>
+            Delete
+          </MenuItem>
+        )}
+      </Menu>
     </>
   )
 }
