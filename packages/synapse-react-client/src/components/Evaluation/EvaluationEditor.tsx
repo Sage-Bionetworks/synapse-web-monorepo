@@ -247,18 +247,16 @@ function EvaluationEditorDropdown({
         >
           Save
         </MenuItem>
+        {onDelete && <Divider />}
         {onDelete && (
-          <>
-            <Divider />
-            <MenuItem
-              onClick={() => {
-                handleMenuClose()
-                setDeleteWarningShow(true)
-              }}
-            >
-              Delete
-            </MenuItem>
-          </>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose()
+              setDeleteWarningShow(true)
+            }}
+          >
+            Delete
+          </MenuItem>
         )}
       </Menu>
     </>
