@@ -24,7 +24,7 @@ import { SkeletonTable } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
-import { Tooltip } from '@mui/material'
+import { Tooltip, Box, Typography } from '@mui/material'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
@@ -189,32 +189,57 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   return (
     <div className="bootstrap-4-backport">
       <BlockingLoader show={copyingAllSynapseIDs} />
-      <div className="filterFilesContainer">
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'auto 100px 148px',
+          alignItems: 'center',
+          pb: '15px',
+        }}
+      >
         <DownloadListStats
           numBytes={props.numBytes}
           numPackagableFiles={props.numPackagableFiles}
           numFiles={props.numFiles}
         />
-        <span className="filterFilesByText">Filter Files By</span>
-        <Dropdown>
-          <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
-            {getFilterDisplayText(filter)}
-          </Dropdown.Toggle>
-          <Dropdown.Menu role="menu">
-            {availableFiltersArray.map(availableFilter => (
-              <Dropdown.Item
-                role="menuitem"
-                key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                onClick={() => {
-                  setFilter(availableFilter)
-                }}
-              >
-                {getFilterDisplayText(availableFilter)}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
+        <Box
+          sx={{
+            gridColumnStart: 2,
+            fontWeight: '700',
+            fontSize: '14px',
+            align: 'inherit',
+          }}
+        >
+          Filter Files By
+        </Box>
+        <Box
+          sx={{
+            gridColumnStart: 3,
+            button: {
+              width: '144px',
+            },
+          }}
+        >
+          <Dropdown>
+            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
+              {getFilterDisplayText(filter)}
+            </Dropdown.Toggle>
+            <Dropdown.Menu role="menu">
+              {availableFiltersArray.map(availableFilter => (
+                <Dropdown.Item
+                  role="menuitem"
+                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+                  onClick={() => {
+                    setFilter(availableFilter)
+                  }}
+                >
+                  {getFilterDisplayText(availableFilter)}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Box>
+      </Box>
       {allRows.length > 0 && (
         <>
           <Table
