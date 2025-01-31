@@ -1,6 +1,5 @@
+import { Box, Tooltip, Typography } from '@mui/material'
 import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
-import { ElementWithTooltip } from '../ElementWithTooltip'
-import { Box, Typography } from '@mui/material'
 
 export function FacetPlotLegendList(props: FacetPlotLegendProps) {
   const { labels, colors = [], isExpanded } = props
@@ -19,8 +18,9 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
         return (
-          <ElementWithTooltip
-            tooltipText={facetValue.label}
+          <Tooltip
+            title={facetValue.label}
+            placement={'top'}
             key={facetValue.label}
           >
             <Box
@@ -61,7 +61,7 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
                 {facetValue.count.toLocaleString()}
               </Typography>
             </Box>
-          </ElementWithTooltip>
+          </Tooltip>
         )
       })}
     </div>
