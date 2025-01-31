@@ -221,47 +221,32 @@ export const AccountSettings = () => {
         <Container maxWidth="md">
           <Box sx={{ display: 'flex', my: { xs: '10px', sm: '60px' } }}>
             <Paper component="nav" className="account-setting-panel nav-panel">
-              <ListItemButton
-                onClick={() => handleScroll(profileInformationRef)}
-              >
-                Profile Information
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(emailAddressesRef)}>
-                Email Addresses
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(changePasswordRef)}>
-                Change Password
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(timezoneRef)}>
-                Date/Time Format
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(trustCredentialRef)}>
-                Trust & Credentials
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(twoFactorAuthRef)}>
-                Two-factor Authentication (2FA)
-              </ListItemButton>
-              <ListItemButton
-                onClick={() => handleScroll(personalAccessTokenRef)}
-              >
-                Personal Access Tokens
-              </ListItemButton>
-              <ListItemButton
-                onClick={() => handleScroll(oauthClientManagementRef)}
-              >
-                OAuth Clients
-              </ListItemButton>
-              {showWebhooks && (
-                <ListItemButton onClick={() => handleScroll(webhooksRef)}>
-                  Webhooks
+              {[
+                { label: 'Profile Information', ref: profileInformationRef },
+                { label: 'Email Addresses', ref: emailAddressesRef },
+                { label: 'Change Password', ref: changePasswordRef },
+                { label: 'Date/Time Format', ref: timezoneRef },
+                { label: 'Trust & Credentials', ref: trustCredentialRef },
+                {
+                  label: 'Two-factor Authentication (2FA)',
+                  ref: twoFactorAuthRef,
+                },
+                {
+                  label: 'Personal Access Tokens',
+                  ref: personalAccessTokenRef,
+                },
+                { label: 'OAuth Clients', ref: oauthClientManagementRef },
+                { label: 'Webhooks', ref: webhooksRef },
+                { label: 'Privacy Preferences', ref: cookieManagementRef },
+                { label: 'Sign Out', ref: signOutSectionRef },
+              ].map((item, index) => (
+                <ListItemButton
+                  key={index}
+                  onClick={() => handleScroll(item.ref)}
+                >
+                  {item.label}
                 </ListItemButton>
-              )}
-              <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
-                Privacy Preferences
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(signOutSectionRef)}>
-                Sign Out
-              </ListItemButton>
+              ))}
             </Paper>
 
             <div>
