@@ -73,10 +73,15 @@ export default function StyledTanStackTable<
         header.column.getSize()
     }
     return colSizes
+    // Intentionally limit the dependencies to only recompute when the column sizes change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [table.getState().columnSizingInfo, table.getState().columnSizing])
+  }, [
+    table.getState().columnSizingInfo,
+    table.getState().columnSizing,
+    table.getState().columnVisibility, // If a column is added, its width should be recalculated
+  ])
 
-  const tableWidth = fullWidth ? '100%' : table.getTotalSize()
+  const tableWidth = fullWidth ? '100%' : `${table.getTotalSize()}px`
 
   /* When resizing any column we will render this special memoized version of our table body */
   const TableBodyElement = table.getState().columnSizingInfo.isResizingColumn
@@ -89,6 +94,7 @@ export default function StyledTanStackTable<
         {...tableSlotProps}
         style={{
           ...columnSizeVars,
+          tableLayout: 'fixed',
           width: tableWidth,
           ...tableSlotProps['style'],
         }}
