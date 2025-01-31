@@ -766,6 +766,8 @@ main,
 .UserSearchBoxV2,
 .AsyncSelect {
   .form-control {
+    height: 48px;
+    margin: 8px 0px 12px;
     background-color: map.get(SRC.$colors, 'gray-200');
     border-radius: 3px;
   }
