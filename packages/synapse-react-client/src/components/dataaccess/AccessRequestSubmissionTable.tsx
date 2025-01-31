@@ -50,9 +50,7 @@ const columns = [
   columnHelper.accessor('state', {
     header: props => <ColumnHeader {...props} title={'Status'} />,
     enableSorting: false,
-    cell: ctx => (
-      <Typography>{upperFirst(ctx.getValue().toLocaleLowerCase())}</Typography>
-    ),
+    cell: ctx => upperFirst(ctx.getValue().toLocaleLowerCase()),
   }),
 
   columnHelper.accessor('accessorChanges', {
