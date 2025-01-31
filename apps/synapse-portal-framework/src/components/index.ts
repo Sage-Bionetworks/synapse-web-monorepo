@@ -1,5 +1,4 @@
 import { Navigate as Redirect } from 'react-router'
-import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
 import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
@@ -18,6 +17,9 @@ import ELBetaLaunchBanner from './elportal/ELBetaLaunchBanner'
 import ELBrowseToolsPage from './elportal/ELBrowseToolsPage'
 import ELContributeYourData from './elportal/ELContributeYourData'
 import ELGettingStarted from './elportal/ELGettingStarted'
+import ELSupportedByNIH from './elportal/ELSupportedByNIH'
+import ARKWelcomePage from './arkportal/ARKWelcomePage'
+
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
 import Header from './Header'
@@ -51,6 +53,7 @@ const PortalComponents = {
   ELBetaLaunchBanner,
   ELContributeYourData,
   ELGettingStarted,
+  ELSupportedByNIH,
   ARKWelcomePage,
   GenieHomePageHeader,
   TabbedSynapseObjects,
