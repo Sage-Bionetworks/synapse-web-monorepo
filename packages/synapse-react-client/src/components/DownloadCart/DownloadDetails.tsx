@@ -19,12 +19,12 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     <Box
       sx={{
         display: 'flex',
+        alignItems: 'center',
         justifyContent: 'start ',
         gap: '25px',
         fontWeight: 'bold',
         svg: {
           mr: '5px',
-          mt: '-4px',
         },
       }}
     >
@@ -35,7 +35,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           </>
         )}
       </span>
-      <span className="item">
+      <span>
         <span className={iconClassName}>
           <IconSvg wrap={false} icon="packagableFile" />
         </span>
