@@ -162,6 +162,7 @@ export type CardContainerLogicProps = {
   lockedColumn?: LockedColumn
   initialLimit?: number
   multiCardList?: boolean
+  compact?: boolean
 } & CardConfiguration &
   Pick<
     QueryVisualizationWrapperProps,
@@ -245,6 +246,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
             cardConfiguration={props}
             initialLimit={props.initialLimit}
             multiCardList={props.multiCardList}
+            compact={props.compact}
           />
         </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>

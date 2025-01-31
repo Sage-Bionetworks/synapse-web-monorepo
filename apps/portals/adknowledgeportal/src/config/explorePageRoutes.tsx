@@ -19,7 +19,9 @@ import { targetEnablingResourcesQueryWrapperPlotNavProps } from './synapseConfig
 export const explorePageRoutes: RouteObject[] = [
   {
     path: 'Programs',
-    element: <CardContainerLogic {...programs} sql={programsSql} />,
+    element: (
+      <CardContainerLogic {...programs} sql={programsSql} compact={true} />
+    ),
   },
   {
     path: 'Projects',
