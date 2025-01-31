@@ -9,6 +9,8 @@ import {
   AvailableFilesResponse,
   AvailableFilter,
   FilesStatisticsResponse,
+  RemoveBatchOfFilesFromDownloadListRequest,
+  RemoveBatchOfFilesFromDownloadListResponse,
   Sort,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -244,6 +246,34 @@ export function useAddQueryToDownloadList(
     mutationKey: ['addQueryToDownloadList'],
     onSuccess: async (data, variables, ctx) => {
       // Invalidate all download list queries
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getDownloadListBaseQueryKey(),
+      })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
+    },
+  })
+}
+
+export function useRemoveFilesFromDownloadList(
+  options?: Partial<
+    UseMutationOptions<
+      RemoveBatchOfFilesFromDownloadListResponse,
+      SynapseClientError,
+      RemoveBatchOfFilesFromDownloadListRequest
+    >
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: request =>
+      SynapseClient.removeItemsFromDownloadListV2(request, accessToken),
+    onSuccess: async (data, variables, ctx) => {
+      // PORTALS-2222: Invalidate to load the accurate results
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDownloadListBaseQueryKey(),
       })
