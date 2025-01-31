@@ -40,7 +40,7 @@ export const Demo: Story = {
 }
 export const ElitePortalDemo: Story = {
   args: {
-    sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
+    sql: 'SELECT individualId, Assay FROM syn52234184 WHERE individualId IS NOT NULL and metadataType IS NULL and Assay IS NOT NULL',
     rgbIndex: 0,
     maxBarCount: 20,
     setName: 'Set size',

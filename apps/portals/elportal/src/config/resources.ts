@@ -11,7 +11,7 @@ export const studiesSql =
 export const speciesSql = 'SELECT * FROM syn53406593 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'
 export const upsetPlotSql =
-  'SELECT individualID, assay FROM syn51489960.4 WHERE individualID IS NOT NULL and metadataType IS NULL and assay IS NOT NULL'
+  'SELECT individualId, Assay FROM syn52234184 WHERE individualId IS NOT NULL and metadataType IS NULL and Assay IS NOT NULL'
 export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
 export const partnersSql =
