@@ -1,7 +1,6 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, Divider, Menu, MenuItem } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useEffect, useRef, useState } from 'react'
-import Dropdown from 'react-bootstrap/Dropdown'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
   AppUtils,
@@ -11,6 +10,10 @@ import {
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'synapse-react-client/utils/functions/index'
 import { RESPONSIVE_SIDE_PADDING } from '../../utils'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
@@ -118,6 +121,17 @@ export default function Navbar() {
   const handleClosePortalResources = () => {
     setPortalResourcesAnchorEl(null)
   }
+
+  const [profileMenuAnchorEl, setProfileMenuAnchorEl] =
+    useState<null | HTMLElement>(null)
+  const profileMenuIsOpen = Boolean(profileMenuAnchorEl)
+  const handleProfileMenuClick = (event: MouseEvent<HTMLElement>) => {
+    setProfileMenuAnchorEl(event.currentTarget)
+  }
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchorEl(null)
+  }
+
   return (
     <>
       <Box
@@ -197,65 +211,79 @@ export default function Navbar() {
             userProfile &&
             isSynapseSubdomainOrLocal && ( // desktop version, show dropdown
               <>
-                <Dropdown className="user-loggedIn">
-                  <Dropdown.Toggle
-                    variant="light"
+                <div className="user-loggedIn">
+                  <button
                     id="user-menu-button"
                     aria-label="User Dropdown Menu"
+                    onClick={e => {
+                      handleProfileMenuClick(e)
+                    }}
                   >
                     <NavUserLink userProfile={userProfile} />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="nav-user-menu portal-nav-menu">
-                    <Dropdown.Item className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1">
+                  </button>
+                  <Menu
+                    open={profileMenuIsOpen}
+                    onClose={handleProfileMenuClose}
+                    anchorEl={profileMenuAnchorEl}
+                    className="nav-user-menu portal-nav-menu"
+                  >
+                    <div className="dropdown-item">
                       Signed in as&nbsp;
                       <strong>{userProfile.userName}</strong>
-                    </Dropdown.Item>
+                    </div>
+                    <Divider sx={{ my: 0 }} />
                     {synapseQuickLinks.map(el => {
                       const borderBottomClass = el.hasBorder
                         ? 'border-bottom-1'
                         : ''
                       return (
-                        <Dropdown.Item
-                          key={el.text}
-                          className={`SRC-primary-background-color-hover SRC-nested-color ${borderBottomClass}`}
-                          href={`https://www.synapse.org/Profile:${
-                            userProfile.ownerId
-                          }${el.settingSubPath ? `/${el.settingSubPath}` : ''}`}
+                        <MenuItem
+                          component="a"
+                          className={`dropdown-item SRC-primary-background-color-hover  ${borderBottomClass}`}
+                          href={`${getEndpoint(
+                            BackendDestinationEnum.PORTAL_ENDPOINT,
+                          )}/Profile:${userProfile.ownerId}${
+                            el.settingSubPath ? `/${el.settingSubPath}` : ''
+                          }`}
                         >
                           {el.text}
-                        </Dropdown.Item>
+                        </MenuItem>
                       )
                     })}
-                    <Dropdown.Item
-                      key="DownloadV2"
+                    <MenuItem
                       onClick={() => {
                         navigate('/DownloadCart')
+                        handleProfileMenuClose()
                       }}
-                      className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
+                      className="dropdown-item SRC-primary-background-color-hover"
                     >
                       Downloads
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      key="Settings"
-                      className="SRC-primary-background-color-hover SRC-nested-color border-bottom-1"
+                    </MenuItem>
+                    <Divider sx={{ my: 0 }} />
+                    <MenuItem
+                      component="a"
+                      className="dropdown-item SRC-primary-background-color-hover"
                       href={accountSettingsUrl.toString()}
                     >
                       Settings
-                    </Dropdown.Item>
-                    <Dropdown.Item // desktop sign out
-                      className="SRC-primary-background-color-hover SRC-nested-color"
+                    </MenuItem>
+                    <Divider sx={{ my: 0 }} />
+                    <MenuItem // desktop sign out
+                      className="dropdown-item SRC-primary-background-color-hover"
                       onClick={() => {
                         clearSession()
                       }}
                     >
                       Sign Out
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                    </MenuItem>
+                  </Menu>
+                </div>
 
                 <a
                   className="user-loggedIn-mb" // mobile version, shows the user icon and name, no dropdown
-                  href={`https://www.synapse.org/Profile:${userProfile.ownerId}/projects/all`}
+                  href={`${getEndpoint(
+                    BackendDestinationEnum.PORTAL_ENDPOINT,
+                  )}/Profile:${userProfile.ownerId}/projects/all`}
                 >
                   <NavUserLink userProfile={userProfile} />
                 </a>
