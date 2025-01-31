@@ -12,13 +12,19 @@ export function OAuthClientManagementPageInternal() {
         className="SageResourcesPage"
         sx={{
           margin: '0 auto',
-          width: '900px',
+          width: { xs: '100%', md: '900px' },
           '& .SourceAppLogo': {
             display: 'block',
           },
         }}
       >
-        <Box sx={{ padding: '60px', position: 'relative' }}>
+        <Box
+          sx={{
+            py: '60px',
+            px: { xs: '10px', med: '60px' },
+            position: 'relative',
+          }}
+        >
           <BackButton to={'/authenticated/myaccount'} />
           <SourceAppLogo />
           <Typography
