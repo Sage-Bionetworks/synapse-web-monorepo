@@ -2,12 +2,6 @@
 
 // Core/generic homepage styles for Portals
 
-.bootstrap-4-backport {
-  .btn {
-    font-weight: bold;
-  }
-}
-
 .nav-logo {
   height: 50px;
   button {
@@ -291,6 +285,7 @@ button.dropdown-toggle.nav-button:hover {
 
 %nav-dropdown-item {
   height: 50px;
+  padding: 0.55rem 1.5rem;
   min-width: 230px;
   display: flex;
   align-items: center;
