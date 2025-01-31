@@ -1,14 +1,15 @@
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { Dropdown } from 'react-bootstrap'
-import { Icon } from '../row_renderers/utils'
-import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
+import { Menu, Tooltip } from '@mui/material'
 import {
   ComponentElement,
   CSSProperties,
+  MouseEvent,
   PropsWithChildren,
   ReactNode,
+  useState,
 } from 'react'
+import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
+import { Icon } from '../row_renderers/utils'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 
 type CustomImageProps = {
   svgImg: ComponentElement<any, any>
@@ -44,6 +45,7 @@ type ElementWithTooltipProps = PropsWithChildren<{
   darkTheme?: boolean
   size?: string
   icon?: ReactNode
+  menuItems?: React.ReactNode
 }>
 
 function getTooltipTriggerContents(
@@ -69,6 +71,7 @@ export const ElementWithTooltip = ({
   darkTheme,
   size,
   icon,
+  menuItems,
 }: ElementWithTooltipProps) => {
   const { place } = tooltipVisualProps
   const iconComponent = icon ? (
@@ -84,45 +87,56 @@ export const ElementWithTooltip = ({
     ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
   //if there is no callbackFn - assume it's a toggle
 
-  let tooltipTrigger: JSX.Element
+  let tooltipTrigger: ReactNode
   if (!children) {
-    tooltipTrigger = callbackFn ? (
+    tooltipTrigger = (
       <button
         tabIndex={0}
         className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
-        onKeyPress={() => callbackFn()}
-        onClick={() => callbackFn()}
+        onClick={e => {
+          if (callbackFn) {
+            callbackFn()
+          } else {
+            // open dropdown menu
+            handleClick(e)
+          }
+        }}
         aria-label={tooltipText}
       >
         {tooltipTriggerContents}
       </button>
-    ) : (
-      <Dropdown.Toggle
-        className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
-          darkTheme ? 'dark-theme' : ''
-        } `}
-        variant={'light'}
-        aria-label={tooltipText}
-      >
-        {tooltipTriggerContents}
-      </Dropdown.Toggle>
     )
   } else {
     tooltipTrigger = <div className="SRC-hand-cursor">{children}</div>
   }
 
   return (
-    <Tooltip
-      title={tooltipText}
-      enterNextDelay={TOOLTIP_DELAY_SHOW}
-      placement={place}
-      data-testid="ElementTooltip"
-    >
-      {tooltipTrigger}
-    </Tooltip>
+    <>
+      <Tooltip
+        title={tooltipText}
+        enterNextDelay={TOOLTIP_DELAY_SHOW}
+        placement={place}
+        data-testid="ElementTooltip"
+      >
+        {tooltipTrigger}
+      </Tooltip>
+      {menuItems && (
+        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+          {menuItems}
+        </Menu>
+      )}
+    </>
   )
 }
