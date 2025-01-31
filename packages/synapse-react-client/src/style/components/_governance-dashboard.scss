@@ -32,22 +32,6 @@
 .AccessApprovalsTable,
 .AccessSubmissionTable {
   margin-top: 20px;
-
-  thead {
-    background-color: map.get(SRC.$colors, 'gray-200');
-    th {
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-  }
-
-  th,
-  td {
-    border: none;
-  }
-  li {
-    list-style: none;
-  }
   .requester {
     font-style: italic;
     color: map.get(SRC.$colors, 'gray-700') !important;

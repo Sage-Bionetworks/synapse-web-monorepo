@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import { Form } from 'react-bootstrap'
 import {
   Button,
   RadioGroup,
@@ -81,92 +80,88 @@ export default function DataAccessRequestAccessorsEditor(
 
   return (
     <>
-      <Form.Group>
-        <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
-          Data Requesters
-        </Typography>
-        <Typography
-          variant={'body1'}
-          sx={{ mb: 1 }}
-          className={'requester-label'}
-        >
-          {helpText}
-        </Typography>
-        <UserSearchBoxV2
-          inputId={'requesters'}
-          typeFilter={TYPE_FILTER.USERS_ONLY}
-          onChange={onSelectUserCallback}
-          filterPredicate={userGroupHeader =>
-            !accessorChanges
-              .map(ac => ac.userId)
-              .includes(userGroupHeader.ownerId)
-          }
-          value={null}
-        />
-      </Form.Group>
-      <Form.Group>
-        <Stack gap={1}>
-          {accessorChanges.map((ac, i) => {
-            return (
-              <div className={'list-items'} key={`accessor-${i}`}>
-                <UserBadge
-                  userId={ac.userId}
-                  showAccountLevelIcon={true}
-                  disableLink={true}
-                  showFullName={true}
-                />
-                {
-                  // only display delete button if the user profile is not the current user and has not had access before
+      <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
+        Data Requesters
+      </Typography>
+      <Typography
+        variant={'body1'}
+        sx={{ mb: 1 }}
+        className={'requester-label'}
+      >
+        {helpText}
+      </Typography>
+      <UserSearchBoxV2
+        inputId={'requesters'}
+        typeFilter={TYPE_FILTER.USERS_ONLY}
+        onChange={onSelectUserCallback}
+        filterPredicate={userGroupHeader =>
+          !accessorChanges
+            .map(ac => ac.userId)
+            .includes(userGroupHeader.ownerId)
+        }
+        value={null}
+      />
+      <Stack gap={1}>
+        {accessorChanges.map((ac, i) => {
+          return (
+            <div className={'list-items'} key={`accessor-${i}`}>
+              <UserBadge
+                userId={ac.userId}
+                showAccountLevelIcon={true}
+                disableLink={true}
+                showFullName={true}
+              />
+              {
+                // only display delete button if the user profile is not the current user and has not had access before
+                user?.ownerId !== ac.userId &&
+                  ac.type === AccessType.GAIN_ACCESS && (
+                    <Button
+                      aria-label={`Remove user`}
+                      variant={'text'}
+                      sx={{
+                        ml: 1,
+                        px: 0,
+                      }}
+                      onClick={() => onClearAccessor(ac.userId)}
+                    >
+                      <IconSvg icon="clear" />
+                    </Button>
+                  )
+              }
+              {
+                // Renewal/Revoke data access, only display if isRenewal is true
+                // TODO: It's possible to that the accessors list is in an illegal state with no way to recover -- see PLFM-7893
+                isRenewal &&
                   user?.ownerId !== ac.userId &&
-                    ac.type === AccessType.GAIN_ACCESS && (
-                      <Button
-                        aria-label={`Remove user`}
-                        variant={'text'}
-                        sx={{
-                          ml: 1,
-                          px: 0,
-                        }}
-                        onClick={() => onClearAccessor(ac.userId)}
+                  ac.type !== AccessType.GAIN_ACCESS && (
+                    <>
+                      <RadioGroup
+                        value={ac.type}
+                        onChange={(_event, value) =>
+                          onAccessorAccessTypeChange(
+                            value as AccessType,
+                            ac.userId,
+                          )
+                        }
                       >
-                        <IconSvg icon="clear" />
-                      </Button>
-                    )
-                }
-                {
-                  // Renewal/Revoke data access, only display if isRenewal is true
-                  // TODO: It's possible to that the accessors list is in an illegal state with no way to recover -- see PLFM-7893
-                  isRenewal &&
-                    user?.ownerId !== ac.userId &&
-                    ac.type !== AccessType.GAIN_ACCESS && (
-                      <>
-                        <RadioGroup
-                          value={ac.type}
-                          onChange={(_event, value) =>
-                            onAccessorAccessTypeChange(
-                              value as AccessType,
-                              ac.userId,
-                            )
-                          }
-                        >
-                          <FormControlLabel
-                            control={<Radio />}
-                            label={'Renew'}
-                            value={AccessType.RENEW_ACCESS}
-                          />
-                          <FormControlLabel
-                            control={<Radio />}
-                            label={'Revoke'}
-                            value={AccessType.REVOKE_ACCESS}
-                          />
-                        </RadioGroup>
-                      </>
-                    )
-                }
-              </div>
-            )
-          })}
-        </Stack>
-      </Form.Group>
+                        <FormControlLabel
+                          control={<Radio />}
+                          label={'Renew'}
+                          value={AccessType.RENEW_ACCESS}
+                        />
+                        <FormControlLabel
+                          control={<Radio />}
+                          label={'Revoke'}
+                          value={AccessType.REVOKE_ACCESS}
+                        />
+                      </RadioGroup>
+                    </>
+                  )
+              }
+            </div>
+          )
+        })}
+      </Stack>
     </>
   )
 }

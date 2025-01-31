@@ -1,18 +1,17 @@
+import { Box, TextField } from '@mui/material'
+import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import { Box } from '@mui/material'
-import { FormControl } from 'react-bootstrap'
+import { usePostReply, usePutReply } from '../../synapse-queries/forum/useReply'
 import {
   useCreateThread,
-  useUpdateThreadTitle,
   useUpdateThreadMessage,
+  useUpdateThreadTitle,
 } from '../../synapse-queries/forum/useThread'
-import { usePostReply, usePutReply } from '../../synapse-queries/forum/useReply'
-import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
-import { MarkdownEditor } from '../Markdown/MarkdownEditor'
 import {
   ConfirmationButtons,
   ConfirmationDialog,
 } from '../ConfirmationDialog/ConfirmationDialog'
+import { MarkdownEditor } from '../Markdown/MarkdownEditor'
 
 export type ForumThreadEditorProps = {
   initialTitle?: string
@@ -107,10 +106,11 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
   }
 
   const editorContent = (
-    <div className="bootstrap-4-backport">
+    <div>
       {!isReply && (
-        <FormControl
-          type="text"
+        <TextField
+          fullWidth
+          sx={{ my: 1 }}
           placeholder="Title"
           value={title}
           onChange={e => setTitle(e.target.value)}

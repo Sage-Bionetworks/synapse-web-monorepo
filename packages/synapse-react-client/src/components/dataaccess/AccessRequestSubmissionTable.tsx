@@ -3,22 +3,101 @@ import {
   Direction,
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
+  SubmissionSearchResult,
   SubmissionSearchSort,
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useMemo, useState } from 'react'
-import { Table } from 'react-bootstrap'
 import { Link } from 'react-router'
-import SortIcon from '../../assets/icons/Sort'
 import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { UserBadge } from '../UserCard/UserBadge'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+
+const columnHelper = createColumnHelper<SubmissionSearchResult>()
+const columns = [
+  columnHelper.accessor('id', {
+    header: props => <ColumnHeader {...props} title={'Request'} />,
+    enableSorting: false,
+    cell: ctx => (
+      <Link to={`/Submissions/${ctx.getValue()}`}>{ctx.getValue()}</Link>
+    ),
+  }),
+  columnHelper.accessor('accessRequirementName', {
+    header: props => (
+      <ColumnHeader {...props} title={'Access Requirement Name'} />
+    ),
+    enableSorting: false,
+  }),
+  columnHelper.accessor('submitterId', {
+    header: props => <ColumnHeader {...props} title={'Submitter'} />,
+    enableSorting: false,
+    cell: ctx => <UserOrTeamBadge principalId={ctx.getValue()} />,
+  }),
+  columnHelper.accessor('state', {
+    header: props => <ColumnHeader {...props} title={'Status'} />,
+    enableSorting: false,
+    cell: ctx => (
+      <Typography>{upperFirst(ctx.getValue().toLocaleLowerCase())}</Typography>
+    ),
+  }),
+
+  columnHelper.accessor('accessorChanges', {
+    header: props => <ColumnHeader {...props} title={'Requesters'} />,
+    enableSorting: false,
+    cell: ctx => (
+      <Stack gap={1}>
+        <UserOrTeamBadge principalId={ctx.row.original.submitterId} />
+        {ctx
+          .getValue()
+          .filter(user => ctx.row.original.submitterId !== user.userId)
+          .map(requester => (
+            <UserBadge
+              key={requester.userId}
+              userId={requester.userId}
+              className="requester"
+            />
+          ))}
+      </Stack>
+    ),
+  }),
+  columnHelper.accessor('accessRequirementReviewerIds', {
+    header: props => <ColumnHeader {...props} title={'Reviewer(s)'} />,
+    enableSorting: false,
+    cell: ctx => (
+      <Stack gap={1}>
+        {ctx.getValue().length === 0 ? (
+          <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+        ) : (
+          ctx
+            .getValue()
+            .map(reviewerId => (
+              <UserOrTeamBadge key={reviewerId} principalId={reviewerId} />
+            ))
+        )}
+      </Stack>
+    ),
+  }),
+  columnHelper.accessor('createdOn', {
+    header: props => <ColumnHeader {...props} title={'Created Date'} />,
+    enableSorting: true,
+    cell: ctx => formatDate(dayjs(ctx.getValue())),
+    sortDescFirst: true,
+  }),
+]
 
 export type AccessRequestSubmissionTableProps = {
   showSubmitter?: boolean
@@ -31,20 +110,43 @@ export type AccessRequestSubmissionTableProps = {
   reviewerFilterType?: SubmissionReviewerFilterType
 }
 
+function getSortApiRequestFromTableSortState(
+  sortingState: SortingState,
+): SubmissionSearchSort[] | undefined {
+  if (sortingState.length === 0) {
+    return undefined
+  }
+  const sort = sortingState[0]
+  let field: SubmissionSortField = SubmissionSortField.CREATED_ON
+  if (sort.id === 'createdOn') {
+    field = SubmissionSortField.CREATED_ON
+  } else if (sort.id === 'modifiedOn') {
+    field = SubmissionSortField.MODIFIED_ON
+  }
+  return [
+    {
+      field,
+      direction: sort.desc ? Direction.DESC : Direction.ASC,
+    },
+  ]
+}
+
 export function AccessRequestSubmissionTable({
-  showSubmitter,
-  showStatus,
-  showRequesters,
+  showSubmitter = false,
+  showStatus = false,
+  showRequesters = false,
   accessorId,
   accessRequirementId,
   reviewerId,
   submissionState,
   reviewerFilterType,
 }: AccessRequestSubmissionTableProps) {
-  const [sort, setSort] = useState<SubmissionSearchSort>({
-    field: SubmissionSortField.CREATED_ON,
-    direction: Direction.DESC,
-  })
+  const [tableSortState, setTableSortState] = useState<SortingState>([
+    {
+      desc: true,
+      id: 'createdOn',
+    },
+  ])
 
   const searchRequest: SubmissionSearchRequest = useMemo(
     () => ({
@@ -53,7 +155,7 @@ export function AccessRequestSubmissionTable({
       submissionState,
       reviewerId,
       reviewerFilterType,
-      sort: [sort],
+      sort: getSortApiRequestFromTableSortState(tableSortState),
     }),
     [
       accessorId,
@@ -61,103 +163,39 @@ export function AccessRequestSubmissionTable({
       submissionState,
       reviewerId,
       reviewerFilterType,
-      sort,
+      tableSortState,
     ],
   )
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
-  const accessSubmissions = data?.pages.flatMap(page => page.results) ?? []
+  const accessSubmissions = useMemo(
+    () => data?.pages.flatMap(page => page.results) ?? [],
+    [data?.pages],
+  )
 
-  const onSort = (field: SubmissionSortField) => {
-    if (sort.field === field) {
-      setSort({ field, direction: sort.direction === 'DESC' ? 'ASC' : 'DESC' })
-    } else {
-      setSort({ field, direction: 'DESC' })
-    }
-  }
+  const table = useReactTable<SubmissionSearchResult>({
+    data: accessSubmissions,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    enableFilters: false, // filters are handled by separate controls
+    manualSorting: true,
+    onSortingChange: setTableSortState,
+    state: {
+      sorting: tableSortState,
+      columnVisibility: {
+        submitterId: showSubmitter,
+        state: showStatus,
+        accessorChanges: showRequesters,
+      },
+    },
+    columnResizeMode: 'onChange',
+  })
+
   return (
-    <div className="bootstrap-4-backport AccessSubmissionTable">
-      <Table striped borderless bordered={false}>
-        <thead>
-          <tr>
-            <th>REQUEST</th>
-            <th>Access Requirement Name</th>
-            {showSubmitter && <th>Submitter</th>}
-            {showStatus && <th>Status</th>}
-            {showRequesters && <th>Requesters</th>}
-            <th>Reviewer(s)</th>
-            <th>
-              Created Date
-              <SortIcon
-                role="button"
-                style={{ float: 'right' }}
-                active={sort.field === SubmissionSortField.CREATED_ON}
-                aria-label="Sort by Created On"
-                direction={
-                  sort.field === SubmissionSortField.CREATED_ON
-                    ? sort.direction === 'DESC'
-                      ? 'DESC'
-                      : 'ASC'
-                    : 'DESC'
-                }
-                onClick={() => onSort(SubmissionSortField.CREATED_ON)}
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {accessSubmissions.map(item => {
-            return (
-              <tr key={item.id}>
-                <td>
-                  <Link to={`/Submissions/${item.id}`}>{item.id}</Link>
-                </td>
-                <td>{item.accessRequirementName}</td>
-                {showSubmitter && (
-                  <td>
-                    <UserOrTeamBadge principalId={item.submitterId} />
-                  </td>
-                )}
-                {showStatus && (
-                  <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
-                )}
-                {showRequesters && (
-                  <td>
-                    <UserOrTeamBadge principalId={item.submitterId} />
-                    {item.accessorChanges
-                      .filter(user => item.submitterId !== user.userId)
-                      .map(requester => (
-                        <li key={requester.userId}>
-                          <UserBadge
-                            userId={requester.userId}
-                            className="requester"
-                          />
-                        </li>
-                      ))}
-                  </td>
-                )}
-                <td>
-                  <Stack gap={1}>
-                    {item.accessRequirementReviewerIds.length === 0 ? (
-                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                    ) : (
-                      item.accessRequirementReviewerIds.map(reviewerId => (
-                        <UserOrTeamBadge
-                          key={reviewerId}
-                          principalId={reviewerId}
-                        />
-                      ))
-                    )}
-                  </Stack>
-                </td>
-                <td>{formatDate(dayjs(item.createdOn))}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </Table>
+    <div className={'AccessSubmissionTable'}>
+      <StyledTanStackTable table={table} fullWidth={true} />
       {isLoading && (
         <div className="SRC-center-text">
           <SynapseSpinner size={40} />
@@ -168,14 +206,12 @@ export function AccessRequestSubmissionTable({
           No Results
         </Typography>
       )}
-      {!hasNextPage ? (
-        ''
-      ) : (
+      {hasNextPage && (
         <Button
           variant="outlined"
           color="primary"
           onClick={() => {
-            fetchNextPage()
+            void fetchNextPage()
           }}
         >
           Show More
