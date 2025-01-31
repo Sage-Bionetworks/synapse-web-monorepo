@@ -1,7 +1,7 @@
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
+import { Tooltip, Box } from '@mui/material'
 import pluralize from 'pluralize'
 
 export type DownloadDetailsProps = {
@@ -16,15 +16,26 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const isInactive = numFiles === 0
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
-    <span className="DownloadDetailsV2">
-      <span className="item">
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'start ',
+        gap: '25px',
+        fontWeight: 'bold',
+        svg: {
+          mr: '5px',
+        },
+      }}
+    >
+      <span>
         {!isInactive && (
           <>
             {numFiles.toLocaleString()} {pluralize('File', numFiles)}
           </>
         )}
       </span>
-      <span className="item">
+      <span>
         <span className={iconClassName}>
           <IconSvg wrap={false} icon="packagableFile" />
         </span>
@@ -57,6 +68,6 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           )}
         </span>
       )}
-    </span>
+    </Box>
   )
 }
