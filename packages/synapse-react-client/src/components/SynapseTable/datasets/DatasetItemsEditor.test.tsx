@@ -549,7 +549,7 @@ describe('Dataset Items Editor tests', () => {
     )
 
     // Call under test: select a different version
-    await user.selectOptions(await screen.findByRole('listbox'), '1')
+    await user.selectOptions(await screen.findByRole('combobox'), '1')
 
     // The version passed to the icons should now be v1
     await waitFor(() =>
