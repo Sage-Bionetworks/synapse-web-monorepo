@@ -1,18 +1,17 @@
 import '@testing-library/jest-dom'
-import { act, render, screen } from '@testing-library/react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import { mockFileStatistics } from '../../mocks/mock_file_statistics'
-import userEvent from '@testing-library/user-event'
-import DownloadListTableV2 from './DownloadListTable'
 import {
   AvailableFilesResponse,
   DownloadListItemResult,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { mockFileStatistics } from '../../mocks/mock_file_statistics'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
+import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
+import DownloadListTableV2 from './DownloadListTable'
 
-jest.spyOn(SynapseClient, 'removeItemFromDownloadListV2').mockResolvedValue({
+jest.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
   numberOfFilesRemoved: 2,
 })
 
@@ -22,8 +21,6 @@ jest
 jest
   .spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl')
   .mockResolvedValue(null)
-
-const mockRefetchStatistics = jest.fn()
 
 const page1: DownloadListItemResult[] = [
   {
@@ -77,10 +74,7 @@ jest
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2
-        filesStatistics={mockFileStatistics}
-        refetchStatistics={mockRefetchStatistics}
-      />
+      <DownloadListTableV2 filesStatistics={mockFileStatistics} />
     </SynapseTestContext>,
   )
 }
@@ -89,16 +83,14 @@ describe('DownloadListTable tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-  it('loads more available download files when inView', async () => {
+  it('loads more available download files when "show more" is clicked', async () => {
     renderComponent()
 
     const fileEntity1 = await screen.findAllByText('file1.txt')
     expect(fileEntity1).toHaveLength(1)
 
     // trigger fetching page 2
-    act(() => {
-      mockAllIsIntersecting(true)
-    })
+    await userEvent.click(screen.getByRole('button', { name: 'Show More' }))
 
     const fileEntity2 = await screen.findAllByText('file2.txt')
     expect(fileEntity2).toHaveLength(1)
