@@ -35,7 +35,7 @@ function EnumFacetFilterSelectBox(
       <MenuItem value={menuText} sx={{ display: 'none' }} />
       <Box
         sx={{
-          // hack to expand the dropdown menu width for this component only
+          // expand the dropdown menu width for this component only
           '& .EnumFacetFilter__dropdown_menu': {
             maxWidth: '100%',
           },
