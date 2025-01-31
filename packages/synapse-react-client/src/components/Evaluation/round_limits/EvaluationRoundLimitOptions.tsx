@@ -1,5 +1,6 @@
+import { InputLabel, Select, TextField } from '@mui/material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
-import { FormControl, FormGroup } from 'react-bootstrap'
+import StyledFormControl from '../../styled/StyledFormControl'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 
 export type EvaluationRoundLimitOptionsProps = {
@@ -25,11 +26,11 @@ export function EvaluationRoundLimitOptions({
 }: EvaluationRoundLimitOptionsProps) {
   return (
     <>
-      <FormGroup className="limit-type">
-        <label>Limit Type</label>
-        <FormControl
-          as="select"
-          custom
+      <StyledFormControl className="limit-type">
+        <InputLabel>Limit Type</InputLabel>
+        <Select
+          fullWidth
+          native
           value={limitInput.type}
           onChange={event => {
             onChange({
@@ -53,23 +54,24 @@ export function EvaluationRoundLimitOptions({
               </option>
             ),
           )}
-        </FormControl>
-      </FormGroup>
+        </Select>
+      </StyledFormControl>
 
-      <FormGroup className="limit-input">
-        <label>Maximum Submissions</label>
-        <FormControl
-          type="text"
-          pattern="[0-9]*"
-          value={limitInput.maxSubmissionString}
-          onChange={event => {
-            onChange({
-              type: limitInput.type,
-              maxSubmissionString: event.target.value,
-            })
-          }}
-        />
-      </FormGroup>
+      <TextField
+        fullWidth
+        className="limit-input"
+        label={'Maximum Submissions'}
+        inputProps={{
+          pattern: '[0-9]*',
+        }}
+        value={limitInput.maxSubmissionString}
+        onChange={event => {
+          onChange({
+            type: limitInput.type,
+            maxSubmissionString: event.target.value,
+          })
+        }}
+      />
     </>
   )
 }

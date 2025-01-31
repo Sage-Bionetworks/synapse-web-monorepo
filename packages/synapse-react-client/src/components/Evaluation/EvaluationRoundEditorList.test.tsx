@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import JestMockPromise from 'jest-mock-promise'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
@@ -56,61 +55,52 @@ describe('test EvaluationRoundEditorList', () => {
     )
     spyFetchEvaluationList.mockImplementation(mockGetEvaulationsList)
     mockGetEvaulationsList
-      .mockReturnValueOnce(
-        new JestMockPromise(resolve => {
-          resolve({
-            page: evaluationRoundsList.slice(0, 2),
-            nextPageToken: nextPageToken,
-          })
-        }),
-      )
+      .mockResolvedValueOnce({
+        page: evaluationRoundsList.slice(0, 2),
+        nextPageToken: nextPageToken,
+      })
       //no next page token on the second page since it is done
-      .mockReturnValueOnce(
-        new JestMockPromise(resolve => {
-          resolve({ page: evaluationRoundsList.slice(2) })
-        }),
-      )
+      .mockResolvedValueOnce({ page: evaluationRoundsList.slice(2) })
   })
 
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  it('error fetching page', () => {
+  it('error fetching page', async () => {
     mockGetEvaulationsList.mockReset()
     const error = new TypeError('you got a new error!')
-    mockGetEvaulationsList.mockReturnValue(
-      new JestMockPromise((resolve, reject) => {
-        reject(error)
-      }),
-    )
+    mockGetEvaulationsList.mockRejectedValue(error)
 
     render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
       wrapper: createWrapper(),
     })
 
-    expect(screen.queryByRole('form')).not.toBeInTheDocument()
-    expect(screen.queryByRole('alert')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByRole('form')).not.toBeInTheDocument()
+      expect(screen.queryByRole('alert')).toBeInTheDocument()
+    })
   })
 
-  it('fetched pages', () => {
+  it('fetched pages', async () => {
     render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
       wrapper: createWrapper(),
     })
+    await waitFor(() => {
+      expect(mockGetEvaulationsList).toHaveBeenCalledWith(
+        evaluationId,
+        { nextPageToken: undefined },
+        MOCK_CONTEXT_VALUE.accessToken,
+      )
+      expect(mockGetEvaulationsList).toHaveBeenCalledWith(
+        evaluationId,
+        { nextPageToken: nextPageToken },
+        MOCK_CONTEXT_VALUE.accessToken,
+      )
 
-    expect(mockGetEvaulationsList).toHaveBeenCalledWith(
-      evaluationId,
-      { nextPageToken: undefined },
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(mockGetEvaulationsList).toHaveBeenCalledWith(
-      evaluationId,
-      { nextPageToken: nextPageToken },
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-
-    expect(screen.getAllByRole('form')).toHaveLength(3)
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      expect(screen.getAllByRole('form')).toHaveLength(3)
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
   })
 
   it('add round button', async () => {
@@ -118,8 +108,10 @@ describe('test EvaluationRoundEditorList', () => {
       wrapper: createWrapper(),
     })
 
-    expect(screen.getAllByRole('form')).toHaveLength(3)
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getAllByRole('form')).toHaveLength(3)
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
 
     await userEvent.click(screen.getByRole('button', { name: 'Add Round' }))
 
