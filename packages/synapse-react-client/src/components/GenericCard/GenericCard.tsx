@@ -16,7 +16,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { Box, Link, Button, Typography } from '@mui/material'
+import { Box, Link } from '@mui/material'
 import {
   CardLink,
   ColumnIconConfigs,
@@ -44,7 +44,6 @@ import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 import { Stack } from '@mui/system'
-import { DialogBase } from '../DialogBase'
 import CitationPopover from '../CitationPopover'
 
 export type KeyToAlias = {
@@ -62,6 +61,8 @@ export type GenericCardSchema = {
   title: string
   subTitle?: string
   description?: string
+  includeCitation?: boolean
+  citationBoilerplateText?: string
   icon?: string
   imageFileHandleColumnName?: string
   thumbnailRequiresPadding?: boolean
@@ -376,7 +377,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
     const genericCardSchemaDefined = genericCardSchema!
-    const { link = '', type } = genericCardSchemaDefined
+    const {
+      link = '',
+      type,
+      includeCitation,
+      citationBoilerplateText,
+    } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
       genericCardSchemaDefined.subTitle &&
@@ -533,6 +539,10 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       genericCardSchemaDefined.description || '',
     )
 
+    const doiColumnIndex = getColumnIndex('doi', selectColumns, columnModels)
+    const doiValue =
+      doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
+
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
@@ -559,9 +569,15 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               }}
             >
               <div className="SRC-type">{type}</div>
-              <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
-                <CitationPopover />
-              </Box>
+              {includeCitation && (
+                <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
+                  <CitationPopover
+                    title={title}
+                    doi={doiValue}
+                    boilerplateText={citationBoilerplateText}
+                  />
+                </Box>
+              )}
             </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option

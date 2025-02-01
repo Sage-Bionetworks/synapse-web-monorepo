@@ -1,9 +1,77 @@
-import { useState } from 'react'
-import { Button, Popover, Typography, Box, Stack } from '@mui/material'
+import { useEffect, useState } from 'react'
+import {
+  Button,
+  Popover,
+  Typography,
+  Box,
+  Stack,
+  FormControl,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from '@mui/material'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 
-function CitationPopover() {
+type CitationPopoverProps = {
+  doi: string | undefined
+  title?: string
+  boilerplateText?: string
+}
+
+function CitationPopover({
+  doi,
+  title,
+  boilerplateText,
+}: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [citationFormat, setCitationFormat] = useState('bibtex')
+  const [citation, setCitation] = useState('')
+
+  const selectSx = {
+    width: '100%',
+    boxShadow: 'none',
+    backgroundColor: '#F1F3F5',
+    '& .MuiOutlinedInput-notchedOutline': {
+      border: 0,
+    },
+    '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      border: 'none',
+    },
+    '.MuiInputBase-root': {
+      display: 'flex',
+      minHeight: '38px',
+      alignItems: 'center',
+      gap: '10px',
+      backgroundColor: 'transparent',
+      boxShadow: 'none',
+      '&:before, &:after': {
+        borderBottom: 'none !important',
+      },
+    },
+    '.MuiSelect-select': {
+      display: 'flex',
+      alignItems: 'center',
+      color: '#353A3F',
+      fontFamily: 'DM Sans',
+      fontSize: '14px',
+      fontStyle: 'normal',
+      fontWeight: 400,
+      lineHeight: '16px',
+      gap: '10px',
+    },
+    '.MuiInputBase-input': {
+      padding: '7px 10px',
+      border: 'none',
+      '&::placeholder': {
+        color: '#353A3F',
+        fontFamily: 'DM Sans',
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 400,
+        lineHeight: '16px',
+      },
+    },
+  }
 
   const quotationSvg = (
     <svg
@@ -24,6 +92,10 @@ function CitationPopover() {
     </svg>
   )
 
+  const handleChange = (event: SelectChangeEvent) => {
+    setCitationFormat(event.target.value)
+  }
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -32,8 +104,64 @@ function CitationPopover() {
     setAnchorEl(null)
   }
 
+  const getCitation = async () => {
+    const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
+
+    try {
+      const response = await fetch(
+        `https://citation.doi.org/format?doi=${formattedDoi}&style=${citationFormat}&lang=en-US`,
+        {
+          headers: {
+            Accept: `text/x-${citationFormat}`,
+          },
+        },
+      )
+      if (!response.ok) {
+        throw new Error('Failed to fetch citation.')
+      }
+      const citationText = await response.text()
+      setCitation(citationText)
+    } catch (err) {
+      console.log(err)
+      return
+    }
+  }
+
+  const handleDownload = () => {
+    if (!citation) {
+      return
+    }
+    const extensionMap: Record<string, string> = {
+      bibtex: 'bib',
+    }
+    const citationTitle = title ? `${title.replace(/\s+/g, '_')}` : 'citation'
+    const fileExtension = extensionMap[citationFormat] || 'txt'
+
+    const blob = new Blob([citation], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `${citationTitle}.${fileExtension}`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleCopy = () => {
+    if (!citation) {
+      return
+    }
+    navigator.clipboard.writeText(citation)
+  }
+
   const open = Boolean(anchorEl)
   const id = open ? 'cite-as-popover' : undefined
+
+  useEffect(() => {
+    if (open) {
+      getCitation()
+    }
+  }, [open])
 
   return (
     <Box>
@@ -47,6 +175,12 @@ function CitationPopover() {
           alignItems: 'center',
           gap: '4px',
           textDecoration: 'none',
+          borderRadius: '3px',
+          border: '1px solid',
+          borderColor: 'grey.400',
+          '&:hover': {
+            textDecoration: 'none',
+          },
         }}
       >
         <Box sx={{ display: 'flex' }}>{quotationSvg}</Box>
@@ -59,7 +193,6 @@ function CitationPopover() {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        disableScrollLock
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -68,48 +201,101 @@ function CitationPopover() {
           vertical: 'top',
           horizontal: 'left',
         }}
+        sx={{
+          '.MuiPopover-paper': {
+            borderRadius: 0,
+            background: '#FFF',
+            boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
+          },
+        }}
       >
-        <Stack sx={{ gap: '20px', padding: '20px', maxWidth: '40vw' }}>
+        <Stack
+          sx={{
+            gap: '20px',
+            padding: '20px',
+            width: '500px',
+          }}
+        >
           <Typography
             sx={{ fontSize: '14px', fontWeight: 700, lineHeight: 'normal' }}
           >
             Cite as:
           </Typography>
-          <Typography variant="smallText1" sx={{ lineHeight: 'normal' }}>
-            Serra Kaya, Charles A Schurman, Neha S Dole, Daniel S Evans, Tamara
-            Alliston, Prioritization of Genes Relevant to Bone Fragility Through
-            the Unbiased Integration of Aging Mouse Bone Transcriptomics and
-            Human GWAS Analyses, Journal of Bone and Mineral Research, Volume
-            37, Issue 4, 1 April 2022, Pages 804–817,
-            https://doi.org/10.1002/jbmr.4516
+          <Typography
+            variant="smallText1"
+            sx={{
+              lineHeight: 'normal',
+              maxHeight: '300px',
+              width: '100%',
+              overflowY: 'scroll',
+              overflowX: 'hidden',
+              wordWrap: 'break-word',
+            }}
+          >
+            {boilerplateText}
+            {citation ? citation : <span>Loading citation...</span>}
           </Typography>
           <Box
             sx={{
               display: 'flex',
-              gap: '20px',
+              alignItems: 'stretch',
+              gap: '8px',
+              width: '100%',
+              maxHeight: '38px',
             }}
           >
-            <Button>Select format</Button>
+            <Box sx={{ flex: 1 }}>
+              <FormControl sx={selectSx}>
+                <Select
+                  variant="standard"
+                  displayEmpty
+                  value={citationFormat}
+                  onChange={handleChange}
+                  renderValue={selected => (
+                    <Typography variant="smallText1" sx={{ color: 'grey.900' }}>
+                      {selected?.length ? citationFormat : 'BibTeX'}
+                    </Typography>
+                  )}
+                >
+                  <MenuItem value={'bibtex'}>bibtex</MenuItem>
+                  <MenuItem value={'other'}>other</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             <Button
+              onClick={() => {
+                handleDownload()
+              }}
               sx={{
+                flex: 1,
+                padding: '6px 16px',
+                borderRadius: 'none',
                 backgroundColor: 'primary.main',
                 color: '#FFF',
+                whiteSpace: 'nowrap',
                 '&:hover': {
-                  backgroundColor: 'primary.main',
+                  backgroundColor: '#2d4673',
+                  textDecoration: 'none',
                   color: '#FFF',
                 },
               }}
             >
               Download Citation
             </Button>
-            <Button
+            <CopyToClipboardIcon
+              value={citation}
+              onClick={() => {
+                handleCopy()
+              }}
               sx={{
+                '.MuiIconButton-root': {
+                  borderRadius: 0,
+                  padding: '6px 16px',
+                },
                 border: '1px solid',
                 borderColor: 'primary.main',
               }}
-            >
-              <CopyToClipboardIcon value={''} />
-            </Button>
+            />
           </Box>
         </Stack>
       </Popover>
