@@ -42,13 +42,12 @@ function LoggedInRedirector() {
   const isProviderSearchParam = getSearchParam('provider') !== undefined
   const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 
-  const { mayRedirect: mayRedirectToSignToS } =
-    useMaybeRedirectToSignTermsOfService()
+  const { mayPromptTermsOfUse } = useMaybeRedirectToSignTermsOfService()
 
   useEffect(() => {
     // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
     // then redirect!
-    if (accessToken && !isInSSOFlow && !mayRedirectToSignToS) {
+    if (accessToken && !isInSSOFlow && !mayPromptTermsOfUse) {
       // take user back to page they came from in the source app, if stored in a cookie
       const isProcessed = processRedirectURLInOneSage()
       if (!isProcessed && appContext?.redirectURL) {
@@ -56,7 +55,7 @@ function LoggedInRedirector() {
         window.location.replace(appContext?.redirectURL)
       }
     }
-  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayRedirectToSignToS])
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayPromptTermsOfUse])
   return <></>
 }
 

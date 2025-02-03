@@ -17,6 +17,7 @@ import {
   SynapseContextUtils,
   SynapseQueries,
 } from 'synapse-react-client'
+import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybeRedirectToSignTermsOfService'
 import { StyledOuterContainer } from './StyledComponents'
 
 export function SignUpdatedTermsOfUsePage() {
@@ -119,7 +120,10 @@ export function SignUpdatedTermsOfUsePage() {
                 variant="outlined"
                 sx={{ width: '100%' }}
                 onClick={() => {
-                  sessionStorage.setItem('skippedSigningToS', 'true')
+                  sessionStorage.setItem(
+                    SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY,
+                    'true',
+                  )
                   redirectAfterSignOrSkip()
                 }}
                 disabled={isLoading}
