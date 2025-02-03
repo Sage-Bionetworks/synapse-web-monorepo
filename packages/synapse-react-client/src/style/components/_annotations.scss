@@ -4,9 +4,6 @@
   .react-select-container > .form-control {
     height: 53.33px;
   }
-  .form-group.calendar-with-icon-form-group {
-    margin-bottom: 0px;
-  }
   .form-group.field-array {
     margin-bottom: 0px;
   }
@@ -44,14 +41,6 @@
     .row {
       padding: 0px 10px;
     }
-    .calendar-with-icon-form-group.form-group {
-      input {
-        margin-bottom: 0;
-      }
-      .input-group-prepend {
-        margin-bottom: 0;
-      }
-    }
 
     .field-array > .field-description {
       margin-top: 0px;
@@ -68,8 +57,7 @@
       }
 
       .form-control,
-      .react-select-container,
-      .calendar-with-icon-form-group {
+      .react-select-container {
         grid-row-start: widget;
       }
 
