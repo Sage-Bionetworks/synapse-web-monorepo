@@ -1,6 +1,7 @@
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import { useApplicationSessionContext } from 'synapse-react-client'
+import { ApplicationSessionContextType } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
 import useMaybeRedirectToSignTermsOfService, {
   SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY,
@@ -20,6 +21,19 @@ vi.mock('react-router', () => {
     useNavigate: vi.fn(),
   }
 })
+
+const mockApplicationSessionContext: ApplicationSessionContextType = {
+  hasInitializedSession: true,
+  refreshSession: vi.fn(),
+  clearSession: vi.fn(),
+  isLoadingSSO: false,
+  termsOfServiceStatus: {
+    userId: '1234',
+    userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
+    lastAgreementDate: new Date().toISOString(),
+  },
+}
+
 const mockLocation: Location = {
   key: '',
   state: undefined,
@@ -39,10 +53,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
 
   it('does not redirect and updates state to indicate no redirect when user ToS status is up to date', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
@@ -59,10 +70,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
   it('does not redirect when user ToS is MUST_AGREE_SOON and user has skipped signing updated ToS', async () => {
     sessionStorage.setItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY, 'true')
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
@@ -79,10 +87,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
   it('redirects to signTermsOfUse when user ToS is MUST_AGREE_SOON and user has not skipped signing updated ToS and has never signed ToU', async () => {
     sessionStorage.removeItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY)
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
@@ -98,10 +103,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
   })
   it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has never signed ToU', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
@@ -119,10 +121,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
   it('redirects to signUpdatedTermsOfUse when user ToS is MUST_AGREE_SOON and user has not skipped signing updated ToS and has signed ToU', async () => {
     sessionStorage.removeItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY)
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
@@ -140,10 +139,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
   })
   it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has signed ToU', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
@@ -166,10 +162,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       pathname: '/authenticated/signTermsOfUse',
     })
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
@@ -192,10 +185,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       pathname: '/authenticated/signUpdatedTermsOfUse',
     })
     mockUseApplicationSessionContext.mockReturnValue({
-      hasInitializedSession: true,
-      refreshSession: vi.fn(),
-      clearSession: vi.fn(),
-      isLoadingSSO: false,
+      ...mockApplicationSessionContext,
       termsOfServiceStatus: {
         userId: '1234',
         userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
