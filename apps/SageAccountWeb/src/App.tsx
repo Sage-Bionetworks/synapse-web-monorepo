@@ -30,7 +30,7 @@ import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAu
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { RESET_2FA_ROUTE } from './Constants'
-import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
+import useMaybePromptToSignTermsOfService from './hooks/useMaybePromptToSignTermsOfService'
 import LoginPage from './LoginPage'
 import { getSearchParam } from './URLUtils'
 
@@ -42,7 +42,7 @@ function LoggedInRedirector() {
   const isProviderSearchParam = getSearchParam('provider') !== undefined
   const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 
-  const { mayPromptTermsOfUse } = useMaybeRedirectToSignTermsOfService()
+  const { mayPromptTermsOfUse } = useMaybePromptToSignTermsOfService()
 
   useEffect(() => {
     // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS

@@ -17,7 +17,7 @@ import {
   SynapseContextUtils,
   SynapseQueries,
 } from 'synapse-react-client'
-import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybeRedirectToSignTermsOfService'
+import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybePromptToSignTermsOfService'
 import { StyledOuterContainer } from './StyledComponents'
 
 export function SignUpdatedTermsOfUsePage() {

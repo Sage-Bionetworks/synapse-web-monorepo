@@ -14,7 +14,7 @@ type UseMaybeRedirectToSignTermsOfServiceReturn = {
 
 export const SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY = 'skippedSigningToS'
 
-export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirectToSignTermsOfServiceReturn {
+export default function useMaybePromptToSignTermsOfService(): UseMaybeRedirectToSignTermsOfServiceReturn {
   // Detect if terms of service are up to date.  If not, route to either the Pledge or a page where the user can sign the updated terms.
   // Note, if the status is "MUST_AGREE_SOON", then the new page will offer a "Skip" button
   const skippedSigningUpdatedToS =
