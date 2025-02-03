@@ -138,7 +138,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       )
     })
   })
-  it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has never signed ToU', async () => {
+  it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has signed ToU', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
       hasInitializedSession: true,
       refreshSession: vi.fn(),
