@@ -19,7 +19,7 @@ const COHORT_BUILDER_ORIENTATION_BANNER_TEXT = (
     data files or Sent to CAVATICA for analysis. See the ELITE Portal Help Docs
     for more information about{' '}
     <a
-      href="https://help.eliteportal.org/help/cohort-builder"
+      href="https://help.eliteportal.org/help/explore-data#ExploringData-OverviewoftheCohortBuilderSubtab"
       target="_blank"
       rel="noreferrer"
     >
