@@ -1,5 +1,12 @@
 import { InfoOutlined } from '@mui/icons-material'
-import { Box, Tooltip } from '@mui/material'
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+} from '@mui/material'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
@@ -21,6 +28,7 @@ import Plot from '../../Plot/Plot'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import StyledFormControl from '../../styled/StyledFormControl'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
