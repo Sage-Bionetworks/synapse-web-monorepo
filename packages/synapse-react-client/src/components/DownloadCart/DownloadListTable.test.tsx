@@ -80,6 +80,9 @@ function renderComponent() {
       <DownloadListTableV2
         filesStatistics={mockFileStatistics}
         refetchStatistics={mockRefetchStatistics}
+        numBytes={100}
+        numPackagableFiles={5}
+        numFiles={6}
       />
     </SynapseTestContext>,
   )
