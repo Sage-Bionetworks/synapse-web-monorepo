@@ -1,6 +1,13 @@
-import { Dropdown } from 'react-bootstrap'
-import { useState, MouseEvent, PropsWithChildren } from 'react'
-import { Fade, IconButton, Menu, Tooltip } from '@mui/material'
+import {
+  Box,
+  Fade,
+  IconButton,
+  Menu,
+  MenuItem,
+  Select,
+  Tooltip,
+} from '@mui/material'
+import { MouseEvent, PropsWithChildren, useState } from 'react'
 import IconSvg from '../../../IconSvg'
 
 export type EnumFacetFilterDropdownProps = PropsWithChildren<{
@@ -15,20 +22,28 @@ function EnumFacetFilterSelectBox(
 ) {
   const { menuText, children } = props
 
-  const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
-  const onToggle = () => setIsShowDropdown(!isShowDropdown)
-
   return (
-    <Dropdown
+    <Select
       className={'EnumFacetFilter EnumFacetFilterSelect'}
-      show={isShowDropdown}
-      onToggle={onToggle}
+      value={menuText}
+      renderValue={() => menuText}
+      onChange={() => {
+        // noop - the children will handle change events
+      }}
     >
-      <Dropdown.Toggle className="secondary-caret" variant="gray-select">
-        {menuText}
-      </Dropdown.Toggle>
-      <Dropdown.Menu>{children}</Dropdown.Menu>
-    </Dropdown>
+      {/* Hack to prevent Select warnings - add a hidden MenuItem */}
+      <MenuItem value={menuText} sx={{ display: 'none' }} />
+      <Box
+        sx={{
+          // expand the dropdown menu width for this component only
+          '& .EnumFacetFilter__dropdown_menu': {
+            maxWidth: '100%',
+          },
+        }}
+      >
+        {children}
+      </Box>
+    </Select>
   )
 }
 
