@@ -765,10 +765,9 @@ main,
 // TODO - remove after react-select is updated to use MUI theme, see PORTALS-2651
 .UserSearchBoxV2,
 .AsyncSelect {
-  .form-control {
+  input {
     height: 48px;
     margin: 8px 0px 12px;
-    background-color: map.get(SRC.$colors, 'gray-200');
     border-radius: 3px;
   }
 }
