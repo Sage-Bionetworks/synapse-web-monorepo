@@ -59,6 +59,8 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
       td: {
         paddingTop: theme.spacing(density === 'compact' ? 0 : 1),
         paddingBottom: theme.spacing(density === 'compact' ? 0 : 1),
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
       },
       '.resizer': {
         position: 'absolute',

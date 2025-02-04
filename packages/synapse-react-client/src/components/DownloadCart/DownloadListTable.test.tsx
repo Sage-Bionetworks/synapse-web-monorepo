@@ -5,7 +5,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { mockFileStatistics } from '../../mocks/mock_file_statistics'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
@@ -74,12 +73,7 @@ jest
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2
-        filesStatistics={mockFileStatistics}
-        numBytes={100}
-        numPackagableFiles={5}
-        numFiles={6}
-      />
+      <DownloadListTableV2 />
     </SynapseTestContext>,
   )
 }

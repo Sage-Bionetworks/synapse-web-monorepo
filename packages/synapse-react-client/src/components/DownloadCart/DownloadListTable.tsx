@@ -3,7 +3,6 @@ import {
   AvailableFilter,
   DownloadListItem,
   DownloadListItemResult,
-  FilesStatisticsResponse,
   Sort,
   SortField,
 } from '@sage-bionetworks/synapse-types'
@@ -222,10 +221,6 @@ const getColumns = (args: {
       },
     }),
   ]
-}
-
-export type DownloadListTableProps = {
-  filesStatistics: FilesStatisticsResponse
 }
 
 function getSortApiRequestFromTableSortState(
