@@ -1,0 +1,22 @@
+import{F as s}from"./FeaturedToolsList-BDw1ocao.js";import"./jsx-runtime-Du8NFWEI.js";import"./index-Dl6G-zuu.js";import"./useFiles-slSSO9fC.js";import"./useQuery-6SsvXKRa.js";import"./utils-Bx1BRerw.js";import"./OrientationBanner-BJ9gW8Zk.js";import"./spreadSx-CwcO6WA9.js";import"./FullWidthAlert-BK7MPzqu.js";import"./Alert-CeaOJcfo.js";import"./createTheme-CiCSa2mH.js";import"./index-GEGPABih.js";import"./styled-CGsSw8UJ.js";import"./mergeSlotProps-B0sAykN9.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-CEBgoE3Z.js";import"./createSvgIcon-CARPmhEq.js";import"./Paper-DfbYtKZb.js";import"./IconButton-BX1jAiHM.js";import"./ButtonBase-BtHCltnO.js";import"./TransitionGroupContext-TdpM2qIg.js";import"./useIsFocusVisible-ByxglBfx.js";import"./Stack-DiY0npK2.js";import"./Box-D0Jm1lZU.js";import"./AlertTitle-D5vyrqh6.js";import"./Typography-NAJ1jGoo.js";import"./utils-D1_9yZbw.js";import"./index-BIzb42Jq.js";import"./Grow-8_BQPAWr.js";import"./ClickAwayListener-D7YV5tOA.js";import"./ownerDocument-DW-IO8s5.js";import"./Tooltip-DOWgCEwD.js";import"./index-CBeLH2jy.js";import"./useControlled-1Y2rT-1r.js";import"./useId-BkqTTtmk.js";import"./Button-0w0n5xUv.js";import"./VerificationSubmission-CjmU3lv6.js";import"./SynapseConstants-CmafGRmS.js";import"./StringUtils-CkZesiyJ.js";import"./tinycolor-Begke6kS.js";import"./InfoTwoTone-D_Raqnaw.js";import"./CheckCircleTwoTone-BBYOrcPX.js";import"./calculateFriendlyFileSize-B5Pk7maD.js";import"./Skeleton-DyxL95vN.js";import"./inputBaseClasses-yPUgEGHH.js";import"./Fade-BvpYcI5h.js";import"./Link-BXmnhkxu.js";import"./cloneDeep-CrT5BP8N.js";import"./_initCloneObject-CKp18hZk.js";import"./_baseTimes-36S_kd0L.js";import"./isArray-ggc3KxVp.js";import"./dayjs.min-d18Up55D.js";import"./chunk-K6AXKMTT-B5GX6HSq.js";import"./merge-DLQdEICg.js";import"./identity-DKeuBCMA.js";import"./DateFormatter-CCWThlFs.js";import"./timezone-Cq1SAuLw.js";import"./ShowMore-CuqZdAPw.js";const Co={title:"Home Page/FeaturedToolsList",component:s},o={args:{entityId:"syn26450069",idColumnName:"resourceId",nameColumnName:"resourceName",descriptionColumnName:"description",typeColumnName:"resourceType",dateColumnName:"dateAdded",toolDetailPageURL:"/Explore/Tools/DetailsPage?Resource_id=",filterClause:"ORDER BY dateAdded DESC"}},e={args:{entityId:"syn51469335",idColumnName:"id",nameColumnName:"name",descriptionColumnName:"summary",typeColumnName:"softwareType",toolURLColumnName:"url",filterClause:`WHERE "isFeatured" = 'true'`}};var r,m,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn26450069',
+    idColumnName: 'resourceId',
+    nameColumnName: 'resourceName',
+    descriptionColumnName: 'description',
+    typeColumnName: 'resourceType',
+    dateColumnName: 'dateAdded',
+    toolDetailPageURL: '/Explore/Tools/DetailsPage?Resource_id=',
+    filterClause: 'ORDER BY dateAdded DESC'
+  }
+}`,...(t=(m=o.parameters)==null?void 0:m.docs)==null?void 0:t.source}}};var i,p,a;e.parameters={...e.parameters,docs:{...(i=e.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn51469335',
+    idColumnName: 'id',
+    nameColumnName: 'name',
+    descriptionColumnName: 'summary',
+    typeColumnName: 'softwareType',
+    toolURLColumnName: 'url',
+    filterClause: 'WHERE "isFeatured" = \\'true\\''
+  }
+}`,...(a=(p=e.parameters)==null?void 0:p.docs)==null?void 0:a.source}}};const No=["NFDemo","ELITEDemo"];export{e as ELITEDemo,o as NFDemo,No as __namedExportsOrder,Co as default};
