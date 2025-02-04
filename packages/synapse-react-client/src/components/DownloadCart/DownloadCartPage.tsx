@@ -306,10 +306,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                   }
                   numFiles={data.numberOfFilesAvailableForDownload}
                 />
-                <AvailableForDownloadTable
-                  filesStatistics={data}
-                  refetchStatistics={refetch}
-                />
+                <AvailableForDownloadTable filesStatistics={data} />
               </div>
             </div>
           )}

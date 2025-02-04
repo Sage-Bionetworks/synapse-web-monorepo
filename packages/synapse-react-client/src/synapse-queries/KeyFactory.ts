@@ -178,7 +178,7 @@ const downloadListQueryKeys = {
     request,
   ],
   availableFilesInfinite: (request: AvailableFilesRequest) => [
-    downloadListQueryKeys.availableFiles(request),
+    ...downloadListQueryKeys.availableFiles(request),
     'infinite',
   ],
   getActionsRequired: () => [downloadListQueryKeys.base, 'actionsRequired'],

@@ -1,3 +1,4 @@
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import {
   render,
   screen,
@@ -5,9 +6,11 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import JestMockPromise from 'jest-mock-promise'
 import dayjs, { Dayjs } from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   EvaluationRoundEditor,
   EvaluationRoundEditorProps,
@@ -17,10 +20,6 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from './input_models/models'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 dayjs.extend(duration)
 
@@ -46,15 +45,13 @@ describe('test EvaluationRoundEditor', () => {
     mockOnDelete = jest.fn()
     mockOnSave = jest.fn()
 
-    mockCreateEvaluationRound = jest.fn(
-      () => new JestMockPromise(resolve => resolve(fakeEvaluationRoundInput)),
-    )
-    mockUpdateEvaluationRound = jest.fn(
-      () => new JestMockPromise(resolve => resolve(fakeEvaluationRoundInput)),
-    )
-    mockDeleteEvaluationRound = jest.fn(
-      () => new JestMockPromise(resolve => resolve()),
-    )
+    mockCreateEvaluationRound = jest
+      .fn()
+      .mockResolvedValue(fakeEvaluationRoundInput)
+    mockUpdateEvaluationRound = jest
+      .fn()
+      .mockResolvedValue(fakeEvaluationRoundInput)
+    mockDeleteEvaluationRound = jest.fn().mockResolvedValue(null)
 
     jest
       .spyOn(SynapseClient, 'createEvaluationRound')
@@ -235,13 +232,9 @@ describe('test EvaluationRoundEditor', () => {
 
   it('test save: Error occur', async () => {
     //make the SynapseClient call throw an error
-    mockUpdateEvaluationRound.mockImplementation(
-      () =>
-        new JestMockPromise((resolve, reject) => {
-          reject(new Error('oops! you got a fake error'))
-        }),
+    mockUpdateEvaluationRound.mockRejectedValue(
+      new Error('oops! you got a fake error'),
     )
-
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
@@ -276,7 +269,7 @@ describe('test EvaluationRoundEditor', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Round Options' }))
 
     // Click the delete button in the dropdown menu
-    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
 
     // Click delete on the button inside the warning modal
     const dialog = screen.getByRole('dialog')
@@ -327,11 +320,8 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    mockDeleteEvaluationRound.mockImplementation(
-      () =>
-        new JestMockPromise((resolve, reject) =>
-          reject(new Error('oops! you got a fake error')),
-        ),
+    mockDeleteEvaluationRound.mockRejectedValue(
+      new Error('oops! you got a fake error'),
     )
 
     render(<EvaluationRoundEditor {...props} />, {
@@ -351,7 +341,9 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnDelete).not.toHaveBeenCalled()
 
     //error should be shown
-    within(screen.getByRole('alert')).getByText('oops! you got a fake error')
+    within(await screen.findByRole('alert')).getByText(
+      'oops! you got a fake error',
+    )
   })
 })
 

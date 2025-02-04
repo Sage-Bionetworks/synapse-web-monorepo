@@ -48,45 +48,6 @@
   }
 }
 
-@mixin sortable-table() {
-  thead > tr > th,
-  thead:first-child > tr:first-child > th {
-    padding: 10px 6px 5px 7px;
-    border: 1px solid #dddddf;
-    background-color: map.get(SRC.$colors, 'gray-200');
-    color: map.get(SRC.$colors, 'gray-800');
-    span {
-      display: inline-block;
-      float: right;
-    }
-  }
-  td {
-    vertical-align: middle !important;
-  }
-}
-
-@mixin sticky-column() {
-  border-collapse: separate;
-  .stickyColumn {
-    right: 0;
-    position: sticky;
-    z-index: 800;
-  }
-  // fix colors (icons, and set the cell background color to be opaque).
-  thead .stickyColumn {
-    text-align: center;
-  }
-  tbody tr > td.stickyColumn {
-    border-left: 1px solid map.get(SRC.$colors, 'gray-400');
-  }
-  tbody tr:nth-of-type(even) > .stickyColumn {
-    background-color: white;
-  }
-  tbody tr:nth-of-type(odd) > .stickyColumn {
-    background-color: #fbfbfc;
-  }
-}
-
 @mixin underline-tabs(
   $active-color: SRC.$secondary-action-color,
   $inactive-color: lightgray

@@ -1,11 +1,18 @@
-import { Badge, Drawer, List, ListItemButton, Tooltip } from '@mui/material'
+import {
+  Badge,
+  Drawer,
+  InputAdornment,
+  List,
+  ListItemButton,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import {
   Direction,
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
-import { Form } from 'react-bootstrap'
+import { useState, KeyboardEvent } from 'react'
 import SynapseIconWhite from '../../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../../assets/icons/SynapseLogoName'
 import SynapseClient from '../../synapse-client'
@@ -416,26 +423,32 @@ export function SynapseNavDrawer({
                     <IconSvg icon="addCircleOutline" />
                   </a>
                 </Tooltip>
-                <div className="searchInputWithIcon">
-                  <IconSvg icon="searchOutlined" />
-                  <Form.Control
-                    type="search"
-                    placeholder="Search All Projects"
-                    value={projectSearchText}
-                    onChange={event => {
-                      setProjectSearchText(event.target.value)
-                    }}
-                    onKeyDown={(event: any) => {
-                      if (event.key === 'Enter') {
-                        if (event.target.value !== '') {
-                          setProjectSearchText('')
-                          handleDrawerClose()
-                          onProjectSearch(event.target.value)
-                        }
+                <TextField
+                  type="search"
+                  placeholder="Search All Projects"
+                  value={projectSearchText}
+                  onChange={event => {
+                    setProjectSearchText(event.target.value)
+                  }}
+                  onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                    if (event.key === 'Enter') {
+                      if ((event.target as HTMLInputElement).value !== '') {
+                        setProjectSearchText('')
+                        handleDrawerClose()
+                        onProjectSearch(
+                          (event.target as HTMLInputElement).value,
+                        )
                       }
-                    }}
-                  />
-                </div>
+                    }
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSvg icon="searchOutlined" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
                 <div className="linkList" onClick={handleDrawerClose}>
                   <a
                     className="SRC-whiteText"
@@ -544,30 +557,35 @@ export function SynapseNavDrawer({
             {selectedItem == NavItem.HELP && (
               <>
                 <div className="header">Help</div>
-                <div className="searchInputWithIcon">
-                  <IconSvg icon="searchOutlined" />
-                  <Form.Control
-                    type="search"
-                    placeholder="Search Synapse Documentation"
-                    value={docSiteSearchText}
-                    onChange={event => {
-                      setDocSiteSearchText(event.target.value)
-                    }}
-                    onKeyDown={(event: any) => {
-                      if (event.key === 'Enter') {
-                        if (event.target.value !== '') {
-                          window.open(
-                            `https://help.synapse.org/search.html?max=10&s=docs&q=${encodeURI(
-                              event.target.value,
-                            )}`,
-                          )
-                          setDocSiteSearchText('')
-                          handleDrawerClose()
-                        }
+                <TextField
+                  type="search"
+                  placeholder="Search Documentation"
+                  value={docSiteSearchText}
+                  onChange={event => {
+                    setDocSiteSearchText(event.target.value)
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSvg icon="searchOutlined" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter') {
+                      if ((event.target as HTMLInputElement).value !== '') {
+                        window.open(
+                          `https://help.synapse.org/search.html?max=10&s=docs&q=${encodeURI(
+                            (event.target as HTMLInputElement).value,
+                          )}`,
+                        )
+                        setDocSiteSearchText('')
+                        handleDrawerClose()
                       }
-                    }}
-                  />
-                </div>
+                    }
+                  }}
+                />
+
                 <div className="linkList" onClick={handleDrawerClose}>
                   <a
                     className="SRC-whiteText"

@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseContextConsumer } from '../../utils/context/SynapseContext'
 import SynapseFormWrapper, {
   SynapseFormWrapperProps,
 } from './SynapseFormWrapper'
@@ -7,13 +6,9 @@ import SynapseFormWrapper, {
 const meta = {
   title: 'Synapse/SynapseFormWrapper',
   component: SynapseFormWrapper,
-  render: args => (
-    <SynapseContextConsumer>
-      {synapseContext => (
-        <SynapseFormWrapper {...args} token={synapseContext?.accessToken} />
-      )}
-    </SynapseContextConsumer>
-  ),
+  parameters: {
+    withRouter: true,
+  },
 } satisfies Meta<SynapseFormWrapperProps>
 export default meta
 type Story = StoryObj<typeof meta>
