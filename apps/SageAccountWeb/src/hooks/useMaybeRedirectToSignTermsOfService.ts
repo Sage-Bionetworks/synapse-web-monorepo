@@ -9,21 +9,23 @@ import {
 type UseMaybeRedirectToSignTermsOfServiceReturn = {
   // if true, the user may be redirected (or has already been redirected) to sign the ToS
   // i.e. don't assume the ToS has been signed and boot the user to the original app until this returns false!
-  mayRedirect: boolean
+  mayPromptTermsOfUse: boolean
 }
+
+export const SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY = 'skippedSigningToS'
 
 export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirectToSignTermsOfServiceReturn {
   // Detect if terms of service are up to date.  If not, route to either the Pledge or a page where the user can sign the updated terms.
   // Note, if the status is "MUST_AGREE_SOON", then the new page will offer a "Skip" button
   const skippedSigningUpdatedToS =
-    sessionStorage.getItem('skippedSigningToS') === 'true'
+    sessionStorage.getItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY) === 'true'
   const { termsOfServiceStatus } = useApplicationSessionContext()
 
   const navigate = useNavigate()
   const location = useLocation()
 
-  // true until we confirm we will not redirect
-  const [mayRedirect, setMayRedirect] = useState(true)
+  // true until we confirm we will not show terms of use
+  const [mayPromptTermsOfUse, setMayPromptTermsOfUse] = useState(true)
 
   useEffect(() => {
     if (termsOfServiceStatus) {
@@ -44,8 +46,9 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
           storeLastPlace()
           navigate('/authenticated/signUpdatedTermsOfUse')
         }
+      } else {
+        setMayPromptTermsOfUse(false)
       }
-      setMayRedirect(false)
     }
   }, [
     termsOfServiceStatus,
@@ -54,5 +57,5 @@ export default function useMaybeRedirectToSignTermsOfService(): UseMaybeRedirect
     navigate,
   ])
 
-  return { mayRedirect: mayRedirect }
+  return { mayPromptTermsOfUse }
 }
