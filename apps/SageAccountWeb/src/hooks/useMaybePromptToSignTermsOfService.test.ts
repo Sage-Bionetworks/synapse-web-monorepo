@@ -3,9 +3,9 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { useApplicationSessionContext } from 'synapse-react-client'
 import { ApplicationSessionContextType } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
-import useMaybeRedirectToSignTermsOfService, {
+import useMaybePromptToSignTermsOfService, {
   SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY,
-} from './useMaybeRedirectToSignTermsOfService'
+} from './useMaybePromptToSignTermsOfService'
 import { useLocation, useNavigate, Location } from 'react-router'
 
 vi.mock('synapse-react-client', () => {
@@ -61,7 +61,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalled()
@@ -78,7 +78,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalled()
@@ -95,7 +95,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith('/authenticated/signTermsOfUse')
@@ -111,7 +111,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith('/authenticated/signTermsOfUse')
@@ -129,7 +129,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith(
@@ -147,7 +147,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith(
@@ -170,7 +170,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalledWith(
@@ -193,7 +193,7 @@ describe('useMaybeRedirectToSignTermsOfService', () => {
       },
     })
 
-    const hook = renderHook(() => useMaybeRedirectToSignTermsOfService())
+    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
     await waitFor(() => {
       expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalledWith(
