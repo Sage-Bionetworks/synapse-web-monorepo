@@ -8,7 +8,7 @@ import {
 } from 'synapse-react-client'
 import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
-import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
+import useMaybePromptToSignTermsOfService from './hooks/useMaybePromptToSignTermsOfService'
 import { getSearchParam } from './URLUtils'
 
 function AppInitializer(props: { children?: ReactNode }) {
@@ -62,7 +62,7 @@ function AppInitializer(props: { children?: ReactNode }) {
   }, [])
 
   // Anywhere in the app, redirect the user to sign the ToS if required
-  useMaybeRedirectToSignTermsOfService()
+  useMaybePromptToSignTermsOfService()
 
   return (
     <AppContextProvider

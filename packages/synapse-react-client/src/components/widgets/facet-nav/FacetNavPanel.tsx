@@ -1,30 +1,29 @@
 import { InfoOutlined } from '@mui/icons-material'
-import Plotly from 'plotly.js-basic-dist'
-import { useMemo, useState } from 'react'
-import { Dropdown } from 'react-bootstrap'
-import { SizeMe } from 'react-sizeme'
-import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
-import { SynapseConstants } from '../../../utils'
-import SynapseClient from '../../../synapse-client'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import { Box, Tooltip } from '@mui/material'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
-import loadingScreen from '../../LoadingScreen/LoadingScreen'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
-import { Box, Tooltip } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
-import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
-import { FacetPlotLegendList } from './FacetPlotLegendList'
-import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
+import Plotly from 'plotly.js-basic-dist'
+import { useMemo, useState } from 'react'
+import { SizeMe } from 'react-sizeme'
+import SynapseClient from '../../../synapse-client'
+import { SynapseConstants } from '../../../utils'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
+import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
+import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
+import loadingScreen from '../../LoadingScreen/LoadingScreen'
+import Plot from '../../Plot/Plot'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
 import { useQueryContext } from '../../QueryContext'
-import Plot from '../../Plot/Plot'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
+import { FacetPlotLegendList } from './FacetPlotLegendList'
+import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 
 export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (
@@ -336,27 +335,18 @@ function FacetNavPanel(props: FacetNavPanelProps) {
 
   /* rendering functions */
   const chartSelectionToggle = (
-    <div
-      onClick={event => {
-        event.stopPropagation()
-      }}
-      className="bootstrap-4-backport SRC-labeled-dropdown"
-    >
-      <span className="SRC-labeled-dropdown__label">Chart Type</span>
-      <Dropdown>
-        <Dropdown.Toggle className="secondary-caret" variant="gray-select">
-          {plotType === 'PIE' ? 'Pie Chart' : 'Bar Chart'}
-        </Dropdown.Toggle>
-        <Dropdown.Menu className="chart-tools">
-          <Dropdown.Item as="button" onClick={() => onSetPlotType('BAR')}>
-            Bar Chart
-          </Dropdown.Item>
-          <Dropdown.Item as="button" onClick={() => onSetPlotType('PIE')}>
-            Pie Chart
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
+    <StyledFormControl fullWidth>
+      <InputLabel>Chart Type</InputLabel>
+      <Select
+        value={plotType}
+        onChange={e => {
+          onSetPlotType(e.target.value as PlotType)
+        }}
+      >
+        <MenuItem value={'BAR'}>Bar Chart</MenuItem>
+        <MenuItem value={'PIE'}>Pie Chart</MenuItem>
+      </Select>
+    </StyledFormControl>
   )
 
   if (
@@ -380,6 +370,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
           hasCancelButton={false}
           confirmButtonProps={{ children: 'Apply Filters' }}
           onConfirm={() => setShowModal(false)}
+          maxWidth={'md'}
         />
         <div
           role="figure"
@@ -396,22 +387,24 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             />
           )}
           {isModalView && (
-            <>
-              <div className={'bootstrap-4-backport SRC-labeled-dropdown'}>
-                <span className="SRC-labeled-dropdown__label">
-                  Filter All Data By
-                </span>
+            <Stack gap={2}>
+              <StyledFormControl>
+                <InputLabel
+                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                >
+                  <span>Filter All Data By</span>
+                  <Tooltip title="Selecting items in this dropdown will affect all facets on the Explore page.">
+                    <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
+                  </Tooltip>
+                </InputLabel>
                 <EnumFacetFilter
                   facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
-                <Tooltip title="Selecting items in this dropdown will affect all facets on the Explore page.">
-                  <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
-                </Tooltip>
-              </div>
+              </StyledFormControl>
               {chartSelectionToggle}
-            </>
+            </Stack>
           )}
           <Box
             sx={{

@@ -1,7 +1,6 @@
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import { Button, Link } from '@mui/material'
+import { Button, Link, Container } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
-import { Container } from 'react-bootstrap'
 
 export type EmailConfirmationPageProps = {
   email: string

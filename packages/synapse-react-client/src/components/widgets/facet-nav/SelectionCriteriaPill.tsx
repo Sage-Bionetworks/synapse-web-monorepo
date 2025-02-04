@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material'
-import { ElementWithTooltip } from '../ElementWithTooltip'
+import { Tooltip } from '@mui/material'
 
 export type SelectionCriteriaPillProps = {
   readonly key: string
@@ -17,7 +17,7 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
   const { innerText, tooltipText, onRemoveFilter } = props
 
   return (
-    <ElementWithTooltip tooltipText={tooltipText} callbackFn={() => {}}>
+    <Tooltip title={tooltipText} placement={'top'}>
       <div className="SelectionCriteriaPill">
         <span>{innerText}</span>
         <button
@@ -28,7 +28,7 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
           <Close />
         </button>
       </div>
-    </ElementWithTooltip>
+    </Tooltip>
   )
 }
 
