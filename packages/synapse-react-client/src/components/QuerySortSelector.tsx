@@ -55,7 +55,7 @@ function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
   }
 
   return (
-    <div className="QuerySortSelector bootstrap-4-backport">
+    <div className="QuerySortSelector">
       <Typography variant="label" className="sort-by-label SRC-inlineBlock">
         Sort by
       </Typography>

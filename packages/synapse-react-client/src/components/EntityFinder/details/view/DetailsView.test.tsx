@@ -665,7 +665,7 @@ describe('DetailsView tests', () => {
           ]),
         })
 
-        await screen.findByRole('listbox')
+        await screen.findByRole('combobox')
 
         // We should have two versions and 'Always Latest Version' as options
         expect((await screen.findAllByRole('option')).length).toBe(3)
@@ -715,7 +715,7 @@ describe('DetailsView tests', () => {
           versionSelection: VersionSelectionType.REQUIRED,
         })
 
-        await screen.findByRole('listbox')
+        await screen.findByRole('combobox')
 
         // We should have two versions
         expect(screen.getAllByRole('option').length).toBe(2)
@@ -731,7 +731,7 @@ describe('DetailsView tests', () => {
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
         })
-        const versionSelectBox = await screen.findByRole('listbox')
+        const versionSelectBox = await screen.findByRole('combobox')
 
         // There are two versions, plus "Always Latest"
         const options = await screen.findAllByRole('option')
@@ -775,7 +775,7 @@ describe('DetailsView tests', () => {
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
         })
-        expect(await screen.findByRole('listbox')).toBeDefined()
+        expect(await screen.findByRole('combobox')).toBeDefined()
 
         expect(
           (screen.getAllByRole('option')[0] as HTMLOptionElement).selected,
@@ -815,7 +815,7 @@ describe('DetailsView tests', () => {
             ],
           ]),
         })
-        expect(await screen.findByRole('listbox')).toBeDefined()
+        expect(await screen.findByRole('combobox')).toBeDefined()
 
         expect(
           (screen.getAllByRole('option')[0] as HTMLOptionElement).selected,
@@ -850,7 +850,7 @@ describe('DetailsView tests', () => {
           ]),
           versionSelection: VersionSelectionType.REQUIRED,
         })
-        expect(await screen.findByRole('listbox')).toBeDefined()
+        expect(await screen.findByRole('combobox')).toBeDefined()
 
         // Always Latest Version is not an option
         expect(screen.getAllByRole('option').length).toBe(2)
