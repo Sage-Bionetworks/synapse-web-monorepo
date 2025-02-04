@@ -16,7 +16,6 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import Plotly from 'plotly.js-basic-dist'
 import { useMemo, useState } from 'react'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import SynapseClient from '../../../synapse-client'
 import { SynapseConstants } from '../../../utils'
@@ -25,6 +24,7 @@ import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUt
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
+import Plot from '../../Plot/Plot'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
@@ -32,8 +32,6 @@ import StyledFormControl from '../../styled/StyledFormControl'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
-
-const Plot = createPlotlyComponent(Plotly)
 
 export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (

@@ -26,7 +26,6 @@ import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
 import PageProgress from './components/PageProgress/PageProgress'
 import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
-import PlotlyWrapper from './components/PlotlyWrapper'
 import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
@@ -143,7 +142,6 @@ const SynapseComponents = {
   displayToast,
   IconSvg,
   UserProfileLinks,
-  PlotlyWrapper,
   DatasetItemsEditor,
   EntityTypeIcon,
   HelpPopover,
