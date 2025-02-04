@@ -118,7 +118,7 @@ export function MarkdownEditor({
   }
 
   return (
-    <div className="bootstrap-4-backport MarkdownEditor">
+    <div className="MarkdownEditor">
       <div className="MarkdownEditorControls">
         <div className="Tabs">
           {MarkdownEditorTabs.map(tabName => {

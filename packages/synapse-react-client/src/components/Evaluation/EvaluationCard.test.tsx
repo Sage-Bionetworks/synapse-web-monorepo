@@ -1,6 +1,5 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
-import JestMockPromise from 'jest-mock-promise'
 import SynapseClient from '../../synapse-client'
 import {
   EvaluationCard,
@@ -72,16 +71,12 @@ describe('test Evaluation Card', () => {
       onDeleteSuccess: mockOnDeleteSuccess,
     }
 
-    mockGetEvaluationPermissions = jest.fn(
-      () => new JestMockPromise(resolve => resolve(permissions)),
-    )
+    mockGetEvaluationPermissions = jest.fn().mockResolvedValue(permissions)
     jest
       .spyOn(SynapseClient, 'getEvaluationPermissions')
       .mockImplementation(mockGetEvaluationPermissions)
 
-    mockDeleteEvaluation = jest.fn(
-      () => new JestMockPromise(resolve => resolve()),
-    )
+    mockDeleteEvaluation = jest.fn().mockResolvedValue(null)
     jest
       .spyOn(SynapseClient, 'deleteEvaluation')
       .mockImplementation(mockDeleteEvaluation)
@@ -93,48 +88,49 @@ describe('test Evaluation Card', () => {
   })
   afterAll(() => server.close())
 
-  test('retrieve evaluation permissions - failure', () => {
-    mockGetEvaluationPermissions.mockImplementation(() => {
-      return new JestMockPromise((resolve, reject) => {
-        reject(new Error("OOPS! It's a error getting EvaluationPermission"))
-      })
-    })
+  test('retrieve evaluation permissions - failure', async () => {
+    mockGetEvaluationPermissions.mockRejectedValue(
+      new Error("OOPS! It's a error getting EvaluationPermission"),
+    )
 
     render(<EvaluationCard {...props} />, {
       wrapper: createWrapper(),
     })
 
-    within(screen.getByRole('alert')).getByText(
+    within(await screen.findByRole('alert')).getByText(
       "OOPS! It's a error getting EvaluationPermission",
     )
   })
 
-  test('all retrieve calls happy case', () => {
+  test('all retrieve calls happy case', async () => {
     render(<EvaluationCard {...props} />, {
       wrapper: createWrapper(),
     })
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
-    screen.getByRole('heading', { name: 'E V A L U A T I O N (1234)' })
+    await screen.findByRole('heading', { name: 'E V A L U A T I O N (1234)' })
     screen.getByText("no you can't just make a submission")
     screen.getByText('This is an awesome queue')
     screen.getByText(/Created on .+ by/)
     screen.getByRole('button', { name: 'Submit' })
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
-  test('submit button not shown when user does not have permission', () => {
+  test('submit button not shown when user does not have permission', async () => {
     permissions.canSubmit = false
 
     render(<EvaluationCard {...props} />, {
       wrapper: createWrapper(),
     })
 
-    expect(
-      screen.queryByRole('button', { name: 'Submit' }),
-    ).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Submit' }),
+      ).not.toBeInTheDocument(),
+    )
   })
 
-  test('no permissions for any dropdown option - no dropdown shown', () => {
+  test('no permissions for any dropdown option - no dropdown shown', async () => {
     permissions.canEdit = false
     permissions.canChangePermissions = false
     permissions.canDelete = false
@@ -143,9 +139,11 @@ describe('test Evaluation Card', () => {
       wrapper: createWrapper(),
     })
 
-    expect(
-      screen.queryByRole('button', { name: 'Options' }),
-    ).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Options' }),
+      ).not.toBeInTheDocument(),
+    )
   })
 
   test('no permissions for edit dropdown option - hide option', async () => {
@@ -156,7 +154,7 @@ describe('test Evaluation Card', () => {
     })
 
     // Open the dropdown menu
-    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    const dropdown = await screen.findByRole('button', { name: 'Options' })
     await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
@@ -190,7 +188,7 @@ describe('test Evaluation Card', () => {
     })
 
     // Open the dropdown menu
-    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    const dropdown = await screen.findByRole('button', { name: 'Options' })
     await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
@@ -224,7 +222,7 @@ describe('test Evaluation Card', () => {
     })
 
     // Open the dropdown menu
-    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    const dropdown = await screen.findByRole('button', { name: 'Options' })
     await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
@@ -249,7 +247,7 @@ describe('test Evaluation Card', () => {
     })
 
     // Open the dropdown menu
-    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    const dropdown = await screen.findByRole('button', { name: 'Options' })
     await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
@@ -282,18 +280,16 @@ describe('test Evaluation Card', () => {
   })
 
   test('Delete options API call failure - onDeleteSuccess callback not called', async () => {
-    mockDeleteEvaluation.mockImplementation(() => {
-      return new JestMockPromise((resolve, reject) => {
-        reject(new Error("OOPS! It's a error Deleting"))
-      })
-    })
+    mockDeleteEvaluation.mockRejectedValue(
+      new Error("OOPS! It's a error Deleting"),
+    )
 
     render(<EvaluationCard {...props} />, {
       wrapper: createWrapper(),
     })
 
     // Open the dropdown menu
-    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    const dropdown = await screen.findByRole('button', { name: 'Options' })
     await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')

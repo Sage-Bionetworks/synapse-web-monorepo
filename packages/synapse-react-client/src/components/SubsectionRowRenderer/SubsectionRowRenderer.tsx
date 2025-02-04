@@ -107,7 +107,7 @@ function SubsectionRowRenderer({
     return friendlyValue ? friendlyValue : rawValue
   }
   return (
-    <div className="SubsectionRowRenderer bootstrap-4-backport">
+    <div className="SubsectionRowRenderer">
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
       {!isLoading &&
         rowSet &&

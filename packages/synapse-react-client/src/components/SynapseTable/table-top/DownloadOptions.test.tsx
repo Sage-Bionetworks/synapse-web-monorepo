@@ -106,15 +106,17 @@ describe('Download Options tests', () => {
 
     await userEvent.click(downloadOptionsButton)
 
-    await screen.findByRole('button', { name: 'Export Table' })
-    const programmaticOptionsMenuItem = await screen.findByRole('button', {
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    const programmaticOptionsMenuItem = await screen.findByRole('menuitem', {
       name: 'Programmatic Options',
     })
 
     // Download files should not be visible for tables
     await waitFor(() => {
       expect(
-        screen.queryByRole('button', { name: ADD_ALL_FILES_TO_DOWNLOAD_CART }),
+        screen.queryByRole('menuitem', {
+          name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
+        }),
       ).not.toBeInTheDocument()
     })
     // Verify that programmatic download isn't disabled
@@ -134,11 +136,11 @@ describe('Download Options tests', () => {
 
     await userEvent.click(downloadOptionsButton)
 
-    await screen.findByRole('button', { name: 'Export Table' })
-    const downloadFilesMenuItem = await screen.findByRole('button', {
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    const downloadFilesMenuItem = await screen.findByRole('menuitem', {
       name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
-    const programmaticOptionsMenuItem = await screen.findByRole('button', {
+    const programmaticOptionsMenuItem = await screen.findByRole('menuitem', {
       name: 'Programmatic Options',
     })
 
@@ -163,15 +165,17 @@ describe('Download Options tests', () => {
 
     await userEvent.click(downloadOptionsButton)
 
-    await screen.findByRole('button', { name: 'Export Table' })
-    const programmaticOptionsMenuItem = await screen.findByRole('button', {
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    const programmaticOptionsMenuItem = await screen.findByRole('menuitem', {
       name: 'Programmatic Options',
     })
 
     // Download files should not be visible for project views
     await waitFor(() => {
       expect(
-        screen.queryByRole('button', { name: ADD_ALL_FILES_TO_DOWNLOAD_CART }),
+        screen.queryByRole('menuitem', {
+          name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
+        }),
       ).not.toBeInTheDocument()
     })
 
@@ -210,11 +214,11 @@ describe('Download Options tests', () => {
 
     await userEvent.click(downloadOptionsButton)
 
-    await screen.findByRole('button', { name: 'Export Table' })
-    const downloadFilesMenuItem = await screen.findByRole('button', {
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    const downloadFilesMenuItem = await screen.findByRole('menuitem', {
       name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
-    const programmaticOptionsMenuItem = await screen.findByRole('button', {
+    const programmaticOptionsMenuItem = await screen.findByRole('menuitem', {
       name: 'Programmatic Options',
     })
 
@@ -254,18 +258,17 @@ describe('Download Options tests', () => {
 
     await userEvent.click(downloadOptionsButton)
 
-    await screen.findByRole('button', { name: 'Export Table' })
-    const downloadFilesMenuItem = await screen.findByRole('button', {
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    const downloadFilesMenuItem = await screen.findByRole('menuitem', {
       name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
-    const programmaticOptionsMenuItem = await screen.findByRole('button', {
+    const programmaticOptionsMenuItem = await screen.findByRole('menuitem', {
       name: 'Programmatic Options',
     })
 
     // Verify that programmatic download and download files are disabled
-    expect(downloadFilesMenuItem.classList.contains('disabled')).toBe(true)
-    expect(programmaticOptionsMenuItem.classList.contains('disabled')).toBe(
-      true,
-    )
+    // Note: `toBeDisabled` only checks the `disabled` attribute, which is not set on these menuitems,  see https://github.com/testing-library/jest-dom/issues/144
+    expect(downloadFilesMenuItem).toHaveAttribute('aria-disabled', 'true')
+    expect(programmaticOptionsMenuItem).toHaveAttribute('aria-disabled', 'true')
   })
 })

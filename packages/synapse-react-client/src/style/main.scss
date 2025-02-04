@@ -6,26 +6,20 @@
 @use './abstracts/functions';
 @use './abstracts/mixins';
 
-// 1. Bootstrap 4 backports.
-// We currently use Bootstrap 3 CSS but accidentally ended up using react-bootstrap 1.x.x, which was designed for Bootstrap 4
-// In an effort to facilitate eventual migration towards Bootstrap 4, we backport certain styling that are new or changed in Bootstrap 4
-@use './bootstrap4_backports/all';
-
-// 2. Vendors
+// 1. Vendors
 @use './vendors/normalize';
 @use 'animate.css/animate';
 
-// 3. Base stuff
+// 2. Base stuff
 @use './base/base';
 @use './base/fonts';
 @use './base/helpers';
 @use './base/core';
 @use './base/icons';
-@use './base/modal';
 @use './base/form';
 
-// 4. Components
+// 3. Components
 @use './components/all' as all2;
 
-// 5. Themes
+// 4. Themes
 // at least for now we are handing themes as a different import

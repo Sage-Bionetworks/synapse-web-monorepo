@@ -1,34 +1,33 @@
+import { Box, Button, TextField, Typography } from '@mui/material'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  ObjectType,
+  SubscriptionObjectType,
+} from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import {
+  useGetCurrentUserProfile,
+  useGetEntityBundle,
+} from '../../synapse-queries'
 import { useGetRepliesInfinite } from '../../synapse-queries/forum/useReply'
 import {
   useDeleteThread,
   useGetThread,
   useRestoreThread,
 } from '../../synapse-queries/forum/useThread'
+import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  ObjectType,
-  SubscriptionObjectType,
-} from '@sage-bionetworks/synapse-types'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { DiscussionReply } from './DiscussionReply'
-import { FormControl } from 'react-bootstrap'
-import { Button, Typography } from '@mui/material'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityBundle,
-} from '../../synapse-queries'
-import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningDialog from '../SynapseForm/WarningDialog'
-import { SubscribersModal } from './SubscribersModal'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
+import { DiscussionReply } from './DiscussionReply'
+import { ForumThreadEditor } from './ForumThreadEditor'
+import { SubscribersModal } from './SubscribersModal'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -103,7 +102,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   return (
-    <div className="bootstrap-4-backport DiscussionThread">
+    <div className="DiscussionThread">
       {threadData && threadBody ? (
         <>
           <div style={{ textAlign: 'center' }}>
@@ -207,36 +206,38 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </>
         )}
       </div>
-      {!showReplyEditor1 ? (
-        <FormControl
-          type="text"
-          placeholder={INPUT_PLACEHOLDER}
-          onClick={() => {
-            if (currentUserProfile?.userName == 'anonymous') {
-              setShowSignInModal(true)
-            } else {
-              setShowReplyEditor1(true)
-            }
-          }}
-        />
-      ) : (
-        <ForumThreadEditor
-          id={threadId}
-          isReply={true}
-          onClose={() => setShowReplyEditor1(false)}
-          isDialog={false}
-        />
-      )}
+      <Box sx={{ mt: 2, mb: 3 }}>
+        {!showReplyEditor1 ? (
+          <TextField
+            fullWidth
+            placeholder={INPUT_PLACEHOLDER}
+            onClick={() => {
+              if (currentUserProfile?.userName == 'anonymous') {
+                setShowSignInModal(true)
+              } else {
+                setShowReplyEditor1(true)
+              }
+            }}
+          />
+        ) : (
+          <ForumThreadEditor
+            id={threadId}
+            isReply={true}
+            onClose={() => setShowReplyEditor1(false)}
+            isDialog={false}
+          />
+        )}
+      </Box>
       <div>
         {replies.map(reply => (
           <DiscussionReply key={reply.id} reply={reply} />
         ))}
       </div>
       {replies.length > 0 && (
-        <>
+        <Box sx={{ mt: 2, mb: 3 }}>
           {!showReplyEditor2 ? (
-            <FormControl
-              type="text"
+            <TextField
+              fullWidth
               placeholder={INPUT_PLACEHOLDER}
               onClick={() => {
                 if (currentUserProfile?.userName == 'anonymous') {
@@ -254,7 +255,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               isDialog={false}
             />
           )}
-        </>
+        </Box>
       )}
 
       {hasNextPage ? (

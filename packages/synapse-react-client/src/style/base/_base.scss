@@ -8,12 +8,6 @@
  */
 html {
   box-sizing: border-box;
-
-  // For some reason, the Bootstrap 3 css sets html's font-size to 10px but then also sets body's font-size to 14px
-  // the 10px setting causes problems for Bootstrap 4, which we use concurrently with Bootstrap 3 by wrapping
-  // Bootstrap 4 elements in a <div className="bootstrap-4-backport"/>. The conflict is caused by Bootstrap preferring
-  // to use rem instead of px for all of their size settings, which means that the 10px defined in HTML is treated as
-  // the root element size instead of the 14px that gets used everywhere else.
   font-size: 16px;
 }
 
