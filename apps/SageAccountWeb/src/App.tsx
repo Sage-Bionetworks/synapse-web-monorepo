@@ -24,6 +24,7 @@ import { RegisterAccount1 } from './components/RegisterAccount1'
 import { RegisterAccount2 } from './components/RegisterAccount2'
 import { ResetPassword } from './components/ResetPassword'
 import { SageResourcesPage } from './components/SageResourcesPage'
+import { SignUpdatedTermsOfUsePage } from './components/SignUpdatedTermsOfUsePage'
 import { TermsOfUsePage } from './components/TermsOfUsePage'
 import { ResetTwoFactorAuth } from './components/TwoFactorAuth/ResetTwoFactorAuth'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
@@ -70,6 +71,10 @@ function AuthenticatedRoutes() {
     <Routes>
       <Route path={'validate'} element={<ProfileValidation />} />
       <Route path={'signTermsOfUse'} element={<TermsOfUsePage />} />
+      <Route
+        path={'signUpdatedTermsOfUse'}
+        element={<SignUpdatedTermsOfUsePage />}
+      />
       <Route path={'myaccount'} element={<AccountSettings />} />
       <Route path={'currentaffiliation'} element={<CurrentAffiliationPage />} />
       <Route path={'accountcreated'} element={<AccountCreatedPage />} />
