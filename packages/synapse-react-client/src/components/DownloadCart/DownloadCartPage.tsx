@@ -298,15 +298,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     }}
                   />
                 )}
-                <AvailableForDownloadTable
-                  filesStatistics={data}
-                  refetchStatistics={refetch}
-                  numBytes={data.sumOfFileSizesAvailableForDownload}
-                  numPackagableFiles={
-                    data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
-                  }
-                  numFiles={data.numberOfFilesAvailableForDownload}
-                />
+                <AvailableForDownloadTable />
               </div>
             </div>
           )}

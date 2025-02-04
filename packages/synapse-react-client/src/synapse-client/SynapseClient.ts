@@ -175,7 +175,6 @@ import {
   DownloadFromTableRequest,
   DownloadFromTableResult,
   DownloadList,
-  DownloadListItem,
   DownloadListManifestRequest,
   DownloadListPackageRequest,
   DownloadListPackageResponse,
@@ -3917,13 +3916,10 @@ export const getAllDownloadListActionsRequired = (
  * Remove item from Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/remove.html
  */
-export const removeItemFromDownloadListV2 = (
-  item: DownloadListItem,
+export const removeItemsFromDownloadListV2 = (
+  request: RemoveBatchOfFilesFromDownloadListRequest,
   accessToken: string | undefined = undefined,
 ): Promise<RemoveBatchOfFilesFromDownloadListResponse> => {
-  const request: RemoveBatchOfFilesFromDownloadListRequest = {
-    batchToRemove: [item],
-  }
   return doPost<RemoveBatchOfFilesFromDownloadListResponse>(
     '/repo/v1/download/list/remove',
     request,
