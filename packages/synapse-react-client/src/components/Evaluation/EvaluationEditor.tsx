@@ -1,14 +1,23 @@
-import { Alert, Button } from '@mui/material'
-import { Col, Dropdown, Form, Row } from 'react-bootstrap'
-import { useEffect, useState } from 'react'
-import SynapseClient from '../../synapse-client'
+import {
+  Alert,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  TextField,
+} from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { ErrorBanner } from '../error/ErrorBanner'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import WarningDialog from '../SynapseForm/WarningDialog'
+import { MouseEvent, useEffect, useState } from 'react'
+import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
+import WarningDialog from '../SynapseForm/WarningDialog'
+import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
@@ -114,95 +123,70 @@ export function EvaluationEditor({
     : undefined
 
   return (
-    <div className="bootstrap-4-backport">
-      <div className="evaluation-editor">
-        <Row>
-          <Col>
-            <h4>{evaluation.id ? 'Edit' : 'Create'} Evaluation Queue</h4>
-          </Col>
-          <Col>
-            <EvaluationEditorDropdown onClick={onSave} onDelete={onDelete} />
-          </Col>
-        </Row>
-        <Form>
-          <Form.Group>
-            <Form.Label htmlFor="evaluation-name">Name</Form.Label>
-            <Form.Control
-              id="evaluation-name"
-              type="text"
-              value={name}
-              onChange={event => setName(event.target.value)}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label htmlFor="evaluation-description">
-              Description
-            </Form.Label>
-            <Form.Control
-              id="evaluation-description"
-              as="textarea"
-              value={description}
-              rows={2}
-              onChange={event => setDescription(event.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label htmlFor="evaluation-submissioninstructions">
-              Submission Instructions
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              id="evaluation-submissioninstructions"
-              value={submissionInstructionsMessage}
-              rows={2}
-              onChange={event =>
-                setSubmissionInstructionsMessage(event.target.value)
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label htmlFor="evaluation-receiptmessage">
-              Submission Receipt Message
-            </Form.Label>
-            <Form.Control
-              id="evaluation-receiptmessage"
-              type="text"
-              value={submissionReceiptMessage}
-              onChange={event =>
-                setSubmissionReceiptMessage(event.target.value)
-              }
-            />
-          </Form.Group>
-          {evaluation?.createdOn && (
-            <CreatedOnByUserDiv
-              userId={evaluation.ownerId!}
-              date={new Date(evaluation.createdOn)}
-            />
-          )}
-          {error && <ErrorBanner error={error} />}
-          {showSaveSuccess && (
-            <Alert
-              className="save-success-alert"
-              severity="success"
-              onClose={() => setShowSaveSuccess(false)}
-              sx={{ marginBottom: '20px' }}
-            >
-              Successfully saved.
-            </Alert>
-          )}
-          <div className="d-flex justify-content-end">
-            <Button
-              variant="contained"
-              color="primary"
-              className="save-button"
-              onClick={onSave}
-            >
-              Save
-            </Button>
-          </div>
-        </Form>
-      </div>
+    <div className="evaluation-editor">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <h4>{evaluation.id ? 'Edit' : 'Create'} Evaluation Queue</h4>
+        <EvaluationEditorDropdown onClick={onSave} onDelete={onDelete} />
+      </Box>
+      <Stack gap={2}>
+        <TextField
+          label={'Name'}
+          fullWidth
+          value={name}
+          onChange={event => setName(event.target.value)}
+        />
+        <TextField
+          label={'Description'}
+          fullWidth
+          multiline
+          value={description}
+          rows={2}
+          onChange={event => setDescription(event.target.value)}
+        />
+        <TextField
+          fullWidth
+          label={'Submission Instructions'}
+          value={submissionInstructionsMessage}
+          multiline
+          rows={2}
+          onChange={event =>
+            setSubmissionInstructionsMessage(event.target.value)
+          }
+        />
+        <TextField
+          label={'Submission Receipt Message'}
+          fullWidth
+          value={submissionReceiptMessage}
+          onChange={event => setSubmissionReceiptMessage(event.target.value)}
+        />
+        {evaluation?.createdOn && (
+          <CreatedOnByUserDiv
+            userId={evaluation.ownerId!}
+            date={new Date(evaluation.createdOn)}
+          />
+        )}
+        {error && <ErrorBanner error={error} />}
+        {showSaveSuccess && (
+          <Alert
+            className="save-success-alert"
+            severity="success"
+            onClose={() => setShowSaveSuccess(false)}
+            sx={{ marginBottom: '20px' }}
+          >
+            Successfully saved.
+          </Alert>
+        )}
+        <Box sx={{ mb: 3, alignSelf: 'flex-end' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            className="save-button"
+            onClick={onSave}
+          >
+            Save
+          </Button>
+        </Box>
+      </Stack>
     </div>
   )
 }
@@ -217,6 +201,14 @@ function EvaluationEditorDropdown({
   onDelete,
 }: EvaluationEditorDropdownProps) {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
+  const isContextMenuOpen = Boolean(menuAnchorEl)
+  const handleMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null)
+  }
 
   return (
     <>
@@ -237,27 +229,36 @@ function EvaluationEditorDropdown({
           confirmButtonColor="error"
         />
       )}
-      <Dropdown className="float-right">
-        <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-          <IconSvg icon="verticalEllipsis" />
-        </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
-          <Dropdown.Item role="menuitem" onClick={onClick}>
-            Save
-          </Dropdown.Item>
-          {onDelete && (
-            <>
-              <Dropdown.Divider />
-              <Dropdown.Item
-                role="menuitem"
-                onClick={() => setDeleteWarningShow(true)}
-              >
-                Delete
-              </Dropdown.Item>
-            </>
-          )}
-        </Dropdown.Menu>
-      </Dropdown>
+
+      <IconButton onClick={handleMenuClick}>
+        <IconSvg icon="verticalEllipsis" wrap={false} />
+      </IconButton>
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={isContextMenuOpen}
+        onClose={handleMenuClose}
+        slotProps={{ paper: { sx: { minWidth: '120px' } } }}
+      >
+        <MenuItem
+          onClick={() => {
+            handleMenuClose()
+            onClick()
+          }}
+        >
+          Save
+        </MenuItem>
+        {onDelete && <Divider />}
+        {onDelete && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose()
+              setDeleteWarningShow(true)
+            }}
+          >
+            Delete
+          </MenuItem>
+        )}
+      </Menu>
     </>
   )
 }
