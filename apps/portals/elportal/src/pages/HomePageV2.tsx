@@ -11,6 +11,8 @@ import {
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
+import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
+
 import {
   topPublicationsSql,
   whatWeDoSql,
@@ -141,7 +143,8 @@ export default function HomePage() {
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
-          style: { maxWidth: '100%', padding: 0 },
+          maxWidth: false,
+          style: { padding: 0 },
         }}
       >
         <ELGettingStarted />
@@ -259,6 +262,17 @@ export default function HomePage() {
           link="/Explore/Computational Tools"
         />
       </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <SectionLayout
+          ContainerProps={{
+            className: 'home-spacer',
+            maxWidth: false,
+            style: { padding: 0 },
+          }}
+        >
+          <ELSupportedByNIH />
+        </SectionLayout>
+      </div>
     </>
   )
 }

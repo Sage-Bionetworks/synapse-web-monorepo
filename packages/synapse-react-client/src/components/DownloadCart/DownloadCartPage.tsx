@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
-import DownloadListStats from './DownloadListStats'
 import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
 import {
   DownloadListActionsRequired,
@@ -299,14 +298,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     }}
                   />
                 )}
-                <DownloadListStats
-                  numBytes={data.sumOfFileSizesAvailableForDownload}
-                  numPackagableFiles={
-                    data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
-                  }
-                  numFiles={data.numberOfFilesAvailableForDownload}
-                />
-                <AvailableForDownloadTable filesStatistics={data} />
+                <AvailableForDownloadTable />
               </div>
             </div>
           )}

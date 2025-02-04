@@ -24,13 +24,14 @@ import { RegisterAccount1 } from './components/RegisterAccount1'
 import { RegisterAccount2 } from './components/RegisterAccount2'
 import { ResetPassword } from './components/ResetPassword'
 import { SageResourcesPage } from './components/SageResourcesPage'
+import { SignUpdatedTermsOfUsePage } from './components/SignUpdatedTermsOfUsePage'
 import { TermsOfUsePage } from './components/TermsOfUsePage'
 import { ResetTwoFactorAuth } from './components/TwoFactorAuth/ResetTwoFactorAuth'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import { WebhookManagementPage } from './components/WebhooksManagementPage'
 import { RESET_2FA_ROUTE } from './Constants'
-import useMaybeRedirectToSignTermsOfService from './hooks/useMaybeRedirectToSignTermsOfService'
+import useMaybePromptToSignTermsOfService from './hooks/useMaybePromptToSignTermsOfService'
 import LoginPage from './LoginPage'
 import { getSearchParam } from './URLUtils'
 
@@ -42,13 +43,12 @@ function LoggedInRedirector() {
   const isProviderSearchParam = getSearchParam('provider') !== undefined
   const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 
-  const { mayRedirect: mayRedirectToSignToS } =
-    useMaybeRedirectToSignTermsOfService()
+  const { mayPromptTermsOfUse } = useMaybePromptToSignTermsOfService()
 
   useEffect(() => {
     // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
     // then redirect!
-    if (accessToken && !isInSSOFlow && !mayRedirectToSignToS) {
+    if (accessToken && !isInSSOFlow && !mayPromptTermsOfUse) {
       // take user back to page they came from in the source app, if stored in a cookie
       const isProcessed = processRedirectURLInOneSage()
       if (!isProcessed && appContext?.redirectURL) {
@@ -56,7 +56,7 @@ function LoggedInRedirector() {
         window.location.replace(appContext?.redirectURL)
       }
     }
-  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayRedirectToSignToS])
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayPromptTermsOfUse])
   return <></>
 }
 
@@ -71,6 +71,10 @@ function AuthenticatedRoutes() {
     <Routes>
       <Route path={'validate'} element={<ProfileValidation />} />
       <Route path={'signTermsOfUse'} element={<TermsOfUsePage />} />
+      <Route
+        path={'signUpdatedTermsOfUse'}
+        element={<SignUpdatedTermsOfUsePage />}
+      />
       <Route path={'myaccount'} element={<AccountSettings />} />
       <Route path={'currentaffiliation'} element={<CurrentAffiliationPage />} />
       <Route path={'accountcreated'} element={<AccountCreatedPage />} />

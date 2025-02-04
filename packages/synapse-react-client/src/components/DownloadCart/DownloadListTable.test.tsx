@@ -74,7 +74,12 @@ jest
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2 filesStatistics={mockFileStatistics} />
+      <DownloadListTableV2
+        filesStatistics={mockFileStatistics}
+        numBytes={100}
+        numPackagableFiles={5}
+        numFiles={6}
+      />
     </SynapseTestContext>,
   )
 }

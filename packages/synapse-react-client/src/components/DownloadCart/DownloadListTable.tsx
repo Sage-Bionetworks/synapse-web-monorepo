@@ -36,6 +36,7 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
+import DownloadListStats from './DownloadListStats'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 
@@ -258,8 +259,7 @@ function getSortApiRequestFromTableSortState(
   }
 }
 
-export default function DownloadListTable(props: DownloadListTableProps) {
-  const { filesStatistics } = props
+export default function DownloadListTable() {
   const handleError = useErrorHandler()
 
   const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] =
@@ -281,18 +281,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     fetchNextPage,
     isError,
     error: newError,
-    refetch,
   } = useGetAvailableFilesToDownloadInfinite(
     getSortApiRequestFromTableSortState(tableSortState),
     filter,
   )
-
-  //SWC-5858: Update the Download List files table when the statistics change
-  useEffect(() => {
-    if (refetch) {
-      void refetch()
-    }
-  }, [filesStatistics, refetch])
 
   useEffect(() => {
     if (isError && newError) {
@@ -410,21 +402,58 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   return (
     <div>
       <BlockingLoader show={copyingAllSynapseIDs} />
-      <div className="filterFilesContainer">
-        <span className="filterFilesByText">Filter Files By</span>
-        <Select native fullWidth value={getFilterDisplayText(filter)}>
-          {availableFiltersArray.map(availableFilter => (
-            <option
-              key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-              onClick={() => {
-                setFilter(availableFilter)
-              }}
-            >
-              {getFilterDisplayText(availableFilter)}
-            </option>
-          ))}
-        </Select>
-      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: {
+            xs: 'column',
+            md: 'row',
+          },
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          py: '15px',
+          rowGap: '15px',
+        }}
+      >
+        <DownloadListStats />
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '10px',
+            alignItems: 'inherit',
+            justifyContent: 'end',
+          }}
+        >
+          <Box
+            sx={{
+              fontWeight: '700',
+              fontSize: '14px',
+            }}
+          >
+            Filter Files By
+          </Box>
+          <Box
+            sx={{
+              button: {
+                width: '144px',
+              },
+            }}
+          >
+            <Select native fullWidth value={getFilterDisplayText(filter)}>
+              {availableFiltersArray.map(availableFilter => (
+                <option
+                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+                  onClick={() => {
+                    setFilter(availableFilter)
+                  }}
+                >
+                  {getFilterDisplayText(availableFilter)}
+                </option>
+              ))}
+            </Select>
+          </Box>
+        </Box>
+      </Box>
       {allRows.length > 0 && (
         <div className="DownloadListTableV2">
           {/* TODO: This table can be very large, so it should be refactored to use row virtualization or discrete pagination */}

@@ -157,7 +157,7 @@ function UserSearchBoxV2(props: UserSearchBoxProps) {
 
   return (
     <Select
-      className="bootstrap-4-backport UserSearchBoxV2"
+      className="UserSearchBoxV2"
       ref={selectRef}
       inputValue={inputValue}
       onInputChange={setInputValue}

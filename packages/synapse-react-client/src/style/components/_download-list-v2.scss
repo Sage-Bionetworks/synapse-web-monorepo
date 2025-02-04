@@ -4,9 +4,11 @@
 
 .DownloadListTableV2 {
   white-space: pre;
+
   .eligibileIcon {
     color: map.get(SRC.$colors, 'gray-800');
   }
+
   .ineligibileIcon {
     color: map.get(SRC.$colors, 'warning');
   }
@@ -14,21 +16,9 @@
     background-color: #f9f5e7;
   }
 }
+
 .sort {
   padding-left: 5px;
-}
-.DownloadDetailsV2 {
-  font-weight: bold;
-  .item {
-    margin-right: 35px;
-    svg {
-      margin-right: 5px;
-      margin-top: -4px;
-    }
-    #icon-packagableFile svg {
-      margin-top: 0px;
-    }
-  }
 }
 
 .Download-Link {
@@ -36,6 +26,7 @@
     #SHOW_DOWNLOAD_TOOLTIP {
       text-transform: none;
     }
+
     .download-cart-size {
       background-color: SRC.$secondary-action-color;
       color: white;
