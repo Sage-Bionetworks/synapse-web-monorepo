@@ -1,7 +1,6 @@
 import {
   AccessType,
   SubmissionReviewerFilterType,
-  SubmissionSearchRequest,
   SubmissionSearchResponse,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
@@ -11,12 +10,14 @@ import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { mockSubmissionSearchResponse } from '../../mocks/dataaccess/mockAccessRequest'
+import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { rest, server } from '../../mocks/msw/server'
 import { mockActTeam } from '../../mocks/team/mockTeam'
 import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../mocks/user/mock_user_profile'
+import SynapseClient from '../../synapse-client/index'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../utils/APIConstants'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -42,8 +43,10 @@ function renderComponent(props: AccessRequestSubmissionTableProps) {
   })
 }
 
-const onServiceReceivedRequest = jest.fn()
-const onServiceReceivedRequestForNextPage = jest.fn()
+const searchAccessSubmissionSpy = jest.spyOn(
+  SynapseClient,
+  'searchAccessSubmission',
+)
 
 const nextPageToken = 'mock-npt'
 
@@ -81,13 +84,8 @@ describe('Access Request Submission Table tests', () => {
         )}${ACCESS_REQUEST_SUBMISSION_SEARCH}`,
 
         async (req, res, ctx) => {
-          onServiceReceivedRequest(req.body)
           let response
-          if (
-            (req.body as SubmissionSearchRequest).nextPageToken ===
-            nextPageToken
-          ) {
-            onServiceReceivedRequestForNextPage()
+          if ((await req.json()).nextPageToken === nextPageToken) {
             response = mockSubmissionSearchResponsePage2
           } else {
             response = {
@@ -128,7 +126,7 @@ describe('Access Request Submission Table tests', () => {
 
     renderComponent(props)
 
-    await waitFor(() => expect(onServiceReceivedRequest).toHaveBeenCalled())
+    await waitFor(() => expect(searchAccessSubmissionSpy).toHaveBeenCalled())
   })
 
   it('Renders all headers and a row of data', async () => {
@@ -144,7 +142,7 @@ describe('Access Request Submission Table tests', () => {
       ),
     )
 
-    screen.getByRole('columnheader', { name: 'REQUEST' })
+    screen.getByRole('columnheader', { name: 'Request' })
     screen.getByRole('columnheader', { name: 'Access Requirement Name' })
     screen.getByRole('columnheader', { name: 'Submitter' })
     screen.getByRole('columnheader', { name: 'Status' })
@@ -196,14 +194,13 @@ describe('Access Request Submission Table tests', () => {
     // Clicking the button should make a request for the next page
     await userEvent.click(showMoreButton)
     await waitFor(() =>
-      expect(onServiceReceivedRequest).toHaveBeenLastCalledWith(
+      expect(searchAccessSubmissionSpy).toHaveBeenLastCalledWith(
         expect.objectContaining({ nextPageToken: nextPageToken }),
+        MOCK_ACCESS_TOKEN,
       ),
     )
-    expect(onServiceReceivedRequestForNextPage).toHaveBeenCalled()
 
     // Second page of data should be shown
-
     await waitFor(() =>
       expect(screen.getAllByRole('row')).toHaveLength(
         mockSubmissionSearchResponse.results.length +
@@ -227,26 +224,28 @@ describe('Access Request Submission Table tests', () => {
       showRequesters: true,
     })
 
-    await waitFor(() => expect(onServiceReceivedRequest).toHaveBeenCalled())
+    await waitFor(() => expect(searchAccessSubmissionSpy).toHaveBeenCalled())
 
     // By default, should sort by created on, descending
     const defaultSort = [{ field: 'CREATED_ON', direction: 'DESC' }]
-    expect(onServiceReceivedRequest).toHaveBeenCalledWith(
+    expect(searchAccessSubmissionSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         sort: defaultSort,
       }),
+      MOCK_ACCESS_TOKEN,
     )
 
     // clicking the current sort should reverse the direction
-    const createdOnSortButton = screen.getByLabelText('Sort by Created On')
+    const createdOnSortButton = screen.getByLabelText('Sort by Created Date')
     await userEvent.click(createdOnSortButton)
 
     // desc -> asc
     await waitFor(() =>
-      expect(onServiceReceivedRequest).toHaveBeenLastCalledWith(
+      expect(searchAccessSubmissionSpy).toHaveBeenLastCalledWith(
         expect.objectContaining({
           sort: [{ field: 'CREATED_ON', direction: 'ASC' }],
         }),
+        MOCK_ACCESS_TOKEN,
       ),
     )
   })
