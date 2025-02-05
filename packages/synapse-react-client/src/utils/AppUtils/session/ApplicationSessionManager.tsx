@@ -1,5 +1,6 @@
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import SynapseClient from '../../../synapse-client'
@@ -8,6 +9,8 @@ import { SynapseContextProvider, SynapseContextType } from '../../context'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
+
+dayjs.extend(utc)
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   downloadCartPageUrl?: string
