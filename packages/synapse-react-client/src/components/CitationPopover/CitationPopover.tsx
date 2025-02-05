@@ -9,8 +9,12 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  darken,
+  useTheme,
 } from '@mui/material'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
+import CloseIcon from '@mui/icons-material/Close'
+import { KeyboardArrowDown } from '@mui/icons-material'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -26,50 +30,30 @@ function CitationPopover({
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [citationFormat, setCitationFormat] = useState('bibtex')
   const [citation, setCitation] = useState('')
+  const [loading, setLoading] = useState(false)
+  const theme = useTheme()
 
   const selectSx = {
     width: '100%',
-    boxShadow: 'none',
     backgroundColor: '#F1F3F5',
+    '.MuiInputBase-root': {
+      minHeight: '38px',
+      '&:before, &:after': {
+        borderBottom: 'none !important',
+      },
+    },
     '& .MuiOutlinedInput-notchedOutline': {
       border: 0,
     },
     '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
       border: 'none',
     },
-    '.MuiInputBase-root': {
-      display: 'flex',
-      minHeight: '38px',
-      alignItems: 'center',
-      gap: '10px',
-      backgroundColor: 'transparent',
-      boxShadow: 'none',
-      '&:before, &:after': {
-        borderBottom: 'none !important',
-      },
-    },
     '.MuiSelect-select': {
       display: 'flex',
       alignItems: 'center',
-      color: '#353A3F',
-      fontFamily: 'DM Sans',
-      fontSize: '14px',
-      fontStyle: 'normal',
-      fontWeight: 400,
-      lineHeight: '16px',
-      gap: '10px',
     },
     '.MuiInputBase-input': {
       padding: '7px 10px',
-      border: 'none',
-      '&::placeholder': {
-        color: '#353A3F',
-        fontFamily: 'DM Sans',
-        fontSize: '14px',
-        fontStyle: 'normal',
-        fontWeight: 400,
-        lineHeight: '16px',
-      },
     },
   }
 
@@ -104,35 +88,16 @@ function CitationPopover({
     setAnchorEl(null)
   }
 
-  const getCitation = async () => {
-    const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
-
-    try {
-      const response = await fetch(
-        `https://citation.doi.org/format?doi=${formattedDoi}&style=${citationFormat}&lang=en-US`,
-        {
-          headers: {
-            Accept: `text/x-${citationFormat}`,
-          },
-        },
-      )
-      if (!response.ok) {
-        throw new Error('Failed to fetch citation.')
-      }
-      const citationText = await response.text()
-      setCitation(citationText)
-    } catch (err) {
-      console.log(err)
-      return
-    }
-  }
-
   const handleDownload = () => {
     if (!citation) {
       return
     }
     const extensionMap: Record<string, string> = {
+      apa: 'ris',
       bibtex: 'bib',
+      ieee: 'ris',
+      nature: 'ris',
+      science: 'ris',
     }
     const citationTitle = title ? `${title.replace(/\s+/g, '_')}` : 'citation'
     const fileExtension = extensionMap[citationFormat] || 'txt'
@@ -158,37 +123,64 @@ function CitationPopover({
   const id = open ? 'cite-as-popover' : undefined
 
   useEffect(() => {
+    const getCitation = async () => {
+      setLoading(true)
+      const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
+
+      try {
+        const response = await fetch(
+          `https://citation.doi.org/format?doi=${formattedDoi}&style=${citationFormat}&lang=en-US`,
+          {
+            headers: {
+              Accept: `text/x-${citationFormat}`,
+            },
+          },
+        )
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch citation: ${response.status}: ${response.statusText}`,
+          )
+        }
+        const citationText = await response.text()
+        setCitation(citationText)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (open) {
       getCitation()
     }
-  }, [open])
+  }, [open, citationFormat, doi])
 
   return (
-    <Box>
-      <Button
-        onClick={handleClick}
-        sx={{
-          display: 'flex',
-          height: '20px',
-          padding: '2px 8px',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '4px',
-          textDecoration: 'none',
-          borderRadius: '3px',
-          border: '1px solid',
-          borderColor: 'grey.400',
-          '&:hover': {
-            textDecoration: 'none',
-          },
-        }}
-      >
-        <Box sx={{ display: 'flex' }}>{quotationSvg}</Box>
-        <Typography variant="label" sx={{ lineHeight: '20px' }}>
-          Cite As
-        </Typography>
-      </Button>
+    <div>
+      {doi && (
+        <Button
+          onClick={handleClick}
+          sx={{
+            display: 'flex',
+            height: '20px',
+            padding: '2px 8px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '4px',
+            textDecoration: 'none !important',
+            borderRadius: '3px',
+            border: '1px solid',
+            borderColor: 'grey.400',
+          }}
+        >
+          <Box sx={{ display: 'flex' }}>{quotationSvg}</Box>
+          <Typography variant="label" sx={{ lineHeight: '20px' }}>
+            Cite As
+          </Typography>
+        </Button>
+      )}
       <Popover
+        data-testid="CiteAsPopover"
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -201,11 +193,20 @@ function CitationPopover({
           vertical: 'top',
           horizontal: 'left',
         }}
-        sx={{
-          '.MuiPopover-paper': {
-            borderRadius: 0,
-            background: '#FFF',
-            boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
+        slotProps={{
+          paper: {
+            sx: theme => ({
+              postion: 'relative',
+              borderRadius: 0,
+              boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
+              [theme.breakpoints.down('sm')]: {
+                maxWidth: '100%',
+                maxHeight: '100%',
+                top: '0 !important',
+                left: '0 !important',
+                bottom: '0 !important',
+              },
+            }),
           },
         }}
       >
@@ -213,33 +214,49 @@ function CitationPopover({
           sx={{
             gap: '20px',
             padding: '20px',
-            width: '500px',
+            width: { xs: '100%', md: '500px' },
           }}
         >
-          <Typography
-            sx={{ fontSize: '14px', fontWeight: 700, lineHeight: 'normal' }}
-          >
-            Cite as:
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography
+              sx={{ fontSize: '20px', fontWeight: 700, lineHeight: 'normal' }}
+            >
+              Cite As:
+            </Typography>
+            <CloseIcon
+              onClick={handleClose}
+              sx={{
+                display: { xs: 'block', sm: 'none' },
+                marginLeft: 'auto',
+                color: '#878E95',
+              }}
+            />
+          </Box>
           <Typography
             variant="smallText1"
             sx={{
               lineHeight: 'normal',
-              maxHeight: '300px',
-              width: '100%',
+              maxHeight: { xs: '100%', sm: '300px' },
               overflowY: 'scroll',
-              overflowX: 'hidden',
               wordWrap: 'break-word',
             }}
           >
             {boilerplateText}
-            {citation ? citation : <span>Loading citation...</span>}
+            <br />
+            {loading ? (
+              <Box sx={{ fontWeight: 700 }}>
+                <br />
+                Loading citation...
+              </Box>
+            ) : (
+              citation
+            )}
           </Typography>
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'stretch',
-              gap: '8px',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: { xs: '10px', sm: '8px' },
               width: '100%',
               maxHeight: '38px',
             }}
@@ -248,17 +265,28 @@ function CitationPopover({
               <FormControl sx={selectSx}>
                 <Select
                   variant="standard"
-                  displayEmpty
+                  sx={{
+                    svg: {
+                      color: '#878E95',
+                      width: '24px',
+                      height: '24px',
+                      right: '10px',
+                    },
+                  }}
                   value={citationFormat}
                   onChange={handleChange}
+                  IconComponent={KeyboardArrowDown}
                   renderValue={selected => (
                     <Typography variant="smallText1" sx={{ color: 'grey.900' }}>
-                      {selected?.length ? citationFormat : 'BibTeX'}
+                      {selected?.length ? citationFormat : 'bibtex'}
                     </Typography>
                   )}
                 >
                   <MenuItem value={'bibtex'}>bibtex</MenuItem>
-                  <MenuItem value={'other'}>other</MenuItem>
+                  <MenuItem value={'apa'}>apa</MenuItem>
+                  <MenuItem value={'ieee'}>ieee</MenuItem>
+                  <MenuItem value={'nature'}>nature</MenuItem>
+                  <MenuItem value={'science'}>science</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -269,37 +297,38 @@ function CitationPopover({
               sx={{
                 flex: 1,
                 padding: '6px 16px',
-                borderRadius: 'none',
+                borderRadius: 0,
                 backgroundColor: 'primary.main',
-                color: '#FFF',
+                color: '#FFF !important',
                 whiteSpace: 'nowrap',
                 '&:hover': {
-                  backgroundColor: '#2d4673',
+                  backgroundColor: darken(theme.palette.primary.main, 0.2),
                   textDecoration: 'none',
-                  color: '#FFF',
                 },
               }}
             >
               Download Citation
             </Button>
             <CopyToClipboardIcon
+              data-testid="CopyButton"
               value={citation}
               onClick={() => {
                 handleCopy()
               }}
               sx={{
                 '.MuiIconButton-root': {
+                  width: '100%',
                   borderRadius: 0,
                   padding: '6px 16px',
+                  border: '1px solid',
+                  borderColor: 'primary.main',
                 },
-                border: '1px solid',
-                borderColor: 'primary.main',
               }}
             />
           </Box>
         </Stack>
       </Popover>
-    </Box>
+    </div>
   )
 }
 
