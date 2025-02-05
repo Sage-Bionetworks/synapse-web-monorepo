@@ -13,6 +13,11 @@ global.fetch = jest.fn(() =>
   }),
 ) as jest.Mock
 
+const openPopover = () => {
+  const button = screen.getByText('Cite As')
+  fireEvent.click(button)
+}
+
 describe('CitationPopover tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -32,20 +37,16 @@ describe('CitationPopover tests', () => {
 
   it('opens popover when button is clicked', async () => {
     render(<CitationPopover {...mockProps} />)
-
-    const button = screen.getByText('Cite As')
-    act(() => fireEvent.click(button))
+    openPopover()
 
     await waitFor(() => {
       expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
     })
   })
 
-  it('opens dropdown', async () => {
+  it('shows menu options when select button is clicked with bibtex as default', async () => {
     render(<CitationPopover {...mockProps} />)
-
-    const button = screen.getByText('Cite As')
-    act(() => fireEvent.click(button))
+    openPopover()
 
     const select = screen.getByRole('combobox')
     act(() => fireEvent.mouseDown(select))
@@ -60,11 +61,9 @@ describe('CitationPopover tests', () => {
     })
   })
 
-  it('displays boilerplate text correctly', async () => {
+  it('displays boilerplate text when available', async () => {
     render(<CitationPopover {...mockProps} />)
-
-    const button = screen.getByText('Cite As')
-    act(() => fireEvent.click(button))
+    openPopover()
 
     await waitFor(() => {
       expect(screen.getByText('Some boilerplate text')).toBeInTheDocument()
@@ -73,14 +72,11 @@ describe('CitationPopover tests', () => {
 
   it('copies citation to clipboard', async () => {
     render(<CitationPopover {...mockProps} />)
-
     const mockWriteText = jest.fn().mockResolvedValue('copied')
     Object.assign(navigator, {
       clipboard: { writeText: mockWriteText },
     })
-
-    const button = screen.getByText('Cite As')
-    act(() => fireEvent.click(button))
+    openPopover()
 
     await waitFor(() => {
       expect(
@@ -101,9 +97,7 @@ describe('CitationPopover tests', () => {
 
   it('downloads citation', async () => {
     render(<CitationPopover {...mockProps} />)
-
-    const button = screen.getByText('Cite As')
-    act(() => fireEvent.click(button))
+    openPopover()
 
     await waitFor(() => {
       expect(
@@ -134,5 +128,16 @@ describe('CitationPopover tests', () => {
 
     createElementSpy.mockRestore()
     appendChildSpy.mockRestore()
+  })
+
+  it('displays loading text while fetching citation', async () => {
+    render(<CitationPopover {...mockProps} />)
+    openPopover()
+
+    expect(screen.getByText('Loading citation...')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading citation...')).not.toBeInTheDocument()
+    })
   })
 })
