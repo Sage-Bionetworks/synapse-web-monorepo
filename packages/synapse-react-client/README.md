@@ -97,7 +97,7 @@ In this example, make sure that your `node_modules` folder is in your Dart Sass 
 
 ## Adding a new component and Publishing a new version of SRC
 
-JavaScript packages and applications inside the monorepo can directly import modules within the `src` folder, so modules created within the `src` directory are accessible from other TypeScript packages and applications within the monorepo--they have been configured to reference the synapse-react-client source files.
+JavaScript packages and applications inside the monorepo that have been configured to reference the synapse-react-client source files can directly import modules within the `src` folder without exporting them from any additional file.
 
 To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). Note that certain dependencies are not included in the UMD bundle. See the config used to build the bundle, `vite.config.umd.ts`, for more details.
 
