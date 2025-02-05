@@ -99,9 +99,11 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
       // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
       const allCountsSet = searchPageTabs.every(tab => tab.count !== undefined)
       if (selectedTabIndex == undefined && allCountsSet) {
-        // navigate to the tab that has the highest count
-        const maxCountTab = searchPageTabs.reduce((max, tab) =>
-          max === null || tab.count! > max.count! ? tab : max,
+        // Navigate to the tab that has the highest count.
+        // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
+        const maxCountTab = searchPageTabs.reduce(
+          (max, tab) => (tab.count! > max.count! ? tab : max),
+          searchPageTabs[0],
         )
         navigate({
           pathname: `/Search/${maxCountTab.path}`,
