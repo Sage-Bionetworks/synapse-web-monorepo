@@ -569,15 +569,6 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               }}
             >
               <div className="SRC-type">{type}</div>
-              {includeCitation && (
-                <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
-                  <CitationPopover
-                    title={title}
-                    doi={doiValue}
-                    boilerplateText={citationBoilerplateText}
-                  />
-                </Box>
-              )}
             </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option
@@ -645,6 +636,22 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               </Box>
             )}
           </div>
+          {includeCitation && (
+            <Box
+              sx={{
+                display: 'flex',
+                marginLeft: 'auto',
+                paddingTop: '21px',
+                paddingRight: '40px',
+              }}
+            >
+              <CitationPopover
+                title={title}
+                doi={doiValue}
+                boilerplateText={citationBoilerplateText}
+              />
+            </Box>
+          )}
         </div>
         {showFooter && (
           <CardFooter

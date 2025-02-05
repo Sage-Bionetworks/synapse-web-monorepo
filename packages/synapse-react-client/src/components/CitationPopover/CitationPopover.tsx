@@ -15,7 +15,7 @@ import {
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
 import { KeyboardArrowDown } from '@mui/icons-material'
-import { useQuery } from '@tanstack/react-query'
+import { useCitation } from './useCitation'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -118,41 +118,14 @@ function CitationPopover({
     navigator.clipboard.writeText(citation)
   }
 
-  const fetchCitation = async (doi: string | undefined, format: string) => {
-    const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
-    try {
-      const response = await fetch(
-        `https://citation.doi.org/format?doi=${formattedDoi}&style=${format}&lang=en-US`,
-        {
-          headers: {
-            Accept: `text/x-${format}`,
-          },
-        },
-      )
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch citation: ${response.status}: ${response.statusText}`,
-        )
-      }
-      return await response.text()
-    } catch (err) {
-      console.log(err)
-      return ''
-    }
-  }
-
   const open = Boolean(anchorEl)
   const id = open ? 'cite-as-popover' : undefined
 
-  const useCitation = (doi: string, format: string) => {
-    return useQuery({
-      queryKey: ['citation', doi, format],
-      queryFn: () => fetchCitation(doi, format),
-      enabled: !!doi && !!format && !!open,
-    })
-  }
-
-  const { data: citation, isLoading } = useCitation(doi || '', citationFormat)
+  const { data: citation, isLoading } = useCitation(
+    doi || '',
+    citationFormat,
+    open,
+  )
 
   return (
     <div>
@@ -195,6 +168,7 @@ function CitationPopover({
         slotProps={{
           paper: {
             sx: theme => ({
+              width: '500px',
               postion: 'relative',
               borderRadius: 0,
               boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
@@ -213,7 +187,6 @@ function CitationPopover({
           sx={{
             gap: '20px',
             padding: '20px',
-            width: { xs: '100%', md: '500px' },
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -235,7 +208,7 @@ function CitationPopover({
             variant="smallText1"
             sx={{
               lineHeight: 'normal',
-              maxHeight: { xs: '100%', sm: '300px' },
+              maxHeight: '300px',
               overflowY: 'scroll',
               wordWrap: 'break-word',
             }}
@@ -286,17 +259,10 @@ function CitationPopover({
             </Box>
             <Button
               onClick={() => handleDownload(citation || '')}
+              variant="contained"
               sx={{
-                flex: 1,
                 padding: '6px 16px',
                 borderRadius: 0,
-                backgroundColor: 'primary.main',
-                color: '#FFF !important',
-                whiteSpace: 'nowrap',
-                '&:hover': {
-                  backgroundColor: darken(theme.palette.primary.main, 0.2),
-                  textDecoration: 'none',
-                },
               }}
             >
               Download Citation
