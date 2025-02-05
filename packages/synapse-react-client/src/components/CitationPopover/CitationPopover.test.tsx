@@ -1,5 +1,12 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import CitationPopover from './CitationPopover'
+
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
+}))
+
+const mockUseQuery = useQuery as jest.MockedFunction<typeof useQuery>
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -18,9 +25,19 @@ const openPopover = () => {
   fireEvent.click(button)
 }
 
+const data =
+  '@misc{test2025,\n  title = {Some BibTeX Entry},\n  year = {2025}\n}'
+
 describe('CitationPopover tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseQuery.mockReturnValue({
+      isLoading: false,
+      data: data,
+      error: null,
+      isError: false,
+      isSuccess: true,
+    } as UseQueryResult<unknown, unknown>)
   })
 
   const mockProps = {
@@ -66,7 +83,9 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await waitFor(() => {
-      expect(screen.getByText('Some boilerplate text')).toBeInTheDocument()
+      expect(
+        screen.getByText(content => content.includes('Some boilerplate text')),
+      ).toBeInTheDocument()
     })
   })
 
@@ -130,14 +149,18 @@ describe('CitationPopover tests', () => {
     appendChildSpy.mockRestore()
   })
 
-  it('displays loading text while fetching citation', async () => {
+  it('displays loading text while fetching citation', () => {
+    mockUseQuery.mockReturnValue({
+      isLoading: true,
+      data: undefined,
+      error: null,
+      isError: false,
+      isSuccess: false,
+    } as UseQueryResult<unknown, unknown>)
+
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
     expect(screen.getByText('Loading citation...')).toBeInTheDocument()
-
-    await waitFor(() => {
-      expect(screen.queryByText('Loading citation...')).not.toBeInTheDocument()
-    })
   })
 })

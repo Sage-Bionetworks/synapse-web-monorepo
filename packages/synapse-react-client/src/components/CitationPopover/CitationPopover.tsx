@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Button,
   Popover,
@@ -15,6 +15,7 @@ import {
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
 import { KeyboardArrowDown } from '@mui/icons-material'
+import { useQuery } from '@tanstack/react-query'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -29,8 +30,6 @@ function CitationPopover({
 }: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [citationFormat, setCitationFormat] = useState('bibtex')
-  const [citation, setCitation] = useState('')
-  const [loading, setLoading] = useState(false)
   const theme = useTheme()
 
   const selectSx = {
@@ -88,7 +87,7 @@ function CitationPopover({
     setAnchorEl(null)
   }
 
-  const handleDownload = () => {
+  const handleDownload = (citation: string) => {
     if (!citation) {
       return
     }
@@ -112,48 +111,48 @@ function CitationPopover({
     document.body.removeChild(link)
   }
 
-  const handleCopy = () => {
+  const handleCopy = (citation: string) => {
     if (!citation) {
       return
     }
     navigator.clipboard.writeText(citation)
   }
 
+  const fetchCitation = async (doi: string | undefined, format: string) => {
+    const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
+    try {
+      const response = await fetch(
+        `https://citation.doi.org/format?doi=${formattedDoi}&style=${format}&lang=en-US`,
+        {
+          headers: {
+            Accept: `text/x-${format}`,
+          },
+        },
+      )
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch citation: ${response.status}: ${response.statusText}`,
+        )
+      }
+      return await response.text()
+    } catch (err) {
+      console.log(err)
+      return ''
+    }
+  }
+
   const open = Boolean(anchorEl)
   const id = open ? 'cite-as-popover' : undefined
 
-  useEffect(() => {
-    const getCitation = async () => {
-      setLoading(true)
-      const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
+  const useCitation = (doi: string, format: string) => {
+    return useQuery({
+      queryKey: ['citation', doi, format],
+      queryFn: () => fetchCitation(doi, format),
+      enabled: !!doi && !!format && !!open,
+    })
+  }
 
-      try {
-        const response = await fetch(
-          `https://citation.doi.org/format?doi=${formattedDoi}&style=${citationFormat}&lang=en-US`,
-          {
-            headers: {
-              Accept: `text/x-${citationFormat}`,
-            },
-          },
-        )
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch citation: ${response.status}: ${response.statusText}`,
-          )
-        }
-        const citationText = await response.text()
-        setCitation(citationText)
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (open) {
-      getCitation()
-    }
-  }, [open, citationFormat, doi])
+  const { data: citation, isLoading } = useCitation(doi || '', citationFormat)
 
   return (
     <div>
@@ -243,7 +242,7 @@ function CitationPopover({
           >
             {boilerplateText}
             <br />
-            {loading ? (
+            {isLoading ? (
               <Box sx={{ fontWeight: 700 }}>
                 <br />
                 Loading citation...
@@ -276,11 +275,6 @@ function CitationPopover({
                   value={citationFormat}
                   onChange={handleChange}
                   IconComponent={KeyboardArrowDown}
-                  renderValue={selected => (
-                    <Typography variant="smallText1" sx={{ color: 'grey.900' }}>
-                      {selected?.length ? citationFormat : 'bibtex'}
-                    </Typography>
-                  )}
                 >
                   <MenuItem value={'bibtex'}>bibtex</MenuItem>
                   <MenuItem value={'apa'}>apa</MenuItem>
@@ -291,9 +285,7 @@ function CitationPopover({
               </FormControl>
             </Box>
             <Button
-              onClick={() => {
-                handleDownload()
-              }}
+              onClick={() => handleDownload(citation || '')}
               sx={{
                 flex: 1,
                 padding: '6px 16px',
@@ -311,10 +303,8 @@ function CitationPopover({
             </Button>
             <CopyToClipboardIcon
               data-testid="CopyButton"
-              value={citation}
-              onClick={() => {
-                handleCopy()
-              }}
+              value={citation || ''}
+              onClick={() => handleCopy(citation || '')}
               sx={{
                 '.MuiIconButton-root': {
                   width: '100%',
