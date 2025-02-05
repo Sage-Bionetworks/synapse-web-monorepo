@@ -7,7 +7,7 @@ import {
   MOCK_USER_ID_2,
   mockUserBundle,
 } from '../../mocks/user/mock_user_profile'
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'

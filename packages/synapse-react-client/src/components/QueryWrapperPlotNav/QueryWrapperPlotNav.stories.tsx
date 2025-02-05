@@ -1,10 +1,3 @@
-import { Meta, StoryObj } from '@storybook/react'
-import {
-  DATASET,
-  EXPERIMENTAL_TOOL,
-  GENERIC_CARD,
-  MEDIUM_USER_CARD,
-} from '../../utils/SynapseConstants'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
@@ -12,15 +5,22 @@ import {
   Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import SynapseClient from '../../synapse-client'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
+import {
+  DATASET,
+  EXPERIMENTAL_TOOL,
+  GENERIC_CARD,
+  MEDIUM_USER_CARD,
+} from '../../utils/SynapseConstants'
+import { CustomControlCallbackData } from '../SynapseTable'
+import { displayToast } from '../ToastMessage'
 import QueryWrapperPlotNav, {
   QueryWrapperPlotNavProps,
 } from './QueryWrapperPlotNav'
-import { displayToast } from '../ToastMessage'
-import { CustomControlCallbackData } from '../SynapseTable'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
-import { SynapseClient } from '../../index'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
-import { fn } from '@storybook/test'
 
 const meta: Meta<QueryWrapperPlotNavProps> = {
   title: 'Explore/QueryWrapperPlotNav',

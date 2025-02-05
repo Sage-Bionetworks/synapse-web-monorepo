@@ -1,17 +1,3 @@
-import { render, screen } from '@testing-library/react'
-import { SynapseConstants } from '../../../utils'
-import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
-import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  DEFAULT_PAGE_SIZE,
-} from '../../../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   EntityHeader,
@@ -22,23 +8,37 @@ import {
   ReferenceList,
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import dayjs from 'dayjs'
+import { uniqueId } from 'lodash-es'
+import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123'
-import dayjs from 'dayjs'
-import { formatDate } from '../../../utils/functions/DateFormatter'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
-import * as HasAccessModule from '../../HasAccess/HasAccessV2'
-import * as EntityLinkModule from '../../EntityLink'
-import * as UserBadgeModule from '../../UserCard/UserBadge'
-import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
-import * as EntityIdListModule from './EntityIdList'
-import { QueryWrapper } from '../../../index'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
 import { MOCK_TEAM_ID, mockTeamData } from '../../../mocks/team/mockTeam'
-import { uniqueId } from 'lodash-es'
+import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../../utils'
+import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../../utils/APIConstants'
+import { formatDate } from '../../../utils/functions/DateFormatter'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../utils/functions/getEndpoint'
+import {
+  AUTHENTICATED_PRINCIPAL_ID,
+  DEFAULT_PAGE_SIZE,
+} from '../../../utils/SynapseConstants'
+import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
+import * as EntityLinkModule from '../../EntityLink'
+import * as HasAccessModule from '../../HasAccess/HasAccessV2'
+import { QueryWrapper } from '../../QueryWrapper'
 import { AUTHENTICATED_GROUP_DISPLAY_TEXT } from '../../TeamBadge'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
+import * as UserBadgeModule from '../../UserCard/UserBadge'
+import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
+import * as EntityIdListModule from './EntityIdList'
+import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle

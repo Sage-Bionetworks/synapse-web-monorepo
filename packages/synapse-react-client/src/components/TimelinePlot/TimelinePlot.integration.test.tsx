@@ -1,8 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import TimelinePlot, { TimelinePlotProps } from './TimelinePlot'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 import queryResultBundleJson from '../../mocks/query/syn51735464'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 

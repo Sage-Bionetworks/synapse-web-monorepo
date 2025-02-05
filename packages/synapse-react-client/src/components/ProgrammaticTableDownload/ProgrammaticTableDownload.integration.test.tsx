@@ -13,7 +13,7 @@ import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
 } from './ProgrammaticTableDownload'
-import { SynapseConstants } from '../../index'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
