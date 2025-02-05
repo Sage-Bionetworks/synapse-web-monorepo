@@ -5,11 +5,11 @@ import {
 import { PortalFullTextSearchField } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalFullTextSearchField'
 import { SearchParamAwareStandaloneQueryWrapper } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/SearchParamAwareStandaloneQueryWrapper'
 import { Box } from '@mui/material'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { Outlet, RouteObject } from 'react-router'
+import { Outlet, RouteObject, useLocation, useNavigate } from 'react-router'
 import cckpConfigs from 'src/config/synapseConfigs'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
+import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Grants',
@@ -40,7 +40,7 @@ export const searchPageTabs: PortalSearchTabConfig[] = [
 export const searchPageChildRoutes: RouteObject[] = [
   {
     index: true,
-    element: <RedirectWithQuery to={searchPageTabs[0].path} />,
+    element: <CCKPSearchPage />,
   },
   {
     path: searchPageTabs[0].path,
@@ -69,7 +69,7 @@ export const searchPageChildRoutes: RouteObject[] = [
 ]
 
 export type CCKPSearchPageProps = {
-  selectedTabIndex: number
+  selectedTabIndex?: number
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
@@ -86,6 +86,8 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
     cckpConfigs
   const [searchPageTabsState, setSearchPageTabsState] =
     useState<PortalSearchTabConfig[]>(searchPageTabs)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const onQueryResultBundleChange = useCallback(
     (tabIndex: number, newQueryResultBundleJSON: string) => {
@@ -94,14 +96,28 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         searchPageTabs[tabIndex].count = newCount
         setSearchPageTabsState([...searchPageTabs])
       }
+      // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
+      const allCountsSet = searchPageTabs.every(tab => tab.count !== undefined)
+      if (selectedTabIndex == undefined && allCountsSet) {
+        // navigate to the tab that has the highest count
+        const maxCountTab = searchPageTabs.reduce((max, tab) =>
+          max === null || tab.count! > max.count! ? tab : max,
+        )
+        navigate({
+          pathname: `/Search/${maxCountTab.path}`,
+          search: location.search,
+        })
+      }
     },
-    [searchPageTabsState],
+    [searchPageTabsState, selectedTabIndex],
   )
   // on search field value update, update the special search parameter FTS_SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
-      <PortalFullTextSearchField />
-      <PortalSearchTabs tabConfig={searchPageTabsState} />
+      <PortalFullTextSearchField disabled={selectedTabIndex == undefined} />
+      {selectedTabIndex != undefined && (
+        <PortalSearchTabs tabConfig={searchPageTabsState} />
+      )}
       <SearchParamAwareStandaloneQueryWrapper
         isVisible={selectedTabIndex == 0}
         standaloneQueryWrapperProps={{
@@ -156,6 +172,18 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
           },
         }}
       />
+      {selectedTabIndex == undefined && (
+        <Box
+          sx={{
+            display: 'flex',
+            mt: '100px',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <SynapseSpinner size={50} />
+        </Box>
+      )}
       <Outlet />
     </Box>
   )
