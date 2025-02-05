@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import { InputAdornment, TextField } from '@mui/material'
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material'
 import { useSearchParams } from 'react-router'
 import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
-export function PortalFullTextSearchField() {
+export function PortalFullTextSearchField(props: TextFieldProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchInput, setSearchInput] = useState(
     searchParams.get(FTS_SEARCH_TERM),
@@ -12,6 +12,7 @@ export function PortalFullTextSearchField() {
 
   return (
     <TextField
+      {...props}
       size={'small'}
       placeholder="Search by keyword"
       value={searchInput}
