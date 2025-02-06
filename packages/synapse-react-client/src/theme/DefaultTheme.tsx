@@ -440,10 +440,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiTypography: {
       defaultProps: {
         variantMapping: {
-          // For now use p for headlines, since the bootstrap-4-backport class will override style
-          headline1: 'p',
-          headline2: 'p',
-          headline3: 'p',
+          headline1: 'h1',
+          headline2: 'h2',
+          headline3: 'h3',
           body1: 'p',
           body1Italic: 'p',
           body2: 'p',

@@ -1,14 +1,12 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants, SynapseClient } from 'synapse-react-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { PlotParams } from 'react-plotly.js'
-
-const Plot = createPlotlyComponent(Plotly)
+import Plot from 'synapse-react-client/components/Plot/Plot'
 
 export type SurveysCompletedPlotsProps = {
   token?: string

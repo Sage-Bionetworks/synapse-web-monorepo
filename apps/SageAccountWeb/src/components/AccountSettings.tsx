@@ -21,7 +21,6 @@ import {
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
 import { RefObject, useEffect, useRef, useState } from 'react'
-import { Form } from 'react-bootstrap'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import {
   ChangePassword,
@@ -274,7 +273,7 @@ export const AccountSettings = () => {
                     getUserData()
                   }}
                 />
-                <Form onChange={markFormDirty}>
+                <form onChange={markFormDirty}>
                   <StyledFormControl
                     fullWidth
                     variant="standard"
@@ -410,7 +409,7 @@ export const AccountSettings = () => {
                       Save Changes
                     </Button>
                   </div>
-                </Form>
+                </form>
               </Paper>
               <Paper
                 ref={emailAddressesRef}

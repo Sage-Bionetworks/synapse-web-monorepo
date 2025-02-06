@@ -667,7 +667,6 @@ main,
 .modal,
 #rootPanel {
   a,
-  .bootstrap-4-backport a,
   .markdown td a,
   .markdown a.SRC-userCard,
   .secondary-links a,
@@ -721,15 +720,13 @@ main,
       @include SRC_Mixins.ignoreLink;
     }
   }
-  *,
-  .bootstrap-4-backport {
-    a.ignoreLink:not(.btn, .MuiLink-root, .MuiButton-root) {
+  // TODO: Remove * ?
+  * a.ignoreLink:not(.btn, .MuiLink-root, .MuiButton-root) {
+    @include SRC_Mixins.ignoreLink;
+    &:visited,
+    &:active,
+    &:link {
       @include SRC_Mixins.ignoreLink;
-      &:visited,
-      &:active,
-      &:link {
-        @include SRC_Mixins.ignoreLink;
-      }
     }
   }
 }
@@ -765,8 +762,9 @@ main,
 // TODO - remove after react-select is updated to use MUI theme, see PORTALS-2651
 .UserSearchBoxV2,
 .AsyncSelect {
-  .form-control {
-    background-color: map.get(SRC.$colors, 'gray-200');
+  input {
+    height: 48px;
+    margin: 8px 0px 12px;
     border-radius: 3px;
   }
 }

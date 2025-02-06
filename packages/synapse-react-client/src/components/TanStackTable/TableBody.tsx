@@ -55,12 +55,21 @@ export function TableBody<TData = unknown, TRowType = Row<TData>>(
         const trOwnerState: TrOwnerState<TData, TRowType> = { row, tableRow }
         const trSlotProps = getSlotProps(_trSlotProps, trOwnerState)
 
+        let mergedClassNames = trSlotProps.className ?? ''
+        if (table.options.meta?.getRowClassNames) {
+          mergedClassNames =
+            `${mergedClassNames} ${table.options.meta.getRowClassNames(
+              row,
+            )}`.trim()
+        }
+
         return (
           <Tr
             key={tableRow?.id ?? index}
             {...trSlotProps}
             row={row}
             tableRow={tableRow}
+            className={mergedClassNames}
           >
             {tableRow?.getVisibleCells().map((props, index) => (
               <TableCellRenderer key={index} {...props} />

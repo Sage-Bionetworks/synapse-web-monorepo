@@ -1,7 +1,7 @@
+import { Select } from '@mui/material'
 import { EntityRef } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
-import { SyntheticEvent, useEffect } from 'react'
-import { Form } from 'react-bootstrap'
+import { useEffect } from 'react'
 import { useGetVersionsInfinite } from '../../../synapse-queries/index'
 import { DatasetItemsEditorTableData } from './DatasetItemsEditor'
 
@@ -47,17 +47,17 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
   return (
     <div>
       {versions && versions.length > 0 && (
-        <Form.Control
-          role="listbox"
-          size="sm"
-          as="select"
+        <Select
+          native
+          fullWidth
           value={versionNumber}
-          onClick={(event: SyntheticEvent<HTMLSelectElement>) => {
+          sx={{ height: '30px' }}
+          onClick={event => {
             event.stopPropagation()
           }}
           onChange={event => {
             event.stopPropagation()
-            const version = parseInt(event.target.value)
+            const version = parseInt((event.target as HTMLInputElement).value)
             toggleSelection({
               entityId: entityId,
               versionNumber: version,
@@ -82,7 +82,7 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
               </option>
             )
           })}
-        </Form.Control>
+        </Select>
       )}
     </div>
   )

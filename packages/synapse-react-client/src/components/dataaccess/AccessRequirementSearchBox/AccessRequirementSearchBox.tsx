@@ -1,5 +1,4 @@
-import { Skeleton } from '@mui/material'
-import { components, GroupBase, SelectComponentsConfig } from 'react-select'
+import { Skeleton, useTheme } from '@mui/material'
 import AsyncSelect from 'react-select/async'
 import SynapseClient from '../../../synapse-client'
 import { useGetAccessRequirements } from '../../../synapse-queries/dataaccess/useAccessRequirements'
@@ -21,35 +20,12 @@ export function getOptionLabel(id: string | number, name: string) {
   }
 }
 
-const customSelectComponents: Partial<
-  SelectComponentsConfig<
-    {
-      id: string | number
-      value: string | number
-      label: string
-    },
-    false,
-    GroupBase<{
-      id: string | number
-      value: string | number
-      label: string
-    }>
-  >
-> = {
-  Control: props => {
-    return (
-      <components.Control
-        {...props}
-        className={`form-control ${props.className ?? ''}`}
-      />
-    )
-  },
-}
-
 export default function AccessRequirementSearchBox(
   props: AccessRequirementSearchBoxProps,
 ) {
   const { inputId, initialId, onChange, placeholder } = props
+
+  const { palette } = useTheme()
   const { accessToken } = useSynapseContext()
   const { data: initialAccessRequirement, isLoading: isLoadingInitialAR } =
     useGetAccessRequirements(initialId!, {
@@ -92,7 +68,7 @@ export default function AccessRequirementSearchBox(
 
   return (
     <AsyncSelect
-      className="bootstrap-4-backport AsyncSelect"
+      className="AsyncSelect"
       defaultInputValue={
         initialId
           ? getOptionLabel(
@@ -119,8 +95,7 @@ export default function AccessRequirementSearchBox(
       cacheOptions
       isClearable
       styles={{
-        // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
-        control: styles => ({ ...styles, display: 'flex !important' }),
+        control: styles => ({ ...styles, backgroundColor: palette.grey[200] }),
         input: provided => ({
           ...provided,
           // SWC-6327 - Adjust the input style so a right-click focuses on the input field
@@ -129,7 +104,6 @@ export default function AccessRequirementSearchBox(
           },
         }),
       }}
-      components={customSelectComponents}
       loadOptions={loadOptions}
       onChange={option => {
         onChange(option?.id.toString())

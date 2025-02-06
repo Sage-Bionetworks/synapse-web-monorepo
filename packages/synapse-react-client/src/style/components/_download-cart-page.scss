@@ -80,30 +80,6 @@
     }
   }
 
-  .availableForDownloadTableContainer {
-    padding-top: 20px;
-
-    .filterFilesContainer {
-      display: grid;
-      align-items: center;
-      grid-template-columns: auto 100px 148px;
-      padding-bottom: 15px;
-
-      .filterFilesByText {
-        grid-column-start: 2;
-        font-weight: 700;
-      }
-
-      .dropdown {
-        grid-column-start: 3;
-
-        button {
-          width: 144px;
-        }
-      }
-    }
-  }
-
   .subSectionContainer {
     display: flex;
 

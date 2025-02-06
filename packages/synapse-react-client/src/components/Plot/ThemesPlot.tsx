@@ -1,29 +1,26 @@
-import { useEffect, useState } from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import {
-  ElementWithTooltip,
-  TooltipVisualProps,
-} from '../widgets/ElementWithTooltip'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
-import { SynapseConstants, useSynapseContext } from '../../utils'
-import { getFullQueryTableResults } from '../../synapse-client'
+import { Tooltip } from '@mui/material'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
+import _ from 'lodash-es'
+import Plotly from 'plotly.js-basic-dist'
+import { useEffect, useState } from 'react'
+import { RequiredKeysOf } from 'type-fest'
+import { getFullQueryTableResults } from '../../synapse-client'
+import { SynapseConstants, useSynapseContext } from '../../utils'
 import { resultToJson } from '../../utils/functions'
+import { unCamelCase } from '../../utils/functions/unCamelCase'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
+import BarPlot from './BarPlot'
+import DotPlot from './DotPlot'
 import {
   BarPlotColors,
   ClickCallbackParams,
   GraphItem,
   PlotProps,
 } from './types'
-import _ from 'lodash-es'
-import DotPlot from './DotPlot'
-import BarPlot from './BarPlot'
-import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
@@ -35,7 +32,6 @@ export type ThemesPlotProps = {
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
-  tooltipProps?: TooltipVisualProps
   dotPlotYAxisLabel?: string
 }
 
@@ -50,13 +46,6 @@ const optionsConfig: Partial<Plotly.Config> = {
   autosizable: true,
 }
 
-const tooltipVisualProps: TooltipVisualProps = {
-  delayShow: 0,
-  place: 'right',
-  type: 'light',
-  effect: 'solid',
-  border: true,
-}
 const dotPlotLayoutConfig: Partial<Plotly.Layout> = {
   showlegend: true,
   dragmode: false,
@@ -210,7 +199,6 @@ export function ThemesPlot({
   dotPlot,
   topBarPlot,
   sideBarPlot,
-  tooltipProps = tooltipVisualProps,
   onPointClick,
   onIndividualThemeBarPlotPointClick,
   dotPlotYAxisLabel = 'Research Themes',
@@ -338,10 +326,9 @@ export function ThemesPlot({
                   }}
                 >
                   <div className="ThemesPlot__dotPlot__barColumn">
-                    <ElementWithTooltip
-                      tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
-                      tooltipVisualProps={tooltipProps}
-                      callbackFn={() => _.noop}
+                    <Tooltip
+                      title={`${getTooltip(dotPlotQueryData, label)} `}
+                      placement={'right'}
                     >
                       <div>
                         <span className="ThemesPlot__dotPlot__themeLabel">
@@ -372,7 +359,7 @@ export function ThemesPlot({
                           }}
                         />
                       </div>
-                    </ElementWithTooltip>
+                    </Tooltip>
                   </div>
                   <div className="ThemesPlot__dotPlot__dotPlotColumn">
                     <div
@@ -383,9 +370,10 @@ export function ThemesPlot({
                     >
                       <DotPlot
                         id={`${i}`}
-                        onClick={(e: any) =>
-                          onPointClick(getClickTargetData(e, false))
-                        }
+                        onClick={(e: any) => {
+                          const { type, event } = getClickTargetData(e, false)
+                          onPointClick({ facetValue: label, type, event })
+                        }}
                         plotData={dotPlotQueryData}
                         plotStyle={dotPlot.plotStyle}
                         markerSymbols={dotPlot.markerSymbols}

@@ -22,7 +22,7 @@ import {
 } from '../../CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
 import EntityIdList from './EntityIdList'
-import { EntityLink } from '../../EntityLink'
+import { EntityLink, EntityLinkProps } from '../../EntityLink'
 import EvaluationIdRenderer from './EvaluationIdRenderer'
 import { SynapseCardLabel } from '../../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
@@ -50,6 +50,17 @@ export type SynapseTableCellProps = {
   isRowEntityColumn?: boolean
 }
 
+function getDisplayTextFieldForEntityIdColumn(
+  columnName: string,
+): EntityLinkProps['displayTextField'] {
+  // SWC-7235 - For any table type, if the column is an ENTITYID and the column name is 'id', then display the ID.
+  // Otherwise, display the entity name.
+  if (columnName.toLowerCase() === 'id') {
+    return 'id'
+  }
+  return 'name'
+}
+
 function SynapseTableCell(props: SynapseTableCellProps) {
   const {
     columnType,
@@ -68,7 +79,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
   if (!columnValue) {
-    return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    return <p className="SRC-inactive">{NOT_SET_DISPLAY_VALUE}</p>
   }
 
   if (columnLinkConfig) {
@@ -112,16 +123,19 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   }
 
   switch (columnType) {
-    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.ENTITYID: {
+      const displayTextField = getDisplayTextFieldForEntityIdColumn(columnName)
       return (
         <p>
           <EntityLink
             entity={columnValue}
             className={`${isBold}`}
-            displayTextField={'name'}
+            displayTextField={displayTextField}
+            showIcon={false}
           />
         </p>
       )
+    }
     case ColumnTypeEnum.DATE_LIST: {
       const jsonData: number[] = JSON.parse(columnValue)
       return (
@@ -176,16 +190,25 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       )
     }
     case ColumnTypeEnum.ENTITYID_LIST: {
+      const displayTextField = getDisplayTextFieldForEntityIdColumn(columnName)
       const jsonData: string[] = JSON.parse(columnValue)
       return (
         <p>
-          <EntityIdList entityIdList={jsonData} />
+          <EntityIdList
+            entityIdList={jsonData}
+            displayTextField={displayTextField}
+            showIcon={false}
+          />
         </p>
       )
     }
     case ColumnTypeEnum.USERID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
-      return <UserIdList userIds={jsonData} />
+      return (
+        <p>
+          <UserIdList userIds={jsonData} />
+        </p>
+      )
     }
     // handle other list types
     case ColumnTypeEnum.STRING_LIST:

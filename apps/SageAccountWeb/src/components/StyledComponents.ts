@@ -21,10 +21,21 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   margin: '0 auto',
   display: 'flex',
   overflow: 'hidden',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+    width: '100%',
+    height: '100vh',
+    overflowY: 'scroll',
+  },
+
   '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
     width: '450px',
     position: 'relative',
     padding: theme.spacing(8),
+    [theme.breakpoints.down('md')]: {
+      height: '100%',
+      width: '100%',
+    },
   },
   '& > div:nth-of-type(1)': {
     backgroundColor: '#FFF',

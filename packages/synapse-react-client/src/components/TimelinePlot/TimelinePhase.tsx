@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
 import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
 import { Dialog, DialogContent } from '@mui/material'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
@@ -10,8 +9,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import CardContainerLogic from '../CardContainerLogic'
 import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
-
-const Plot = createPlotlyComponent(Plotly)
+import Plot from '../Plot/Plot'
 
 type TimepointData = {
   timepoints: dayjs.Dayjs[]

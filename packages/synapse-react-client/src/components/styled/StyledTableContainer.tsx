@@ -43,6 +43,14 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
         : {
             backgroundColor: theme.palette.grey[100],
           },
+      ['tr']: {
+        backgroundColor: theme.palette.background.default,
+      },
+      ['tr:nth-of-type(even)']: noStripedRows
+        ? undefined
+        : {
+            backgroundColor: theme.palette.grey[100],
+          },
       ['th,td']: {
         position: 'relative',
         paddingLeft: theme.spacing(density === 'compact' ? 0 : 1),
@@ -51,6 +59,8 @@ export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
       td: {
         paddingTop: theme.spacing(density === 'compact' ? 0 : 1),
         paddingBottom: theme.spacing(density === 'compact' ? 0 : 1),
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
       },
       '.resizer': {
         position: 'absolute',

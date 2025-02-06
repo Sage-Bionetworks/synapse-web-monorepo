@@ -153,6 +153,7 @@ export function SynapseTable(props: SynapseTableProps) {
           id: selectColumn.name,
           enableSorting: isSortableColumn(selectColumn.columnType),
           enableResizing: true,
+          size: 200,
           header: TableDataColumnHeader,
           cell: TableDataCell,
         })
