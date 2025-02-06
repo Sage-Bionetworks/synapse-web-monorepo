@@ -25,7 +25,7 @@
       "vite-config/*": ["../../packages/vite-config/src/*"]
     }
   },
-  "include": ["**/*.tsx", "**/*.ts"],
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
   "files": ["src/types.d.ts"],
   "references": [
     { "path": "../../packages/synapse-client" },

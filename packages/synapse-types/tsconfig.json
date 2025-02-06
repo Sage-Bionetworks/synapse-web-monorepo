@@ -10,5 +10,5 @@
     "moduleResolution": "bundler",
     "noEmit": false
   },
-  "include": ["**/*"]
+  "include": ["./src/*.ts", "./src/**/*.ts"]
 }
