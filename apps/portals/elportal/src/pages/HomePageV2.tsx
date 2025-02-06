@@ -129,7 +129,7 @@ export default function HomePage() {
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
-        summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
+        summaryText="We provide rich multi-omic datasets, computational tools, and publications that empower researchers to discover novel biomarkers of health and disease."
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
