@@ -8,7 +8,7 @@ jest.mock('./useCitation', () => ({
   useCitation: jest.fn(),
 }))
 
-const mockUseCitation = useCitation as jest.MockedFunction<typeof useCitation>
+const mockUseCitation = jest.mocked(useCitation)
 
 const openPopover = async () => {
   const button = screen.getByTestId('CiteAsButton')

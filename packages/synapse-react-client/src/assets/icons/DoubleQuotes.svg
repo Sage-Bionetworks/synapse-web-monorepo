@@ -1,4 +1,3 @@
-export const DoubleQuotes = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="12"
@@ -15,6 +14,3 @@ export const DoubleQuotes = (
       fill="#395979"
     />
   </svg>
-)
-
-export default DoubleQuotes

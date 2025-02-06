@@ -14,7 +14,7 @@ import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useCitation } from './useCitation'
-import DoubleQuotes from '../../assets/icons/DoubleQuotes'
+import { ReactComponent as DoubleQuotes } from '../../assets/icons/DoubleQuotes.svg'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -112,7 +112,7 @@ function CitationPopover({
         <Button
           onClick={handleClick}
           variant="outlined"
-          startIcon={DoubleQuotes}
+          startIcon={<DoubleQuotes />}
           data-testid="CiteAsButton"
           sx={{
             display: 'flex',
