@@ -25,7 +25,6 @@ import {
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
-import headerbackground from '../assets/headerbackground.png'
 import headerbackgroundvideo from '../assets/header-video.mp4'
 import { Box } from '@mui/material'
 import { FeaturedDataTabs } from 'synapse-react-client'
