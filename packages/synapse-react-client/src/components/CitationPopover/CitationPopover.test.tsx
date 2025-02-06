@@ -1,20 +1,24 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UseQueryResult } from '@tanstack/react-query'
 import CitationPopover from './CitationPopover'
 import { useCitation } from './useCitation'
+import { createLinkAndDownload } from './CitationPopoverUtils'
 
 jest.mock('./useCitation', () => ({
   useCitation: jest.fn(),
 }))
 
+jest.mock('./CitationPopoverUtils', () => ({
+  createLinkAndDownload: jest.fn(),
+}))
+
 const mockUseCitation = jest.mocked(useCitation)
+const mockCreateLinkAndDownload = jest.mocked(createLinkAndDownload)
 
 const openPopover = async () => {
   const button = screen.getByTestId('CiteAsButton')
-  await act(async () => {
-    await userEvent.click(button)
-  })
+  await userEvent.click(button)
 }
 
 const data =
@@ -79,9 +83,7 @@ describe('CitationPopover tests', () => {
     })
 
     const select = screen.getByRole('combobox')
-    await act(async () => {
-      await userEvent.click(select)
-    })
+    await userEvent.click(select)
 
     await waitFor(() => {
       const bibtexItems = screen.getAllByText('bibtex')
@@ -123,9 +125,7 @@ describe('CitationPopover tests', () => {
     })
 
     const copyButton = screen.getByTestId('CopyButton')
-    await act(async () => {
-      await userEvent.click(copyButton)
-    })
+    await userEvent.click(copyButton)
 
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalledWith(data)
@@ -134,6 +134,7 @@ describe('CitationPopover tests', () => {
 
   it('downloads citation', async () => {
     render(<CitationPopover {...mockProps} />)
+    const { title } = mockProps
     openPopover()
 
     await waitFor(() => {
@@ -146,31 +147,19 @@ describe('CitationPopover tests', () => {
       ).toBeInTheDocument()
     })
 
-    const createElementSpy = jest
-      .spyOn(document, 'createElement')
-      .mockReturnValue(document.createElement('a'))
-
-    const appendChildSpy = jest.spyOn(document.body, 'appendChild')
-
-    const mockLink = document.createElement('a')
-    mockLink.setAttribute = jest.fn()
-    mockLink.click = jest.fn()
-
     const downloadButton = screen.getByRole('button', {
       name: 'Download Citation',
     })
 
-    await act(async () => {
-      await userEvent.click(downloadButton)
+    await userEvent.click(downloadButton)
+
+    await waitFor(() => {
+      expect(mockCreateLinkAndDownload).toHaveBeenCalledWith(
+        title,
+        'bib',
+        expect.any(String),
+      )
     })
-
-    const clickSpy = jest.spyOn(mockLink, 'click')
-
-    expect(clickSpy).toHaveBeenCalled()
-    expect(appendChildSpy).toHaveBeenCalledWith(mockLink)
-
-    createElementSpy.mockRestore()
-    appendChildSpy.mockRestore()
   })
 
   it('displays loading text while fetching citation', async () => {

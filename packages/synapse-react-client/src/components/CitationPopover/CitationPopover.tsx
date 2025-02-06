@@ -15,6 +15,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useCitation } from './useCitation'
 import { ReactComponent as DoubleQuotes } from '../../assets/icons/DoubleQuotes.svg'
+import { createLinkAndDownload } from './CitationPopoverUtils'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -77,17 +78,12 @@ function CitationPopover({
       nature: 'ris',
       science: 'ris',
     }
-    const citationTitle = title ? `${title.replace(/\s+/g, '_')}` : 'citation'
     const fileExtension = extensionMap[citationFormat] || 'txt'
 
     const blob = new Blob([citation], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${citationTitle}.${fileExtension}`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+
+    createLinkAndDownload(title || 'citation', fileExtension, url)
   }
 
   const handleCopy = (citation: string) => {
