@@ -15,14 +15,12 @@ export const navbarConfig: NavbarConfig = {
       path: '/Explore',
     },
     {
-      //TODO
       name: 'Contribute A Standard',
-      path: '/ContributeAStandard',
+      path: 'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#submitting-a-new-standard',
     },
     {
-      //TODO
       name: 'Help',
-      path: 'https://help.standardsexplorer.synapse.org/doc/',
+      path: 'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#user-documentation',
     },
   ],
 }
