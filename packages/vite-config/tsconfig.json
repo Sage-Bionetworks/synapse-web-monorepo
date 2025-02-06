@@ -9,5 +9,5 @@
     "moduleResolution": "bundler",
     "noEmit": false
   },
-  "include": ["src/**/*"]
+  "include": ["**/*"]
 }

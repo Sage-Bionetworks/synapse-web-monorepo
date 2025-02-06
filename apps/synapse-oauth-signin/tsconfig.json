@@ -25,7 +25,7 @@
       "vite-config/*": ["../../../packages/vite-config/src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["."],
   "references": [
     { "path": "../../packages/synapse-client" },
     { "path": "../../packages/synapse-react-client" },

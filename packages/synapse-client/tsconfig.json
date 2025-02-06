@@ -2,7 +2,7 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "module": "esnext",
     "target": "esnext",
@@ -15,5 +15,5 @@
     "noUnusedLocals": false,
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*.ts", "src/spec/**/*.json"]
+  "include": ["**/*.ts", "**/*.json"]
 }

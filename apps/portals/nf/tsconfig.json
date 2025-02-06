@@ -21,7 +21,7 @@
       "vite-config/*": ["../../../packages/vite-config/src/*"]
     }
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "include": ["**/*.tsx", "**/*.ts"],
   "files": ["src/types.d.ts"],
   "references": [
     { "path": "../../synapse-portal-framework" },

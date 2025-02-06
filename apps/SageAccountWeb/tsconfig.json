@@ -31,7 +31,7 @@
       "vite-config/*": ["../../../packages/vite-config/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/tests/setupTests.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "references": [
     { "path": "../../packages/synapse-client" },
     { "path": "../../packages/synapse-react-client" },

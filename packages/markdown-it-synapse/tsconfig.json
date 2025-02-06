@@ -10,5 +10,5 @@
     "noImplicitAny": false,
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["**/*.ts"]
 }
