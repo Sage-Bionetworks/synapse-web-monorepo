@@ -109,7 +109,6 @@ function CitationPopover({
           onClick={handleClick}
           variant="outlined"
           startIcon={<DoubleQuotes />}
-          data-testid="CiteAsButton"
           sx={{
             display: 'flex',
             height: '20px',

@@ -1,9 +1,12 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { UseQueryResult } from '@tanstack/react-query'
 import CitationPopover from './CitationPopover'
 import { useCitation } from './useCitation'
 import { createLinkAndDownload } from './CitationPopoverUtils'
+import {
+  getUseQueryLoadingMock,
+  getUseQuerySuccessMock,
+} from '../../testutils/ReactQueryMockUtils'
 
 jest.mock('./useCitation', () => ({
   useCitation: jest.fn(),
@@ -17,7 +20,7 @@ const mockUseCitation = jest.mocked(useCitation)
 const mockCreateLinkAndDownload = jest.mocked(createLinkAndDownload)
 
 const openPopover = async () => {
-  const button = screen.getByTestId('CiteAsButton')
+  const button = screen.getByRole('button', { name: /Cite As/i })
   await userEvent.click(button)
 }
 
@@ -33,22 +36,12 @@ const mockProps = {
 describe('CitationPopover tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseCitation.mockReturnValue({
-      isLoading: false,
-      data: data,
-      error: null,
-      isError: false,
-      isSuccess: true,
-    } as UseQueryResult<string, Error>)
-  })
-  afterEach(() => {
-    cleanup()
+    mockUseCitation.mockReturnValue(getUseQuerySuccessMock(data))
   })
 
-  it('renders button', () => {
+  it('renders button', async () => {
     render(<CitationPopover {...mockProps} />)
-    const button = screen.queryByTestId('CiteAsButton')
-    expect(button).toBeInTheDocument()
+    await screen.findByRole('button', { name: /Cite As/i })
   })
 
   it('opens popover when button is clicked and fetches citation', async () => {
@@ -67,11 +60,7 @@ describe('CitationPopover tests', () => {
       )
     })
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(content => content.includes('Some BibTeX Entry')),
-      ).toBeInTheDocument()
-    })
+    await screen.findByText(content => content.includes('Some BibTeX Entry'))
   })
 
   it('shows menu options when select button is clicked with bibtex as default', async () => {
@@ -99,11 +88,9 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(content => content.includes('Some boilerplate text')),
-      ).toBeInTheDocument()
-    })
+    await screen.findByText(content =>
+      content.includes('Some boilerplate text'),
+    )
   })
 
   it('copies citation to clipboard', async () => {
@@ -118,11 +105,7 @@ describe('CitationPopover tests', () => {
       expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
     })
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(content => content.includes('Some BibTeX Entry')),
-      ).toBeInTheDocument()
-    })
+    await screen.findByText(content => content.includes('Some BibTeX Entry'))
 
     const copyButton = screen.getByTestId('CopyButton')
     await userEvent.click(copyButton)
@@ -141,11 +124,7 @@ describe('CitationPopover tests', () => {
       expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
     })
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(content => content.includes('Some BibTeX Entry')),
-      ).toBeInTheDocument()
-    })
+    await screen.findByText(content => content.includes('Some BibTeX Entry'))
 
     const downloadButton = screen.getByRole('button', {
       name: 'Download Citation',
@@ -163,13 +142,7 @@ describe('CitationPopover tests', () => {
   })
 
   it('displays loading text while fetching citation', async () => {
-    mockUseCitation.mockReturnValue({
-      isLoading: true,
-      data: undefined,
-      error: null,
-      isError: false,
-      isSuccess: false,
-    } as UseQueryResult<string, Error>)
+    mockUseCitation.mockReturnValue(getUseQueryLoadingMock())
 
     render(<CitationPopover {...mockProps} />)
     openPopover()
