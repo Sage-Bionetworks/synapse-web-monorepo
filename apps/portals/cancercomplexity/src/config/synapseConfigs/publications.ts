@@ -12,7 +12,6 @@ const rgbIndex = 1
 
 export const publicationSchema: GenericCardSchema = {
   type: SynapseConstants.PUBLICATION,
-  includeCitation: true,
   title: 'publicationTitle',
   subTitle: 'authors',
   citationBoilerplateText:

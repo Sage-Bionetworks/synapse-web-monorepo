@@ -1,12 +1,14 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CitationPopover from './CitationPopover'
 import { useCitation } from './useCitation'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import {
+  getUseQueryErrorMock,
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
+import { UseQueryResult } from '@tanstack/react-query'
 
 jest.mock('./useCitation', () => ({
   useCitation: jest.fn(),
@@ -157,5 +159,23 @@ describe('CitationPopover tests', () => {
     })
 
     expect(screen.getByText('Loading citation...')).toBeInTheDocument()
+  })
+
+  it('displays error message', async () => {
+    const mockError = new Error('Failed to fetch citation.')
+
+    mockUseCitation.mockReturnValue(
+      getUseQueryErrorMock(mockError) as UseQueryResult<string, Error>,
+    )
+
+    render(<CitationPopover {...mockProps} />)
+    openPopover()
+
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
+    })
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText('Failed to fetch citation.')
   })
 })

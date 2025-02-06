@@ -9,6 +9,7 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Alert,
 } from '@mui/material'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
@@ -96,11 +97,11 @@ function CitationPopover({
   const open = Boolean(anchorEl)
   const id = open ? 'cite-as-popover' : undefined
 
-  const { data: citation, isLoading } = useCitation(
-    doi || '',
-    citationFormat,
-    open,
-  )
+  const {
+    data: citation,
+    isLoading,
+    error,
+  } = useCitation(doi || '', citationFormat, open)
 
   return (
     <div>
@@ -175,6 +176,11 @@ function CitationPopover({
               }}
             />
           </Box>
+          {error && (
+            <Alert severity={'error'} sx={{ my: 2 }} icon={false}>
+              {error.message}
+            </Alert>
+          )}
           <Typography
             variant="smallText1"
             sx={{
