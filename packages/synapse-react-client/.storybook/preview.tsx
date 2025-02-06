@@ -25,6 +25,7 @@ import {
   nfPortalPalette,
   sageBionetworksPalette,
   stopAdPortalPalette,
+  standardsPortalPalette
 } from '../src/theme/palette/Palettes'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 
@@ -135,6 +136,9 @@ const preview: Preview = {
         }),
         ['GENIE Portal']: createTheme(defaultMuiThemeOptions, {
           palette: geniePalette,
+        }),
+        ['Standards Explorer']: createTheme(defaultMuiThemeOptions, {
+          palette: standardsPortalPalette,
         }),
       },
       defaultTheme: 'Synapse',

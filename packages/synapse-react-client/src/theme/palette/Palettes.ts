@@ -173,6 +173,12 @@ export const geniePalette: PaletteOptions = {
   secondary: generatePalette('#26881F'),
 }
 
+export const standardsPortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#395979'),
+  secondary: generatePalette('#395979'),
+}
+
 export default {
   palette,
   generatePalette,
@@ -189,4 +195,5 @@ export default {
   cancerComplexityPortalPalette,
   sageBionetworksPalette,
   geniePalette,
+  standardsPortalPalette,
 }
