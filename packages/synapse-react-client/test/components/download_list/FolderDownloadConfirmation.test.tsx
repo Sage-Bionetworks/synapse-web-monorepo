@@ -1,16 +1,15 @@
-import { act, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
   EntityChildrenResponse,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
-import { DownloadConfirmationUIProps } from '../../../src/components/download_list/DownloadConfirmationUI'
+import { act, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { FolderDownloadConfirmation } from '../../../src/components/download_list'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
+import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
