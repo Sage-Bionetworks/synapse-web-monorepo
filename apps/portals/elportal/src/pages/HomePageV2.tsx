@@ -11,6 +11,8 @@ import {
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
+import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
+
 import {
   topPublicationsSql,
   whatWeDoSql,
@@ -141,7 +143,8 @@ export default function HomePage() {
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
-          style: { maxWidth: '100%', padding: 0 },
+          maxWidth: false,
+          style: { padding: 0 },
         }}
       >
         <ELGettingStarted />
@@ -156,8 +159,8 @@ export default function HomePage() {
               sql={upsetPlotSql}
               rgbIndex={0}
               maxBarCount={20}
-              setName="# Files per assay"
-              combinationName="# individuals"
+              setName="Set size"
+              combinationName="Intersection size"
               onClick={handleUpsetPlotClick}
               // summaryLinkText='Explore All Data'
               // summaryLink='/Explore/Data'
@@ -191,7 +194,8 @@ export default function HomePage() {
                       },
                       {
                         title: 'ADAMTS7 Study',
-                        description: '',
+                        description:
+                          'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
                         facetsToPlot: ['dataTypes'],
                         selectFacetColumnName: 'Study',
                         selectFacetColumnValue: 'ADAMTS7',
@@ -204,7 +208,7 @@ export default function HomePage() {
                   },
                 },
                 {
-                  title: 'Translation Studies',
+                  title: 'Translational Studies',
                   icon: 'TRANSLATIONAL',
                   explorePagePath: '/Explore/Studies',
                   exploreObjectType: 'Studies',
@@ -258,6 +262,17 @@ export default function HomePage() {
           link="/Explore/Computational Tools"
         />
       </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <SectionLayout
+          ContainerProps={{
+            className: 'home-spacer',
+            maxWidth: false,
+            style: { padding: 0 },
+          }}
+        >
+          <ELSupportedByNIH />
+        </SectionLayout>
+      </div>
     </>
   )
 }

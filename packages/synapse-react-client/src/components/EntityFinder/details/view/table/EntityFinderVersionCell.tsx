@@ -1,7 +1,7 @@
+import { Select } from '@mui/material'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
-import { SyntheticEvent, useEffect } from 'react'
-import { Form } from 'react-bootstrap'
+import { useEffect } from 'react'
 import { useGetVersionsInfinite } from '../../../../../synapse-queries/index'
 import { isTableType } from '../../../../../utils/functions/EntityTypeUtils'
 import IconSvg from '../../../../IconSvg/IconSvg'
@@ -111,17 +111,17 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
   return (
     <div>
       {versions && versions.length > 0 ? (
-        <Form.Control
-          role="listbox"
-          size="sm"
-          as="select"
+        <Select
+          native
+          fullWidth
           value={currentSelectedVersionOptionValue}
-          onClick={(event: SyntheticEvent<HTMLSelectElement>) => {
+          onClick={event => {
             event.stopPropagation()
           }}
+          sx={{ height: '30px' }}
           onChange={event => {
             event.stopPropagation()
-            const version = parseInt(event.target.value)
+            const version = parseInt((event.target as HTMLInputElement).value)
             toggleSelection({
               targetId: id,
               targetVersionNumber:
@@ -143,7 +143,7 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
               </option>
             )
           })}
-        </Form.Control>
+        </Select>
       ) : (
         latestVersionText
       )}

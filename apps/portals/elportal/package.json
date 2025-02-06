@@ -16,7 +16,8 @@
     "react-router": "^7.1.1",
     "react-type-animation": "^3.2.0",
     "synapse-react-client": "workspace:*",
-    "vite": "^5.4.3"
+    "vite": "^5.4.3",
+    "@upsetjs/react": "^1.11.0"
   },
   "devDependencies": {
     "@types/react": "18.2.64",

@@ -1,6 +1,5 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import {
   GraphItem,
   SynapseClient,
@@ -13,8 +12,7 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { PlotParams } from 'react-plotly.js'
-
-const Plot = createPlotlyComponent(Plotly)
+import Plot from 'synapse-react-client/components/Plot/Plot'
 
 export type StatusLineChartProps = {
   token?: string

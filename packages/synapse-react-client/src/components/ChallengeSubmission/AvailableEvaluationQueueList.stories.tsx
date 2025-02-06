@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import {
   generatedEvaulations,
   mockEvaluationQueue,
@@ -17,6 +18,9 @@ const meta: Meta = {
       </Box>
     ),
   ],
+  args: {
+    onChangeSelectedEvaluation: fn(),
+  },
 } satisfies Meta<typeof AvailableEvaluationQueueList>
 export default meta
 type Story = StoryObj<typeof meta>

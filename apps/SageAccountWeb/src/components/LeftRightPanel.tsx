@@ -19,8 +19,8 @@ export function LeftRightPanel({
           <Box
             className="right-panel"
             sx={{
-              marginTop: '95px',
-              marginBottom: theme.spacing(4),
+              marginTop: { xs: 0, md: '95px' },
+              marginBottom: { xs: 0, md: theme.spacing(4) },
               overflow: 'hidden',
               fontWeight: '700',
               fontSize: '16px',

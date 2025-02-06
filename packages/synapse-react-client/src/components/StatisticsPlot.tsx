@@ -1,6 +1,4 @@
-import Plotly from 'plotly.js-basic-dist'
 import { Component, ContextType } from 'react'
-import createPlotlyComponent from 'react-plotly.js/factory'
 import SynapseClient from '../synapse-client'
 import {
   ProjectFilesStatisticsRequest,
@@ -8,7 +6,7 @@ import {
   FilesCountStatistics,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseContext } from '../utils/context/SynapseContext'
-const Plot = createPlotlyComponent(Plotly)
+import Plot from './Plot/Plot'
 
 const months = [
   'Jan',

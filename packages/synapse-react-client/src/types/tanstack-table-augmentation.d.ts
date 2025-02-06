@@ -16,6 +16,9 @@ declare module '@tanstack/react-table' {
     rowEntityVersionColumnIndex?: number
     getWrapInExpandableTd?: (cell: Cell<TData>) => boolean
     renderPlaceholderData?: boolean
+
+    /** Can be used to dynamically add class names to the tr element */
+    getRowClassNames?: (row: Row<TData>) => string
   }
 
   interface ColumnMeta<TData extends RowData, TValue> {

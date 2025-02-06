@@ -32,18 +32,6 @@
     display: block;
     margin-bottom: 0;
   }
-  input.form-control {
-    margin-bottom: 1rem;
-    border: SrcVars.$gray-input-border;
-    padding: SrcVars.$input-padding;
-    height: auto;
-    border-radius: 2px;
-    box-shadow: none;
-
-    &[type='password'] {
-      margin-bottom: 5px;
-    }
-  }
   a {
     font-weight: bold;
   }
@@ -54,10 +42,6 @@
   .ButtonWithIcon__Icon {
     float: none;
     display: inline;
-  }
-  .form-control::placeholder {
-    color: SrcVars.$gray-deemphasized;
-    font-style: normal;
   }
 }
 

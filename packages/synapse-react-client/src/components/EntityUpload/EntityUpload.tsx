@@ -201,7 +201,6 @@ export const EntityUpload = forwardRef(function EntityUpload(
             />
             {/* File input */}
             <input
-              className="form-control"
               type="file"
               id="filesToUpload"
               name="file upload"
@@ -217,7 +216,6 @@ export const EntityUpload = forwardRef(function EntityUpload(
             />
             {/* Folder input */}
             <input
-              className="form-control"
               type="file"
               id="folderToUpload"
               name="folder upload"

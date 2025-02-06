@@ -4,14 +4,8 @@ import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 const meta: Meta<ProvenanceProps> = {
   title: 'Synapse/ProvenanceGraph',
   component: ProvenanceGraph,
-  decorators: [
-    Story => (
-      <div className="bootstrap-4-backport">
-        <Story />
-      </div>
-    ),
-  ],
 }
+
 export default meta
 type Story = StoryObj<typeof meta>
 
