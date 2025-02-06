@@ -126,6 +126,7 @@ function CitationPopover({
       <Popover
         aria-label="Citation options popover"
         id={id}
+        elevation={9}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -143,7 +144,6 @@ function CitationPopover({
               width: '500px',
               postion: 'relative',
               borderRadius: 0,
-              boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
               [theme.breakpoints.down('sm')]: {
                 maxWidth: '100%',
                 maxHeight: '100%',
