@@ -78,8 +78,14 @@ function RangeSlider(props: RangeSliderProps) {
           <Box>
             <Button
               size="small"
-              variant="contained"
+              variant="outlined"
               onClick={() => onApplyClicked({ min: values[0], max: values[1] })}
+              sx={{
+                borderRadius: 0,
+                border: '1px solid #395979',
+                p: '6px 8px',
+                fontSize: 14,
+              }}
             >
               Apply
             </Button>
