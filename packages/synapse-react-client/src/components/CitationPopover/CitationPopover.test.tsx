@@ -48,8 +48,8 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await waitFor(() => {
-      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
     })
 
     await waitFor(() => {
@@ -67,8 +67,8 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await waitFor(() => {
-      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
     })
 
     const select = screen.getByRole('combobox')
@@ -101,13 +101,18 @@ describe('CitationPopover tests', () => {
     })
     openPopover()
 
-    await waitFor(() => {
-      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
     })
 
     await screen.findByText(content => content.includes('Some BibTeX Entry'))
 
-    const copyButton = screen.getByTestId('CopyButton')
+    // const copyButton = screen.getByTestId('CopyButton')
+    // await userEvent.click(copyButton)
+
+    const copyButton = screen.getByRole('button', {
+      name: /Copy to clipboard/i,
+    })
     await userEvent.click(copyButton)
 
     await waitFor(() => {
@@ -120,8 +125,8 @@ describe('CitationPopover tests', () => {
     const { title } = mockProps
     openPopover()
 
-    await waitFor(() => {
-      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
     })
 
     await screen.findByText(content => content.includes('Some BibTeX Entry'))
@@ -147,9 +152,9 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await waitFor(() =>
-      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument(),
-    )
+    await screen.findByRole('presentation', {
+      name: /Citation options popover/i,
+    })
 
     expect(screen.getByText('Loading citation...')).toBeInTheDocument()
   })

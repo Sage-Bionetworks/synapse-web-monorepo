@@ -123,7 +123,7 @@ function CitationPopover({
         </Button>
       )}
       <Popover
-        data-testid="CiteAsPopover"
+        aria-label="Citation options popover"
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -239,7 +239,6 @@ function CitationPopover({
               Download Citation
             </Button>
             <CopyToClipboardIcon
-              data-testid="CopyButton"
               value={citation || ''}
               onClick={() => handleCopy(citation || '')}
               sx={{

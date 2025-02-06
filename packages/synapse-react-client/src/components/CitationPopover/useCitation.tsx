@@ -5,25 +5,20 @@ export const fetchCitation = async (
   format: string,
 ) => {
   const formattedDoi = doi ? doi.replace('https://doi.org/', '') : ''
-  try {
-    const response = await fetch(
-      `https://citation.doi.org/format?doi=${formattedDoi}&style=${format}&lang=en-US`,
-      {
-        headers: {
-          Accept: `text/x-${format}`,
-        },
+  const response = await fetch(
+    `https://citation.doi.org/format?doi=${formattedDoi}&style=${format}&lang=en-US`,
+    {
+      headers: {
+        Accept: `text/x-${format}`,
       },
+    },
+  )
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch citation: ${response.status}: ${response.statusText}`,
     )
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch citation: ${response.status}: ${response.statusText}`,
-      )
-    }
-    return await response.text()
-  } catch (err) {
-    console.log(err)
-    return ''
   }
+  return await response.text()
 }
 
 export const useCitation = (doi: string, format: string, enabled: boolean) => {

@@ -41,7 +41,10 @@ export function CopyToClipboardIcon({
         autohide={true}
       ></ToastMessage>
       <Box display="flex" ref={ref} {...props}>
-        <IconButton onClick={copyToClipboard(ref, value)}>
+        <IconButton
+          onClick={copyToClipboard(ref, value)}
+          aria-label="Copy to clipboard"
+        >
           <IconSvg
             icon="contentCopy"
             wrap={false}
