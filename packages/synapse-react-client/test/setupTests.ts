@@ -13,13 +13,13 @@ beforeAll(() => {
   faker.seed(12345)
 })
 
-
 // Add polyfills for react-router - https://github.com/remix-run/react-router/issues/12363
 if (!global.TextEncoder) {
   global.TextEncoder = TextEncoder
 }
 
 if (!global.TextDecoder) {
+  // @ts-expect-error - Type mismatch
   global.TextDecoder = TextDecoder
 }
 
@@ -58,6 +58,7 @@ beforeAll(() => {
     },
   ) as Location
 
+  // @ts-expect-error - `delete` is not allowed on a required property
   delete window.open
   window.open = jest.fn()
 })
@@ -86,6 +87,6 @@ Element.prototype.scrollTo = jest.fn()
 // crypto.getRandomValues polyfill for JSDOM
 Object.defineProperty(global.self, 'crypto', {
   value: {
-    getRandomValues: arr => crypto.randomBytes(arr.length),
+    getRandomValues: (arr: Array<unknown>) => crypto.randomBytes(arr.length),
   },
 })

@@ -1,22 +1,25 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
-import * as MarkdownSynapseImageModule from '../../../src/components/Markdown/widget/MarkdownSynapseImage'
-import * as MarkdownPlotModule from '../../../src/components/Markdown/widget/MarkdownSynapsePlot'
+import mockFileEntity from '../../mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { mockEntityWikiPage } from '../../mocks/mockWiki'
+import * as MarkdownSynapseImageModule from './widget/MarkdownSynapseImage'
+import * as MarkdownPlotModule from './widget/MarkdownSynapsePlot'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
   NO_WIKI_CONTENT,
-} from '../../../src/components/Markdown/MarkdownSynapse'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import SynapseClient from '../../../src/synapse-client'
+} from './MarkdownSynapse'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../synapse-client/index'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
+} from '../../utils/functions/getEndpoint'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { WikiPage } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../src/mocks/msw/server'
-import * as MarkdownProvenanceModule from '../../../src/components/Markdown/widget/MarkdownProvenanceGraph'
+import { rest, server } from '../../mocks/msw/server'
+import * as MarkdownProvenanceModule from './widget/MarkdownProvenanceGraph'
 
-jest.mock('../../../src/components/Plot/SynapsePlot', () => {
+jest.mock('../Plot/SynapsePlot', () => {
   return {
     __esModule: true,
     default: function MockSynapsePlot() {
@@ -25,7 +28,7 @@ jest.mock('../../../src/components/Plot/SynapsePlot', () => {
   }
 })
 
-jest.mock('../../../src/components/widgets/SynapseImage', () => {
+jest.mock('../widgets/SynapseImage', () => {
   return {
     __esModule: true,
     default: function MockSynapseImage() {
@@ -34,7 +37,7 @@ jest.mock('../../../src/components/widgets/SynapseImage', () => {
   }
 })
 
-jest.mock('../../../src/components/ProvenanceGraph/ProvenanceGraph', () => {
+jest.mock('../ProvenanceGraph/ProvenanceGraph', () => {
   return {
     __esModule: true,
     default: function MockSynapseProvenanceGraph() {
@@ -65,6 +68,7 @@ function mockGetEntityWiki(markdown: string) {
       )}/repo/v1/entity/:id/wiki/:wikiId`,
       async (req, res, ctx) => {
         const response: WikiPage = {
+          ...mockEntityWikiPage,
           markdown,
         }
         return res(ctx.status(200), ctx.json(response))
@@ -186,12 +190,12 @@ describe('MarkdownSynapse tests', () => {
   })
 
   describe('it renders a video widget', () => {
-    it('do not render a video widget without token', async () => {
+    it('do not render a video widget without token', () => {
       mockGetEntityWiki('${video?mp4SynapseId=syn21714374}')
       const props: MarkdownSynapseProps = {
         ownerId: '_',
       }
-      renderComponent(props, { accessToken: undefined })
+      renderComponent(props, { ...MOCK_CONTEXT_VALUE, accessToken: undefined })
       expect(() => screen.getByTestId('video-login')).toBeDefined()
     })
 
@@ -218,11 +222,15 @@ describe('MarkdownSynapse tests', () => {
   })
 
   describe('it renders an image widget', () => {
-    jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({})
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue({})
+    jest
+      .spyOn(SynapseClient, 'getEntity')
+      .mockResolvedValue(mockFileEntity.entity)
+    jest
+      .spyOn(SynapseClient, 'getFiles')
+      .mockResolvedValue({ requestedFiles: [] })
     jest
       .spyOn(SynapseClient, 'getWikiAttachmentsFromEntity')
-      .mockResolvedValue({})
+      .mockResolvedValue({ list: [] })
 
     it('renders an image from a synapseId', async () => {
       mockGetEntityWiki(

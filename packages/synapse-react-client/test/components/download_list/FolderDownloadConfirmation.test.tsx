@@ -35,9 +35,7 @@ const mockDownloadConfirmationUi = jest
     <div data-testid={DOWNLOAD_CONFIRMATION_UI_TEST_ID}></div>
   ))
 
-const mockToastFn = jest
-  .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+const mockToastFn = jest.spyOn(ToastMessage, 'displayToast')
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
@@ -50,12 +48,9 @@ const mockOnClose = jest.fn()
 
 async function setUp() {
   const user = userEvent.setup()
-  let component
-  await act(async () => {
-    component = render(
-      <FolderDownloadConfirmation folderId={FOLDER_ID} fnClose={mockOnClose} />,
-    )
-  })
+  const component = render(
+    <FolderDownloadConfirmation folderId={FOLDER_ID} fnClose={mockOnClose} />,
+  )
 
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
   return { component, user }
@@ -99,8 +94,7 @@ describe('FolderDownloadConfirmation', () => {
       includeTypes: [EntityType.FILE],
     })
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
     expect(passedProps).toEqual({
       onAddToDownloadCart: expect.any(Function),
       onCancel: expect.any(Function),
@@ -114,8 +108,7 @@ describe('FolderDownloadConfirmation', () => {
   it('adds files to download list using a folder ID when invoked', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -130,7 +123,19 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall[0].onSuccess()
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+          numberOfFilesAdded: 1,
+        },
+        {
+          parentId: FOLDER_ID,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        null,
+      )
     })
     expect(mockToastFn).toHaveBeenCalledWith(
       expect.any(String),
@@ -143,8 +148,7 @@ describe('FolderDownloadConfirmation', () => {
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -158,8 +162,7 @@ describe('FolderDownloadConfirmation', () => {
   it('handles case where adding files to the download list results in an error', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -174,9 +177,19 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0].onError({
-        reason: 'some error message',
-      })
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
+        new SynapseClientError(
+          400,
+          'some error message',
+          expect.getState().currentTestName!,
+        ),
+        {
+          parentId: FOLDER_ID,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        null,
+      )
     })
     expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
     expect(mockOnClose).toHaveBeenCalled()

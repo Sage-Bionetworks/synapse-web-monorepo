@@ -1,40 +1,41 @@
+import { QueryBundleRequest, SortItem } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SynapseConstants } from '../../src/utils'
-import QuerySortSelector, {
-  QuerySortSelectorProps,
-} from '../../src/components/QuerySortSelector'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../../src/components/QueryVisualizationWrapper'
-import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../src/components/QueryContext/QueryContext'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  SortItem,
-} from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../src/mocks/query/syn16787123'
 import selectEvent from 'react-select-event'
-import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
+import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../utils/index'
+import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { useQueryContext } from './QueryContext/QueryContext'
+import QuerySortSelector, { QuerySortSelectorProps } from './QuerySortSelector'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper/index'
 
-const renderComponent = (
-  props: QuerySortSelectorProps,
-  queryContext: Partial<QueryContextType>,
-  queryVisualizationContext: Partial<QueryVisualizationContextType>,
-) => {
+jest.mock('./QueryContext/QueryContext', () => ({
+  useQueryContext: jest.fn(),
+}))
+
+jest.mock('./QueryVisualizationWrapper/QueryVisualizationContext', () => ({
+  useQueryVisualizationContext: jest.fn(),
+}))
+
+const mockExecuteQueryRequest = jest.fn()
+jest
+  .mocked(useQueryContext)
+  // @ts-expect-error - only mocking the function we need
+  .mockReturnValue({
+    executeQueryRequest: mockExecuteQueryRequest,
+  })
+
+// @ts-expect-error - only mocking the function we need
+jest.mocked(useQueryVisualizationContext).mockReturnValue({
+  getColumnDisplayName: jest
+    .fn()
+    .mockImplementation(() => 'Open Access Journals'),
+})
+
+const renderComponent = (props: QuerySortSelectorProps) => {
   return render(
-    <QueryContextProvider queryContext={queryContext}>
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={queryVisualizationContext}
-      >
-        <QuerySortSelector {...props} />
-      </QueryVisualizationContextProvider>
-    </QueryContextProvider>,
+    <QuerySortSelector {...props} />,
+
     {
       wrapper: createWrapper(),
     },
@@ -42,7 +43,6 @@ const renderComponent = (
 }
 
 describe('QuerySortSelector tests', () => {
-  const executeQueryRequest = jest.fn(() => {})
   const sql = 'SELECT * FROM syn16787123'
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -58,27 +58,13 @@ describe('QuerySortSelector tests', () => {
       offset: 0,
     },
   }
-  const getLastQueryRequest = jest.fn(() => lastQueryRequest)
 
-  // cast the data to ignore ts warning
-  const data = syn16787123Json as QueryResultBundle
   const props: QuerySortSelectorProps = {
     sortConfig: {
       defaultColumn: 'authors',
       defaultDirection: 'ASC',
       sortableColumns: ['authors', 'title', 'createdOn', 'journal'],
     },
-  }
-
-  const queryContext: Partial<QueryContextType> = {
-    data,
-    hasNextPage: false,
-    getCurrentQueryRequest: getLastQueryRequest,
-    executeQueryRequest: executeQueryRequest,
-  }
-
-  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
-    getColumnDisplayName: jest.fn(() => 'Open Access Journals'),
   }
 
   const sortByOpenAccessJournals = async () => {
@@ -93,8 +79,8 @@ describe('QuerySortSelector tests', () => {
   const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
     await waitFor(
       () => {
-        expect(executeQueryRequest).toHaveBeenCalled()
-        const queryTransformFn = executeQueryRequest.mock.lastCall![0]
+        expect(mockExecuteQueryRequest).toHaveBeenCalled()
+        const queryTransformFn = mockExecuteQueryRequest.mock.lastCall![0]
         expect(typeof queryTransformFn).toBe('function')
         expect(queryTransformFn(lastQueryRequest)).toEqual(
           expect.objectContaining({
@@ -111,7 +97,7 @@ describe('QuerySortSelector tests', () => {
   }
 
   it('Executes query request on sort', async () => {
-    renderComponent(props, queryContext, queryVisualizationContext)
+    renderComponent(props)
     await sortByOpenAccessJournals()
 
     const expectedSortItem: SortItem = {

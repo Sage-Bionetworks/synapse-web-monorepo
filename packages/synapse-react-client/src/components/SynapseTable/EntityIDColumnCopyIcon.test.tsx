@@ -1,21 +1,21 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import EntityIDColumnCopyIcon from '../../../src/components/SynapseTable/EntityIDColumnCopyIcon'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import {
   QueryBundleRequest,
   QueryResultBundle,
+  TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../src/components/QueryContext/QueryContext'
-import idsQueryResponse from '../../../src/mocks/mockIDListQueryResponseData.json'
-import { SynapseClient, SynapseConstants } from '../../../src'
-import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { SynapseClient, SynapseConstants } from '../../index'
+import idsQueryResponse from '../../mocks/mockIDListQueryResponseData.json'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
+
+jest.mock('../QueryContext/QueryContext', () => ({
+  useQueryContext: jest.fn(),
+}))
 
 const synID = 'syn55555'
 const version = '7'
@@ -40,29 +40,25 @@ const mockQueryRequest: QueryBundleRequest = {
   },
 }
 
-const queryContext: Partial<QueryContextType> = {
-  data: idsQueryResponse as QueryResultBundle,
-  getCurrentQueryRequest: () => mockQueryRequest,
-  isLoadingNewBundle: false,
-}
+const mockUseQueryContext = jest.mocked(useQueryContext)
 
-function renderComponent(wrapperProps?: SynapseContextType) {
-  return render(
-    <QueryContextProvider queryContext={queryContext}>
-      <EntityIDColumnCopyIcon />
-    </QueryContextProvider>,
-    {
-      wrapper: createWrapper(wrapperProps),
-    },
-  )
+// @ts-expect-error -- only mocking the function we need
+mockUseQueryContext.mockReturnValue({
+  getCurrentQueryRequest: jest.fn().mockReturnValue(mockQueryRequest),
+})
+
+function renderComponent() {
+  return render(<EntityIDColumnCopyIcon />, {
+    wrapper: createWrapper(),
+  })
 }
 
 describe('EntityIDColumnCopyIcon tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    SynapseClient.getFullQueryTableResults = jest
-      .fn()
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
       .mockResolvedValue(idsQueryResponse as QueryResultBundle)
     mockAllIsIntersecting(false)
   })
@@ -83,7 +79,9 @@ describe('EntityIDColumnCopyIcon tests', () => {
       await userEvent.click(await screen.findByRole('button'))
 
       await waitFor(() =>
-        expect(SynapseClient.getFullQueryTableResults).toBeCalledWith(
+        expect(
+          jest.mocked(SynapseClient.getFullQueryTableResults),
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             query: expect.objectContaining({
               sql: `select id from ${synID}.${version} ${whereClause}`,

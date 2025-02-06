@@ -1,14 +1,16 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
-} from '../../../src/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
+} from './StandaloneQueryWrapper'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn20337467Json from '../../../src/mocks/query/syn20337467.json'
-import SynapseClient from '../../../src/synapse-client'
+import syn20337467Json from '../../mocks/query/syn20337467.json'
+import SynapseClient from '../../synapse-client/index'
 
-jest.mock('../../../src/synapse-client', () => ({
+jest.mock('../../synapse-client/index', () => ({
   getEntity: jest.fn(),
   getQueryTableAsyncJobResults: jest.fn(),
 }))
@@ -39,11 +41,13 @@ describe('StandaloneQueryWrapper rendering tests', () => {
   it('renders a Synapse table', async () => {
     const data = syn20337467Json as QueryResultBundle
     mockGetEntity.mockResolvedValue({
+      ...mockFileViewEntity,
       id: 'syn123',
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     })
     mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
       return Promise.resolve({
+        ...mockCompleteAsyncJob,
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',
         responseBody: data,
@@ -52,7 +56,6 @@ describe('StandaloneQueryWrapper rendering tests', () => {
 
     renderComponent({
       rgbIndex: 7,
-      title: 'Tools',
       name: 'Tools',
       sql: 'SELECT * FROM syn20337467',
     })
@@ -66,11 +69,13 @@ describe('StandaloneQueryWrapper rendering tests', () => {
   it('renders a Synapse table with top level controls', async () => {
     const data = syn20337467Json as QueryResultBundle
     mockGetEntity.mockResolvedValue({
+      ...mockFileViewEntity,
       id: 'syn123',
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     })
     mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
       return Promise.resolve({
+        ...mockCompleteAsyncJob,
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',
         responseBody: data,
@@ -79,7 +84,6 @@ describe('StandaloneQueryWrapper rendering tests', () => {
 
     renderComponent({
       rgbIndex: 7,
-      title: 'Tools',
       name: 'Tools',
       sql: 'SELECT * FROM syn20337467',
       showTopLevelControls: true,

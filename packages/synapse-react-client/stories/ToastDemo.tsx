@@ -47,11 +47,6 @@ export const ToastDemo = () => {
   }
   return (
     <div>
-      {/*
-        theme will be provided by StorybookComponentWrapper when this component appears in a Story,
-        which is the only place where this component is used,
-        so ignore that "smallText2" is not a default MUI Typography variant
-      @ts-expect-error */}
       <Typography component="label" variant="smallText2">
         Alert Variant
       </Typography>

@@ -1,31 +1,29 @@
+import { FormData, StatusEnum } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import _ from 'lodash-es'
-import * as SynapseFormModule from '../../../src/components/SynapseForm/SynapseForm'
-import { SynapseFormProps } from '../../../src/components/SynapseForm/SynapseForm'
-import * as SynapseFormUtils from '../../../src/components/SynapseForm/SynapseFormUtils'
-import SynapseFormWrapper, {
-  SynapseFormWrapperProps,
-  UploadToolSearchParams,
-} from '../../../src/components/SynapseForm/SynapseFormWrapper'
-import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import SynapseClient from '../../../src/synapse-client'
-import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
+import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import {
   mockFileEntityWithVersion,
   mockFormData,
   mockFormSchema as formschemaJson,
-} from '../../../src/mocks/mock_drug_tool_data'
-import { mockFileHandle } from '../../../src/mocks/mock_file_handle'
-
-let onSaveCaptor: SynapseFormProps['onSave'] | undefined = undefined
-let onSubmitCaptor: SynapseFormProps['onSubmit'] | undefined = undefined
+} from '../../mocks/mock_drug_tool_data'
+import { mockFileHandle } from '../../mocks/mock_file_handle'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import SynapseClient from '../../synapse-client/index'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import * as SynapseFormModule from './SynapseForm'
+import { IFormData } from './SynapseForm'
+import * as SynapseFormUtils from './SynapseFormUtils'
+import SynapseFormWrapper, {
+  SynapseFormWrapperProps,
+  UploadToolSearchParams,
+} from './SynapseFormWrapper'
 
 const mockSynapseForm = jest
   .spyOn(SynapseFormModule, 'default')
-  .mockImplementation((props: SynapseFormProps) => {
-    onSaveCaptor = props.onSave
-    onSubmitCaptor = props.onSubmit
+  // @ts-expect-error - Mocking a class component, TypeScript expects us to mock all methods. Instead, just mock with a function component
+  .mockImplementation(() => {
     return <div data-testid="SynapseForm" />
   })
 
@@ -42,6 +40,21 @@ const searchParams: UploadToolSearchParams = {
 const fileNamePath = 'somescreen.somefield'
 const formTitle = 'my submission'
 const formClass = 'someFormClass'
+
+const mockSubmittedFormData: FormData = {
+  formDataId: 'some-id',
+  etag: 'some-etag',
+  dataFileHandleId: '123',
+  groupId: 'foo',
+  name: 'myform',
+  createdBy: String(MOCK_USER_ID),
+  createdOn: new Date().toISOString(),
+  modifiedOn: new Date().toISOString(),
+  submissionStatus: {
+    submittedOn: new Date().toISOString(),
+    state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
+  },
+}
 
 const renderComponent = (props: SynapseFormWrapperProps) => {
   return render(<SynapseFormWrapper {...props} />, {
@@ -60,17 +73,23 @@ const props: SynapseFormWrapperProps = {
 
 describe('SynapseFormWrapper', () => {
   beforeEach(() => {
-    jest.spyOn(SynapseClient, 'getFileResult').mockResolvedValue(mockFileHandle)
+    jest.spyOn(SynapseClient, 'getFileResult').mockResolvedValue({
+      fileHandleId: mockFileHandle.id,
+      fileHandle: mockFileHandle,
+    })
     jest
       .spyOn(SynapseClient, 'getFileHandleContent')
       .mockResolvedValue(JSON.stringify(formschemaJson))
 
-    jest.spyOn(SynapseClient, 'uploadFile').mockResolvedValue(mockFileEntity)
+    jest.spyOn(SynapseClient, 'uploadFile').mockResolvedValue({
+      fileHandleId: mockFileHandle.id,
+      fileName: 'foobar.txt',
+    })
     jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue(mockFileEntity)
-    jest.spyOn(SynapseClient, 'createEntity').mockResolvedValue('123444')
+    jest.spyOn(SynapseClient, 'createEntity').mockResolvedValue(mockFileEntity)
     jest
       .spyOn(SynapseClient, 'getFileHandleContentFromID')
-      .mockResolvedValue(mockFormData)
+      .mockResolvedValue(JSON.stringify(mockFormData))
 
     jest.clearAllMocks()
   })
@@ -256,17 +275,17 @@ describe('SynapseFormWrapper', () => {
     test('should CREATE formData if there is not a formDataId', async () => {
       jest
         .spyOn(SynapseClient, 'uploadFile')
-        .mockResolvedValue({ fileHandleId: '123' })
+        .mockResolvedValue({ fileHandleId: '123', fileName: 'foobar.txt' })
 
       const create = jest
         .spyOn(SynapseClient, 'createFormData')
-        .mockResolvedValue(JSON.stringify(formschemaJson))
+        .mockResolvedValue(mockSubmittedFormData)
 
       const update = jest
         .spyOn(SynapseClient, 'updateFormData')
-        .mockResolvedValue(JSON.stringify(formschemaJson))
+        .mockResolvedValue(mockSubmittedFormData)
 
-      const formData = _.cloneDeep(formschemaJson)
+      const formData = _.cloneDeep(formschemaJson) as unknown as IFormData
       _.set(formData, props.fileNamePath, 'someName')
 
       renderComponent(props)
@@ -274,6 +293,7 @@ describe('SynapseFormWrapper', () => {
       await screen.findByTestId('SynapseForm')
 
       // Call under test -- call onSave
+      const onSaveCaptor = mockSynapseForm.mock.lastCall![0].onSave
       onSaveCaptor(formData)
 
       await waitFor(() => {
@@ -289,15 +309,15 @@ describe('SynapseFormWrapper', () => {
       }
       jest
         .spyOn(SynapseClient, 'uploadFile')
-        .mockResolvedValue({ fileHandleId: '123' })
+        .mockResolvedValue({ fileHandleId: '123', fileName: 'foobar.txt' })
       const create = jest
         .spyOn(SynapseClient, 'createFormData')
-        .mockResolvedValue(JSON.stringify(formschemaJson))
+        .mockResolvedValue(mockSubmittedFormData)
       const update = jest
         .spyOn(SynapseClient, 'updateFormData')
-        .mockResolvedValue(JSON.stringify(formschemaJson))
+        .mockResolvedValue(mockSubmittedFormData)
 
-      const formData = _.cloneDeep(formschemaJson)
+      const formData = _.cloneDeep(formschemaJson) as unknown as IFormData
       _.set(formData, props.fileNamePath, 'someName')
 
       renderComponent(_props)
@@ -305,6 +325,7 @@ describe('SynapseFormWrapper', () => {
       await screen.findByTestId('SynapseForm')
 
       // Call under test -- call onSave
+      const onSaveCaptor = mockSynapseForm.mock.lastCall![0].onSave
       onSaveCaptor(formData)
 
       await waitFor(() => {
@@ -318,13 +339,15 @@ describe('SynapseFormWrapper', () => {
     test('should create formData if there is not and ID', async () => {
       jest
         .spyOn(SynapseClient, 'uploadFile')
-        .mockResolvedValue({ fileHandleId: '123' })
+        .mockResolvedValue({ fileHandleId: '123', fileName: 'foobar.txt' })
 
       const submit = jest
         .spyOn(SynapseClient, 'submitFormData')
-        .mockResolvedValue(JSON.stringify(formschemaJson))
+        .mockResolvedValue(mockSubmittedFormData)
 
-      const formData = _.cloneDeep(formschemaJson)
+      const formData: IFormData = _.cloneDeep(
+        formschemaJson,
+      ) as unknown as IFormData
       _.set(formData, props.fileNamePath, 'someName')
 
       renderComponent(props)
@@ -332,6 +355,7 @@ describe('SynapseFormWrapper', () => {
       await screen.findByTestId('SynapseForm')
 
       // Call under test -- call onSubmit
+      const onSubmitCaptor = mockSynapseForm.mock.lastCall![0].onSubmit
       onSubmitCaptor(formData)
 
       await waitFor(() => expect(submit).toHaveBeenCalled())

@@ -6,11 +6,10 @@ import {
   guessPropertyType,
   PropertyType,
   transformDataFromPropertyType,
-} from '../../../../src/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
+} from './AdditionalPropertiesSchemaField'
 import { getDefaultRegistry } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
-import { createSchemaUtils } from '@rjsf/utils'
-import { JSONSchema } from '@apidevtools/json-schema-ref-parser'
+import { createSchemaUtils, IdSchema } from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
 
 const schemaUtils = createSchemaUtils(
@@ -123,10 +122,16 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
         <AdditionalPropertiesSchemaField
           schema={{ __additional_property: true, type: 'array' }}
           uiSchema={{}}
-          idSchema={{ $id: 'root' }}
+          idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
           onChange={jest.fn()}
+          onBlur={jest.fn()}
+          onFocus={jest.fn()}
+          disabled={false}
+          readonly={false}
+          name={''}
+          onDropPropertyClick={jest.fn()}
         />,
       )
 
@@ -137,7 +142,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      const typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
       expect(
         within(typeInput).getByText<HTMLOptionElement>('String').selected,
       ).toBeTruthy()
@@ -160,10 +165,16 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
         <AdditionalPropertiesSchemaField
           schema={{ __additional_property: true, type: 'array' }}
           uiSchema={{}}
-          idSchema={{ $id: 'root' }}
+          idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
           onChange={jest.fn()}
+          onBlur={jest.fn()}
+          onFocus={jest.fn()}
+          disabled={false}
+          readonly={false}
+          name={''}
+          onDropPropertyClick={jest.fn()}
         />,
       )
 
@@ -174,7 +185,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      const typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
       expect(
         within(typeInput).getByText<HTMLOptionElement>('Datetime').selected,
       ).toBeTruthy()
@@ -210,10 +221,16 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
         <AdditionalPropertiesSchemaField
           schema={{ __additional_property: true, type: 'array' }}
           uiSchema={{}}
-          idSchema={{ $id: 'root' }}
+          idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
           onChange={jest.fn()}
+          onBlur={jest.fn()}
+          onFocus={jest.fn()}
+          disabled={false}
+          readonly={false}
+          name={''}
+          onDropPropertyClick={jest.fn()}
         />,
       )
 
@@ -224,7 +241,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      const typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
       expect(
         within(typeInput).getByText<HTMLOptionElement>('String').selected,
       ).toBeTruthy()
