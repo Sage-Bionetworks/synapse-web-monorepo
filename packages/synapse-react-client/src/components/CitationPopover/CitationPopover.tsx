@@ -9,13 +9,12 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  darken,
-  useTheme,
 } from '@mui/material'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useCitation } from './useCitation'
+import DoubleQuotes from '../../assets/icons/DoubleQuotes'
 
 type CitationPopoverProps = {
   doi: string | undefined
@@ -30,13 +29,12 @@ function CitationPopover({
 }: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [citationFormat, setCitationFormat] = useState('bibtex')
-  const theme = useTheme()
 
   const selectSx = {
     width: '100%',
-    backgroundColor: '#F1F3F5',
     '.MuiInputBase-root': {
       minHeight: '38px',
+      borderRadius: 0,
       '&:before, &:after': {
         borderBottom: 'none !important',
       },
@@ -55,25 +53,6 @@ function CitationPopover({
       padding: '7px 10px',
     },
   }
-
-  const quotationSvg = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="13"
-      viewBox="0 0 12 13"
-      fill="none"
-    >
-      <path
-        d="M1.2002 6.85162H3.497C3.497 7.82963 3.09981 8.71402 2.4614 9.35362C2.45901 9.356 2.45421 9.3608 2.45179 9.36322V10.3364C3.18859 10.2116 3.84859 9.85881 4.35379 9.35361C4.99457 8.71283 5.38939 7.82961 5.38939 6.85161L5.38943 2.66241H1.20022L1.2002 6.85162Z"
-        fill="#395979"
-      />
-      <path
-        d="M6.61035 2.66242V6.85162H8.90715C8.90715 7.82963 8.50996 8.71402 7.87155 9.35362C7.86917 9.356 7.86436 9.3608 7.86194 9.36322V10.3364C8.59874 10.2116 9.25874 9.85881 9.76394 9.35361C10.4048 8.714 10.7995 7.83081 10.7995 6.85161V2.66241L6.61035 2.66242Z"
-        fill="#395979"
-      />
-    </svg>
-  )
 
   const handleChange = (event: SelectChangeEvent) => {
     setCitationFormat(event.target.value)
@@ -145,7 +124,7 @@ function CitationPopover({
             borderColor: 'grey.400',
           }}
         >
-          <Box sx={{ display: 'flex' }}>{quotationSvg}</Box>
+          <Box sx={{ display: 'flex' }}>{DoubleQuotes}</Box>
           <Typography variant="label" sx={{ lineHeight: '20px' }}>
             Cite As
           </Typography>

@@ -43,7 +43,7 @@ import {
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
-import { Stack } from '@mui/system'
+import { Stack } from '@mui/material'
 import CitationPopover from '../CitationPopover'
 
 export type KeyToAlias = {
