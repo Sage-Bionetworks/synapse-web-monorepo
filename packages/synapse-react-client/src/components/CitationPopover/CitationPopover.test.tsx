@@ -109,9 +109,6 @@ describe('CitationPopover tests', () => {
 
     await screen.findByText(content => content.includes('Some BibTeX Entry'))
 
-    // const copyButton = screen.getByTestId('CopyButton')
-    // await userEvent.click(copyButton)
-
     const copyButton = screen.getByRole('button', {
       name: /Copy to clipboard/i,
     })
