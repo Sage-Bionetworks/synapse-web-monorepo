@@ -1,63 +1,72 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { UseQueryResult, useQuery } from '@tanstack/react-query'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { UseQueryResult } from '@tanstack/react-query'
 import CitationPopover from './CitationPopover'
+import { useCitation } from './useCitation'
 
-jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(),
+jest.mock('./useCitation', () => ({
+  useCitation: jest.fn(),
 }))
 
-const mockUseQuery = useQuery as jest.MockedFunction<typeof useQuery>
+const mockUseCitation = useCitation as jest.MockedFunction<typeof useCitation>
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    status: 200,
-    statusText: 'OK',
-    text: () =>
-      Promise.resolve(
-        '@misc{test2025,\n  title = {Some BibTeX Entry},\n  year = {2025}\n}',
-      ),
-  }),
-) as jest.Mock
-
-const openPopover = () => {
-  const button = screen.getByText('Cite As')
-  fireEvent.click(button)
+const openPopover = async () => {
+  const button = screen.getByTestId('CiteAsButton')
+  await act(async () => {
+    await userEvent.click(button)
+  })
 }
 
 const data =
   '@misc{test2025,\n  title = {Some BibTeX Entry},\n  year = {2025}\n}'
 
+const mockProps = {
+  doi: 'https://doi.org/10.1234/abcd1234',
+  title: 'Some Article',
+  boilerplateText: 'Some boilerplate text',
+}
+
 describe('CitationPopover tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseQuery.mockReturnValue({
+    mockUseCitation.mockReturnValue({
       isLoading: false,
       data: data,
       error: null,
       isError: false,
       isSuccess: true,
-    } as UseQueryResult<unknown, unknown>)
+    } as UseQueryResult<string, Error>)
   })
-
-  const mockProps = {
-    doi: 'https://doi.org/10.1234/abcd1234',
-    title: 'Some Article',
-    boilerplateText: 'Some boilerplate text',
-  }
+  afterEach(() => {
+    cleanup()
+  })
 
   it('renders button', () => {
     render(<CitationPopover {...mockProps} />)
-    const button = screen.getByText('Cite As')
+    const button = screen.queryByTestId('CiteAsButton')
     expect(button).toBeInTheDocument()
   })
 
-  it('opens popover when button is clicked', async () => {
+  it('opens popover when button is clicked and fetches citation', async () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
     await waitFor(() => {
       expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(mockUseCitation).toHaveBeenCalledWith(
+        mockProps.doi,
+        'bibtex',
+        true,
+      )
+    })
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(content => content.includes('Some BibTeX Entry')),
+      ).toBeInTheDocument()
     })
   })
 
@@ -65,8 +74,14 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
+    await waitFor(() => {
+      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    })
+
     const select = screen.getByRole('combobox')
-    act(() => fireEvent.mouseDown(select))
+    await act(async () => {
+      await userEvent.click(select)
+    })
 
     await waitFor(() => {
       const bibtexItems = screen.getAllByText('bibtex')
@@ -98,25 +113,32 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await waitFor(() => {
+      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
       expect(
         screen.getByText(content => content.includes('Some BibTeX Entry')),
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(content => content.includes('2025')),
       ).toBeInTheDocument()
     })
 
     const copyButton = screen.getByTestId('CopyButton')
-    act(() => fireEvent.click(copyButton))
+    await act(async () => {
+      await userEvent.click(copyButton)
+    })
 
-    expect(mockWriteText).toHaveBeenCalledWith(
-      '@misc{test2025,\n  title = {Some BibTeX Entry},\n  year = {2025}\n}',
-    )
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalledWith(data)
+    })
   })
 
   it('downloads citation', async () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
+
+    await waitFor(() => {
+      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument()
+    })
 
     await waitFor(() => {
       expect(
@@ -138,7 +160,9 @@ describe('CitationPopover tests', () => {
       name: 'Download Citation',
     })
 
-    act(() => fireEvent.click(downloadButton))
+    await act(async () => {
+      await userEvent.click(downloadButton)
+    })
 
     const clickSpy = jest.spyOn(mockLink, 'click')
 
@@ -149,17 +173,21 @@ describe('CitationPopover tests', () => {
     appendChildSpy.mockRestore()
   })
 
-  it('displays loading text while fetching citation', () => {
-    mockUseQuery.mockReturnValue({
+  it('displays loading text while fetching citation', async () => {
+    mockUseCitation.mockReturnValue({
       isLoading: true,
       data: undefined,
       error: null,
       isError: false,
       isSuccess: false,
-    } as UseQueryResult<unknown, unknown>)
+    } as UseQueryResult<string, Error>)
 
     render(<CitationPopover {...mockProps} />)
     openPopover()
+
+    await waitFor(() =>
+      expect(screen.getByTestId('CiteAsPopover')).toBeInTheDocument(),
+    )
 
     expect(screen.getByText('Loading citation...')).toBeInTheDocument()
   })

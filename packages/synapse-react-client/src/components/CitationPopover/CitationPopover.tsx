@@ -111,20 +111,17 @@ function CitationPopover({
       {doi && (
         <Button
           onClick={handleClick}
+          variant="outlined"
+          startIcon={DoubleQuotes}
+          data-testid="CiteAsButton"
           sx={{
             display: 'flex',
             height: '20px',
             padding: '2px 8px',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '4px',
-            textDecoration: 'none !important',
-            borderRadius: '3px',
-            border: '1px solid',
             borderColor: 'grey.400',
+            '& .MuiButton-startIcon': { marginRight: '4px', marginLeft: 0 },
           }}
         >
-          <Box sx={{ display: 'flex' }}>{DoubleQuotes}</Box>
           <Typography variant="label" sx={{ lineHeight: '20px' }}>
             Cite As
           </Typography>
