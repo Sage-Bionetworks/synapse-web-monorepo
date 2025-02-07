@@ -1,25 +1,25 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SynapseTableCell from '../src/components/SynapseTable/SynapseTableCell/SynapseTableCell'
+import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { QueryContextProvider } from '../src'
-import { mockTableEntity } from '../src/mocks/entity/mockTableEntity'
+import { QueryContextProvider } from '../../../index'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 
-const meta = {
+const meta: Meta<SynapseTableCellProps> = {
   title: 'Explore/SynapseTableCell',
   component: SynapseTableCell,
   tags: ['autodocs'],
-  decorators: [
-    (Story: StoryObj) => (
-      <QueryContextProvider
-        queryContext={{
-          entity: mockTableEntity,
-        }}
-      >
-        <Story />
-      </QueryContextProvider>
-    ),
-  ],
-} satisfies Meta
+  render: args => (
+    <QueryContextProvider
+      // @ts-expect-error - incomplete mock
+      queryContext={{
+        entityId: mockTableEntity.id,
+      }}
+    >
+      <SynapseTableCell {...args} />
+    </QueryContextProvider>
+  ),
+}
+
 export default meta
 type Story = StoryObj<typeof meta>
 

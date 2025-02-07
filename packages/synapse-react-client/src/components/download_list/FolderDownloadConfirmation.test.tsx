@@ -1,26 +1,25 @@
-import { act, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
   EntityChildrenResponse,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
-import { DownloadConfirmationUIProps } from '../../../src/components/download_list/DownloadConfirmationUI'
-import { FolderDownloadConfirmation } from '../../../src/components/download_list'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { act, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FolderDownloadConfirmation } from './index'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
-} from '../../../src/synapse-queries'
+} from '../../synapse-queries/index'
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../../src/testutils/ReactQueryMockUtils'
+} from '../../testutils/ReactQueryMockUtils'
 
-jest.mock('../../../src/synapse-queries', () => ({
+jest.mock('../../synapse-queries/index', () => ({
   useGetEntityChildren: jest.fn(),
   useAddQueryToDownloadList: jest.fn(),
 }))
@@ -35,9 +34,7 @@ const mockDownloadConfirmationUi = jest
     <div data-testid={DOWNLOAD_CONFIRMATION_UI_TEST_ID}></div>
   ))
 
-const mockToastFn = jest
-  .spyOn(ToastMessage, 'displayToast')
-  .mockImplementation(() => {})
+const mockToastFn = jest.spyOn(ToastMessage, 'displayToast')
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
@@ -50,12 +47,9 @@ const mockOnClose = jest.fn()
 
 async function setUp() {
   const user = userEvent.setup()
-  let component
-  await act(async () => {
-    component = render(
-      <FolderDownloadConfirmation folderId={FOLDER_ID} fnClose={mockOnClose} />,
-    )
-  })
+  const component = render(
+    <FolderDownloadConfirmation folderId={FOLDER_ID} fnClose={mockOnClose} />,
+  )
 
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
   return { component, user }
@@ -99,8 +93,7 @@ describe('FolderDownloadConfirmation', () => {
       includeTypes: [EntityType.FILE],
     })
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
     expect(passedProps).toEqual({
       onAddToDownloadCart: expect.any(Function),
       onCancel: expect.any(Function),
@@ -114,8 +107,7 @@ describe('FolderDownloadConfirmation', () => {
   it('adds files to download list using a folder ID when invoked', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -130,7 +122,19 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall[0].onSuccess()
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+          numberOfFilesAdded: 1,
+        },
+        {
+          parentId: FOLDER_ID,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        null,
+      )
     })
     expect(mockToastFn).toHaveBeenCalledWith(
       expect.any(String),
@@ -143,8 +147,7 @@ describe('FolderDownloadConfirmation', () => {
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -158,8 +161,7 @@ describe('FolderDownloadConfirmation', () => {
   it('handles case where adding files to the download list results in an error', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -174,9 +176,19 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0].onError({
-        reason: 'some error message',
-      })
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
+        new SynapseClientError(
+          400,
+          'some error message',
+          expect.getState().currentTestName!,
+        ),
+        {
+          parentId: FOLDER_ID,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        null,
+      )
     })
     expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
     expect(mockOnClose).toHaveBeenCalled()

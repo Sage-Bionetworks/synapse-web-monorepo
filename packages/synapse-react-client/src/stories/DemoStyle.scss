@@ -37,7 +37,7 @@ $synapse-tertiary-color-palette: (
   900: #2f2814,
 );
 
-@use '../src/style/main' with (
+@use '../style/main' with (
   $primary-action-color: map.get($synapse-primary-color-palette, 500),
   $secondary-action-color: map.get($synapse-secondary-color-palette, 500),
   $primary-color-palette: $synapse-primary-color-palette,
@@ -45,4 +45,4 @@ $synapse-tertiary-color-palette: (
   $primary-bgcolor-rgba: rgba(64, 123, 160, 0.03)
 );
 
-@use '../src/template_style/Index';
+@use '../template_style/Index';

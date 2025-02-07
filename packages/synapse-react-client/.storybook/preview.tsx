@@ -7,7 +7,7 @@ import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import isChromatic from 'chromatic/isChromatic'
 import { initialize, mswLoader } from 'msw-storybook-addon'
-import '../stories/DemoStyle.scss'
+import '../src/stories/DemoStyle.scss'
 import * as React from 'react'
 import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
 import { getHandlers } from '../src/mocks/msw/handlers'
@@ -25,7 +25,7 @@ import {
   nfPortalPalette,
   sageBionetworksPalette,
   stopAdPortalPalette,
-  standardsPortalPalette
+  standardsPortalPalette,
 } from '../src/theme/palette/Palettes'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 
