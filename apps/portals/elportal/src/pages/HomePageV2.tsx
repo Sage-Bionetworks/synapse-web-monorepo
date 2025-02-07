@@ -177,82 +177,80 @@ export default function HomePage() {
           </SectionLayout>
         </div>
         <div className={'home-bg-dark'}>
-          <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-            <FeaturedDataTabs
-              sql={dataSql}
-              rgbIndex={3}
-              configs={[
-                {
-                  title: 'Human Studies',
-                  icon: 'PERSON',
-                  explorePagePath: '/Explore/Studies',
-                  exploreObjectType: 'Studies',
-                  plotsConfig: {
-                    configs: [
-                      {
-                        title: 'The Long Life Family Study',
-                        description:
-                          'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'LLFS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=LLFS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                      {
-                        title: 'ADAMTS7 Study',
-                        description:
-                          'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'ADAMTS7',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                    ],
-                  },
+          <FeaturedDataTabs
+            sql={dataSql}
+            rgbIndex={3}
+            configs={[
+              {
+                title: 'Human Studies',
+                icon: 'PERSON',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title: 'The Long Life Family Study',
+                      description:
+                        'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'LLFS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title: 'ADAMTS7 Study',
+                      description:
+                        'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'ADAMTS7',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
                 },
-                {
-                  title: 'Translational Studies',
-                  icon: 'TRANSLATIONAL',
-                  explorePagePath: '/Explore/Studies',
-                  exploreObjectType: 'Studies',
-                  plotsConfig: {
-                    configs: [
-                      {
-                        title: 'MRGWAS',
-                        description:
-                          'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'MRGWAS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                      {
-                        title: 'Aging-PheWAS',
-                        description:
-                          'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'Aging-PheWAS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                    ],
-                  },
+              },
+              {
+                title: 'Translational Studies',
+                icon: 'TRANSLATIONAL',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title: 'MRGWAS',
+                      description:
+                        'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'MRGWAS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title: 'Aging-PheWAS',
+                      description:
+                        'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'Aging-PheWAS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
                 },
-              ]}
-            />
-          </SectionLayout>
+              },
+            ]}
+          />
         </div>
         <ELContributeYourData />
         <PortalFeatureHighlights

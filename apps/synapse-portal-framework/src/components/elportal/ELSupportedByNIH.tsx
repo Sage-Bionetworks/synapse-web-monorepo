@@ -7,13 +7,9 @@ const ELSupportedByNIH: React.FC = () => {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: {
-          xs: '100%',
-          sm: '50% 50%',
-          md: '25% 75%',
-        },
-        position: 'relative',
-        p: '80px',
+        gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
+        gap: { xs: '38px', md: '80px' },
+        padding: { xs: '40px', lg: '80px' },
       }}
     >
       <Box
@@ -54,7 +50,6 @@ const ELSupportedByNIH: React.FC = () => {
         sx={{
           width: '100%',
           height: '100%',
-          pl: { xs: 'none', md: '80px' },
         }}
       >
         <Box
@@ -65,7 +60,7 @@ const ELSupportedByNIH: React.FC = () => {
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'contain',
           }}
-        ></Box>
+        />
         <Typography
           variant="body1"
           sx={{

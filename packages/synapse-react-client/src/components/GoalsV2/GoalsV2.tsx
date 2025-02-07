@@ -104,7 +104,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
     <Box
       sx={{
         height: '560px',
-        padding: '80px',
+        padding: { xs: '40px', lg: '80px' },
       }}
     >
       <Box
@@ -114,7 +114,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         }}
       >
         <Typography
-          variant="headline1"
+          variant="headline2"
           sx={{
             pt: '30px',
             mb: '40px',
@@ -122,7 +122,7 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
             width: 'max-content',
             borderTop: '3px solid rgba(128, 128, 128, 0.25)',
             color: 'grey.1000',
-            fontSize: '32px',
+            fontSize: { xs: '24px', md: '32px' },
           }}
         >
           What's in the Portal?
@@ -132,6 +132,11 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
           target="_blank"
           rel="noopener noreferrer"
           variant="contained"
+          sx={theme => ({
+            [theme.breakpoints.down('sm')]: {
+              width: '100%',
+            },
+          })}
         >
           Start Exploring Data
         </Button>
@@ -140,9 +145,9 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
         {goalsDataArray.map((row, index) => {
           return showDesktop ? (
-            <Box sx={{ display: 'grid' }}>
+            <div>
               <GoalsV2Desktop key={index} {...row} />
-            </Box>
+            </div>
           ) : (
             <Box sx={{ display: 'grid' }}>
               <GoalsV2Mobile key={index} {...row} />
