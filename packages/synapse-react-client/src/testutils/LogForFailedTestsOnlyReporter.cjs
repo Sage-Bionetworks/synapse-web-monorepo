@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Copied from https://github.com/facebook/jest/issues/4156#issuecomment-757376195
 const { DefaultReporter } = require('@jest/reporters')
 
