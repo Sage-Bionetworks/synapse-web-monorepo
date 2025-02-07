@@ -86,9 +86,9 @@ export default function HomePage() {
             3000,
             'healthy aging',
             3000,
-            'lifespan',
+            'life span',
             3000,
-            'healthspan',
+            'health span',
             3000,
             'familial longevity',
             3000,
@@ -97,6 +97,8 @@ export default function HomePage() {
             'long-lived animal species',
             3000,
             'longevity-associated genes',
+            3000,
+            'longevity-associated omics',
             3000,
             'comparative biogerontology',
             3000,
@@ -114,7 +116,7 @@ export default function HomePage() {
   )
   const subTitle = (
     <span style={{ color: theme.palette.grey[100] }}>
-      The open science hub for breakthroughs in lifespan and healthspan
+      The open science hub for breakthroughs in life span and health span
     </span>
   )
   const description = (
