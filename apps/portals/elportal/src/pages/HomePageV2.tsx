@@ -25,7 +25,7 @@ import {
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
-import headerbackground from '../assets/headerbackground.png'
+import headerbackgroundvideo from '../assets/header-video.mp4'
 import { Box } from '@mui/material'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import { handleUpsetPlotClick } from 'src/config/synapseConfigs/handleUpsetPlotClick'
@@ -61,7 +61,15 @@ export default function HomePage() {
   )
   const title = (
     <Box sx={{ color: 'grey.100' }}>
-      <div>Explore the data</div>
+      Discover and explore data&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.up('md')]: {
+            display: 'block',
+          },
+        })}
+      ></Box>
       about&nbsp;
       <Box
         component={'span'}
@@ -98,7 +106,7 @@ export default function HomePage() {
           repeat={Infinity}
           style={{
             fontWeight: 700,
-            color: theme.palette.primary.main,
+            color: '#35E7C6',
           }}
         />
       </Box>
@@ -120,16 +128,17 @@ export default function HomePage() {
   return (
     <>
       <PortalHomePageHeader
-        backgroundCss={`linear-gradient(90deg, #1C3D4F 45.5%, rgba(28, 61, 79, 0.00) 100%), url(${headerbackground}) lightgray 50% / cover no-repeat`}
+        backgroundCss={`linear-gradient(90deg, #024472 45.5%, rgba(2, 68, 114, 0.00) 100%)`}
         title={title}
         subTitle={subTitle}
         description={description}
+        backgroundMp4={headerbackgroundvideo}
       />
       <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
-        summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
+        summaryText="We provide rich multi-omic datasets, computational tools, and publications that empower researchers to discover novel biomarkers of health and disease."
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
