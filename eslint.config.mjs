@@ -15,11 +15,11 @@ const getDirectories = source =>
     .map(dirent => dirent.name)
 
 // TODO: Use Nx API to retrieve project directories
-const appDirs = getDirectories('apps').map(app => `apps/${app}`)
-const portalDirs = getDirectories('apps/portals').map(
+const appDirs = getDirectories(`${import.meta.dirname}/apps`).map(app => `apps/${app}`)
+const portalDirs = getDirectories(`${import.meta.dirname}/apps/portals`).map(
   app => `apps/portals/${app}`,
 )
-const packageDirs = getDirectories('packages').map(pkg => `packages/${pkg}`)
+const packageDirs = getDirectories(`${import.meta.dirname}/packages`).map(pkg => `packages/${pkg}`)
 const allProjectDirs = [...appDirs, ...portalDirs, ...packageDirs]
 
 export default tseslint.config(
