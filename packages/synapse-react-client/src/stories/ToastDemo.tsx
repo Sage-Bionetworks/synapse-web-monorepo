@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { displayToast } from '../src/components/ToastMessage'
+import { displayToast } from '../components/ToastMessage/index'
 
 export const ToastDemo = () => {
   const [variant, setVariant] = useState<

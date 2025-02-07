@@ -33,7 +33,7 @@
       "vite-config/*": ["../vite-config/src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.json"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.json"],
   "references": [
     //    {
     //      "path": "../synapse-client"

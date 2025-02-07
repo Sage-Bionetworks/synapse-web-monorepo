@@ -1,12 +1,8 @@
 // Copied from https://github.com/facebook/jest/issues/4156#issuecomment-757376195
-import { DefaultReporter, TestResult, Config } from '@jest/reporters'
+const { DefaultReporter } = require('@jest/reporters')
 
 class Reporter extends DefaultReporter {
-  printTestFileHeader(
-    _testPath: string,
-    _config: Config.ProjectConfig,
-    result: TestResult,
-  ) {
+  printTestFileHeader(_testPath, _config, result) {
     const console = result.console
 
     if (result.numFailingTests === 0 && !result.testExecError) {

@@ -7,19 +7,19 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { FolderDownloadConfirmation } from '../../../src/components/download_list'
-import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
-import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
+import { FolderDownloadConfirmation } from './index'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
-} from '../../../src/synapse-queries'
+} from '../../synapse-queries/index'
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../../src/testutils/ReactQueryMockUtils'
+} from '../../testutils/ReactQueryMockUtils'
 
-jest.mock('../../../src/synapse-queries', () => ({
+jest.mock('../../synapse-queries/index', () => ({
   useGetEntityChildren: jest.fn(),
   useAddQueryToDownloadList: jest.fn(),
 }))

@@ -2,7 +2,7 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": ".",
+    "rootDir": "src",
     "baseUrl": ".",
     "outDir": "../../node_modules/.cache/.tsc_cache/synapse-portal-framework",
     "noEmit": false,

@@ -15,11 +15,15 @@ const getDirectories = source =>
     .map(dirent => dirent.name)
 
 // TODO: Use Nx API to retrieve project directories
-const appDirs = getDirectories(`${import.meta.dirname}/apps`).map(app => `apps/${app}`)
+const appDirs = getDirectories(`${import.meta.dirname}/apps`).map(
+  app => `apps/${app}`,
+)
 const portalDirs = getDirectories(`${import.meta.dirname}/apps/portals`).map(
   app => `apps/portals/${app}`,
 )
-const packageDirs = getDirectories(`${import.meta.dirname}/packages`).map(pkg => `packages/${pkg}`)
+const packageDirs = getDirectories(`${import.meta.dirname}/packages`).map(
+  pkg => `packages/${pkg}`,
+)
 const allProjectDirs = [...appDirs, ...portalDirs, ...packageDirs]
 
 export default tseslint.config(
@@ -46,7 +50,11 @@ export default tseslint.config(
           // We must enumerate each file that we want to lint that is not explicitly captured by a project-specific tsconfig
           // allowDefaultProject does not allow `**` globs.
           // https://github.com/typescript-eslint/typescript-eslint/issues/9739
-          allowDefaultProject: allProjectDirs.map(dir => `${dir}/*.ts`)
+          allowDefaultProject: [
+            ...allProjectDirs.map(dir => `${dir}/*.ts`),
+            `packages/synapse-react-client/.storybook/*.ts`,
+            `packages/synapse-react-client/.storybook/*.tsx`,
+          ],
         },
         project: [
           './tsconfig.json',
