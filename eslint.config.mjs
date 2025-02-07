@@ -7,6 +7,20 @@ import barrel from 'eslint-plugin-barrel-files'
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import storybook from 'eslint-plugin-storybook'
+import { readdirSync } from 'fs'
+
+const getDirectories = source =>
+  readdirSync(source, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+
+// TODO: Use Nx API to retrieve project directories
+const appDirs = getDirectories('apps').map(app => `apps/${app}`)
+const portalDirs = getDirectories('apps/portals').map(
+  app => `apps/portals/${app}`,
+)
+const packageDirs = getDirectories('packages').map(pkg => `packages/${pkg}`)
+const allProjectDirs = [...appDirs, ...portalDirs, ...packageDirs]
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -28,7 +42,18 @@ export default tseslint.config(
     },
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          // We must enumerate each file that we want to lint that is not explicitly captured by a project-specific tsconfig
+          // allowDefaultProject does not allow `**` globs.
+          // https://github.com/typescript-eslint/typescript-eslint/issues/9739
+          allowDefaultProject: allProjectDirs.map(dir => `${dir}/*.ts`)
+        },
+        project: [
+          './tsconfig.json',
+          './packages/**/*/tsconfig.json',
+          './apps/**/*/tsconfig.json',
+        ],
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         JSX: true,
@@ -84,6 +109,12 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['synapse-client/src/generated/'],
+    ignores: [
+      '.nx/',
+      '**/generated/',
+      '**/build/',
+      '**/dist/',
+      '**/playwright-report/',
+    ],
   },
 )

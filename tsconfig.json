@@ -1,7 +1,7 @@
 {
   "extends": "./shared/tsconfig.base.json",
   "files": ["eslint.config.mjs"],
-  "include": [],
+  "include": ["./**/vite.config.ts"],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
