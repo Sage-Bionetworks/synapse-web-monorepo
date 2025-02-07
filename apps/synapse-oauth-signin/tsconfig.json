@@ -1,7 +1,7 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": "./src",
     "baseUrl": "src",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

@@ -2,6 +2,7 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
+    "baseUrl": "src",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "resolveJsonModule": true,
