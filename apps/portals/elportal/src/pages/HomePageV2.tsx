@@ -86,9 +86,9 @@ export default function HomePage() {
             3000,
             'healthy aging',
             3000,
-            'life span',
+            'lifespan',
             3000,
-            'health span',
+            'healthspan',
             3000,
             'familial longevity',
             3000,
@@ -116,7 +116,7 @@ export default function HomePage() {
   )
   const subTitle = (
     <span style={{ color: theme.palette.grey[100] }}>
-      The open science hub for breakthroughs in life span and health span
+      The open science hub for breakthroughs in lifespan and healthspan
     </span>
   )
   const description = (
