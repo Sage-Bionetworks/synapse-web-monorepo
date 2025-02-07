@@ -50,7 +50,7 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 
@@ -69,7 +69,7 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 
@@ -103,7 +103,7 @@ describe('CitationPopover tests', () => {
     })
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 
@@ -124,7 +124,7 @@ describe('CitationPopover tests', () => {
     const { title } = mockProps
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 
@@ -151,7 +151,7 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 
@@ -168,7 +168,7 @@ describe('CitationPopover tests', () => {
     render(<CitationPopover {...mockProps} />)
     openPopover()
 
-    await screen.findByRole('presentation', {
+    await screen.findByRole('dialog', {
       name: /Citation options popover/i,
     })
 

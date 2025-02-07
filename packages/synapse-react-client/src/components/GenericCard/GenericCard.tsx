@@ -639,7 +639,6 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
           {includeCitation && (
             <Box
               sx={{
-                display: 'flex',
                 marginLeft: 'auto',
                 paddingTop: '21px',
                 paddingRight: '40px',

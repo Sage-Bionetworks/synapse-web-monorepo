@@ -10,6 +10,7 @@ import {
   MenuItem,
   SelectChangeEvent,
   Alert,
+  SxProps,
 } from '@mui/material'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import CloseIcon from '@mui/icons-material/Close'
@@ -24,6 +25,30 @@ type CitationPopoverProps = {
   boilerplateText?: string
 }
 
+const selectSx: SxProps = {
+  width: '100%',
+  '.MuiInputBase-root': {
+    minHeight: '38px',
+    borderRadius: 0,
+    '&:before, &:after': {
+      borderBottom: 'none !important',
+    },
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 0,
+  },
+  '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '.MuiSelect-select': {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  '.MuiInputBase-input': {
+    padding: '7px 10px',
+  },
+}
+
 function CitationPopover({
   doi,
   title,
@@ -31,30 +56,6 @@ function CitationPopover({
 }: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [citationFormat, setCitationFormat] = useState('bibtex')
-
-  const selectSx = {
-    width: '100%',
-    '.MuiInputBase-root': {
-      minHeight: '38px',
-      borderRadius: 0,
-      '&:before, &:after': {
-        borderBottom: 'none !important',
-      },
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      border: 0,
-    },
-    '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      border: 'none',
-    },
-    '.MuiSelect-select': {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    '.MuiInputBase-input': {
-      padding: '7px 10px',
-    },
-  }
 
   const handleChange = (event: SelectChangeEvent) => {
     setCitationFormat(event.target.value)
@@ -85,13 +86,6 @@ function CitationPopover({
     const url = URL.createObjectURL(blob)
 
     createLinkAndDownload(title || 'citation', fileExtension, url)
-  }
-
-  const handleCopy = (citation: string) => {
-    if (!citation) {
-      return
-    }
-    navigator.clipboard.writeText(citation)
   }
 
   const open = Boolean(anchorEl)
@@ -125,6 +119,7 @@ function CitationPopover({
       )}
       <Popover
         aria-label="Citation options popover"
+        role="dialog"
         id={id}
         elevation={9}
         open={open}
@@ -246,7 +241,6 @@ function CitationPopover({
             </Button>
             <CopyToClipboardIcon
               value={citation || ''}
-              onClick={() => handleCopy(citation || '')}
               sx={{
                 '.MuiIconButton-root': {
                   width: '100%',
