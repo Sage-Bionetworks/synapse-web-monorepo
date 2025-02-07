@@ -15,7 +15,7 @@ import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
 } from '../../../../mocks/accessRequirement/mockAccessRequirements'
-import { SynapseClient } from '../../../../index'
+import * as SynapseClient from '../../../../synapse-client/SynapseClient'
 import {
   MOCK_EMPTY_RESEARCH_PROJECT,
   MOCK_RESEARCH_PROJECT,

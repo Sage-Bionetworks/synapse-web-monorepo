@@ -1,21 +1,22 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import EntityIDColumnCopyIcon from '../../../src/components/SynapseTable/EntityIDColumnCopyIcon'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import {
   QueryBundleRequest,
   QueryResultBundle,
+  TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../src/components/QueryContext/QueryContext'
+import EntityIDColumnCopyIcon from '../../../src/components/SynapseTable/EntityIDColumnCopyIcon'
 import idsQueryResponse from '../../../src/mocks/mockIDListQueryResponseData.json'
-import { SynapseClient, SynapseConstants } from '../../../src'
-import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../../src/synapse-client'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
+import * as SynapseConstants from '../../../src/utils/SynapseConstants'
 
 const synID = 'syn55555'
 const version = '7'

@@ -1,4 +1,3 @@
-import { EnumFacetFilter, EnumFacetFilterProps } from './EnumFacetFilter'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -8,24 +7,25 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import { SynapseConstants } from '../../../../utils'
-import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
-import { QueryContextType, useQueryContext } from '../../../../index'
 import userEvent from '@testing-library/user-event'
-import { server } from '../../../../mocks/msw/server'
-import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import QueryWrapper from '../../../QueryWrapper'
-import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
-import { DEBOUNCE_DELAY_MS } from '../../../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
+import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
+import { registerTableQueryResult } from '../../../../mocks/msw/handlers/tableQueryService'
+import { server } from '../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   mockUserProfileData,
   mockUserProfileData2,
 } from '../../../../mocks/user/mock_user_profile'
-import { registerTableQueryResult } from '../../../../mocks/msw/handlers/tableQueryService'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../../../utils'
+import { DEBOUNCE_DELAY_MS } from '../../../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { QueryContextType, useQueryContext } from '../../../QueryContext/index'
+import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
+import QueryWrapper from '../../../QueryWrapper'
+import { EnumFacetFilter, EnumFacetFilterProps } from './EnumFacetFilter'
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },

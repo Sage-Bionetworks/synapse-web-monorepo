@@ -10,15 +10,15 @@ import { renderHook, waitFor } from '@testing-library/react'
 import dayjs from 'dayjs'
 import { MemoryRouter } from 'react-router'
 import {
-  defaultQueryClientConfig,
-  FullContextProvider,
-  SynapseClient,
-} from '../../../index'
-import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '../../../mocks/MockSynapseContext'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import SynapseClient from '../../../synapse-client'
+import {
+  defaultQueryClientConfig,
+  FullContextProvider,
+} from '../../context/index'
 import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import {

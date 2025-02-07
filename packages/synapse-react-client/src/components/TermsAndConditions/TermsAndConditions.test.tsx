@@ -1,9 +1,10 @@
-import TermsAndConditions from './TermsAndConditions'
-import { SynapseClient, SynapseContextType } from '../../index'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import mockSyn51718002 from '../../mocks/query/syn51718002.json'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
+import mockSyn51718002 from '../../mocks/query/syn51718002.json'
+import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../utils/index'
+import TermsAndConditions from './TermsAndConditions'
 
 const defaultProps = {
   onFormChange: jest.fn(),

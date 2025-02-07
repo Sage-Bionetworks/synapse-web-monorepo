@@ -10,7 +10,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
