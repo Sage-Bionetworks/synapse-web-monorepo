@@ -2,7 +2,7 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "../../node_modules/.cache/.tsc_cache/markdown-it-synapse",
     "noEmit": false,
     "target": "esnext",
