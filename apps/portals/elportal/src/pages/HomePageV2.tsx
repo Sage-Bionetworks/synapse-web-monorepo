@@ -134,7 +134,6 @@ export default function HomePage() {
         description={description}
         backgroundMp4={headerbackgroundvideo}
       />
-      <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
@@ -279,6 +278,7 @@ export default function HomePage() {
             style: { padding: 0 },
           }}
         >
+          <PortalFeaturedPartners sql={partnersSql2} />
           <ELSupportedByNIH />
         </SectionLayout>
       </div>
