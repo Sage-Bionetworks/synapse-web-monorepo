@@ -98,6 +98,8 @@ export default function HomePage() {
             3000,
             'longevity-associated genes',
             3000,
+            'longevity-associated omics',
+            3000,
             'comparative biogerontology',
             3000,
           ]}
