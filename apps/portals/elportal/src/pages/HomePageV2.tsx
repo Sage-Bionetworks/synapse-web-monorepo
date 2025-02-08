@@ -8,6 +8,7 @@ import {
   PortalHomePageHeader,
   GoalsV2,
   PortalFeaturedPartners,
+  PortalSectionHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -158,24 +159,22 @@ export default function HomePage() {
       >
         <ELGettingStarted />
         <GoalsV2 entityId={goalsV2Table} dataLink="/Explore/Data" />
-        <div className={'home-bg-dark'}>
-          <SectionLayout
-            title="Exploring the Data"
-            centerTitle
-            ContainerProps={{ className: 'home-spacer' }}
-          >
-            <UpsetPlot
-              sql={upsetPlotSql}
-              rgbIndex={0}
-              maxBarCount={20}
-              setName="Set size"
-              combinationName="Intersection size"
-              onClick={handleUpsetPlotClick}
-              // summaryLinkText='Explore All Data'
-              // summaryLink='/Explore/Data'
-            />
-          </SectionLayout>
-        </div>
+        <SectionLayout
+          title="Exploring the Data"
+          centerTitle
+          ContainerProps={{ className: 'home-spacer' }}
+        >
+          <UpsetPlot
+            sql={upsetPlotSql}
+            rgbIndex={0}
+            maxBarCount={20}
+            setName="Set size"
+            combinationName="Intersection size"
+            onClick={handleUpsetPlotClick}
+            // summaryLinkText='Explore All Data'
+            // summaryLink='/Explore/Data'
+          />
+        </SectionLayout>
         <div className={'home-bg-dark'}>
           <FeaturedDataTabs
             sql={dataSql}
