@@ -270,6 +270,7 @@ export default function HomePage() {
           link="/Explore/Computational Tools"
         />
       </SectionLayout>
+      <PortalFeaturedPartners sql={partnersSql2} />
       <div className={'home-bg-dark'}>
         <SectionLayout
           ContainerProps={{
@@ -278,7 +279,6 @@ export default function HomePage() {
             style: { padding: 0 },
           }}
         >
-          <PortalFeaturedPartners sql={partnersSql2} />
           <ELSupportedByNIH />
         </SectionLayout>
       </div>
