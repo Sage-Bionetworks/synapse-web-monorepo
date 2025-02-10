@@ -7,14 +7,21 @@ import {
   SynapseClient,
   useApplicationSessionContext,
 } from 'synapse-react-client'
-//import { Link } from '@mui/material'
 import { IconButton } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import accountSettingsPanelConfig from './accountSettingsPanelConfig.json'
 
-function AccountSettingsTopBar() {
+interface AccountSettingsTopBarProps {
+  accountSettingsPanelConfig: Array<{
+    label: string
+    ref: RefObject<HTMLDivElement>
+  }>
+}
+
+const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
+  accountSettingsPanelConfig,
+}) => {
   const sourceApp = useSourceApp()
   const iconSx: SxProps = {
     width: '32px',
@@ -25,9 +32,16 @@ function AccountSettingsTopBar() {
   const appContext = useAppContext()
   const { refreshSession } = useApplicationSessionContext()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const signOutSectionRef = useRef<HTMLDivElement>(null)
+
+  const [isOpen, setIsOpen] = React.useState(false)
 
   const handleClose = () => {
-    setAnchorEl(null)
+    setIsOpen(false)
+  }
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setIsOpen(!isOpen)
   }
 
   const handleScroll = (ref: RefObject<HTMLDivElement>) => {
@@ -38,11 +52,14 @@ function AccountSettingsTopBar() {
     <Box
       sx={{
         display: 'flex',
+        width: '100%',
         height: '60px',
         alignItems: 'center',
         justifyContent: 'space-between',
+        position: 'fixed',
+        zIndex: 10,
+        backgroundColor: 'white',
       }}
-      onClick={event => setAnchorEl(event.currentTarget)}
     >
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <BadgeOutlined sx={iconSx} />
@@ -62,6 +79,7 @@ function AccountSettingsTopBar() {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
+          onClick={handleClick}
         >
           <MenuIcon />
         </IconButton>
@@ -69,32 +87,30 @@ function AccountSettingsTopBar() {
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
           }}
           keepMounted
           transformOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
           }}
-          open={Boolean(anchorEl)}
+          open={isOpen}
           onClose={handleClose}
-          MenuListProps={{
-            onMouseLeave: handleClose,
-          }}
         >
           {accountSettingsPanelConfig.map((item: any, index: number) => (
             <MenuItem
               key={index}
               onClick={() => {
                 handleClose()
-                if (item.ref === 'signOutSectionRef') {
+                if (item.ref === signOutSectionRef) {
                   SynapseClient.signOut().then(() => {
                     refreshSession()
                   })
                 } else if (item.ref) {
-                  const ref = useRef<HTMLDivElement>(null)
-                  handleScroll(ref)
+                  handleScroll(item.ref)
+                  setAnchorEl(item.ref)
+                  setIsOpen(false)
                 }
               }}
               sx={{
