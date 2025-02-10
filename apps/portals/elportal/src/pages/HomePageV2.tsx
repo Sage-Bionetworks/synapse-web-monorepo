@@ -159,11 +159,14 @@ export default function HomePage() {
       >
         <ELGettingStarted />
         <GoalsV2 entityId={goalsV2Table} dataLink="/Explore/Data" />
-        <SectionLayout
-          title="Exploring the Data"
-          centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
-        >
+        <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+          <PortalSectionHeader
+            title="Explore the Data"
+            buttonText="View All Studies"
+            link="/Explore/Studies"
+            summaryText="fsfds"
+            sx={{ margin: 'auto' }}
+          />
           <UpsetPlot
             sql={upsetPlotSql}
             rgbIndex={0}

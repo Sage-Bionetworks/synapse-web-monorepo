@@ -1,25 +1,36 @@
-import { Stack, Typography, Button } from '@mui/material'
+import { Stack, Typography, Button, SxProps, Theme } from '@mui/material'
 import { Link } from 'react-router'
+import { spreadSx } from '../../theme/spreadSx'
 
 export type PortalSectionHeaderProps = {
   title: string
   buttonText?: string
   summaryText?: string
+  link?: string
+  sx?: SxProps<Theme>
 }
 
 const PortalSectionHeader = ({
   title,
   buttonText,
   summaryText,
+  link,
+  sx,
 }: PortalSectionHeaderProps) => {
   return (
     <Stack
-      sx={{
+      // sx={{
+      //   gridArea: 'content',
+      //   gap: '16px',
+      //   borderTop: '3px solid',
+      //   borderColor: 'grey.400',
+      // }}
+      sx={spreadSx(sx, {
         gridArea: 'content',
         gap: '16px',
         borderTop: '3px solid',
         borderColor: 'grey.400',
-      }}
+      })}
     >
       <Typography
         variant="headline2"
@@ -33,7 +44,7 @@ const PortalSectionHeader = ({
       <Button
         variant="contained"
         component={Link}
-        to={''}
+        to={link || ''}
         sx={theme => ({
           [theme.breakpoints.up('sm')]: {
             width: 'fit-content',
