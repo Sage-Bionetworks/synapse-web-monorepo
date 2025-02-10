@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { RefObject, useRef } from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
@@ -12,6 +12,7 @@ import { IconButton } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import accountSettingsPanelConfig from './accountSettingsPanelConfig.json'
 
 function AccountSettingsTopBar() {
   const sourceApp = useSourceApp()
@@ -27,6 +28,10 @@ function AccountSettingsTopBar() {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -62,6 +67,7 @@ function AccountSettingsTopBar() {
         </IconButton>
         <Menu
           id="menu-appbar"
+          anchorEl={anchorEl}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'right',
@@ -73,16 +79,36 @@ function AccountSettingsTopBar() {
           }}
           open={Boolean(anchorEl)}
           onClose={handleClose}
+          MenuListProps={{
+            onMouseLeave: handleClose,
+          }}
         >
-          <MenuItem
-            onClick={() => {
-              SynapseClient.signOut().then(() => {
-                refreshSession()
-              })
-            }}
-          >
-            Sign out
-          </MenuItem>
+          {accountSettingsPanelConfig.map((item: any, index: number) => (
+            <MenuItem
+              key={index}
+              onClick={() => {
+                handleClose()
+                if (item.ref === 'signOutSectionRef') {
+                  SynapseClient.signOut().then(() => {
+                    refreshSession()
+                  })
+                } else if (item.ref) {
+                  const ref = useRef<HTMLDivElement>(null)
+                  handleScroll(ref)
+                }
+              }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
+                '&:active': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
         </Menu>
       </Box>
     </Box>
