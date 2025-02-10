@@ -6,6 +6,7 @@ export type PortalHomePageHeaderProps = {
   title: React.ReactNode
   subTitle: React.ReactNode
   description: React.ReactNode
+  backgroundMp4?: string
 }
 
 const PortalHomePageHeader = ({
@@ -14,6 +15,7 @@ const PortalHomePageHeader = ({
   title,
   subTitle,
   description,
+  backgroundMp4,
 }: PortalHomePageHeaderProps) => {
   return (
     <Box
@@ -21,8 +23,30 @@ const PortalHomePageHeader = ({
       sx={{
         background: backgroundCss,
         padding: { xs: 0, md: '50px 80px' },
+        position: 'relative',
       }}
     >
+      {backgroundMp4 && (
+        <Box
+          component="video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'fill',
+            zIndex: -1,
+          }}
+        >
+          <source src={backgroundMp4} type="video/mp4" />
+          Your browser does not support the video tag.
+        </Box>
+      )}
       <Stack
         sx={{
           alignItems: 'flex-start',
