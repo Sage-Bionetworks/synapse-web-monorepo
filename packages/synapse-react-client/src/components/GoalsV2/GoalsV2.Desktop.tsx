@@ -35,7 +35,10 @@ export default function GoalsV2Desktop({
             justifyContent: 'center',
           }}
         >
-          <Typography variant="h6" component="strong" sx={{ marginRight: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{ marginRight: 1, fontSize: '16px', fontWeight: 900 }}
+          >
             {countSql && (
               <QueryCount parens={false} query={{ sql: countSql }} />
             )}
