@@ -118,7 +118,7 @@ function CitationPopover({
         </Button>
       )}
       <Popover
-        aria-label="Citation options popover"
+        aria-label="Citation options"
         role="dialog"
         id={id}
         elevation={9}

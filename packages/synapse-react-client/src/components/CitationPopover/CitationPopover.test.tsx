@@ -51,7 +51,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     await waitFor(() => {
@@ -70,7 +70,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     const select = screen.getByRole('combobox')
@@ -104,7 +104,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     await screen.findByText(content => content.includes('Some BibTeX Entry'))
@@ -125,7 +125,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     await screen.findByText(content => content.includes('Some BibTeX Entry'))
@@ -152,7 +152,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     expect(screen.getByText('Loading citation...')).toBeInTheDocument()
@@ -169,7 +169,7 @@ describe('CitationPopover tests', () => {
     openPopover()
 
     await screen.findByRole('dialog', {
-      name: /Citation options popover/i,
+      name: /Citation options/i,
     })
 
     const alert = await screen.findByRole('alert')
