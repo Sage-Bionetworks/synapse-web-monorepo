@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 import dayjs from 'dayjs'
+import { Box, Button, Typography } from '@mui/material'
 
 type ControlType = 'number' | 'date'
 
@@ -30,8 +31,6 @@ export function Range(props: RangeProps) {
           max: undefined,
         },
   )
-
-  const className = props.className ? `range ${props.className}` : `range`
 
   const isValid = (
     { min, max }: RangeValues,
@@ -72,39 +71,70 @@ export function Range(props: RangeProps) {
   }
 
   return (
-    <div className={className} style={{ display: 'flex', flexWrap: 'wrap' }}>
-      <div style={{ marginRight: '10px' }}>
-        <input
-          aria-label="min"
-          key="range_min"
-          type={props.type}
-          value={values.min}
-          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
-            setValues({ min: target.value, max: values.max })
-          }
-        />
-        <div>to</div>
-        <input
-          aria-label="max"
-          key="range_max"
-          type={props.type}
-          value={values.max}
-          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
-            setValues({ min: values.min, max: target.value })
-          }
-        />
-      </div>
-      <button
-        className="btn btn-link SRC-noPadding"
-        onClick={() =>
-          handleAppyChanges(values, props.onApplyClicked, props.type)
-        }
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          marginRight: '10px',
+          gap: '10px',
+        }}
       >
-        Apply
-      </button>
-      {error && (
-        <div className="SRC-danger-color">{props.errorText || errorText}</div>
-      )}
-    </div>
+        <Box>
+          <Typography>From</Typography>
+          <input
+            aria-label="min"
+            key="range_min"
+            type={props.type}
+            value={values.min}
+            onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
+              setValues({ min: target.value, max: values.max })
+            }
+          />
+        </Box>
+        <Box>
+          <Typography>To</Typography>
+          <input
+            aria-label="max"
+            key="range_max"
+            type={props.type}
+            value={values.max}
+            onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
+              setValues({ min: values.min, max: target.value })
+            }
+          />
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-end',
+        }}
+      >
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() =>
+            handleAppyChanges(values, props.onApplyClicked, props.type)
+          }
+          sx={{
+            height: '38px',
+            borderRadius: 0,
+            border: '1px solid #395979',
+            p: '6px 8px',
+            fontSize: 14,
+          }}
+        >
+          Apply
+        </Button>
+        {error && (
+          <div className="SRC-danger-color">{props.errorText || errorText}</div>
+        )}
+      </Box>
+    </Box>
   )
 }
