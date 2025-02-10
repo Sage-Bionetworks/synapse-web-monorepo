@@ -136,7 +136,6 @@ export default function HomePage() {
         description={description}
         backgroundMp4={headerbackgroundvideo}
       />
-      <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
@@ -272,6 +271,15 @@ export default function HomePage() {
           reverseOrder={true}
           link="/Explore/Computational Tools"
         />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
+        <PortalFeaturedPartners sql={partnersSql2} />
       </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout
