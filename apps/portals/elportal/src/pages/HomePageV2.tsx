@@ -270,7 +270,15 @@ export default function HomePage() {
           link="/Explore/Computational Tools"
         />
       </SectionLayout>
-      <PortalFeaturedPartners sql={partnersSql2} />
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
+        <PortalFeaturedPartners sql={partnersSql2} />
+      </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout
           ContainerProps={{
