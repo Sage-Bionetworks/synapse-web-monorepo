@@ -12,9 +12,6 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  SxProps,
-  Menu,
-  IconButton,
 } from '@mui/material'
 import {
   FeatureFlagEnum,
@@ -23,7 +20,7 @@ import {
   VerificationState,
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
-import React, { RefObject, useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import {
   ChangePassword,
@@ -44,10 +41,7 @@ import { ProfileAvatar } from './ProfileAvatar'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import { StyledFormControl } from './StyledComponents'
-import { BadgeOutlined } from '@mui/icons-material'
-import { useSourceApp } from './useSourceApp'
-import { useAppContext } from '../AppContext'
-import MenuIcon from '@mui/icons-material/Menu'
+import AccountSettingsTopBar from './AccountSettingsTopBar'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -227,25 +221,6 @@ export const AccountSettings = () => {
     { label: 'Privacy Preferences', ref: cookieManagementRef },
     { label: 'Sign Out', ref: signOutSectionRef },
   ]
-  const sourceApp = useSourceApp()
-  const iconSx: SxProps = {
-    width: '32px',
-    height: '32px',
-    ml: '20px',
-    mr: '10px',
-  }
-  const appContext = useAppContext()
-  const { refreshSession } = useApplicationSessionContext()
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [isOpen, setIsOpen] = React.useState(false)
-
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setIsOpen(!isOpen)
-  }
 
   const handleScroll = (ref: RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
@@ -260,85 +235,7 @@ export const AccountSettings = () => {
 
   return (
     <div className="account-settings-page">
-      <Box
-        sx={{
-          display: 'flex',
-          width: '100%',
-          height: '60px',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'fixed',
-          zIndex: 1,
-          backgroundColor: 'white',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <BadgeOutlined sx={iconSx} />
-          <Typography variant="headline3" sx={{ display: 'inline' }}>
-            Account Settings
-          </Typography>
-          <Box
-            className="AccountSettingsSourceAppLogo"
-            sx={{ marginLeft: '30px', display: { xs: 'none', md: 'block' } }}
-          >
-            <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
-          </Box>
-        </Box>
-        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={handleClick}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={isOpen}
-            onClose={handleClose}
-          >
-            {menuConfigArray.map((item: any, index: number) => (
-              <MenuItem
-                key={index}
-                onClick={() => {
-                  handleClose()
-                  if (item.ref === signOutSectionRef) {
-                    SynapseClient.signOut().then(() => {
-                      refreshSession()
-                    })
-                  } else if (item.ref) {
-                    handleScroll(item.ref)
-                    setAnchorEl(item.ref)
-                    setIsOpen(false)
-                  }
-                }}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                  },
-                  '&:active': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                  },
-                }}
-              >
-                {item.label}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Box>
-      </Box>
+      <AccountSettingsTopBar accountSettingsPanelConfig={menuConfigArray} />
       <div className="panel-wrapper-bg with-account-setting">
         <Container
           maxWidth="md"
