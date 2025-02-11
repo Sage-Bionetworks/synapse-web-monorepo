@@ -164,8 +164,7 @@ export default function HomePage() {
             title="Explore the Data"
             buttonText="View All Studies"
             link="/Explore/Studies"
-            summaryText="fsfds"
-            sx={{ margin: 'auto' }}
+            centered
           />
           <UpsetPlot
             sql={upsetPlotSql}

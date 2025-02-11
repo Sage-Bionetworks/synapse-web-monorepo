@@ -8,12 +8,12 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { Link } from 'react-router'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 export type RecentPublicationsGridProps = {
   sql: string
@@ -209,45 +209,18 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           ))}
         </Box>
       </Box>
-      <Box>
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="16px"
+      <Box sx={{ paddingBottom: '30px' }}>
+        <PortalSectionHeader
+          title="Recently Published"
+          summaryText={summaryText}
+          buttonText={buttonLinkText}
+          link={buttonLink}
+          reverseButtonAndText
           sx={{
-            borderTop: '3px solid',
-            borderColor: 'grey.400',
-            padding: '30px 0',
+            h2: { fontSize: '24px', paddingTop: '30px' },
+            '& p': { fontSize: '16px', lineHeight: '24px' },
           }}
-        >
-          <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>
-            Recently Published
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontStyle: 'italic', color: 'grey.800' }}
-          >
-            {summaryText && summaryText}
-          </Typography>
-          {buttonLink && buttonLinkText && (
-            <Button
-              variant="contained"
-              to={buttonLink}
-              component={Link}
-              sx={theme => ({
-                whiteSpace: 'nowrap',
-                alignSelf: 'flex-start',
-                padding: '6px 24px',
-                fontWeight: 600,
-                [theme.breakpoints.down('sm')]: {
-                  width: '100%',
-                },
-              })}
-            >
-              {buttonLinkText}
-            </Button>
-          )}
-        </Box>
+        />
       </Box>
     </Box>
   )

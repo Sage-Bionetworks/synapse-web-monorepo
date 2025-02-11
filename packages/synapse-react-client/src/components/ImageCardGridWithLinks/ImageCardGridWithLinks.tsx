@@ -20,6 +20,7 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 const BORDER_RADIUS = '6px'
 
@@ -178,30 +179,14 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <div>
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="16px"
-          sx={{ borderTop: '3px solid', borderColor: 'grey.400' }}
-        >
-          <Typography
-            color="grey.1000"
-            variant="headline2"
-            paddingTop="26px"
-            fontSize="24px"
-          >
-            {title}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="grey.800"
-            sx={{ fontStyle: 'italic' }}
-          >
-            {summaryText}
-          </Typography>
-        </Box>
-      </div>
+      <PortalSectionHeader
+        title={title}
+        summaryText={summaryText}
+        sx={{
+          h2: { fontSize: '24px', paddingTop: '26px' },
+          '& p': { fontSize: '16px', lineHeight: '24px' },
+        }}
+      />
       <Grid
         container
         spacing={2.5}

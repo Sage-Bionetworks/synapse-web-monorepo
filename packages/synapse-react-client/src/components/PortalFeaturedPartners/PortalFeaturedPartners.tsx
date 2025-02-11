@@ -5,6 +5,7 @@ import { SynapseConstants } from '../../utils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 export type PortalFeaturedPartnersProps = {
   sql: string
@@ -147,28 +148,16 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
     <Box
       sx={{
         display: 'grid',
-        padding: { xs: '40px', md: '20px 80px' },
+        padding: { xs: '40px', lg: '20px 80px' },
         backgroundColor: 'grey.100',
         gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
         gap: '50px',
       }}
     >
-      <Box
-        sx={{
-          borderTop: '3px solid',
-          borderColor: 'grey.400',
-          gap: '16px',
-        }}
-      >
-        <Typography
-          color="grey.1000"
-          variant="headline2"
-          paddingTop="26px"
-          fontSize="24px"
-        >
-          Our Partners
-        </Typography>
-      </Box>
+      <PortalSectionHeader
+        title="Our Partners"
+        sx={{ h2: { fontSize: '24px', paddingTop: '26px' } }}
+      />
       <Box
         sx={theme => ({
           display: 'flex',
