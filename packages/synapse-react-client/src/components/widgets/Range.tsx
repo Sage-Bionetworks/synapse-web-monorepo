@@ -92,16 +92,32 @@ export function Range(props: RangeProps) {
           },
         }}
       >
-        <Box>
+        <Box key="range_min">
           <Typography>From</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker />
+            <DatePicker
+              value={values.min ? dayjs(values.min) : null}
+              onChange={date =>
+                setValues({
+                  min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                  max: values.max,
+                })
+              }
+            />
           </LocalizationProvider>
         </Box>
-        <Box>
+        <Box key="range_max">
           <Typography>To</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker />
+            <DatePicker
+              value={values.max ? dayjs(values.max) : null}
+              onChange={date =>
+                setValues({
+                  max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                  min: values.min,
+                })
+              }
+            />
           </LocalizationProvider>
         </Box>
       </Box>
