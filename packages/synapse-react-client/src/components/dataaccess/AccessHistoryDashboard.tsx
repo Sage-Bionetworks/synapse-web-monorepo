@@ -115,7 +115,7 @@ export const UserHistoryDashboard = () => {
   )
 
   return (
-    <div className="UserHistoryDashboard bootstrap-4-backport">
+    <div className="UserHistoryDashboard">
       <div className="InputPanel">
         <div>
           <Typography

@@ -24,7 +24,7 @@ export function EvaluationEditorPage({
     string | undefined
   >(evaluationId)
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       <EvaluationEditor
         evaluationId={savedEvaluationId}
         //do not use entityId if we already have the evaluation Id

@@ -1,25 +1,22 @@
+import { useGetDownloadListStatistics } from '../../synapse-queries/index'
 import DownloadDetails from './DownloadDetails'
 
-export type DownloadListStatsProps = {
-  numFiles: number
-  numPackagableFiles: number
-  numBytes: number
-}
+export default function DownloadListStats() {
+  const { data } = useGetDownloadListStatistics({ throwOnError: true })
 
-export default function DownloadListStats(props: DownloadListStatsProps) {
-  const { numFiles, numPackagableFiles, numBytes } = props
+  if (!data) {
+    return null
+  }
 
   return (
     <div>
       <DownloadDetails
-        numFiles={numFiles}
-        numPackagableFiles={numPackagableFiles}
-        numBytes={numBytes}
-      ></DownloadDetails>
-      {
-        // also have access to fileStats.numberOfFilesRequiringAction
-        // and fileStats.totalNumberOfFiles
-      }
+        numBytes={data.sumOfFileSizesAvailableForDownload}
+        numPackagableFiles={
+          data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+        }
+        numFiles={data.numberOfFilesAvailableForDownload}
+      />
     </div>
   )
 }

@@ -1,4 +1,5 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, useTheme } from '@mui/material'
+import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Select, {
   components,
@@ -9,8 +10,6 @@ import Select, {
 import { useSearchUserGroupHeaders } from '../../synapse-queries'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
-import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 type UserSearchBoxValueType = {
@@ -44,14 +43,6 @@ const customSelectComponents: Partial<
     GroupBase<UserSearchBoxValueType>
   >
 > = {
-  Control: props => {
-    return (
-      <components.Control
-        {...props}
-        className={`form-control ${props.className ?? ''}`}
-      />
-    )
-  },
   SingleValue: props => {
     const { data } = props
     return (
@@ -91,6 +82,8 @@ function UserSearchBoxV2(props: UserSearchBoxProps) {
     focusOnSelect = false,
     value,
   } = props
+
+  const { palette } = useTheme()
   const [inputValue, setInputValue] = useState('')
   const [debouncedInput, setDebouncedInput] = useState('')
   useDebouncedEffect(
@@ -157,7 +150,7 @@ function UserSearchBoxV2(props: UserSearchBoxProps) {
 
   return (
     <Select
-      className="bootstrap-4-backport UserSearchBoxV2"
+      className="UserSearchBoxV2"
       ref={selectRef}
       inputValue={inputValue}
       onInputChange={setInputValue}
@@ -181,8 +174,7 @@ function UserSearchBoxV2(props: UserSearchBoxProps) {
       isClearable
       value={value}
       styles={{
-        // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
-        control: styles => ({ ...styles, display: 'flex !important' }),
+        control: styles => ({ ...styles, backgroundColor: palette.grey[200] }),
         input: provided => ({
           ...provided,
           // SWC-6327 - Adjust the input style so a right-click focuses on the input field

@@ -1,7 +1,7 @@
-import { Fragment, useCallback, useEffect } from 'react'
+import { AddBox, CloseTwoTone } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
-import { CloseTwoTone, AddBox } from '@mui/icons-material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
+import { Fragment, useCallback, useEffect } from 'react'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 import {
   EvaluationRoundLimitOptions,
@@ -70,10 +70,12 @@ export function EvaluationRoundLimitOptionsList({
 
             {/*remove button for the EvaluationRoundLimitOptions*/}
             <IconButton
+              size={'small'}
               color="primary"
               aria-label="Remove"
               className="remove-button"
               onClick={handleDeleteLimit(index)}
+              sx={{ height: '40px', width: '40px' }}
             >
               <CloseTwoTone />
             </IconButton>
@@ -85,10 +87,12 @@ export function EvaluationRoundLimitOptionsList({
                 // if the are unused limit types
                 limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
                   <IconButton
+                    size={'small'}
                     color="primary"
                     aria-label="Add"
                     onClick={addNewLimit}
                     className="add-button"
+                    sx={{ height: '40px', width: '40px' }}
                   >
                     <AddBox />
                   </IconButton>

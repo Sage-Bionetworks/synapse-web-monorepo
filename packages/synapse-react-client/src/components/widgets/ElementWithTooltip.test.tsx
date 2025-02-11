@@ -34,11 +34,11 @@ function init(overrides?: ElementWithTooltipProps) {
 }
 
 describe('ElementWithTooltip', () => {
-  beforeEach(() => init())
   afterEach(() => {
     jest.useRealTimers()
   })
   it('should render with correct tooltip properties', async () => {
+    init()
     jest.useFakeTimers()
     const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
     await user.hover(imageButton)
@@ -73,9 +73,10 @@ describe('ElementWithTooltip', () => {
 
   it('should create dropdown toggle element without callbackFn passed in', () => {
     init({ ...props, callbackFn: undefined })
-    expect(imageButton.classList.contains('dropdown-toggle')).toBe(true)
+    screen.getByRole('button')
   })
   it('should call the callback Fn', async () => {
+    init()
     await userEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
   })

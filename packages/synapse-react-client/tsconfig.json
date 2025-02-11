@@ -3,11 +3,11 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-react-client",
+    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-react-client/build",
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
-    "allowJs": false,
+    "allowJs": true,
     "noEmit": false,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
@@ -33,7 +33,13 @@
       "vite-config/*": ["../vite-config/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.json",
+    "src/**/*.cjs"
+  ],
   "references": [
     //    {
     //      "path": "../synapse-client"

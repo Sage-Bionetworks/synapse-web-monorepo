@@ -1,11 +1,11 @@
+import { Typography } from '@mui/material'
+import { SortDirection } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
+import Select from 'react-select'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
-import { SortDirection } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
-import Select, { components, ControlProps, GroupBase } from 'react-select'
-import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration
@@ -13,24 +13,9 @@ export type QuerySortSelectorProps = {
 
 export type EnumOption = { value: string; label: string }
 
-/**
- * We want to apply the 'form-control' bootstrap class to react-select's Control component, and the easiest way to do that is to make a custom version
- */
-export const Control = ({
-  children,
-  ...rest
-}: ControlProps<any, boolean, GroupBase<any>>) => {
-  return (
-    <components.Control {...rest} className="form-control">
-      {children}
-    </components.Control>
-  )
-}
-
 function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
-  const queryContext = useQueryContext()
-  const { executeQueryRequest } = queryContext
+  const { executeQueryRequest } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,
@@ -69,7 +54,7 @@ function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
   }
 
   return (
-    <div className="QuerySortSelector bootstrap-4-backport">
+    <div className="QuerySortSelector">
       <Typography variant="label" className="sort-by-label SRC-inlineBlock">
         Sort by
       </Typography>
@@ -78,7 +63,6 @@ function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
         value={findValueOption(sortColumn, enumOptions)}
         options={enumOptions}
         onChange={option => onChange((option as EnumOption | null)?.value)}
-        components={{ Control }}
         styles={{
           control: provided => ({
             ...provided,

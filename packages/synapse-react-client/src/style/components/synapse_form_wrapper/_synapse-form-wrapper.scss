@@ -137,7 +137,6 @@
   $b: 35rem;
 
   .wrap {
-    @include SrcMixins.calc(height, '#{$a} - #{$b}');
     overflow: hidden;
     width: 100%;
     clear: both;
