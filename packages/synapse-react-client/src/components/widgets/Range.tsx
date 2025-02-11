@@ -85,6 +85,7 @@ export function Range(props: RangeProps) {
           display: 'flex',
           marginRight: '10px',
           gap: '10px',
+          color: '#71767F',
           '& .MuiInputBase-root': {
             height: '38px',
             width: '150px',
