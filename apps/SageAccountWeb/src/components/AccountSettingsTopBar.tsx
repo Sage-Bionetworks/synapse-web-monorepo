@@ -1,3 +1,4 @@
+import React, { RefObject, useRef } from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
@@ -6,9 +7,21 @@ import {
   SynapseClient,
   useApplicationSessionContext,
 } from 'synapse-react-client'
-import { Link } from '@mui/material'
+import { IconButton } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 
-function AccountSettingsTopBar() {
+interface AccountSettingsTopBarProps {
+  accountSettingsPanelConfig: Array<{
+    label: string
+    ref: RefObject<HTMLDivElement>
+  }>
+}
+
+const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
+  accountSettingsPanelConfig,
+}) => {
   const sourceApp = useSourceApp()
   const iconSx: SxProps = {
     width: '32px',
@@ -18,14 +31,34 @@ function AccountSettingsTopBar() {
   }
   const appContext = useAppContext()
   const { refreshSession } = useApplicationSessionContext()
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const signOutSectionRef = useRef<HTMLDivElement>(null)
+
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  const handleClose = () => {
+    setIsOpen(false)
+  }
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setIsOpen(!isOpen)
+  }
+
+  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   return (
     <Box
       sx={{
         display: 'flex',
+        width: '100%',
         height: '60px',
         alignItems: 'center',
         justifyContent: 'space-between',
+        position: 'fixed',
+        zIndex: 10,
+        backgroundColor: 'white',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -35,21 +68,65 @@ function AccountSettingsTopBar() {
         </Typography>
         <Box
           className="AccountSettingsSourceAppLogo"
-          sx={{ marginLeft: '30px' }}
+          sx={{ marginLeft: '30px', display: { xs: 'none', md: 'block' } }}
         >
           <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
         </Box>
       </Box>
-      <Link
-        sx={{ marginRight: '15px' }}
-        onClick={() => {
-          SynapseClient.signOut().then(() => {
-            refreshSession()
-          })
-        }}
-      >
-        Sign out
-      </Link>
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+          onClick={handleClick}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          open={isOpen}
+          onClose={handleClose}
+        >
+          {accountSettingsPanelConfig.map((item: any, index: number) => (
+            <MenuItem
+              key={index}
+              onClick={() => {
+                handleClose()
+                if (item.ref === signOutSectionRef) {
+                  SynapseClient.signOut().then(() => {
+                    refreshSession()
+                  })
+                } else if (item.ref) {
+                  handleScroll(item.ref)
+                  setAnchorEl(item.ref)
+                  setIsOpen(false)
+                }
+              }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
+                '&:active': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
     </Box>
   )
 }
