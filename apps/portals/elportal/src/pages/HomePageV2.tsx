@@ -162,7 +162,7 @@ export default function HomePage() {
           <UpsetPlot
             sql={upsetPlotSql}
             rgbIndex={0}
-            maxBarCount={10}
+            maxBarCount={20}
             setName="Set size"
             combinationName="Intersection size"
             onClick={handleUpsetPlotClick}

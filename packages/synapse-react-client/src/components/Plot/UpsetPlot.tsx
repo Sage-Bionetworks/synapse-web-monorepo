@@ -167,15 +167,15 @@ export function UpsetPlot({
             <Box
               sx={{
                 height: '560px',
-                padding: { xs: '40px', lg: '80px' },
               }}
             >
-              <PortalSectionHeader
+              {/* <PortalSectionHeader
                 title="Explore the Data"
                 buttonText="View All Studies"
                 link="/Explore/Studies"
                 centered
-              />
+                sx={{ marginBottom: '90px' }}
+              /> */}
               <div className="UpsetPlot">
                 <UpSetJS
                   sets={data.sets}

@@ -24,8 +24,11 @@ const PortalSectionHeader = ({
   return (
     <Box
       sx={spreadSx(sx, {
-        display: centered ? 'flex' : 'block',
-        justifyContent: centered ? 'center' : 'flex-start',
+        ...(centered && {
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+        }),
       })}
     >
       <Stack
@@ -49,7 +52,10 @@ const PortalSectionHeader = ({
             sx={{
               gap: '16px',
               width: '100%',
-              alignItems: centered ? 'center' : 'flex-start',
+              ...(centered && {
+                alignItems: 'center',
+                width: '100%',
+              }),
               ...(reverseButtonAndText && {
                 flexDirection: 'column-reverse',
               }),
@@ -65,10 +71,11 @@ const PortalSectionHeader = ({
                     width: '100%',
                   },
                   maxWidth: '100%',
+                  width: 'fit-content',
                   whiteSpace: 'nowrap',
-                  padding: { xs: '6px', md: '6px 24px' },
+                  padding: { xs: '6px', sm: '6px 24px' },
                   fontWeight: '600',
-                  fontSize: { xs: '16px', md: '18px' },
+                  fontSize: { xs: '16px', sm: '18px' },
                   lineHeight: '144%',
                 })}
               >
