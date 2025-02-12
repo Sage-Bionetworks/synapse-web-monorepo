@@ -1,5 +1,13 @@
-import { Stack, Typography, Button, SxProps, Theme, Box } from '@mui/material'
-import { Link } from 'react-router'
+import {
+  Stack,
+  Typography,
+  Button,
+  SxProps,
+  Theme,
+  Box,
+  Link as MuiLink,
+} from '@mui/material'
+import { Link as RouterLink } from 'react-router'
 import { spreadSx } from '../../theme/spreadSx'
 
 export type PortalSectionHeaderProps = {
@@ -21,6 +29,8 @@ const PortalSectionHeader = ({
   centered = false,
   reverseButtonAndText = false,
 }: PortalSectionHeaderProps) => {
+  const iisExternalLink =
+    link?.startsWith('http://') || link?.startsWith('https://')
   return (
     <Box
       sx={spreadSx(sx, {
@@ -64,8 +74,14 @@ const PortalSectionHeader = ({
             {buttonText && (
               <Button
                 variant="contained"
-                component={Link}
-                to={link || ''}
+                component={iisExternalLink ? MuiLink : RouterLink}
+                {...(iisExternalLink
+                  ? {
+                      href: link,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    }
+                  : { to: link })}
                 sx={theme => ({
                   [theme.breakpoints.down('sm')]: {
                     width: '100%',
