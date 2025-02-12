@@ -77,56 +77,49 @@ export function Range(props: RangeProps) {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'row',
+        flexWrap: 'wrap',
+        flex: '1 0',
+        marginRight: '10px',
+        gap: '10px',
+        '& .MuiInputBase-root': {
+          minWidth: '150px',
+        },
+        '& .MuiInputBase-root,.MuiButton-root': {
+          height: '38px',
+        },
+        '& .MuiInputLabel-root': {
+          color: 'grey.700',
+          fontWeight: 400,
+        },
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          marginRight: '10px',
-          gap: '10px',
-          '& .MuiInputBase-root': {
-            minWidth: '150px',
-          },
-          '& .MuiInputBase-root,.MuiButton-root': {
-            height: '38px',
-          },
-          '& .MuiInputLabel-root': {
-            color: 'grey.700',
-            fontWeight: 400,
-          },
-        }}
-      >
-        <Box key="range_min" sx={{ flex: '1 0' }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="From"
-              value={values.min ? dayjs(values.min) : null}
-              onChange={date =>
-                setValues({
-                  min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
-                  max: values.max,
-                })
-              }
-            />
-          </LocalizationProvider>
-        </Box>
-        <Box key="range_max">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="To"
-              value={values.max ? dayjs(values.max) : null}
-              onChange={date =>
-                setValues({
-                  max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
-                  min: values.min,
-                })
-              }
-            />
-          </LocalizationProvider>
-        </Box>
+      <Box key="range_min">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="From"
+            value={values.min ? dayjs(values.min) : null}
+            onChange={date =>
+              setValues({
+                min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                max: values.max,
+              })
+            }
+          />
+        </LocalizationProvider>
+      </Box>
+      <Box key="range_max">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="To"
+            value={values.max ? dayjs(values.max) : null}
+            onChange={date =>
+              setValues({
+                max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                min: values.min,
+              })
+            }
+          />
+        </LocalizationProvider>
       </Box>
       <Button
         size="small"
