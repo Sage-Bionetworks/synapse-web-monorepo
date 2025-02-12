@@ -13,6 +13,7 @@ export type SynapseTrendingProjectItemProps = {
   entityIdColIndex: number
   nUniqueUsersColIndex: number
   egressSizeGbColIndex: number
+  projectDescriptionColumnIndex: number
   isMobileView: boolean
 }
 
@@ -30,6 +31,7 @@ export function SynapseTrendingProjectItem({
   entityIdColIndex,
   nUniqueUsersColIndex,
   egressSizeGbColIndex,
+  projectDescriptionColumnIndex,
   isMobileView,
 }: SynapseTrendingProjectItemProps) {
   const theme = useTheme()
@@ -41,6 +43,8 @@ export function SynapseTrendingProjectItem({
   const friendlyEgressSize = egressSize
     ? calculateFriendlyFileSize(parseFloat(egressSize) * 1e9)
     : ''
+
+  const projectDescription = rowValues[projectDescriptionColumnIndex]
 
   const userCount = rowValues[nUniqueUsersColIndex]
   const friendlyUserCount = userCount
@@ -63,6 +67,7 @@ export function SynapseTrendingProjectItem({
       borderRadius = '0px 0px 12px 12px'
       break
   }
+  const displayedName = projectDescription ?? entityHeader?.name
   const egress = (
     <Typography variant="body1">
       <EgressIcon />
@@ -107,7 +112,7 @@ export function SynapseTrendingProjectItem({
           {rank}
         </Typography>
         <Box>
-          <Typography variant="body1">{entityHeader?.name}</Typography>
+          <Typography variant="body1">{displayedName}</Typography>
           {isMobileView && (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               {egress}

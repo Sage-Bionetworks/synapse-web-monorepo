@@ -1,5 +1,6 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { getColumnIndex } from '../GenericCard/index'
 import {
   SynapseTrendingProjectItem,
   trendingProjectsGridTemplateColumns,
@@ -33,14 +34,15 @@ export function SynapseTrendingProjects({
 
   const rowSet = past30DaysDownloadData?.responseBody?.queryResult?.queryResults
   const headers = rowSet?.headers
-  const entityIdColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'PROJECT_ID',
+  const entityIdColIndex = getColumnIndex('PROJECT_ID', headers)!
+  const nUniqueUsersColIndex = getColumnIndex('N_UNIQUE_USERS', headers)!
+  const egressSizeColIndex = getColumnIndex(
+    'ESTIMATED_PROJECT_SIZE_IN_GIB',
+    headers,
   )!
-  const nUniqueUsersColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'N_UNIQUE_USERS',
-  )!
-  const egressSizeColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'ESTIMATED_PROJECT_SIZE_IN_GIB',
+  const projectDescriptionColumnIndex = getColumnIndex(
+    'PROJECT_DESCRIPTION',
+    headers,
   )!
 
   if (!rowSet || rowSet.rows.length == 0) {
@@ -73,6 +75,7 @@ export function SynapseTrendingProjects({
           entityIdColIndex={entityIdColIndex}
           egressSizeGbColIndex={egressSizeColIndex}
           nUniqueUsersColIndex={nUniqueUsersColIndex}
+          projectDescriptionColumnIndex={projectDescriptionColumnIndex}
           isMobileView={isMobileView}
         />
       ))}
