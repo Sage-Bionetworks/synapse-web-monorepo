@@ -78,16 +78,21 @@ export function Range(props: RangeProps) {
       sx={{
         display: 'flex',
         flexDirection: 'row',
+        alignItems: 'flex-end',
       }}
     >
       <Box
         sx={{
           display: 'flex',
+          flexWrap: 'wrap',
+          flexDirection: 'row',
           marginRight: '10px',
           gap: '10px',
           '& .MuiInputBase-root': {
+            minWidth: '150px',
+          },
+          '& .MuiInputBase-root,.MuiButton-root': {
             height: '38px',
-            width: '150px',
           },
           '& .MuiInputLabel-root': {
             color: 'grey.700',
@@ -95,7 +100,7 @@ export function Range(props: RangeProps) {
           },
         }}
       >
-        <Box key="range_min">
+        <Box key="range_min" sx={{ flex: '1 0' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="From"
@@ -124,32 +129,24 @@ export function Range(props: RangeProps) {
           </LocalizationProvider>
         </Box>
       </Box>
-      <Box
+      <Button
+        size="small"
+        variant="outlined"
+        onClick={() =>
+          handleAppyChanges(values, props.onApplyClicked, props.type)
+        }
         sx={{
-          display: 'flex',
-          alignItems: 'flex-end',
+          borderRadius: 0,
+          border: '1px solid #395979',
+          p: '6px 8px',
+          fontSize: 14,
         }}
       >
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() =>
-            handleAppyChanges(values, props.onApplyClicked, props.type)
-          }
-          sx={{
-            height: '38px',
-            borderRadius: 0,
-            border: '1px solid #395979',
-            p: '6px 8px',
-            fontSize: 14,
-          }}
-        >
-          Apply
-        </Button>
-        {error && (
-          <div className="SRC-danger-color">{props.errorText || errorText}</div>
-        )}
-      </Box>
+        Apply
+      </Button>
+      {error && (
+        <div className="SRC-danger-color">{props.errorText || errorText}</div>
+      )}
     </Box>
   )
 }
