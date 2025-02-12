@@ -78,7 +78,6 @@ export function Range(props: RangeProps) {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'flex-end',
       }}
     >
       <Box
@@ -136,10 +135,8 @@ export function Range(props: RangeProps) {
           handleAppyChanges(values, props.onApplyClicked, props.type)
         }
         sx={{
-          borderRadius: 0,
-          border: '1px solid #395979',
-          p: '6px 8px',
-          fontSize: 14,
+          alignSelf: 'flex-end',
+          fontSize: 16,
         }}
       >
         Apply
