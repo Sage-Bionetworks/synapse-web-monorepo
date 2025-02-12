@@ -5,7 +5,7 @@ import { spreadSx } from '../../theme/spreadSx'
 export type PortalSectionHeaderProps = {
   title: string
   buttonText?: string
-  summaryText?: string
+  summaryText?: React.ReactNode
   link?: string
   sx?: SxProps<Theme>
   centered?: boolean
@@ -18,8 +18,8 @@ const PortalSectionHeader = ({
   summaryText,
   link,
   sx,
-  centered,
-  reverseButtonAndText,
+  centered = false,
+  reverseButtonAndText = false,
 }: PortalSectionHeaderProps) => {
   return (
     <Box
@@ -31,7 +31,7 @@ const PortalSectionHeader = ({
       <Stack
         sx={{
           gap: '16px',
-          borderTop: '3px solid',
+          borderTop: '4px solid',
           borderColor: 'grey.400',
           alignItems: centered ? 'center' : 'flex-start',
         }}
@@ -39,53 +39,57 @@ const PortalSectionHeader = ({
         <Typography
           variant="headline2"
           paddingTop="30px"
-          paddingBottom="10px"
           color="grey.1000"
-          fontSize={'32px'}
+          fontSize={{ xs: '24px', md: '32px' }}
         >
           {title}
         </Typography>
-        <Box
-          sx={{
-            ...(reverseButtonAndText && {
-              display: 'flex',
+        {(buttonText || summaryText) && (
+          <Stack
+            sx={{
               gap: '16px',
-              flexDirection: 'column-reverse',
-            }),
-          }}
-        >
-          {buttonText && (
-            <Button
-              variant="contained"
-              component={Link}
-              to={link || ''}
-              sx={theme => ({
-                [theme.breakpoints.up('sm')]: {
-                  width: 'fit-content',
-                },
-                whiteSpace: 'nowrap',
-                padding: '6px 24px',
-                fontWeight: '600',
-                fontSize: '16px',
-              })}
-            >
-              {buttonText}
-            </Button>
-          )}
-          {summaryText && (
-            <Typography
-              variant="body1"
-              sx={{
-                fontStyle: 'italic',
-                color: 'grey.800',
-                fontSize: '18px',
-                lineHeight: '27px',
-              }}
-            >
-              {summaryText}
-            </Typography>
-          )}
-        </Box>
+              width: '100%',
+              alignItems: centered ? 'center' : 'flex-start',
+              ...(reverseButtonAndText && {
+                flexDirection: 'column-reverse',
+              }),
+            }}
+          >
+            {buttonText && (
+              <Button
+                variant="contained"
+                component={Link}
+                to={link || ''}
+                sx={theme => ({
+                  [theme.breakpoints.down('sm')]: {
+                    width: '100%',
+                  },
+                  maxWidth: '100%',
+                  whiteSpace: 'nowrap',
+                  padding: { xs: '6px', md: '6px 24px' },
+                  fontWeight: '600',
+                  fontSize: { xs: '16px', md: '18px' },
+                  lineHeight: '144%',
+                })}
+              >
+                {buttonText}
+              </Button>
+            )}
+            {summaryText && (
+              <Typography
+                variant="body1"
+                sx={{
+                  fontStyle: 'italic',
+                  color: 'grey.800',
+                  fontSize: '18px',
+                  lineHeight: '27px',
+                }}
+              >
+                {summaryText}
+              </Typography>
+            )}
+          </Stack>
+        )}
       </Stack>
     </Box>
   )

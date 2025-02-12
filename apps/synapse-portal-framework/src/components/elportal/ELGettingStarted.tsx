@@ -1,7 +1,8 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
 import accessIcon from './assets/access_icon.png'
+import { PortalSectionHeader } from 'synapse-react-client'
 
 export function IconSquare({ iconUrl, headline, description }) {
   return (
@@ -54,53 +55,20 @@ const ELGettingStarted = () => {
         gap: { xs: '50px', md: '80px' },
       }}
     >
-      <Box
+      <PortalSectionHeader
+        reverseButtonAndText
+        title="Getting Started"
+        summaryText="We provide all the help you need for navigating the portal and
+        accelerating your research."
+        buttonText="Visit Our Help Section"
+        link="https://help.eliteportal.org/help/"
         sx={{
-          borderTop: '3px solid #ffffff88',
-          py: '20px',
+          '*': { color: '#FFF', borderColor: 'rgba(255, 255, 255, 0.40)' },
+          '& p': { fontSize: '16px' },
+          h2: { fontSize: '24px' },
+          a: { border: '1px solid white' },
         }}
-      >
-        <Typography
-          variant="headline2"
-          sx={{
-            width: '100%',
-            color: 'white',
-            fontSize: '24px',
-          }}
-        >
-          Getting Started
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            maxWidth: '100%',
-            my: '16px',
-            color: 'white',
-            fontStyle: 'italic',
-            fontSize: '13px',
-            lineHeight: '20px',
-          }}
-        >
-          We provide all the help you need for navigating the portal and
-          accelerating your research.
-        </Typography>
-        <Button
-          variant="contained"
-          href="https://help.eliteportal.org/help/"
-          rel="noopener noreferrer"
-          target="_blank"
-          sx={theme => ({
-            border: '1px solid white',
-            padding: '6px 24px',
-            fontSize: '14px',
-            [theme.breakpoints.down('sm')]: {
-              width: '100%',
-            },
-          })}
-        >
-          Visit Our Help Section
-        </Button>
-      </Box>
+      />
       <Box
         sx={{
           display: 'grid',

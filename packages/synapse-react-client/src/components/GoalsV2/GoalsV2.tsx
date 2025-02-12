@@ -6,8 +6,9 @@ import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { Box, Typography, Button } from '@mui/material'
+import { Box, alpha, useTheme } from '@mui/material'
 import useGetGoalData from '../../utils/hooks/useGetGoalData'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 export type GoalsV2Props = {
   entityId: string
@@ -37,6 +38,7 @@ const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   const { entityId, dataLink } = props
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
+  const theme = useTheme()
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -107,40 +109,16 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <Box
+      <PortalSectionHeader
+        centered
+        title="What's in the Portal?"
+        buttonText="Start Exploring Data"
+        link={dataLink}
         sx={{
-          textAlign: 'center',
-          paddingBottom: '30px',
+          '*': { borderColor: alpha(theme.palette.primary.main, 0.2) },
+          a: { marginTop: '24px', marginBottom: '30px' },
         }}
-      >
-        <Typography
-          variant="headline2"
-          sx={{
-            pt: '30px',
-            mb: '40px',
-            mx: 'auto',
-            width: 'max-content',
-            borderTop: '3px solid rgba(128, 128, 128, 0.25)',
-            color: 'grey.1000',
-            fontSize: { xs: '24px', md: '32px' },
-          }}
-        >
-          What's in the Portal?
-        </Typography>
-        <Button
-          href={dataLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="contained"
-          sx={theme => ({
-            [theme.breakpoints.down('sm')]: {
-              width: '100%',
-            },
-          })}
-        >
-          Start Exploring Data
-        </Button>
-      </Box>
+      />
       {goalError && <ErrorBanner error={goalError} />}
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
         {goalsDataArray.map((row, index) => {
