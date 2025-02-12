@@ -183,7 +183,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
         title={title}
         summaryText={summaryText}
         sx={{
-          h2: { fontSize: '24px', paddingTop: '26px' },
+          h2: { fontSize: '24px', paddingTop: '26px', width: '100%' },
           '& p': { fontSize: '16px', lineHeight: '24px' },
         }}
       />

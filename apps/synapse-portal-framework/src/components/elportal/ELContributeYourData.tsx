@@ -31,7 +31,6 @@ function ELContributeYourData() {
         sx={{
           flex: '1 1 auto',
           zIndex: 1,
-          textAlign: 'center',
           padding: { xs: '100px 40px', md: '100px 0' },
         }}
       >
@@ -45,13 +44,17 @@ function ELContributeYourData() {
           buttonText="Start Contributing"
           link="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
           sx={{
-            '*': { color: '#FFF', borderTop: 'none' },
             h2: {
+              color: 'primary.contrastText',
               fontSize: '24px',
-              borderTop: '4px solid rgba(255, 255, 255, 0.40)',
+              borderColor: 'rgba(255, 255, 255, 0.40)',
             },
-            a: { border: '1px solid white' },
-            '& p': { fontSize: '16px', paddingBottom: '10px' },
+            '.MuiButton-root': { border: '1px solid white' },
+            '& p': {
+              fontSize: '16px',
+              paddingBottom: '10px',
+              color: 'primary.contrastText',
+            },
           }}
         />
       </Box>

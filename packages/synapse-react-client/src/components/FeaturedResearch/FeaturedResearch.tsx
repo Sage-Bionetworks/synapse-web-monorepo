@@ -244,7 +244,7 @@ function FeaturedResearch(props: FeaturedResearchProps) {
       <Stack>
         <PortalSectionHeader
           title="Featured Research"
-          sx={{ h2: { fontSize: '24px', paddingBottom: 0 } }}
+          sx={{ h2: { fontSize: '24px', paddingBottom: 0, width: '100%' } }}
         />
         <Stack gap="16px">
           {remainingCards.map((research, index) => (

@@ -64,7 +64,7 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
         buttonText={buttonText}
         link={link}
         summaryText={summaryText}
-        sx={{ gridArea: 'content' }}
+        sx={{ gridArea: 'content', h2: { width: '100%' } }}
       />
     </Box>
   )

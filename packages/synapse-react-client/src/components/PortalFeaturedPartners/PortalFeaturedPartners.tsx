@@ -156,7 +156,7 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
     >
       <PortalSectionHeader
         title="Our Partners"
-        sx={{ h2: { fontSize: '24px', paddingTop: '26px' } }}
+        sx={{ h2: { fontSize: '24px', paddingTop: '26px', width: '100%' } }}
       />
       <Box
         sx={theme => ({

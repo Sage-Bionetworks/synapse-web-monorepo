@@ -114,10 +114,10 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         title="What's in the Portal?"
         buttonText="Start Exploring Data"
         link={dataLink}
-        sx={{
-          '& > *': { borderColor: alpha(theme.palette.primary.main, 0.2) },
+        sx={theme => ({
+          h2: { borderColor: alpha(theme.palette.primary.main, 0.2) },
           a: { marginTop: '24px', marginBottom: '30px' },
-        }}
+        })}
       />
       {goalError && <ErrorBanner error={goalError} />}
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>

@@ -36,24 +36,30 @@ const PortalSectionHeader = ({
       sx={spreadSx(sx, {
         ...(centered && {
           width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
         }),
       })}
     >
       <Stack
         sx={{
           gap: '16px',
-          borderTop: '4px solid',
-          borderColor: 'grey.400',
           alignItems: centered ? 'center' : 'flex-start',
+          ...(centered && {
+            textAlign: 'center',
+          }),
         }}
       >
         <Typography
           variant="headline2"
           paddingTop="30px"
           color="grey.1000"
-          fontSize={{ xs: '24px', md: '32px' }}
+          sx={theme => ({
+            fontSize: { xs: '24px', md: '32px' },
+            borderTop: '4px solid',
+            borderColor: 'grey.400',
+            [theme.breakpoints.down('md')]: {
+              width: '100%',
+            },
+          })}
         >
           {title}
         </Typography>

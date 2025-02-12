@@ -24,7 +24,6 @@ export function IconSquare({ iconUrl, headline, description }) {
         sx={{
           mb: '10px',
           maxWidth: '100%',
-          color: 'white',
           fontWeight: 400,
         }}
       >
@@ -34,7 +33,6 @@ export function IconSquare({ iconUrl, headline, description }) {
         variant="body1"
         sx={{
           maxWidth: '100%',
-          color: 'white',
           fontSize: '13px',
         }}
       >
@@ -49,6 +47,7 @@ const ELGettingStarted = () => {
     <Box
       sx={{
         backgroundColor: 'primary.main',
+        color: 'primary.contrastText',
         display: 'grid',
         padding: { xs: '40px', md: '80px' },
         gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
@@ -63,10 +62,14 @@ const ELGettingStarted = () => {
         buttonText="Visit Our Help Section"
         link="https://help.eliteportal.org/help/"
         sx={{
-          '*': { color: '#FFF', borderColor: 'rgba(255, 255, 255, 0.40)' },
-          '& p': { fontSize: '16px' },
-          h2: { fontSize: '24px' },
-          a: { border: '1px solid white' },
+          h2: {
+            fontSize: '24px',
+            width: '100%',
+            borderColor: 'rgba(255, 255, 255, 0.40)',
+            color: 'primary.contrastText',
+          },
+          '& p': { fontSize: '16px', color: 'primary.contrastText' },
+          '.MuiButton-root': { border: '1px solid white' },
         }}
       />
       <Box

@@ -211,7 +211,7 @@ function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
           link={buttonLink}
           reverseButtonAndText
           sx={{
-            h2: { fontSize: '24px', paddingTop: '30px' },
+            h2: { fontSize: '24px', paddingTop: '30px', width: '100%' },
             '& p': { fontSize: '16px', lineHeight: '24px' },
           }}
         />

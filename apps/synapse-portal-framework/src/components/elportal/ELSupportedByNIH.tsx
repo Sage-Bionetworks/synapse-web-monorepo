@@ -20,7 +20,10 @@ const ELSupportedByNIH: React.FC = () => {
         buttonText="Visit the NIA Website"
         link="https://www.nia.nih.gov/research/dgcg"
         sx={{
-          '& > *': { borderColor: alpha(theme.palette.primary.main, 0.2) },
+          h2: {
+            borderColor: alpha(theme.palette.primary.main, 0.2),
+            width: '100%',
+          },
         }}
       />
       <Box
@@ -51,8 +54,14 @@ const ELSupportedByNIH: React.FC = () => {
           of Health (NIH), NIA supports cutting-edge research on aging and
           age-related diseases, including Alzheimer's disease and other forms of
           dementia.
-          <br />
-          <br />
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            pt: '10px',
+            fontSize: '18px',
+          }}
+        >
           With a mission to improve the health and well-being of older
           populations, NIA funds innovative scientific studies, promotes
           training for the next generation of researchers, and provides trusted
