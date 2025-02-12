@@ -20,9 +20,7 @@ const ELSupportedByNIH: React.FC = () => {
         buttonText="Visit the NIA Website"
         link="https://www.nia.nih.gov/research/dgcg"
         sx={{
-          '*': {
-            borderColor: alpha(theme.palette.primary.main, 0.2),
-          },
+          '& > *': { borderColor: alpha(theme.palette.primary.main, 0.2) },
         }}
       />
       <Box
