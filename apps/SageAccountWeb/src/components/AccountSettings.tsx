@@ -10,6 +10,8 @@ import {
   Paper,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import {
   FeatureFlagEnum,
@@ -34,12 +36,12 @@ import {
   useSynapseContext,
 } from 'synapse-react-client'
 import UniversalCookies from 'universal-cookie'
-import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
 import { ProfileAvatar } from './ProfileAvatar'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import { StyledFormControl } from './StyledComponents'
+import AccountSettingsTopBar from './AccountSettingsTopBar'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -200,6 +202,26 @@ export const AccountSettings = () => {
     }
   }, [hash])
 
+  const menuConfigArray = [
+    { label: 'Profile Information', ref: profileInformationRef },
+    { label: 'Email Addresses', ref: emailAddressesRef },
+    { label: 'Change Password', ref: changePasswordRef },
+    { label: 'Date/Time Format', ref: timezoneRef },
+    { label: 'Trust & Credentials', ref: trustCredentialRef },
+    {
+      label: 'Two-factor Authentication (2FA)',
+      ref: twoFactorAuthRef,
+    },
+    {
+      label: 'Personal Access Tokens',
+      ref: personalAccessTokenRef,
+    },
+    { label: 'OAuth Clients', ref: oauthClientManagementRef },
+    { label: 'Webhooks', ref: webhooksRef },
+    { label: 'Privacy Preferences', ref: cookieManagementRef },
+    { label: 'Sign Out', ref: signOutSectionRef },
+  ]
+
   const handleScroll = (ref: RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -207,54 +229,28 @@ export const AccountSettings = () => {
     verificationState?.state == VerificationStateEnum.APPROVED ||
     verificationState?.state == VerificationStateEnum.SUBMITTED
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const formControlMargin = isMobile ? 'dense' : 'normal'
+
   return (
     <div className="account-settings-page">
-      <AccountSettingsTopBar />
+      <AccountSettingsTopBar accountSettingsPanelConfig={menuConfigArray} />
       <div className="panel-wrapper-bg with-account-setting">
-        <Container maxWidth="md">
-          <Box sx={{ display: 'flex', my: '60px' }}>
+        <Container
+          maxWidth="md"
+          sx={{ paddingTop: '100px', position: 'relative' }}
+        >
+          <Box sx={{ display: 'flex', my: { xs: '10px', sm: '60px' } }}>
             <Paper component="nav" className="account-setting-panel nav-panel">
-              <ListItemButton
-                onClick={() => handleScroll(profileInformationRef)}
-              >
-                Profile Information
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(emailAddressesRef)}>
-                Email Addresses
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(changePasswordRef)}>
-                Change Password
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(timezoneRef)}>
-                Date/Time Format
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(trustCredentialRef)}>
-                Trust & Credentials
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(twoFactorAuthRef)}>
-                Two-factor Authentication (2FA)
-              </ListItemButton>
-              <ListItemButton
-                onClick={() => handleScroll(personalAccessTokenRef)}
-              >
-                Personal Access Tokens
-              </ListItemButton>
-              <ListItemButton
-                onClick={() => handleScroll(oauthClientManagementRef)}
-              >
-                OAuth Clients
-              </ListItemButton>
-              {showWebhooks && (
-                <ListItemButton onClick={() => handleScroll(webhooksRef)}>
-                  Webhooks
+              {menuConfigArray.map((item, index) => (
+                <ListItemButton
+                  key={index}
+                  onClick={() => handleScroll(item.ref)}
+                >
+                  {item.label}
                 </ListItemButton>
-              )}
-              <ListItemButton onClick={() => handleScroll(cookieManagementRef)}>
-                Privacy Preferences
-              </ListItemButton>
-              <ListItemButton onClick={() => handleScroll(signOutSectionRef)}>
-                Sign Out
-              </ListItemButton>
+              ))}
             </Paper>
 
             <div>
@@ -286,7 +282,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                     required
                   >
                     <TextField
@@ -301,7 +297,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'First name'}
@@ -315,7 +311,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Last name'}
@@ -329,7 +325,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Current position'}
@@ -343,7 +339,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Industry'}
@@ -357,7 +353,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Website'}
@@ -371,7 +367,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'City, Country'}
@@ -385,7 +381,7 @@ export const AccountSettings = () => {
                   <StyledFormControl
                     fullWidth
                     variant="standard"
-                    margin="normal"
+                    margin={formControlMargin}
                   >
                     <TextField
                       label={'Institutional affiliation'}
@@ -398,7 +394,7 @@ export const AccountSettings = () => {
                   </StyledFormControl>
                   <TextField
                     fullWidth
-                    margin="normal"
+                    margin={formControlMargin}
                     label="Bio"
                     id="bio"
                     name="bio"
@@ -445,7 +441,7 @@ export const AccountSettings = () => {
                 <StyledFormControl
                   fullWidth
                   variant="standard"
-                  margin="normal"
+                  margin={formControlMargin}
                   sx={{ marginBottom: '10px' }}
                 >
                   <TextField
