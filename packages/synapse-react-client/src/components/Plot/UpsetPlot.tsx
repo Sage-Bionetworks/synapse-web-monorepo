@@ -23,8 +23,6 @@ import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import PortalSectionHeader from '../PortalSectionHeader'
-import { Box } from '@mui/material'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -164,51 +162,38 @@ export function UpsetPlot({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <Box
-              sx={{
-                height: '560px',
-              }}
-            >
-              {/* <PortalSectionHeader
-                title="Explore the Data"
-                buttonText="View All Studies"
-                link="/Explore/Studies"
-                centered
-                sx={{ marginBottom: '90px' }}
-              /> */}
-              <div className="UpsetPlot">
-                <UpSetJS
-                  sets={data.sets}
-                  combinations={data.combinations}
-                  width={size.width!}
-                  height={height}
-                  onHover={setSelection}
-                  onClick={onClick}
-                  selection={selection}
-                  color={colorPalette[0]}
-                  selectionColor={colorPalette[0]}
-                  hasSelectionOpacity={0.3}
-                  // alternatingBackgroundColor={false}
-                  setName={setName?.toUpperCase()}
-                  combinationName={combinationName?.toUpperCase()}
-                  fontFamily="'DM Sans', sans-serif"
-                  fontSizes={updateFontSizes}
-                  exportButtons={false}
-                  notMemberColor="transparent"
-                />
-                {summaryLink && summaryLinkText && (
-                  <div className="UpsetPlot__summary">
-                    <LargeButton
-                      color="secondary"
-                      variant="contained"
-                      href={summaryLink}
-                    >
-                      {summaryLinkText}
-                    </LargeButton>
-                  </div>
-                )}
-              </div>
-            </Box>
+            <div className="UpsetPlot">
+              <UpSetJS
+                sets={data.sets}
+                combinations={data.combinations}
+                width={size.width!}
+                height={height}
+                onHover={setSelection}
+                onClick={onClick}
+                selection={selection}
+                color={colorPalette[0]}
+                selectionColor={colorPalette[0]}
+                hasSelectionOpacity={0.3}
+                // alternatingBackgroundColor={false}
+                setName={setName?.toUpperCase()}
+                combinationName={combinationName?.toUpperCase()}
+                fontFamily="'DM Sans', sans-serif"
+                fontSizes={updateFontSizes}
+                exportButtons={false}
+                notMemberColor="transparent"
+              />
+              {summaryLink && summaryLinkText && (
+                <div className="UpsetPlot__summary">
+                  <LargeButton
+                    color="secondary"
+                    variant="contained"
+                    href={summaryLink}
+                  >
+                    {summaryLinkText}
+                  </LargeButton>
+                </div>
+              )}
+            </div>
           )}
         </SizeMe>
       )}

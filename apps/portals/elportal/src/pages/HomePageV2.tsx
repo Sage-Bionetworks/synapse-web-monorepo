@@ -8,6 +8,7 @@ import {
   PortalHomePageHeader,
   GoalsV2,
   PortalFeaturedPartners,
+  PortalSectionHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -74,9 +75,12 @@ export default function HomePage() {
       <Box
         component={'span'}
         sx={theme => ({
+          [theme.breakpoints.down('md')]: {
+            display: 'block',
+            minHeight: '100px',
+          },
           [theme.breakpoints.down('sm')]: {
             minHeight: '150px',
-            display: 'block',
           },
         })}
       >
@@ -159,6 +163,13 @@ export default function HomePage() {
         <ELGettingStarted />
         <GoalsV2 entityId={goalsV2Table} dataLink="/Explore/Data" />
         <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+          <PortalSectionHeader
+            title="Explore the Data"
+            buttonText="View All Studies"
+            link="/Explore/Studies"
+            centered
+            sx={{ marginBottom: '90px' }}
+          />
           <UpsetPlot
             sql={upsetPlotSql}
             rgbIndex={0}
