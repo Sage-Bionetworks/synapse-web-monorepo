@@ -85,17 +85,20 @@ export function Range(props: RangeProps) {
           display: 'flex',
           marginRight: '10px',
           gap: '10px',
-          color: '#71767F',
           '& .MuiInputBase-root': {
             height: '38px',
             width: '150px',
           },
+          '& .MuiInputLabel-root': {
+            color: 'grey.700',
+            fontWeight: 400,
+          },
         }}
       >
         <Box key="range_min">
-          <Typography>From</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              label="From"
               value={values.min ? dayjs(values.min) : null}
               onChange={date =>
                 setValues({
@@ -107,9 +110,9 @@ export function Range(props: RangeProps) {
           </LocalizationProvider>
         </Box>
         <Box key="range_max">
-          <Typography>To</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              label="To"
               value={values.max ? dayjs(values.max) : null}
               onChange={date =>
                 setValues({
