@@ -6,7 +6,7 @@ import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { Box, alpha, useTheme } from '@mui/material'
+import { Box, alpha } from '@mui/material'
 import useGetGoalData from '../../utils/hooks/useGetGoalData'
 import PortalSectionHeader from '../PortalSectionHeader'
 
@@ -38,7 +38,6 @@ const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
   const { entityId, dataLink } = props
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
-  const theme = useTheme()
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
