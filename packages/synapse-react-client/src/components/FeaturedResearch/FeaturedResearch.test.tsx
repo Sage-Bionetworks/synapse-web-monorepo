@@ -141,7 +141,8 @@ describe('FeaturedResearch Tests', () => {
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
 
-    expect(screen.getByText('Featured Research')).toBeInTheDocument()
+    const headings = screen.queryAllByText('Featured Research')
+    expect(headings.length).toBe(1)
     expect(screen.getByText('Read more')).toBeInTheDocument()
     expect(screen.getByText('Title 1')).toBeInTheDocument()
     expect(screen.getByText('Description 1')).toBeInTheDocument()
