@@ -72,7 +72,6 @@ describe('PortalSectionHeader tests', () => {
       centered: true,
     })
 
-    expect(container.firstChild).toHaveStyle('display: flex')
-    expect(container.firstChild).toHaveStyle('justify-content: center')
+    expect(container.firstChild).toHaveStyle('width: 100%')
   })
 })

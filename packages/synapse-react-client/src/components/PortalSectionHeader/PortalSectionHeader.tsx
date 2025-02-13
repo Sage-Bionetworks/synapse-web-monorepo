@@ -42,9 +42,9 @@ const PortalSectionHeader = ({
       <Stack
         sx={{
           gap: '16px',
-          alignItems: centered ? 'center' : 'flex-start',
           ...(centered && {
             textAlign: 'center',
+            alignItems: 'center',
           }),
         }}
       >
