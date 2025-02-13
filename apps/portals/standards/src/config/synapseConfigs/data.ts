@@ -58,6 +58,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'digitalAssessmentDetails',
     ],
   },
+  initialPlotType: 'BAR',
 }
 
 export const dataDetailPageProps: StandaloneQueryWrapperProps = {
