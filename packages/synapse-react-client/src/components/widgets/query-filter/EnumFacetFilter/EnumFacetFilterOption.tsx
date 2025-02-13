@@ -42,6 +42,9 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
       <FormControlLabel
         control={control}
         className="EnumFacetFilter__checkbox"
+        sx={{
+          overflowWrap: 'anywhere',
+        }}
         onClick={event => event.stopPropagation()}
         onChange={(_event, newValue) => {
           onChange(newValue)
