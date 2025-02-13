@@ -8,6 +8,7 @@ import dts from 'vite-plugin-dts'
 export type PluginConfigOptions = {
   includeReactPlugins?: boolean
   includeLibraryPlugins?: boolean
+  externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0]
 }
 
 /**
@@ -34,14 +35,18 @@ const REACT_PLUGINS: PluginOption[] = [
 /**
  * Plugins that libraries that should emit ESM and CJS bundles will use
  */
-const LIBRARY_PLUGINS: PluginOption[] = [
-  // Do not bundle any dependencies; the consumer's bundler will resolve and link them.
-  externalizeDeps(),
-  // Generate a single type definition file for distribution.
-  dts({
-    rollupTypes: true,
-  }),
-]
+function getLibraryPlugins(
+  externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0],
+): PluginOption[] {
+  return [
+    // Do not bundle any dependencies; the consumer's bundler will resolve and link them.
+    externalizeDeps(externalizeDepsOptions),
+    // Generate a single type definition file for distribution.
+    dts({
+      rollupTypes: true,
+    }),
+  ]
+}
 
 /**
  * Get a shared configuration of Vite plugins to use based on the provided options. Note that Vite does not deeply merge
@@ -53,7 +58,7 @@ export function getPluginConfig(options: PluginConfigOptions): PluginOption[] {
     plugins.push(...REACT_PLUGINS)
   }
   if (options.includeLibraryPlugins) {
-    plugins.push(...LIBRARY_PLUGINS)
+    plugins.push(...getLibraryPlugins(options.externalizeDepsOptions))
   }
   return plugins
 }
