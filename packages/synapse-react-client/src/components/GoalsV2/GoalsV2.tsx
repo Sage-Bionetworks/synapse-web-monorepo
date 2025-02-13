@@ -6,8 +6,9 @@ import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { Box, Typography, Button } from '@mui/material'
+import { Box, alpha } from '@mui/material'
 import useGetGoalData from '../../utils/hooks/useGetGoalData'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 export type GoalsV2Props = {
   entityId: string
@@ -104,45 +105,26 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
     <Box
       sx={{
         height: '560px',
-        padding: '80px',
+        padding: { xs: '40px', lg: '80px' },
       }}
     >
-      <Box
-        sx={{
-          textAlign: 'center',
-          paddingBottom: '30px',
-        }}
-      >
-        <Typography
-          variant="headline1"
-          sx={{
-            pt: '30px',
-            mb: '40px',
-            mx: 'auto',
-            width: 'max-content',
-            borderTop: '3px solid rgba(128, 128, 128, 0.25)',
-            color: 'grey.1000',
-            fontSize: '32px',
-          }}
-        >
-          What's in the Portal?
-        </Typography>
-        <Button
-          href={dataLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="contained"
-        >
-          Start Exploring Data
-        </Button>
-      </Box>
+      <PortalSectionHeader
+        centered
+        title="What's in the Portal?"
+        buttonText="Start Exploring Data"
+        link={dataLink}
+        sx={theme => ({
+          h2: { borderColor: alpha(theme.palette.primary.main, 0.2) },
+          a: { marginTop: '24px', marginBottom: '30px' },
+        })}
+      />
       {goalError && <ErrorBanner error={goalError} />}
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
         {goalsDataArray.map((row, index) => {
           return showDesktop ? (
-            <Box sx={{ display: 'grid' }}>
+            <div>
               <GoalsV2Desktop key={index} {...row} />
-            </Box>
+            </div>
           ) : (
             <Box sx={{ display: 'grid' }}>
               <GoalsV2Mobile key={index} {...row} />

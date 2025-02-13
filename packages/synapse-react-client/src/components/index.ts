@@ -90,6 +90,7 @@ export * from './PortalFeatureHighlights'
 export * from './FeaturedResearch'
 export * from './PortalHomePageHeader'
 export * from './PortalFeaturedPartners'
+export * from './PortalSectionHeader'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '../assets/themed_icons/Project'

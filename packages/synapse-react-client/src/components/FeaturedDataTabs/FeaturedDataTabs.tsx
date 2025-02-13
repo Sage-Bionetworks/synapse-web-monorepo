@@ -2,7 +2,7 @@ import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { Icon } from '../row_renderers/utils'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
-import { Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { Paper } from '@mui/material'
 
 export type FeatureDataTabProps = {
@@ -25,7 +25,10 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
   // explore all data button
   const selectedTabProps: FeatureDataTabProps = configs[selectedTabIndex]
   return (
-    <div className="FeaturedDataTabs">
+    <Box
+      className="FeaturedDataTabs"
+      sx={{ padding: { xs: '40px', lg: '80px' } }}
+    >
       {/* tabs */}
       <div className="FeaturedDataTabs__tabs">
         {configs.map((config, index) => {
@@ -68,6 +71,11 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
                     variant="contained"
                     color="secondary"
                     href={selectedTabProps.explorePagePath}
+                    sx={theme => ({
+                      [theme.breakpoints.down('sm')]: {
+                        width: '100%',
+                      },
+                    })}
                   >
                     View All {selectedTabProps.exploreObjectType}
                   </Button>
@@ -81,7 +89,7 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
           )}
         </>
       )}
-    </div>
+    </Box>
   )
 }
 

@@ -16,6 +16,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
 import { useInView } from 'react-intersection-observer'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 const transitionTimeoutMs = 400
 
@@ -240,30 +241,26 @@ function FeaturedResearch(props: FeaturedResearchProps) {
           />
         )}
       </Box>
-      <Stack
-        gap="16px"
-        sx={{
-          borderTop: '3px solid',
-          borderColor: 'grey.400',
-          padding: '30px 0 0 0',
-        }}
-      >
-        <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>
-          Featured Research
-        </Typography>
-        {remainingCards.map((research, index) => (
-          <FeaturedResearchCard
-            entityId={entityId}
-            research={research}
-            key={index}
-            isLoading={isLoading}
-            titleColIndex={titleColIndex}
-            descriptionColIndex={descriptionColIndex}
-            publicationDateColIndex={publicationDateColIndex}
-            imageColIndex={imageColIndex}
-            linkColIndex={linkColIndex}
-          />
-        ))}
+      <Stack>
+        <PortalSectionHeader
+          title="Featured Research"
+          sx={{ h2: { fontSize: '24px', paddingBottom: 0, width: '100%' } }}
+        />
+        <Stack gap="16px">
+          {remainingCards.map((research, index) => (
+            <FeaturedResearchCard
+              entityId={entityId}
+              research={research}
+              key={index}
+              isLoading={isLoading}
+              titleColIndex={titleColIndex}
+              descriptionColIndex={descriptionColIndex}
+              publicationDateColIndex={publicationDateColIndex}
+              imageColIndex={imageColIndex}
+              linkColIndex={linkColIndex}
+            />
+          ))}
+        </Stack>
       </Stack>
     </Box>
   )
