@@ -21,6 +21,7 @@ type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
+  plotType?: PlotType
 }
 type CustomPlotIdentifier = {
   title: string
@@ -89,6 +90,7 @@ const getCombinedNewPlots = (
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
   >[] = [],
+  plotType: PlotType,
 ): UiPlotState[] => [
   ...customPlots.map((plotProps, index) => ({
     plotId: getCustomPlotIdentifier(plotProps),
@@ -98,7 +100,7 @@ const getCombinedNewPlots = (
   ...facetNavPanelPropsArray.map((facetPlotProps, index) => ({
     plotId: facetPlotProps.facetToPlot,
     isHidden: index + customPlots.length >= DEFAULT_VISIBLE_PLOTS,
-    plotType: DEFAULT_PLOT_TYPE,
+    plotType: plotType ?? 'PIE', // default to pie
   })),
 ]
 
@@ -133,6 +135,7 @@ function PlotsContainer(props: PlotsContainerProps) {
   const {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
+    plotType = DEFAULT_PLOT_TYPE,
   } = props
   const { queryMetadataQueryOptions } = useQueryContext()
   const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
@@ -144,13 +147,14 @@ function PlotsContainer(props: PlotsContainerProps) {
     const plotType = plotUiStateArray.find(item =>
       plotMatchesDefinition(plotId, item.plotId),
     )?.plotType
-    return plotType ?? 'PIE'
+    return plotType ?? 'PIE' // default to PIE
   }
 
   useEffect(() => {
     const combinedNewPlots = getCombinedNewPlots(
       customPlots,
       facetNavPanelPropsArray,
+      plotType,
     )
 
     // Update the state with new plots
