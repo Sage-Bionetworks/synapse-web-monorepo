@@ -26,13 +26,14 @@ const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
         gap: { xs: '38px', md: '80px' },
         gridTemplateColumns: {
           xs: 'minmax(100px, 1fr)',
+          md: '1fr 1fr',
           lg: reverseOrder
             ? 'minmax(150px, 1fr) minmax(300px, 2fr)'
             : 'minmax(300px, 2fr) minmax(150px, 1fr)',
         },
         gridTemplateAreas: {
           xs: `'image' 'content'`,
-          lg: reverseOrder ? `'content image'` : `'image content'`,
+          md: reverseOrder ? `'content image'` : `'image content'`,
         },
       }}
     >

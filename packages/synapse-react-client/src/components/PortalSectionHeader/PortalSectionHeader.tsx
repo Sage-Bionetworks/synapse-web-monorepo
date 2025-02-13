@@ -29,7 +29,7 @@ const PortalSectionHeader = ({
   centered = false,
   reverseButtonAndText = false,
 }: PortalSectionHeaderProps) => {
-  const iisExternalLink =
+  const isExternalLink =
     link?.startsWith('http://') || link?.startsWith('https://')
   return (
     <Box
@@ -80,8 +80,8 @@ const PortalSectionHeader = ({
             {buttonText && (
               <Button
                 variant="contained"
-                component={iisExternalLink ? MuiLink : RouterLink}
-                {...(iisExternalLink
+                component={isExternalLink ? MuiLink : RouterLink}
+                {...(isExternalLink
                   ? {
                       href: link,
                       target: '_blank',
