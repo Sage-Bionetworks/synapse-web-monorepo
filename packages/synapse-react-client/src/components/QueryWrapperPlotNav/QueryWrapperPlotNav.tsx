@@ -143,7 +143,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
   | 'initialLimit'
-  | 'plotType'
+  | 'initialPlotType'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -169,7 +169,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     isFullTextSearchEnabled,
     customPlots,
     initialLimit,
-    plotType,
+    initialPlotType,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = useState(false)
@@ -259,7 +259,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               <PlotsContainer
                 facetsToPlot={facetsToPlot}
                 customPlots={customPlots}
-                plotType={plotType}
+                initialPlotType={initialPlotType}
               />
               <RowSetView
                 tableConfiguration={tableConfiguration}
