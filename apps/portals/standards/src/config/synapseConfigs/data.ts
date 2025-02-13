@@ -6,7 +6,6 @@ import {
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { dataSql } from '../resources'
-import { data } from 'react-router'
 
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
