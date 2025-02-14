@@ -50,16 +50,17 @@ const Section: StyledComponent<BoxProps> = styled(
   },
 )(() => ({}))
 
-const SectionInnerGrid: StyledComponent<BoxProps> = styled(
-  props => <Box {...props} />,
-  {
-    label: 'SectionInnerGrid',
-  },
-)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'auto 200px',
-  columnGap: theme.spacing(5),
-}))
+const SectionInnerGrid = styled(Box, { label: 'SectionInnerGrid' })(
+  ({ theme }) => ({
+    display: 'grid',
+    gridTemplateColumns: 'auto 200px',
+    columnGap: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '1fr',
+      gap: '18px',
+    },
+  }),
+)
 
 export const TWO_FACTOR_DOCS_LINK =
   'https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#Adding-Two-Factor-Authentication-(2FA)-to-your-account'
@@ -117,7 +118,7 @@ export default function TwoFactorEnrollmentForm(
       <Paper
         sx={{
           position: 'relative',
-          width: '800px',
+          width: { xs: '100%', md: '800px' },
           py: 6.5,
           px: 8,
           mx: 'auto',
@@ -170,7 +171,15 @@ export default function TwoFactorEnrollmentForm(
                 of these apps already installed, you can skip this step.
               </Typography>
             </Box>
-            <Stack justifyContent={'space-between'} sx={{ flexShrink: 0 }}>
+            <Stack
+              justifyContent={'space-between'}
+              sx={theme => ({
+                flexShrink: 0,
+                [theme.breakpoints.down('sm')]: {
+                  gap: '20px',
+                },
+              })}
+            >
               <Link href={'https://authy.com/download/'}>Authy</Link>
               <Link
                 href={
