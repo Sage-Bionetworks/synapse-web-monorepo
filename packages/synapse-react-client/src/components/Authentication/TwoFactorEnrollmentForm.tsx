@@ -172,8 +172,8 @@ export default function TwoFactorEnrollmentForm(
               </Typography>
             </Box>
             <Stack
-              justifyContent={'space-between'}
               sx={theme => ({
+                justifyContent: 'space-between',
                 flexShrink: 0,
                 [theme.breakpoints.down('sm')]: {
                   gap: '20px',
