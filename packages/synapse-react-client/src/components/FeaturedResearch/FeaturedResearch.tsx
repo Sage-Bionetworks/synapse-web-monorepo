@@ -144,8 +144,7 @@ const FeaturedResearchTopCard = ({
       <Stack useFlexGap gap={'16px'}>
         <Typography
           variant="headline2"
-          color={'grey.1000'}
-          sx={{ fontSize: { xs: '24px', md: '36px' } }}
+          sx={{ color: 'grey.1000', fontSize: { xs: '24px', md: '36px' } }}
         >
           <Link
             href={research.values[linkColIndex] ?? ''}
