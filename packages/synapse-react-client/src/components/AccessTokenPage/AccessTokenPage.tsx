@@ -27,13 +27,29 @@ export function AccessTokenPage({ title, body }: AccessTokenPageProps) {
 
   return (
     <div>
-      <Box display={'flex'} gap={2} justifyContent={'space-between'}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          justifyContent: 'space-between',
+          flexDirection: { xs: 'column', md: 'row' },
+        }}
+      >
         <Box flexGrow={1}>
           <h1>{title}</h1>
           {body}
         </Box>
-        <Box flexShrink={0} alignSelf={'end'}>
+        <Box
+          sx={theme => ({
+            flexShrink: 0,
+            alignSelf: 'end',
+            [theme.breakpoints.down('md')]: { width: '100%' },
+          })}
+        >
           <Button
+            sx={theme => ({
+              [theme.breakpoints.down('md')]: { width: '100%' },
+            })}
             variant="contained"
             color="primary"
             onClick={() => setShowCreateTokenModal(true)}
