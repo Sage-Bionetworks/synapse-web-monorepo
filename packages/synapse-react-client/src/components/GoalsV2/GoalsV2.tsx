@@ -1,15 +1,14 @@
+import { alpha, Box } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import { EvenlyDistributedWrappedContainer } from '../styled/EvenlyDistributedWrappedContainer'
-import GoalsV2Mobile from './GoalsV2.Mobile'
-import GoalsV2Desktop from './GoalsV2.Desktop'
+import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { Box, alpha } from '@mui/material'
 import useGetGoalData from '../../utils/hooks/useGetGoalData'
+import useShowDesktop from '../../utils/hooks/useShowDesktop'
+import { ErrorBanner } from '../error/ErrorBanner'
 import PortalSectionHeader from '../PortalSectionHeader'
+import GoalsV2Desktop from './GoalsV2.Desktop'
+import GoalsV2Mobile from './GoalsV2.Mobile'
 
 export type GoalsV2Props = {
   entityId: string
