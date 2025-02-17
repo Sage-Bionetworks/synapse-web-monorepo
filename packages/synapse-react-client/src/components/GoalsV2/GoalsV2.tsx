@@ -3,6 +3,7 @@ import { SynapseConstants } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
+import { EvenlyDistributedWrappedContainer } from '../styled/EvenlyDistributedWrappedContainer'
 import GoalsV2Mobile from './GoalsV2.Mobile'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -119,18 +120,20 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         })}
       />
       {goalError && <ErrorBanner error={goalError} />}
-      <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-        {goalsDataArray.map((row, index) => {
-          return showDesktop ? (
-            <div>
+      <div className={`Goals`}>
+        {showDesktop && (
+          <EvenlyDistributedWrappedContainer>
+            {goalsDataArray.map((row, index) => (
               <GoalsV2Desktop key={index} {...row} />
-            </div>
-          ) : (
+            ))}
+          </EvenlyDistributedWrappedContainer>
+        )}
+        {!showDesktop &&
+          goalsDataArray.map((row, index) => (
             <Box sx={{ display: 'grid' }}>
               <GoalsV2Mobile key={index} {...row} />
             </Box>
-          )
-        })}
+          ))}
       </div>
     </Box>
   )
