@@ -4,6 +4,7 @@ import { chunk } from 'lodash-es'
 import { ReactNode } from 'react'
 
 const MAX_ITEMS_PER_ROW = 4
+const DEFAULT_SPACING = 3
 
 type EvenlyDistributedWrappedContainerProps = {
   children: ReactNode[]
@@ -11,7 +12,7 @@ type EvenlyDistributedWrappedContainerProps = {
 
 const FlexContainer: StyledComponent<BoxProps> = styled(Box)(({ theme }) => ({
   display: 'flex',
-  rowGap: theme.spacing(3),
+  rowGap: theme.spacing(DEFAULT_SPACING),
   columnGap: 'min(2%, 16px)',
   flexWrap: 'wrap',
   justifyContent: 'space-evenly',
@@ -74,7 +75,8 @@ export function EvenlyDistributedWrappedContainer(
   const chunks = chunkItemsIntoEvenlyDistributedGroups(children)
 
   return chunks.map((row, index) => {
-    const spaceRowsSx = index !== chunks.length - 1 ? { mb: 3 } : {}
+    const spaceRowsSx =
+      index !== chunks.length - 1 ? { mb: DEFAULT_SPACING } : {}
     return <FlexContainer sx={spaceRowsSx}>{row}</FlexContainer>
   })
 }
