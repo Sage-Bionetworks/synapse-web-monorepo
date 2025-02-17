@@ -14,7 +14,7 @@ export default function GoalsV2Desktop({
   return (
     <Card
       sx={{
-        width: 200,
+        maxWidth: '200px',
         height: 'auto',
         backgroundColor: 'transparent',
         borderColor: 'transparent',

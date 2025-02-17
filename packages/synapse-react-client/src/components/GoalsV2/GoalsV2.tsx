@@ -102,10 +102,12 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       }
     }) ?? []
 
+  const ContentComponent = showDesktop ? GoalsV2Desktop : GoalsV2Mobile
+
   return (
     <Box
       sx={{
-        height: '560px',
+        minHeight: '560px',
         padding: { xs: '40px', lg: '80px' },
       }}
     >
@@ -121,19 +123,17 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       />
       {goalError && <ErrorBanner error={goalError} />}
       <div className={`Goals`}>
-        {showDesktop && (
-          <EvenlyDistributedWrappedContainer>
-            {goalsDataArray.map((row, index) => (
-              <GoalsV2Desktop key={index} {...row} />
-            ))}
-          </EvenlyDistributedWrappedContainer>
-        )}
-        {!showDesktop &&
-          goalsDataArray.map((row, index) => (
-            <Box sx={{ display: 'grid' }}>
-              <GoalsV2Mobile key={index} {...row} />
-            </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: showDesktop ? 'row' : 'column',
+          }}
+        >
+          {goalsDataArray.map((row, index) => (
+            <ContentComponent key={index} {...row} />
           ))}
+        </Box>
       </div>
     </Box>
   )
