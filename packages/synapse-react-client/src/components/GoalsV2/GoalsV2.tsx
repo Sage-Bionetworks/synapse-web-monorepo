@@ -1,14 +1,14 @@
+import { alpha, Box } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import GoalsV2Mobile from './GoalsV2.Mobile'
-import GoalsV2Desktop from './GoalsV2.Desktop'
+import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { Box, alpha } from '@mui/material'
 import useGetGoalData from '../../utils/hooks/useGetGoalData'
+import useShowDesktop from '../../utils/hooks/useShowDesktop'
+import { ErrorBanner } from '../error/ErrorBanner'
 import PortalSectionHeader from '../PortalSectionHeader'
+import GoalsV2Desktop from './GoalsV2.Desktop'
+import GoalsV2Mobile from './GoalsV2.Mobile'
 
 export type GoalsV2Props = {
   entityId: string
@@ -101,10 +101,12 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
       }
     }) ?? []
 
+  const ContentComponent = showDesktop ? GoalsV2Desktop : GoalsV2Mobile
+
   return (
     <Box
       sx={{
-        height: '560px',
+        minHeight: '560px',
         padding: { xs: '40px', lg: '80px' },
       }}
     >
@@ -119,18 +121,18 @@ export const GoalsV2: React.FC<GoalsV2Props> = (props: GoalsV2Props) => {
         })}
       />
       {goalError && <ErrorBanner error={goalError} />}
-      <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-        {goalsDataArray.map((row, index) => {
-          return showDesktop ? (
-            <div>
-              <GoalsV2Desktop key={index} {...row} />
-            </div>
-          ) : (
-            <Box sx={{ display: 'grid' }}>
-              <GoalsV2Mobile key={index} {...row} />
-            </Box>
-          )
-        })}
+      <div className={`Goals`}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: showDesktop ? 'row' : 'column',
+          }}
+        >
+          {goalsDataArray.map((row, index) => (
+            <ContentComponent key={index} {...row} />
+          ))}
+        </Box>
       </div>
     </Box>
   )

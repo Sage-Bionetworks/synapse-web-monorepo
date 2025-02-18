@@ -19,14 +19,10 @@
 }
 
 .Goals {
-  &__Desktop {
-    @extend %space-between;
-  }
   &__Card {
     p {
       margin: 0px !important;
     }
-    flex: 1;
     display: flex;
     flex-direction: column;
     box-shadow: SRC.$box-shadow-soft;
