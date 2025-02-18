@@ -1,11 +1,9 @@
-import { Box, Chip, Link, Paper, SxProps, Typography } from '@mui/material'
 import { EastTwoTone } from '@mui/icons-material'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+import { Box, Card, Chip, Link, SxProps, Typography } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 
 export type SynapseFeaturedDatasetItemProps = {
   sourceTable: string
-  id?: string | null
   community?: string | null
   name?: string | null
   description?: string | null
@@ -15,6 +13,7 @@ export type SynapseFeaturedDatasetItemProps = {
   imageFileId?: string | null
   size?: string | null
   sizeUnit?: string | null
+  link: string
 }
 const clampedTextSx: SxProps = {
   textOverflow: 'ellipsis',
@@ -26,8 +25,6 @@ const clampedTextSx: SxProps = {
 }
 export function SynapseFeaturedDatasetItem({
   sourceTable,
-  id,
-  community,
   name,
   description,
   contributors,
@@ -36,10 +33,11 @@ export function SynapseFeaturedDatasetItem({
   individuals,
   size,
   sizeUnit,
+  link,
 }: SynapseFeaturedDatasetItemProps) {
   const tags: string[] = keywords ? JSON.parse(keywords) : []
   return (
-    <Paper
+    <Card
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -157,17 +155,12 @@ export function SynapseFeaturedDatasetItem({
           {contributors}
         </Typography>
         <Box sx={{ mt: '32px' }}>
-          <Link
-            href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}Synapse:${id}`}
-            target="_blank"
-          >
+          <Link href={link} target="_blank">
             Explore dataset
             <EastTwoTone sx={{ mb: '-8px', ml: '6px' }} />
           </Link>
         </Box>
       </Box>
-    </Paper>
+    </Card>
   )
 }

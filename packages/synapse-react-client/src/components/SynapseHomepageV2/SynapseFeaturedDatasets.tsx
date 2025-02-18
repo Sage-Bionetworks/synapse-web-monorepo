@@ -1,6 +1,11 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/index'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/material'
+import { getColumnIndex } from '../GenericCard/index'
 import { SynapseFeaturedDatasetItem } from './SynapseFeaturedDatasetItem'
 
 export type SynapseFeaturedDatasetsProps = {
@@ -28,36 +33,17 @@ export function SynapseFeaturedDatasets({
 
   const rowSet = data?.responseBody?.queryResult?.queryResults
   const headers = rowSet?.headers
-  const entityIdColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'id',
-  )!
-  const communityColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'community',
-  )!
-  const nameColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'name',
-  )!
-  const descriptionColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'description',
-  )!
-  const contributorsColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'contributors',
-  )!
-  const keywordsColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'keywords',
-  )!
-  const individualsColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'individuals',
-  )!
-  const imageColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'image',
-  )!
-  const sizeColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'size',
-  )!
-  const sizeUnitColIndex = headers?.findIndex(
-    selectColumn => selectColumn.name == 'sizeUnit',
-  )!
+  const entityIdColIndex = getColumnIndex('id', headers)!
+  const communityColIndex = getColumnIndex('community', headers)!
+  const nameColIndex = getColumnIndex('name', headers)!
+  const descriptionColIndex = getColumnIndex('description', headers)!
+  const contributorsColIndex = getColumnIndex('contributors', headers)!
+  const keywordsColIndex = getColumnIndex('keywords', headers)!
+  const individualsColIndex = getColumnIndex('individuals', headers)!
+  const imageColIndex = getColumnIndex('image', headers)!
+  const sizeColIndex = getColumnIndex('size', headers)!
+  const sizeUnitColIndex = getColumnIndex('sizeUnit', headers)!
+  const linkColIndex = getColumnIndex('link', headers)!
 
   if (!rowSet || rowSet.rows.length == 0) {
     return <></>
@@ -71,7 +57,7 @@ export function SynapseFeaturedDatasets({
         justifyContent: 'center',
       }}
     >
-      {rowSet.rows.map(row => {
+      {rowSet.rows.map((row, index) => {
         const community = row.values[communityColIndex]
         const id = row.values[entityIdColIndex]
         const name = row.values[nameColIndex]
@@ -82,13 +68,17 @@ export function SynapseFeaturedDatasets({
         const imageFileId = row.values[imageColIndex]
         const size = row.values[sizeColIndex]
         const sizeUnit = row.values[sizeUnitColIndex]
+        const linkColumnValue = row.values[linkColIndex]
+
+        const link =
+          linkColumnValue ??
+          `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${id}`
         return (
-          <Box key={id} sx={{ maxWidth: '450px', width: '100%' }}>
+          <Box key={index} sx={{ maxWidth: '450px', width: '100%' }}>
             <SynapseFeaturedDatasetItem
-              key={id}
               sourceTable={sourceTable}
               community={community}
-              id={id}
+              link={link}
               name={name}
               description={description}
               keywords={keywords}
