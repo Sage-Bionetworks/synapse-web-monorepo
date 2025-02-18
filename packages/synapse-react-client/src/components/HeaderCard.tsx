@@ -1,6 +1,6 @@
+import { useState, useEffect } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import { useState, useEffect } from 'react'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 
 export type HeaderCardProps = {

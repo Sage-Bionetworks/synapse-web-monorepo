@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    headerType: 'Study',
+    type: 'Standard',
     title: 'Example Study',
     description:
       'This is an example study description that demonstrates the HeaderCard component.',
@@ -32,7 +32,7 @@ export const Default: Story = {
     descriptionConfig: {
       showFullDescriptionByDefault: true,
     },
-    icon: <Study style={{ width: '30px', height: '30px' }} />,
+    icon: <Study />,
   },
 }
 
@@ -41,5 +41,19 @@ export const WithSubtitle: Story = {
     ...Default.args,
     title: 'Study With Subtitle',
     subTitle: 'Principal Investigator: John Doe',
+  },
+}
+
+export const Dicom: Story = {
+  args: {
+    ...Default.args,
+    title: 'DICOM',
+    description:
+      'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
+    values: [
+      ['AUTHOR NAME', 'DICOM (@dicom)'],
+      ['LAT UPDATED', '2024-01-01'],
+      ['BASED ON', 'None'],
+    ],
   },
 }
