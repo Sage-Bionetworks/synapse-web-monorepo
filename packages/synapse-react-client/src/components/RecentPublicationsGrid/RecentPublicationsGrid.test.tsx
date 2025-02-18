@@ -124,15 +124,15 @@ describe('RecentPublicationsGrid Tests', () => {
       expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
     )
 
-    expect(screen.getByText('Category1')).toBeInTheDocument()
-    expect(screen.getByText('Title1')).toBeInTheDocument()
-    expect(screen.getByText('Journal1')).toBeInTheDocument()
-    expect(screen.getByText('September, 2024')).toBeInTheDocument()
+    expect(screen.queryByText('Category1')).not.toBeInTheDocument()
+    screen.getByText('Title1')
+    screen.getByText('Journal1')
+    screen.getByText('September, 2024')
 
-    expect(screen.getByText('Category2')).toBeInTheDocument()
-    expect(screen.getByText('Title2')).toBeInTheDocument()
-    expect(screen.getByText('Journal2')).toBeInTheDocument()
-    expect(screen.getByText('March, 2024')).toBeInTheDocument()
+    expect(screen.queryByText('Category2')).not.toBeInTheDocument()
+    screen.getByText('Title2')
+    screen.getByText('Journal2')
+    screen.getByText('March, 2024')
   })
 
   it('renders summary text and button if props provided', () => {

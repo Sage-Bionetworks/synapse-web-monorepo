@@ -1,12 +1,16 @@
-import { Box, Link as MuiLink, Skeleton, Typography } from '@mui/material'
+import { Box, Chip, Link as MuiLink, Skeleton, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { SynapseConstants, SynapseUtilityFunctions } from '../../utils'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/index'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+} from '../../utils/SynapseConstants'
 import PortalSectionHeader from '../PortalSectionHeader'
 
 export type RecentPublicationsGridProps = {
@@ -29,7 +33,7 @@ type PublicationCardProps = {
 const PublicationCard = ({
   pub,
   isLoading,
-  categoryColIndex,
+  categoryColIndex: _categoryColIndex, // PORTALS-3426 - category was dropped
   titleColIndex,
   journalColIndex,
   publicationDateColIndex,
@@ -46,20 +50,27 @@ const PublicationCard = ({
         <Skeleton variant="rectangular" height={275} width="100%" />
       ) : (
         <div>
-          {pub.values[categoryColIndex] && (
-            <Typography
-              variant="overline"
-              fontSize={'14px'}
+          {pub.values[journalColIndex] && (
+            <Chip
+              label={
+                <Typography
+                  variant={'overline'}
+                  sx={{ fontSize: '14px', lineHeight: 'initial' }}
+                >
+                  {pub.values[journalColIndex]}
+                </Typography>
+              }
               sx={{
-                backgroundColor: 'grey.300',
                 borderRadius: '3px',
+                height: 'auto',
                 padding: '4px 8px',
-                border: 'none',
-                lineHeight: 'initial',
+                '& .MuiChip-label': {
+                  padding: '0',
+                  display: 'block',
+                  whiteSpace: 'normal',
+                },
               }}
-            >
-              {pub.values[categoryColIndex]}
-            </Typography>
+            />
           )}
           <Typography
             variant="headline2"
@@ -89,15 +100,6 @@ const PublicationCard = ({
               variant="body1"
               color="grey.700"
               fontSize={'14px'}
-              fontStyle={'italic'}
-              lineHeight={1.35}
-            >
-              {pub.values[journalColIndex]}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="grey.700"
-              fontSize={'14px'}
               lineHeight={1.35}
               paddingBottom={{ xs: 0, md: '35px' }}
             >
@@ -117,12 +119,10 @@ const PublicationCard = ({
 function RecentPublicationsGrid(props: RecentPublicationsGridProps) {
   const { sql, buttonLink, buttonLinkText, summaryText } = props
 
-  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    partMask: BUNDLE_MASK_QUERY_SELECT_COLUMNS | BUNDLE_MASK_QUERY_RESULTS,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     query: {
