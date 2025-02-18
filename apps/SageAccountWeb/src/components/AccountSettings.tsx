@@ -220,7 +220,7 @@ export const AccountSettings = () => {
     { label: 'Webhooks', ref: webhooksRef },
     { label: 'Privacy Preferences', ref: cookieManagementRef },
     { label: 'Sign Out', ref: signOutSectionRef },
-  ]
+  ].filter(item => item.label !== 'Webhooks' || showWebhooks)
 
   const handleScroll = (ref: RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
