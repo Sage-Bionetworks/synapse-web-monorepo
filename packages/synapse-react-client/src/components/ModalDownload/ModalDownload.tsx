@@ -19,6 +19,9 @@ import {
   includeRowIdAndRowVersionOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
+import SynapseFormCheckboxesWidget from '../SynapseForm/SynapseFormCheckboxesWidget'
+import SynapseFormCheckboxWidget from '../SynapseForm/SynapseFormCheckboxWidget'
+import SynapseFormRadioWidget from '../SynapseForm/SynapseFormRadioWidget'
 
 type ModalDownloadState = {
   isLoading: boolean
@@ -146,6 +149,11 @@ export class ModalDownload extends Component<
               onChange={this.handleChange}
               formData={this.state.formData}
               onSubmit={this.handleSubmit}
+              widgets={{
+                CheckboxWidget: SynapseFormCheckboxWidget,
+                CheckboxesWidget: SynapseFormCheckboxesWidget,
+                RadioWidget: SynapseFormRadioWidget,
+              }}
             >
               {this.state.isLoading && (
                 <div className="SRC-centerAndJustifyContent">
