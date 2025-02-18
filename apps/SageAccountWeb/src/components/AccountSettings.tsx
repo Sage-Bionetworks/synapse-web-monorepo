@@ -235,13 +235,7 @@ export const AccountSettings = () => {
 
   return (
     <div className="account-settings-page">
-      <AccountSettingsTopBar
-        accountSettingsPanelConfig={
-          showWebhooks
-            ? menuConfigArray
-            : menuConfigArray.filter(item => item.ref !== webhooksRef)
-        }
-      />
+      <AccountSettingsTopBar accountSettingsPanelConfig={menuConfigArray} />
       <div className="panel-wrapper-bg with-account-setting">
         <Container
           maxWidth="md"
@@ -249,19 +243,14 @@ export const AccountSettings = () => {
         >
           <Box sx={{ display: 'flex', my: { xs: '10px', sm: '60px' } }}>
             <Paper component="nav" className="account-setting-panel nav-panel">
-              {menuConfigArray.map((item, index) => {
-                if (item.ref === webhooksRef && showWebhooks === false) {
-                  return null
-                }
-                return (
-                  <ListItemButton
-                    key={index}
-                    onClick={() => handleScroll(item.ref)}
-                  >
-                    {item.label}
-                  </ListItemButton>
-                )
-              })}
+              {menuConfigArray.map((item, index) => (
+                <ListItemButton
+                  key={index}
+                  onClick={() => handleScroll(item.ref)}
+                >
+                  {item.label}
+                </ListItemButton>
+              ))}
             </Paper>
 
             <div>
