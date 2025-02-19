@@ -71,20 +71,22 @@ export function ComplexMenu(props: ComplexMenuProps) {
           <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
         ),
       )}
-      {dropdownMenus.map((menuProps, index) => {
-        return (
-          <Box
-            sx={theme => ({
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-                '.MuiButton-root': { width: '100%' },
-              },
-            })}
-          >
-            <DropdownMenu key={index} {...menuProps} />
-          </Box>
-        )
-      })}
+      {dropdownMenus.map(
+        (menuProps, index) =>
+          menuProps.items &&
+          menuProps.items.length > 0 && (
+            <Box
+              sx={theme => ({
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                  '.MuiButton-root': { width: '100%' },
+                },
+              })}
+            >
+              <DropdownMenu key={index} {...menuProps} />
+            </Box>
+          ),
+      )}
     </Box>
   )
 }
