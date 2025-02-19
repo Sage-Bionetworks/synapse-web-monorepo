@@ -1,7 +1,6 @@
 @use '../../abstracts/variables' as SRC;
 @use './entity-finder' as EntityFinder;
 @use '../../abstracts/mixins' as SrcMixins;
-@use '../../../template_style/form' as Form;
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
