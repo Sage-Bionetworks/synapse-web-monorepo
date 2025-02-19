@@ -39,7 +39,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
 
     const devConfig = {
       REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
-      PORTAL: 'https://portal-dev.dev.sagebase.org/',
+      PORTAL: 'https://dev.synapse.org/',
     }
 
     if (isStaging || isDev) {
