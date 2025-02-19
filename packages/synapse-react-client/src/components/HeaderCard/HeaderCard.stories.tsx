@@ -2,7 +2,8 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCard from './HeaderCardV2'
 import type { HeaderCardProps } from './HeaderCardV2'
-import { Study } from '../../assets/themed_icons' // icon example. fix later
+import { Study } from '../../assets/themed_icons'
+import { LaunchOutlined } from '@mui/icons-material'
 
 const meta = {
   title: 'Synapse/HeaderCardV2',
@@ -11,7 +12,7 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} as Meta<typeof HeaderCard>
+} satisfies Meta<typeof HeaderCard>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -22,7 +23,7 @@ export const Default: Story = {
     title: 'Default HeaderCard',
     description: 'This is a default header card',
     values: [
-      ['Label 1', 'Value 1'], // Each inner array is [label, value]
+      ['Label 1', 'Value 1'],
       ['Label 2', 'Value 2'],
       ['Label 3', 'Value 3'],
     ],
@@ -32,6 +33,81 @@ export const Default: Story = {
       showFullDescriptionByDefault: true,
     },
     icon: <Study />,
+  },
+}
+
+export const DicomCard: Story = {
+  args: {
+    type: 'DICOM',
+    title: 'DICOM',
+    description:
+      'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
+    values: [
+      ['AUTHOR NAME', 'DICOM (@dicom)'],
+      ['LAST UPDATED', '2024-01-01'],
+      ['BASED ON', 'None'],
+    ],
+    icon: <Study />,
+    ctaButtons: [
+      {
+        label: 'View Standard on External Website',
+        variant: 'outlined',
+        href: 'https://dicom.nema.org/',
+        target: '_blank',
+        endIcon: <LaunchOutlined />,
+        sx: { borderRadius: 1 },
+      },
+    ],
+  },
+}
+
+export const WithMultipleButtons: Story = {
+  args: {
+    ...DicomCard.args,
+    title: 'DICOM with Multiple Actions',
+    ctaButtons: [
+      {
+        label: 'View Standard on External Website',
+        variant: 'outlined',
+        href: 'https://dicom.nema.org/',
+        target: '_blank',
+        endIcon: <LaunchOutlined />,
+        sx: { borderRadius: 1 },
+      },
+      {
+        label: 'Download Documentation',
+        variant: 'contained',
+        href: '#',
+        sx: { borderRadius: 1 },
+      },
+      {
+        label: 'View Examples',
+        variant: 'outlined',
+        href: '#',
+        sx: { borderRadius: 1 },
+      },
+    ],
+  },
+}
+
+export const WithStackedLayout: Story = {
+  args: {
+    ...DicomCard.args,
+    title: 'DICOM with Stacked Layout',
+    forceStackedLayout: true,
+    values: [
+      ['AUTHOR NAME', 'DICOM (@dicom)'],
+      ['LAST UPDATED', '2024-01-01'],
+      ['BASED ON', 'None'],
+      [
+        'VERY LONG LABEL',
+        'This is a very long value that demonstrates why we might want to force a stacked layout. It contains lots of text that would be hard to read in a side-by-side layout.',
+      ],
+      [
+        'ANOTHER LONG ONE',
+        'More extensive content that benefits from the full width of the card when displayed in a stacked layout.',
+      ],
+    ],
   },
 }
 
@@ -63,27 +139,6 @@ export const StudyHeaderCardV2: Story = {
     descriptionConfig: {
       showFullDescriptionByDefault: true,
     },
-  },
-}
-
-export const WithSubtitle: Story = {
-  args: {
-    ...Default.args,
-    title: 'Study With Subtitle',
-    subTitle: 'Principal Investigator: John Doe',
-  },
-}
-
-export const Dicom: Story = {
-  args: {
-    ...Default.args,
-    title: 'DICOM',
-    description:
-      'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
-    values: [
-      ['AUTHOR NAME', 'DICOM (@dicom)'],
-      ['LAT UPDATED', '2024-01-01'],
-      ['BASED ON', 'None'],
-    ],
+    icon: <Study />,
   },
 }
