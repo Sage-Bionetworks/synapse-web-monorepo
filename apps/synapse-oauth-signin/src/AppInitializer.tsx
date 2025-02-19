@@ -47,7 +47,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
         ;(window as any).SRC = {}
       }
 
-      ;(window as any).SRC.OVERRIDE_ENDPOINT_CONFIG = isStaging
+      ;(window as any).SRC_OVERRIDE_ENDPOINT_CONFIG = isStaging
         ? stagingConfig
         : devConfig
     }
