@@ -19,7 +19,7 @@ const KNOWN_SYNAPSE_ORG_URLS = [
   'www.synapse.org',
   'staging.synapse.org',
   'tst.synapse.org',
-  'portal-dev.dev.sagebase.org',
+  'dev.synapse.org',
   '127.0.0.1',
 ]
 
@@ -72,7 +72,7 @@ export const STACK_MAP: Record<SynapseStack, EndpointObject> = {
   },
   development: {
     REPO: SYNAPSE_BACKEND_DEV_URL,
-    PORTAL: 'https://portal-dev.dev.sagebase.org/',
+    PORTAL: 'https://dev.synapse.org/',
   },
   mock: {
     REPO: MOCK_REPO_ORIGIN,
