@@ -17,22 +17,109 @@ import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { CardFooter } from '../row_renderers/utils'
 
 export type HeaderCardProps = {
+  /** Type label displayed at the top of the card */
   type: string
+  /** Main title of the card */
   title: string
+  /** Optional subtitle, often used for author or additional context */
   subTitle?: string
+  /** Main description text */
   description: string
+  /** Maximum number of secondary labels to show before "Show More" */
   secondaryLabelLimit?: number
+  /** Array of label-value pairs to display in the card footer */
   values?: string[][]
+  /** Whether to align the card to the left navigation */
   isAlignToLeftNav?: boolean
+  /** Configuration for the collapsible description */
   descriptionConfig?: DescriptionConfig
+  /** Optional URL for making the title clickable */
   href?: string
+  /** Target attribute for the title link */
   target?: string
+  /** Icon element to display */
   icon: JSX.Element
+  /** Optional background image URL */
   backgroundImage?: string
+  /** Force values section to appear below main content */
   forceStackedLayout?: boolean
+  /** Optional array of CTA buttons to display below description */
   ctaButtons?: (ButtonProps & { label: string })[]
 }
 
+/**
+ * HeaderCardV2 Component
+ *
+ * A material-UI based card component for displaying detailed information with metadata.
+ * This component supports responsive layouts, background images, and dynamic content
+ * organization.
+ *
+ * Layout Structure:
+ * ┌───────────────────────────────────────────────────────────────┐
+ * │ ┌─────┐  Type Label                                           │
+ * │ │Icon │  Title                                                │
+ * │ │     │  Subtitle                                             │
+ * │ └─────┘                                                       │
+ * │         Description                     Metadata              │
+ * │         [Show More/Less]                --------              │
+ * │                                         Label 1    Value 1    │
+ * │         [CTA Buttons]                   Label 2    Value 2    │
+ * └───────────────────────────────────────────────────────────────┘
+ *
+ * Features:
+ * - Responsive layout with configurable breakpoints
+ * - Optional background image with overlay
+ * - Collapsible description text
+ * - Right-aligned or stacked metadata section
+ * - Call-to-action buttons
+ * - SEO-friendly meta tags management
+ *
+ * Meta Tags Handling:
+ * - Updates document title with card title
+ * - Sets meta description from card description/subtitle
+ * - Restores original meta data on component cleanup
+ *
+ * Layout Modes:
+ * - Default: Icon + Content | Metadata (on desktop)
+ * - Stacked: Full width content with metadata below
+ * - Mobile: All sections stack vertically
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <HeaderCardV2
+ *   type="Study"
+ *   title="Example Study"
+ *   description="Study description"
+ *   values={[['Status', 'Active'], ['Access', 'Public']]}
+ *   icon={<StudyIcon />}
+ *   ctaButtons={[
+ *     { label: 'View Details', variant: 'contained' }
+ *   ]}
+ * />
+ * ```
+
+ * Core component logic:
+ * 1. Responsive Layout:
+ *    - Uses MUI Grid for flexible layouts
+ *    - Switches to stacked layout on mobile or when forceStackedLayout is true
+ *
+ * 2. Meta Tags:
+ *    - Manages document title and meta description
+ *    - Preserves original values for cleanup
+ *
+ * 3. Content Sections:
+ *    - Icon: Optional, maintains aspect ratio
+ *    - Main Content: Type, title, subtitle, description
+ *    - Metadata: Right-aligned or stacked key-value pairs
+ *    - CTA Buttons: Optional action buttons below description
+ *
+ * 4. Styling:
+ *    - Background image support with overlay
+ *    - Consistent spacing using MUI theme
+ *    - Responsive typography
+ *    - Optional left-nav alignment
+ */
 function HeaderCard({
   type,
   title,
