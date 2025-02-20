@@ -40,10 +40,10 @@ export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
 // Given an endpoint will return the specific stack object
 export const getEndpoint = (endpoint: BackendDestinationEnum): string => {
   let endpoint_config = PRODUCTION_ENDPOINT_CONFIG
-  // @ts-ignore if overriding endpoint config
-  if (window.SRC && window.SRC.OVERRIDE_ENDPOINT_CONFIG) {
-    // @ts-ignore
-    endpoint_config = window.SRC && window.SRC.OVERRIDE_ENDPOINT_CONFIG
+  // @ts-expect-error if overriding endpoint config
+  if (window.SRC_OVERRIDE_ENDPOINT_CONFIG) {
+    // @ts-expect-error
+    endpoint_config = window.SRC_OVERRIDE_ENDPOINT_CONFIG
   }
   const { PORTAL, REPO } = endpoint_config
   if (!PORTAL || !REPO) {
