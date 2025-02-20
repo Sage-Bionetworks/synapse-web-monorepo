@@ -5,6 +5,7 @@ const portalsSharedViteConfig = new ConfigBuilder()
   .setIncludeReactConfig(true)
   .setIncludeVitestConfig(true)
   .setConfigOverrides({
+    port: 3001, // Reserve port 3000 for SageAccountWeb
     plugins: [
       createHtmlPlugin({
         inject: {

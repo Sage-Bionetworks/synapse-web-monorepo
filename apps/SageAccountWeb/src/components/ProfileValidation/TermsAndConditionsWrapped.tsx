@@ -22,6 +22,12 @@ function TermsAndConditionsWrapped({
   return (
     <Box>
       <TermsAndConditions
+        termsAndConditionsTableID={
+          import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_ID
+        }
+        termsAndConditionsTableVersion={
+          import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_VERSION
+        }
         onFormChange={isFormComplete => {
           setIsFormComplete(isFormComplete)
         }}
