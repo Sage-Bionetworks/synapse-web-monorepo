@@ -1,11 +1,15 @@
-import TermsAndConditions from './TermsAndConditions'
+import TermsAndConditions, {
+  TermsAndConditionsProps,
+} from './TermsAndConditions'
 import { SynapseClient, SynapseContextType } from '../../index'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import mockSyn51718002 from '../../mocks/query/syn51718002.json'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
 
-const defaultProps = {
+const defaultProps: TermsAndConditionsProps = {
+  termsAndConditionsTableID: 'syn51718002',
+  termsAndConditionsTableVersion: '5',
   onFormChange: jest.fn(),
 }
 
