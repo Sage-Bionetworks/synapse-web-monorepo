@@ -94,6 +94,12 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
             </div>
             <div className={'terms-of-use-panel'}>
               <TermsAndConditions
+                termsAndConditionsTableID={
+                  import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_ID
+                }
+                termsAndConditionsTableVersion={
+                  import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_VERSION
+                }
                 onFormChange={(completed: boolean) => {
                   setIsFormComplete(completed)
                 }}
