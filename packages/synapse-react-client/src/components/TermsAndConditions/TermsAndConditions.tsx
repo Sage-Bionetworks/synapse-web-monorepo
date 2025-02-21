@@ -10,14 +10,14 @@ import { useGetFullTableQueryResults } from '../../synapse-queries'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
-  termsAndConditionsTableID?: string
-  termsAndConditionsTableVersion?: string
+  termsAndConditionsTableID: string
+  termsAndConditionsTableVersion: string
   hideLinkToFullTC?: boolean
 }
 
 function TermsAndConditions({
-  termsAndConditionsTableID = 'syn51718002',
-  termsAndConditionsTableVersion = '5',
+  termsAndConditionsTableID,
+  termsAndConditionsTableVersion,
   onFormChange,
   hideLinkToFullTC = false,
 }: TermsAndConditionsProps) {
