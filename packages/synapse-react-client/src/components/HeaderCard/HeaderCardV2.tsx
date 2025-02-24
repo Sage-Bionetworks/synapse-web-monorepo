@@ -9,7 +9,6 @@ import {
   ButtonProps,
   Grid,
   useTheme,
-  useMediaQuery,
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
