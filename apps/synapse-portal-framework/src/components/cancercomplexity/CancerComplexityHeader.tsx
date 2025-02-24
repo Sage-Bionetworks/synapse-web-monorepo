@@ -1,10 +1,7 @@
 import { Box, Typography } from '@mui/material'
-import { usePortalContext } from '../PortalContext'
 import HeaderSearchBox from '../HeaderSearchBox'
 
 const CancerComplexityHeader = () => {
-  const { headerConfig } = usePortalContext()
-  const { showBlur = true, centerText = false } = headerConfig
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
     'Justo Turpis',
@@ -15,26 +12,26 @@ const CancerComplexityHeader = () => {
   const content = (
     <>
       <Box
-        className={`header-text ${showBlur ? 'blur' : ''} ${
-          centerText ? 'center-text' : ''
-        }`}
         sx={{
           margin: 0,
-          padding: { xs: '40px', md: '40px 80px' },
+          color: '#FFFF',
         }}
       >
         <Typography
           variant="headline1"
           sx={{
-            fontSize: '30px',
+            fontSize: '48px',
             fontWeight: 'bold',
-            marginTop: '20px',
-            marginBottom: '30px',
+            marginBottom: '15px',
+            lineHeight: '54px',
           }}
         >
           Welcome to the Cancer Complexity Knowledge Portal
         </Typography>
-        <Typography variant="body1">
+        <Typography
+          variant="body1"
+          sx={{ fontSize: '18px', lineHeight: '144%' }}
+        >
           The NCI Division of Cancer Biology supports multiple research programs
           composed of interdisciplinary communities of scientists who aim to
           integrate approaches, data, and tools to address important questions
@@ -47,36 +44,36 @@ const CancerComplexityHeader = () => {
   )
   return (
     <header id="header">
-      <div className="container-fluid">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px 0',
+        }}
+      >
         <Box
-          className="row"
           sx={{
-            display: 'flex',
-            flexWrap: { xs: 'wrap', lg: 'nowrap' },
-            justifyContent: 'center',
+            margin: 0,
+            flex: 1,
+            padding: { xs: '40px', lg: '40px 80px' },
           }}
         >
-          <Box
-            className="col-md-offset-1 col-md-10"
-            sx={{
-              margin: 0,
-              padding: { xs: '0 15px', lg: '20px 0' },
-            }}
-          >
-            {content}
-          </Box>
-          <HeaderSearchBox
-            searchExampleTerms={searchExampleTerms}
-            searchPlaceholder={searchPlaceholder}
-            path="/Search"
-            sx={{
-              '& > :first-child': {
-                background: 'rgba(184, 204, 226, 0.60)',
-              },
-            }}
-          />
+          {content}
         </Box>
-      </div>
+        <HeaderSearchBox
+          searchExampleTerms={searchExampleTerms}
+          searchPlaceholder={searchPlaceholder}
+          path="/Search"
+          sx={{
+            flex: 1,
+            '& > :first-child': {
+              background: 'rgba(184, 204, 226, 0.60)',
+            },
+          }}
+        />
+      </Box>
     </header>
   )
 }

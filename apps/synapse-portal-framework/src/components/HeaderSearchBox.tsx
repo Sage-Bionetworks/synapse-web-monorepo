@@ -18,20 +18,20 @@ const HeaderSearchBox = ({
   return (
     <Box
       sx={spreadSx(sx, {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: { xs: '40px', md: '40px 80px 40px 0' },
+        padding: { xs: '40px', lg: '40px 80px 40px 0' },
+        width: '100%',
       })}
     >
       <Stack
-        sx={{
+        sx={theme => ({
           padding: '40px',
           gap: '30px',
           borderRadius: '6px',
           backdropFilter: 'blur(15px)',
-          width: '660px',
-        }}
+          [theme.breakpoints.up('lg')]: {
+            minWidth: '660px',
+          },
+        })}
       >
         <Box
           sx={{
