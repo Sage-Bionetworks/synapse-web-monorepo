@@ -1,7 +1,5 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCardV2 from './HeaderCardV2'
-import type { HeaderCardV2Props } from './HeaderCardV2'
 import { Study } from '../../assets/themed_icons'
 import { LaunchOutlined } from '@mui/icons-material'
 
@@ -53,7 +51,7 @@ export const DicomCard: Story = {
         label: 'View Standard on External Website',
         variant: 'outlined',
         href: 'https://dicom.nema.org/',
-        target: '_blank',
+        // target: '_blank',
         endIcon: <LaunchOutlined />,
         sx: { borderRadius: 1 },
       },
@@ -70,7 +68,7 @@ export const WithMultipleButtons: Story = {
         label: 'View Standard on External Website',
         variant: 'outlined',
         href: 'https://dicom.nema.org/',
-        target: '_blank',
+        // target: '_blank',
         endIcon: <LaunchOutlined />,
         sx: { borderRadius: 1 },
       },

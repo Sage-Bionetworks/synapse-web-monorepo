@@ -3,7 +3,6 @@ import {
   Box,
   Card,
   Typography,
-  Divider,
   Link,
   Stack,
   Button,
@@ -136,7 +135,7 @@ function HeaderCardV2({
   ctaButtons,
 }: HeaderCardV2Props) {
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
