@@ -134,8 +134,6 @@ function HeaderCardV2({
   ctaButtons,
 }: HeaderCardV2Props) {
   const theme = useTheme()
-  // const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
