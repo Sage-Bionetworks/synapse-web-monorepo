@@ -25,7 +25,7 @@ import {
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 
-const showHeaderWithSearch = true
+const showHeaderWithSearch = false
 
 const routes: RouteObject[] = [
   {
