@@ -1,20 +1,35 @@
 import { useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import { InputAdornment, TextField, TextFieldProps } from '@mui/material'
+import {
+  InputAdornment,
+  TextField,
+  TextFieldProps,
+  useTheme,
+} from '@mui/material'
 import { useSearchParams } from 'react-router'
 import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
-export function PortalFullTextSearchField(props: TextFieldProps) {
+type PortalFullTextSearchFieldProps = TextFieldProps & {
+  placeholder?: string
+  path?: string
+}
+
+export function PortalFullTextSearchField({
+  placeholder = 'Search by keyword',
+  path,
+  ...props
+}: PortalFullTextSearchFieldProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchInput, setSearchInput] = useState(
     searchParams.get(FTS_SEARCH_TERM),
   )
+  const theme = useTheme()
 
   return (
     <TextField
       {...props}
       size={'small'}
-      placeholder="Search by keyword"
+      placeholder={placeholder}
       value={searchInput}
       onChange={event => {
         setSearchInput(event.target.value)
@@ -23,12 +38,15 @@ export function PortalFullTextSearchField(props: TextFieldProps) {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
           setSearchParams({ FTS_SEARCH_TERM: trimmedInput })
+          if (path) {
+            window.location.pathname = `${path}`
+          }
         }
       }}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchIcon />
+            <SearchIcon sx={{ color: theme.palette.primary.main }} />
           </InputAdornment>
         ),
       }}
@@ -41,6 +59,7 @@ export function PortalFullTextSearchField(props: TextFieldProps) {
           backgroundColor: 'white',
         },
         mb: '20px',
+        ...props.sx,
       }}
     />
   )

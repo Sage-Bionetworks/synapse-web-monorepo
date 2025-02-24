@@ -23,6 +23,9 @@ import {
   onPointClick,
 } from './synapseConfigs/onPointClick'
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
+import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
+
+const showHeaderWithSearch = false
 
 const routes: RouteObject[] = [
   {
@@ -34,7 +37,7 @@ const routes: RouteObject[] = [
         index: true,
         element: (
           <>
-            <Header />
+            {showHeaderWithSearch ? <CancerComplexityHeader /> : <Header />}
             <div className={'home-bg-dark'}>
               <SectionLayout
                 title={'Portal Goals'}
