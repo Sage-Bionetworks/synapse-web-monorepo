@@ -47,7 +47,7 @@ const inExperimentalMode = false
 Specifying the following in the window object will override request endpoints:
 
 ```js
-window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
+window.SRC_OVERRIDE_ENDPOINT_CONFIG = {
   PORTAL: '<endpoint>',
   REPO: '<endpoint>',
 }

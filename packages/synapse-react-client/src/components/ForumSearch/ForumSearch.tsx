@@ -60,7 +60,7 @@ export const ForumSearch = (props: ForumSearchProps) => {
 
   useEffect(() => {
     if (error) {
-      displayToast(error.reason as string, 'danger')
+      displayToast(error.reason, 'danger')
     }
   }, [error])
 
@@ -90,6 +90,11 @@ export const ForumSearch = (props: ForumSearchProps) => {
     <div className="ForumSearch">
       <div>
         <TextField
+          sx={theme => ({
+            [theme.breakpoints.down('md')]: {
+              width: '100%',
+            },
+          })}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

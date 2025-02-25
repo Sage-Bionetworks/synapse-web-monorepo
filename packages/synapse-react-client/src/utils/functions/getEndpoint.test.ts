@@ -34,10 +34,8 @@ describe('getting endpoints works', () => {
       REPO: 'REPO_CUSTOM_ENDPOINT',
       PORTAL: 'PORTAL_CUSTOM_ENDPOINT',
     }
-    // @ts-ignore
-    window.SRC = {}
-    // @ts-ignore
-    window.SRC.OVERRIDE_ENDPOINT_CONFIG = OVERRIDE_ENDPOINT_CONFIG
+    // @ts-expect-error
+    window.SRC_OVERRIDE_ENDPOINT_CONFIG = OVERRIDE_ENDPOINT_CONFIG
     expect(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)).toEqual(
       OVERRIDE_ENDPOINT_CONFIG.REPO,
     )
@@ -46,10 +44,8 @@ describe('getting endpoints works', () => {
     )
   })
   it('throws an error when the custom object does not have the right keys', () => {
-    // @ts-ignore
-    window.SRC = {}
-    // @ts-ignore
-    window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
+    // @ts-expect-error
+    window.SRC_OVERRIDE_ENDPOINT_CONFIG = {
       PORTALZ: 'PORTAL_ENDPOINT',
     }
     // https://jestjs.io/docs/en/expect.html#tothrowerror

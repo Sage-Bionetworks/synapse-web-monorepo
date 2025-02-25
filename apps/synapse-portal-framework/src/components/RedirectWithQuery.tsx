@@ -11,6 +11,7 @@ export default function RedirectWithQuery(props: NavigateProps) {
   return (
     <Navigate
       {...props}
+      replace={true}
       to={{
         pathname: props.to as string,
         search,

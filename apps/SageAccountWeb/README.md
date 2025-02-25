@@ -84,3 +84,20 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
+
+## Pointing to another stack
+
+To start or build the app and have it point to another stack, add the parameter --mode=\<stack\> where stack is one of:
+
+- production
+- staging
+- development
+
+For example, to start the app and have it point to the production stack, run:
+
+```
+pnpm start --mode=production
+```
+
+We are using [Vite to pass environment variables](https://vite.dev/guide/env-and-mode#env-variables-and-modes) into the
+app. This command would cause Vite to load the environment variables from the .env and the .env.production files.

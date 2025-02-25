@@ -207,6 +207,7 @@ export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-prod.dev.sagebase.org'
 
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
 export const ONE_SAGE_STAGING_URL = 'https://staging.accounts.synapse.org'
+export const ONE_SAGE_DEV_URL = 'https://dev.accounts.synapse.org'
 export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
 
 export const SAGE_OFFERINGS_HELP_URL =

@@ -1,7 +1,10 @@
-import { PropsWithChildren, useEffect, useMemo } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { hasResettableFilters as hasResettableFiltersUtil } from '../../utils/functions/queryUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   CombineRangeFacetConfig,
   QueryContextProvider,
@@ -146,11 +149,15 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
   }, [rowSelectionPrimaryKey, setRowSelectionPrimaryKey])
 
   const setSelectedRows = useSetAtom(selectedRowsAtom)
-
+  const onChangeCallback = useCallback(
+    (data: QueryResultBundle) =>
+      onQueryResultBundleChange(JSON.stringify(data)),
+    [onQueryResultBundleChange],
+  )
   // Track changes to the query row data and propagate to callback
   useOnQueryDataChange({
     queryBundleRequest: getCurrentQueryRequest(),
-    onChange: data => onQueryResultBundleChange(JSON.stringify(data)),
+    onChange: onChangeCallback,
   })
 
   const context: QueryContextType = useDeepCompareMemoize({

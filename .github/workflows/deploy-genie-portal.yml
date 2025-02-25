@@ -1,0 +1,21 @@
+name: 'Deploy Genie portal'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**' # temporarily track GH Actions changes to test
+      - 'apps/portals/genie/**'
+      - 'apps/synapse-portal-framework/**'
+      - 'packages/synapse-react-client/**'
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-portal.yml
+    with:
+      portal-name: genie
+      branch-or-tag: main

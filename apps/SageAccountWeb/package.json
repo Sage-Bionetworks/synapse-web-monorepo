@@ -69,7 +69,7 @@
   },
   "scripts": {
     "clean": "rimraf build coverage",
-    "start": "vite",
+    "start": "echo \"WARNING!: running pnpm start now causes Vite to point to the Synapse dev stack. To point to production, run pnpm start --mode=production\n\"; vite",
     "preview": "vite preview",
     "build": "vite build",
     "test": "vitest",
