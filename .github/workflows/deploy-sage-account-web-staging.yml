@@ -19,3 +19,4 @@ jobs:
       bucket-name: staging.accounts.synapse.org
       cfdist-id: E1QXK5X5JV0YKJ
       deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+      vite-mode: 'staging'

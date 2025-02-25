@@ -51,9 +51,7 @@ const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
 
 function overrideEndpoint(stack: SynapseStack) {
   const endpointConfig = STACK_MAP[stack]
-  ;(window as any)['SRC'] = {
-    OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
-  }
+  ;(window as any)['SRC_OVERRIDE_ENDPOINT_CONFIG'] = endpointConfig
 }
 
 /**

@@ -31,7 +31,7 @@ function AppInitializer(props: { children?: ReactNode }) {
 
     const devConfig = {
       REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
-      PORTAL: 'https://portal-dev.dev.sagebase.org/',
+      PORTAL: 'https://dev.synapse.org/',
     }
 
     if (isStaging || isDev) {
@@ -39,7 +39,7 @@ function AppInitializer(props: { children?: ReactNode }) {
         ;(window as any).SRC = {}
       }
 
-      ;(window as any).SRC.OVERRIDE_ENDPOINT_CONFIG = isStaging
+      ;(window as any).SRC_OVERRIDE_ENDPOINT_CONFIG = isStaging
         ? stagingConfig
         : devConfig
     }

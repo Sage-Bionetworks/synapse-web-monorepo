@@ -23,6 +23,11 @@ on:
         required: true
         type: string
         description: The IAM role used to deploy
+      vite-mode:
+        required: false
+        type: string
+        description: The Vite mode to build in
+        default: 'production'
 
 jobs:
   build-and-deploy:
@@ -40,7 +45,7 @@ jobs:
           ref: ${{ inputs.branch-or-tag }}
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run: pnpm nx run ${{ inputs.app-name }}:build
+        run: pnpm nx run ${{ inputs.app-name }}:build --mode=${{ inputs.vite-mode }}
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v4
         with:

@@ -204,6 +204,9 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
               variant={'contained'}
               href={detailsPagePath}
               color={'secondary'}
+              sx={theme => ({
+                [theme.breakpoints.down('sm')]: { width: '100%' },
+              })}
             >
               Explore {selectedFacetValue}
             </Button>

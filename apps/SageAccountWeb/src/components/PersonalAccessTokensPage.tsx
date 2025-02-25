@@ -12,7 +12,8 @@ export function PersonalAccessTokensPageInternal() {
         className="SageResourcesPage"
         sx={{
           margin: '0 auto',
-          width: '900px',
+          width: { xs: '100%', md: '900px' },
+          height: { xs: '100vh', md: '100%' },
           '& .SourceAppLogo': {
             display: 'block',
           },
