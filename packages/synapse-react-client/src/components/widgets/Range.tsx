@@ -97,6 +97,14 @@ export function Range(props: RangeProps) {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="From"
+            slotProps={{
+              textField: props => ({
+                inputProps: {
+                  ...props.inputProps,
+                  'aria-label': 'min',
+                },
+              }),
+            }}
             value={values.min ? dayjs(values.min) : null}
             onChange={date =>
               setValues({
@@ -111,6 +119,14 @@ export function Range(props: RangeProps) {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="To"
+            slotProps={{
+              textField: props => ({
+                inputProps: {
+                  ...props.inputProps,
+                  'aria-label': 'max',
+                },
+              }),
+            }}
             value={values.max ? dayjs(values.max) : null}
             onChange={date =>
               setValues({
