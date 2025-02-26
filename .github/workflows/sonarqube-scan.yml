@@ -6,7 +6,9 @@ on:
 
 name: Main Workflow
 jobs:
-  sonarqube:
+  # For monorepos, create one job per project and specify the directory
+  sonarqube-src:
+    name: sonarqube-src
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,3 +19,5 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: packages/synapse-react-client
