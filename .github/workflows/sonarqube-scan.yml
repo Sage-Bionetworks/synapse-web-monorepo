@@ -4,11 +4,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-name: Main Workflow
+name: SonarCloud Code Scan
 jobs:
   # For monorepos, create one job per project and specify the directory
   sonarqube-src:
-    name: sonarqube-src
+    name: scan-synapse-react-client
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
