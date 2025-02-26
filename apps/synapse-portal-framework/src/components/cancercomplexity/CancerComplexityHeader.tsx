@@ -5,9 +5,15 @@ const CancerComplexityHeader = () => {
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
     'Justo Turpis',
+    'Nostra',
     'Fames',
-    'Synapse Data',
-    'Genomics',
+    'Rhoncus',
+    'Pharetra enim',
+    'Aliquet',
+    'Ridiculus',
+    'Penatibus',
+    'Accumsan quisque',
+    'Patient Advocacy',
   ]
   const content = (
     <>
@@ -20,7 +26,7 @@ const CancerComplexityHeader = () => {
         <Typography
           variant="headline1"
           sx={{
-            fontSize: '48px',
+            fontSize: { xs: '42px', md: '48px' },
             fontWeight: 'bold',
             marginBottom: '15px',
             lineHeight: '54px',
