@@ -1,4 +1,12 @@
-import { Box, Stack, SxProps, Typography, Button } from '@mui/material'
+import {
+  Box,
+  Stack,
+  SxProps,
+  Typography,
+  Button,
+  lighten,
+  useTheme,
+} from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useSearchParams } from 'react-router'
@@ -17,6 +25,7 @@ const HeaderSearchBox = ({
   sx,
 }: HeaderSearchBoxProps) => {
   const [, setSearchParams] = useSearchParams()
+  const theme = useTheme()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
@@ -80,16 +89,17 @@ const HeaderSearchBox = ({
             {searchExampleTerms &&
               searchExampleTerms.map(term => (
                 <Button
+                  variant="contained"
                   onClick={() => handleTermClick(term)}
                   sx={{
                     borderRadius: '30px',
-                    border: '1px solid #ECF2F5',
-                    background: '#E5E9F1',
+                    border: '1px solid',
+                    borderColor: lighten(theme.palette.primary.main, 0.9),
                     padding: '7px 9px',
                     textDecoration: 'none !important',
-                    variant: 'contained',
+                    backgroundColor: lighten(theme.palette.primary.main, 0.8),
                     '&:hover': {
-                      background: '#D6DAE5',
+                      background: lighten(theme.palette.primary.main, 0.7),
                     },
                   }}
                 >
