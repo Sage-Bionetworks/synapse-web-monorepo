@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { Box, Button } from '@mui/material'
+import { Box, Button, TextField } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 
@@ -93,50 +93,81 @@ export function Range(props: RangeProps) {
         },
       }}
     >
-      <Box key="range_min">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
+      {props.type === 'date' ? (
+        <>
+          <Box key="range_min">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="From"
+                slotProps={{
+                  textField: props => ({
+                    inputProps: {
+                      ...props.inputProps,
+                      'aria-label': 'min',
+                    },
+                  }),
+                }}
+                value={values.min ? dayjs(values.min) : null}
+                onChange={date =>
+                  setValues({
+                    min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                    max: values.max,
+                  })
+                }
+              />
+            </LocalizationProvider>
+          </Box>
+          <Box key="range_max">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="To"
+                slotProps={{
+                  textField: props => ({
+                    inputProps: {
+                      ...props.inputProps,
+                      'aria-label': 'max',
+                    },
+                  }),
+                }}
+                value={values.max ? dayjs(values.max) : null}
+                onChange={date =>
+                  setValues({
+                    max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                    min: values.min,
+                  })
+                }
+              />
+            </LocalizationProvider>
+          </Box>
+        </>
+      ) : (
+        <>
+          <TextField
             label="From"
-            slotProps={{
-              textField: props => ({
-                inputProps: {
-                  ...props.inputProps,
-                  'aria-label': 'min',
-                },
-              }),
-            }}
-            value={values.min ? dayjs(values.min) : null}
-            onChange={date =>
+            type="number"
+            value={values.min ?? ''}
+            onChange={e =>
               setValues({
-                min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                min: e.target.value,
                 max: values.max,
               })
             }
+            inputProps={{ 'aria-label': 'min' }}
           />
-        </LocalizationProvider>
-      </Box>
-      <Box key="range_max">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
+          <TextField
             label="To"
-            slotProps={{
-              textField: props => ({
-                inputProps: {
-                  ...props.inputProps,
-                  'aria-label': 'max',
-                },
-              }),
-            }}
-            value={values.max ? dayjs(values.max) : null}
-            onChange={date =>
+            type="number"
+            value={values.max ?? ''}
+            onChange={e =>
               setValues({
-                max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                max: e.target.value,
                 min: values.min,
               })
             }
+            inputProps={{ 'aria-label': 'max' }}
           />
-        </LocalizationProvider>
-      </Box>
+        </>
+      )}
       <Button
         size="small"
         variant="outlined"
