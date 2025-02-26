@@ -86,6 +86,14 @@ jest.mock('@mui/material', () => {
   }
 })
 
+jest.mock('@mui/x-date-pickers/DateTimePicker', () => {
+  return {
+    DateTimePicker: jest.requireActual(
+      '@mui/x-date-pickers/DesktopDateTimePicker',
+    ).DesktopDateTimePicker,
+  }
+})
+
 const queryRequest: QueryBundleRequest = {
   partMask: 255,
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
