@@ -18,6 +18,7 @@
     "build": "vite build",
     "lint": "eslint src/*",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "coverage": "vitest --coverage",
     "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse-table:build"
   },
