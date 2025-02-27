@@ -4,7 +4,6 @@ import ConsortiaGoals from '@sage-bionetworks/synapse-portal-framework/component
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/DevelopedBySage'
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
@@ -25,8 +24,6 @@ import {
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 
-const showHeaderWithSearch = false
-
 const routes: RouteObject[] = [
   {
     path: '/',
@@ -37,7 +34,7 @@ const routes: RouteObject[] = [
         index: true,
         element: (
           <>
-            {showHeaderWithSearch ? <CancerComplexityHeader /> : <Header />}
+            <CancerComplexityHeader />
             <div className={'home-bg-dark'}>
               <SectionLayout
                 title={'Portal Goals'}
