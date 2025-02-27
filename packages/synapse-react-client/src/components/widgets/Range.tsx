@@ -142,30 +142,34 @@ export function Range(props: RangeProps) {
         </>
       ) : (
         <>
-          <TextField
-            label="From"
-            type="number"
-            value={values.min ?? ''}
-            onChange={e =>
-              setValues({
-                min: e.target.value,
-                max: values.max,
-              })
-            }
-            inputProps={{ 'aria-label': 'min' }}
-          />
-          <TextField
-            label="To"
-            type="number"
-            value={values.max ?? ''}
-            onChange={e =>
-              setValues({
-                max: e.target.value,
-                min: values.min,
-              })
-            }
-            inputProps={{ 'aria-label': 'max' }}
-          />
+          <Box key="range_min">
+            <TextField
+              label="From"
+              type="number"
+              value={values.min ?? ''}
+              onChange={e =>
+                setValues({
+                  min: e.target.value,
+                  max: values.max,
+                })
+              }
+              inputProps={{ 'aria-label': 'min' }}
+            />
+          </Box>
+          <Box key="range_max">
+            <TextField
+              label="To"
+              type="number"
+              value={values.max ?? ''}
+              onChange={e =>
+                setValues({
+                  max: e.target.value,
+                  min: values.min,
+                })
+              }
+              inputProps={{ 'aria-label': 'max' }}
+            />
+          </Box>
         </>
       )}
       <Button
