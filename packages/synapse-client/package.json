@@ -40,6 +40,7 @@
     "generate": "MODEL_NAME_MAPPINGS=$(npx tsx src/codegen/generateModelNameMappings.ts); rimraf src/generated && openapi-generator-cli generate -i src/spec/openapispecification.json -c config.json -o src/generated -t out/ --model-name-mappings $MODEL_NAME_MAPPINGS",
     "build": "pnpm tsc --build",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "lint": "eslint src"
   },
   "nx": {
