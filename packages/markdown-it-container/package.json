@@ -30,6 +30,7 @@
     "lint": "eslint index.mjs",
     "build": "rollup -c",
     "test": "pnpm lint && pnpm build && c8 --exclude dist --exclude test -r text -r html -r lcov mocha",
+    "test:coverage": "pnpm lint && pnpm build && c8 --exclude dist --exclude test -r text -r html -r lcov mocha",
     "prepublishOnly": "pnpm lint && pnpm build"
   },
   "devDependencies": {
