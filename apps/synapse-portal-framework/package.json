@@ -34,6 +34,7 @@
     "clean": "rimraf coverage",
     "lint": "eslint src",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs",
     "type-check": "tsc --build"
   },
