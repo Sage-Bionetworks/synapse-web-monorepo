@@ -1,6 +1,9 @@
 export type FeatureFlags = Record<FeatureFlagEnum, boolean>
 
 export enum FeatureFlagEnum {
+  // If enabled, show the new header component that uses the HeaderSearchBox component
+  PORTAL_SEARCH_HEADER = 'PORTAL_SEARCH_HEADER',
+
   // If enabled, allow viewing & editing the 'description' string field on entities
   DESCRIPTION_FIELD = 'DESCRIPTION_FIELD',
 
