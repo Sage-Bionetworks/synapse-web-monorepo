@@ -8,7 +8,7 @@ export function SystemUseNotification() {
     <Box
       sx={{
         color: 'grey.700',
-        maxHeight: '110px',
+        maxHeight: { xs: '170px', md: '110px' },
         overflow: 'auto',
         margin: '20px 0px',
       }}
