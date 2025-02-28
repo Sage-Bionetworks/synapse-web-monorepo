@@ -203,7 +203,7 @@ function HeaderCard({
     >
       <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
         <Grid container spacing={3}>
-          {/* Icon Column */}
+          {/* Icon Column -- can't get the size right. Just getting rid of it for now.
           {icon && (
             <Grid item xs={12} md="auto">
               <Box
@@ -217,19 +217,26 @@ function HeaderCard({
               </Box>
             </Grid>
           )}
+          */}
 
           {/* Main Content Grid */}
-          <Grid item xs={12} md={values && !forceStackedLayout ? 7 : 12}>
+          <Grid item xs={12} md={values && forceStackedLayout ? 12 : 8}>
             <Stack spacing={2}>
               <Box>
+                {/* Type label */}
                 <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  gutterBottom
+                  className="SRC-type"
+                  sx={{
+                    fontSize: '14px',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    color: '#000000',
+                  }}
                 >
                   {type}
                 </Typography>
 
+                {/* Title */}
                 <Typography
                   variant="h4"
                   component="h3"
@@ -249,11 +256,14 @@ function HeaderCard({
                   )}
                 </Typography>
 
+                {/* Subtitle */}
+
                 {subTitle && (
                   <Typography
                     variant="body1"
-                    color="text.secondary"
-                    className="SRC-author"
+                    color="inherit"
+                    fontStyle="italic"
+                    paddingBottom="17px"
                   >
                     {subTitle}
                   </Typography>
@@ -266,6 +276,8 @@ function HeaderCard({
                 />
 
                 {ctaButtons && ctaButtons.length > 0 && (
+                  // I haven't tried this at all yet. Will work on it when I get storyboard working again or have
+                  // HeaderCardV2 being used and being sent buttons to display. (Siggie)
                   <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
@@ -291,31 +303,54 @@ function HeaderCard({
 
           {/* Values Section */}
           {values && (
-            <Grid
-              item
-              xs={12}
-              md={forceStackedLayout ? 12 : 4}
-              sx={{
-                borderLeft: {
-                  xs: 'none',
-                  md: forceStackedLayout
-                    ? 'none'
-                    : `1px solid ${theme.palette.divider}`,
-                },
-                pl: { xs: 0, md: forceStackedLayout ? 0 : 3 },
-                mt: { xs: 2, md: 0 },
-              }}
-            >
-              <CardFooter
-                isHeader={true}
-                secondaryLabelLimit={secondaryLabelLimit}
-                values={values}
-              />
+            <Grid item xs={12} md={forceStackedLayout ? 12 : 4}>
+              <MetadataTable data={values} />
             </Grid>
           )}
         </Grid>
       </Box>
     </Card>
+  )
+}
+
+type MetadataTableProps = {
+  data: string[][]
+}
+
+function MetadataTable({ data }: MetadataTableProps) {
+  return (
+    <table
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+      }}
+    >
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={item[2] || index}>
+            <td
+              style={{
+                padding: '8px 16px 8px 0',
+                verticalAlign: 'top',
+                whiteSpace: 'nowrap',
+                fontWeight: 'bold',
+              }}
+            >
+              {item[0]}
+            </td>
+            <td
+              style={{
+                padding: '8px 0',
+                verticalAlign: 'top',
+                wordBreak: 'break-word',
+              }}
+            >
+              {item[1]}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
