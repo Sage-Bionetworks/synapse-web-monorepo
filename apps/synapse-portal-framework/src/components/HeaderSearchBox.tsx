@@ -71,6 +71,7 @@ const HeaderSearchBox = ({
               '.MuiInputBase-root': {
                 height: '100%',
                 borderRadius: '3px',
+                fontSize: '16px',
               },
             }}
           />
@@ -95,7 +96,7 @@ const HeaderSearchBox = ({
                     borderRadius: '30px',
                     border: '1px solid',
                     borderColor: lighten(theme.palette.primary.main, 0.9),
-                    padding: '7px 9px',
+                    padding: '1px 9px',
                     textDecoration: 'none !important',
                     backgroundColor: lighten(theme.palette.primary.main, 0.8),
                     '&:hover': {
@@ -106,7 +107,6 @@ const HeaderSearchBox = ({
                   <Typography
                     sx={{
                       color: 'grey.800',
-                      fontSize: '16px',
                     }}
                   >
                     {term}
