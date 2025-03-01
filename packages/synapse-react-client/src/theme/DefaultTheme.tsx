@@ -86,14 +86,22 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiButton: {
       styleOverrides: {
-        root: {
-          fontWeight: 900,
-          padding: '6px 12px',
-          borderRadius: '3px',
-          textTransform: 'capitalize',
-          '&:hover': {
-            transition: '0.2s',
-          },
+        root: ({ ownerState }) => {
+          let padding = '6px 12px'
+          if (ownerState.size === 'small') {
+            padding = '6px 8px'
+          } else if (ownerState.size === 'large') {
+            padding = '8px 16px'
+          }
+          return {
+            fontWeight: 900,
+            padding: padding,
+            borderRadius: '3px',
+            textTransform: 'capitalize',
+            '&:hover': {
+              transition: '0.2s',
+            },
+          }
         },
         contained: ({ theme, ownerState }) => ({
           '&:hover, &:visited': {

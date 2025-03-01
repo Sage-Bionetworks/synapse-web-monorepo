@@ -1,5 +1,9 @@
-import { ChangeEvent, useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers'
+import { Box, Button, TextField } from '@mui/material'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 
 type ControlType = 'number' | 'date'
 
@@ -30,8 +34,6 @@ export function Range(props: RangeProps) {
           max: undefined,
         },
   )
-
-  const className = props.className ? `range ${props.className}` : `range`
 
   const isValid = (
     { min, max }: RangeValues,
@@ -72,39 +74,120 @@ export function Range(props: RangeProps) {
   }
 
   return (
-    <div className={className} style={{ display: 'flex', flexWrap: 'wrap' }}>
-      <div style={{ marginRight: '10px' }}>
-        <input
-          aria-label="min"
-          key="range_min"
-          type={props.type}
-          value={values.min}
-          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
-            setValues({ min: target.value, max: values.max })
-          }
-        />
-        <div>to</div>
-        <input
-          aria-label="max"
-          key="range_max"
-          type={props.type}
-          value={values.max}
-          onChange={({ target }: ChangeEvent<HTMLInputElement>) =>
-            setValues({ min: values.min, max: target.value })
-          }
-        />
-      </div>
-      <button
-        className="btn btn-link SRC-noPadding"
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        flex: '1 0',
+        marginRight: '10px',
+        gap: '10px',
+        '& .MuiInputBase-root': {
+          minWidth: '150px',
+        },
+        '& .MuiInputBase-root,.MuiButton-root': {
+          height: '38px',
+        },
+        '& .MuiInputLabel-root': {
+          color: 'grey.700',
+          fontWeight: 400,
+        },
+      }}
+    >
+      {props.type === 'date' ? (
+        <>
+          <Box key="range_min">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="From"
+                slotProps={{
+                  textField: props => ({
+                    inputProps: {
+                      ...props.inputProps,
+                      'aria-label': 'min',
+                    },
+                  }),
+                }}
+                value={values.min ? dayjs(values.min) : null}
+                onChange={date =>
+                  setValues({
+                    min: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                    max: values.max,
+                  })
+                }
+              />
+            </LocalizationProvider>
+          </Box>
+          <Box key="range_max">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="To"
+                slotProps={{
+                  textField: props => ({
+                    inputProps: {
+                      ...props.inputProps,
+                      'aria-label': 'max',
+                    },
+                  }),
+                }}
+                value={values.max ? dayjs(values.max) : null}
+                onChange={date =>
+                  setValues({
+                    max: date ? dayjs(date).format('YYYY-MM-DD') : undefined,
+                    min: values.min,
+                  })
+                }
+              />
+            </LocalizationProvider>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Box key="range_min">
+            <TextField
+              label="From"
+              type="number"
+              value={values.min ?? ''}
+              onChange={e =>
+                setValues({
+                  min: e.target.value,
+                  max: values.max,
+                })
+              }
+              inputProps={{ 'aria-label': 'min' }}
+            />
+          </Box>
+          <Box key="range_max">
+            <TextField
+              label="To"
+              type="number"
+              value={values.max ?? ''}
+              onChange={e =>
+                setValues({
+                  max: e.target.value,
+                  min: values.min,
+                })
+              }
+              inputProps={{ 'aria-label': 'max' }}
+            />
+          </Box>
+        </>
+      )}
+      <Button
+        size="small"
+        variant="outlined"
         onClick={() =>
           handleAppyChanges(values, props.onApplyClicked, props.type)
         }
+        sx={{
+          alignSelf: 'flex-end',
+          fontSize: 16,
+        }}
       >
         Apply
-      </button>
+      </Button>
       {error && (
         <div className="SRC-danger-color">{props.errorText || errorText}</div>
       )}
-    </div>
+    </Box>
   )
 }

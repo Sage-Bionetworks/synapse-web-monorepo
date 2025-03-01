@@ -467,3 +467,19 @@ export const TableWithClickWrap: Story = {
     fileVersionColumnName: 'currentVersion',
   },
 }
+
+export const TableWithRange: Story = {
+  args: {
+    sql: 'SELECT * FROM syn64926023',
+
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true,
+    },
+
+    name: 'Table with Range Types',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    showExportToCavatica: false,
+  },
+}
