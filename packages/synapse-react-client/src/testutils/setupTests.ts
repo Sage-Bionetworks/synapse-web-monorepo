@@ -7,6 +7,7 @@ import { setupIntersectionMocking } from 'react-intersection-observer/test-utils
 import { faker } from '@faker-js/faker'
 import { configure } from '@testing-library/dom'
 import { TextEncoder, TextDecoder } from 'node:util'
+import './muiDatePickerMock'
 
 // Set a constant seed for faker so the generated data doesn't change
 beforeAll(() => {
