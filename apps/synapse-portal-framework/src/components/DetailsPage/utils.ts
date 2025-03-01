@@ -9,14 +9,14 @@ export function useScrollOnMount() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (hash) {
-        const id = hash.replace('#', '')
+        const id = decodeURIComponent(hash.replace('#', ''))
         const element = document.getElementById(id)
         if (element) {
           scrollToWithOffset(element)
           scrolledRef.current = true
         }
       }
-    }, 1000)
+    }, 3000)
     return () => {
       clearTimeout(timer)
     }

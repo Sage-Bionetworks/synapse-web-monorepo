@@ -55,7 +55,15 @@ function LoginPage(props: LoginPageProps) {
 
   return (
     <StyledOuterContainer>
-      <StyledInnerContainer>
+      <StyledInnerContainer
+        sx={theme => ({
+          [theme.breakpoints.down('sm')]: {
+            '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
+              padding: '40px',
+            },
+          },
+        })}
+      >
         <Box
           sx={{
             py: 10,
@@ -67,7 +75,7 @@ function LoginPage(props: LoginPageProps) {
         >
           <Box
             sx={{
-              minHeight: '600px',
+              minHeight: { xs: '100%', md: '600px' },
             }}
           >
             <div className={'panel-logo'}>
@@ -100,14 +108,16 @@ function LoginPage(props: LoginPageProps) {
         </Box>
         <Box
           sx={{
-            background:
-              "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+            background: {
+              sm: 'none',
+              md: "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+            },
           }}
         >
           <Typography
             className="headline"
             variant="headline2"
-            sx={{ marginTop: '95px' }}
+            sx={{ marginTop: { xs: '45px', md: '95px' } }}
           >
             Sign in to your account
           </Typography>
