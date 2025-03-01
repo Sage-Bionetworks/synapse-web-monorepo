@@ -233,7 +233,9 @@ export const RegisterAccount1 = () => {
                 <Box
                   display="flex"
                   flexDirection="column"
-                  sx={{ minHeight: '530px' }}
+                  sx={{
+                    minHeight: { xs: '100%', md: '530px' },
+                  }}
                 >
                   <div className="panel-logo logo-wrapper">
                     <SourceAppLogo />
@@ -363,11 +365,16 @@ export const RegisterAccount1 = () => {
               </Box>
               <Box
                 sx={{
-                  background:
-                    "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+                  background: {
+                    xs: 'none',
+                    md: "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+                  },
                 }}
               >
-                <Typography variant="headline2" sx={{ marginTop: '95px' }}>
+                <Typography
+                  variant="headline2"
+                  sx={{ marginTop: { xs: '45px', md: '95px' } }}
+                >
                   Create an Account
                 </Typography>
                 {page !== Pages.GOOGLE_REGISTRATION && (
