@@ -67,7 +67,7 @@ const ELSupportedByNIH: React.FC = () => {
           training for the next generation of researchers, and provides trusted
           health information to the public. By fostering collaboration across
           disciplines, NIA aims to advance our understanding of aging, extend
-          healthspan, and ensure healthier lives for individuals of all ages.
+          health span, and ensure healthier lives for individuals of all ages.
         </Typography>
       </Box>
     </Box>
