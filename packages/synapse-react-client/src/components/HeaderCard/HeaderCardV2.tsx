@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Card,
@@ -83,6 +83,7 @@ export type HeaderCardProps = {
  * - Default: Icon + Content | Metadata (on desktop)
  * - Stacked: Full width content with metadata below
  * - Mobile: All sections stack vertically
+ * - Height-Based: Stacks when metadata height exceeds description height
  *
  * @component
  * @example
@@ -102,7 +103,8 @@ export type HeaderCardProps = {
  * Core component logic:
  * 1. Responsive Layout:
  *    - Uses MUI Grid for flexible layouts
- *    - Switches to stacked layout on mobile or when forceStackedLayout is true
+ *    - Switches to stacked layout on mobile, when forceStackedLayout is true,
+ *      or when the metadata table height exceeds the description height
  *
  * 2. Meta Tags:
  *    - Manages document title and meta description
@@ -139,6 +141,15 @@ function HeaderCard({
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
+  // Refs for measuring heights
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const metadataRef = useRef<HTMLDivElement>(null)
+
+  // State for dynamic layout
+  const [useStackedLayout, setUseStackedLayout] = useState(
+    forceStackedLayout || isMobile,
+  )
+
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
@@ -153,6 +164,7 @@ function HeaderCard({
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
 
+  // Effect to handle meta tags
   useEffect(() => {
     if (title && document.title !== title) {
       document.title = title
@@ -170,6 +182,35 @@ function HeaderCard({
       descriptionElement?.setAttribute('content', docDescription)
     }
   }, [title, description, subTitle, docTitle, docDescription])
+
+  // Effect to check heights and update layout if needed
+  useEffect(() => {
+    if (forceStackedLayout || isMobile) {
+      setUseStackedLayout(true)
+      return
+    }
+
+    const checkHeights = () => {
+      if (descriptionRef.current && metadataRef.current && values) {
+        const descHeight = descriptionRef.current.offsetHeight
+        const metaHeight = metadataRef.current.offsetHeight
+
+        // If metadata is taller than description, use stacked layout
+        setUseStackedLayout(metaHeight > descHeight)
+      }
+    }
+
+    // Initial check
+    checkHeights()
+
+    // Add resize listener
+    window.addEventListener('resize', checkHeights)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkHeights)
+    }
+  }, [forceStackedLayout, isMobile, values, description])
 
   return (
     <Card
@@ -203,25 +244,9 @@ function HeaderCard({
     >
       <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
         <Grid container spacing={3}>
-          {/* Icon Column -- can't get the size right. Just getting rid of it for now.
-          {icon && (
-            <Grid item xs={12} md="auto">
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: { xs: 'center', md: 'flex-start' },
-                }}
-              >
-                {icon}
-              </Box>
-            </Grid>
-          )}
-          */}
-
           {/* Main Content Grid */}
-          <Grid item xs={12} md={values && forceStackedLayout ? 12 : 8}>
-            <Stack spacing={2}>
+          <Grid item xs={12} md={useStackedLayout ? 12 : 8}>
+            <Stack spacing={2} ref={descriptionRef}>
               <Box>
                 {/* Type label */}
                 <Typography
@@ -257,7 +282,6 @@ function HeaderCard({
                 </Typography>
 
                 {/* Subtitle */}
-
                 {subTitle && (
                   <Typography
                     variant="body1"
@@ -276,8 +300,6 @@ function HeaderCard({
                 />
 
                 {ctaButtons && ctaButtons.length > 0 && (
-                  // I haven't tried this at all yet. Will work on it when I get storyboard working again or have
-                  // HeaderCardV2 being used and being sent buttons to display. (Siggie)
                   <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
@@ -303,8 +325,10 @@ function HeaderCard({
 
           {/* Values Section */}
           {values && (
-            <Grid item xs={12} md={forceStackedLayout ? 12 : 4}>
-              <MetadataTable data={values} />
+            <Grid item xs={12} md={useStackedLayout ? 12 : 4}>
+              <Box ref={metadataRef}>
+                <MetadataTable data={values} />
+              </Box>
             </Grid>
           )}
         </Grid>
