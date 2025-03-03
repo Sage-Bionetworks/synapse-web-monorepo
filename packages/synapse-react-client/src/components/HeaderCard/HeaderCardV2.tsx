@@ -3,7 +3,6 @@ import {
   Box,
   Card,
   Typography,
-  Divider,
   Link,
   Stack,
   Button,
@@ -14,7 +13,6 @@ import {
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-import { CardFooter } from '../row_renderers/utils'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
