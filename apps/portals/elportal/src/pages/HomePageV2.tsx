@@ -125,8 +125,8 @@ export default function HomePage() {
     <span style={{ color: theme.palette.grey[200] }}>
       People with Exceptional Longevity (EL) can live in good health to 95, 100,
       or even beyond. <br /> <br /> The ELITE Portal brings together the latest
-      research so that we can crack the code of longevity and all live longer,
-      healthier lives.
+      research so we can turn biological insights into treatments that will help
+      us all live longer, healthier lives.
     </span>
   )
   return (
@@ -141,7 +141,7 @@ export default function HomePage() {
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
-        summaryText="We provide rich multi-omic datasets, computational tools, and publications that empower researchers to discover novel biomarkers of health and disease."
+        summaryText="The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets of health and disease. Learn more about our research domains and tools."
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
