@@ -16,7 +16,7 @@ import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { CardFooter } from '../row_renderers/utils'
 
-export type HeaderCardProps = {
+export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
   type: string
   /** Main title of the card */
@@ -122,7 +122,7 @@ export type HeaderCardProps = {
  *    - Responsive typography
  *    - Optional left-nav alignment
  */
-function HeaderCard({
+function HeaderCardV2({
   type,
   title,
   subTitle = '',
@@ -137,7 +137,7 @@ function HeaderCard({
   backgroundImage,
   forceStackedLayout = false,
   ctaButtons,
-}: HeaderCardProps) {
+}: HeaderCardV2Props) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -378,4 +378,4 @@ function MetadataTable({ data }: MetadataTableProps) {
   )
 }
 
-export default HeaderCard
+export default HeaderCardV2

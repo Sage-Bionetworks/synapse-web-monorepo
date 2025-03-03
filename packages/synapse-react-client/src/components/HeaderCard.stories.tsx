@@ -1,7 +1,5 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCard from './HeaderCard'
-import type { HeaderCardProps } from './HeaderCard'
 import { Study } from '../assets/themed_icons'
 
 const meta = {

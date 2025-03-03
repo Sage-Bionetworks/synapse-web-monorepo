@@ -1,18 +1,16 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import HeaderCard from './HeaderCardV2'
-import type { HeaderCardProps } from './HeaderCardV2'
+import HeaderCardV2 from './HeaderCardV2'
 import { Study } from '../../assets/themed_icons'
 import { LaunchOutlined } from '@mui/icons-material'
 
 const meta = {
   title: 'Synapse/HeaderCardV2',
-  component: HeaderCard,
+  component: HeaderCardV2,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof HeaderCard>
+} satisfies Meta<typeof HeaderCardV2>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -20,7 +18,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     type: 'defaultType',
-    title: 'Default HeaderCard',
+    title: 'Default HeaderCardV2',
     description: 'This is a default header card',
     values: [
       ['Label 1', 'Value 1'],
@@ -53,7 +51,7 @@ export const DicomCard: Story = {
         label: 'View Standard on External Website',
         variant: 'outlined',
         href: 'https://dicom.nema.org/',
-        target: '_blank',
+        // target: '_blank',
         endIcon: <LaunchOutlined />,
         sx: { borderRadius: 1 },
       },
@@ -70,7 +68,7 @@ export const WithMultipleButtons: Story = {
         label: 'View Standard on External Website',
         variant: 'outlined',
         href: 'https://dicom.nema.org/',
-        target: '_blank',
+        // target: '_blank',
         endIcon: <LaunchOutlined />,
         sx: { borderRadius: 1 },
       },
