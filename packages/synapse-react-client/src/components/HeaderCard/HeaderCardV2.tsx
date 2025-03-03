@@ -244,7 +244,7 @@ function HeaderCardV2({
     >
       <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
         <Grid container spacing={3}>
-          {/* Icon Column */}
+          {/* Icon Column
           {icon && (
             <Grid item xs={12} md="auto">
               <Box
@@ -258,6 +258,7 @@ function HeaderCardV2({
               </Box>
             </Grid>
           )}
+          */}
 
           {/* Main Content Grid */}
           <Grid item xs={12} md={useStackedLayout ? 12 : 8}>
