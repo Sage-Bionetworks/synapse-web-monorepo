@@ -125,8 +125,8 @@ export default function HomePage() {
     <span style={{ color: theme.palette.grey[200] }}>
       People with Exceptional Longevity (EL) can live in good health to 95, 100,
       or even beyond. <br /> <br /> The ELITE Portal brings together the latest
-      research to help us turn biological insights into treatments that will
-      enable people to live longer, healthier lives.
+      research so we can turn biological insights into treatments that will help
+      us all live longer, healthier lives.
     </span>
   )
   return (
