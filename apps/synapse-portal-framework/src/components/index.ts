@@ -22,6 +22,7 @@ import ARKWelcomePage from './arkportal/ARKWelcomePage'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
+import CancerComplexityHeader from './cancercomplexity/CancerComplexityHeader'
 import Header from './Header'
 import Image from './Image'
 import NFBrowseToolsPage from './nf/NFBrowseToolsPage'
@@ -56,6 +57,7 @@ const PortalComponents = {
   ELSupportedByNIH,
   ARKWelcomePage,
   GenieHomePageHeader,
+  CancerComplexityHeader,
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,
