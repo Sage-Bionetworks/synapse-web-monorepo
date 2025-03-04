@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Card,
@@ -9,10 +9,10 @@ import {
   ButtonProps,
   Grid,
   useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-import { CardFooter } from '../row_renderers/utils'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -81,6 +81,7 @@ export type HeaderCardV2Props = {
  * - Default: Icon + Content | Metadata (on desktop)
  * - Stacked: Full width content with metadata below
  * - Mobile: All sections stack vertically
+ * - Height-Based: Stacks when metadata height exceeds description height
  *
  * @component
  * @example
@@ -96,10 +97,12 @@ export type HeaderCardV2Props = {
  *   ]}
  * />
  * ```
+
  * Core component logic:
  * 1. Responsive Layout:
  *    - Uses MUI Grid for flexible layouts
- *    - Switches to stacked layout on mobile or when forceStackedLayout is true
+ *    - Switches to stacked layout on mobile, when forceStackedLayout is true,
+ *      or when the metadata table height exceeds the description height
  *
  * 2. Meta Tags:
  *    - Manages document title and meta description
@@ -134,6 +137,17 @@ function HeaderCardV2({
   ctaButtons,
 }: HeaderCardV2Props) {
   const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
+  // Refs for measuring heights
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const metadataRef = useRef<HTMLDivElement>(null)
+
+  // State for dynamic layout
+  const [useStackedLayout, setUseStackedLayout] = useState(
+    forceStackedLayout || isMobile,
+  )
+
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
@@ -148,6 +162,7 @@ function HeaderCardV2({
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
 
+  // Effect to handle meta tags
   useEffect(() => {
     if (title && document.title !== title) {
       document.title = title
@@ -165,6 +180,35 @@ function HeaderCardV2({
       descriptionElement?.setAttribute('content', docDescription)
     }
   }, [title, description, subTitle, docTitle, docDescription])
+
+  // Effect to check heights and update layout if needed
+  useEffect(() => {
+    if (forceStackedLayout || isMobile) {
+      setUseStackedLayout(true)
+      return
+    }
+
+    const checkHeights = () => {
+      if (descriptionRef.current && metadataRef.current && values) {
+        const descHeight = descriptionRef.current.offsetHeight
+        const metaHeight = metadataRef.current.offsetHeight
+
+        // If metadata is taller than description, use stacked layout
+        setUseStackedLayout(metaHeight > descHeight)
+      }
+    }
+
+    // Initial check
+    checkHeights()
+
+    // Add resize listener
+    window.addEventListener('resize', checkHeights)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkHeights)
+    }
+  }, [forceStackedLayout, isMobile, values, description])
 
   return (
     <Card
@@ -198,33 +242,38 @@ function HeaderCardV2({
     >
       <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
         <Grid container spacing={3}>
-          {/* Icon Column */}
-          {icon && (
-            <Grid item xs={12} md="auto">
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: { xs: 'center', md: 'flex-start' },
-                }}
-              >
-                {icon}
-              </Box>
-            </Grid>
-          )}
-
           {/* Main Content Grid */}
-          <Grid item xs={12} md={values && !forceStackedLayout ? 7 : 12}>
-            <Stack spacing={2}>
+          <Grid item xs={12} md={useStackedLayout ? 12 : 8}>
+            <Stack spacing={2} ref={descriptionRef}>
               <Box>
+                {/* Type label */}
                 <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  gutterBottom
+                  className="SRC-type"
+                  sx={{
+                    fontSize: '14px',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    color: '#000000',
+                  }}
                 >
                   {type}
                 </Typography>
 
+                {/* Icon Column */}
+                {icon && (
+                  <Grid item xs={12} md={3}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: { xs: 'center', md: 'flex-start' },
+                      }}
+                    >
+                      {icon}
+                    </Box>
+                  </Grid>
+                )}
+                {/* Title */}
                 <Typography
                   variant="h4"
                   component="h3"
@@ -244,11 +293,13 @@ function HeaderCardV2({
                   )}
                 </Typography>
 
+                {/* Subtitle */}
                 {subTitle && (
                   <Typography
                     variant="body1"
-                    color="text.secondary"
-                    className="SRC-author"
+                    color="inherit"
+                    fontStyle="italic"
+                    paddingBottom="17px"
                   >
                     {subTitle}
                   </Typography>
@@ -286,31 +337,56 @@ function HeaderCardV2({
 
           {/* Values Section */}
           {values && (
-            <Grid
-              item
-              xs={12}
-              md={forceStackedLayout ? 12 : 4}
-              sx={{
-                borderLeft: {
-                  xs: 'none',
-                  md: forceStackedLayout
-                    ? 'none'
-                    : `1px solid ${theme.palette.divider}`,
-                },
-                pl: { xs: 0, md: forceStackedLayout ? 0 : 3 },
-                mt: { xs: 2, md: 0 },
-              }}
-            >
-              <CardFooter
-                isHeader={true}
-                secondaryLabelLimit={secondaryLabelLimit}
-                values={values}
-              />
+            <Grid item xs={12} md={useStackedLayout ? 12 : 4}>
+              <Box ref={metadataRef}>
+                <MetadataTable data={values} />
+              </Box>
             </Grid>
           )}
         </Grid>
       </Box>
     </Card>
+  )
+}
+
+type MetadataTableProps = {
+  data: string[][]
+}
+
+function MetadataTable({ data }: MetadataTableProps) {
+  return (
+    <table
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+      }}
+    >
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={item[2] || index}>
+            <td
+              style={{
+                padding: '8px 16px 8px 0',
+                verticalAlign: 'top',
+                whiteSpace: 'nowrap',
+                fontWeight: 'bold',
+              }}
+            >
+              {item[0]}
+            </td>
+            <td
+              style={{
+                padding: '8px 0',
+                verticalAlign: 'top',
+                wordBreak: 'break-word',
+              }}
+            >
+              {item[1]}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
