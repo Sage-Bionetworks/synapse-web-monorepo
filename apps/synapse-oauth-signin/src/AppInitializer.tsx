@@ -25,34 +25,6 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
     maxAge = parseInt(maxAgeURLParam)
   }
   const clientId = searchParams.get('client_id') ?? undefined
-
-  useEffect(() => {
-    // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
-
-    const isStaging: boolean = window.location.hostname.includes('staging')
-    const isDev: boolean = window.location.hostname.includes('dev')
-
-    const stagingConfig = {
-      REPO: SynapseConstants.SYNAPSE_BACKEND_STAGING_URL,
-      PORTAL: 'https://staging.synapse.org/',
-    }
-
-    const devConfig = {
-      REPO: SynapseConstants.SYNAPSE_BACKEND_DEV_URL,
-      PORTAL: 'https://dev.synapse.org/',
-    }
-
-    if (isStaging || isDev) {
-      if (!(window as any).SRC) {
-        ;(window as any).SRC = {}
-      }
-
-      ;(window as any).SRC_OVERRIDE_ENDPOINT_CONFIG = isStaging
-        ? stagingConfig
-        : devConfig
-    }
-  }, [])
-
   const onNoAccessTokenFound = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
