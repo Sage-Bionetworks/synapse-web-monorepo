@@ -67,7 +67,7 @@ function HeaderCard(props: HeaderCardProps) {
   })
 
   const { appId } = useSynapseContext()
-  if (['standards', 'nf'].includes(String(appId))) {
+  if (['standards' /* 'nf' */].includes(String(appId))) {
     return <HeaderCardV2 {...props} />
   }
 
