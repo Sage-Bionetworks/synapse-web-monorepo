@@ -10,6 +10,7 @@ jobs:
   sonarqube-src:
     name: scan-synapse-react-client
     runs-on: ubuntu-latest
+    secrets: inherit
     steps:
       - uses: actions/checkout@v4
         with:
