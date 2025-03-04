@@ -10,7 +10,6 @@ jobs:
   sonarqube-src:
     name: scan-synapse-react-client
     runs-on: ubuntu-latest
-    secrets: inherit
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,3 +21,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: packages/synapse-react-client
+        secrets: inherit
