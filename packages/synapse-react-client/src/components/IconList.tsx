@@ -32,7 +32,7 @@ function IconList(props: IconListProps) {
   const css = useTheme ? 'icon-list themed' : 'icon-list'
   const componentCss = useBackground ? `${css} bg-circle` : css
   const queryContext = useQueryContext()
-  const { addValueToSelectedFacet, removeSelectedFacet } = queryContext
+  const { addValueToSelectedFacet } = queryContext
 
   const handleIconClick = (dataType: 'string') => {
     const facet: UniqueFacetIdentifier = {
