@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect } from 'react'
+import { PropsWithChildren, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   ApplicationSessionManager,
