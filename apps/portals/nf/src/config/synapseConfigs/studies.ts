@@ -21,10 +21,6 @@ export const studyHeaderIconOptions = {
   Completed: studyCompleteHeaderSvg,
 }
 
-const applyFacetFilter = (columnName: string, value: string) => {
-  console.log(`Filtering by ${columnName}: ${value}`)
-}
-
 export const studyColumnIconConfigs: ColumnIconConfigs = {
   columns: {
     dataStatus: {
@@ -41,8 +37,6 @@ export const studyColumnIconConfigs: ColumnIconConfigs = {
       genomicVariants: {
         icon: 'geneVariants',
         label: 'Genomic Variants Data Available',
-        onClick: () => applyFacetFilter('dataType', 'genomicVariants'),
-        // onClick: () => applyFacetFilter('dataType', 'genomicVariants'),
       },
       geneExpression: {
         icon: 'geneExpression',
