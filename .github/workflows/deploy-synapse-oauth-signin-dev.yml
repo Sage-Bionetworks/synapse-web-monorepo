@@ -19,3 +19,4 @@ jobs:
       bucket-name: dev-signin.synapse.org
       cfdist-id: E237A0ZZH0I63
       deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+      vite-mode: 'development'
