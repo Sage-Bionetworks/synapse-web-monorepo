@@ -14,6 +14,15 @@ import {
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 
+interface CTAButton {
+  label: string
+  href?: string
+  variant?: ButtonProps['variant']
+  sx?: ButtonProps['sx']
+  endIcon?: JSX.Element
+  // Add other button props as needed
+}
+
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
   type: string
@@ -42,7 +51,7 @@ export type HeaderCardV2Props = {
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
   /** Optional array of CTA buttons to display below description */
-  ctaButtons?: (ButtonProps & { label: string })[]
+  ctaButtons?: CTAButton[]
 }
 
 /**
@@ -136,6 +145,8 @@ function HeaderCardV2({
   forceStackedLayout = false,
   ctaButtons,
 }: HeaderCardV2Props) {
+  ctaButtons = ctaButtons || ctaButtonsForTesting
+
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -240,110 +251,130 @@ function HeaderCardV2({
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
-        <Grid container spacing={3}>
-          {/* Main Content Grid */}
-          <Grid item xs={12} md={useStackedLayout ? 12 : 8}>
-            <Stack spacing={2} ref={descriptionRef}>
-              <Box>
-                {/* Type label */}
-                <Typography
-                  className="SRC-type"
-                  sx={{
-                    fontSize: '14px',
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    color: '#000000',
-                  }}
-                >
-                  {type}
-                </Typography>
+      {/* <Typography
+        className="SRC-type"
+        sx={{
+          fontSize: '14px',
+          textTransform: 'uppercase',
+          fontWeight: 700,
+          color: '#000000',
+        }}
+      >
+        {type}
+      </Typography> */}
 
-                {/* Icon Column */}
-                {icon && (
-                  <Grid item xs={12} md={3}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        justifyContent: { xs: 'center', md: 'flex-start' },
-                      }}
-                    >
-                      {icon}
-                    </Box>
-                  </Grid>
-                )}
-                {/* Title */}
-                <Typography
-                  variant="h4"
-                  component="h3"
-                  sx={{ fontWeight: 700, mb: 1 }}
-                >
-                  {href ? (
-                    <Link
-                      href={href}
-                      target={target}
-                      underline="hover"
-                      color="inherit"
-                    >
-                      {title}
-                    </Link>
-                  ) : (
-                    title
-                  )}
-                </Typography>
-
-                {/* Subtitle */}
-                {subTitle && (
-                  <Typography
-                    variant="body1"
-                    color="inherit"
-                    fontStyle="italic"
-                    paddingBottom="17px"
-                  >
-                    {subTitle}
-                  </Typography>
-                )}
-
-                <CollapsibleDescription
-                  description={description}
-                  descriptionSubTitle=""
-                  descriptionConfig={descriptionConfiguration}
-                />
-
-                {ctaButtons && ctaButtons.length > 0 && (
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={2}
-                    sx={{ mt: 2 }}
-                  >
-                    {ctaButtons.map((buttonProps, index) => (
-                      <Button
-                        key={index}
-                        {...buttonProps}
-                        sx={{
-                          width: { xs: '100%', sm: 'auto' },
-                          ...buttonProps.sx,
-                        }}
-                      >
-                        {buttonProps.label}
-                      </Button>
-                    ))}
-                  </Stack>
-                )}
-              </Box>
-            </Stack>
-          </Grid>
-
-          {/* Values Section */}
-          {values && (
-            <Grid item xs={12} md={useStackedLayout ? 12 : 4}>
-              <Box ref={metadataRef}>
-                <MetadataTable data={values} />
-              </Box>
-            </Grid>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 12fr 1fr',
+          '& > *': {
+            gridColumn: 2,
+          },
+          paddingBottom: '25px',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            gap: 2,
+          }}
+        >
+          {icon && (
+            <Box
+              sx={{
+                flexShrink: 0, // Prevent icon from shrinking
+                flexBasis: '50px',
+                // alignSelf: 'flex-start',
+                // marginTop: '0.25rem',  // Slight adjustment to align with text
+                '& > *': {
+                  width: '100% !important',
+                  maxWidth: '100% !important',
+                },
+                '& img.iconImg': {
+                  width: '100% !important',
+                },
+              }}
+            >
+              {icon}
+            </Box>
           )}
-        </Grid>
+
+          {/* Title */}
+          <Typography sx={{ fontWeight: 700, mb: 1, fontSize: '1.75rem' }}>
+            {href ? (
+              <Link
+                href={href}
+                target={target}
+                underline="hover"
+                color="inherit"
+              >
+                {title}
+              </Link>
+            ) : (
+              title
+            )}
+          </Typography>
+        </Box>
+
+        {/* Subtitle */}
+        {subTitle && (
+          <Typography
+            variant="body1"
+            color="inherit"
+            fontStyle="italic"
+            paddingBottom="17px"
+          >
+            {subTitle}
+          </Typography>
+        )}
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            gap: 2,
+            // gridTemplateColumns: 'min(65ch, 100%) 1fr',
+            // gridColumnGap: '8%',
+          }}
+        >
+          <Box style={{ flexBasis: 'min(65ch, 100%)' }}>
+            <CollapsibleDescription
+              description={description}
+              descriptionSubTitle=""
+              descriptionConfig={descriptionConfiguration}
+            />
+          </Box>
+          {values && (
+            <Box ref={metadataRef}>
+              <MetadataTable data={values} />
+            </Box>
+          )}
+        </Box>
+
+        {ctaButtons && ctaButtons.length > 0 && (
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            sx={{ mt: 2 }}
+          >
+            {ctaButtons.map((buttonProps, index) => (
+              <Button
+                key={index}
+                variant={buttonProps.variant || 'contained'}
+                href={buttonProps.href}
+                sx={{
+                  width: { xs: '100%', sm: 'auto' },
+                  ...(buttonProps.sx || {}),
+                }}
+              >
+                {buttonProps.label}
+              </Button>
+            ))}
+          </Stack>
+        )}
       </Box>
     </Card>
   )
@@ -366,7 +397,7 @@ function MetadataTable({ data }: MetadataTableProps) {
           <tr key={item[2] || index}>
             <td
               style={{
-                padding: '8px 16px 8px 0',
+                padding: '0px 16px 8px 0',
                 verticalAlign: 'top',
                 whiteSpace: 'nowrap',
                 fontWeight: 'bold',
@@ -376,7 +407,7 @@ function MetadataTable({ data }: MetadataTableProps) {
             </td>
             <td
               style={{
-                padding: '8px 0',
+                paddingBottom: '12px',
                 verticalAlign: 'top',
                 wordBreak: 'break-word',
               }}
@@ -391,3 +422,33 @@ function MetadataTable({ data }: MetadataTableProps) {
 }
 
 export default HeaderCardV2
+
+// Remove when i have storyboard working again or real data to test with
+import { LaunchOutlined } from '@mui/icons-material'
+const ctaButtonsForTesting: CTAButton[] = [
+  {
+    label: 'View Standard on External Website',
+    variant: 'outlined',
+    href: 'https://dicom.nema.org/',
+    // target: '_blank',
+    endIcon: <LaunchOutlined />,
+    sx: {
+      borderRadius: 1,
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.14)',
+      },
+    },
+  },
+  {
+    label: 'Download Documentation',
+    variant: 'contained',
+    href: '#',
+    sx: { borderRadius: 1 },
+  },
+  {
+    label: 'View Examples',
+    variant: 'outlined',
+    href: '#',
+    sx: { borderRadius: 1 },
+  },
+]
