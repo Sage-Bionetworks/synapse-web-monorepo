@@ -260,6 +260,7 @@ export type IconName = (typeof IconStrings)[number]
 export type IconSvgProps = {
   icon: IconName
   // If provided, will be shown in tooltip
+  onClick?: () => void
   label?: string
   wrap?: boolean
 } & SvgIconProps
@@ -539,7 +540,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
 }
 
 function IconSvg(props: IconSvgProps) {
-  const { icon, label = '', wrap = true, ...svgIconProps } = props
+  const { icon, label = '', onClick, wrap = true, ...svgIconProps } = props
 
   const Wrapper = wrap ? 'span' : Fragment
   const wrapperProps = wrap
@@ -547,6 +548,8 @@ function IconSvg(props: IconSvgProps) {
         'data-svg': icon,
         className: 'styled-svg-wrapper',
         id: `icon-${icon}`,
+        onClick: onClick,
+        style: onClick ? { cursor: 'pointer' } : {},
         role: 'img',
       }
     : {}

@@ -130,6 +130,7 @@ export type ColumnIconConfigs = {
       [index: string]: IconSvgProps
     }
   }
+  facetColumnIconConfig?: boolean
 }
 
 export type CommonCardProps = {
