@@ -7,7 +7,10 @@ import {
   DetailsPageContentType,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { DetailsPageTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import {
+  DetailsPageTabConfig,
+  DetailsPageTabs,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import ProjectDiscussionForum from '@sage-bionetworks/synapse-portal-framework/components/ProjectDiscussionForum'
@@ -17,7 +20,7 @@ import {
   ColumnSingleValueFilterOperator,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { RouteObject } from 'react-router'
+import { Outlet, RouteObject } from 'react-router'
 import {
   CardConfiguration,
   CardContainerLogic,
@@ -436,7 +439,10 @@ export function ChallengeDetailsPage() {
       <DetailsPage
         sql={challengeProjectsSql}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-      />
+      >
+        <DetailsPageTabs tabConfig={challengeDetailsPageTabConfig} />
+        <Outlet />
+      </DetailsPage>
     </>
   )
 }

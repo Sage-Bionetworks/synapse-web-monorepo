@@ -91,10 +91,10 @@ export const SelectedDate: Story = {
     label: 'foo',
     columnType: 'DATE',
     facetResult: {
-      columnMin: '0',
-      columnMax: '100',
-      selectedMin: '5',
-      selectedMax: '95',
+      columnMin: '2020-01-01',
+      columnMax: '2025-06-01',
+      selectedMin: '2020-01-01',
+      selectedMax: '2025-06-01',
     },
   },
 }

@@ -1,4 +1,4 @@
-name: 'Deploy synapse-oauth-signin'
+name: Deploy oauth-signin-dev
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     with:
       app-name: synapse-oauth-signin
       branch-or-tag: main
-      bucket-name: staging-signin.synapse.org
-      cfdist-id: EUE2TU70O0M2M
-      deployment-role-arn: arn:aws:iam::325565585839:role/sagebase-github-oidc-synapseprod-web-monorepo-infra
-      vite-mode: 'staging'
+      bucket-name: dev-signin.synapse.org
+      cfdist-id: E237A0ZZH0I63
+      deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+      vite-mode: 'development'
