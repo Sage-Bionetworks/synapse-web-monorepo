@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import IconSvg, { IconSvgProps } from './IconSvg/IconSvg'
 import { merge } from 'lodash-es'
+import { useQueryContext } from './QueryContext'
+import { UniqueFacetIdentifier } from '../utils'
 
 type IconConfigs = {
   [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg
@@ -29,6 +31,15 @@ function IconList(props: IconListProps) {
   let noMatch: boolean = false
   const css = useTheme ? 'icon-list themed' : 'icon-list'
   const componentCss = useBackground ? `${css} bg-circle` : css
+  const queryContext = useQueryContext()
+  const { addValueToSelectedFacet, removeSelectedFacet } = queryContext
+
+  const handleIconClick = (dataType: 'string') => {
+    const facet: UniqueFacetIdentifier = {
+      columnName: 'dataType',
+    }
+    addValueToSelectedFacet(facet, dataType)
+  }
 
   const mergedIconConfigs: IconConfigs = useMemo(() => {
     const mergedIconConfigs: IconConfigs = {}
@@ -47,7 +58,13 @@ function IconList(props: IconListProps) {
         noMatch = true
         return
       } else {
-        return <IconSvg key={el} {...iconConfig} />
+        return (
+          <IconSvg
+            key={el}
+            {...iconConfig}
+            onClick={() => handleIconClick(el)}
+          />
+        )
       }
     })
   }

@@ -548,9 +548,9 @@ function IconSvg(props: IconSvgProps) {
         'data-svg': icon,
         className: 'styled-svg-wrapper',
         id: `icon-${icon}`,
-        onClick: onClick,
-        style: onClick ? { cursor: 'pointer' } : {},
         role: 'img',
+        onClick,
+        style: onClick ? { cursor: 'pointer' } : {},
       }
     : {}
 
