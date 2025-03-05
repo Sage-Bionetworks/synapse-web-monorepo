@@ -28,7 +28,7 @@ export const ACCESS_DENIED_MESSAGE =
 export const NOT_FOUND_MESSAGE =
   'The link you followed may be broken, or the page may have been removed.'
 export const ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION =
-  'A free account grants lets you view public resources.'
+  'A Synapse account is free, and lets you view public resources.'
 export const ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION =
   'Please remember that all messages left in the forum are public.'
 export const ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION =
