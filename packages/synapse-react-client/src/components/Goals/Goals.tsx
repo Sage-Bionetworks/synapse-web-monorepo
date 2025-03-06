@@ -1,8 +1,10 @@
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useMemo } from 'react'
 import { SynapseConstants } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
+import { EvenlyDistributedWrappedContainer } from '../styled/EvenlyDistributedWrappedContainer'
 import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
@@ -42,7 +44,9 @@ export function Goals(props: GoalsProps) {
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
-      sql: `select * from ${entityId} order by ItemOrder`,
+      sql: `select *
+            from ${entityId}
+            order by ItemOrder`,
     },
   }
   const { data: queryResultBundle } =
@@ -72,10 +76,9 @@ export function Goals(props: GoalsProps) {
   )
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
-  return (
-    <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-      {goalError && <ErrorBanner error={goalError} />}
-      {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
+  const goalsDataProps = useMemo(() => {
+    return queryResultBundle?.queryResult!.queryResults.rows.map(
+      (el, index): GoalsDataProps => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {
           // We cast values above assuming there are no null values, emit a warning just in case.
@@ -95,21 +98,51 @@ export function Goals(props: GoalsProps) {
         // assume that we recieve assets in order of rows and there is an asset for each item
         // can revisit if this isn't the case.
         const asset = goalAssets?.[index] ?? ''
-        const goalsDataProps: GoalsDataProps = {
+        return {
           countSql,
           title,
           summary,
           link,
           asset,
         }
-        return showDesktop ? (
-          <GoalsDesktop {...goalsDataProps} />
-        ) : (
-          <GoalsMobile {...goalsDataProps} />
-        )
-      })}
-    </div>
-  )
-}
+      },
+    )
+  }, [
+    countSqlColumnIndex,
+    goalAssets,
+    linkColumnIndex,
+    queryResultBundle?.queryResult,
+    summaryColumnIndex,
+    tableIdColumnIndex,
+    titleColumnIndex,
+  ])
 
+  if (goalError) {
+    return <ErrorBanner error={goalError} />
+  }
+
+  if (!goalsDataProps) {
+    return <></>
+  }
+
+  if (showDesktop) {
+    return (
+      <div className={`Goals`}>
+        <EvenlyDistributedWrappedContainer>
+          {goalsDataProps.map((props, index) => (
+            <GoalsDesktop key={index} {...props} />
+          ))}
+        </EvenlyDistributedWrappedContainer>
+      </div>
+    )
+  } else {
+    return (
+      <div className={`Goals`}>
+        {goalsDataProps.map((props, index) => (
+          <GoalsMobile key={index} {...props} />
+        ))}
+      </div>
+    )
+  }
+}
 export default Goals

@@ -57,6 +57,7 @@ const routes: RouteObject[] = [
                 modelADStrainsSelectedFacet.facetValue
               }"]}]}`,
             }}
+            replace={true}
           />
         ),
       },
@@ -69,7 +70,7 @@ const routes: RouteObject[] = [
       {
         // PORTALS-2919: Redirect DataAccess/Instructions to /Data Access
         path: 'DataAccess/Instructions',
-        element: <Navigate to="/Data Access" />,
+        element: <Navigate to="/Data Access" replace={true} />,
       },
       {
         path: 'Explore',

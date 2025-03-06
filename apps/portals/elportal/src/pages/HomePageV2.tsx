@@ -8,6 +8,7 @@ import {
   PortalHomePageHeader,
   GoalsV2,
   PortalFeaturedPartners,
+  PortalSectionHeader,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -25,7 +26,7 @@ import {
 import { Link, Typography, useTheme } from '@mui/material'
 import analyzetheclouds from '../assets/analyzetheclouds.png'
 import computationaltools from '../assets/computationaltools.png'
-import headerbackground from '../assets/headerbackground.png'
+import headerbackgroundvideo from '../assets/header-video.mp4'
 import { Box } from '@mui/material'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import { handleUpsetPlotClick } from 'src/config/synapseConfigs/handleUpsetPlotClick'
@@ -61,14 +62,25 @@ export default function HomePage() {
   )
   const title = (
     <Box sx={{ color: 'grey.100' }}>
-      <div>Explore the data</div>
+      Discover and explore data&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.up('md')]: {
+            display: 'block',
+          },
+        })}
+      ></Box>
       about&nbsp;
       <Box
         component={'span'}
         sx={theme => ({
+          [theme.breakpoints.down('md')]: {
+            display: 'block',
+            minHeight: '100px',
+          },
           [theme.breakpoints.down('sm')]: {
             minHeight: '150px',
-            display: 'block',
           },
         })}
       >
@@ -78,19 +90,19 @@ export default function HomePage() {
             3000,
             'healthy aging',
             3000,
-            'lifespan',
+            'life span',
             3000,
-            'healthspan',
+            'health span',
             3000,
             'familial longevity',
             3000,
             'centenarians',
             3000,
-            'long-lived animal species',
+            'cross-species studies',
             3000,
             'longevity-associated genes',
             3000,
-            'comparative biogerontology',
+            'longevity-associated omics',
             3000,
           ]}
           wrapper="span"
@@ -98,7 +110,7 @@ export default function HomePage() {
           repeat={Infinity}
           style={{
             fontWeight: 700,
-            color: theme.palette.primary.main,
+            color: '#35E7C6',
           }}
         />
       </Box>
@@ -106,30 +118,30 @@ export default function HomePage() {
   )
   const subTitle = (
     <span style={{ color: theme.palette.grey[100] }}>
-      The open science hub for breakthroughs in lifespan and healthspan
+      The open science hub for breakthroughs in life span and health span
     </span>
   )
   const description = (
     <span style={{ color: theme.palette.grey[200] }}>
       People with Exceptional Longevity (EL) can live in good health to 95, 100,
       or even beyond. <br /> <br /> The ELITE Portal brings together the latest
-      research so that we can crack the code of longevity and all live longer,
-      healthier lives.
+      research so we can turn biological insights into treatments that will help
+      us all live longer, healthier lives.
     </span>
   )
   return (
     <>
       <PortalHomePageHeader
-        backgroundCss={`linear-gradient(90deg, #1C3D4F 45.5%, rgba(28, 61, 79, 0.00) 100%), url(${headerbackground}) lightgray 50% / cover no-repeat`}
+        backgroundCss={`linear-gradient(90deg, #024472 45.5%, rgba(2, 68, 114, 0.00) 100%)`}
         title={title}
         subTitle={subTitle}
         description={description}
+        backgroundMp4={headerbackgroundvideo}
       />
-      <PortalFeaturedPartners sql={partnersSql2} />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
-        summaryText="We provide multi-omic datasets, software tools, and publications that empower researchers to discover the latest health-promoting therapeutics."
+        summaryText="The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets of health and disease. Learn more about our research domains and tools."
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
@@ -148,104 +160,129 @@ export default function HomePage() {
         }}
       >
         <ELGettingStarted />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
         <GoalsV2 entityId={goalsV2Table} dataLink="/Explore/Data" />
-        <div className={'home-bg-dark'}>
-          <SectionLayout
-            title="Exploring the Data"
-            centerTitle
-            ContainerProps={{ className: 'home-spacer' }}
-          >
-            <UpsetPlot
-              sql={upsetPlotSql}
-              rgbIndex={0}
-              maxBarCount={20}
-              setName="Set size"
-              combinationName="Intersection size"
-              onClick={handleUpsetPlotClick}
-              // summaryLinkText='Explore All Data'
-              // summaryLink='/Explore/Data'
-            />
-          </SectionLayout>
-        </div>
-        <div className={'home-bg-dark'}>
-          <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-            <FeaturedDataTabs
-              sql={dataSql}
-              rgbIndex={3}
-              configs={[
-                {
-                  title: 'Human Studies',
-                  icon: 'PERSON',
-                  explorePagePath: '/Explore/Studies',
-                  exploreObjectType: 'Studies',
-                  plotsConfig: {
-                    configs: [
-                      {
-                        title: 'The Long Life Family Study',
-                        description:
-                          'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'LLFS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=LLFS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                      {
-                        title: 'ADAMTS7 Study',
-                        description:
-                          'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'ADAMTS7',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                    ],
-                  },
+      </SectionLayout>
+      <SectionLayout>
+        <PortalSectionHeader
+          title="Explore the Data"
+          buttonText="View All Studies"
+          link="/Explore/Studies"
+          centered
+          sx={{ marginBottom: '90px' }}
+        />
+        <UpsetPlot
+          sql={upsetPlotSql}
+          rgbIndex={0}
+          maxBarCount={20}
+          setName="Set size"
+          combinationName="Intersection size"
+          onClick={handleUpsetPlotClick}
+          // summaryLinkText='Explore All Data'
+          // summaryLink='/Explore/Data'
+        />
+      </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
+          <FeaturedDataTabs
+            sql={dataSql}
+            rgbIndex={3}
+            configs={[
+              {
+                title: 'Human Studies',
+                icon: 'PERSON',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title: 'The Long Life Family Study',
+                      description:
+                        'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'LLFS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title: 'ADAMTS7 Study',
+                      description:
+                        'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'ADAMTS7',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
                 },
-                {
-                  title: 'Translational Studies',
-                  icon: 'TRANSLATIONAL',
-                  explorePagePath: '/Explore/Studies',
-                  exploreObjectType: 'Studies',
-                  plotsConfig: {
-                    configs: [
-                      {
-                        title: 'MRGWAS',
-                        description:
-                          'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'MRGWAS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                      {
-                        title: 'Aging-PheWAS',
-                        description:
-                          'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
-                        facetsToPlot: ['dataTypes'],
-                        selectFacetColumnName: 'Study',
-                        selectFacetColumnValue: 'Aging-PheWAS',
-                        detailsPagePath:
-                          '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
-                        unitDescription: 'Files',
-                        plotType: 'STACKED_HORIZONTAL_BAR',
-                      },
-                    ],
-                  },
+              },
+              {
+                title: 'Translational Studies',
+                icon: 'TRANSLATIONAL',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title: 'MRGWAS',
+                      description:
+                        'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'MRGWAS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title: 'Aging-PheWAS',
+                      description:
+                        'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'Aging-PheWAS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
                 },
-              ]}
-            />
-          </SectionLayout>
-        </div>
+              },
+            ]}
+          />
+        </SectionLayout>
+      </div>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
         <ELContributeYourData />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
         <PortalFeatureHighlights
           image={analyzetheclouds}
           title="Analyze on the Cloud"
@@ -257,10 +294,19 @@ export default function HomePage() {
           image={computationaltools}
           title="Computational Tools"
           buttonText="Check out our Computational Tools"
-          summaryText="We provide researchers with unique access to toolkits for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
+          summaryText="Access toolkits generated by our partners for probing and interpreting longevity-related data. The power of new software, pipelines, and applications are all at your fingertips."
           reverseOrder={true}
           link="/Explore/Computational Tools"
         />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          style: { padding: 0 },
+        }}
+      >
+        <PortalFeaturedPartners sql={partnersSql2} />
       </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout

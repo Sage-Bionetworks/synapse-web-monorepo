@@ -86,14 +86,22 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiButton: {
       styleOverrides: {
-        root: {
-          fontWeight: 900,
-          padding: '6px 12px',
-          borderRadius: '3px',
-          textTransform: 'capitalize',
-          '&:hover': {
-            transition: '0.2s',
-          },
+        root: ({ ownerState }) => {
+          let padding = '6px 12px'
+          if (ownerState.size === 'small') {
+            padding = '6px 8px'
+          } else if (ownerState.size === 'large') {
+            padding = '8px 16px'
+          }
+          return {
+            fontWeight: 900,
+            padding: padding,
+            borderRadius: '3px',
+            textTransform: 'capitalize',
+            '&:hover': {
+              transition: '0.2s',
+            },
+          }
         },
         contained: ({ theme, ownerState }) => ({
           '&:hover, &:visited': {
@@ -440,10 +448,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiTypography: {
       defaultProps: {
         variantMapping: {
-          // For now use p for headlines, since the bootstrap-4-backport class will override style
-          headline1: 'p',
-          headline2: 'p',
-          headline3: 'p',
+          headline1: 'h1',
+          headline2: 'h2',
+          headline3: 'h3',
           body1: 'p',
           body1Italic: 'p',
           body2: 'p',

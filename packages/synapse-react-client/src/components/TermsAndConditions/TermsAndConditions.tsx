@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { LoadingItem, tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
-import { Button, Link } from '@mui/material'
+import { Alert, AlertTitle, Button, Link, Typography } from '@mui/material'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
   URL_TERMS_CONDITIONS_AGREEMENT,
@@ -10,20 +10,20 @@ import { useGetFullTableQueryResults } from '../../synapse-queries'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
-  termsAndConditionsTableID?: string
-  termsAndConditionsTableVersion?: string
+  termsAndConditionsTableID: string
+  termsAndConditionsTableVersion: string
   hideLinkToFullTC?: boolean
 }
 
 function TermsAndConditions({
-  termsAndConditionsTableID = 'syn51718002',
-  termsAndConditionsTableVersion = '5',
+  termsAndConditionsTableID,
+  termsAndConditionsTableVersion,
   onFormChange,
   hideLinkToFullTC = false,
 }: TermsAndConditionsProps) {
   const [tcList, setTcList] = useState<tcItem[]>([])
   // Fetch the table data
-  const { data, isLoading } = useGetFullTableQueryResults(
+  const { data, isLoading, error, isError } = useGetFullTableQueryResults(
     {
       entityId: termsAndConditionsTableID,
       query: {
@@ -35,6 +35,13 @@ function TermsAndConditions({
     { staleTime: Infinity },
     true, // force this query to be run as the anonymous user (without an access token)
   )
+
+  const isTermsAndConditionsTableNotFound = isError && error.status == 404
+
+  if (isTermsAndConditionsTableNotFound) {
+    // "Pledge" Synapse table is unavailable on this stack.  Allow agreement to the terms, but we will show a warning below
+    onFormChange(true)
+  }
 
   // update tcList when data changes (transform)
   useEffect(() => {
@@ -130,6 +137,22 @@ function TermsAndConditions({
           </Link>
           ), including:
         </label>
+        {isTermsAndConditionsTableNotFound && (
+          <Alert severity="warning">
+            <AlertTitle>Source data unavailable</AlertTitle>
+            <Typography variant="body1">
+              We are unable to display the source table content for the Synapse
+              Pledge at this time. Please review the full{' '}
+              <Link target="_blank" href={sageTermsOfService}>
+                {' '}
+                Terms of Service{' '}
+              </Link>{' '}
+              carefully before proceeding. By clicking "Agree And Continue," you
+              confirm that you have read and understood the Terms and Conditions
+              for use.
+            </Typography>
+          </Alert>
+        )}
         <ul className="term-list">
           {isLoading && <LoadingItem numLoadingItems={6} />}
           {tcList.length > 0 &&

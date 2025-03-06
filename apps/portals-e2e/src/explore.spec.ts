@@ -416,7 +416,9 @@ const expectTable = async (page: Page, exploreTab: string) => {
       const totalRows = Number(totalRowsText?.replace(/\D/g, ''))
 
       await test.step('confirm total row count in heading', async () => {
-        const tabHeading = await page.getByRole('heading').textContent()
+        const tabHeading = await page
+          .getByRole('heading', { name: /\d+/ })
+          .textContent()
         const totalRowsHeading = Number(tabHeading?.replace(/\D/g, '')) || 0
         expect(totalRows).toEqual(totalRowsHeading)
       })

@@ -16,6 +16,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
 import { useInView } from 'react-intersection-observer'
+import PortalSectionHeader from '../PortalSectionHeader'
 
 const transitionTimeoutMs = 400
 
@@ -143,8 +144,7 @@ const FeaturedResearchTopCard = ({
       <Stack useFlexGap gap={'16px'}>
         <Typography
           variant="headline2"
-          color={'grey.1000'}
-          sx={{ fontSize: { xs: '30px', md: '36px' } }}
+          sx={{ color: 'grey.1000', fontSize: { xs: '24px', md: '36px' } }}
         >
           <Link
             href={research.values[linkColIndex] ?? ''}
@@ -214,18 +214,25 @@ function FeaturedResearch(props: FeaturedResearchProps) {
   const topCard = dataRows[0]
   const remainingCards = dataRows.slice(1)
 
+  const featuredResearchHeader = (
+    <PortalSectionHeader
+      title="Featured Research"
+      sx={{
+        h2: { fontSize: '24px', paddingBottom: 0, width: '100%' },
+      }}
+    />
+  )
+
   return (
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: {
-          xs: 'minmax(100px, 1fr)',
-          lg: 'minmax(300px, 2fr) minmax(150px, 1fr)',
-        },
+        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
         gap: { xs: '30px', md: '40px' },
         padding: { xs: '40px', lg: '80px' },
       }}
     >
+      <Box sx={{ display: { md: 'none' } }}>{featuredResearchHeader}</Box>
       <Box>
         {topCard && (
           <FeaturedResearchTopCard
@@ -240,30 +247,25 @@ function FeaturedResearch(props: FeaturedResearchProps) {
           />
         )}
       </Box>
-      <Stack
-        gap="16px"
-        sx={{
-          borderTop: '3px solid',
-          borderColor: 'grey.400',
-          padding: '30px 0 0 0',
-        }}
-      >
-        <Typography variant="headline2" color="grey.1000" fontSize={'24px'}>
-          Featured Research
-        </Typography>
-        {remainingCards.map((research, index) => (
-          <FeaturedResearchCard
-            entityId={entityId}
-            research={research}
-            key={index}
-            isLoading={isLoading}
-            titleColIndex={titleColIndex}
-            descriptionColIndex={descriptionColIndex}
-            publicationDateColIndex={publicationDateColIndex}
-            imageColIndex={imageColIndex}
-            linkColIndex={linkColIndex}
-          />
-        ))}
+      <Stack>
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          {featuredResearchHeader}
+        </Box>
+        <Stack gap="16px">
+          {remainingCards.map((research, index) => (
+            <FeaturedResearchCard
+              entityId={entityId}
+              research={research}
+              key={index}
+              isLoading={isLoading}
+              titleColIndex={titleColIndex}
+              descriptionColIndex={descriptionColIndex}
+              publicationDateColIndex={publicationDateColIndex}
+              imageColIndex={imageColIndex}
+              linkColIndex={linkColIndex}
+            />
+          ))}
+        </Stack>
       </Stack>
     </Box>
   )

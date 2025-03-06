@@ -109,7 +109,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           Sage Bionetworks
         </a>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary css-16cn9en-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary MuiButton-sizeLarge MuiButton-outlinedSizeLarge MuiButton-colorSecondary css-upmgun-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
@@ -129,12 +129,12 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
     <div
       class="MuiBox-root css-u64sd7"
     >
-      <p
+      <h1
         class="MuiTypography-root MuiTypography-headline1 css-m2ix13-MuiTypography-root"
       >
         Explore the data
-      </p>
-      <p
+      </h1>
+      <h1
         class="MuiTypography-root MuiTypography-headline1 css-m2ix13-MuiTypography-root"
       >
         behind 
@@ -142,7 +142,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           class="index-module_type__E-SaG"
           style="color: rgb(181, 211, 206);"
         />
-      </p>
+      </h1>
     </div>
     <div
       class="MuiBox-root css-lcciv2"
@@ -415,7 +415,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </clippath>
             </defs>
           </svg>
-          <p
+          <h2
             class="MuiTypography-root MuiTypography-headline2 css-iobtgw-MuiTypography-root"
           >
             Created by 
@@ -423,9 +423,9 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               Sage Bionetworks
             </strong>
             , Synapse empowers biomedical researchers with tools for open science and collaboration, forging a path to optimal human health.
-          </p>
+          </h2>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-1pu9iaa-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-6svpgq-MuiButtonBase-root-MuiButton-root"
             href="https://www.sagebionetworks.org"
             tabindex="0"
             target="_blank"
@@ -441,19 +441,19 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       <div
         class="MuiBox-root css-0"
       >
-        <p
+        <h1
           class="MuiTypography-root MuiTypography-headline1 css-bypmur-MuiTypography-root"
         >
           We partner with scientific leaders
-        </p>
+        </h1>
         <div
           class="MuiBox-root css-wntgvd"
         >
-          <p
+          <h1
             class="MuiTypography-root MuiTypography-headline1 css-gacos-MuiTypography-root"
           >
             Synapse is your ecosystem for responsible data sharing, innovative data reuse, and collaboration.
-          </p>
+          </h1>
         </div>
         <div
           class="MuiBox-root css-16vxqzz"
@@ -556,11 +556,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
           <div
             class="MuiBox-root css-cla2og"
           >
-            <p
+            <h1
               class="MuiTypography-root MuiTypography-headline1 css-gkk169-MuiTypography-root"
             >
               Synapse by the numbers
-            </p>
+            </h1>
             <p
               class="MuiTypography-root MuiTypography-body1 css-19y1nnc-MuiTypography-root"
             >
@@ -580,11 +580,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               </svg>
                Live
             </p>
-            <p
+            <h2
               class="MuiTypography-root MuiTypography-headline2 css-1nmmd39-MuiTypography-root"
             >
               Projects trending last month
-            </p>
+            </h2>
           </div>
         </div>
         <div
@@ -600,11 +600,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <div
           class="MuiBox-root css-cla2og"
         >
-          <p
+          <h1
             class="MuiTypography-root MuiTypography-headline1 css-1irv0gu-MuiTypography-root"
           >
             Made for biomedical data reuse and discovery
-          </p>
+          </h1>
           <div
             class="MuiBox-root css-79elbk"
           >
@@ -614,16 +614,16 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               <div
                 class="MuiBox-root css-1o3pu3x"
               >
-                <p
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-a9h2lq-MuiTypography-root"
                 >
                   Access or query data
-                </p>
-                <p
+                </h3>
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-t4glcm-MuiTypography-root"
                 >
                   Seamless Integrations
-                </p>
+                </h3>
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
@@ -644,7 +644,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   </div>
                 </div>
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-n52da1-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-1b7t1xk-MuiButtonBase-root-MuiButton-root"
                   href="https://help.synapse.org/docs/API-Clients-and-Documentation.1985446128.html"
                   tabindex="0"
                   target="_blank"
@@ -665,16 +665,16 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               <div
                 class="MuiBox-root css-1o3pu3x"
               >
-                <p
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-a9h2lq-MuiTypography-root"
                 >
                   Display your provenance
-                </p>
-                <p
+                </h3>
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-t4glcm-MuiTypography-root"
                 >
                   Research Credit
-                </p>
+                </h3>
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
@@ -684,7 +684,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   class="MuiBox-root css-16ks28l"
                 />
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-n52da1-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-1b7t1xk-MuiButtonBase-root-MuiButton-root"
                   href="https://help.synapse.org/docs/Provenance.1972470373.html"
                   tabindex="0"
                   target="_blank"
@@ -705,16 +705,16 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               <div
                 class="MuiBox-root css-1o3pu3x"
               >
-                <p
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-a9h2lq-MuiTypography-root"
                 >
                   Safeguard data
-                </p>
-                <p
+                </h3>
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-t4glcm-MuiTypography-root"
                 >
                   Precision Governance
-                </p>
+                </h3>
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
@@ -735,7 +735,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   </div>
                 </div>
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-n52da1-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-1b7t1xk-MuiButtonBase-root-MuiButton-root"
                   href="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"
                   tabindex="0"
                   target="_blank"
@@ -756,16 +756,16 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
               <div
                 class="MuiBox-root css-1o3pu3x"
               >
-                <p
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-a9h2lq-MuiTypography-root"
                 >
                   Accelerate biomedical progress
-                </p>
-                <p
+                </h3>
+                <h3
                   class="MuiTypography-root MuiTypography-headline3 css-t4glcm-MuiTypography-root"
                 >
                   Powered by Synapse
-                </p>
+                </h3>
                 <p
                   class="MuiTypography-root MuiTypography-body1 css-h66qwn-MuiTypography-root"
                 >
@@ -775,7 +775,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                   class="MuiBox-root css-16ks28l"
                 />
                 <a
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-n52da1-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary MuiButton-root MuiButton-contained MuiButton-containedLightPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorLightPrimary css-1b7t1xk-MuiButtonBase-root-MuiButton-root"
                   href="http://localhost:3000/sageresources"
                   tabindex="0"
                   target="_blank"
@@ -796,16 +796,16 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       <div
         class="MuiBox-root css-gngfd0"
       >
-        <p
+        <h1
           class="MuiTypography-root MuiTypography-headline1 css-p75j6w-MuiTypography-root"
         >
           Featured datasets
-        </p>
+        </h1>
         <div
           class="MuiBox-root css-15v321u"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-a2zga5-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorSecondary css-ts7beu-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
@@ -819,19 +819,19 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       <div
         class="MuiBox-root css-1y9aki2"
       >
-        <p
+        <h1
           class="MuiTypography-root MuiTypography-headline1 css-1uehx6t-MuiTypography-root"
         >
           Synapse in action
-        </p>
+        </h1>
         <div
           class="MuiBox-root css-7la697"
         >
-          <p
+          <h1
             class="MuiTypography-root MuiTypography-headline1 css-hlq40i-MuiTypography-root"
           >
             Explore real-world case studies and success stories showcasing how researchers use Synapse to drive innovative biomedical discoveries and improve health outcomes.
-          </p>
+          </h1>
         </div>
       </div>
       <div
@@ -840,11 +840,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         <div
           class="MuiBox-root css-194k3rb"
         >
-          <p
+          <h1
             class="MuiTypography-root MuiTypography-headline1 css-14ql2dw-MuiTypography-root"
           >
             Plans
-          </p>
+          </h1>
           <p
             class="MuiTypography-root MuiTypography-body1 css-1yxtjap-MuiTypography-root"
           >
@@ -869,11 +869,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <div
                   class="MuiBox-root css-0"
                 >
-                  <p
+                  <h1
                     class="MuiTypography-root MuiTypography-headline1 css-j1bnje-MuiTypography-root"
                   >
                     Free
-                  </p>
+                  </h1>
                   <p
                     class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >
@@ -973,11 +973,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <div
                   class="MuiBox-root css-0"
                 >
-                  <p
+                  <h1
                     class="MuiTypography-root MuiTypography-headline1 css-j1bnje-MuiTypography-root"
                   >
                     Self-Managed Plan
-                  </p>
+                  </h1>
                   <p
                     class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >
@@ -1082,11 +1082,11 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 <div
                   class="MuiBox-root css-0"
                 >
-                  <p
+                  <h1
                     class="MuiTypography-root MuiTypography-headline1 css-j1bnje-MuiTypography-root"
                   >
                     Data Coordination
-                  </p>
+                  </h1>
                   <p
                     class="MuiTypography-root MuiTypography-body1 css-1y7oxcg-MuiTypography-root"
                   >

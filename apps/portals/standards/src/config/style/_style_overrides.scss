@@ -1,0 +1,34 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+
+#footer,
+#header {
+  height: fit-content;
+  background-image: none;
+}
+
+#header {
+  position: relative;
+  .header-text {
+    position: absolute;
+    top: 20%;
+    min-height: 50%;
+    @media only screen and (max-width: 1200px) {
+      top: 5%;
+      width: 90%;
+      left: 5%;
+      height: 90%;
+    }
+    height: fit-content;
+    h2 {
+      margin-bottom: 20px;
+    }
+    width: 60%;
+    left: 10%;
+    margin: 0px;
+    padding: 25px;
+  }
+}
+
+#footer {
+  background: linear-gradient(263.11deg, #8bb4ce 2.14%, #3e7293 50.63%);
+}

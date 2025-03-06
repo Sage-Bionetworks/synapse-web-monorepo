@@ -1,6 +1,7 @@
-import { Box, Link, Button, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import backgroundSpotsLeft from './assets/dot_blob_top_left.png'
 import backgroundSpotsRight from './assets/dot_blob_bottom_right.png'
+import { PortalSectionHeader } from 'synapse-react-client'
 
 function ELContributeYourData() {
   return (
@@ -30,51 +31,32 @@ function ELContributeYourData() {
         sx={{
           flex: '1 1 auto',
           zIndex: 1,
-          textAlign: 'center',
           padding: { xs: '100px 40px', md: '100px 0' },
         }}
       >
-        <Typography
-          variant="headline1"
-          style={{ color: 'white' }}
+        <PortalSectionHeader
+          centered
+          reverseButtonAndText
+          title="Contribute Your Data"
+          summaryText="If you are a funded portal contributor and ready to upload data to the
+        ELITE Portal, you can begin the data submission process by contacting
+        our data curation team through our service desk."
+          buttonText="Start Contributing"
+          link="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
           sx={{
-            pt: 4,
-            mb: 2,
-            mx: 'auto',
-            width: 'max-content',
-            borderTop: '6px solid #ffffff88',
+            h2: {
+              color: 'primary.contrastText',
+              fontSize: '24px',
+              borderColor: 'rgba(255, 255, 255, 0.40)',
+            },
+            '.MuiButton-root': { border: '1px solid white' },
+            '& p': {
+              fontSize: '16px',
+              paddingBottom: '10px',
+              color: 'primary.contrastText',
+            },
           }}
-        >
-          Contribute Your Data
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ color: 'white', fontStyle: 'italic', mb: 3 }}
-        >
-          If you are a funded portal contributor and ready to upload data to the
-          ELITE Portal, you can begin the data submission process by contacting
-          our data curation team through our service desk.
-        </Typography>
-        <Link
-          href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
-          target="_blank"
-          rel="noopener noreferrer"
-          fontFamily="Lato"
-          fontSize="18"
-          fontStyle="semi-bold"
-        >
-          <Button
-            variant="contained"
-            sx={theme => ({
-              border: '1px solid white',
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-              },
-            })}
-          >
-            Start Contributing
-          </Button>
-        </Link>
+        />
       </Box>
       <Box
         sx={{

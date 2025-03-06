@@ -1,0 +1,22 @@
+name: Deploy oauth-signin-dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/synapse-react-client/**'
+      - 'apps/synapse-oauth-signin/**'
+jobs:
+  build-and-deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-app.yml
+    with:
+      app-name: synapse-oauth-signin
+      branch-or-tag: main
+      bucket-name: dev-signin.synapse.org
+      cfdist-id: E237A0ZZH0I63
+      deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+      vite-mode: 'development'

@@ -131,7 +131,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     setZoom(1)
     setOpenCropModal(false)
   }
-  const cropperSize = 400
+  const cropperSize = window.innerWidth <= 768 ? 250 : 400
   const cropperSizePx = `${cropperSize}px`
 
   return (

@@ -6,8 +6,13 @@ import { ConfigBuilder } from 'vite-config'
  */
 const config = new ConfigBuilder()
   .setIncludeReactConfig(true)
-  .setIncludeLibraryConfig(true)
-  .setBuildLibEntry(resolve(__dirname, 'src/index.ts'))
+  .setIncludeLibraryConfig(true, {
+    except: [
+      // Include @sage-bionetworks/synapse-types because the local version may drift from the version released on NPM
+      '@sage-bionetworks/synapse-types',
+    ],
+  })
+  .setBuildLibEntry(resolve(__dirname, 'src/umd.index.ts'))
   .setConfigOverrides({
     root: '.',
     build: {

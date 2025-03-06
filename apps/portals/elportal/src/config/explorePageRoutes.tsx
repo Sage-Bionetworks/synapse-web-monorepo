@@ -12,20 +12,18 @@ import publicationsQueryWrapperPlotNavProps from './synapseConfigs/publications'
 
 const COHORT_BUILDER_ORIENTATION_BANNER_TEXT = (
   <>
-    This page helps you explore and find data in the ELITE Portal related to a
-    specific group of Participants. Add filters to build a list of participants,
-    select specific participants you are interested in, and view the files
-    associated with your chosen cohort. From there, you can download the related
-    data files or Sent to CAVATICA for analysis. See the ELITE Portal Help Docs
-    for more information about{' '}
+    Cohort Builder helps you filter data in the ELITE Portal to find relevant
+    data records for your research. Apply filters to define cohorts based on
+    demographic and dataset attributes and view the files associated with your
+    cohort. Visit our{' '}
     <a
       href="https://help.eliteportal.org/help/explore-data#ExploringData-OverviewoftheCohortBuilderSubtab"
       target="_blank"
       rel="noreferrer"
     >
-      Cohort Builder
-    </a>
-    .
+      Help Docs
+    </a>{' '}
+    for more information.
   </>
 )
 

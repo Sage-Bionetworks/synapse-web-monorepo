@@ -5,7 +5,6 @@ import viteLibraryConfig from './vite-library-config.js'
 import vitestConfig from './vitest-config.js'
 
 export class ConfigBuilder {
-  private includeReactConfig = false
   private includeLibraryConfig = false
   private buildLibEntry: string | string[] | undefined = undefined
   private includeVitestConfig = false
@@ -13,7 +12,7 @@ export class ConfigBuilder {
   private configOverrides: Record<string, any> | null = null
 
   setIncludeReactConfig(includeReactConfig: boolean): ConfigBuilder {
-    this.includeReactConfig = includeReactConfig
+    this.pluginConfigOptions.includeReactPlugins = includeReactConfig
     return this
   }
 
@@ -27,15 +26,14 @@ export class ConfigBuilder {
     return this
   }
 
-  setIncludeLibraryConfig(includeLibraryConfig: boolean): ConfigBuilder {
-    this.includeLibraryConfig = includeLibraryConfig
-    return this
-  }
-
-  setPluginConfigOptions(
-    pluginConfigOptions: PluginConfigOptions,
+  setIncludeLibraryConfig(
+    includeLibraryConfig: boolean,
+    externalizeDepsOptions?: Parameters<
+      typeof getPluginConfig
+    >[0]['externalizeDepsOptions'],
   ): ConfigBuilder {
-    this.pluginConfigOptions = pluginConfigOptions
+    this.includeLibraryConfig = includeLibraryConfig
+    this.pluginConfigOptions.externalizeDepsOptions = externalizeDepsOptions
     return this
   }
 
@@ -63,7 +61,7 @@ export class ConfigBuilder {
     if (this.pluginConfigOptions) {
       config = mergeConfig(config, {
         plugins: getPluginConfig({
-          includeReactPlugins: this.includeReactConfig,
+          ...this.pluginConfigOptions,
           includeLibraryPlugins: this.includeLibraryConfig,
         }),
       })

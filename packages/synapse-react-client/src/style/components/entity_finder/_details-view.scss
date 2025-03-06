@@ -1,7 +1,6 @@
 @use '../../abstracts/variables' as SRC;
 @use './entity-finder' as EntityFinder;
 @use '../../abstracts/mixins' as SrcMixins;
-@use '../../../template_style/form' as Form;
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
@@ -19,10 +18,6 @@
   height: $-finder-height;
   background-color: SRC.$background-color-gray-light;
   overflow-y: hidden;
-
-  select.form-control {
-    margin-bottom: 0px;
-  }
 }
 
 .EntityFinderDetailsViewPlaceholder {

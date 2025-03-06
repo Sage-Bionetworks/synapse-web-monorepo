@@ -23,8 +23,8 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    // termsAndConditionsTableID: 'syn51718002', // use default
-    // termsAndConditionsTableVersion: '4', // use default
+    termsAndConditionsTableID: 'syn51718002',
+    termsAndConditionsTableVersion: '5',
     onFormChange: formComplete => {
       if (formComplete) {
         displayToast('All items accepted!')

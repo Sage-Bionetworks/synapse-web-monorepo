@@ -15,8 +15,7 @@ export type EnumOption = { value: string; label: string }
 
 function QuerySortSelector({ sortConfig }: QuerySortSelectorProps) {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
-  const queryContext = useQueryContext()
-  const { executeQueryRequest } = queryContext
+  const { executeQueryRequest } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,

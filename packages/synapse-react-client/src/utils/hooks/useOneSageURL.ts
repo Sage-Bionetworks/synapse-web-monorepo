@@ -3,8 +3,10 @@ import { useSynapseContext } from '../context'
 import { BackendDestinationEnum, getEndpoint } from '../functions/index'
 import {
   ONE_SAGE_APPID_QUERY_PARAM_KEY,
+  ONE_SAGE_DEV_URL,
   ONE_SAGE_PRODUCTION_URL,
   ONE_SAGE_STAGING_URL,
+  SYNAPSE_BACKEND_DEV_URL,
   SYNAPSE_BACKEND_PRODUCTION_URL,
   SYNAPSE_BACKEND_STAGING_URL,
 } from '../SynapseConstants'
@@ -29,10 +31,9 @@ export function getOneSageBaseUrl(
     if (currentBackendEndpointWithoutSlash === SYNAPSE_BACKEND_STAGING_URL) {
       return ONE_SAGE_STAGING_URL
     }
-  }
-
-  if (currentHostname.endsWith('.sagebase.org')) {
-    // TODO: Return the dev accounts site created in IT-3849
+    if (currentBackendEndpointWithoutSlash === SYNAPSE_BACKEND_DEV_URL) {
+      return ONE_SAGE_DEV_URL
+    }
   }
 
   if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {

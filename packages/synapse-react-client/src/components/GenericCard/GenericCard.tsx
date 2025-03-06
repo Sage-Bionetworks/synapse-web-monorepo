@@ -43,6 +43,8 @@ import {
 import { useGetEntity } from '../../synapse-queries'
 import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
+import { Stack } from '@mui/material'
+import CitationPopover from '../CitationPopover'
 
 export type KeyToAlias = {
   key: string
@@ -59,6 +61,8 @@ export type GenericCardSchema = {
   title: string
   subTitle?: string
   description?: string
+  includeCitation?: boolean
+  citationBoilerplateText?: string
   icon?: string
   imageFileHandleColumnName?: string
   thumbnailRequiresPadding?: boolean
@@ -373,7 +377,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
     const genericCardSchemaDefined = genericCardSchema!
-    const { link = '', type } = genericCardSchemaDefined
+    const {
+      link = '',
+      type,
+      includeCitation,
+      citationBoilerplateText,
+    } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
       genericCardSchemaDefined.subTitle &&
@@ -549,6 +558,10 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       genericCardSchemaDefined.description || '',
     )
 
+    const doiColumnIndex = getColumnIndex('doi', selectColumns, columnModels)
+    const doiValue =
+      doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
+
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
@@ -569,7 +582,13 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
         <div className={'SRC-portalCardMain'}>
           {icon}
           <div className="SRC-cardContent">
-            <div className="SRC-type">{type}</div>
+            <Stack
+              sx={{
+                flexDirection: 'row',
+              }}
+            >
+              <div className="SRC-type">{type}</div>
+            </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
@@ -636,6 +655,21 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               </Box>
             )}
           </div>
+          {includeCitation && (
+            <Box
+              sx={{
+                marginLeft: 'auto',
+                paddingTop: '21px',
+                paddingRight: '40px',
+              }}
+            >
+              <CitationPopover
+                title={title}
+                doi={doiValue}
+                boilerplateText={citationBoilerplateText}
+              />
+            </Box>
+          )}
         </div>
         {showFooter && (
           <CardFooter

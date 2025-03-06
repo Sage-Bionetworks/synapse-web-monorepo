@@ -19,17 +19,17 @@ module.exports = {
       moduleNameMapper: {
         '\\.(css|less|scss)$': 'identity-obj-proxy',
         // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
-        '\\.svg$': '<rootDir>/test/testutils/svg.js',
+        '\\.svg$': '<rootDir>/src/testutils/MockSvg.js',
       },
       transformIgnorePatterns: [
         `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
       ],
-      setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
+      setupFilesAfterEnv: ['<rootDir>/src/testutils/setupTests.ts'],
       resetMocks: false,
     },
   ],
   reporters: [
-    '<rootDir>/test/testutils/LogForFailedTestsOnlyReporter.ts',
+    '<rootDir>/src/testutils/LogForFailedTestsOnlyReporter.cjs',
     'summary',
     [
       './node_modules/jest-html-reporter',
