@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import IconSvg, { IconSvgProps } from './IconSvg/IconSvg'
 import { merge } from 'lodash-es'
 import { useQueryContext } from './QueryContext'
@@ -34,12 +34,15 @@ function IconList(props: IconListProps) {
   const queryContext = useQueryContext()
   const { addValueToSelectedFacet } = queryContext
 
-  const handleIconClick = (dataType: 'string') => {
-    const facet: UniqueFacetIdentifier = {
-      columnName: 'dataType',
-    }
-    addValueToSelectedFacet(facet, dataType)
-  }
+  const handleIconClick = useCallback(
+    (dataType: 'string') => {
+      const facet: UniqueFacetIdentifier = {
+        columnName: 'dataType',
+      }
+      addValueToSelectedFacet(facet, dataType)
+    },
+    [addValueToSelectedFacet],
+  )
 
   const mergedIconConfigs: IconConfigs = useMemo(() => {
     const mergedIconConfigs: IconConfigs = {}
