@@ -7,7 +7,6 @@ import {
   Stack,
   Button,
   ButtonProps,
-  Grid,
   useTheme,
   useMediaQuery,
 } from '@mui/material'
@@ -153,11 +152,6 @@ function HeaderCardV2({
   // Refs for measuring heights
   const descriptionRef = useRef<HTMLDivElement>(null)
   const metadataRef = useRef<HTMLDivElement>(null)
-
-  // State for dynamic layout
-  const [useStackedLayout, setUseStackedLayout] = useState(
-    forceStackedLayout || isMobile,
-  )
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
