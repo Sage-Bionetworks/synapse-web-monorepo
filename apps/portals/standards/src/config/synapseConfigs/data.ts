@@ -30,34 +30,16 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   hideDownload: true,
   sql: dataSql,
-  name: 'Data',
+  name: 'Standards',
   columnAliases,
   tableConfiguration: {
     showDownloadColumn: false,
     columnLinks: dataColumnLinks,
   },
   facetsToPlot: [
-    'study',
-    'reportedOutcome',
-    'dataCollectionMethod',
-    'deviceType',
-    'devicePlatform',
-    'deviceLocation',
-    'diagnosis',
-    'digitalAssessmentCategory',
-    'dataType',
-    'dataSubtype',
+    'Data_Topic',
+    // 'Organizations',
   ],
-  searchConfiguration: {
-    searchable: [
-      'collection',
-      'reportedOutcome',
-      'devicePlatform',
-      'diagnosis',
-      'digitalAssessmentCategory',
-      'digitalAssessmentDetails',
-    ],
-  },
   initialPlotType: 'BAR',
 }
 
