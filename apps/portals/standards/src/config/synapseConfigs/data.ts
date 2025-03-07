@@ -10,18 +10,10 @@ import { dataSql } from '../resources'
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
   {
-    matchColumnName: 'dataDescriptionLocation',
-    isMarkdown: true,
-  },
-  {
-    matchColumnName: 'dataAccessInstructions',
-    isMarkdown: true,
-  },
-  {
-    matchColumnName: 'study',
+    matchColumnName: 'Name',
     isMarkdown: false,
-    baseURL: 'Explore/Collections/DetailsPage',
-    URLColumnName: 'study',
+    baseURL: 'Explore/Standard/DetailsPage',
+    URLColumnName: 'Name',
   },
 ]
 
