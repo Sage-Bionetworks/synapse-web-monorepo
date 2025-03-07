@@ -12,11 +12,13 @@ import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctio
 type PortalFullTextSearchFieldProps = TextFieldProps & {
   placeholder?: string
   path?: string
+  role?: string
 }
 
 export function PortalFullTextSearchField({
   placeholder = 'Search by keyword',
   path,
+  role,
   ...props
 }: PortalFullTextSearchFieldProps) {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -37,7 +39,7 @@ export function PortalFullTextSearchField({
       onKeyDown={(event: any) => {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
-          setSearchParams({ FTS_SEARCH_TERM: trimmedInput })
+          setSearchParams({ FTS_SEARCH_TERM: trimmedInput, role: role || '' })
           if (path) {
             window.location.pathname = `${path}`
           }

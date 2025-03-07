@@ -5,7 +5,13 @@ import {
 import { PortalFullTextSearchField } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalFullTextSearchField'
 import { SearchParamAwareStandaloneQueryWrapper } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/SearchParamAwareStandaloneQueryWrapper'
 import { Box } from '@mui/material'
-import { Outlet, RouteObject, useLocation, useNavigate } from 'react-router'
+import {
+  Outlet,
+  RouteObject,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router'
 import cckpConfigs from 'src/config/synapseConfigs'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
@@ -80,6 +86,14 @@ function getQueryCount(queryResultBundleJSON: string) {
   return queryCount
 }
 
+const roleMapping: { [key: string]: string } = {
+  researcher: 'Datasets',
+  principalInvestigator: 'Grants',
+  funder: 'Grants',
+  student: 'Educational Resources',
+  patientAdvocate: 'Educational Resources',
+}
+
 export function CCKPSearchPage(props: CCKPSearchPageProps) {
   const { selectedTabIndex } = props
   const { datasets, education, grants, people, publications, tools } =
@@ -88,6 +102,8 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
     useState<PortalSearchTabConfig[]>(searchPageTabs)
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const role = searchParams.get('role')
 
   const onQueryResultBundleChange = useCallback(
     (tabIndex: number, newQueryResultBundleJSON: string) => {
@@ -101,14 +117,26 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
       if (selectedTabIndex == undefined && allCountsSet) {
         // Navigate to the tab that has the highest count.
         // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
-        const maxCountTab = searchPageTabs.reduce(
-          (max, tab) => (tab.count! > max.count! ? tab : max),
-          searchPageTabs[0],
-        )
-        navigate({
-          pathname: `/Search/${maxCountTab.path}`,
-          search: location.search,
-        })
+        if (role && roleMapping[role]) {
+          const roleTab = searchPageTabs.find(
+            tab => tab.title === roleMapping[role],
+          )
+          if (roleTab) {
+            navigate({
+              pathname: `/Search/${roleTab.path}`,
+              search: location.search,
+            })
+          }
+        } else {
+          const maxCountTab = searchPageTabs.reduce(
+            (max, tab) => (tab.count! > max.count! ? tab : max),
+            searchPageTabs[0],
+          )
+          navigate({
+            pathname: `/Search/${maxCountTab.path}`,
+            search: location.search,
+          })
+        }
       }
     },
     [searchPageTabsState, selectedTabIndex],
