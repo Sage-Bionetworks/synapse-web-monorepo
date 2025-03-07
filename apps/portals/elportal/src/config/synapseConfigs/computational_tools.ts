@@ -11,7 +11,7 @@ const computationalSchema: GenericCardSchema = {
   title: 'name',
   description: 'summary',
   subTitle: 'softwareType',
-  secondaryLabels: ['contributor', 'program', 'grants', 'documentation'],
+  secondaryLabels: ['contributor', 'project', 'toolType', 'documentation'],
   link: 'url',
 }
 
