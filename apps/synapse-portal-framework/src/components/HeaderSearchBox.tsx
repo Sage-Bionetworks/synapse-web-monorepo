@@ -67,22 +67,39 @@ const HeaderSearchBox = ({
         })}
       >
         <Box
-          sx={{
+          sx={theme => ({
             display: 'flex',
             gap: '20px',
             alignItems: 'center',
             height: '48px',
-          }}
+            [theme.breakpoints.down('md')]: {
+              flexDirection: 'column',
+              marginBottom: '50px',
+            },
+          })}
         >
-          <FormControl sx={{ width: '187px', minHeight: '38px' }}>
+          <FormControl
+            sx={theme => ({
+              minWidth: '187px',
+              minHeight: '38px',
+              height: '100%',
+              [theme.breakpoints.down('md')]: {
+                width: '100%',
+              },
+            })}
+          >
             <Select
-              variant="standard"
               sx={{
+                backgroundColor: '#FFFF',
+                height: '100%',
                 svg: {
                   color: '#878E95',
                   width: '24px',
                   height: '24px',
                   right: '10px',
+                },
+                '.MuiSelect-select': {
+                  marginRight: '10px',
                 },
               }}
               displayEmpty
@@ -92,11 +109,24 @@ const HeaderSearchBox = ({
               IconComponent={KeyboardArrowDown}
             >
               <MenuItem disabled value="">
-                <em>Select a Role</em>
+                <Typography
+                  sx={{
+                    fontStyle: 'italic',
+                    color: 'grey.700',
+                  }}
+                >
+                  Select a Role
+                </Typography>
               </MenuItem>
               {roles.map(({ value, label }) => (
-                <MenuItem key={value} value={value}>
-                  {label}
+                <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
+                  <Typography
+                    sx={{
+                      display: 'inline',
+                    }}
+                  >
+                    {label}
+                  </Typography>
                 </MenuItem>
               ))}
             </Select>
@@ -106,6 +136,7 @@ const HeaderSearchBox = ({
             path={path}
             role={role}
             sx={{
+              boxShadow: 'none',
               margin: 0,
               height: '100%',
               borderRadius: '3px',
@@ -113,6 +144,11 @@ const HeaderSearchBox = ({
                 height: '100%',
                 borderRadius: '3px',
                 fontSize: '16px',
+              },
+              '.MuiInputBase-input::placeholder': {
+                fontStyle: 'italic',
+                opacity: 1,
+                color: 'grey.700',
               },
             }}
           />
@@ -134,6 +170,7 @@ const HeaderSearchBox = ({
                   variant="contained"
                   onClick={() => handleTermClick(term)}
                   sx={{
+                    boxShadow: 'none !important',
                     borderRadius: '30px',
                     border: '1px solid',
                     borderColor: lighten(theme.palette.primary.main, 0.9),
