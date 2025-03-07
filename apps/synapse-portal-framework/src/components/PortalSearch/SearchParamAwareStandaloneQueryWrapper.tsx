@@ -20,6 +20,8 @@ export function SearchParamAwareStandaloneQueryWrapper(
     }
     return undefined
   }, [searchParams])
+  const { role: _, ...filteredSearchParams } = searchParamsRecords || {}
+
   // if is visible, render a StandaloneQueryWrapper.
   // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)
   if (isVisible) {
@@ -27,7 +29,7 @@ export function SearchParamAwareStandaloneQueryWrapper(
       <StandaloneQueryWrapper
         {...standaloneQueryWrapperProps}
         shouldDeepLink={false}
-        searchParams={searchParamsRecords}
+        searchParams={filteredSearchParams}
       />
     )
   }
@@ -35,7 +37,7 @@ export function SearchParamAwareStandaloneQueryWrapper(
   const { sql } = standaloneQueryWrapperProps
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(undefined, searchParamsRecords, undefined)
+    getAdditionalFilters(undefined, filteredSearchParams, undefined)
   return (
     <QueryWrapper
       {...standaloneQueryWrapperProps}

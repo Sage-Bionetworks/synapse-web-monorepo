@@ -6,16 +6,23 @@ import {
   Button,
   lighten,
   useTheme,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useSearchParams } from 'react-router'
+import { KeyboardArrowDown } from '@mui/icons-material'
+import { useState } from 'react'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
   path?: string
   sx?: SxProps
+  roles: { value: string; label: string }[]
 }
 
 const HeaderSearchBox = ({
@@ -23,16 +30,22 @@ const HeaderSearchBox = ({
   searchExampleTerms,
   path,
   sx,
+  roles,
 }: HeaderSearchBoxProps) => {
+  const [role, setRole] = useState('')
   const [, setSearchParams] = useSearchParams()
   const theme = useTheme()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    setSearchParams({ FTS_SEARCH_TERM: trimmedTerm })
+    setSearchParams({ FTS_SEARCH_TERM: trimmedTerm, role: role || '' })
     if (path) {
       window.location.pathname = `${path}`
     }
+  }
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value)
   }
 
   return (
@@ -61,9 +74,37 @@ const HeaderSearchBox = ({
             height: '48px',
           }}
         >
+          <FormControl sx={{ width: '187px', minHeight: '38px' }}>
+            <Select
+              variant="standard"
+              sx={{
+                svg: {
+                  color: '#878E95',
+                  width: '24px',
+                  height: '24px',
+                  right: '10px',
+                },
+              }}
+              displayEmpty
+              label="Select a Role"
+              value={role}
+              onChange={handleChange}
+              IconComponent={KeyboardArrowDown}
+            >
+              <MenuItem disabled value="">
+                <em>Select a Role</em>
+              </MenuItem>
+              {roles.map(({ value, label }) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
             path={path}
+            role={role}
             sx={{
               margin: 0,
               height: '100%',
