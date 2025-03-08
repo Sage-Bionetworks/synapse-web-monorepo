@@ -10,18 +10,10 @@ import { dataSql } from '../resources'
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
   {
-    matchColumnName: 'dataDescriptionLocation',
-    isMarkdown: true,
-  },
-  {
-    matchColumnName: 'dataAccessInstructions',
-    isMarkdown: true,
-  },
-  {
-    matchColumnName: 'study',
+    matchColumnName: 'Name',
     isMarkdown: false,
-    baseURL: 'Explore/Collections/DetailsPage',
-    URLColumnName: 'study',
+    baseURL: 'Explore/Standard/DetailsPage',
+    URLColumnName: 'Name',
   },
 ]
 
@@ -30,34 +22,16 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   hideDownload: true,
   sql: dataSql,
-  name: 'Data',
+  name: 'Standards',
   columnAliases,
   tableConfiguration: {
     showDownloadColumn: false,
     columnLinks: dataColumnLinks,
   },
   facetsToPlot: [
-    'study',
-    'reportedOutcome',
-    'dataCollectionMethod',
-    'deviceType',
-    'devicePlatform',
-    'deviceLocation',
-    'diagnosis',
-    'digitalAssessmentCategory',
-    'dataType',
-    'dataSubtype',
+    'Data_Topic',
+    // 'Organizations',
   ],
-  searchConfiguration: {
-    searchable: [
-      'collection',
-      'reportedOutcome',
-      'devicePlatform',
-      'diagnosis',
-      'digitalAssessmentCategory',
-      'digitalAssessmentDetails',
-    ],
-  },
   initialPlotType: 'BAR',
 }
 
