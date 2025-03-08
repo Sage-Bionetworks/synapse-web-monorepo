@@ -13,6 +13,7 @@ export const toolsSchema: GenericCardSchema = {
   type: SynapseConstants.TOOL,
   title: 'toolName',
   description: 'description',
+  includeCitation: true,
   secondaryLabels: [
     'inputData',
     'inputFormat',

@@ -15,6 +15,7 @@ export const educationSchema: GenericCardSchema = {
   title: 'title',
   subTitle: 'topic',
   description: 'description',
+  includeCitation: true,
   secondaryLabels: [
     'link',
     'activityType',
