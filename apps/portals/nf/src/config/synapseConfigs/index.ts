@@ -6,3 +6,11 @@ import initiatives from './initiatives'
 import hackathons from './hackathons'
 
 export { studies, datasets, publications, tools, initiatives, hackathons }
+export default {
+  studies,
+  datasets,
+  publications,
+  tools,
+  initiatives,
+  hackathons,
+}
