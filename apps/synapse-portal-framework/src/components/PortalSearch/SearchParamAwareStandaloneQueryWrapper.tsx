@@ -20,7 +20,8 @@ export function SearchParamAwareStandaloneQueryWrapper(
     }
     return undefined
   }, [searchParams])
-  const { role: _, ...filteredSearchParams } = searchParamsRecords || {}
+  const { FTS_SEARCH_ROLE: _, ...filteredSearchParams } =
+    searchParamsRecords || {}
 
   // if is visible, render a StandaloneQueryWrapper.
   // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)

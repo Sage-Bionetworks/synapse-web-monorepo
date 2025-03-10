@@ -7,7 +7,10 @@ import {
   useTheme,
 } from '@mui/material'
 import { useSearchParams } from 'react-router'
-import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import {
+  FTS_SEARCH_TERM,
+  FTS_SEARCH_ROLE,
+} from 'synapse-react-client/utils/functions/SqlFunctions'
 
 type PortalFullTextSearchFieldProps = TextFieldProps & {
   placeholder?: string
@@ -39,7 +42,15 @@ export function PortalFullTextSearchField({
       onKeyDown={(event: any) => {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
-          setSearchParams({ FTS_SEARCH_TERM: trimmedInput, role: role || '' })
+          const newSearchParams = new URLSearchParams(searchParams)
+          newSearchParams.set('FTS_SEARCH_TERM', trimmedInput)
+
+          if (role) {
+            newSearchParams.set('FTS_SEARCH_ROLE', role)
+          }
+
+          setSearchParams(newSearchParams)
+
           if (path) {
             window.location.pathname = `${path}`
           }

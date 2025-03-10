@@ -22,7 +22,7 @@ type HeaderSearchBoxProps = {
   searchExampleTerms?: string[]
   path?: string
   sx?: SxProps
-  roles: { value: string; label: string }[]
+  roles?: { value: string; label: string }[]
 }
 
 const HeaderSearchBox = ({
@@ -33,12 +33,20 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps) => {
   const [role, setRole] = useState('')
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const theme = useTheme()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    setSearchParams({ FTS_SEARCH_TERM: trimmedTerm, role: role || '' })
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('FTS_SEARCH_TERM', trimmedTerm)
+
+    if (role) {
+      newSearchParams.set('FTS_SEARCH_ROLE', role)
+    }
+
+    setSearchParams(newSearchParams)
+
     if (path) {
       window.location.pathname = `${path}`
     }
@@ -78,59 +86,61 @@ const HeaderSearchBox = ({
             },
           })}
         >
-          <FormControl
-            sx={theme => ({
-              minWidth: '187px',
-              minHeight: '38px',
-              height: '100%',
-              [theme.breakpoints.down('md')]: {
-                width: '100%',
-              },
-            })}
-          >
-            <Select
-              sx={{
-                backgroundColor: '#FFFF',
+          {roles && (
+            <FormControl
+              sx={theme => ({
+                minWidth: '187px',
+                minHeight: '38px',
                 height: '100%',
-                svg: {
-                  color: '#878E95',
-                  width: '24px',
-                  height: '24px',
-                  right: '10px',
+                [theme.breakpoints.down('md')]: {
+                  width: '100%',
                 },
-                '.MuiSelect-select': {
-                  marginRight: '10px',
-                },
-              }}
-              displayEmpty
-              label="Select a Role"
-              value={role}
-              onChange={handleChange}
-              IconComponent={KeyboardArrowDown}
+              })}
             >
-              <MenuItem disabled value="">
-                <Typography
-                  sx={{
-                    fontStyle: 'italic',
-                    color: 'grey.700',
-                  }}
-                >
-                  Select a Role
-                </Typography>
-              </MenuItem>
-              {roles.map(({ value, label }) => (
-                <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
+              <Select
+                sx={{
+                  backgroundColor: '#FFFF',
+                  height: '100%',
+                  svg: {
+                    color: '#878E95',
+                    width: '24px',
+                    height: '24px',
+                    right: '10px',
+                  },
+                  '.MuiSelect-select': {
+                    marginRight: '10px',
+                  },
+                }}
+                displayEmpty
+                label="Select a Role"
+                value={role}
+                onChange={handleChange}
+                IconComponent={KeyboardArrowDown}
+              >
+                <MenuItem disabled value="">
                   <Typography
                     sx={{
-                      display: 'inline',
+                      fontStyle: 'italic',
+                      color: 'grey.700',
                     }}
                   >
-                    {label}
+                    Select a Role
                   </Typography>
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                {roles.map(({ value, label }) => (
+                  <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
+                    <Typography
+                      sx={{
+                        display: 'inline',
+                      }}
+                    >
+                      {label}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
             path={path}
