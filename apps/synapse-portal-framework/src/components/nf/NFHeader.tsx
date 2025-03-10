@@ -1,8 +1,9 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 import Header from '../Header'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
+import { AddAlertTwoTone } from '@mui/icons-material'
 
 const NFHeader = () => {
   const searchPlaceholder =
@@ -49,6 +50,23 @@ const NFHeader = () => {
           datasets, analysis tools, resources, and publications related to
           neurofibromatosis and schwannomatosis. Anyone can join the NF Open
           Science Initiative (NF-OSI) to contribute!
+          <Link
+            href="https://sagebionetworks.us7.list-manage.com/subscribe?u=b146de537186191a9d2110f3a&id=063befda5a"
+            target="_blank"
+            sx={{
+              color: 'white',
+              '&:hover': { color: 'white', textDecorationColor: 'white' },
+              '&:focus': { color: 'white' },
+              textDecorationColor: 'white',
+              marginTop: '15px',
+              display: 'block',
+            }}
+          >
+            <AddAlertTwoTone
+              sx={{ width: '16px', height: '16px', marginRight: '7px' }}
+            />
+            Subscribe to the NF-OSI Newsletter
+          </Link>
         </Typography>
       </Box>
     </>
