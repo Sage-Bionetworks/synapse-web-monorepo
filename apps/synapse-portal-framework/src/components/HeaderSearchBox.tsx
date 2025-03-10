@@ -16,6 +16,10 @@ import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useSearchParams } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
+import {
+  FTS_SEARCH_TERM,
+  FTS_SEARCH_ROLE,
+} from 'synapse-react-client/utils/functions/SqlFunctions'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -39,10 +43,10 @@ const HeaderSearchBox = ({
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
     const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('FTS_SEARCH_TERM', trimmedTerm)
+    newSearchParams.set(FTS_SEARCH_TERM, trimmedTerm)
 
     if (role) {
-      newSearchParams.set('FTS_SEARCH_ROLE', role)
+      newSearchParams.set(FTS_SEARCH_ROLE, role)
     }
 
     setSearchParams(newSearchParams)
