@@ -20,6 +20,8 @@ export function SearchParamAwareStandaloneQueryWrapper(
     }
     return undefined
   }, [searchParams])
+
+  // FTS_SEARCH_ROLE is used for search page behavior and should not be passed to the QueryWrapper to instantiate a filter.
   const { FTS_SEARCH_ROLE: _, ...filteredSearchParams } =
     searchParamsRecords || {}
 

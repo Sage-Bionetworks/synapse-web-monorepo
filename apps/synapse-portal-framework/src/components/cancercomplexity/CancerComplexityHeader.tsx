@@ -87,7 +87,7 @@ const CancerComplexityHeader = () => {
               searchExampleTerms={searchExampleTerms}
               searchPlaceholder={searchPlaceholder}
               path="/Search"
-              // roles={roles}
+              roles={roles}
               sx={{
                 flex: 1,
                 '& > :first-child': {
