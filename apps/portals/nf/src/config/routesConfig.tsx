@@ -17,6 +17,7 @@ import InitiativeDetailsPage from '../pages/InitiativeDetailsPage'
 import { studyDetailsPageRoute } from '../pages/StudyDetailsPage/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { popularSearchesSql, toolsSql } from './resources'
+import { searchPageChildRoutes } from 'src/pages/NFSearchPage'
 
 const routes: RouteObject[] = [
   {
@@ -123,6 +124,10 @@ const routes: RouteObject[] = [
           </>
         ),
         children: explorePageRoutes,
+      },
+      {
+        path: 'Search',
+        children: searchPageChildRoutes,
       },
       {
         path: 'Explore/Initiatives/DetailsPage',
