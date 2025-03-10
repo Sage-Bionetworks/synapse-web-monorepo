@@ -142,14 +142,6 @@ export type CommonCardProps = {
   rgbIndex?: number
   columnIconOptions?: ColumnIconConfigs
   releaseCardConfig?: ReleaseCardConfig
-  customSecondaryLabelConfig?: {
-    key: string
-    value: string
-    isVisible: (
-      schema: Record<string, number>,
-      data: string[],
-    ) => string | undefined
-  }
 }
 export type CardConfiguration = {
   type: string
