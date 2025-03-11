@@ -65,6 +65,7 @@
     "classnames": "^2.5.1",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.10",
+    "dompurify": "^3.2.4",
     "immutable": "4.1.0",
     "jotai": "^2.7.0",
     "json-rules-engine": "^4.1.0",
