@@ -80,6 +80,7 @@ export default function StandardsDetailsPage() {
         genericCardSchema={standardsCardSchema}
         secondaryLabelLimit={6}
         isHeader={true}
+        headerCardVariant="HeaderCardV2"
         searchParams={{ Name }}
       />
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
-import { useSynapseContext } from '../utils/index'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 
 export type HeaderCardProps = {
@@ -32,6 +31,7 @@ function HeaderCard(props: HeaderCardProps) {
     href,
     target,
     icon,
+    headerCardVariant = 'HeaderCard',
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -66,8 +66,7 @@ function HeaderCard(props: HeaderCardProps) {
     }
   })
 
-  const { appId } = useSynapseContext()
-  if (['standards' /* 'nf' */].includes(String(appId))) {
+  if (headerCardVariant === 'HeaderCardV2') {
     return <HeaderCardV2 {...props} />
   }
 

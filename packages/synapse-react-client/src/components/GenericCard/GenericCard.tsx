@@ -365,6 +365,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       iconOptions,
       useTypeColumnForIcon = false,
       isHeader = false,
+      headerCardVariant,
       titleLinkConfig,
       ctaLinkConfig,
       labelLinkConfig,
@@ -514,6 +515,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     if (isHeader) {
       return (
         <HeaderCard
+          headerCardVariant={headerCardVariant}
           descriptionConfig={descriptionConfig}
           title={title}
           subTitle={subTitle}
