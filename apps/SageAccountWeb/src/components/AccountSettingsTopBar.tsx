@@ -87,16 +87,17 @@ const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'bottom',
+            vertical: 'top',
             horizontal: 'right',
           }}
           keepMounted
           transformOrigin={{
-            vertical: 'bottom',
+            vertical: 'top',
             horizontal: 'right',
           }}
           open={isOpen}
           onClose={handleClose}
+          sx={{ mt: '30px' }}
         >
           {accountSettingsPanelConfig.map((item: any, index: number) => (
             <MenuItem
