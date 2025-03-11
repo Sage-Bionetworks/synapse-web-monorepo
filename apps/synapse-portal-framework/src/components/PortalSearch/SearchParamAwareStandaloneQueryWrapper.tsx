@@ -20,6 +20,7 @@ export function SearchParamAwareStandaloneQueryWrapper(
     }
     return undefined
   }, [searchParams])
+
   // if is visible, render a StandaloneQueryWrapper.
   // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)
   if (isVisible) {
