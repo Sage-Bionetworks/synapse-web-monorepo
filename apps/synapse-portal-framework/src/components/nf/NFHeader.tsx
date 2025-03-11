@@ -71,10 +71,8 @@ const NFHeader = () => {
       </Box>
     </>
   )
-  return (
-    <>
-      {isFeatureEnabled ? (
-        <header id="header">
+  if (isFeatureEnabled) {
+    return (<header id="header">
           <Box
             sx={{
               display: 'flex',
@@ -105,12 +103,10 @@ const NFHeader = () => {
               }}
             />
           </Box>
-        </header>
-      ) : (
-        <Header />
-      )}
-    </>
-  )
+        </header>)
+  }
+
+  return <Header />
 }
 
 export default NFHeader
