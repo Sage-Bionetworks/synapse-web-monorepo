@@ -81,6 +81,7 @@ export function OAuth2Form() {
     }
   }, [pendingRedirectURL])
 
+  const showPendingRedirectUi = pendingRedirectURL !== undefined
   const clientId = useMemo(() => {
     const clientId = searchParams.get('client_id')
     if (!clientId) {
@@ -313,7 +314,7 @@ export function OAuth2Form() {
       }}
     >
       <div style={{ marginTop: '50px' }}>
-        {pendingRedirectURL !== undefined && (
+        {showPendingRedirectUi && (
           <p>Waiting for {oauthClientInfo?.client_name}...</p>
         )}
         <span
@@ -367,7 +368,7 @@ export function OAuth2Form() {
         accessToken &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
-        pendingRedirectURL === undefined &&
+        !showPendingRedirectUi &&
         oidcRequestDescription && (
           <StyledInnerContainer>
             <UserCard
@@ -428,7 +429,7 @@ export function OAuth2Form() {
             </div>
           </StyledInnerContainer>
         )}
-      {(isLoading || pendingRedirectURL !== undefined) && loadingSpinner}
+      {(isLoading || showPendingRedirectUi) && loadingSpinner}
       {error && (
         <FullWidthAlert
           variant="danger"
