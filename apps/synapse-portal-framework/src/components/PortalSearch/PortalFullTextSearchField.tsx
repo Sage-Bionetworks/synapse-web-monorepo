@@ -42,14 +42,13 @@ export function PortalFullTextSearchField({
       onKeyDown={(event: any) => {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
-          const newSearchParams = new URLSearchParams(searchParams)
-          newSearchParams.set(FTS_SEARCH_TERM, trimmedInput)
-
-          if (role) {
-            newSearchParams.set(FTS_SEARCH_ROLE, role)
-          }
-
-          setSearchParams(newSearchParams)
+          setSearchParams(prev => {
+            prev.set(FTS_SEARCH_TERM, trimmedInput)
+            if (role) {
+              prev.set(FTS_SEARCH_ROLE, role)
+            }
+            return prev
+          })
 
           if (path) {
             window.location.pathname = `${path}`

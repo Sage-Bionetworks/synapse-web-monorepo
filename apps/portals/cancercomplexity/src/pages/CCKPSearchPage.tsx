@@ -16,7 +16,7 @@ import cckpConfigs from 'src/config/synapseConfigs'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-export const searchPageTabs: PortalSearchTabConfig[] = [
+export const searchPageTabs = [
   {
     title: 'Grants',
     path: 'Grants',
@@ -41,7 +41,9 @@ export const searchPageTabs: PortalSearchTabConfig[] = [
     title: 'Educational Resources',
     path: 'EducationalResources',
   },
-] satisfies PortalSearchTabConfig[]
+] as const satisfies PortalSearchTabConfig[]
+
+const count = new Map<(typeof searchPageTabs)[number]['title'], number>()
 
 export const searchPageChildRoutes: RouteObject[] = [
   {
@@ -117,17 +119,24 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
   const onQueryResultBundleChange = useCallback(
     (tabIndex: number, newQueryResultBundleJSON: string) => {
       const newCount = getQueryCount(newQueryResultBundleJSON)
-      if (searchPageTabsState[tabIndex].count !== newCount) {
-        searchPageTabs[tabIndex].count = newCount
-        setSearchPageTabsState([...searchPageTabs])
+      if (
+        searchPageTabsState[tabIndex].count !== newCount &&
+        newCount !== undefined
+      ) {
+        count.set(searchPageTabs[tabIndex].title, newCount)
+        setSearchPageTabsState(prevTabs =>
+          prevTabs.map((tab, index) =>
+            index === tabIndex ? { ...tab, count: newCount } : tab,
+          ),
+        )
       }
       // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
-      const allCountsSet = searchPageTabs.every(tab => tab.count !== undefined)
+      const allCountsSet = searchPageTabs.every(tab => count.has(tab.title))
       if (selectedTabIndex == undefined && allCountsSet) {
         const roleTab =
           role && searchPageTabs.find(tab => tab.title === roleMapping[role])
         // If a role is selected, navigate to the corresponding tab from the roleMapping unless that corresponding tab has a count of 0.
-        if (roleTab && roleTab.count) {
+        if (roleTab && count.get(roleTab.title)) {
           navigate({
             pathname: `/Search/${roleTab.path}`,
             search: location.search,
@@ -135,10 +144,13 @@ export function CCKPSearchPage(props: CCKPSearchPageProps) {
         } else {
           // Navigate to the tab that has the highest count.
           // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
-          const maxCountTab = searchPageTabs.reduce(
-            (max, tab) => (tab.count! > max.count! ? tab : max),
-            searchPageTabs[0],
-          )
+          const maxCountTab = searchPageTabs.reduce((max, tab) => {
+            const currentCount = count.get(tab.title) ?? 0
+            const maxCount = count.get(max.title) ?? 0
+
+            return currentCount > maxCount ? tab : max
+          }, searchPageTabs[0])
+
           navigate({
             pathname: `/Search/${maxCountTab.path}`,
             search: location.search,

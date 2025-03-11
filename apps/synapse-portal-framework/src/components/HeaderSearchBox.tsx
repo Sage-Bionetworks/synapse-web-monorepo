@@ -37,19 +37,18 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps) => {
   const [role, setRole] = useState('')
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
   const theme = useTheme()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set(FTS_SEARCH_TERM, trimmedTerm)
-
-    if (role) {
-      newSearchParams.set(FTS_SEARCH_ROLE, role)
-    }
-
-    setSearchParams(newSearchParams)
+    setSearchParams(prev => {
+      prev.set(FTS_SEARCH_TERM, trimmedTerm)
+      if (role) {
+        prev.set(FTS_SEARCH_ROLE, role)
+      }
+      return prev
+    })
 
     if (path) {
       window.location.pathname = `${path}`
