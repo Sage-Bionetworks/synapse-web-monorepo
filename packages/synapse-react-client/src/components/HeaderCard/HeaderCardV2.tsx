@@ -167,6 +167,11 @@ function HeaderCardV2({
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
 
+  // State for dynamic layout
+  const [useStackedLayout, setUseStackedLayout] = useState(
+    forceStackedLayout || isMobile,
+  )
+
   // Effect to handle meta tags
   useEffect(() => {
     if (title && document.title !== title) {
@@ -188,22 +193,37 @@ function HeaderCardV2({
 
   // Effect to check heights and update layout if needed
   useEffect(() => {
+    // This runs every time forceStackedLayout or isMobile changes
+    setUseStackedLayout(forceStackedLayout || isMobile)
+
+    // Only set up height checking if not already forced to stack
     if (forceStackedLayout || isMobile) {
       setUseStackedLayout(true)
       return
     }
-
+    // Function to check heights and update layout
     const checkHeights = () => {
-      if (descriptionRef.current && metadataRef.current && values) {
+      if (!descriptionRef.current || !metadataRef.current || !values) return
+
+      // First reset to side-by-side to get accurate height measurements
+      // This ensures we get the height as if it were in side-by-side mode
+      setUseStackedLayout(false)
+
+      // Use setTimeout to allow the DOM to update before measuring
+      setTimeout(() => {
+        if (!descriptionRef.current || !metadataRef.current) return
+
         const descHeight = descriptionRef.current.offsetHeight
         const metaHeight = metadataRef.current.offsetHeight
 
         // If metadata is taller than description, use stacked layout
-        setUseStackedLayout(metaHeight > descHeight)
-      }
+        if (metaHeight > descHeight) {
+          setUseStackedLayout(true)
+        }
+      }, 0)
     }
 
-    // Initial check
+    // Initial check after component mounts or values change
     checkHeights()
 
     // Add resize listener
@@ -214,6 +234,16 @@ function HeaderCardV2({
       window.removeEventListener('resize', checkHeights)
     }
   }, [forceStackedLayout, isMobile, values, description])
+
+  // For debugging - remove in production
+  console.log(
+    'useStackedLayout:',
+    useStackedLayout,
+    'isMobile:',
+    isMobile,
+    'forceStackedLayout:',
+    forceStackedLayout,
+  )
 
   return (
     <Card
@@ -327,14 +357,19 @@ function HeaderCardV2({
         <Box
           sx={{
             display: 'flex',
-            flexWrap: 'wrap',
+            flexDirection: useStackedLayout ? 'column' : 'row',
+            flexWrap: useStackedLayout ? 'nowrap' : 'wrap',
             justifyContent: 'space-between',
             gap: 2,
-            // gridTemplateColumns: 'min(65ch, 100%) 1fr',
-            // gridColumnGap: '8%',
           }}
         >
-          <Box style={{ flexBasis: 'min(65ch, 100%)' }}>
+          <Box
+            ref={descriptionRef}
+            style={{
+              flexBasis: useStackedLayout ? '100%' : 'min(65ch, 100%)',
+              width: useStackedLayout ? '100%' : 'auto',
+            }}
+          >
             <CollapsibleDescription
               description={description}
               descriptionSubTitle=""
@@ -342,7 +377,13 @@ function HeaderCardV2({
             />
           </Box>
           {values && (
-            <Box ref={metadataRef}>
+            <Box
+              ref={metadataRef}
+              sx={{
+                width: useStackedLayout ? '100%' : 'auto',
+                marginTop: useStackedLayout ? 2 : 0,
+              }}
+            >
               <MetadataTable data={values} />
             </Box>
           )}
@@ -363,6 +404,7 @@ function HeaderCardV2({
                   width: { xs: '100%', sm: 'auto' },
                   ...(buttonProps.sx || {}),
                 }}
+                endIcon={buttonProps.endIcon}
               >
                 {buttonProps.label}
               </Button>
