@@ -58,7 +58,7 @@ export const xssOptions: IFilterXSSOptions = {
     s: [],
     section: [],
     small: [],
-    span: ['data-widgetparams', 'class', 'id'],
+    span: ['data-widgetparams', 'data-widget-type', 'class', 'id'],
     sub: [],
     summary: [],
     sup: [],
@@ -152,7 +152,9 @@ DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
     }
   }
 
-  if (attrName === 'style') {
+  if (attrName === 'data-widgetparams' || attrName === 'data-widget-type') {
+    data.attrValue = attrValue
+  } else if (attrName === 'style') {
     const safeStyles = attrValue
       .split(';')
       .map(style => style.trim())
