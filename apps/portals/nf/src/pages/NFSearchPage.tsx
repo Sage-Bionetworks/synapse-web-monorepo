@@ -1,59 +1,40 @@
+import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
 import { PortalSearchTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
 import { RouteObject } from 'react-router'
-import cckpConfigs from 'src/config/synapseConfigs'
-import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
-
-export const searchPageTabs = [
+import nfConfigs from 'src/config/synapseConfigs'
+export const searchPageTabs: PortalSearchTabConfig[] = [
   {
-    title: 'Grants',
-    path: 'Grants',
+    title: 'Initiatives',
+    path: 'Initiatives',
   },
   {
-    title: 'People',
-    path: 'People',
-  },
-  {
-    title: 'Publications',
-    path: 'Publications',
+    title: 'Studies',
+    path: 'Studies',
   },
   {
     title: 'Datasets',
     path: 'Datasets',
   },
   {
+    title: 'Publications',
+    path: 'Publications',
+  },
+  {
     title: 'Tools',
     path: 'Tools',
   },
   {
-    title: 'Educational Resources',
-    path: 'EducationalResources',
+    title: 'Hackathons',
+    path: 'Hackathons',
   },
-] as const satisfies PortalSearchTabConfig[]
-
-type CCKPSearchRole =
-  | 'researcher'
-  | 'principalInvestigator'
-  | 'funder'
-  | 'student'
-  | 'patientAdvocate'
-const roleMapping: Record<
-  CCKPSearchRole,
-  (typeof searchPageTabs)[number]['title']
-> = {
-  researcher: 'Datasets',
-  principalInvestigator: 'Grants',
-  funder: 'Grants',
-  student: 'Educational Resources',
-  patientAdvocate: 'Educational Resources',
-}
-
+]
 const portalSearchPageConfigs = [
-  cckpConfigs.grants,
-  cckpConfigs.people,
-  cckpConfigs.publications,
-  cckpConfigs.datasets,
-  cckpConfigs.tools,
-  cckpConfigs.education,
+  nfConfigs.initiatives,
+  nfConfigs.studies,
+  nfConfigs.datasets,
+  nfConfigs.publications,
+  nfConfigs.tools,
+  nfConfigs.hackathons,
 ]
 
 export const searchPageChildRoutes: RouteObject[] = [
@@ -61,10 +42,8 @@ export const searchPageChildRoutes: RouteObject[] = [
     index: true,
     element: (
       <PortalSearchPage
-        selectedTabIndex={undefined}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -75,7 +54,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={0}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -86,7 +64,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={1}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -97,7 +74,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={2}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -108,7 +84,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={3}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -119,7 +94,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={4}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },
@@ -130,7 +104,6 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={5}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
-        roleMapping={roleMapping}
       />
     ),
   },

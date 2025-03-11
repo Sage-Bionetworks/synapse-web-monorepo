@@ -13,6 +13,7 @@ export const datasetSchema: GenericCardSchema = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',
+  includeCitation: true,
   secondaryLabels: [
     'overallDesign',
     'tumorType',

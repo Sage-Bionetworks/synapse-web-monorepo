@@ -1,1 +1,1 @@
-export const dataSql = `SELECT id, study, numberParticipants,reportedOutcome,dataCollectionMethod,deviceType,devicePlatform,deviceLocation,sensorType,diagnosis,digitalAssessmentCategory,digitalAssessmentDetails,dataType,dataSubtype,dataDescriptionLocation, dataAccessInstructions FROM syn21994970.10 where dhPortalIndex = 'TRUE'`
+export const dataSql = `SELECT * FROM syn64960277`

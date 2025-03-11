@@ -8,9 +8,20 @@ import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   ErrorPage,
+  GenericCardSchema,
+  SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
+import { CardContainerLogic } from 'synapse-react-client'
+
+export const standardsCardSchema: GenericCardSchema = {
+  type: SynapseConstants.GENERIC_CARD,
+  title: 'Name',
+  // subTitle: '',
+  // description: '',
+  secondaryLabels: ['Collections', 'Data_Topic', 'Organizations'],
+}
 
 export const standardDetailsPageContent: DetailsPageContentType = [
   {
@@ -41,42 +52,37 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'Related Standards',
     element: (
       <DetailsPageContextConsumer columnName={'id'}>
-      {({ value }) => (
-        <>{value}</>
-        // TODO:
-        // <CardContainerLogic
-        //   {...standardCardContainerProps}
-        //   searchParams={{ standardId: value! }}
-        // />
-      )}
-    </DetailsPageContextConsumer>
-
+        {({ value }) => (
+          <>{value}</>
+          // TODO:
+          // <CardContainerLogic
+          //   {...standardCardContainerProps}
+          //   searchParams={{ standardId: value! }}
+          // />
+        )}
+      </DetailsPageContextConsumer>
     ),
   },
 ]
 
 export default function StandardsDetailsPage() {
-  const { study } = useGetPortalComponentSearchParams()
+  const { Name } = useGetPortalComponentSearchParams()
 
-  if (!study) {
+  if (!Name) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
     <>
       {/* TODO: header card */}
-      {/* <CardContainerLogic
-        isHeader
-        isAlignToLeftNav
-        {...standardsCardConfiguration}
-        columnAliases={columnAliases}
-        genericCardSchema={{
-          ...standardsSchema,
-          title: 'name',
-          link: 'id',
-        }}
-        sql={studySql}
-        searchParams={{ study }}
-      /> */}
+      <CardContainerLogic
+        sql={dataSql}
+        type={SynapseConstants.GENERIC_CARD}
+        genericCardSchema={standardsCardSchema}
+        secondaryLabelLimit={6}
+        isHeader={true}
+        searchParams={{ Name }}
+      />
+
       <DetailsPage sql={dataSql}>
         <DetailsPageContent content={standardDetailsPageContent} />
       </DetailsPage>
