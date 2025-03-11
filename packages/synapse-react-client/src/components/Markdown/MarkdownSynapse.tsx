@@ -314,7 +314,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
 
   public addIdsToReferenceWidgets(text: string) {
     const referenceRegex =
-      /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
+      /<span.*?id="wikiReference.*?<span.*? data-widgetparams.*?span>/g
     let referenceCount = 1
 
     return text.replace(referenceRegex, () => {
