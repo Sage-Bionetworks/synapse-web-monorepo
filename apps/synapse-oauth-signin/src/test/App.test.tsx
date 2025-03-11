@@ -210,6 +210,7 @@ describe('App integration tests', () => {
     // Should redirect back to the client app with the code provided by the server, and the original state provided by the client via the browser.
     await waitFor(() => {
       screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
@@ -240,7 +241,7 @@ describe('App integration tests', () => {
     // The state is still returned
     // and the 'access_denied' error is sent
     await waitFor(() => {
-      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
@@ -276,6 +277,7 @@ describe('App integration tests', () => {
 
     await waitFor(() => {
       screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
