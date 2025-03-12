@@ -27,10 +27,9 @@ import {
   MouseEvent,
   RefObject,
 } from 'react'
-import xss from 'xss'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError, SynapseContext } from '../../utils'
-import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
+import { sanitize } from '../../utils/functions/SanitizeHtmlUtils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
@@ -194,7 +193,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
     const initText = this.props.renderInline
       ? this.state.md.renderInline(markdown)
       : this.state.md.render(markdown)
-    const cleanText = xss(initText, xssOptions)
+    const cleanText = sanitize(initText)
     return { __html: cleanText }
   }
 
@@ -315,7 +314,7 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
 
   public addIdsToReferenceWidgets(text: string) {
     const referenceRegex =
-      /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
+      /<span.*?id="wikiReference.*?<span.*? data-widgetparams.*?span>/g
     let referenceCount = 1
 
     return text.replace(referenceRegex, () => {

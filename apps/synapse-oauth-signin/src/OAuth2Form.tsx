@@ -43,10 +43,6 @@ const sendGTagEvent = (event: string) => {
   }
 }
 
-function redirectToURL(redirectURL: string) {
-  window.location.replace(redirectURL)
-}
-
 export function OAuth2Form() {
   const { clearSession, hasInitializedSession } =
     AppUtils.useApplicationSessionContext()
@@ -59,7 +55,7 @@ export function OAuth2Form() {
     Error | SynapseClientError | OAuthClientError
   >()
   // The target URL may take a while to respond, so we show a loader to inform the user that the delay is not our fault
-  const [showPendingRedirectUI, setShowPendingRedirectUI] = useState(false)
+  const [pendingRedirectURL, setPendingRedirectURL] = useState<string>()
 
   // If the URL contains a provider, then we are in the middle of authenticating after coming from an external IdP (e.g. Google, ORCID)
   const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
@@ -72,14 +68,20 @@ export function OAuth2Form() {
         // invalid token, so clear it
         clearSession()
       } else {
-        const isRedirecting = handleErrorRedirect(searchParams, error)
-        setShowPendingRedirectUI(isRedirecting)
+        handleErrorRedirect(searchParams, error)
         setError(error)
       }
     },
     [clearSession],
   )
 
+  useEffect(() => {
+    if (pendingRedirectURL !== undefined) {
+      window.location.replace(pendingRedirectURL)
+    }
+  }, [pendingRedirectURL])
+
+  const showPendingRedirectUi = pendingRedirectURL !== undefined
   const clientId = useMemo(() => {
     const clientId = searchParams.get('client_id')
     if (!clientId) {
@@ -197,7 +199,6 @@ export function OAuth2Form() {
           return
         }
         // done!  redirect with access code.
-        setShowPendingRedirectUI(true)
         const redirectUri = searchParams.get('redirect_uri')!
         cookies.remove(
           SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
@@ -216,8 +217,9 @@ export function OAuth2Form() {
           'code',
           encodeURIComponent(accessCode.access_code),
         )
-
-        redirectToURL(`${redirectUri}?${redirectSearchParams.toString()}`)
+        setPendingRedirectURL(
+          `${redirectUri}?${redirectSearchParams.toString()}`,
+        )
       },
       onError: e => {
         onError(e)
@@ -312,7 +314,7 @@ export function OAuth2Form() {
       }}
     >
       <div style={{ marginTop: '50px' }}>
-        {showPendingRedirectUI && (
+        {showPendingRedirectUi && (
           <p>Waiting for {oauthClientInfo?.client_name}...</p>
         )}
         <span
@@ -334,7 +336,7 @@ export function OAuth2Form() {
     !isLoggedIn &&
     oauthClientInfo &&
     oauthClientInfo.verified &&
-    !showPendingRedirectUI &&
+    pendingRedirectURL === undefined &&
     oidcRequestDescription &&
     hasInitializedSession // wait for session to be initialized (may be anonymous) before jumping to One Sage
   ) {
@@ -356,7 +358,6 @@ export function OAuth2Form() {
             onClick: () => {
               // The client verification warning appears before the user has a chance to sign in
               // So there is no risk of going 'back' to an external IdP to sign in to synapse
-              setShowPendingRedirectUI(true)
               window.history.back()
             },
           }}
@@ -367,7 +368,7 @@ export function OAuth2Form() {
         accessToken &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
-        !showPendingRedirectUI &&
+        !showPendingRedirectUi &&
         oidcRequestDescription && (
           <StyledInnerContainer>
             <UserCard
@@ -428,7 +429,7 @@ export function OAuth2Form() {
             </div>
           </StyledInnerContainer>
         )}
-      {(isLoading || showPendingRedirectUI) && loadingSpinner}
+      {(isLoading || showPendingRedirectUi) && loadingSpinner}
       {error && (
         <FullWidthAlert
           variant="danger"
