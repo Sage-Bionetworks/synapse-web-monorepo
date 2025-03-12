@@ -3,33 +3,36 @@ import { useCookiePreferences } from './useCookiePreferences'
 
 declare global {
   interface Window {
-    dataLayer: any
+    gtag: (...args: any[]) => void
+    dataLayer: any[]
   }
 }
 
 // This hook code is globally executed once
 let isExecuted = false
 
-export const useGoogleAnalytics = (measurementId?: string) => {
+export const useGoogleAnalytics = (measurementId: string = 'GTM-KPW4KS62') => {
   const [cookiePreferences] = useCookiePreferences()
 
   useEffect(() => {
     if (cookiePreferences.analyticsAllowed && !isExecuted) {
-      const w = window
-      const d = document
-      const s = 'script'
-      const l = 'dataLayer'
-      const i = measurementId ?? 'GTM-KPW4KS62'
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      w[l] = w[l] || []
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-      const f = d.getElementsByTagName(s)[0],
-        j = d.createElement(s),
-        dl = l != 'dataLayer' ? `&l=${l}` : ''
-      j.async = true
-      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-      f.parentNode?.insertBefore(j, f)
+      window.dataLayer = window.dataLayer || []
+      function gtag(...args: any[]) {
+        window.dataLayer.push(args)
+      }
+
+      window.gtag = gtag
+      window.dataLayer.push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js',
+      })
+      const firstScriptElement = document.getElementsByTagName('script')[0]
+      const gtmScript = document.createElement('script')
+      const dl = `&l=dataLayer`
+      gtmScript.async = true
+      gtmScript.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + measurementId + dl
+      firstScriptElement.parentNode?.insertBefore(gtmScript, firstScriptElement)
 
       isExecuted = true
     }
