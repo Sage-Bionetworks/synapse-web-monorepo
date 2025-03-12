@@ -346,9 +346,8 @@ import {
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import { SetOptional } from 'type-fest'
 import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
-import xss from 'xss'
-import { xssOptions } from '../utils/functions/SanitizeHtmlUtils'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { sanitize } from '../utils/functions/SanitizeHtmlUtils'
 
 const cookies = new UniversalCookies()
 
@@ -5432,7 +5431,7 @@ const getMessageToUser = async (
   body: string,
   accessToken: string,
 ) => {
-  const cleanedMessageBody = xss(body, xssOptions)
+  const cleanedMessageBody = sanitize(body)
   const uploadedFileResult = await uploadFile(
     accessToken,
     'content',
