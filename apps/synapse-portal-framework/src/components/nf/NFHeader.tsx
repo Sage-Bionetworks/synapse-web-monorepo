@@ -72,38 +72,40 @@ const NFHeader = () => {
     </>
   )
   if (isFeatureEnabled) {
-    return (<header id="header">
+    return (
+      <header id="header">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px 0',
+          }}
+        >
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', lg: 'row' },
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '20px 0',
+              margin: 0,
+              flex: 1,
+              padding: { xs: '40px', lg: '40px 80px' },
             }}
           >
-            <Box
-              sx={{
-                margin: 0,
-                flex: 1,
-                padding: { xs: '40px', lg: '40px 80px' },
-              }}
-            >
-              {content}
-            </Box>
-            <HeaderSearchBox
-              searchExampleTerms={searchExampleTerms}
-              searchPlaceholder={searchPlaceholder}
-              path="/Search"
-              sx={{
-                flex: 1,
-                '& > :first-child': {
-                  background: 'rgba(184, 204, 226, 0.60)',
-                },
-              }}
-            />
+            {content}
           </Box>
-        </header>)
+          <HeaderSearchBox
+            searchExampleTerms={searchExampleTerms}
+            searchPlaceholder={searchPlaceholder}
+            path="/Search"
+            sx={{
+              flex: 1,
+              '& > :first-child': {
+                background: 'rgba(184, 204, 226, 0.60)',
+              },
+            }}
+          />
+        </Box>
+      </header>
+    )
   }
 
   return <Header />
