@@ -11,14 +11,11 @@ import {
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
 
-export type PortalSearchPageProps<
-  RoleType extends string = string,
-  TabTitleType extends string = string,
-> = {
+export type PortalSearchPageProps = {
   selectedTabIndex?: number
   configs: QueryWrapperPlotNavProps[]
   searchPageTabs: PortalSearchTabConfig[]
-  roleMapping?: Record<RoleType, TabTitleType>
+  roleMapping?: Record<string, string>
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
