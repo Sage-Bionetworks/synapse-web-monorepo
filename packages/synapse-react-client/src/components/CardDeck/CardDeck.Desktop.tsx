@@ -13,6 +13,13 @@ export default function CardDeckDesktop({
 }: CardDeckDataProps) {
   return (
     <div className="Programs__Card">
+      <div className="Programs__Card__header__image">
+        {headerImageFileHandleAssociation && (
+          <ImageFileHandle
+            fileHandleAssociation={headerImageFileHandleAssociation}
+          />
+        )}
+      </div>
       <div
         className="Programs__Card__header"
         style={{ backgroundColor: color.replace(')', ',.05)') }}
