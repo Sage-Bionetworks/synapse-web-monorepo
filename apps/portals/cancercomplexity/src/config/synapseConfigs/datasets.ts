@@ -13,6 +13,19 @@ export const datasetSchema: GenericCardSchema = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',
+  customSecondaryLabelConfig: {
+    key: 'HOW TO DOWNLOAD',
+    value: 'This file is hosted externally, follow the External Link, below',
+    isVisible: (schema: Record<string, number>, data: string[]) => {
+      return data[schema['externalLink']]
+        ? [
+            'HOW TO DOWNLOAD',
+            'This file is hosted externally, follow the External Link, below',
+            'externalLink',
+          ]
+        : undefined
+    },
+  },
   secondaryLabels: [
     'overallDesign',
     'tumorType',

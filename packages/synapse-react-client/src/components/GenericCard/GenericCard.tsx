@@ -75,7 +75,6 @@ export type GenericCardSchema = {
       data: string[],
     ) => string[] | undefined
   }
-
   link?: string
   dataTypeIconNames?: string
 }
@@ -425,18 +424,16 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
-    genericCardSchemaDefined.customSecondaryLabelConfig = {
-      key: 'HOW TO DOWNLOAD',
-      value: 'This file is hosted externally, follow the External Link, below',
-      isVisible: (schema: Record<string, number>, data: string[]) => {
-        return data[schema['externalLink']]
-          ? [
-              genericCardSchemaDefined.customSecondaryLabelConfig?.key ?? '',
-              genericCardSchemaDefined.customSecondaryLabelConfig?.value ?? '',
-              'externalLink',
-            ]
-          : undefined
-      },
+    const customLabel =
+      genericCardSchemaDefined.customSecondaryLabelConfig?.isVisible(
+        schema,
+        data,
+      )
+
+    if (customLabel) {
+      const [key, value, columnName] = customLabel
+      const keyValue = [key, value, columnName]
+      values.push(keyValue)
     }
 
     const isView = table && !isTableEntity(table)
@@ -474,16 +471,6 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
             />
           )
           columnDisplayName = getColumnDisplayName(columnName)
-        }
-        if (columnName === 'externalLink') {
-          const howToDownloadLabel =
-            genericCardSchemaDefined.customSecondaryLabelConfig.isVisible(
-              schema,
-              data,
-            )
-          if (howToDownloadLabel) {
-            values.push(howToDownloadLabel)
-          }
         }
         const keyValue = [columnDisplayName, value, columnName]
         values.push(keyValue)
