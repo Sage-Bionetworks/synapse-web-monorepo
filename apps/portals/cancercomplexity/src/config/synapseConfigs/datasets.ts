@@ -13,6 +13,7 @@ export const datasetSchema: GenericCardSchema = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',
+  includeCitation: true,
   customSecondaryLabelConfig: {
     key: 'HOW TO DOWNLOAD',
     value: 'This file is hosted externally, follow the External Link, below',
