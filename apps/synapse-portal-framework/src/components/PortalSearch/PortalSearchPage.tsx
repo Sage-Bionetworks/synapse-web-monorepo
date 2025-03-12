@@ -20,7 +20,7 @@ export type PortalSearchPageProps<
 > = {
   selectedTabIndex?: number
   configs: QueryWrapperPlotNavProps[]
-  searchPageTabs: SearchTabs
+  searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<RoleType, TabTitleType>
 }
 
