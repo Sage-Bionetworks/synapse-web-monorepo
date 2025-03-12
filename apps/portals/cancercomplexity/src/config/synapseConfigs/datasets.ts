@@ -8,6 +8,9 @@ import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
 
 const rgbIndex = 0
+const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
+const CUSTOM_LABEL_VALUE =
+  'This file is hosted externally, follow the External Link, below'
 
 export const datasetSchema: GenericCardSchema = {
   type: SynapseConstants.DATASET,
@@ -15,16 +18,10 @@ export const datasetSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   customSecondaryLabelConfig: {
-    key: 'HOW TO DOWNLOAD',
-    value: 'This file is hosted externally, follow the External Link, below',
+    key: CUSTOM_LABEL_KEY,
+    value: CUSTOM_LABEL_VALUE,
     isVisible: (schema: Record<string, number>, data: string[]) => {
-      return data[schema['externalLink']]
-        ? [
-            'HOW TO DOWNLOAD',
-            'This file is hosted externally, follow the External Link, below',
-            'externalLink',
-          ]
-        : undefined
+      return Boolean(data[schema['externalLink']])
     },
   },
   secondaryLabels: [

@@ -70,11 +70,9 @@ export type GenericCardSchema = {
   customSecondaryLabelConfig?: {
     key: string
     value: string
-    isVisible: (
-      schema: Record<string, number>,
-      data: string[],
-    ) => string[] | undefined
+    isVisible: (schema: Record<string, number>, data: string[]) => boolean
   }
+
   link?: string
   dataTypeIconNames?: string
 }
@@ -424,15 +422,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
-    const customLabel =
-      genericCardSchemaDefined.customSecondaryLabelConfig?.isVisible(
-        schema,
-        data,
-      )
+    const customLabelConfig =
+      genericCardSchemaDefined.customSecondaryLabelConfig
 
-    if (customLabel) {
-      const [key, value, columnName] = customLabel
-      const keyValue = [key, value, columnName]
+    if (customLabelConfig?.isVisible(schema, data)) {
+      const { key, value } = customLabelConfig
+      const keyValue = [key, value]
       values.push(keyValue)
     }
 
