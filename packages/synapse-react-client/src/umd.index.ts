@@ -58,6 +58,13 @@ import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
 import { SynapseConstants } from './utils'
 import Palettes from './theme/palette/Palettes'
+import { sendAnalyticsEvent } from './utils/analytics/sendAnalyticsEvent'
+import {
+  sendSearchQuerySubmittedEvent,
+  sendSearchResultClickedEvent,
+  sendSearchResultReturnedEvent,
+  sendSearchResultsReturnedEvent,
+} from './utils/analytics/sendSearchEvent'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -193,10 +200,19 @@ const SynapseComponents = {
   EntityUploadModal,
 }
 
+const Analytics = {
+  sendAnalyticsEvent,
+  sendSearchQuerySubmittedEvent,
+  sendSearchResultsReturnedEvent,
+  sendSearchResultReturnedEvent,
+  sendSearchResultClickedEvent,
+}
+
 // Include the version in the build
 const SynapseReactClientVersion = version
 
 export {
+  Analytics,
   HttpClient,
   SynapseReactClientVersion,
   SynapseComponents,

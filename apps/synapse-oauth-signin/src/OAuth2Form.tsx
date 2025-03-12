@@ -25,6 +25,7 @@ import {
   UserCard,
   useSynapseContext,
 } from 'synapse-react-client'
+import { sendAnalyticsEvent } from 'synapse-react-client/utils/analytics/sendAnalyticsEvent'
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
@@ -32,15 +33,7 @@ import { handleErrorRedirect } from './URLUtils'
 
 const cookies = new UniversalCookies()
 const sendGTagEvent = (event: string) => {
-  // send event to Google Analytics
-  // (casting to 'any' type to get compile-time access to gtag())
-  const windowAny: any = window
-  const gtag = windowAny.gtag
-  if (gtag) {
-    gtag('event', event, {
-      event_category: 'SynapseOAUTH',
-    })
-  }
+  sendAnalyticsEvent(event, { event_category: 'SynapseOAUTH' })
 }
 
 function redirectToURL(redirectURL: string) {
