@@ -3,7 +3,7 @@ import ExpandableContent from '../home_page/ExpandableContent'
 import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 
-export default function MobileCardDeck({
+export default function CardDeckMobile({
   //link,
   description,
   title,

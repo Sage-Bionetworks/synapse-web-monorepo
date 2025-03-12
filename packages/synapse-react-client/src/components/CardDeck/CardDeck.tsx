@@ -6,14 +6,13 @@ import { SynapseConstants } from '../../utils'
 
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import MobileCardDeck from './CardDeck.Mobile'
+import CardDeckMobile from './CardDeck.Mobile'
 import CardDeckDesktop from './CardDeck.Desktop'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { CardLink } from '../CardContainerLogic'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
-import Programs from '.'
 
 export type CardDeckProps = {
   entityId: string
@@ -22,8 +21,8 @@ export type CardDeckProps = {
   descriptionColumnName: string
   ctaButtonTextColumnName: string
   ctaButtonURLColumnName: string
-  titleIconFileHandleColumnName: string
-  headerImageFileHandleColumnName: string
+  titleIconFileHandleColumnName?: string
+  headerImageFileHandleColumnName?: string
   linkConfig: CardLink
 }
 
@@ -98,7 +97,7 @@ export function CardDeck(props: CardDeckProps) {
         const title = values[titleColumnIndex]
         const description = values[descriptionColumnIndex]
         const ctaButtonText = values[ctaButtonTextColumnIndex]
-        const ctaButtonURL = values[ctaButtonURLColumnIndex]
+        const ctaButtonURL = values[ctaButtonURLColumnIndex] ?? ''
         const titleIconFileHandleIdValue = values[titleIconColumnIndex] ?? ''
         const headerImageFileHandleIdValue =
           values[headerImageColumnIndex] ?? ''
@@ -133,7 +132,7 @@ export function CardDeck(props: CardDeckProps) {
         return showDesktop ? (
           <CardDeckDesktop {...CardDeckDataProps} />
         ) : (
-          <MobileCardDeck {...CardDeckDataProps} />
+          <CardDeckMobile {...CardDeckDataProps} />
         )
       })}
     </div>
