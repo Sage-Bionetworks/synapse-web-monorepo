@@ -13,7 +13,7 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const CardDeckDemo: Story = {
+export const CCPKResourcesDemo: Story = {
   args: {
     entityId: 'syn64943600',
     rgbIndex: 1,
@@ -22,6 +22,44 @@ export const CardDeckDemo: Story = {
     ctaButtonTextColumnName: 'ctaButtonText',
     ctaButtonURLColumnName: 'ctaButtonURL',
     titleIconFileHandleColumnName: 'icon',
+    headerImageFileHandleColumnName: 'headerImage',
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title',
+    },
+  },
+}
+
+export const ProgramsDemo: Story = {
+  args: {
+    entityId: 'syn17024173',
+    rgbIndex: 1,
+    titleColumnName: 'Program',
+    descriptionColumnName: 'Short Description',
+    ctaButtonTextColumnName: 'ctaButtonText',
+    ctaButtonURLColumnName: 'ctaButtonURL',
+    titleIconFileHandleColumnName: 'Homepage Image',
+    headerImageFileHandleColumnName: undefined,
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title',
+    },
+  },
+}
+
+export const TestOptionalArgsDemo: Story = {
+  args: {
+    entityId: 'syn65414596',
+    rgbIndex: 1,
+    titleColumnName: 'title',
+    descriptionColumnName: 'description',
+    ctaButtonTextColumnName: 'buttonText',
+    ctaButtonURLColumnName: 'buttonURL',
+    titleIconFileHandleColumnName: 'iconImage',
     headerImageFileHandleColumnName: 'headerImage',
     linkConfig: {
       isMarkdown: false,
