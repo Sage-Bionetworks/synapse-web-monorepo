@@ -185,8 +185,12 @@ function CitationPopover({
               wordWrap: 'break-word',
             }}
           >
-            {boilerplateText}
-            <br />
+            {boilerplateText && (
+              <>
+                {boilerplateText}
+                <br />
+              </>
+            )}
             {isLoading ? (
               <Box sx={{ fontWeight: 700 }}>
                 <br />
