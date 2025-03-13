@@ -210,10 +210,11 @@ describe('App integration tests', () => {
     // Should redirect back to the client app with the code provided by the server, and the original state provided by the client via the browser.
     await waitFor(() => {
       screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
-        `${params.get('redirect_uri')}?state=${params.get(
-          'state',
-        )}&code=${ACCESS_CODE_PROVIDED_BY_SERVER}`,
+        `${params.get(
+          'redirect_uri',
+        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
       )
     })
   })
@@ -240,7 +241,7 @@ describe('App integration tests', () => {
     // The state is still returned
     // and the 'access_denied' error is sent
     await waitFor(() => {
-      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get('redirect_uri')}?state=${params.get(
           'state',
@@ -276,10 +277,32 @@ describe('App integration tests', () => {
 
     await waitFor(() => {
       screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
-        `${params.get('redirect_uri')}?state=${params.get(
-          'state',
-        )}&code=${ACCESS_CODE_PROVIDED_BY_SERVER}`,
+        `${params.get(
+          'redirect_uri',
+        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+      )
+    })
+  })
+
+  test('Does not modify encoded state - SWC-7272', async () => {
+    const prompt = 'none'
+    const state = 'somePreEncodedState%3D%3D'
+    // Consent has already been granted:
+    resetConsentedInMockService(true)
+
+    // Need a token in the cookie so the app tries to use it
+    document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
+
+    const { params } = renderApp({ prompt, state })
+
+    await waitFor(() => {
+      screen.getByText(`Waiting for ${mockOauthClient.client_name!}...`)
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get(
+          'redirect_uri',
+        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
       )
     })
   })
