@@ -209,17 +209,21 @@ export function OAuth2Form() {
         )
 
         const redirectSearchParams = new URLSearchParams()
-        const state = searchParams.get('state')
-        if (state) {
-          redirectSearchParams.set('state', encodeURIComponent(state))
-        }
         redirectSearchParams.set(
           'code',
           encodeURIComponent(accessCode.access_code),
         )
-        setPendingRedirectURL(
-          `${redirectUri}?${redirectSearchParams.toString()}`,
-        )
+
+        let redirectUrl = `${redirectUri}?${redirectSearchParams.toString()}`
+
+        const state = searchParams.get('state')
+        if (state) {
+          // SWC-7272 - append raw state to the end of the URL
+          // We do not use URLSearchParams for state because it encodes the value, and it should be passed untouched.
+          redirectUrl += `&state=${state}`
+        }
+
+        setPendingRedirectURL(redirectUrl)
       },
       onError: e => {
         onError(e)
