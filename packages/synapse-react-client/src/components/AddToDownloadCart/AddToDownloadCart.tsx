@@ -9,6 +9,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import SynapseClient from '../../synapse-client'
+import { GetAppTwoTone } from '@mui/icons-material'
 
 export type AddToDownloadCartProps = {
   folderId: string
@@ -77,7 +78,11 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
 
   return (
     <div>
-      <Button onClick={onAddClick} variant="contained">
+      <Button
+        onClick={onAddClick}
+        variant="contained"
+        startIcon={<GetAppTwoTone />}
+      >
         Add to Download Cart
       </Button>
       {showConfirmation &&
