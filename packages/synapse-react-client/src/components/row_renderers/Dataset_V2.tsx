@@ -4,14 +4,9 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import * as Utils from './utils'
 import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
-import { Button } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { AddToDownloadCart, AddToDownloadCartProps } from '../AddToDownloadCart'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { SynapseConstants } from '../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { QueryWrapper } from '../QueryWrapper'
+import { AddToDownloadCart } from '../AddToDownloadCart'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 
 export type Dataset_V2_Props = {
