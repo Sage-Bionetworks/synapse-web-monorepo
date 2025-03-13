@@ -1,10 +1,9 @@
 import { useMemo, useEffect, useState, useRef } from 'react'
-import xss from 'xss'
-import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../synapse-queries/team/useTeamMembers'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { Alert } from '@mui/material'
+import { sanitize } from '../../../utils/functions/SanitizeHtmlUtils'
 
 /**
  * @param options
@@ -23,7 +22,7 @@ function useCleanHtml(options: {
     if (isTrusted) {
       return rawHtml
     } else {
-      return xss(rawHtml, xssOptions)
+      return sanitize(rawHtml)
     }
   }, [isLoading, isTrusted, rawHtml])
 }

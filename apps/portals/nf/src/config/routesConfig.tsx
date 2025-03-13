@@ -6,7 +6,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import { RouteObject } from 'react-router'
+import { Navigate, RouteObject } from 'react-router'
 import DatasetDetailsPage from 'src/pages/DatasetDetailsPage'
 import { hackathonDetailsPageRoutesConfig } from 'src/pages/HackathonDetailsPage/HackathonDetailsPage'
 import { organizationsDetailsPageRoute } from 'src/pages/OrganizationDetailsPage/OrganizationDetailsPage'
@@ -17,6 +17,7 @@ import InitiativeDetailsPage from '../pages/InitiativeDetailsPage'
 import { studyDetailsPageRoute } from '../pages/StudyDetailsPage/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { popularSearchesSql, toolsSql } from './resources'
+import { searchPageChildRoutes } from 'src/pages/NFSearchPage'
 
 const routes: RouteObject[] = [
   {
@@ -35,6 +36,11 @@ const routes: RouteObject[] = [
     children: [
       ...sharedRoutes,
       { index: true, element: <HomePage /> },
+      {
+        //PORTALS-3454: Redirect Browse Tools to Research Tools Central/Browse Tools
+        path: 'Browse Tools',
+        element: <Navigate to="/Research Tools Central/Browse Tools" replace />,
+      },
       {
         path: 'Research Tools Central',
         children: [
@@ -118,6 +124,10 @@ const routes: RouteObject[] = [
           </>
         ),
         children: explorePageRoutes,
+      },
+      {
+        path: 'Search',
+        children: searchPageChildRoutes,
       },
       {
         path: 'Explore/Initiatives/DetailsPage',
