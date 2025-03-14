@@ -17,9 +17,9 @@ import { CardContainerLogic } from 'synapse-react-client'
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.GENERIC_CARD,
-  title: 'Name',
+  title: 'Acronym',
   // subTitle: '',
-  // description: '',
+  description: 'Name',
   secondaryLabels: ['Collections', 'Data_Topic', 'Organizations'],
 }
 

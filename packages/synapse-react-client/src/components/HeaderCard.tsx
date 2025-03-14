@@ -4,6 +4,8 @@ import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 
+type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
+
 export type HeaderCardProps = {
   type: string
   title: string
@@ -16,6 +18,7 @@ export type HeaderCardProps = {
   href?: string
   target?: string
   icon: JSX.Element
+  headerCardVariant?: HeaderCardVariant
 }
 
 function HeaderCard(props: HeaderCardProps) {

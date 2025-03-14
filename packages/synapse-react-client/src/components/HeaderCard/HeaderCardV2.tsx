@@ -144,14 +144,72 @@ function HeaderCardV2({
   forceStackedLayout = false,
   ctaButtons,
 }: HeaderCardV2Props) {
-  ctaButtons = ctaButtons || ctaButtonsForTesting
-
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  // State for dynamic layout
+  // const [useStackedLayout, setUseStackedLayout] = useState(
+  //   forceStackedLayout || isMobile,
+  // )
 
   // Refs for measuring heights
   const descriptionRef = useRef<HTMLDivElement>(null)
   const metadataRef = useRef<HTMLDivElement>(null)
+  const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
+  const [metadataHeight, setMetadataHeight] = useState<number>(0)
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
+
+  // Effect to check heights and update layout if needed
+  useEffect(() => {
+    // Only set up height checking if not already forced to stack
+    if (forceStackedLayout || isMobile) {
+      return
+    }
+
+    const dHeight = descriptionRef.current.offsetHeight
+    const mHeight = metadataRef.current.offsetHeight
+    // const { dHeight } = descriptionRef.current.getBoundingClientRect();
+    setDescriptionHeight(dHeight)
+    // const { mHight } = metadataRef.current.getBoundingClientRect();
+    setMetadataHeight(mHeight)
+
+    console.log('in useEffect', {
+      windowWidth,
+      useStackedLayout,
+      dHeight,
+      mHeight,
+    })
+
+    const sww = () => setWindowWidth(window.innerWidth)
+
+    // Add resize listener
+    window.addEventListener('resize', sww)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', sww)
+    }
+    // If metadata is taller than description, use stacked layout
+    // if (mHeight > dHeight) {
+    //   setUseStackedLayout(true)
+    //   console.log(`should stack -- ${mHeight} > ${dHeight}`)
+    // } else {
+    //   // console.l`g('should not st -- ${mHeight} <= ${dHeight}`ck')
+    //   UseStackedLayout(false)
+    // }
+  }, [forceStackedLayout, isMobile, values, description, windowWidth])
+
+  let useStackedLayout = false
+  if (forceStackedLayout || isMobile) {
+    useStackedLayout = true
+  } else {
+    useStackedLayout = metadataHeight > descriptionHeight
+  }
+  console.log({
+    windowWidth,
+    useStackedLayout,
+    descriptionHeight,
+    metadataHeight,
+  })
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
@@ -165,11 +223,6 @@ function HeaderCardV2({
   const [docTitle] = useState<string>(document.title)
   const [docDescription] = useState<string>(
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
-  )
-
-  // State for dynamic layout
-  const [useStackedLayout, setUseStackedLayout] = useState(
-    forceStackedLayout || isMobile,
   )
 
   // Effect to handle meta tags
@@ -190,60 +243,6 @@ function HeaderCardV2({
       descriptionElement?.setAttribute('content', docDescription)
     }
   }, [title, description, subTitle, docTitle, docDescription])
-
-  // Effect to check heights and update layout if needed
-  useEffect(() => {
-    // This runs every time forceStackedLayout or isMobile changes
-    setUseStackedLayout(forceStackedLayout || isMobile)
-
-    // Only set up height checking if not already forced to stack
-    if (forceStackedLayout || isMobile) {
-      setUseStackedLayout(true)
-      return
-    }
-    // Function to check heights and update layout
-    const checkHeights = () => {
-      if (!descriptionRef.current || !metadataRef.current || !values) return
-
-      // First reset to side-by-side to get accurate height measurements
-      // This ensures we get the height as if it were in side-by-side mode
-      setUseStackedLayout(false)
-
-      // Use setTimeout to allow the DOM to update before measuring
-      setTimeout(() => {
-        if (!descriptionRef.current || !metadataRef.current) return
-
-        const descHeight = descriptionRef.current.offsetHeight
-        const metaHeight = metadataRef.current.offsetHeight
-
-        // If metadata is taller than description, use stacked layout
-        if (metaHeight > descHeight) {
-          setUseStackedLayout(true)
-        }
-      }, 0)
-    }
-
-    // Initial check after component mounts or values change
-    checkHeights()
-
-    // Add resize listener
-    window.addEventListener('resize', checkHeights)
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkHeights)
-    }
-  }, [forceStackedLayout, isMobile, values, description])
-
-  // For debugging - remove in production
-  console.log(
-    'useStackedLayout:',
-    useStackedLayout,
-    'isMobile:',
-    isMobile,
-    'forceStackedLayout:',
-    forceStackedLayout,
-  )
 
   return (
     <Card
@@ -289,6 +288,11 @@ function HeaderCardV2({
 
       <Box
         sx={{
+          // align: 'center',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          // border: '1px solid #000',
+          maxWidth: '1400px',
           display: 'grid',
           gridTemplateColumns: '1fr 12fr 1fr',
           '& > *': {
@@ -360,6 +364,7 @@ function HeaderCardV2({
             flexDirection: useStackedLayout ? 'column' : 'row',
             flexWrap: useStackedLayout ? 'nowrap' : 'wrap',
             justifyContent: 'space-between',
+            alignItems: 'flex-start',
             gap: 2,
           }}
         >
@@ -371,7 +376,7 @@ function HeaderCardV2({
             }}
           >
             <CollapsibleDescription
-              description={description}
+              description={description.repeat(30)}
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
             />
@@ -382,6 +387,7 @@ function HeaderCardV2({
               sx={{
                 width: useStackedLayout ? '100%' : 'auto',
                 marginTop: useStackedLayout ? 2 : 0,
+                alignItems: 'flex-start',
               }}
             >
               <MetadataTable data={values} />
@@ -433,9 +439,10 @@ function MetadataTable({ data }: MetadataTableProps) {
           <tr key={item[2] || index}>
             <td
               style={{
+                width: '1%',
+                whiteSpace: 'nowrap',
                 padding: '0px 16px 8px 0',
                 verticalAlign: 'top',
-                whiteSpace: 'nowrap',
                 fontWeight: 'bold',
               }}
             >
@@ -443,6 +450,7 @@ function MetadataTable({ data }: MetadataTableProps) {
             </td>
             <td
               style={{
+                width: 'auto',
                 paddingBottom: '12px',
                 verticalAlign: 'top',
                 wordBreak: 'break-word',
@@ -458,33 +466,3 @@ function MetadataTable({ data }: MetadataTableProps) {
 }
 
 export default HeaderCardV2
-
-// Remove when i have storyboard working again or real data to test with
-import { LaunchOutlined } from '@mui/icons-material'
-const ctaButtonsForTesting: CTAButton[] = [
-  {
-    label: 'View Standard on External Website',
-    variant: 'outlined',
-    href: 'https://dicom.nema.org/',
-    // target: '_blank',
-    endIcon: <LaunchOutlined />,
-    sx: {
-      borderRadius: 1,
-      '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.14)',
-      },
-    },
-  },
-  {
-    label: 'Download Documentation',
-    variant: 'contained',
-    href: '#',
-    sx: { borderRadius: 1 },
-  },
-  {
-    label: 'View Examples',
-    variant: 'outlined',
-    href: '#',
-    sx: { borderRadius: 1 },
-  },
-]
