@@ -1,42 +1,40 @@
+import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
 import { PortalSearchTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
 import { RouteObject } from 'react-router'
-import cckpConfigs from 'src/config/synapseConfigs'
-import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
-
+import nfConfigs from 'src/config/synapseConfigs'
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
-    title: 'Grants',
-    path: 'Grants',
+    title: 'Initiatives',
+    path: 'Initiatives',
   },
   {
-    title: 'People',
-    path: 'People',
-  },
-  {
-    title: 'Publications',
-    path: 'Publications',
+    title: 'Studies',
+    path: 'Studies',
   },
   {
     title: 'Datasets',
     path: 'Datasets',
   },
   {
+    title: 'Publications',
+    path: 'Publications',
+  },
+  {
     title: 'Tools',
     path: 'Tools',
   },
   {
-    title: 'Educational Resources',
-    path: 'EducationalResources',
+    title: 'Hackathons',
+    path: 'Hackathons',
   },
 ]
-
 const portalSearchPageConfigs = [
-  cckpConfigs.grants,
-  cckpConfigs.people,
-  cckpConfigs.publications,
-  cckpConfigs.datasets,
-  cckpConfigs.tools,
-  cckpConfigs.education,
+  nfConfigs.initiatives,
+  nfConfigs.studies,
+  nfConfigs.datasets,
+  nfConfigs.publications,
+  nfConfigs.tools,
+  nfConfigs.hackathons,
 ]
 
 export const searchPageChildRoutes: RouteObject[] = [
@@ -44,7 +42,6 @@ export const searchPageChildRoutes: RouteObject[] = [
     index: true,
     element: (
       <PortalSearchPage
-        selectedTabIndex={undefined}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
       />

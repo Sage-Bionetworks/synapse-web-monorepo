@@ -41,6 +41,7 @@ const INPUT_PLACEHOLDER = 'Write a reply...'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
+  const defaultMargin = '16px'
 
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
   const [showThreadModal, setShowThreadModal] = useState(false)
@@ -105,7 +106,18 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     <div className="DiscussionThread">
       {threadData && threadBody ? (
         <>
-          <div style={{ textAlign: 'center' }}>
+          <Box
+            sx={theme => ({
+              textAlign: 'center',
+              [theme.breakpoints.down('sm')]: {
+                display: 'flex',
+                marginBottom: defaultMargin,
+                button: {
+                  whiteSpace: 'nowrap',
+                },
+              },
+            })}
+          >
             <Button
               variant={orderByDatePosted ? 'contained' : 'outlined'}
               onClick={() => setOrderByDatePosted(true)}
@@ -118,15 +130,28 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             >
               Most Recent
             </Button>
-          </div>
+          </Box>
           <UserBadge
             userId={threadData.createdBy}
             withAvatar={true}
             avatarSize="MEDIUM"
             showCardOnHover={true}
           />
-          <div>
-            <Typography style={{ marginTop: '4px' }} variant="headline2">
+          <Box
+            sx={theme => ({
+              [theme.breakpoints.down('sm')]: {
+                display: 'flex',
+                flexDirection: 'column-reverse',
+                marginBottom: defaultMargin,
+                marginTop: defaultMargin,
+                '.SubscribersModal': {
+                  justifyContent: 'flex-start',
+                  marginBottom: defaultMargin,
+                },
+              },
+            })}
+          >
+            <Typography sx={{ marginTop: '4px' }} variant="headline2">
               {threadData.title}
             </Typography>
             <SubscribersModal
@@ -135,7 +160,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               showModal={showSubscriberModal}
               handleModal={setShowSubscriberModal}
             />
-          </div>
+          </Box>
           <div>
             <MarkdownSynapse
               markdown={threadBody}
@@ -234,7 +259,17 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         ))}
       </div>
       {replies.length > 0 && (
-        <Box sx={{ mt: 2, mb: 3 }}>
+        <Box
+          sx={theme => ({
+            mt: 2,
+            mb: 3,
+            [theme.breakpoints.down('sm')]: {
+              MarkdownEditor: {
+                display: 'block',
+              },
+            },
+          })}
+        >
           {!showReplyEditor2 ? (
             <TextField
               fullWidth

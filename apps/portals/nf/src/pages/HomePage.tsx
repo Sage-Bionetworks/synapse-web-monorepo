@@ -1,4 +1,3 @@
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
@@ -19,6 +18,7 @@ import {
   UserCardListRotate,
   JsonLdScript,
 } from 'synapse-react-client'
+import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 
 const limit = 3
 
@@ -57,7 +57,7 @@ export default function HomePage() {
           alternateName: 'Neurofibromatosis Data Portal',
         }}
       />
-      <Header />
+      <NFHeader />
       <SectionLayout
         title={'Resource Overview'}
         centerTitle

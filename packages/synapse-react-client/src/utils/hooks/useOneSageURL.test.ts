@@ -53,7 +53,25 @@ describe('OneSage URL tests', () => {
         'https://staging.accounts.synapse.org/?appId=staging.synapse.org',
       )
     })
-    test.todo('dev') // IT-3849
+    test('dev', () => {
+      const appId = 'dev.synapse.org'
+      const url = getOneSageUrl(
+        'dev.synapse.org',
+        SYNAPSE_BACKEND_DEV_URL,
+        appId,
+      )
+      expect(url.toString()).toEqual(
+        'https://dev.accounts.synapse.org/?appId=dev.synapse.org',
+      )
+      //SWC-7128: with trailing slash
+      expect(
+        getOneSageUrl(
+          'dev.synapse.org',
+          `${SYNAPSE_BACKEND_DEV_URL}/`,
+          appId,
+        ).toString(),
+      ).toEqual('https://dev.accounts.synapse.org/?appId=dev.synapse.org')
+    })
     test('local', () => {
       const appId = 'localhost'
       expect(
@@ -108,7 +126,13 @@ describe('OneSage URL tests', () => {
       )
       expect(url.toString()).toEqual('https://staging.accounts.synapse.org/')
     })
-    test.todo('dev') // no site exists (IT-3849)
+    test('dev', () => {
+      const url = getOneSageUrl(
+        'dev.accounts.synapse.org',
+        SYNAPSE_BACKEND_DEV_URL,
+      )
+      expect(url.toString()).toEqual('https://dev.accounts.synapse.org/')
+    })
     test('local', () => {
       const url = getOneSageUrl('localhost', SYNAPSE_BACKEND_PRODUCTION_URL)
       expect(url.toString()).toEqual('http://localhost:3000/')
@@ -130,8 +154,20 @@ describe('OneSage URL tests', () => {
       )
       expect(url.toString()).toEqual('https://staging.accounts.synapse.org/')
     })
-    test.todo('dev') // no site exists
-    test.todo('local') // these typically run on the same port, so we need to establish a convention to run them on different ports
+    test('dev', () => {
+      const url = getOneSageUrl(
+        'dev-signin.synapse.org',
+        SYNAPSE_BACKEND_DEV_URL,
+      )
+      expect(url.toString()).toEqual('https://dev.accounts.synapse.org/')
+    })
+    test('local', () => {
+      const localhostUrl = getOneSageUrl('localhost', SYNAPSE_BACKEND_DEV_URL)
+      expect(localhostUrl.toString()).toEqual('http://localhost:3000/')
+
+      const localhostIp = getOneSageUrl('127.0.0.1', SYNAPSE_BACKEND_DEV_URL)
+      expect(localhostIp.toString()).toEqual('http://127.0.0.1:3000/')
+    })
   })
 
   describe('portal domain', () => {
