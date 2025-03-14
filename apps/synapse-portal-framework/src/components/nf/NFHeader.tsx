@@ -9,17 +9,16 @@ const NFHeader = () => {
   const searchPlaceholder =
     'Search for neurofibromatosis related data and resources'
   const searchExampleTerms = [
-    'Justo Turpis',
-    'Nostra',
-    'Fames',
-    'Rhoncus',
-    'Pharetra enim',
-    'Aliquet',
-    'Ridiculus',
-    'Penatibus',
-    'Accumsan quisque',
-    'Patient Advocacy',
+    'cutaneous neurofibroma',
+    'drug screening',
+    'vision restoration',
+    'schwann',
+    'malignant tumors',
+    'whole genome sequencing',
+    'study with data available',
+    'patient reported outcomes',
   ]
+
   const isFeatureEnabled = useGetFeatureFlag(
     FeatureFlagEnum.PORTAL_SEARCH_HEADER,
   )
