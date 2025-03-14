@@ -1,4 +1,4 @@
-import { Programs } from './Programs'
-import type { ProgramsProps } from './Programs'
-export { Programs, ProgramsProps }
-export default Programs
+import { CardDeck } from './CardDeck'
+import type { CardDeckProps } from './CardDeck'
+export { CardDeck, CardDeckProps }
+export default CardDeck
