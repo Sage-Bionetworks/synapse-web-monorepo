@@ -16,6 +16,10 @@ export const searchPageTabs: PortalSearchTabConfig[] = [
     path: 'Datasets',
   },
   {
+    title: 'Files',
+    path: 'Files',
+  },
+  {
     title: 'Publications',
     path: 'Publications',
   },
@@ -32,6 +36,7 @@ const portalSearchPageConfigs = [
   nfConfigs.initiatives,
   nfConfigs.studies,
   nfConfigs.datasets,
+  nfConfigs.files,
   nfConfigs.publications,
   nfConfigs.tools,
   nfConfigs.hackathons,
@@ -102,6 +107,16 @@ export const searchPageChildRoutes: RouteObject[] = [
     element: (
       <PortalSearchPage
         selectedTabIndex={5}
+        configs={portalSearchPageConfigs}
+        searchPageTabs={searchPageTabs}
+      />
+    ),
+  },
+  {
+    path: searchPageTabs[6].path,
+    element: (
+      <PortalSearchPage
+        selectedTabIndex={6}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
       />
