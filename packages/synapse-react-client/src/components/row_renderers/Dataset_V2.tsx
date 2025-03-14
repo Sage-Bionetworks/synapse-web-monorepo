@@ -77,7 +77,6 @@ class Dataset_V2 extends Component<Dataset_V2_Props, never> {
     const synapseLink: string = data[schema.synapseLink] || ''
     const synapseLinkId: string =
       synapseLink.match(SYNAPSE_ENTITY_ID_REGEX)?.[1] || ''
-    const datasetAlias: string = data[schema.datasetAlias] || ''
 
     if (genericCardSchema && genericCardSchema.secondaryLabels) {
       const { secondaryLabels } = genericCardSchema
