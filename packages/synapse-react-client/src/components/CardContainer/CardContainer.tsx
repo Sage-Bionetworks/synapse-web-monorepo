@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
+  DATASET_V2,
   FUNDER,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
@@ -19,7 +20,7 @@ import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { Dataset, Funder } from '../row_renderers'
+import { Dataset, Funder, Dataset_V2 } from '../row_renderers'
 import { ReleaseCard } from '../ReleaseCard'
 import {
   LoadingObservationCard,
@@ -66,6 +67,8 @@ function Card(props: { propsToPass: any; type: string }) {
   switch (type) {
     case DATASET:
       return <Dataset {...propsToPass} />
+    case DATASET_V2:
+      return <Dataset_V2 {...propsToPass} />
     case FUNDER:
       return <Funder {...propsToPass} />
     case GENERIC_CARD:
