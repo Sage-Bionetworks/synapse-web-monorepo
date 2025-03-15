@@ -12,8 +12,8 @@ export default function CardDeckDesktop({
   color,
 }: CardDeckDataProps) {
   return (
-    <div className="Programs__Card">
-      <div className="Programs__Card__header__image">
+    <div className="CardDeck__Card">
+      <div className="CardDeck__Card__header__image">
         {headerImageFileHandleAssociation && (
           <ImageFileHandle
             fileHandleAssociation={headerImageFileHandleAssociation}
@@ -21,18 +21,18 @@ export default function CardDeckDesktop({
         )}
       </div>
       <div
-        className="Programs__Card__header"
+        className="CardDeck__Card__header"
         style={{ backgroundColor: color.replace(')', ',.05)') }}
       >
-        <div className="Programs__Card__header__icon">
+        <div className="CardDeck__Card__header__icon">
           {titleIconFileHandleAssociation && (
             <ImageFileHandle
               fileHandleAssociation={titleIconFileHandleAssociation}
             />
           )}
         </div>
-        <div className="Programs__Card__header__info">
-          <span className="Programs__Card__header__info__title"> {title} </span>
+        <div className="CardDeck__Card__header__info">
+          <span className="CardDeck__Card__header__info__title"> {title} </span>
           {/* {link && (
             <p className="Programs__Card__header__info__link">
               <a
@@ -47,7 +47,7 @@ export default function CardDeckDesktop({
           )} */}
         </div>
       </div>
-      <div className="Programs__Card__summary">
+      <div className="CardDeck__Card__summary">
         <p> {description} </p>
         <LargeButton
           color="secondary"

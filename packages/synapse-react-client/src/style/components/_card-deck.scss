@@ -1,0 +1,98 @@
+@use '../abstracts/variables' as SRC;
+
+// horizontally and vertically center
+%hv-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.CardDeck {
+  &__Desktop {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-bottom: 50px;
+  }
+  &__Card {
+    p {
+      margin: 0px;
+    }
+    width: 23%;
+    display: flex;
+    min-height: 300px;
+    flex-direction: column;
+    box-shadow: SRC.$box-shadow-soft;
+    background: #ffffff;
+    margin: 5px;
+    &__header__image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    &__header {
+      min-height: 75px;
+      @extend %side-padding;
+      background: SRC.$primary-action-color;
+      display: flex;
+      align-items: center;
+
+      &__icon img {
+        width: 50px;
+      }
+
+      p {
+        @extend %space-between;
+        align-items: center;
+        width: 100%;
+        color: white;
+      }
+
+      &__info {
+        margin-left: 10px;
+
+        a:hover,
+        a:focus {
+          text-decoration: none;
+        }
+
+        &__title {
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        &__link a {
+          color: #1a1c29;
+        }
+      }
+    }
+    &__summary {
+      flex: 1;
+      @extend %side-padding;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      @extend %space-between;
+      flex-direction: column;
+    }
+  }
+
+  &__Mobile {
+    @extend %hv-center;
+
+    &__Header {
+      @extend %hv-center;
+
+      .iconImg {
+        width: 40px;
+      }
+
+      &__Title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-left: 10px;
+      }
+    }
+  }
+}

@@ -86,7 +86,7 @@ export function CardDeck(props: CardDeckProps) {
     queryResultBundle,
   )
   return (
-    <div className={`Programs${showDesktop ? '__Desktop' : ''}`}>
+    <div className={`CardDeck${showDesktop ? '__Desktop' : ''}`}>
       {queryResultBundle?.queryResult!.queryResults.rows.map(el => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {
