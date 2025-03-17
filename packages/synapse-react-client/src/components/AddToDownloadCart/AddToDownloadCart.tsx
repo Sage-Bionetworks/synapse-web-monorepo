@@ -22,11 +22,22 @@ const FolderTsx: React.FC<{ entityId: string; fnClose: () => void }> = ({
 }
 
 const TableTsx: React.FC<{
-  initQueryRequest: QueryBundleRequest
-  queryWrapperKey: string
-}> = ({ initQueryRequest, queryWrapperKey }) => {
+  entityId: string
+}> = ({ entityId }) => {
+  const initQueryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: entityId,
+    query: {
+      sql: `select * from ${entityId}`,
+      limit: DEFAULT_PAGE_SIZE,
+      sort: undefined,
+      additionalFilters: undefined,
+    },
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  }
+
   return (
-    <QueryWrapper initQueryRequest={initQueryRequest} key={queryWrapperKey}>
+    <QueryWrapper initQueryRequest={initQueryRequest}>
       <QueryWrapperErrorBoundary>
         <TableQueryDownloadConfirmation />
       </QueryWrapperErrorBoundary>
@@ -48,18 +59,6 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
   const onAddClick = () => {
     setShowConfirmation(true)
   }
-  const initQueryRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: entityId,
-    query: {
-      sql: `select * from ${entityId}`,
-      limit: DEFAULT_PAGE_SIZE,
-      sort: undefined,
-      additionalFilters: undefined,
-    },
-    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-  }
-  const queryWrapperKey = JSON.stringify(initQueryRequest)
 
   if (isLoading) {
     return null
@@ -81,10 +80,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
           (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
             <FolderTsx entityId={entityId} fnClose={handleClose} />
           ) : (
-            <TableTsx
-              initQueryRequest={initQueryRequest}
-              queryWrapperKey={queryWrapperKey}
-            />
+            <TableTsx entityId={entityId} />
           ))}
       </div>
     </div>
