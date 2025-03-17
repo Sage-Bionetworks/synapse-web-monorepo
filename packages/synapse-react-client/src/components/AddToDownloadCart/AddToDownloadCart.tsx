@@ -69,22 +69,26 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
 
   return (
     <div>
-      <Button
-        onClick={onAddClick}
-        variant="contained"
-        startIcon={<GetAppTwoTone />}
-      >
-        Add to Download Cart
-      </Button>
-      {showConfirmation &&
-        (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
-          <FolderTsx entityId={entityId} fnClose={handleClose} />
-        ) : (
-          <TableTsx
-            initQueryRequest={initQueryRequest}
-            queryWrapperKey={queryWrapperKey}
-          />
-        ))}
+      <div>
+        <Button
+          onClick={onAddClick}
+          variant="contained"
+          startIcon={<GetAppTwoTone />}
+        >
+          Add to Download Cart
+        </Button>
+      </div>
+      <div>
+        {showConfirmation &&
+          (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
+            <FolderTsx entityId={entityId} fnClose={handleClose} />
+          ) : (
+            <TableTsx
+              initQueryRequest={initQueryRequest}
+              queryWrapperKey={queryWrapperKey}
+            />
+          ))}
+      </div>
     </div>
   )
 }
