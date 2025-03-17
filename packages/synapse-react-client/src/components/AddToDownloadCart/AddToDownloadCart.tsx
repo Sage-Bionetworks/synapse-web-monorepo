@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@mui/material'
 import { useSynapseContext } from '../../utils'
 import { FolderDownloadConfirmation } from '../download_list/FolderDownloadConfirmation'
@@ -14,6 +14,26 @@ import { useGetEntity } from '../../synapse-queries/'
 
 export type AddToDownloadCartProps = {
   entityId: string
+}
+
+const FolderTsx: React.FC<{ entityId: string; fnClose: () => void }> = ({
+  entityId,
+  fnClose,
+}) => {
+  return <FolderDownloadConfirmation folderId={entityId} fnClose={fnClose} />
+}
+
+const TableTsx: React.FC<{
+  initQueryRequest: QueryBundleRequest
+  queryWrapperKey: string
+}> = ({ initQueryRequest, queryWrapperKey }) => {
+  return (
+    <QueryWrapper initQueryRequest={initQueryRequest} key={queryWrapperKey}>
+      <QueryWrapperErrorBoundary>
+        <TableQueryDownloadConfirmation />
+      </QueryWrapperErrorBoundary>
+    </QueryWrapper>
+  )
 }
 
 export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
@@ -43,22 +63,6 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
   }
   const queryWrapperKey = JSON.stringify(initQueryRequest)
 
-  function folderTsx() {
-    return (
-      <FolderDownloadConfirmation folderId={entityId} fnClose={handleClose} />
-    )
-  }
-
-  function tableTsx() {
-    return (
-      <QueryWrapper initQueryRequest={initQueryRequest} key={queryWrapperKey}>
-        <QueryWrapperErrorBoundary>
-          <TableQueryDownloadConfirmation />
-        </QueryWrapperErrorBoundary>
-      </QueryWrapper>
-    )
-  }
-
   if (isLoading) {
     return null
   }
@@ -73,9 +77,14 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
         Add to Download Cart
       </Button>
       {showConfirmation &&
-        (entityConcreteType === 'org.sagebionetworks.repo.model.Folder'
-          ? folderTsx()
-          : tableTsx())}
+        (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
+          <FolderTsx entityId={entityId} fnClose={handleClose} />
+        ) : (
+          <TableTsx
+            initQueryRequest={initQueryRequest}
+            queryWrapperKey={queryWrapperKey}
+          />
+        ))}
     </div>
   )
 }
