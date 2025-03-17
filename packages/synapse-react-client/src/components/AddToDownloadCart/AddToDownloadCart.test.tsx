@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { AddToDownloadCart, AddToDownloadCartProps } from './AddToDownloadCart'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
@@ -13,12 +13,13 @@ jest.mock('../download_list/FolderDownloadConfirmation', () => ({
 
 describe('AddToDownloadCart', () => {
   const props: AddToDownloadCartProps = {
-    folderId: 'syn7248585',
+    entityId: 'syn7248585',
   }
 
   it('renders the button', () => {
-    render(<AddToDownloadCart {...props} />, { wrapper: createWrapper() })
-    fireEvent.click(screen.getByText(/add to download cart/i))
+    act(() => {
+      render(<AddToDownloadCart {...props} />, { wrapper: createWrapper() })
+    })
     expect(
       screen.getByRole('button', { name: /add to download cart/i }),
     ).toBeInTheDocument()
