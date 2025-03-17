@@ -12,11 +12,11 @@ import SynapseClient from '../../synapse-client'
 import { GetAppTwoTone } from '@mui/icons-material'
 
 export type AddToDownloadCartProps = {
-  folderId: string
+  entityId: string
 }
 
 export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
-  folderId,
+  entityId,
 }: AddToDownloadCartProps) => {
   const { accessToken } = useSynapseContext()
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -28,7 +28,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
         // will return 40X if not logged in
         const { concreteType: entityType } = await SynapseClient.getEntity(
           accessToken,
-          folderId,
+          entityId,
         )
         setEntityType(entityType)
       } catch (e) {
@@ -38,7 +38,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
       }
     }
     getEntity()
-  }, [folderId, accessToken])
+  }, [entityId, accessToken])
 
   const handleClose = () => {
     setShowConfirmation(false)
@@ -49,9 +49,9 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
   }
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: folderId,
+    entityId: entityId,
     query: {
-      sql: `select * from ${folderId}`,
+      sql: `select * from ${entityId}`,
       limit: DEFAULT_PAGE_SIZE,
       sort: undefined,
       additionalFilters: undefined,
@@ -62,7 +62,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
 
   function folderTsx() {
     return (
-      <FolderDownloadConfirmation folderId={folderId} fnClose={handleClose} />
+      <FolderDownloadConfirmation folderId={entityId} fnClose={handleClose} />
     )
   }
 
