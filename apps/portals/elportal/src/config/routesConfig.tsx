@@ -1,5 +1,4 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ELBetaLaunchBanner from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBetaLaunchBanner'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBrowseToolsPage'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -19,11 +18,7 @@ import { computationalSql } from './resources'
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: (
-      <App>
-        <ELBetaLaunchBanner />
-      </App>
-    ),
+    element: <App></App>,
     children: [
       ...sharedRoutes,
       {
