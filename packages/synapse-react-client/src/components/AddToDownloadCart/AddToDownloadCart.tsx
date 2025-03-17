@@ -14,13 +14,6 @@ export type AddToDownloadCartProps = {
   entityId: string
 }
 
-const FolderTsx: React.FC<{ entityId: string; fnClose: () => void }> = ({
-  entityId,
-  fnClose,
-}) => {
-  return <FolderDownloadConfirmation folderId={entityId} fnClose={fnClose} />
-}
-
 const TableTsx: React.FC<{
   entityId: string
 }> = ({ entityId }) => {
@@ -45,9 +38,7 @@ const TableTsx: React.FC<{
   )
 }
 
-export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
-  entityId,
-}: AddToDownloadCartProps) => {
+export function AddToDownloadCart({ entityId }: AddToDownloadCartProps) {
   const [showConfirmation, setShowConfirmation] = useState(false)
   const { data: entity, isLoading } = useGetEntity(entityId)
   const entityConcreteType = entity?.concreteType
@@ -60,10 +51,6 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
     setShowConfirmation(true)
   }
 
-  if (isLoading) {
-    return null
-  }
-
   return (
     <div>
       <div>
@@ -71,6 +58,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
           onClick={onAddClick}
           variant="contained"
           startIcon={<GetAppTwoTone />}
+          disabled={isLoading}
         >
           Add to Download Cart
         </Button>
@@ -78,7 +66,10 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
       <div>
         {showConfirmation &&
           (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
-            <FolderTsx entityId={entityId} fnClose={handleClose} />
+            <FolderDownloadConfirmation
+              folderId={entityId}
+              fnClose={handleClose}
+            />
           ) : (
             <TableTsx entityId={entityId} />
           ))}
