@@ -1,4 +1,3 @@
-import { MouseEvent } from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
@@ -20,15 +19,6 @@ export type DatasetV2_Props = {
 }
 
 const DatasetV2 = (props: DatasetV2_Props): JSX.Element => {
-  const handleLinkClick =
-    (link: string) => (event: MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault()
-      window.open(
-        `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`,
-        '_blank',
-      )
-    }
-
   const {
     data,
     schema,
