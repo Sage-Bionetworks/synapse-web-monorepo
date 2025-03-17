@@ -18,7 +18,7 @@ export type DatasetV2_Props = {
   queryVisualizationContext: QueryVisualizationContextType
 }
 
-const DatasetV2 = (props: DatasetV2_Props): JSX.Element => {
+export function DatasetV2(props: DatasetV2_Props): JSX.Element {
   const {
     data,
     schema,
