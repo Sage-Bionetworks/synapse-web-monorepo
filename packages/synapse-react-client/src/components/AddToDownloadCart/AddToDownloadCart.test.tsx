@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import { AddToDownloadCart, AddToDownloadCartProps } from './AddToDownloadCart'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import AddToDownloadCart, { AddToDownloadCartProps } from './AddToDownloadCart'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 jest.mock('../download_list/TableQueryDownloadConfirmation', () => ({
@@ -17,9 +17,7 @@ describe('AddToDownloadCart', () => {
   }
 
   it('renders the button', () => {
-    act(() => {
-      render(<AddToDownloadCart {...props} />, { wrapper: createWrapper() })
-    })
+    render(<AddToDownloadCart {...props} />, { wrapper: createWrapper() })
     expect(
       screen.getByRole('button', { name: /add to download cart/i }),
     ).toBeInTheDocument()
