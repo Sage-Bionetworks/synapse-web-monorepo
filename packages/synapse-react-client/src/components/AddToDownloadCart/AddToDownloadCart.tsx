@@ -10,6 +10,7 @@ import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import SynapseClient from '../../synapse-client'
 import { GetAppTwoTone } from '@mui/icons-material'
+import { useGetEntity } from '../../synapse-queries/'
 
 export type AddToDownloadCartProps = {
   entityId: string
@@ -18,27 +19,9 @@ export type AddToDownloadCartProps = {
 export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
   entityId,
 }: AddToDownloadCartProps) => {
-  const { accessToken } = useSynapseContext()
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [entityType, setEntityType] = useState<string | undefined>(undefined)
-
-  useEffect(() => {
-    const getEntity = async () => {
-      try {
-        // will return 40X if not logged in
-        const { concreteType: entityType } = await SynapseClient.getEntity(
-          accessToken,
-          entityId,
-        )
-        setEntityType(entityType)
-      } catch (e) {
-        console.error('Error on getting entity information = ', e)
-        // should this error out or just default to folder?
-        //setEntityType('org.sagebionetworks.repo.model.Folder');
-      }
-    }
-    getEntity()
-  }, [entityId, accessToken])
+  const { data: entity, isLoading } = useGetEntity(entityId)
+  const entityConcreteType = entity?.concreteType
 
   const handleClose = () => {
     setShowConfirmation(false)
@@ -76,6 +59,10 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
     )
   }
 
+  if (isLoading) {
+    return null
+  }
+
   return (
     <div>
       <Button
@@ -86,7 +73,7 @@ export const AddToDownloadCart: React.FC<AddToDownloadCartProps> = ({
         Add to Download Cart
       </Button>
       {showConfirmation &&
-        (entityType === 'org.sagebionetworks.repo.model.Folder'
+        (entityConcreteType === 'org.sagebionetworks.repo.model.Folder'
           ? folderTsx()
           : tableTsx())}
     </div>
