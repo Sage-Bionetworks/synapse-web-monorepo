@@ -1,3 +1,5 @@
+import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
+
 export const dataSql = 'SELECT * FROM syn52234677'
 export const dataOnStudiesPageSql =
   "SELECT * FROM syn52234677 WHERE `resourceType` = 'metadata'"
@@ -28,3 +30,5 @@ export const defaultSearchConfiguration = {
 export const cavaticaConnectAccountURL =
   'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'
 export const goalsV2Table = 'syn64618674'
+
+export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = ['cavatica']

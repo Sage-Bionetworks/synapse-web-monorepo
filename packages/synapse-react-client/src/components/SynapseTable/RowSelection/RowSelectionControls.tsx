@@ -1,23 +1,22 @@
-import { CustomControl } from '../TopLevelControls/TopLevelControls'
+import { GetAppTwoTone } from '@mui/icons-material'
 import { Button } from '@mui/material'
-import { RowSelectionUI } from './RowSelectionUI'
+import { Table } from '@sage-bionetworks/synapse-types'
+import { useQuery } from '@tanstack/react-query'
+import { useAtom } from 'jotai'
+import { useGetEntity } from '../../../synapse-queries'
+import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { Cavatica } from '../../../assets/icons/Cavatica'
-import { GetAppTwoTone } from '@mui/icons-material'
-import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
-import { useAtom } from 'jotai'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
-import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
-import { Table } from '@sage-bionetworks/synapse-types'
+import { CustomControl } from '../TopLevelControls/TopLevelControls'
+import { RowSelectionUI } from './RowSelectionUI'
 
-const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
+const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
+  'SendToAnalysisPlatformRowSelectionControlButton'
 
 export type RowSelectionControlsProps = {
-  showExportToCavatica?: boolean
   customControls?: CustomControl[]
   remount?: () => void
 }
@@ -29,7 +28,7 @@ export type RowSelectionControlsProps = {
  * @constructor
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
-  const { customControls = [], showExportToCavatica = false, remount } = props
+  const { customControls = [], remount } = props
   const {
     entityId,
     versionNumber,
@@ -40,8 +39,14 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
-  const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
-    useQueryVisualizationContext()
+  const {
+    setIsShowingExportToAnalysisPlatformModal,
+    setShowDownloadConfirmation,
+    enabledExternalAnalysisPlatforms,
+  } = useQueryVisualizationContext()
+
+  const showExportToAnalysisPlatformButton =
+    enabledExternalAnalysisPlatforms.length > 0
 
   const refresh = () => {
     // clear selection
@@ -80,16 +85,16 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               />
             )
           })}
-          {showExportToCavatica && (
+          {/* TODO: Generic button */}
+          {showExportToAnalysisPlatformButton && (
             <Button
               variant="outlined"
               onClick={() => {
-                setIsShowingExportToCavaticaModal(true)
+                setIsShowingExportToAnalysisPlatformModal(true)
               }}
-              startIcon={<Cavatica />}
-              id={SEND_TO_CAVATICA_BUTTON_ID}
+              id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
             >
-              Send to CAVATICA
+              Send to Analysis Platform
             </Button>
           )}
           {showAddToDownloadCart && (

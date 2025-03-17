@@ -44,14 +44,14 @@ const mockUseGetActionsRequiredForTableQuery = jest
   .mockReturnValue(getUseQuerySuccessMock([]))
 
 let showSendToCavaticaModal:
-  | QueryVisualizationContextType['setIsShowingExportToCavaticaModal']
+  | QueryVisualizationContextType['setIsShowingExportToAnalysisPlatformModal']
   | undefined
 let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
 function ContextReceiver(props: PropsWithChildren<any>) {
   setSelectedRows = useSetAtom(selectedRowsAtom)
   showSendToCavaticaModal =
-    useQueryVisualizationContext().setIsShowingExportToCavaticaModal
+    useQueryVisualizationContext().setIsShowingExportToAnalysisPlatformModal
   return <>{props.children}</>
 }
 

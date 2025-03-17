@@ -254,7 +254,7 @@ export const SendToCavatica: Story = {
     name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
   },
 }
 
@@ -380,7 +380,7 @@ export const Dataset: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     helpConfiguration: [
       {
         columnName: 'id',
@@ -439,7 +439,7 @@ export const MaterializedViewOfFiles: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'currentVersion',
@@ -461,7 +461,7 @@ export const TableWithClickWrap: Story = {
     name: 'Table with Click Wrap',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'currentVersion',
@@ -480,6 +480,6 @@ export const TableWithRange: Story = {
     name: 'Table with Range Types',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: false,
+    enabledExternalAnalysisPlatforms: [],
   },
 }

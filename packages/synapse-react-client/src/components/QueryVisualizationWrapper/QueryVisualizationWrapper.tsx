@@ -5,6 +5,7 @@ import { NoContentPlaceholderType } from '../SynapseTable'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
 import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
+import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -46,6 +47,7 @@ export type QueryVisualizationWrapperProps = {
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
   hasCustomPlots?: boolean
+  enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
 }
 
 /**
@@ -64,6 +66,7 @@ export function QueryVisualizationWrapper(
     helpConfiguration,
     hasCustomPlots = false,
     visibleColumnCount = Infinity,
+    enabledExternalAnalysisPlatforms = [],
   } = props
 
   const columnAliases = useMemo(
@@ -194,8 +197,9 @@ export function QueryVisualizationWrapper(
       getDisplayValue,
       getHelpText,
       NoContentPlaceholder,
-      isShowingExportToCavaticaModal,
-      setIsShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal: isShowingExportToCavaticaModal,
+      setIsShowingExportToAnalysisPlatformModal:
+        setIsShowingExportToCavaticaModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
@@ -208,6 +212,7 @@ export function QueryVisualizationWrapper(
       setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
+      enabledExternalAnalysisPlatforms,
     }),
     [
       NoContentPlaceholder,
@@ -228,6 +233,7 @@ export function QueryVisualizationWrapper(
       unitDescription,
       visibleColumns,
       hasCustomPlots,
+      enabledExternalAnalysisPlatforms,
     ],
   )
   /**

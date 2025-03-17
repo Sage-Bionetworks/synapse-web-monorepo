@@ -58,8 +58,8 @@ export default function SendToCavaticaConfirmationDialog(
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const {
-    isShowingExportToCavaticaModal,
-    setIsShowingExportToCavaticaModal,
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
     unitDescription,
   } = useQueryVisualizationContext()
   // The disclaimer should be shown every time. The checkbox state will be pre-filled based on localStorage.
@@ -70,8 +70,9 @@ export default function SendToCavaticaConfirmationDialog(
     useLocalStorageValue<boolean>(EXTERNAL_COMPUTE_ENV_DISCLAIMER)
 
   const showDisclaimer =
-    isShowingExportToCavaticaModal && isShowingDisclaimerPage
-  const showExport = isShowingExportToCavaticaModal && !isShowingDisclaimerPage
+    isShowingExportToAnalysisPlatformModal && isShowingDisclaimerPage
+  const showExport =
+    isShowingExportToAnalysisPlatformModal && !isShowingDisclaimerPage
 
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -111,7 +112,8 @@ export default function SendToCavaticaConfirmationDialog(
     queryMetadata?.columnModels as ColumnModel[],
     {
       throwOnError: true,
-      enabled: !!queryMetadata?.columnModels && isShowingExportToCavaticaModal,
+      enabled:
+        !!queryMetadata?.columnModels && isShowingExportToAnalysisPlatformModal,
     },
   )
 
@@ -180,7 +182,7 @@ export default function SendToCavaticaConfirmationDialog(
           setIsShowingDisclaimerPage(false)
         }}
         onCancel={() => {
-          setIsShowingExportToCavaticaModal(false)
+          setIsShowingExportToAnalysisPlatformModal(false)
         }}
         maxWidth="md"
       />
@@ -300,13 +302,13 @@ export default function SendToCavaticaConfirmationDialog(
             // on success, reset to the disclaimer page and close the modal
             () => {
               setIsShowingDisclaimerPage(true)
-              setIsShowingExportToCavaticaModal(false)
+              setIsShowingExportToAnalysisPlatformModal(false)
             },
           )
         }}
         onCancel={() => {
           setIsShowingDisclaimerPage(true)
-          setIsShowingExportToCavaticaModal(false)
+          setIsShowingExportToAnalysisPlatformModal(false)
         }}
         maxWidth="md"
       />

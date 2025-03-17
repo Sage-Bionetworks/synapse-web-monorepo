@@ -107,6 +107,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'additionalFiltersSessionStorageKey'
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
+    | 'enabledExternalAnalysisPlatforms'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -135,7 +136,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
   | 'searchConfiguration'
-  | 'showExportToCavatica'
+  | 'enabledExternalAnalysisPlatforms'
   | 'cavaticaConnectAccountURL'
   | 'customControls'
   | 'customPlots'
@@ -162,7 +163,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     hideQueryCount,
     hideSqlEditorControl,
     searchConfiguration,
-    showExportToCavatica = false,
     cavaticaConnectAccountURL,
     customControls,
     remount,
@@ -236,7 +236,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   hideFacetFilterControl={!isFaceted}
                   hideVisualizationsControl={!isFaceted}
                   hideSqlEditorControl={hideSqlEditorControl}
-                  showExportToCavatica={showExportToCavatica}
                   cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                   customControls={customControls}
                   remount={remount}

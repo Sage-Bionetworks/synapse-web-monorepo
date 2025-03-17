@@ -1,25 +1,21 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { useEffect } from 'react'
-import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
-import { getHandlers } from '../../mocks/msw/handlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
+import { getHandlers } from '../../../mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import {
   QueryVisualizationWrapper,
   useQueryVisualizationContext,
-} from '../QueryVisualizationWrapper/index'
-import { QueryWrapper } from '../QueryWrapper/index'
-import SendToCavaticaConfirmationDialog, {
-  SendToCavaticaConfirmationDialogProps,
-} from './SendToCavaticaConfirmationDialog'
+} from '../../QueryVisualizationWrapper/index'
+import { QueryWrapper } from '../../QueryWrapper/index'
+import ExportToAnalysisPlatformDialog from './ExportToAnalysisPlatformDialog'
 
-const meta: Meta<
-  SendToCavaticaConfirmationDialogProps & {
-    hasRowSelection: boolean
-    unitDescription: string
-  }
-> = {
-  title: 'Explore/Send to CAVATICA Dialog',
-  component: SendToCavaticaConfirmationDialog,
+const meta: Meta<{
+  hasRowSelection: boolean
+  unitDescription: string
+}> = {
+  title: 'Explore/Send to Analysis Platform Dialog',
+  component: ExportToAnalysisPlatformDialog,
   argTypes: {
     hasRowSelection: {
       description:
@@ -34,7 +30,7 @@ const meta: Meta<
   parameters: {
     design: {
       type: 'figma',
-      url: 'https://www.figma.com/file/3l3RjDnKnv8jms2XFR5BQu/Main?type=design&node-id=1909-58523',
+      url: 'https://www.figma.com/design/GWQwLZl82ZT75gYonOx8Qf/AMP-ALS-Knowledge-Portal-v1?node-id=234-115477&m=dev',
     },
     msw: {
       handlers: [
@@ -76,6 +72,11 @@ export const Demo: Story = {
           <QueryVisualizationWrapper
             unitDescription={args.unitDescription}
             isRowSelectionVisible={args.hasRowSelection}
+            enabledExternalAnalysisPlatforms={[
+              'cavatica',
+              'terra',
+              'adworkbench',
+            ]}
           >
             <ShowModalTrigger />
             <Story />
