@@ -199,7 +199,10 @@ export async function extractPlotDataArray(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
-    textposition: plotType === 'STACKED_HORIZONTAL_BAR' ? 'none' : 'inside',
+    textposition:
+      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'BAR'
+        ? 'none'
+        : 'inside',
     hovertemplate:
       plotType === 'PIE'
         ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'

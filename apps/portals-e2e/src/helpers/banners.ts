@@ -8,7 +8,6 @@ type DismissBannerConfig = {
   closeButtonLabel?: string
 }
 const dismissBannerConfig: Record<BannerType, DismissBannerConfig> = {
-  beta: { bodyText: 'beta version', closeButtonLabel: 'Close' },
   cookies: {
     bodyText: 'Our site uses cookies',
     closeButtonText: 'ALLOW ALL',
