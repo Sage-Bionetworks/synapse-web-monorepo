@@ -110,7 +110,9 @@ const CardMetadataDisplay = (props: CardMetadataDisplayProps) => {
                   },
                 }}
               >
-                <TableCell sx={{ padding: '7px 20px 7px 10px' }}>
+                <TableCell
+                  sx={{ padding: '7px 20px 7px 10px', width: '256px' }}
+                >
                   <Typography
                     sx={{
                       fontSize: '14px',
