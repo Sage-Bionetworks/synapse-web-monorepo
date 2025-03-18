@@ -1,17 +1,21 @@
-import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
-import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { hasResettableFilters as hasResettableFiltersUtil } from '../../utils/functions/queryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { Provider, useAtomValue, useSetAtom } from 'jotai'
+import { noop } from 'lodash-es'
+import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
+import { LockedColumn } from '../../utils'
+import { hasResettableFilters as hasResettableFiltersUtil } from '../../utils/functions/queryUtils'
+import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 import {
   CombineRangeFacetConfig,
   QueryContextProvider,
   QueryContextType,
 } from '../QueryContext/QueryContext'
-import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
-import { ConfirmationDialog } from '../ConfirmationDialog'
+import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
 import {
   hasSelectedRowsAtom,
   isRowSelectionUIFloatingAtom,
@@ -19,13 +23,9 @@ import {
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from './TableRowSelectionState'
-import { Provider, useAtomValue, useSetAtom } from 'jotai'
-import { LockedColumn } from '../../utils'
-import { noop } from 'lodash-es'
-import useOnQueryDataChange from './useOnQueryDataChange'
-import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
 import useComputeRowSelectionPrimaryKey from './useComputeRowSelectionPrimaryKey'
 import useHasFacetedSelectColumn from './useHasFacetedSelectColumn'
+import useOnQueryDataChange from './useOnQueryDataChange'
 
 export type QueryWrapperProps = PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
@@ -118,9 +118,7 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     queryMetadataQueryOptions,
   } = useTableQueryUseQueryOptions(lastQueryRequest, lockedColumn)
 
-  const hasFacetedSelectColumn = useHasFacetedSelectColumn(
-    queryMetadataQueryOptions,
-  )
+  const hasFacetedSelectColumn = useHasFacetedSelectColumn()
 
   const hasResettableFilters = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -140,7 +138,6 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
   const rowSelectionPrimaryKey = useComputeRowSelectionPrimaryKey({
     entityId,
     versionNumber,
-    queryMetadataQueryOptions,
     rowSelectionPrimaryKeyFromProps,
   })
   const setRowSelectionPrimaryKey = useSetAtom(rowSelectionPrimaryKeyAtom)

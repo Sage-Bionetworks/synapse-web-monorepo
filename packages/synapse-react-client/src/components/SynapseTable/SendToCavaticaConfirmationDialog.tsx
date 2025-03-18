@@ -11,14 +11,13 @@ import {
   ActionRequiredCount,
   ColumnModel,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useMemo, useState } from 'react'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
-import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import { useQueryContext } from '../QueryContext'
@@ -28,6 +27,7 @@ import {
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { SkeletonParagraph } from '../Skeleton'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
@@ -46,13 +46,12 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
-    queryMetadataQueryOptions,
     fileIdColumnName,
     fileVersionColumnName,
     fileNameColumnName,
   } = useQueryContext()
 
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)

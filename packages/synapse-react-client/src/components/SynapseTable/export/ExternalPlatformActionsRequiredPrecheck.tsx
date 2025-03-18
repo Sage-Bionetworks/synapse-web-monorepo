@@ -1,24 +1,17 @@
-import { ButtonProps, Stack, Typography } from '@mui/material'
-import {
-  ActionRequiredCount,
-  ColumnModel,
-} from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { useAtomValue } from 'jotai'
+import { ButtonProps, Typography } from '@mui/material'
 import { upperFirst } from 'lodash-es'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useGetActionsRequiredForTableQuery } from '../../../synapse-queries/entity/useActionsRequiredForTableQuery'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useExportTableQueryToAnalysisPlatform } from '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform'
 import { getPrimaryKeyINFilter } from '../../../utils/functions/QueryFilterUtils'
-import useTrackTransientListItems from '../../../utils/hooks/useTrackTransientListItems'
-import { ActionRequiredListItem } from '../../DownloadCart/ActionRequiredListItem'
+import { TableQueryActionsRequired } from '../../DownloadCart/TableQueryActionsRequired'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/index'
 import {
-  hasSelectedRowsAtom,
-  rowSelectionPrimaryKeyAtom,
-  selectedRowsAtom,
+  useHasSelectedRowsAtomValue,
+  useRowSelectionPrimaryKeyAtomValue,
+  useSelectedRowsAtomValue,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { SkeletonParagraph } from '../../Skeleton/index'
 import { getNumberOfResultsToInvokeActionCopy } from '../TopLevelControls/TopLevelControlsUtils'
 import {
@@ -58,18 +51,21 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
-    queryMetadataQueryOptions,
     fileIdColumnName,
     fileVersionColumnName,
     fileNameColumnName,
   } = useQueryContext()
 
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
-  const selectedRows = useAtomValue(selectedRowsAtom)
-  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
-  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+  const { data: queryMetadata, isLoading } = useGetQueryMetadata()
+  const selectedRows = useSelectedRowsAtomValue()
+  const rowSelectionPrimaryKey = useRowSelectionPrimaryKeyAtomValue()
+  const hasSelectedRows = useHasSelectedRowsAtomValue()
 
   const { unitDescription } = useQueryVisualizationContext()
+
+  const [numberOfRequiredActions, setNumberOfRequiredActions] = useState<
+    number | undefined
+  >(undefined)
 
   const queryFilteredBySelection = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -105,17 +101,6 @@ export default function ExternalPlatformActionsRequiredPrecheck(
       fileNameColumnName,
     })
 
-  const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(
-    queryFilteredBySelection,
-    queryMetadata?.columnModels as ColumnModel[],
-    {
-      throwOnError: true,
-      enabled: !!queryMetadata?.columnModels,
-    },
-  )
-
-  const allCompleteAndIncompleteActions = useTrackTransientListItems(actions)
-
   const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
     hasResettableFilters,
     hasSelectedRows,
@@ -143,19 +128,21 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     onConfirmButtonPropsChange({
       id: getConfirmButtonId(selectedPlatform),
       children: confirmButtonText,
-      disabled: isLoading || (actions && actions.length > 0),
+      disabled: isLoading || numberOfRequiredActions !== 0,
       onClick: () => {
         void onConfirmButtonClick()
       },
     })
   }, [
-    actions,
+    numberOfRequiredActions,
     confirmButtonText,
     isLoading,
     onConfirmButtonClick,
     onConfirmButtonPropsChange,
     selectedPlatform,
   ])
+
+  if (isLoading) return <SkeletonParagraph numRows={4} />
 
   return (
     <>
@@ -167,37 +154,12 @@ export default function ExternalPlatformActionsRequiredPrecheck(
         take the following actions before we can send this data to{' '}
         {platform.name}.
       </Typography>
-      {isLoading && <SkeletonParagraph numRows={4} />}
-      {!isLoading && (
-        <Stack gap={3}>
-          {allCompleteAndIncompleteActions &&
-            allCompleteAndIncompleteActions.length > 0 &&
-            allCompleteAndIncompleteActions.map(
-              (item: ActionRequiredCount, index) => {
-                if (item) {
-                  return (
-                    <ActionRequiredListItem
-                      key={index}
-                      action={item.action}
-                      count={item.count}
-                      onViewSharingSettingsClicked={
-                        onViewSharingSettingsClicked
-                      }
-                    />
-                  )
-                } else return false
-              },
-            )}
-          {allCompleteAndIncompleteActions.length == 0 && (
-            <Typography
-              variant={'body1Italic'}
-              sx={{ p: 4, textAlign: 'center', color: 'grey.700' }}
-            >
-              All requirements have been met. No actions are required.
-            </Typography>
-          )}
-        </Stack>
-      )}
+      <TableQueryActionsRequired
+        queryBundleRequest={queryFilteredBySelection}
+        columnModels={queryMetadata!.columnModels!}
+        onNumberOfRequiredActionsChanged={setNumberOfRequiredActions}
+        onViewSharingSettingsClicked={onViewSharingSettingsClicked}
+      />
       <Typography variant="body1" sx={{ fontWeight: 700, marginTop: '15px' }}>
         When completed, click “Send to {platform.name}“ to finish the process
         outside this application. You will be redirected to {platform.name}.

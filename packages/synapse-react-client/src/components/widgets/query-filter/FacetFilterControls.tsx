@@ -1,10 +1,3 @@
-import { useState, Suspense, useCallback, useMemo } from 'react'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
-import {
-  facetObjectMatchesDefinition,
-  getCorrespondingColumnForFacet,
-  isSingleNotSetValue,
-} from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
   FacetColumnResultRange,
@@ -12,21 +5,28 @@ import {
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import { groupBy, noop, sortBy } from 'lodash-es'
+import { Suspense, useCallback, useMemo, useState } from 'react'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import {
+  facetObjectMatchesDefinition,
+  getCorrespondingColumnForFacet,
+  isSingleNotSetValue,
+} from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
+import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 import {
   EnumFacetFilter,
   FacetValueSortConfig,
 } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
-import { RangeFacetFilter } from './RangeFacetFilter'
-import { groupBy, noop, sortBy } from 'lodash-es'
-import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 import { FacetFilterHeader } from './FacetFilterHeader'
-import JsonColumnFacetFilters from './JsonColumnFacetFilters'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { getDefaultShownFacetFilters } from './FacetFilterUtils'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { FacetFilterControlsSkeleton } from './FacetFilterSkeleton'
+import { getDefaultShownFacetFilters } from './FacetFilterUtils'
+import JsonColumnFacetFilters from './JsonColumnFacetFilters'
+import { RangeFacetFilter } from './RangeFacetFilter'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
@@ -108,17 +108,13 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     facetValueSortConfigs,
     initialExpandedFacetControls,
   } = props
-  const {
-    getCurrentQueryRequest,
-    combineRangeFacetConfig,
-    queryMetadataQueryOptions,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const lastRequest = useMemo(
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
 
   const facets = queryMetadata
     .facets!.filter(

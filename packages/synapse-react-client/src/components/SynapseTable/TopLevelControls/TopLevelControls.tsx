@@ -1,6 +1,4 @@
-import { cloneDeep } from 'lodash-es'
-import { Fragment, ReactNode, useMemo, useState } from 'react'
-import { SQL_EDITOR } from '../../../utils/SynapseConstants'
+import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import {
   Query,
   QueryBundleRequest,
@@ -8,29 +6,31 @@ import {
   Row,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useQueryContext } from '../../QueryContext'
-import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import { ColumnSelection, DownloadOptions } from '../table-top'
-import { Button, Divider, Tooltip, Typography } from '@mui/material'
-import QueryCount from '../../QueryCount/QueryCount'
-import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
-import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
-import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
-import {
-  getNumberOfResultsToInvokeAction,
-  getNumberOfResultsToInvokeActionCopy,
-} from './TopLevelControlsUtils'
-import IconSvg from '../../IconSvg'
 import { useAtomValue } from 'jotai'
+import { cloneDeep } from 'lodash-es'
+import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { useGetEntity } from '../../../synapse-queries'
+import { SQL_EDITOR } from '../../../utils/SynapseConstants'
+import IconSvg from '../../IconSvg'
+import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
+import { useQueryContext } from '../../QueryContext'
+import QueryCount from '../../QueryCount/QueryCount'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   hasSelectedRowsAtom,
   isRowSelectionVisibleAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
+import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
+import { ColumnSelection, DownloadOptions } from '../table-top'
 import CustomControlButton from './CustomControlButton'
-import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
+import {
+  getNumberOfResultsToInvokeAction,
+  getNumberOfResultsToInvokeActionCopy,
+} from './TopLevelControlsUtils'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -91,10 +91,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     getInitQueryRequest,
     hasResettableFilters,
     getCurrentQueryRequest,
-    queryMetadataQueryOptions,
   } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const { lockedColumn } = useQueryContext()
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
   const selectedRows = useAtomValue(selectedRowsAtom)
