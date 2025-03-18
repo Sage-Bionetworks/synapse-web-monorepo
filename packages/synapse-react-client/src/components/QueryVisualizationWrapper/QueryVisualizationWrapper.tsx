@@ -7,9 +7,6 @@ import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveSta
 import { useQueryContext } from '../QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { NoContentPlaceholderType } from '../SynapseTable'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
-import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
-import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
 import {
   QueryVisualizationContextProvider,

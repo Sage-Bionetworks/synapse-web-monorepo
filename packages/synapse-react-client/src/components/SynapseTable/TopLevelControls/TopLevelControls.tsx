@@ -14,8 +14,6 @@ import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import IconSvg from '../../IconSvg'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { useQueryContext } from '../../QueryContext'
-import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../../QueryCount/QueryCount'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
