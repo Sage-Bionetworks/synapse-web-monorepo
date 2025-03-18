@@ -1,1 +1,1 @@
-export * from './AddToDownloadCart'
+export * from './AddToDownloadCartButton'

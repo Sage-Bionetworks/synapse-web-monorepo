@@ -5,7 +5,7 @@ import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { AddToDownloadCart } from '../AddToDownloadCart'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 
 export type DatasetV2_Props = {
@@ -98,7 +98,7 @@ export function DatasetV2(props: DatasetV2_Props): JSX.Element {
           <p className="SRC-description-text">{summary}</p>
         </div>
         <div className="SRC-cardAction">
-          {synapseLink && <AddToDownloadCart entityId={synapseLinkId} />}
+          {synapseLink && <AddToDownloadCartButton entityId={synapseLinkId} />}
         </div>
         <div className="SRC-cardAnnotations">
           <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
