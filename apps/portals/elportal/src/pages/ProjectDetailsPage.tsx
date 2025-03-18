@@ -2,7 +2,10 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnMultiValueFunction,
+} from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
 import {
   computationalSql,
@@ -58,6 +61,7 @@ export default function ProjectDetailsPage() {
                       {...publicationCardProps}
                       sql={publicationsSql}
                       searchParams={{ grant: value! }}
+                      sqlOperator={ColumnMultiValueFunction.HAS}
                     />
                   )}
                 </DetailsPageContextConsumer>
@@ -74,6 +78,7 @@ export default function ProjectDetailsPage() {
                       limit={6}
                       type={SynapseConstants.MEDIUM_USER_CARD}
                       searchParams={{ grant: value! }}
+                      sqlOperator={ColumnMultiValueFunction.HAS}
                     />
                   )}
                 </DetailsPageContextConsumer>
