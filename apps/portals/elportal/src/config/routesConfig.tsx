@@ -93,20 +93,22 @@ const routes: RouteObject[] = [
                 loadingSkeletonRowCount={10}
               />
             </SectionLayout>
-            {/* <SectionLayout title={'Aging PheWAS'}>
+            {
+              /* <SectionLayout title={'Aging PheWAS'}>
             <Markdown
                 ownerId="syn27229419"
                 wikiId="622480"
                 loadingSkeletonRowCount={10}
               />
-          </SectionLayout>
-          <SectionLayout title={'LLFS'}>
-            <Markdown
-                ownerId="syn27229419"
-                wikiId="622486"
-                loadingSkeletonRowCount={10}
-              />
-          </SectionLayout> */}
+          </SectionLayout>*/
+              <SectionLayout title={'LLFS'}>
+                <Markdown
+                  ownerId="syn27229419"
+                  wikiId="622486"
+                  loadingSkeletonRowCount={10}
+                />
+              </SectionLayout>
+            }
           </>
         ),
       },
