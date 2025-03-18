@@ -51,6 +51,26 @@ export const ProgramsDemo: Story = {
   },
 }
 
+export const B2AIDemo: Story = {
+  args: {
+    entityId: 'syn65484830',
+    rgbIndex: 1,
+    titleColumnName: 'title',
+    descriptionColumnName: 'description',
+    ctaButtonTextColumnName: 'buttonText',
+    ctaButtonURLColumnName: 'buttonUrl',
+    titleIconFileHandleColumnName: undefined,
+    headerImageFileHandleColumnName: 'headerImage',
+    cardDeckType: 'b2ai',
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title',
+    },
+  },
+}
+
 export const TestOptionalArgsDemo: Story = {
   args: {
     entityId: 'syn65414596',

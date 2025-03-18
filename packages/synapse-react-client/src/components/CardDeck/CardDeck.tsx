@@ -23,6 +23,7 @@ export type CardDeckProps = {
   ctaButtonURLColumnName: string
   titleIconFileHandleColumnName?: string
   headerImageFileHandleColumnName?: string
+  cardDeckType?: string
   linkConfig: CardLink
 }
 
@@ -34,6 +35,7 @@ export type CardDeckDataProps = {
   color: string
   titleIconFileHandleAssociation?: FileHandleAssociation
   headerImageFileHandleAssociation?: FileHandleAssociation
+  cardDeckType?: string
 }
 
 export function CardDeck(props: CardDeckProps) {
@@ -45,6 +47,7 @@ export function CardDeck(props: CardDeckProps) {
     ctaButtonURLColumnName,
     titleIconFileHandleColumnName,
     headerImageFileHandleColumnName,
+    cardDeckType,
     linkConfig,
     rgbIndex,
   } = props
@@ -128,6 +131,7 @@ export function CardDeck(props: CardDeckProps) {
           color,
           titleIconFileHandleAssociation,
           headerImageFileHandleAssociation,
+          cardDeckType,
         }
         return showDesktop ? (
           <CardDeckDesktop {...CardDeckDataProps} />

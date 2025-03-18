@@ -15,10 +15,12 @@
     align-items: flex-start;
     padding-bottom: 50px;
   }
+
   &__Card {
     p {
       margin: 0px;
     }
+
     width: 23%;
     display: flex;
     min-height: 300px;
@@ -26,10 +28,23 @@
     box-shadow: SRC.$box-shadow-soft;
     background: #ffffff;
     margin: 5px;
-    &__header__image img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
+
+    &--b2ai {
+      box-shadow: none;
+    }
+
+    &__header__image {
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      &--b2ai {
+        img {
+          border-radius: 15px;
+        }
+      }
     }
 
     &__header {
@@ -38,6 +53,11 @@
       background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
+      background: #ffffff;
+
+      &--b2ai {
+        background: white;
+      }
 
       &__icon img {
         width: 50px;
@@ -61,6 +81,10 @@
         &__title {
           font-size: 18px;
           font-weight: bold;
+
+          &--b2ai {
+            color: #395979;
+          }
         }
 
         &__link a {
@@ -68,13 +92,17 @@
         }
       }
     }
+
     &__summary {
       flex: 1;
       @extend %side-padding;
-      padding-top: 20px;
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
+
+      p {
+        margin-bottom: 40px;
+      }
     }
   }
 

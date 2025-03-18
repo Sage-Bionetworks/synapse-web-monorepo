@@ -1,6 +1,7 @@
 import { CardDeckDataProps } from './CardDeck'
 import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import classNames from 'classnames'
 
 export default function CardDeckDesktop({
   title,
@@ -9,11 +10,22 @@ export default function CardDeckDesktop({
   ctaButtonURL,
   titleIconFileHandleAssociation,
   headerImageFileHandleAssociation,
+  cardDeckType,
   color,
 }: CardDeckDataProps) {
   return (
-    <div className="CardDeck__Card">
-      <div className="CardDeck__Card__header__image">
+    <div
+      className={classNames(
+        'CardDeck__Card',
+        cardDeckType && `CardDeck__Card--${cardDeckType}`,
+      )}
+    >
+      <div
+        className={classNames(
+          'CardDeck__Card__header__image',
+          cardDeckType && `CardDeck__Card__header__image--${cardDeckType}`,
+        )}
+      >
         {headerImageFileHandleAssociation && (
           <ImageFileHandle
             fileHandleAssociation={headerImageFileHandleAssociation}
@@ -21,8 +33,10 @@ export default function CardDeckDesktop({
         )}
       </div>
       <div
-        className="CardDeck__Card__header"
-        style={{ backgroundColor: color.replace(')', ',.05)') }}
+        className={classNames(
+          'CardDeck__Card__header',
+          cardDeckType && `CardDeck__Card__header--${cardDeckType}`,
+        )}
       >
         <div className="CardDeck__Card__header__icon">
           {titleIconFileHandleAssociation && (
@@ -32,7 +46,16 @@ export default function CardDeckDesktop({
           )}
         </div>
         <div className="CardDeck__Card__header__info">
-          <span className="CardDeck__Card__header__info__title"> {title} </span>
+          <span
+            className={classNames(
+              'CardDeck__Card__header__info__title',
+              cardDeckType &&
+                `CardDeck__Card__header__info__title--${cardDeckType}`,
+            )}
+          >
+            {' '}
+            {title}{' '}
+          </span>
           {/* {link && (
             <p className="Programs__Card__header__info__link">
               <a
@@ -53,7 +76,17 @@ export default function CardDeckDesktop({
           color="secondary"
           variant="contained"
           href={ctaButtonURL}
-          sx={{ width: '120px', marginLeft: 0 }}
+          sx={{
+            width: '120px',
+            marginLeft: 0,
+            ...(cardDeckType === 'b2ai' && {
+              width: '200px',
+              fontSize: '14px',
+              backgroundColor: 'white',
+              boxShadow: 'none',
+              color: '#395979',
+            }),
+          }}
         >
           {ctaButtonText}
         </LargeButton>
