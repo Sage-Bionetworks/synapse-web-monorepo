@@ -263,6 +263,28 @@ export default function HomePage() {
                   ],
                 },
               },
+              {
+                title: 'Cross Species Studies',
+                icon: 'tree_horizontal',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title: 'G_M-OSLAMS',
+                      description:
+                        'Gladyshev Multi-omic Signatures of Longevity across Avian and Mammalian Species',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'G_M-OSLAMS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=G_M-OSLAMS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
+                },
+              },
             ]}
           />
         </SectionLayout>

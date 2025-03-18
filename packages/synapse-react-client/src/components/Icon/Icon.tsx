@@ -45,6 +45,7 @@ import {
   SQL_EDITOR,
   CONTRIBUTOR,
   EXTERNAL_RESOURCE,
+  TREE_HORIZONTAL,
 } from '../../utils/SynapseConstants'
 
 import { ReactComponent as Data2Svg } from '../../assets/icons/Data2.svg'
@@ -58,6 +59,7 @@ import { ReactComponent as translationalSvg } from '../../assets/icons/translati
 import { ReactComponent as chart2Svg } from '../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../assets/icons/file.svg'
 import { ReactComponent as institutionSvg } from '../../assets/icons/institution.svg'
+import { ReactComponent as treeHorizontalSvg } from '../../assets/icons/tree_horizontal.svg'
 import {
   Challenge,
   Program,
@@ -144,6 +146,7 @@ const defaultIcons = {
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
   [CONTRIBUTOR]: institutionSvg,
+  [TREE_HORIZONTAL]: treeHorizontalSvg,
   [EASY_DIFFICULTY]:
     'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
   [MEDIUM_DIFFICULTY]:
