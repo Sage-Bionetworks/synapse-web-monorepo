@@ -13,7 +13,6 @@ import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import Ecosystem from './csbc-home-page/Ecosystem'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
-import ELBetaLaunchBanner from './elportal/ELBetaLaunchBanner'
 import ELBrowseToolsPage from './elportal/ELBrowseToolsPage'
 import ELContributeYourData from './elportal/ELContributeYourData'
 import ELGettingStarted from './elportal/ELGettingStarted'
@@ -51,7 +50,6 @@ const PortalComponents = {
   Redirect,
   NFBrowseToolsPage,
   ELBrowseToolsPage,
-  ELBetaLaunchBanner,
   ELContributeYourData,
   ELGettingStarted,
   ELSupportedByNIH,

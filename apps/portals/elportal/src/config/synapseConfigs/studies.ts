@@ -39,6 +39,7 @@ export const studyCardConfiguration: CardConfiguration = {
     description: 'studyAbstract',
     secondaryLabels: [
       'dataStatus',
+      'dataRestriction',
       'dataTypeAll',
       'studyFocus',
       'Species',

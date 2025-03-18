@@ -3,7 +3,7 @@ import { RouteObject } from 'react-router'
 import cckpConfigs from 'src/config/synapseConfigs'
 import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
 
-export const searchPageTabs: PortalSearchTabConfig[] = [
+export const searchPageTabs = [
   {
     title: 'Grants',
     path: 'Grants',
@@ -28,7 +28,24 @@ export const searchPageTabs: PortalSearchTabConfig[] = [
     title: 'Educational Resources',
     path: 'EducationalResources',
   },
-]
+] as const satisfies PortalSearchTabConfig[]
+
+type CCKPSearchRole =
+  | 'researcher'
+  | 'principalInvestigator'
+  | 'funder'
+  | 'student'
+  | 'patientAdvocate'
+const roleMapping: Record<
+  CCKPSearchRole,
+  (typeof searchPageTabs)[number]['title']
+> = {
+  researcher: 'Datasets',
+  principalInvestigator: 'Grants',
+  funder: 'Grants',
+  student: 'Educational Resources',
+  patientAdvocate: 'Educational Resources',
+}
 
 const portalSearchPageConfigs = [
   cckpConfigs.grants,
@@ -47,6 +64,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={undefined}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -57,6 +75,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={0}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -67,6 +86,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={1}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -77,6 +97,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={2}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -87,6 +108,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={3}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -97,6 +119,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={4}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
@@ -107,6 +130,7 @@ export const searchPageChildRoutes: RouteObject[] = [
         selectedTabIndex={5}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
+        roleMapping={roleMapping}
       />
     ),
   },
