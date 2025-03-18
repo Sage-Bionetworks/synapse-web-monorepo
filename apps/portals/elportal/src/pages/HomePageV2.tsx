@@ -271,9 +271,10 @@ export default function HomePage() {
                 plotsConfig: {
                   configs: [
                     {
-                      title: 'G_M-OSLAMS',
+                      title:
+                        'Multi-Omic Signatures of Longevity Across Avian and Mammalian Species',
                       description:
-                        'Gladyshev Multi-omic Signatures of Longevity across Avian and Mammalian Species',
+                        'The Gladyshev Multi-Omic Signatures of Longevity Across Avian and Mammalian Species (G_M-OSLAMS) study analyzes transcriptomic, proteomic, and metabolomic data across multiple avian tissues to identify key gene expression biomarkers linked to lifespan. Comparing these longevity signatures to those previously identified in mammals, the research aims to uncover universal and species-specific pathways regulating lifespan across vertebrates.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'Study',
                       selectFacetColumnValue: 'G_M-OSLAMS',
