@@ -4,9 +4,9 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
+  CardMetadataDisplay,
   ErrorPage,
   GenericCardSchema,
   SynapseConstants,
@@ -14,6 +14,14 @@ import {
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
+
+export const dataColumnAliases = {
+  Organizations: 'Organization(s)',
+  Is_Open: 'Is Open?',
+  Registration: 'Requires Registration?',
+  Collections: 'Collection(s)',
+  Data_Topic: 'Data Topic(s)',
+}
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.GENERIC_CARD,
@@ -28,7 +36,26 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'About The Standard',
     title: 'About The Standard',
     element: (
-      <MarkdownSynapseFromColumnData columnName={'studyDescriptionLocation'} />
+      <DetailsPageContextConsumer columnName={'Name'}>
+        {({ value }) => (
+          <CardMetadataDisplay
+            sql={dataSql}
+            labels={[
+              'Name',
+              'Collections',
+              'Organizations',
+              'Data_Topic',
+              'Acronym',
+              'Is_Open',
+              'Registration',
+            ]}
+            columnAliases={dataColumnAliases}
+            searchParams={{
+              Name: value!,
+            }}
+          />
+        )}
+      </DetailsPageContextConsumer>
     ),
   },
   {
