@@ -1,6 +1,6 @@
 import { Row, SelectColumn } from '@sage-bionetworks/synapse-types'
+import { atom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
-import { atom } from 'jotai'
 
 export function getRowSelectionEqualityComparator(
   row: Row,
@@ -50,9 +50,22 @@ export const isRowSelectionUIFloatingAtom = atom<boolean>(true)
  */
 export const rowSelectionPrimaryKeyAtom = atom<string[] | undefined>(undefined)
 /**
+ * A unique key that identifies a row. If two selected rows have the same key values, then they are considered equal and would both be selected/deselected together.
+ */
+export function useRowSelectionPrimaryKeyAtomValue() {
+  return useAtomValue(rowSelectionPrimaryKeyAtom)
+}
+
+/**
  * The set of selected rows
  */
 export const selectedRowsAtom = atom<Row[]>([])
+/**
+ * The set of selected rows
+ */
+export function useSelectedRowsAtomValue() {
+  return useAtomValue(selectedRowsAtom)
+}
 
 /**
  * Can be used to determine if a row is selected. If a `rowSelectionPrimaryKey` is defined, then the row is selected if it has a matching PK.
@@ -74,3 +87,9 @@ export const isRowSelectedAtom = atom(
  * Whether rows are currently selected
  */
 export const hasSelectedRowsAtom = atom(get => get(selectedRowsAtom).length > 0)
+/**
+ * Whether rows are currently selected
+ */
+export function useHasSelectedRowsAtomValue() {
+  return useAtomValue(hasSelectedRowsAtom)
+}

@@ -1,4 +1,3 @@
-import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnModel,
   ColumnMultiValueFunctionQueryFilter,
@@ -8,13 +7,8 @@ import {
   QueryFilter,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import SelectionCriteriaPill, {
-  SelectionCriteriaPillProps,
-} from './SelectionCriteriaPill'
-import {
-  QueryVisualizationContextType,
-  useQueryVisualizationContext,
-} from '../../QueryVisualizationWrapper'
+import pluralize from 'pluralize'
+import { ReadonlyDeep } from 'type-fest'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
@@ -23,13 +17,19 @@ import {
   isTextMatchesQueryFilter,
   LockedColumn,
 } from '../../../utils'
-import pluralize from 'pluralize'
-import { ReadonlyDeep } from 'type-fest'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
-import { useQuery } from '@tanstack/react-query'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from '../../QueryVisualizationWrapper'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
+import SelectionCriteriaPill, {
+  SelectionCriteriaPillProps,
+} from './SelectionCriteriaPill'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -278,8 +278,8 @@ function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const lockedColumn = queryContext.lockedColumn
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { currentQueryRequest, queryMetadataQueryOptions } = queryContext
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { currentQueryRequest } = queryContext
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   const queryFilterPillProps = getPillPropsFromQueryFilters(
     currentQueryRequest.query?.additionalFilters ?? [],

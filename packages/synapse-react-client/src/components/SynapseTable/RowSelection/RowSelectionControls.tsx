@@ -30,14 +30,9 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const {
-    entityId,
-    versionNumber,
-    getCurrentQueryRequest,
-    queryMetadataQueryOptions,
-  } = useQueryContext()
+  const { entityId, versionNumber, getCurrentQueryRequest } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
