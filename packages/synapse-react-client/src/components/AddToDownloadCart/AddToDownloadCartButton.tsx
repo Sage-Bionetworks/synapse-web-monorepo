@@ -10,7 +10,7 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { useGetEntity } from '../../synapse-queries/'
 
-export type AddToDownloadCartProps = {
+export type AddToDownloadCartButtonProps = {
   entityId: string
 }
 
@@ -38,7 +38,9 @@ const TableTsx: React.FC<{
   )
 }
 
-export function AddToDownloadCart({ entityId }: AddToDownloadCartProps) {
+export function AddToDownloadCartButton({
+  entityId,
+}: AddToDownloadCartButtonProps) {
   const [showConfirmation, setShowConfirmation] = useState(false)
   const { data: entity, isLoading } = useGetEntity(entityId)
   const entityConcreteType = entity?.concreteType
@@ -78,4 +80,4 @@ export function AddToDownloadCart({ entityId }: AddToDownloadCartProps) {
   )
 }
 
-export default AddToDownloadCart
+export default AddToDownloadCartButton
