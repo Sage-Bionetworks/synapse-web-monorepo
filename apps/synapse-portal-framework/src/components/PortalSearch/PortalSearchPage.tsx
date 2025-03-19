@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { Outlet, useLocation, useNavigate } from 'react-router'
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useCallback, useMemo, useState } from 'react'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
@@ -15,6 +15,7 @@ export type PortalSearchPageProps = {
   selectedTabIndex?: number
   configs: QueryWrapperPlotNavProps[]
   searchPageTabs: PortalSearchTabConfig[]
+  roleMapping?: Record<string, string>
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
@@ -26,13 +27,15 @@ function getQueryCount(queryResultBundleJSON: string) {
 }
 
 export function PortalSearchPage(props: PortalSearchPageProps) {
-  const { selectedTabIndex, configs, searchPageTabs } = props
+  const { selectedTabIndex, configs, searchPageTabs, roleMapping } = props
   // Note: Files does not currently enable FTS
   const [searchPageTabsState, setSearchPageTabsState] = useState<
     PortalSearchTabConfig[]
   >([...searchPageTabs])
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const role = searchParams.get('FTS_SEARCH_ROLE')
   const onQueryResultBundleChange = useCallback(
     (
       tabIndex: number,
@@ -47,16 +50,28 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
       const allCountsSet = searchPageTabs.every(tab => tab.count !== undefined)
       if (selectedTabIndex == undefined && allCountsSet) {
-        // Navigate to the tab that has the highest count.
-        // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
-        const maxCountTab = searchPageTabs.reduce(
-          (max, tab) => (tab.count! > max.count! ? tab : max),
-          searchPageTabs[0],
-        )
-        navigate({
-          pathname: `/Search/${maxCountTab.path}`,
-          search: location.search,
-        })
+        const roleTab =
+          role &&
+          roleMapping &&
+          searchPageTabs.find(tab => tab.title === roleMapping[role])
+        // If a role is selected, navigate to the corresponding tab from the roleMapping unless that corresponding tab has a count of 0.
+        if (roleTab && roleTab.count) {
+          navigate({
+            pathname: `/Search/${roleTab.path}`,
+            search: location.search,
+          })
+        } else {
+          // Navigate to the tab that has the highest count.
+          // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
+          const maxCountTab = searchPageTabs.reduce(
+            (max, tab) => (tab.count! > max.count! ? tab : max),
+            searchPageTabs[0],
+          )
+          navigate({
+            pathname: `/Search/${maxCountTab.path}`,
+            search: location.search,
+          })
+        }
       }
     },
     [searchPageTabsState, navigate, location.search],

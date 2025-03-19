@@ -4,8 +4,17 @@ import studies from './studies'
 import tools from './tools'
 import initiatives from './initiatives'
 import hackathons from './hackathons'
+import files from './files'
 
-export { studies, datasets, publications, tools, initiatives, hackathons }
+export {
+  studies,
+  datasets,
+  publications,
+  tools,
+  initiatives,
+  hackathons,
+  files,
+}
 export default {
   studies,
   datasets,
@@ -13,4 +22,5 @@ export default {
   tools,
   initiatives,
   hackathons,
+  files,
 }
