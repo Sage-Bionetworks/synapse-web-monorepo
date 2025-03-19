@@ -23,7 +23,7 @@ export const CCPKResourcesDemo: Story = {
     ctaButtonURLColumnName: 'ctaButtonURL',
     titleIconFileHandleColumnName: 'icon',
     headerImageFileHandleColumnName: 'headerImage',
-    cardDeckType: 'ccpk',
+    cardDeckType: 'cckp',
     linkConfig: {
       isMarkdown: false,
       baseURL: 'Explore/CardDeck/DetailsPage',
