@@ -87,13 +87,13 @@ export function SynapseTrendingProjectItem({
     <div
       onClick={() => {
         if (altLink) {
-          window.open(altLink, '_target')
+          window.open(altLink, '_blank')
         } else {
           window.open(
             `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}Synapse:${entityId!}`,
-            '_target',
+            '_blank',
           )
         }
       }}
