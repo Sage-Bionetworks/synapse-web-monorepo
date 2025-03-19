@@ -324,6 +324,7 @@ export default function HomePage() {
         title="Subscribe to the ELITE Portal Newsletter"
         subtitle="Get the latest on data releases, events, community highlights, and more"
         buttonText="Subscribe Now"
+        buttonLink="https://news.eliteportal.org/elite-portal-newsletter/"
       />
     </>
   )

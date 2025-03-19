@@ -1,3 +1,4 @@
 import CTASection from './CTASection'
-export { CTASection }
+import type { CTASectionProps } from './CTASection'
+export { CTASection, CTASectionProps }
 export default CTASection

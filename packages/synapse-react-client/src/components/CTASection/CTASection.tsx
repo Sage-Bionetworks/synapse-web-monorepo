@@ -1,5 +1,13 @@
 import { AddAlertTwoTone } from '@mui/icons-material'
-import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Stack,
+  Typography,
+  useTheme,
+  Link as MuiLink,
+} from '@mui/material'
+import { Link as RouterLink } from 'react-router'
 import Illustrations from '../../assets/illustrations'
 
 export type CTASectionProps = {
@@ -23,6 +31,8 @@ const CTASection = ({
   buttonLink,
 }: CTASectionProps) => {
   const theme = useTheme()
+  const isExternalLink =
+    buttonLink?.startsWith('http://') || buttonLink?.startsWith('https://')
   return (
     <>
       <Stack
@@ -30,6 +40,7 @@ const CTASection = ({
           padding: { xs: '40px', lg: '80px' },
           justifyContent: 'center',
           alignItems: 'center',
+          textAlign: 'center',
           background: `linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), ${theme.palette.primary.main}`,
           position: 'relative',
           overflow: 'hidden',
@@ -40,8 +51,10 @@ const CTASection = ({
             ...blobStyles,
             left: 0,
             [theme.breakpoints.down('lg')]: {
-              width: '250px',
-              top: 5,
+              svg: {
+                width: '270px',
+                height: '100%',
+              },
             },
           })}
         >
@@ -53,8 +66,10 @@ const CTASection = ({
             right: 0,
             top: 50,
             [theme.breakpoints.down('lg')]: {
-              width: '420px',
-              top: 65,
+              svg: {
+                width: '300px',
+                height: '100%',
+              },
             },
           })}
         >
@@ -83,10 +98,17 @@ const CTASection = ({
             {subtitle}
           </Typography>
         )}
-        {buttonText && (
+        {buttonText && buttonLink && (
           <Button
             variant="contained"
-            href="https://news.eliteportal.org/elite-portal-newsletter/"
+            component={isExternalLink ? MuiLink : RouterLink}
+            {...(isExternalLink
+              ? {
+                  href: buttonLink,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                }
+              : { to: buttonLink })}
             target="_blank"
             sx={{
               color: '#FFF',
