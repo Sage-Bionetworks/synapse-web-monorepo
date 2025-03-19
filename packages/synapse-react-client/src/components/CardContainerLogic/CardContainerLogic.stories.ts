@@ -8,7 +8,6 @@ import {
 } from '../../mocks/query/mockReleaseCardsTableQueryResultBundle'
 import {
   DATASET,
-  DATASET_V2,
   FUNDER,
   GENERIC_CARD,
   OBSERVATION_CARD,
@@ -90,14 +89,6 @@ export const DatasetCard: Story = {
   args: {
     sql: `SELECT * FROM syn16859580`,
     type: DATASET,
-    limit: 3,
-  },
-}
-
-export const Dataset_V2_Card: Story = {
-  args: {
-    sql: `SELECT * FROM syn21897968`,
-    type: DATASET_V2,
     limit: 3,
   },
 }
