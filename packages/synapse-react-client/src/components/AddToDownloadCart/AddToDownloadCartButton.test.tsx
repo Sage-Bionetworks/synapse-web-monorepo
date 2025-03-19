@@ -19,27 +19,28 @@ jest.mock('../download_list/DownloadConfirmationUI', () => ({
 describe('AddToDownloadCartButton', () => {
   const props: AddToDownloadCartButtonProps = {
     entityId: 'syn7248585',
+    buttonText: 'Download',
   }
 
   it('renders the button', () => {
     render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
     expect(
-      screen.getByRole('button', { name: /add to download cart/i }),
+      screen.getByRole('button', { name: /download/i }),
     ).toBeInTheDocument()
   })
 
-  it('button is disabled when loading', () => {
+  it('button is disabled when loading and then enabled', () => {
     render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
-    const button = screen.getByRole('button', { name: /add to download cart/i })
+    const button = screen.getByRole('button', { name: /download/i })
     expect(button).toBeDisabled()
   })
 
   it('button is enabled when not loading', async () => {
     render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
+    const button = screen.getByRole('button', { name: /download/i })
+    expect(button).toBeDisabled()
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /add to download cart/i }),
-      ).toBeEnabled()
+      expect(button).toBeEnabled()
     })
   })
 
@@ -47,7 +48,7 @@ describe('AddToDownloadCartButton', () => {
     render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
     await waitFor(() => {
       const button = screen.getByRole('button', {
-        name: /add to download cart/i,
+        name: /download/i,
       })
       fireEvent.click(button)
       expect(
