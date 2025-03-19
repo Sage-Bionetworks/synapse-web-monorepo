@@ -45,6 +45,7 @@ import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 import { Stack } from '@mui/material'
 import CitationPopover from '../CitationPopover'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 
 export type KeyToAlias = {
   key: string
@@ -420,6 +421,8 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       schema,
       rowId,
     )
+    const synapseLinkId: string =
+      data[schema.synapseLink]?.match(SYNAPSE_ENTITY_ID_REGEX)?.[1] || ''
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
     const customLabelConfig =
@@ -584,6 +587,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               }}
             >
               <div className="SRC-type">{type}</div>
+              {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+              {synapseLinkId && (
+                <div style={{ marginLeft: 'auto' }}>
+                  <AddToDownloadCartButton entityId={synapseLinkId} />
+                </div>
+              )}
             </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option
