@@ -16,7 +16,6 @@ type Story = StoryObj<typeof meta>
 export const CCPKResourcesDemo: Story = {
   args: {
     entityId: 'syn64943600',
-    rgbIndex: 1,
     titleColumnName: 'title',
     descriptionColumnName: 'description',
     ctaButtonTextColumnName: 'ctaButtonText',
@@ -36,7 +35,6 @@ export const CCPKResourcesDemo: Story = {
 export const ProgramsDemo: Story = {
   args: {
     entityId: 'syn17024173',
-    rgbIndex: 1,
     titleColumnName: 'Program',
     descriptionColumnName: 'Short Description',
     ctaButtonTextColumnName: 'ctaButtonText',
@@ -55,7 +53,6 @@ export const ProgramsDemo: Story = {
 export const B2AIDemo: Story = {
   args: {
     entityId: 'syn65484830',
-    rgbIndex: 1,
     titleColumnName: 'title',
     descriptionColumnName: 'description',
     ctaButtonTextColumnName: 'buttonText',
@@ -75,7 +72,6 @@ export const B2AIDemo: Story = {
 export const TestOptionalArgsDemo: Story = {
   args: {
     entityId: 'syn65414596',
-    rgbIndex: 1,
     titleColumnName: 'title',
     descriptionColumnName: 'description',
     ctaButtonTextColumnName: 'buttonText',

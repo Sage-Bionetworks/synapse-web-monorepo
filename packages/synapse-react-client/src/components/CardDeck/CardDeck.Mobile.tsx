@@ -7,7 +7,6 @@ export default function CardDeckMobile({
   //link,
   description,
   title,
-  color,
   titleIconFileHandleAssociation,
   ctaButtonText,
   ctaButtonURL,

@@ -16,7 +16,6 @@ import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
 
 export type CardDeckProps = {
   entityId: string /* The table entity which should be queried */
-  rgbIndex: number /* The index of the color palette to use */
   titleColumnName: string /* The column name for the title */
   descriptionColumnName: string /* The column name for the description */
   ctaButtonTextColumnName: string /* The column name for the call to action button text */
@@ -32,7 +31,6 @@ export type CardDeckDataProps = {
   description: string /* description of card */
   ctaButtonText: string /* call to action button text */
   ctaButtonURL: string /* call to action button URL */
-  color: string /* color pallette to use */
   titleIconFileHandleAssociation?: FileHandleAssociation /* title icon file handle association */
   headerImageFileHandleAssociation?: FileHandleAssociation /* header image file handle association */
   cardDeckType?: 'cckp' | 'b2ai' /* The type of card deck (cckp or b2ai)*/
@@ -49,11 +47,9 @@ export function CardDeck(props: CardDeckProps) {
     headerImageFileHandleColumnName,
     cardDeckType,
     linkConfig,
-    rgbIndex,
   } = props
   const showDesktop = useShowDesktop()
   const entity = useGetEntity(entityId)
-  const color: string = getColorPalette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -128,7 +124,6 @@ export function CardDeck(props: CardDeckProps) {
           description,
           ctaButtonText,
           ctaButtonURL: href,
-          color,
           titleIconFileHandleAssociation,
           headerImageFileHandleAssociation,
           cardDeckType,
