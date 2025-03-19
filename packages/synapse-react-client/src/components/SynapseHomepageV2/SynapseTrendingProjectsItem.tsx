@@ -14,6 +14,7 @@ export type SynapseTrendingProjectItemProps = {
   nUniqueUsersColIndex: number
   egressSizeGbColIndex: number
   projectDescriptionColumnIndex: number
+  altLinkColIndex: number
   isMobileView: boolean
 }
 
@@ -32,11 +33,13 @@ export function SynapseTrendingProjectItem({
   nUniqueUsersColIndex,
   egressSizeGbColIndex,
   projectDescriptionColumnIndex,
+  altLinkColIndex,
   isMobileView,
 }: SynapseTrendingProjectItemProps) {
   const theme = useTheme()
   const entityId = rowValues[entityIdColIndex]
   const egressSize = rowValues[egressSizeGbColIndex]
+  const altLink = rowValues[altLinkColIndex]
   const { data: entityHeader } = useGetEntityHeader(entityId!, undefined, {
     enabled: !!entityId,
   })
@@ -83,12 +86,16 @@ export function SynapseTrendingProjectItem({
   return (
     <div
       onClick={() => {
-        window.open(
-          `${getEndpoint(
-            BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}Synapse:${entityId!}`,
-          '_target',
-        )
+        if (altLink) {
+          window.open(altLink, '_blank')
+        } else {
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}Synapse:${entityId!}`,
+            '_blank',
+          )
+        }
       }}
     >
       <Box
