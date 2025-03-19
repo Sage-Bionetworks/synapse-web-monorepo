@@ -12,6 +12,7 @@ import { useGetEntity } from '../../synapse-queries/'
 
 export type AddToDownloadCartButtonProps = {
   entityId: string
+  buttonText?: string
 }
 
 const TableTsx: React.FC<{
@@ -40,6 +41,7 @@ const TableTsx: React.FC<{
 
 export function AddToDownloadCartButton({
   entityId,
+  buttonText = 'Download',
 }: AddToDownloadCartButtonProps) {
   const [showConfirmation, setShowConfirmation] = useState(false)
   const { data: entity, isLoading } = useGetEntity(entityId)
@@ -58,11 +60,11 @@ export function AddToDownloadCartButton({
       <div>
         <Button
           onClick={onAddClick}
-          variant="contained"
+          variant="outlined"
           startIcon={<GetAppTwoTone />}
           disabled={isLoading}
         >
-          Add to Download Cart
+          {buttonText}
         </Button>
       </div>
       <div>
