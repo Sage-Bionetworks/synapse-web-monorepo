@@ -36,6 +36,7 @@ export function SynapseTrendingProjects({
   const headers = rowSet?.headers
   const entityIdColIndex = getColumnIndex('PROJECT_ID', headers)!
   const nUniqueUsersColIndex = getColumnIndex('N_UNIQUE_USERS', headers)!
+  const altLinkColIndex = getColumnIndex('ALTERNATE_LINK', headers)!
   const egressSizeColIndex = getColumnIndex(
     'ESTIMATED_PROJECT_SIZE_IN_GIB',
     headers,
@@ -76,6 +77,7 @@ export function SynapseTrendingProjects({
           egressSizeGbColIndex={egressSizeColIndex}
           nUniqueUsersColIndex={nUniqueUsersColIndex}
           projectDescriptionColumnIndex={projectDescriptionColumnIndex}
+          altLinkColIndex={altLinkColIndex}
           isMobileView={isMobileView}
         />
       ))}
