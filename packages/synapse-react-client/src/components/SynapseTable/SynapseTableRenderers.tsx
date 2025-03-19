@@ -263,8 +263,7 @@ export function TableDataColumnHeader(
 
 export function TableDataCell(props: CellContext<Row, string | null>) {
   const { cell, table } = props
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const entityOrRowId = getEntityOrRowId(props)
   const entityOrRowVersion = getEntityOrRowVersion(props)
   const versionNumber =

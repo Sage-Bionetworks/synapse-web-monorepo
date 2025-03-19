@@ -9,6 +9,7 @@ import {
 import { useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { Cavatica } from '../../../assets/icons/Cavatica'
 import { useGetEntity } from '../../../synapse-queries'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import IconSvg from '../../IconSvg'
@@ -92,7 +93,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     getInitQueryRequest,
     hasResettableFilters,
     getCurrentQueryRequest,
-    queryMetadataQueryOptions,
   } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
