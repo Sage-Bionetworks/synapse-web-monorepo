@@ -8,20 +8,18 @@ import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
-import CardMetadataDisplay, {
-  CardMetadataDisplayProps,
-} from './CardMetadataDisplay'
+import RowDataTable, { RowDataTableProps } from './RowDataTable'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
-describe('CardMetadataDisplay tests', () => {
+describe('RowDataTable tests', () => {
   const dataColumnAliases = {
     name: 'Name',
     grantDOI: 'DOI',
     dataType: 'Data Type(s)',
   }
-  const mockProps: CardMetadataDisplayProps = {
+  const mockProps: RowDataTableProps = {
     sql: 'syn52694652',
     labels: ['name', 'dataType', 'grantDOI'],
     columnAliases: dataColumnAliases,
@@ -91,7 +89,7 @@ describe('CardMetadataDisplay tests', () => {
   })
 
   it('renders correct labels', () => {
-    render(<CardMetadataDisplay {...mockProps} />)
+    render(<RowDataTable {...mockProps} />)
     expect(screen.getByText('Name')).toBeInTheDocument()
     expect(screen.getByText('Synodos NF2')).toBeInTheDocument()
     expect(screen.getByText('Data Type(s)')).toBeInTheDocument()
@@ -104,7 +102,7 @@ describe('CardMetadataDisplay tests', () => {
   })
 
   it('renders links correctly', () => {
-    render(<CardMetadataDisplay {...mockProps} />)
+    render(<RowDataTable {...mockProps} />)
     const linkName = 'https://doi.org/10.48105/pc.gr.88541'
     const linkElement = screen.getByRole('link', { name: linkName })
     expect(linkElement).toBeInTheDocument()
@@ -116,7 +114,7 @@ describe('CardMetadataDisplay tests', () => {
 
   it('Shows loading state', () => {
     mockUseGetQueryResultBundle.mockReturnValue(getUseQueryLoadingMock())
-    render(<CardMetadataDisplay {...mockProps} />)
+    render(<RowDataTable {...mockProps} />)
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 })
