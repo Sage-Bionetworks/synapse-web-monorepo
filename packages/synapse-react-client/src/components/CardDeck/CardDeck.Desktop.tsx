@@ -11,7 +11,6 @@ export default function CardDeckDesktop({
   titleIconFileHandleAssociation,
   headerImageFileHandleAssociation,
   cardDeckType,
-  color,
 }: CardDeckDataProps) {
   return (
     <div

@@ -15,27 +15,27 @@ import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
 
 export type CardDeckProps = {
-  entityId: string
-  rgbIndex: number
-  titleColumnName: string
-  descriptionColumnName: string
-  ctaButtonTextColumnName: string
-  ctaButtonURLColumnName: string
-  titleIconFileHandleColumnName?: string
-  headerImageFileHandleColumnName?: string
-  cardDeckType?: string
-  linkConfig: CardLink
+  entityId: string /* The table entity which should be queried */
+  rgbIndex: number /* The index of the color palette to use */
+  titleColumnName: string /* The column name for the title */
+  descriptionColumnName: string /* The column name for the description */
+  ctaButtonTextColumnName: string /* The column name for the call to action button text */
+  ctaButtonURLColumnName: string /* The column name for the call to action button URL */
+  titleIconFileHandleColumnName?: string /* The column name for the title icon image file */
+  headerImageFileHandleColumnName?: string /* The column name for the header image file */
+  cardDeckType?: 'cckp' | 'b2ai' /* The type of card deck (cckp or b2ai)*/
+  linkConfig: CardLink /* The link configuration */
 }
 
 export type CardDeckDataProps = {
-  title: string
-  description: string
-  ctaButtonText: string
-  ctaButtonURL: string
-  color: string
-  titleIconFileHandleAssociation?: FileHandleAssociation
-  headerImageFileHandleAssociation?: FileHandleAssociation
-  cardDeckType?: string
+  title: string /* title of card */
+  description: string /* description of card */
+  ctaButtonText: string /* call to action button text */
+  ctaButtonURL: string /* call to action button URL */
+  color: string /* color pallette to use */
+  titleIconFileHandleAssociation?: FileHandleAssociation /* title icon file handle association */
+  headerImageFileHandleAssociation?: FileHandleAssociation /* header image file handle association */
+  cardDeckType?: 'cckp' | 'b2ai' /* The type of card deck (cckp or b2ai)*/
 }
 
 export function CardDeck(props: CardDeckProps) {
