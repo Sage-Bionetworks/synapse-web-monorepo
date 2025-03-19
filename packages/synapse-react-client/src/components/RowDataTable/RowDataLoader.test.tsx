@@ -8,19 +8,21 @@ import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
-import RowDataTable, { RowDataTableProps } from './RowDataTable'
+import RowDataLoader, { RowDataLoaderProps } from './RowDataLoader'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
-describe('RowDataTable tests', () => {
+describe('RowDataLoader tests', () => {
   const dataColumnAliases = {
     name: 'Name',
     grantDOI: 'DOI',
     dataType: 'Data Type(s)',
   }
-  const mockProps: RowDataTableProps = {
-    sql: 'syn52694652',
+  const mockProps: RowDataLoaderProps = {
+    query: {
+      sql: 'SELECT * FROM syn52694652',
+    },
     labels: ['name', 'dataType', 'grantDOI'],
     columnAliases: dataColumnAliases,
     columnLinks: [
@@ -30,7 +32,30 @@ describe('RowDataTable tests', () => {
         linkColumnName: 'Grant DOI',
       },
     ],
+    row: {
+      rowId: 1,
+      values: [
+        'Synodos NF2',
+        '["Analysis, drugScreen, geneExpression, genomicVariants, immunoassay, kinomics, volume"]',
+        '["https://doi.org/10.48105/pc.gr.88541, https://doi.org/10.48105/pc.gr.88552, https://doi.org/10.48105/pc.gr.88580, https://doi.org/10.48105/pc.gr.88495, https://doi.org/10.48105/pc.gr.88438, https://doi.org/10.48105/pc.gr.88461, https://doi.org/10.48105/pc.gr.88567, https://doi.org/10.48105/pc.gr.88682, https://doi.org/10.48105/pc.gr.88823"]',
+      ],
+    },
+    headers: [
+      {
+        name: 'name',
+        columnType: ColumnTypeEnum.STRING,
+      },
+      {
+        name: 'dataType',
+        columnType: ColumnTypeEnum.STRING_LIST,
+      },
+      {
+        name: 'grantDOI',
+        columnType: ColumnTypeEnum.STRING_LIST,
+      },
+    ],
   }
+
   const mockQueryResult: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryResult: {
@@ -89,7 +114,7 @@ describe('RowDataTable tests', () => {
   })
 
   it('renders correct labels', () => {
-    render(<RowDataTable {...mockProps} />)
+    render(<RowDataLoader {...mockProps} />)
     expect(screen.getByText('Name')).toBeInTheDocument()
     expect(screen.getByText('Synodos NF2')).toBeInTheDocument()
     expect(screen.getByText('Data Type(s)')).toBeInTheDocument()
@@ -102,7 +127,7 @@ describe('RowDataTable tests', () => {
   })
 
   it('renders links correctly', () => {
-    render(<RowDataTable {...mockProps} />)
+    render(<RowDataLoader {...mockProps} />)
     const linkName = 'https://doi.org/10.48105/pc.gr.88541'
     const linkElement = screen.getByRole('link', { name: linkName })
     expect(linkElement).toBeInTheDocument()
@@ -114,7 +139,8 @@ describe('RowDataTable tests', () => {
 
   it('Shows loading state', () => {
     mockUseGetQueryResultBundle.mockReturnValue(getUseQueryLoadingMock())
-    render(<RowDataTable {...mockProps} />)
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    render(<RowDataLoader {...mockProps} />)
+    const skeleton = document.querySelector('.MuiSkeleton-root')
+    expect(skeleton).toBeInTheDocument()
   })
 })

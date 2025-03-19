@@ -6,14 +6,19 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
-  RowDataTable,
   ErrorPage,
   GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
+  RowDataLoader,
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
+import {
+  ColumnSingleValueFilterOperator,
+  Query,
+} from '@sage-bionetworks/synapse-types'
+import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
 
 export const dataColumnAliases = {
   Organizations: 'Organization(s)',
@@ -37,24 +42,33 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'About The Standard',
     element: (
       <DetailsPageContextConsumer columnName={'Name'}>
-        {({ value }) => (
-          <RowDataTable
-            sql={dataSql}
-            labels={[
-              'Name',
-              'Collections',
-              'Organizations',
-              'Data_Topic',
-              'Acronym',
-              'Is_Open',
-              'Registration',
-            ]}
-            columnAliases={dataColumnAliases}
-            searchParams={{
-              Name: value!,
-            }}
-          />
-        )}
+        {({ value, context }) => {
+          const query: Query = {
+            sql: dataSql,
+            additionalFilters: getAdditionalFilters(
+              undefined,
+              { Name: value! },
+              ColumnSingleValueFilterOperator.EQUAL,
+            ),
+          }
+          return (
+            <RowDataLoader
+              row={context.rowData ?? { values: [] }}
+              headers={context.rowSet?.headers ?? []}
+              query={query}
+              labels={[
+                'Name',
+                'Collections',
+                'Organizations',
+                'Data_Topic',
+                'Acronym',
+                'Is_Open',
+                'Registration',
+              ]}
+              columnAliases={dataColumnAliases}
+            />
+          )
+        }}
       </DetailsPageContextConsumer>
     ),
   },
