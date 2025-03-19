@@ -9,6 +9,7 @@ import {
   GoalsV2,
   PortalFeaturedPartners,
   PortalSectionHeader,
+  CTASection,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
@@ -319,6 +320,11 @@ export default function HomePage() {
           <ELSupportedByNIH />
         </SectionLayout>
       </div>
+      <CTASection
+        title="Subscribe to the ELITE Portal Newsletter"
+        subtitle="Get the latest on data releases, events, community highlights, and more"
+        buttonText="Subscribe Now"
+      />
     </>
   )
 }
