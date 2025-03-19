@@ -263,6 +263,29 @@ export default function HomePage() {
                   ],
                 },
               },
+              {
+                title: 'Cross Species Studies',
+                icon: 'tree_horizontal',
+                explorePagePath: '/Explore/Studies',
+                exploreObjectType: 'Studies',
+                plotsConfig: {
+                  configs: [
+                    {
+                      title:
+                        'Multi-Omic Signatures of Longevity Across Avian and Mammalian Species',
+                      description:
+                        'The Gladyshev Multi-Omic Signatures of Longevity Across Avian and Mammalian Species (G_M-OSLAMS) study analyzes transcriptomic, proteomic, and metabolomic data across multiple avian tissues to identify key gene expression biomarkers linked to lifespan. Comparing these longevity signatures to those previously identified in mammals, the research aims to uncover universal and species-specific pathways regulating lifespan across vertebrates.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'G_M-OSLAMS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=G_M-OSLAMS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                  ],
+                },
+              },
             ]}
           />
         </SectionLayout>
