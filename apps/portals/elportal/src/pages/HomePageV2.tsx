@@ -320,12 +320,14 @@ export default function HomePage() {
           <ELSupportedByNIH />
         </SectionLayout>
       </div>
-      <CTASection
-        title="Subscribe to the ELITE Portal Newsletter"
-        subtitle="Get the latest on data releases, events, community highlights, and more"
-        buttonText="Subscribe Now"
-        buttonLink="https://news.eliteportal.org/elite-portal-newsletter/"
-      />
+      <div className={'home-bg-dark'}>
+        <CTASection
+          title="Subscribe to the ELITE Portal Newsletter"
+          subtitle="Get the latest on data releases, events, community highlights, and more"
+          buttonText="Subscribe Now"
+          buttonLink="https://news.eliteportal.org/elite-portal-newsletter/"
+        />
+      </div>
     </>
   )
 }
