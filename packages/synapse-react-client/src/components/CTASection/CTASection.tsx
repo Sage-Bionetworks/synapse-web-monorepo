@@ -109,7 +109,6 @@ const CTASection = ({
                   rel: 'noopener noreferrer',
                 }
               : { to: buttonLink })}
-            target="_blank"
             sx={{
               color: '#FFF',
               '&:hover': { color: '#FFF', textDecorationColor: '#FFF' },
