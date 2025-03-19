@@ -53,14 +53,25 @@
       background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
-      background: #ffffff;
 
       &--b2ai {
         background: white;
       }
 
-      &__icon img {
-        width: 50px;
+      &--ccpk {
+        background: white;
+      }
+
+      &__icon {
+        img {
+          width: 50px;
+        }
+
+        &--ccpk {
+          img {
+            width: 30px;
+          }
+        }
       }
 
       p {
@@ -84,6 +95,12 @@
 
           &--b2ai {
             color: #395979;
+          }
+
+          &--ccpk {
+            font-size: 20px;
+            font-weight: 700;
+            color: #5bb0b5;
           }
         }
 

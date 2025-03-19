@@ -38,7 +38,12 @@ export default function CardDeckDesktop({
           cardDeckType && `CardDeck__Card__header--${cardDeckType}`,
         )}
       >
-        <div className="CardDeck__Card__header__icon">
+        <div
+          className={classNames(
+            'CardDeck__Card__header__icon',
+            cardDeckType && `CardDeck__Card__header__icon--${cardDeckType}`,
+          )}
+        >
           {titleIconFileHandleAssociation && (
             <ImageFileHandle
               fileHandleAssociation={titleIconFileHandleAssociation}
@@ -74,7 +79,7 @@ export default function CardDeckDesktop({
         <p> {description} </p>
         <LargeButton
           color="secondary"
-          variant="contained"
+          variant={cardDeckType === 'ccpk' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
           href={ctaButtonURL}
           sx={{
             width: '120px',
@@ -85,6 +90,13 @@ export default function CardDeckDesktop({
               backgroundColor: 'white',
               boxShadow: 'none',
               color: '#395979',
+            }),
+            ...(cardDeckType === 'ccpk' && {
+              width: '170px',
+              fontSize: '14px',
+              boxShadow: 'none',
+              borderColor: '#314C83',
+              color: '#314C83',
             }),
           }}
         >
