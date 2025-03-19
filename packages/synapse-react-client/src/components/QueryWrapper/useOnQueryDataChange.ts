@@ -1,12 +1,11 @@
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import { useQuery } from '@tanstack/react-query'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
-import { useGetQueryMetadata } from './useGetQueryMetadata'
+import { useEffect, useState } from 'react'
 
 type UseOnQueryDataChangeOptions = {
   queryBundleRequest: QueryBundleRequest
@@ -21,15 +20,16 @@ export default function useOnQueryDataChange(
   options: UseOnQueryDataChangeOptions,
 ) {
   const { queryBundleRequest, onChange } = options
-  const { rowDataQueryOptions } =
+  const { rowDataQueryOptions, queryMetadataQueryOptions } =
     useTableQueryUseQueryOptions(queryBundleRequest)
 
   const { data: rowData, isLoading: rowDataIsLoading } = useQuery({
     ...rowDataQueryOptions,
     select: asyncJobResponse => asyncJobResponse.responseBody,
   })
-  const { data: queryMetadata, isLoading: queryMetadataIsLoading } =
-    useGetQueryMetadata()
+  const { data: queryMetadata, isLoading: queryMetadataIsLoading } = useQuery(
+    queryMetadataQueryOptions,
+  )
 
   // SWC requires the entire QueryResultBundle to enable editing table data, so merge the data back into one object before
   // passing it to the onChange callback

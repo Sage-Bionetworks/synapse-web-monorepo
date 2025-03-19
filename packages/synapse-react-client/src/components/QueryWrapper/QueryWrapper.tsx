@@ -118,7 +118,9 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     queryMetadataQueryOptions,
   } = useTableQueryUseQueryOptions(lastQueryRequest, lockedColumn)
 
-  const hasFacetedSelectColumn = useHasFacetedSelectColumn()
+  const hasFacetedSelectColumn = useHasFacetedSelectColumn(
+    queryMetadataQueryOptions,
+  )
 
   const hasResettableFilters = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -139,6 +141,7 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     entityId,
     versionNumber,
     rowSelectionPrimaryKeyFromProps,
+    queryMetadataQueryOptions,
   })
   const setRowSelectionPrimaryKey = useSetAtom(rowSelectionPrimaryKeyAtom)
   useEffect(() => {
