@@ -78,7 +78,7 @@ export default function CardDeckDesktop({
         <p> {description} </p>
         <LargeButton
           color="secondary"
-          variant={cardDeckType === 'ccpk' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
+          variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
           href={ctaButtonURL}
           sx={{
             width: '120px',
@@ -90,7 +90,7 @@ export default function CardDeckDesktop({
               boxShadow: 'none',
               color: '#395979',
             }),
-            ...(cardDeckType === 'ccpk' && {
+            ...(cardDeckType === 'cckp' && {
               width: '170px',
               fontSize: '14px',
               boxShadow: 'none',
