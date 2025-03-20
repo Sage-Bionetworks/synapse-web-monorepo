@@ -7,7 +7,10 @@ export function resetConsentedInMockService(newValue: boolean) {
   hasConsented = newValue
 }
 
-export const ACCESS_CODE_PROVIDED_BY_SERVER = 'someAccessCode'
+export const ACCESS_CODE_PROVIDED_BY_SERVER = 'some Access Code' //contains value that will be encoded in the redirect to test for double-encoding
+//for the encoded version, because it will be in a URL query parameter URLSearchParams uses application/x-www-form-urlencoded (which encodes spaces as '+' signs)
+export const URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER =
+  ACCESS_CODE_PROVIDED_BY_SERVER.replaceAll(' ', '+')
 
 export const handlers = [
   rest.get(

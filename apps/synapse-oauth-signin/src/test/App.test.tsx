@@ -16,10 +16,10 @@ import {
 } from 'synapse-react-client'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  ACCESS_CODE_PROVIDED_BY_SERVER,
   getOAuth2DescriptionWithInvalidRedirectUriHandler,
   getOAuth2DescriptionWithUnverifiedClientHandler,
   resetConsentedInMockService,
+  URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER,
 } from '../mocks/handlers'
 import mockOauthClient from '../mocks/MockOAuthClient'
 import { server } from '../mocks/server'
@@ -214,7 +214,9 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
       )
     })
   })
@@ -243,9 +245,9 @@ describe('App integration tests', () => {
     await waitFor(() => {
       expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
-        `${params.get('redirect_uri')}?state=${params.get(
+        `${params.get('redirect_uri')}?error=access_denied&state=${params.get(
           'state',
-        )}&error=access_denied`,
+        )}`,
       )
     })
   })
@@ -281,7 +283,9 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
       )
     })
   })
@@ -302,7 +306,33 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
+      )
+    })
+  })
+  test('Does not encode & before error_description - PORTALS-3493', async () => {
+    // Tell service to not prompt, and user is not logged in
+    const prompt = 'none'
+    const state = 'somePreEncodedState%3D%3D'
+    resetConsentedInMockService(false)
+
+    const { params } = renderApp({ prompt, state })
+
+    await waitFor(() => {
+      screen.getByText(`consent_required`)
+      const expectedSearchParams = new URLSearchParams()
+      expectedSearchParams.set('error', 'consent_required')
+      expectedSearchParams.set(
+        'error_description',
+        'Current user has not previously granted permission, and prompt was set to none',
+      )
+      //sent to https://some-client-uri.abc/redirect?state=state123&error=consent_required&error_description=Current+user+has+not+previously+granted+permission%2C+and+prompt+was+set+to+none
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `${params.get(
+          'redirect_uri',
+        )}?${expectedSearchParams.toString()}&state=${params.get('state')}`,
       )
     })
   })
