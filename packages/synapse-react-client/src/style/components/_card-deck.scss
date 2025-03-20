@@ -50,17 +50,8 @@
     &__header {
       min-height: 75px;
       @extend %side-padding;
-      background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
-
-      &--b2ai {
-        background: white;
-      }
-
-      &--cckp {
-        background: white;
-      }
 
       &__icon {
         img {

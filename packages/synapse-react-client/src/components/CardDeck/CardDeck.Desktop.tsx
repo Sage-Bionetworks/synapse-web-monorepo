@@ -88,14 +88,14 @@ export default function CardDeckDesktop({
               fontSize: '14px',
               backgroundColor: 'white',
               boxShadow: 'none',
-              color: '#395979',
+              color: 'SRC.$primary-action-color',
             }),
             ...(cardDeckType === 'cckp' && {
               width: '170px',
               fontSize: '14px',
               boxShadow: 'none',
-              borderColor: '#314C83',
-              color: '#314C83',
+              borderColor: '#SRC.$primary-action-color',
+              color: '#SRC.$primary-action-color',
             }),
           }}
         >

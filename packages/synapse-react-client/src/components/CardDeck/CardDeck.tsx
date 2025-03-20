@@ -8,7 +8,6 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import CardDeckMobile from './CardDeck.Mobile'
 import CardDeckDesktop from './CardDeck.Desktop'
-import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { CardLink } from '../CardContainerLogic'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
