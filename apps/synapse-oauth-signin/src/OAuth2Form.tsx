@@ -202,10 +202,7 @@ export function OAuth2Form() {
         )
 
         const redirectSearchParams = new URLSearchParams()
-        redirectSearchParams.set(
-          'code',
-          encodeURIComponent(accessCode.access_code),
-        )
+        redirectSearchParams.set('code', accessCode.access_code)
 
         let redirectUrl = `${redirectUri}?${redirectSearchParams.toString()}`
 
