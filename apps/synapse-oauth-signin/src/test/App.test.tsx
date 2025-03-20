@@ -245,9 +245,9 @@ describe('App integration tests', () => {
     await waitFor(() => {
       expect(window.location.replace).toBeCalledTimes(1)
       expect(window.location.replace).toHaveBeenCalledWith(
-        `${params.get('redirect_uri')}?state=${params.get(
+        `${params.get('redirect_uri')}?error=access_denied&state=${params.get(
           'state',
-        )}&error=access_denied`,
+        )}`,
       )
     })
   })
@@ -315,7 +315,7 @@ describe('App integration tests', () => {
   test('Does not encode & before error_description - PORTALS-3493', async () => {
     // Tell service to not prompt, and user is not logged in
     const prompt = 'none'
-    const state = 'state123'
+    const state = 'somePreEncodedState%3D%3D'
     resetConsentedInMockService(false)
 
     const { params } = renderApp({ prompt, state })
@@ -323,7 +323,6 @@ describe('App integration tests', () => {
     await waitFor(() => {
       screen.getByText(`consent_required`)
       const expectedSearchParams = new URLSearchParams()
-      expectedSearchParams.set('state', params.get('state')!) // pass through
       expectedSearchParams.set('error', 'consent_required')
       expectedSearchParams.set(
         'error_description',
@@ -331,7 +330,9 @@ describe('App integration tests', () => {
       )
       //sent to https://some-client-uri.abc/redirect?state=state123&error=consent_required&error_description=Current+user+has+not+previously+granted+permission%2C+and+prompt+was+set+to+none
       expect(window.location.replace).toHaveBeenCalledWith(
-        `${params.get('redirect_uri')}?${expectedSearchParams.toString()}`,
+        `${params.get(
+          'redirect_uri',
+        )}?${expectedSearchParams.toString()}&state=${params.get('state')}`,
       )
     })
   })
