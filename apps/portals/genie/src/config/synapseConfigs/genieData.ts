@@ -1,5 +1,5 @@
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
-import { genieDataSql } from '../resources'
+import { enabledAnalysisPlatforms, genieDataSql } from '../resources'
 
 const rgbIndex = 0
 
@@ -7,7 +7,7 @@ const genieDataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   sql: genieDataSql,
   name: 'Files',
-  showExportToCavatica: true,
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   isRowSelectionVisible: true,
   rowSelectionPrimaryKey: ['id'],
   visibleColumnCount: 6,

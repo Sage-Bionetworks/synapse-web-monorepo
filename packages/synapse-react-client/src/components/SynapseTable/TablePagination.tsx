@@ -1,11 +1,4 @@
 import {
-  ChangeEvent,
-  ComponentProps,
-  forwardRef,
-  Ref,
-  useCallback,
-} from 'react'
-import {
   MenuItem,
   Pagination,
   PaginationItem,
@@ -14,25 +7,26 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
+import {
+  ChangeEvent,
+  ComponentProps,
+  forwardRef,
+  Ref,
+  useCallback,
+} from 'react'
 import { useQueryContext } from '../QueryContext'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
 export const TablePagination = () => {
-  const {
-    queryMetadataQueryOptions,
-    goToPage,
-    pageSize,
-    setPageSize,
-    currentPage,
-  } = useQueryContext()
+  const { goToPage, pageSize, setPageSize, currentPage } = useQueryContext()
 
   const prefetchPage = usePrefetchTableRows()
 
   const {
     data: { queryCount, maxRowsPerPage },
-  } = useSuspenseQuery(queryMetadataQueryOptions)
+  } = useSuspenseGetQueryMetadata()
 
   const maxPageSize = maxRowsPerPage ?? pageSize
 

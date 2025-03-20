@@ -1,13 +1,13 @@
-import { CSSProperties, Suspense } from 'react'
-import { SkeletonInlineBlock } from './Skeleton'
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
-import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
-import { useQueryContext } from './QueryContext'
-import IconSvg from './IconSvg/IconSvg'
-import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
 import pluralize from 'pluralize'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { CSSProperties, Suspense } from 'react'
 import { SynapseErrorBoundary } from './error'
+import IconSvg from './IconSvg/IconSvg'
+import { useQueryContext } from './QueryContext'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from './QueryWrapper/useGetQueryMetadata'
+import { SkeletonInlineBlock } from './Skeleton'
+import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
 
 export type TotalQueryResultsProps = {
   style?: CSSProperties
@@ -19,9 +19,8 @@ export type TotalQueryResultsProps = {
 
 function TotalQueryResults(props: TotalQueryResultsProps) {
   const { style, frontText, endText = '', hideIfUnfiltered = false } = props
-  const { resetQuery, hasResettableFilters, queryMetadataQueryOptions } =
-    useQueryContext()
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { resetQuery, hasResettableFilters } = useQueryContext()
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { unitDescription } = useQueryVisualizationContext()
 
   const total = queryMetadata?.queryCount

@@ -1,12 +1,14 @@
+import { useQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { useQueryContext } from '../QueryContext'
-import { NoContentPlaceholderType } from '../SynapseTable'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
+import { unCamelCase } from '../../utils/functions/unCamelCase'
 import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
+import { useQueryContext } from '../QueryContext'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { NoContentPlaceholderType } from '../SynapseTable'
+import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
-import { useQuery } from '@tanstack/react-query'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
@@ -46,6 +48,7 @@ export type QueryVisualizationWrapperProps = {
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
   hasCustomPlots?: boolean
+  enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
 }
 
 /**
@@ -64,6 +67,7 @@ export function QueryVisualizationWrapper(
     helpConfiguration,
     hasCustomPlots = false,
     visibleColumnCount = Infinity,
+    enabledExternalAnalysisPlatforms = [],
   } = props
 
   const columnAliases = useMemo(
@@ -76,9 +80,8 @@ export function QueryVisualizationWrapper(
     hasFacetedSelectColumn,
     hasResettableFilters,
     rowDataQueryOptions,
-    queryMetadataQueryOptions,
   } = useQueryContext()
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   // Get the selectColumns from either query so that creating the context isn't bottlenecked by one or the other
   // Use the previous result as placeholder data so we don't reset the selectColumns unless they have actually changed.
@@ -87,8 +90,7 @@ export function QueryVisualizationWrapper(
     select: data => data.responseBody?.queryResult?.queryResults.headers,
     placeholderData: prevData => prevData,
   })
-  const { data: selectColumnsFromMetadata } = useQuery({
-    ...queryMetadataQueryOptions,
+  const { data: selectColumnsFromMetadata } = useGetQueryMetadata({
     select: data => data.responseBody?.selectColumns,
     placeholderData: prevData => prevData,
   })
@@ -194,8 +196,9 @@ export function QueryVisualizationWrapper(
       getDisplayValue,
       getHelpText,
       NoContentPlaceholder,
-      isShowingExportToCavaticaModal,
-      setIsShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal: isShowingExportToCavaticaModal,
+      setIsShowingExportToAnalysisPlatformModal:
+        setIsShowingExportToCavaticaModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
@@ -208,6 +211,7 @@ export function QueryVisualizationWrapper(
       setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
+      enabledExternalAnalysisPlatforms,
     }),
     [
       NoContentPlaceholder,
@@ -228,6 +232,7 @@ export function QueryVisualizationWrapper(
       unitDescription,
       visibleColumns,
       hasCustomPlots,
+      enabledExternalAnalysisPlatforms,
     ],
   )
   /**

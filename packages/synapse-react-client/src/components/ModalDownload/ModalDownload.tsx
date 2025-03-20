@@ -93,7 +93,7 @@ export class ModalDownload extends Component<
       csvTableDescriptor: { separator },
       additionalFilters: queryRequest.query.additionalFilters,
     }
-    SynapseClient.getDownloadFromTableRequest(
+    SynapseClient.createTableCsvForDownload(
       downloadFromTableRequest,
       this.context.accessToken,
     )

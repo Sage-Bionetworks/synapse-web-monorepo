@@ -19,7 +19,7 @@ const renderComponent = (props: ModalDownloadProps) => {
 describe('it performs the expected functionality', () => {
   const mockClose = jest.fn()
   const mockGetDownloadFromTableRequest = jest
-    .spyOn(SynapseClient, 'getDownloadFromTableRequest')
+    .spyOn(SynapseClient, 'createTableCsvForDownload')
     .mockResolvedValue({
       tableId: 'syn123',
       resultsFileHandleId: 'hello',

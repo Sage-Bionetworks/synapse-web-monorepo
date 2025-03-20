@@ -1,9 +1,8 @@
-import { useEffect } from 'react'
 import { Box } from '@mui/material'
-import WideButton from '../styled/WideButton'
+import { useEffect } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { useQueryContext } from '../QueryContext'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import WideButton from '../styled/WideButton'
+import { useSuspenseGetQueryMetadata } from './useGetQueryMetadata'
 
 export type ViewMoreQueryResultsButtonProps = {
   hasNextPage: boolean
@@ -25,10 +24,9 @@ export function ViewMoreQueryResultsButton(
     initialLimitIsApplied,
     onRemoveInitialLimit,
   } = props
-  const { queryMetadataQueryOptions } = useQueryContext()
   const {
     data: { queryCount },
-  } = useSuspenseQuery(queryMetadataQueryOptions)
+  } = useSuspenseGetQueryMetadata()
 
   useEffect(() => {
     if (

@@ -1,20 +1,19 @@
-import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
+import { Box, Button } from '@mui/material'
+import { PlotType as PlotlyPlotType } from 'plotly.js-basic-dist'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { UniqueFacetIdentifier } from '../../../utils'
-import { useQueryContext } from '../../QueryContext'
+import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import QueryWrapperSynapsePlot, {
   QueryWrapperSynapsePlotProps,
 } from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import { Suspense, useEffect, useMemo, useState } from 'react'
-import useFacetPlots, { getFacets } from './useFacetPlots'
 import FacetNavPanel, {
   FacetNavPanelProps,
   PlotType,
 } from '../facet-nav/FacetNavPanel'
-import { Box, Button } from '@mui/material'
-import { PlotType as PlotlyPlotType } from 'plotly.js-basic-dist'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { PlotsContainerSkeleton } from './PlotsContainerSkeleton'
+import useFacetPlots, { getFacets } from './useFacetPlots'
 
 const DEFAULT_VISIBLE_PLOTS = 2
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
@@ -137,8 +136,7 @@ function PlotsContainer(props: PlotsContainerProps) {
     customPlots = DEFAULT_CUSTOM_PLOTS,
     initialPlotType = DEFAULT_PLOT_TYPE,
   } = props
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
   const [plotUiStateArray, setPlotUiStateArray] = useState<UiPlotState[]>([])
   const facetNavPanelPropsArray = useFacetPlots(facetsToPlot)

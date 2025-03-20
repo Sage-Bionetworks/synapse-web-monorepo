@@ -16,6 +16,7 @@ import {
   cavaticaConnectAccountURL,
   dataOnStudiesPageSql,
   dataSql,
+  enabledAnalysisPlatforms,
   studiesSql,
 } from '../config/resources'
 import studyHeaderSvg from '../config/style/study-header.svg?url'
@@ -147,7 +148,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     rgbIndex={studiesRgbIndex}
                     visibleColumnCount={10}
                     name="Metadata Files"
-                    showExportToCavatica={true}
+                    enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                     cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                     isRowSelectionVisible={true}
                     isRowSelectionUIFloating={false}
@@ -183,7 +184,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                     sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
                     rgbIndex={studiesRgbIndex}
                     visibleColumnCount={10}
-                    showExportToCavatica={true}
+                    enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                     cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                     isRowSelectionVisible={true}
                     isRowSelectionUIFloating={false}

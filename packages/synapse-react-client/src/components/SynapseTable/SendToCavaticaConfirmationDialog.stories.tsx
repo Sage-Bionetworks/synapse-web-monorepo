@@ -48,13 +48,18 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 function ShowModalTrigger() {
-  const { isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal } =
-    useQueryVisualizationContext()
+  const {
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  } = useQueryVisualizationContext()
   useEffect(() => {
-    if (!isShowingExportToCavaticaModal) {
-      setIsShowingExportToCavaticaModal(true)
+    if (!isShowingExportToAnalysisPlatformModal) {
+      setIsShowingExportToAnalysisPlatformModal(true)
     }
-  }, [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal])
+  }, [
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  ])
   return <></>
 }
 

@@ -1,15 +1,13 @@
+import { Skeleton, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { Suspense } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { Skeleton, Typography } from '@mui/material'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { useQueryContext } from '../QueryContext'
+import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 
 function LastUpdatedOn() {
-  const { queryMetadataQueryOptions } = useQueryContext()
   const { showLastUpdatedOn } = useQueryVisualizationContext()
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
 
   return showLastUpdatedOn && queryMetadata && queryMetadata.lastUpdatedOn ? (
     <div

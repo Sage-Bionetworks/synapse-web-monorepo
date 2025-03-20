@@ -1,5 +1,3 @@
-import { Suspense, useMemo } from 'react'
-import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
   Direction,
@@ -12,18 +10,20 @@ import {
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../../QueryContext'
-import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
 import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
-import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
+import { Suspense, useMemo } from 'react'
+import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
 import {
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
 } from '../../../../utils/functions/queryUtils'
+import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
+import { useQueryContext } from '../../../QueryContext'
+import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from '../../../QueryWrapper/useGetQueryMetadata'
+import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 
 export type EnumFacetFilterProps = {
   facet: FacetColumnResultValues
@@ -51,11 +51,10 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     addValueToSelectedFacet,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
-    queryMetadataQueryOptions,
     resetDebounceTimer,
   } = useQueryContext()
 
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const currentSelectedFacet: FacetColumnValuesRequest | undefined =

@@ -11,14 +11,13 @@ import {
   ActionRequiredCount,
   ColumnModel,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useMemo, useState } from 'react'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
-import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
+import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../utils/SynapseConstants'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import { useQueryContext } from '../QueryContext'
@@ -28,6 +27,7 @@ import {
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { SkeletonParagraph } from '../Skeleton'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
@@ -46,20 +46,19 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
-    queryMetadataQueryOptions,
     fileIdColumnName,
     fileVersionColumnName,
     fileNameColumnName,
   } = useQueryContext()
 
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const selectedRows = useAtomValue(selectedRowsAtom)
   const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const {
-    isShowingExportToCavaticaModal,
-    setIsShowingExportToCavaticaModal,
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
     unitDescription,
   } = useQueryVisualizationContext()
   // The disclaimer should be shown every time. The checkbox state will be pre-filled based on localStorage.
@@ -70,8 +69,9 @@ export default function SendToCavaticaConfirmationDialog(
     useLocalStorageValue<boolean>(EXTERNAL_COMPUTE_ENV_DISCLAIMER)
 
   const showDisclaimer =
-    isShowingExportToCavaticaModal && isShowingDisclaimerPage
-  const showExport = isShowingExportToCavaticaModal && !isShowingDisclaimerPage
+    isShowingExportToAnalysisPlatformModal && isShowingDisclaimerPage
+  const showExport =
+    isShowingExportToAnalysisPlatformModal && !isShowingDisclaimerPage
 
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -111,7 +111,8 @@ export default function SendToCavaticaConfirmationDialog(
     queryMetadata?.columnModels as ColumnModel[],
     {
       throwOnError: true,
-      enabled: !!queryMetadata?.columnModels && isShowingExportToCavaticaModal,
+      enabled:
+        !!queryMetadata?.columnModels && isShowingExportToAnalysisPlatformModal,
     },
   )
 
@@ -180,7 +181,7 @@ export default function SendToCavaticaConfirmationDialog(
           setIsShowingDisclaimerPage(false)
         }}
         onCancel={() => {
-          setIsShowingExportToCavaticaModal(false)
+          setIsShowingExportToAnalysisPlatformModal(false)
         }}
         maxWidth="md"
       />
@@ -300,13 +301,13 @@ export default function SendToCavaticaConfirmationDialog(
             // on success, reset to the disclaimer page and close the modal
             () => {
               setIsShowingDisclaimerPage(true)
-              setIsShowingExportToCavaticaModal(false)
+              setIsShowingExportToAnalysisPlatformModal(false)
             },
           )
         }}
         onCancel={() => {
           setIsShowingDisclaimerPage(true)
-          setIsShowingExportToCavaticaModal(false)
+          setIsShowingExportToAnalysisPlatformModal(false)
         }}
         maxWidth="md"
       />

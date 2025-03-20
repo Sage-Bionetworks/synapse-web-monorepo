@@ -1,11 +1,11 @@
 import { Collapse, TextField } from '@mui/material'
 import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react'
-import { useQueryContext } from '../QueryContext'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import IconSvg from '../IconSvg/IconSvg'
 import { IconSvgButton } from '../IconSvgButton'
-import { useQuery } from '@tanstack/react-query'
+import { useQueryContext } from '../QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { updateQueryUsingSearchTerm } from './FullTextSearchUtils'
 
 // See PLFM-7011
@@ -20,12 +20,12 @@ export function FullTextSearch({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) {
-  const { executeQueryRequest, queryMetadataQueryOptions } = useQueryContext()
+  const { executeQueryRequest } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const { data } = useQuery(queryMetadataQueryOptions)
+  const { data } = useGetQueryMetadata()
   const columnModels = data?.columnModels
 
   const search = (event: SyntheticEvent<HTMLFormElement>) => {

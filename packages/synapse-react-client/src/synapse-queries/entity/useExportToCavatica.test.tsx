@@ -59,7 +59,7 @@ const testQueryRequest: QueryBundleRequest = {
 
 const mockGetDownloadFromTableRequest = jest.spyOn(
   SynapseClient,
-  'getDownloadFromTableRequest',
+  'createTableCsvForDownload',
 )
 
 describe('useExportToCavatica', () => {

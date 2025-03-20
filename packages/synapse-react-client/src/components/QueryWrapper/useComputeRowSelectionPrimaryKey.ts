@@ -1,28 +1,21 @@
-import { useMemo } from 'react'
-import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
-import { useGetEntity } from '../../synapse-queries'
 import { Table } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { QueryContextType } from '../QueryContext'
+import { useMemo } from 'react'
+import { useGetEntity } from '../../synapse-queries'
+import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
+import { useGetQueryMetadata } from './useGetQueryMetadata'
 
 type UseComputeRowSelectionPrimaryKeyOptions = {
   entityId: string
   versionNumber?: number
   rowSelectionPrimaryKeyFromProps?: string[]
-  queryMetadataQueryOptions: QueryContextType['queryMetadataQueryOptions']
 }
 
 export default function useComputeRowSelectionPrimaryKey(
   options: UseComputeRowSelectionPrimaryKeyOptions,
 ) {
-  const {
-    rowSelectionPrimaryKeyFromProps,
-    entityId,
-    versionNumber,
-    queryMetadataQueryOptions,
-  } = options
+  const { rowSelectionPrimaryKeyFromProps, entityId, versionNumber } = options
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   return useMemo(() => {
     if (rowSelectionPrimaryKeyFromProps) {
