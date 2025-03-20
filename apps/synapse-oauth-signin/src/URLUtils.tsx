@@ -15,9 +15,6 @@ export const handleErrorRedirect = (
     // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
     if (isValidUrl(redirectUri) && error['error'] !== 'invalid_redirect_uri') {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
-      const errorDescription = error['error_description']
-        ? `&error_description=${encodeURIComponent(error['error_description'])}`
-        : ''
       const redirectURLSearchParams = new URLSearchParams()
       const state = searchParams.get('state')
       if (state) {
@@ -25,9 +22,14 @@ export const handleErrorRedirect = (
       }
       redirectURLSearchParams.set(
         'error',
-        `${encodeURIComponent(error['error'])}${errorDescription}`,
+        `${encodeURIComponent(error['error'])}`,
       )
-
+      if (error['error_description']) {
+        redirectURLSearchParams.set(
+          'error_description',
+          encodeURIComponent(error['error_description']),
+        )
+      }
       window.location.replace(
         `${redirectUri}?${redirectURLSearchParams.toString()}`,
       )
