@@ -20,14 +20,12 @@ export const handleErrorRedirect = (
       if (state) {
         redirectURLSearchParams.set('state', encodeURIComponent(state))
       }
-      redirectURLSearchParams.set(
-        'error',
-        `${encodeURIComponent(error['error'])}`,
-      )
+      redirectURLSearchParams.set('error', error['error'])
       if (error['error_description']) {
         redirectURLSearchParams.set(
           'error_description',
-          encodeURIComponent(error['error_description']),
+          //URLSearchParams.toString() already encodes value, do not encode here (would double encode)
+          error['error_description'],
         )
       }
       window.location.replace(
