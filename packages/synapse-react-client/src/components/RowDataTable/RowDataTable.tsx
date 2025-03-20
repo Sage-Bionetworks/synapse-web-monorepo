@@ -10,6 +10,8 @@ export type RowDataTableProps = {
   headers: SelectColumn[]
   /** List of column names to display as labels */
   labels: string[]
+  /** Optional list of column names whose data should be displayed in the table. If not provided, all columns with data will be shown. */
+  displayedColumns?: string[]
   /** Optional configuration for linking columns */
   columnLinks?: LabelLinkConfig
   /** key-value pair mapping to display in rows */
@@ -53,14 +55,9 @@ const RowDataTable = (props: RowDataTableProps) => {
       <table style={{ width: '100%' }}>
         <tbody>
           {(labelValueArray ?? localLabelValueArray)?.map(
-            ([columnName, value], index) => (
-              <tr
-                key={columnName}
-                style={{
-                  backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'transparent',
-                }}
-              >
-                <td style={{ padding: '7px 20px 7px 10px', width: '256px' }}>
+            ([columnName, value]) => (
+              <tr key={columnName}>
+                <td style={{ width: '256px' }}>
                   <span
                     style={{
                       fontSize: '14px',
@@ -71,7 +68,7 @@ const RowDataTable = (props: RowDataTableProps) => {
                     {columnAliases?.[columnName] ?? columnName}
                   </span>
                 </td>
-                <td style={{ padding: '7px 20px 7px 10px' }}>
+                <td>
                   <SynapseCardLabel
                     value={value}
                     columnName={columnName}

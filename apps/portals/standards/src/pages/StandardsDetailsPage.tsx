@@ -15,11 +15,6 @@ import {
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
-import {
-  ColumnSingleValueFilterOperator,
-  Query,
-} from '@sage-bionetworks/synapse-types'
-import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
 
 export const dataColumnAliases = {
   Organizations: 'Organization(s)',
@@ -43,15 +38,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'About The Standard',
     element: (
       <DetailsPageContextConsumer columnName={'Name'}>
-        {({ value, context }) => {
-          const query: Query = {
-            sql: dataSql,
-            additionalFilters: getAdditionalFilters(
-              undefined,
-              { Name: value! },
-              ColumnSingleValueFilterOperator.EQUAL,
-            ),
-          }
+        {({ context }) => {
           if (context.rowData && context.rowSet) {
             return (
               <RowDataTable
