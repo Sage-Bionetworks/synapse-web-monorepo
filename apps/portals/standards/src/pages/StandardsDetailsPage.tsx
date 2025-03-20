@@ -10,8 +10,8 @@ import {
   GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
-  RowDataTableWithQuery,
   RowDataTable,
+  SkeletonTable,
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
@@ -74,23 +74,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
               />
             )
           } else {
-            return (
-              <RowDataTableWithQuery
-                row={context.rowData ?? { values: [] }}
-                headers={context.rowSet?.headers ?? []}
-                query={query}
-                labels={[
-                  'Name',
-                  'Collections',
-                  'Organizations',
-                  'Data_Topic',
-                  'Acronym',
-                  'Is_Open',
-                  'Registration',
-                ]}
-                columnAliases={dataColumnAliases}
-              />
-            )
+            return <SkeletonTable numRows={6} numCols={1} />
           }
         }}
       </DetailsPageContextConsumer>

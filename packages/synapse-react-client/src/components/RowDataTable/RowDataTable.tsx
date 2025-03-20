@@ -5,7 +5,7 @@ import { SynapseCardLabel } from '../GenericCard'
 
 export type RowDataTableProps = {
   /** Array of string values corresponding to the data for a row */
-  rowData: string[]
+  rowData: Array<string | null>
   /** The headers for the columns in the table */
   headers: SelectColumn[]
   /** List of column names to display as labels */
@@ -18,6 +18,9 @@ export type RowDataTableProps = {
   columnAliases?: Record<string, string>
 }
 
+/**
+ * Displays a table of column names and Synapse Table row data represented as key/value pairs
+ */
 const RowDataTable = (props: RowDataTableProps) => {
   const {
     columnAliases,

@@ -30,6 +30,9 @@ export type RowDataTableWithQueryProps = {
   columnLinks?: LabelLinkConfig
 }
 
+/**
+ * For the first row returned by the query, displays a table of column names and Synapse Table row data represented as key/value pairs
+ */
 const RowDataTableWithQuery = (props: RowDataTableWithQueryProps) => {
   const { columnAliases, columnLinks, query, row, headers, labels } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
