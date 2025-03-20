@@ -28,12 +28,6 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   render: args => <RowDataTable {...args} />,
   args: {
-    labelValueArray: [
-      ['Name', nameVal],
-      ['dataType', dataTypeVal],
-      ['grantDOI', doiVal],
-    ],
-    labels: ['Name', 'dataType', 'grantDOI'],
     rowData: [nameVal, dataTypeVal, doiVal],
     headers: [
       {

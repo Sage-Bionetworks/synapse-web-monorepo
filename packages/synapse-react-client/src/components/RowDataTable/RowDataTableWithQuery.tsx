@@ -1,9 +1,4 @@
-import {
-  Query,
-  QueryBundleRequest,
-  Row,
-  SelectColumn,
-} from '@sage-bionetworks/synapse-types'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import RowDataTable from './RowDataTable'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
@@ -13,17 +8,12 @@ import {
 } from '../../utils/SynapseConstants'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { SkeletonTable } from '../Skeleton'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
 
 export type RowDataTableWithQueryProps = {
   /** The query used to retrieve data */
   query: Query
-  /** The specific row data to be rendered */
-  row: Row
-  /** The headers for the columns in the table */
-  headers: SelectColumn[]
-  /** List of column names to display as labels */
-  labels: string[]
+  /** Optional list of column names whose data should be displayed in the table. If not provided, all columns with data will be shown. */
+  displayedColumns?: string[]
   /** Optional display value overrides for column names */
   columnAliases?: Record<string, string>
   /** Optional configuration for linking columns  */
@@ -34,7 +24,7 @@ export type RowDataTableWithQueryProps = {
  * For the first row returned by the query, displays a table of column names and Synapse Table row data represented as key/value pairs
  */
 const RowDataTableWithQuery = (props: RowDataTableWithQueryProps) => {
-  const { columnAliases, columnLinks, query, row, headers, labels } = props
+  const { columnAliases, columnLinks, query, displayedColumns } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -47,31 +37,19 @@ const RowDataTableWithQuery = (props: RowDataTableWithQueryProps) => {
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
-  // Create an array of label-value pairs for rendering
-  const labelValueArray: [string, string][] = []
-
-  for (let i = 0; i < labels.length; i += 1) {
-    const columnName = headers[i].name
-    const columnIndex = getFieldIndex(columnName, queryResultBundle)
-    const value = row.values[columnIndex]
-    // value can be 'null' if column type is of type STRING or '[null]' if column type is of STRING_LIST
-    if (value && value !== '[null]' && value !== 'null') {
-      labelValueArray.push([columnName, value])
-    }
-  }
-
-  const rowData = row.values.filter((value): value is string => value !== null)
+  const rowData =
+    queryResultBundle?.queryResult!.queryResults.rows[0].values ?? []
+  const headers = queryResultBundle?.queryResult!.queryResults.headers ?? []
 
   if (isLoading) return <SkeletonTable numRows={6} numCols={1} />
 
   return (
     <RowDataTable
-      labelValueArray={labelValueArray}
       columnAliases={columnAliases}
       columnLinks={columnLinks}
       rowData={rowData}
       headers={headers}
-      labels={labels}
+      displayedColumns={displayedColumns}
     />
   )
 }

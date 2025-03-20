@@ -42,13 +42,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
           if (context.rowData && context.rowSet) {
             return (
               <RowDataTable
-                rowData={
-                  context.rowData.values?.filter(
-                    (value): value is string => value !== null,
-                  ) ?? []
-                }
+                rowData={context.rowData.values ?? []}
                 headers={context.rowSet?.headers ?? []}
-                labels={[
+                displayedColumns={[
                   'Name',
                   'Collections',
                   'Organizations',
