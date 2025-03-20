@@ -9,12 +9,11 @@ import {
   GoalsV2,
   PortalFeaturedPartners,
   PortalSectionHeader,
-  CTASection,
 } from 'synapse-react-client'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
-
+import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELNewsletterSection'
 import {
   topPublicationsSql,
   whatWeDoSql,
@@ -321,12 +320,7 @@ export default function HomePage() {
         </SectionLayout>
       </div>
       <div className={'home-bg-dark'}>
-        <CTASection
-          title="Subscribe to the ELITE Portal Newsletter"
-          subtitle="Get the latest on data releases, events, community highlights, and more"
-          buttonText="Subscribe Now"
-          buttonLink="https://news.eliteportal.org/elite-portal-newsletter/"
-        />
+        <ElNewsletterSection />
       </div>
     </>
   )

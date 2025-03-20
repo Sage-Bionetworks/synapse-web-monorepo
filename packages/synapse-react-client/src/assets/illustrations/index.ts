@@ -15,6 +15,8 @@ import { ReactComponent as Wikis } from './wikis_illustration.svg'
 import { ReactComponent as Donate } from './donation_illustration.svg'
 import { ReactComponent as LeftDotBlob } from './left_dot_blob_illustration.svg'
 import { ReactComponent as RightDotBlob } from './right_dot_blob_illustration.svg'
+import { ReactComponent as LeftDotBlobDark } from './left_dot_blob_dark_illustration.svg'
+import { ReactComponent as RightDotBlobDark } from './right_dot_blob_dark_illustration.svg'
 const Illustrations = {
   Challenges,
   CohortBuilder,
@@ -33,5 +35,7 @@ const Illustrations = {
   Donate,
   LeftDotBlob,
   RightDotBlob,
+  LeftDotBlobDark,
+  RightDotBlobDark,
 }
 export default Illustrations
