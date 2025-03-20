@@ -1,12 +1,6 @@
+import './AnalyticsTypes'
 import { useEffect } from 'react'
-import { useCookiePreferences } from './useCookiePreferences'
-
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void
-    dataLayer: any[]
-  }
-}
+import { useCookiePreferences } from '../hooks/useCookiePreferences'
 
 // This hook code is globally executed once
 let isExecuted = false
@@ -17,11 +11,7 @@ export const useGoogleAnalytics = (measurementId: string = 'GTM-KPW4KS62') => {
   useEffect(() => {
     if (cookiePreferences.analyticsAllowed && !isExecuted) {
       window.dataLayer = window.dataLayer || []
-      function gtag(...args: any[]) {
-        window.dataLayer.push(args)
-      }
 
-      window.gtag = gtag
       window.dataLayer.push({
         'gtm.start': new Date().getTime(),
         event: 'gtm.js',
