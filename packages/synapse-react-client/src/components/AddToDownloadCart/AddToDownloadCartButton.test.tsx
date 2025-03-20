@@ -6,14 +6,13 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 jest.mock('../download_list/TableQueryDownloadConfirmation', () => ({
   TableQueryDownloadConfirmation: () => (
-    <div>TableQueryDownloadConfirmation</div>
+    <div data-testid="TableQueryDownloadConfirmation" />
   ),
 }))
 jest.mock('../download_list/FolderDownloadConfirmation', () => ({
-  FolderDownloadConfirmation: () => <div>FolderDownloadConfirmation</div>,
-}))
-jest.mock('../download_list/DownloadConfirmationUI', () => ({
-  DownloadConfirmationUI: () => <div>DownloadConfirmationUI</div>,
+  FolderDownloadConfirmation: () => (
+    <div data-testid="FolderDownloadConfirmation" />
+  ),
 }))
 
 describe('AddToDownloadCartButton', () => {
@@ -44,7 +43,19 @@ describe('AddToDownloadCartButton', () => {
     })
   })
 
-  it('displays the correct download confirmation component when clicked', async () => {
+  it('table entities show the download confirmation UI when clicked', async () => {
+    render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
+    await waitFor(() => {
+      const button = screen.getByRole('button', {
+        name: /download/i,
+      })
+      fireEvent.click(button)
+    })
+    expect(
+      screen.getByTestId('TableQueryDownloadConfirmation'),
+    ).toBeInTheDocument()
+  })
+  it('folder entities show the download confirmation UI when clicked', async () => {
     render(<AddToDownloadCartButton {...props} />, { wrapper: createWrapper() })
     await waitFor(() => {
       const button = screen.getByRole('button', {
@@ -52,7 +63,7 @@ describe('AddToDownloadCartButton', () => {
       })
       fireEvent.click(button)
       expect(
-        screen.getByText('TableQueryDownloadConfirmation'),
+        screen.getByTestId('FolderDownloadConfirmation'),
       ).toBeInTheDocument()
     })
   })
