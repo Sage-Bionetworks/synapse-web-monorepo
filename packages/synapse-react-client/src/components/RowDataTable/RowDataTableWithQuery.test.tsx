@@ -8,18 +8,20 @@ import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
-import RowDataLoader, { RowDataLoaderProps } from './RowDataLoader'
+import RowDataTableWithQuery, {
+  RowDataTableWithQueryProps,
+} from './RowDataTableWithQuery'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
 
-describe('RowDataLoader tests', () => {
+describe('RowDataTableWithQuery tests', () => {
   const dataColumnAliases = {
     name: 'Name',
     grantDOI: 'DOI',
     dataType: 'Data Type(s)',
   }
-  const mockProps: RowDataLoaderProps = {
+  const mockProps: RowDataTableWithQueryProps = {
     query: {
       sql: 'SELECT * FROM syn52694652',
     },
@@ -114,7 +116,7 @@ describe('RowDataLoader tests', () => {
   })
 
   it('renders correct labels', () => {
-    render(<RowDataLoader {...mockProps} />)
+    render(<RowDataTableWithQuery {...mockProps} />)
     expect(screen.getByText('Name')).toBeInTheDocument()
     expect(screen.getByText('Synodos NF2')).toBeInTheDocument()
     expect(screen.getByText('Data Type(s)')).toBeInTheDocument()
@@ -127,7 +129,7 @@ describe('RowDataLoader tests', () => {
   })
 
   it('renders links correctly', () => {
-    render(<RowDataLoader {...mockProps} />)
+    render(<RowDataTableWithQuery {...mockProps} />)
     const linkName = 'https://doi.org/10.48105/pc.gr.88541'
     const linkElement = screen.getByRole('link', { name: linkName })
     expect(linkElement).toBeInTheDocument()
@@ -139,7 +141,7 @@ describe('RowDataLoader tests', () => {
 
   it('Shows loading state', () => {
     mockUseGetQueryResultBundle.mockReturnValue(getUseQueryLoadingMock())
-    render(<RowDataLoader {...mockProps} />)
+    render(<RowDataTableWithQuery {...mockProps} />)
     const skeleton = document.querySelector('.MuiSkeleton-root')
     expect(skeleton).toBeInTheDocument()
   })

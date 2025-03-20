@@ -15,7 +15,7 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import { SkeletonTable } from '../Skeleton'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 
-export type RowDataLoaderProps = {
+export type RowDataTableWithQueryProps = {
   /** The query used to retrieve data */
   query: Query
   /** The specific row data to be rendered */
@@ -30,7 +30,7 @@ export type RowDataLoaderProps = {
   columnLinks?: LabelLinkConfig
 }
 
-const RowDataLoader = (props: RowDataLoaderProps) => {
+const RowDataTableWithQuery = (props: RowDataTableWithQueryProps) => {
   const { columnAliases, columnLinks, query, row, headers, labels } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
 
@@ -68,8 +68,9 @@ const RowDataLoader = (props: RowDataLoaderProps) => {
       columnLinks={columnLinks}
       rowData={rowData}
       headers={headers}
+      labels={labels}
     />
   )
 }
 
-export default RowDataLoader
+export default RowDataTableWithQuery

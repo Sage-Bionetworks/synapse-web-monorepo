@@ -10,7 +10,8 @@ import {
   GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
-  RowDataLoader,
+  RowDataTableWithQuery,
+  RowDataTable,
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
@@ -51,23 +52,46 @@ export const standardDetailsPageContent: DetailsPageContentType = [
               ColumnSingleValueFilterOperator.EQUAL,
             ),
           }
-          return (
-            <RowDataLoader
-              row={context.rowData ?? { values: [] }}
-              headers={context.rowSet?.headers ?? []}
-              query={query}
-              labels={[
-                'Name',
-                'Collections',
-                'Organizations',
-                'Data_Topic',
-                'Acronym',
-                'Is_Open',
-                'Registration',
-              ]}
-              columnAliases={dataColumnAliases}
-            />
-          )
+          if (context.rowData && context.rowSet) {
+            return (
+              <RowDataTable
+                rowData={
+                  context.rowData.values?.filter(
+                    (value): value is string => value !== null,
+                  ) ?? []
+                }
+                headers={context.rowSet?.headers ?? []}
+                labels={[
+                  'Name',
+                  'Collections',
+                  'Organizations',
+                  'Data_Topic',
+                  'Acronym',
+                  'Is_Open',
+                  'Registration',
+                ]}
+                columnAliases={dataColumnAliases}
+              />
+            )
+          } else {
+            return (
+              <RowDataTableWithQuery
+                row={context.rowData ?? { values: [] }}
+                headers={context.rowSet?.headers ?? []}
+                query={query}
+                labels={[
+                  'Name',
+                  'Collections',
+                  'Organizations',
+                  'Data_Topic',
+                  'Acronym',
+                  'Is_Open',
+                  'Registration',
+                ]}
+                columnAliases={dataColumnAliases}
+              />
+            )
+          }
         }}
       </DetailsPageContextConsumer>
     ),

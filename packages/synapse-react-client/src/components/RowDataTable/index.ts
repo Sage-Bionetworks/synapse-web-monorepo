@@ -1,5 +1,5 @@
 import RowDataTable from './RowDataTable'
-import RowDataLoader from './RowDataLoader'
+import RowDataTableWithQuery from './RowDataTableWithQuery'
 import type { RowDataTableProps } from './RowDataTable'
-export { RowDataTable, RowDataLoader, RowDataTableProps }
+export { RowDataTable, RowDataTableWithQuery, RowDataTableProps }
 export default RowDataTable
