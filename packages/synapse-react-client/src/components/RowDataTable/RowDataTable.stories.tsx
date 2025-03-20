@@ -33,6 +33,7 @@ export const Demo: Story = {
       ['dataType', dataTypeVal],
       ['grantDOI', doiVal],
     ],
+    labels: ['Name', 'dataType', 'grantDOI'],
     rowData: [nameVal, dataTypeVal, doiVal],
     headers: [
       {
