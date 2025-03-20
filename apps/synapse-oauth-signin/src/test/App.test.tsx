@@ -16,10 +16,10 @@ import {
 } from 'synapse-react-client'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  ACCESS_CODE_PROVIDED_BY_SERVER,
   getOAuth2DescriptionWithInvalidRedirectUriHandler,
   getOAuth2DescriptionWithUnverifiedClientHandler,
   resetConsentedInMockService,
+  URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER,
 } from '../mocks/handlers'
 import mockOauthClient from '../mocks/MockOAuthClient'
 import { server } from '../mocks/server'
@@ -214,7 +214,9 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
       )
     })
   })
@@ -281,7 +283,9 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
       )
     })
   })
@@ -302,7 +306,9 @@ describe('App integration tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         `${params.get(
           'redirect_uri',
-        )}?code=${ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get('state')}`,
+        )}?code=${URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER}&state=${params.get(
+          'state',
+        )}`,
       )
     })
   })
