@@ -14,13 +14,15 @@ import {
 
 type PortalFullTextSearchFieldProps = TextFieldProps & {
   placeholder?: string
-  path?: string
   role?: string
+  path?: string
+  callback?: (searchString: string) => void
 }
 
 export function PortalFullTextSearchField({
   placeholder = 'Search by keyword',
   path,
+  callback,
   role,
   ...props
 }: PortalFullTextSearchFieldProps) {
@@ -42,16 +44,18 @@ export function PortalFullTextSearchField({
       onKeyDown={(event: any) => {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
-          setSearchParams(prev => {
-            prev.set(FTS_SEARCH_TERM, trimmedInput)
-            if (role) {
-              prev.set(FTS_SEARCH_ROLE, role)
-            }
-            return prev
-          })
-
           if (path) {
+            setSearchParams(prev => {
+              prev.set(FTS_SEARCH_TERM, trimmedInput)
+              if (role) {
+                prev.set(FTS_SEARCH_ROLE, role)
+              }
+              return prev
+            })
             window.location.pathname = `${path}`
+          }
+          if (callback) {
+            callback(trimmedInput)
           }
         }
       }}

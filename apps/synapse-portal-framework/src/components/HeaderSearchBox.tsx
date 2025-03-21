@@ -24,7 +24,9 @@ import {
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
-  path?: string
+  // in practice, either set the path or callback.
+  path?: string // redirect to this path with the search term in the search params
+  callback?: (searchString: string) => void // call back this function with the search term
   sx?: SxProps
   roles?: { value: string; label: string }[]
 }
@@ -33,6 +35,7 @@ const HeaderSearchBox = ({
   searchPlaceholder,
   searchExampleTerms,
   path,
+  callback,
   sx,
   roles,
 }: HeaderSearchBoxProps) => {
@@ -42,16 +45,18 @@ const HeaderSearchBox = ({
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    setSearchParams(prev => {
-      prev.set(FTS_SEARCH_TERM, trimmedTerm)
-      if (role) {
-        prev.set(FTS_SEARCH_ROLE, role)
-      }
-      return prev
-    })
-
     if (path) {
+      setSearchParams(prev => {
+        prev.set(FTS_SEARCH_TERM, trimmedTerm)
+        if (role) {
+          prev.set(FTS_SEARCH_ROLE, role)
+        }
+        return prev
+      })
       window.location.pathname = `${path}`
+    }
+    if (callback) {
+      callback(trimmedTerm)
     }
   }
 
@@ -147,6 +152,7 @@ const HeaderSearchBox = ({
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
             path={path}
+            callback={callback}
             role={role}
             sx={{
               boxShadow: 'none',
