@@ -1,3 +1,4 @@
+import { ColumnType } from '@sage-bionetworks/synapse-types'
 import {
   createContext,
   Dispatch,
@@ -5,7 +6,7 @@ import {
   SetStateAction,
   useContext,
 } from 'react'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
+import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
@@ -22,8 +23,14 @@ export type QueryVisualizationContextType = {
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
-  isShowingExportToCavaticaModal: boolean
-  setIsShowingExportToCavaticaModal: Dispatch<SetStateAction<boolean>>
+  /** The set of external analysis platforms where this component allows users to export data. If this list is empty, then
+   * controls will not be shown. */
+  enabledExternalAnalysisPlatforms: ExternalAnalysisPlatform[]
+  /** If true, a dialog guiding the user through exporting table query data to an external platform is shown. If this
+   * is true, enabledExternalAnalysisPlatforms must be non-empty */
+  isShowingExportToAnalysisPlatformModal: boolean
+  /** Allows toggling isShowingExportToAnalysisPlatformModal */
+  setIsShowingExportToAnalysisPlatformModal: Dispatch<SetStateAction<boolean>>
   showFacetFilter: boolean
   setShowFacetFilter: Dispatch<SetStateAction<boolean>>
   showSearchBar: boolean

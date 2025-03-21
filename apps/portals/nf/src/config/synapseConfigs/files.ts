@@ -1,6 +1,6 @@
-import { columnAliases } from './commonProps'
-import { filesSql } from '../resources'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import { enabledAnalysisPlatforms, filesSql } from '../resources'
+import { columnAliases } from './commonProps'
 
 const rgbIndex = 1
 export const visibleColumnCount = 7
@@ -9,7 +9,7 @@ export const filesPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Files',
   sql: filesSql,
   visibleColumnCount,
-  showExportToCavatica: true,
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   isRowSelectionVisible: true,
   rowSelectionPrimaryKey: ['id'],
   fileIdColumnName: 'id',

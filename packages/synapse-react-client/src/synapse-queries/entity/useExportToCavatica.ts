@@ -1,12 +1,12 @@
-import SynapseClient from '../../synapse-client'
-import { displayToast } from '../../components/ToastMessage/ToastMessage'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   DownloadFromTableRequest,
   QueryBundleRequest,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import { displayToast } from '../../components/ToastMessage/ToastMessage'
+import SynapseClient from '../../synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 
 export function useExportToCavatica(
   queryBundleRequest: QueryBundleRequest,
@@ -40,7 +40,7 @@ export function useExportToCavatica(
         csvTableDescriptor: { separator },
         additionalFilters: queryBundleRequest.query.additionalFilters,
       }
-      const result = await SynapseClient.getDownloadFromTableRequest(
+      const result = await SynapseClient.createTableCsvForDownload(
         downloadFromTableRequest,
         accessToken,
       )

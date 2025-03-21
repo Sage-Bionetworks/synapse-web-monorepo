@@ -68,7 +68,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'Linked Training Resources',
     element: (
       <DetailsPageContextConsumer columnName={'id'}>
-        {({ value }) => (
+        {({ value, context }) => (
           <>{value}</>
           // TODO:
           // <CardContainerLogic

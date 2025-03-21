@@ -17,7 +17,12 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
-import { dataOnStudiesPageSql, dataSql, studiesSql } from 'src/config/resources'
+import {
+  dataOnStudiesPageSql,
+  dataSql,
+  enabledAnalysisPlatforms,
+  studiesSql,
+} from 'src/config/resources'
 import { DATA_TABLE_COLUMN_NAMES } from 'src/config/synapseConfigs/data'
 import {
   STUDY_TABLE_COLUMN_NAMES,
@@ -170,7 +175,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
                 rgbIndex={studyRgbIndex}
                 name="Metadata Files"
                 visibleColumnCount={10}
-                showExportToCavatica={true}
+                enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                 isRowSelectionVisible={true}
                 tableConfiguration={{
                   showAccessColumn: true,
@@ -208,7 +213,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
                 rgbIndex={studyRgbIndex}
                 visibleColumnCount={10}
                 isRowSelectionVisible={true}
-                showExportToCavatica={true}
+                enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                 tableConfiguration={{
                   showAccessColumn: true,
                   showDownloadColumn: true,

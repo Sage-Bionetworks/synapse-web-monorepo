@@ -7,6 +7,7 @@ import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveSta
 import { useQueryContext } from '../QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { NoContentPlaceholderType } from '../SynapseTable'
+import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
 import {
   QueryVisualizationContextProvider,
@@ -47,6 +48,7 @@ export type QueryVisualizationWrapperProps = {
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
   hasCustomPlots?: boolean
+  enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
 }
 
 /**
@@ -65,6 +67,7 @@ export function QueryVisualizationWrapper(
     helpConfiguration,
     hasCustomPlots = false,
     visibleColumnCount = Infinity,
+    enabledExternalAnalysisPlatforms = [],
   } = props
 
   const columnAliases = useMemo(
@@ -193,8 +196,9 @@ export function QueryVisualizationWrapper(
       getDisplayValue,
       getHelpText,
       NoContentPlaceholder,
-      isShowingExportToCavaticaModal,
-      setIsShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal: isShowingExportToCavaticaModal,
+      setIsShowingExportToAnalysisPlatformModal:
+        setIsShowingExportToCavaticaModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
@@ -207,6 +211,7 @@ export function QueryVisualizationWrapper(
       setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
+      enabledExternalAnalysisPlatforms,
     }),
     [
       NoContentPlaceholder,
@@ -227,6 +232,7 @@ export function QueryVisualizationWrapper(
       unitDescription,
       visibleColumns,
       hasCustomPlots,
+      enabledExternalAnalysisPlatforms,
     ],
   )
   /**
