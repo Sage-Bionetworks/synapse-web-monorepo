@@ -30,29 +30,12 @@ import ExternalPlatformActionsRequiredPrecheck from './ExternalPlatformActionsRe
 
 jest.mock(
   '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform',
-  () => ({
-    useExportTableQueryToAnalysisPlatform: jest.fn(),
-  }),
 )
-jest.mock('../../DownloadCart/TableQueryActionsRequired', () => ({
-  TableQueryActionsRequired: jest.fn(),
-}))
-jest.mock('../../QueryContext', () => ({
-  useQueryContext: jest.fn(),
-}))
-jest.mock('../../QueryWrapper/useGetQueryMetadata', () => ({
-  useGetQueryMetadata: jest.fn(),
-}))
-
-jest.mock('../../QueryVisualizationWrapper/index', () => ({
-  useQueryVisualizationContext: jest.fn(),
-}))
-
-jest.mock('../../QueryWrapper/TableRowSelectionState', () => ({
-  useHasSelectedRowsAtomValue: jest.fn(),
-  useRowSelectionPrimaryKeyAtomValue: jest.fn(),
-  useSelectedRowsAtomValue: jest.fn(),
-}))
+jest.mock('../../DownloadCart/TableQueryActionsRequired')
+jest.mock('../../QueryContext')
+jest.mock('../../QueryWrapper/useGetQueryMetadata')
+jest.mock('../../QueryVisualizationWrapper/index')
+jest.mock('../../QueryWrapper/TableRowSelectionState')
 
 const mockUseExportTableQueryToAnalysisPlatform = jest.mocked(
   useExportTableQueryToAnalysisPlatform,

@@ -1,6 +1,5 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
-import * as test from 'node:test'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
