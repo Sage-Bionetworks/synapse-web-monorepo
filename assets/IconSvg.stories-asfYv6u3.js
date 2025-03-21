@@ -1,8 +1,0 @@
-import{j as r}from"./jsx-runtime-Du8NFWEI.js";import{a as s,I as a}from"./IconSvg-BJeJlgRV.js";import"./index-Dl6G-zuu.js";import"./createSvgIcon-DGYn73cf.js";import"./createTheme-BAeQEIuu.js";import"./index-GEGPABih.js";import"./styled-CVek1lbE.js";import"./spreadSx-CwcO6WA9.js";import"./Tooltip-B_hdhCmy.js";import"./index-OQIcOgx6.js";import"./useTheme-DGffmoS1.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DPWvTaVu.js";import"./mergeSlotProps-D1doMhlu.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-CEBgoE3Z.js";import"./index-BIzb42Jq.js";import"./utils-Cn9x6_1Z.js";import"./TransitionGroupContext-TdpM2qIg.js";import"./useControlled-1Y2rT-1r.js";import"./useId-BkqTTtmk.js";import"./useIsFocusVisible-ByxglBfx.js";import"./LayersTwoTone-hfVo2OcY.js";import"./ErrorOutlined-Cv1ApGtt.js";import"./GetAppTwoTone-2-W2Mxbb.js";import"./InfoOutlined-BOPmYxHD.js";import"./DeleteTwoTone-BaSxwZ9v.js";import"./CheckCircleTwoTone-ChmDaZaB.js";const C={title:"UI/IconSvg",render:e=>r.jsx("div",{style:{display:"flex",flexWrap:"wrap",flexDirection:"row"},children:[...s].sort().map(t=>r.jsxs("div",{style:{margin:"10px",textAlign:"center"},children:[r.jsx("div",{children:r.jsx(a,{...e,icon:t,label:t})}),r.jsx("div",{style:{fontSize:"10px"},children:t})]},t))})},o={args:{sx:{color:"primary.main"},fontSize:"large"}};var i,m,p;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
-  args: {
-    sx: {
-      color: 'primary.main'
-    },
-    fontSize: 'large'
-  }
-}`,...(p=(m=o.parameters)==null?void 0:m.docs)==null?void 0:p.source}}};const F=["Icon"];export{o as Icon,F as __namedExportsOrder,C as default};
