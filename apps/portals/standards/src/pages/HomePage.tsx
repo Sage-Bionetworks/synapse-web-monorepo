@@ -1,11 +1,6 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
-import {
-  FeaturedDataTabs,
-  Goals,
-  SynapseConstants,
-  TableFeedCards,
-} from 'synapse-react-client'
+import { FeaturedDataTabs, Goals, SynapseConstants } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
