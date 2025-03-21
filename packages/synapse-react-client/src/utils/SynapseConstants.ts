@@ -72,6 +72,7 @@ export const GRANT: string = 'Grant'
 export const ORGANIZATION: string = 'ORGANIZATION'
 export const CONTRIBUTOR: string = 'contributor'
 export const PERSON: string = 'PERSON'
+export const TREE_HORIZONTAL: string = 'tree_horizontal'
 export const MOUSE: string = 'MOUSE'
 export const TRANSLATIONAL: string = 'TRANSLATIONAL'
 export const EXPLORE: string = 'explore'
@@ -203,7 +204,7 @@ export const SYNAPSE_BACKEND_PRODUCTION_URL =
   'https://repo-prod.prod.sagebase.org'
 export const SYNAPSE_BACKEND_STAGING_URL =
   'https://repo-staging.prod.sagebase.org'
-export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-prod.dev.sagebase.org'
+export const SYNAPSE_BACKEND_DEV_URL = 'https://repo-dev.dev.sagebase.org'
 
 export const ONE_SAGE_PRODUCTION_URL = 'https://accounts.synapse.org'
 export const ONE_SAGE_STAGING_URL = 'https://staging.accounts.synapse.org'

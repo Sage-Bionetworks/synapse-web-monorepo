@@ -1,7 +1,8 @@
-import { act, renderHook } from '@testing-library/react'
-import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { Row } from '@sage-bionetworks/synapse-types'
+import { act, renderHook } from '@testing-library/react'
+import { Provider, useAtom, useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
+import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import {
   hasSelectedRowsAtom,
   isRowSelectedAtom,
@@ -9,15 +10,15 @@ import {
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from './TableRowSelectionState'
-import { Provider, useAtomValue, useSetAtom } from 'jotai'
 
 function useTableRowSelectionState() {
-  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
-  const setIsRowSelectionVisible = useSetAtom(isRowSelectionVisibleAtom)
-  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
-  const setRowSelectionPrimaryKey = useSetAtom(rowSelectionPrimaryKeyAtom)
-  const selectedRows = useAtomValue(selectedRowsAtom)
-  const setSelectedRows = useSetAtom(selectedRowsAtom)
+  const [isRowSelectionVisible, setIsRowSelectionVisible] = useAtom(
+    isRowSelectionVisibleAtom,
+  )
+  const [rowSelectionPrimaryKey, setRowSelectionPrimaryKey] = useAtom(
+    rowSelectionPrimaryKeyAtom,
+  )
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
   const isRowSelected = useAtomValue(isRowSelectedAtom)
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
   return {

@@ -26,8 +26,8 @@ import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import Plot from '../../Plot/Plot'
 import PlotPanelHeader from '../../Plot/PlotPanelHeader'
-import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import StyledFormControl from '../../styled/StyledFormControl'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
@@ -199,7 +199,10 @@ export async function extractPlotDataArray(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
-    textposition: plotType === 'STACKED_HORIZONTAL_BAR' ? 'none' : 'inside',
+    textposition:
+      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'BAR'
+        ? 'none'
+        : 'inside',
     hovertemplate:
       plotType === 'PIE'
         ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
@@ -295,10 +298,8 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata, isLoading: isLoadingQueryMetadata } = useQuery(
-    queryMetadataQueryOptions,
-  )
+  const { data: queryMetadata, isLoading: isLoadingQueryMetadata } =
+    useGetQueryMetadata()
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 

@@ -11,8 +11,6 @@ import {
   ActionRequiredCount,
   ColumnModel,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { useAtomValue } from 'jotai'
 import { useMemo, useState } from 'react'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
@@ -24,10 +22,11 @@ import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
-  hasSelectedRowsAtom,
-  rowSelectionPrimaryKeyAtom,
-  selectedRowsAtom,
+  useHasSelectedRowsAtomValue,
+  useRowSelectionPrimaryKeyAtomValue,
+  useSelectedRowsAtomValue,
 } from '../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { SkeletonParagraph } from '../Skeleton'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
@@ -46,16 +45,15 @@ export default function SendToCavaticaConfirmationDialog(
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
-    queryMetadataQueryOptions,
     fileIdColumnName,
     fileVersionColumnName,
     fileNameColumnName,
   } = useQueryContext()
 
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
-  const selectedRows = useAtomValue(selectedRowsAtom)
-  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
-  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+  const { data: queryMetadata } = useGetQueryMetadata()
+  const selectedRows = useSelectedRowsAtomValue()
+  const rowSelectionPrimaryKey = useRowSelectionPrimaryKeyAtomValue()
+  const hasSelectedRows = useHasSelectedRowsAtomValue()
 
   const {
     isShowingExportToCavaticaModal,

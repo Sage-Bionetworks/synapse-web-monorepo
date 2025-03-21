@@ -27,6 +27,7 @@ export const publicationsCardConfiguration: CardConfiguration = {
     },
   ],
   genericCardSchema: {
+    includeCitation: true,
     title: 'title',
     type: SynapseConstants.PUBLICATION,
     subTitle: 'author',

@@ -20,7 +20,7 @@ export const handleUpsetPlotClick: UpSetSelectionProps['onClick'] =
         const filter: ColumnMultiValueFunctionQueryFilter = {
           concreteType:
             COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-          columnName: 'Assays',
+          columnName: 'dataTypes',
           function: ColumnMultiValueFunction.HAS,
           values: [value],
         }

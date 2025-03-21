@@ -1,22 +1,3 @@
-import { Fragment, Suspense, useMemo } from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import { SizeMe } from 'react-sizeme'
-import {
-  ColumnTypeEnum,
-  FacetColumnResult,
-  FacetColumnResultValueCount,
-  FacetColumnResultValues,
-} from '@sage-bionetworks/synapse-types'
-import Plot from '../Plot/Plot'
-import {
-  extractPlotDataArray,
-  getPlotStyle,
-  PlotType,
-} from '../widgets/facet-nav/FacetNavPanel'
-import { getFacets } from '../widgets/facet-nav/useFacetPlots'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { ShowMore } from '../row_renderers/utils'
 import {
   Box,
   Button,
@@ -25,7 +6,30 @@ import {
   Skeleton,
   Typography,
 } from '@mui/material'
+import {
+  ColumnTypeEnum,
+  FacetColumnResult,
+  FacetColumnResultValueCount,
+  FacetColumnResultValues,
+} from '@sage-bionetworks/synapse-types'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { times } from 'lodash-es'
+import Plotly from 'plotly.js-basic-dist'
+import { Fragment, Suspense, useMemo } from 'react'
+import { SizeMe } from 'react-sizeme'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import Plot from '../Plot/Plot'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { ShowMore } from '../row_renderers/utils'
+import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
+import {
+  extractPlotDataArray,
+  getPlotStyle,
+  PlotType,
+} from '../widgets/facet-nav/FacetNavPanel'
 import { FacetPlotLegendTable } from '../widgets/facet-nav/FacetPlotLegendTable'
+import { getFacets } from '../widgets/facet-nav/useFacetPlots'
 import {
   FACET_PLOTS_CARD_CLASSNAME,
   FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME,
@@ -33,10 +37,6 @@ import {
   FacetPlotsCardPlotContainer,
   FacetPlotsCardTitleContainer,
 } from './FacetPlotsCardGrid'
-import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
-import { times } from 'lodash-es'
-import { useQueryContext } from '../QueryContext'
-import { useSuspenseQuery } from '@tanstack/react-query'
 
 export type FacetPlotsCardProps = {
   title?: string
@@ -101,8 +101,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
     plotType = 'PIE',
   } = props
   const { accessToken } = useSynapseContext()
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const facetDataArray = useMemo(() => {

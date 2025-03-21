@@ -1,18 +1,18 @@
-import { CustomControl } from '../TopLevelControls/TopLevelControls'
+import { GetAppTwoTone } from '@mui/icons-material'
 import { Button } from '@mui/material'
-import { RowSelectionUI } from './RowSelectionUI'
+import { Table } from '@sage-bionetworks/synapse-types'
+import { useAtom } from 'jotai'
+import { useGetEntity } from '../../../synapse-queries'
+import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
-import { GetAppTwoTone } from '@mui/icons-material'
-import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
-import { useAtom } from 'jotai'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
-import { useQuery } from '@tanstack/react-query'
-import { useGetEntity } from '../../../synapse-queries'
-import { Table } from '@sage-bionetworks/synapse-types'
+import { CustomControl } from '../TopLevelControls/TopLevelControls'
+import { RowSelectionUI } from './RowSelectionUI'
 
 const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
 
@@ -30,14 +30,9 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const {
-    entityId,
-    versionNumber,
-    getCurrentQueryRequest,
-    queryMetadataQueryOptions,
-  } = useQueryContext()
+  const { entityId, versionNumber, getCurrentQueryRequest } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =

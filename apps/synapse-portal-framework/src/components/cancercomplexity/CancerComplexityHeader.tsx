@@ -21,6 +21,13 @@ const CancerComplexityHeader = () => {
   const isFeatureEnabled = useGetFeatureFlag(
     FeatureFlagEnum.PORTAL_SEARCH_HEADER,
   )
+  const roles = [
+    { value: 'researcher', label: 'Researcher' },
+    { value: 'principalInvestigator', label: 'Principal Investigator' },
+    { value: 'funder', label: 'Funder' },
+    { value: 'student', label: 'Student' },
+    { value: 'patientAdvocate', label: 'Patient Advocate' },
+  ]
   const content = (
     <>
       <Box
@@ -80,6 +87,7 @@ const CancerComplexityHeader = () => {
               searchExampleTerms={searchExampleTerms}
               searchPlaceholder={searchPlaceholder}
               path="/Search"
+              roles={roles}
               sx={{
                 flex: 1,
                 '& > :first-child': {

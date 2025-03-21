@@ -6,16 +6,27 @@ import {
   Button,
   lighten,
   useTheme,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useSearchParams } from 'react-router'
+import { KeyboardArrowDown } from '@mui/icons-material'
+import { useState } from 'react'
+import {
+  FTS_SEARCH_TERM,
+  FTS_SEARCH_ROLE,
+} from 'synapse-react-client/utils/functions/SqlFunctions'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
   path?: string
   sx?: SxProps
+  roles?: { value: string; label: string }[]
 }
 
 const HeaderSearchBox = ({
@@ -23,16 +34,29 @@ const HeaderSearchBox = ({
   searchExampleTerms,
   path,
   sx,
+  roles,
 }: HeaderSearchBoxProps) => {
+  const [role, setRole] = useState('')
   const [, setSearchParams] = useSearchParams()
   const theme = useTheme()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    setSearchParams({ FTS_SEARCH_TERM: trimmedTerm })
+    setSearchParams(prev => {
+      prev.set(FTS_SEARCH_TERM, trimmedTerm)
+      if (role) {
+        prev.set(FTS_SEARCH_ROLE, role)
+      }
+      return prev
+    })
+
     if (path) {
       window.location.pathname = `${path}`
     }
+  }
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value)
   }
 
   return (
@@ -54,17 +78,78 @@ const HeaderSearchBox = ({
         })}
       >
         <Box
-          sx={{
+          sx={theme => ({
             display: 'flex',
             gap: '20px',
             alignItems: 'center',
             height: '48px',
-          }}
+            [theme.breakpoints.down('md')]: {
+              flexDirection: 'column',
+              marginBottom: '50px',
+            },
+          })}
         >
+          {roles && (
+            <FormControl
+              sx={theme => ({
+                minWidth: '187px',
+                minHeight: '38px',
+                height: '100%',
+                [theme.breakpoints.down('md')]: {
+                  width: '100%',
+                },
+              })}
+            >
+              <Select
+                sx={{
+                  backgroundColor: '#FFFF',
+                  height: '100%',
+                  svg: {
+                    color: '#878E95',
+                    width: '24px',
+                    height: '24px',
+                    right: '10px',
+                  },
+                  '.MuiSelect-select': {
+                    marginRight: '10px',
+                  },
+                }}
+                displayEmpty
+                label="Select a Role"
+                value={role}
+                onChange={handleChange}
+                IconComponent={KeyboardArrowDown}
+              >
+                <MenuItem disabled value="">
+                  <Typography
+                    sx={{
+                      fontStyle: 'italic',
+                      color: 'grey.700',
+                    }}
+                  >
+                    Select a Role
+                  </Typography>
+                </MenuItem>
+                {roles.map(({ value, label }) => (
+                  <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
+                    <Typography
+                      sx={{
+                        display: 'inline',
+                      }}
+                    >
+                      {label}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
             path={path}
+            role={role}
             sx={{
+              boxShadow: 'none',
               margin: 0,
               height: '100%',
               borderRadius: '3px',
@@ -72,6 +157,11 @@ const HeaderSearchBox = ({
                 height: '100%',
                 borderRadius: '3px',
                 fontSize: '16px',
+              },
+              '.MuiInputBase-input::placeholder': {
+                fontStyle: 'italic',
+                opacity: 1,
+                color: 'grey.700',
               },
             }}
           />
@@ -93,6 +183,7 @@ const HeaderSearchBox = ({
                   variant="contained"
                   onClick={() => handleTermClick(term)}
                   sx={{
+                    boxShadow: 'none !important',
                     borderRadius: '30px',
                     border: '1px solid',
                     borderColor: lighten(theme.palette.primary.main, 0.9),

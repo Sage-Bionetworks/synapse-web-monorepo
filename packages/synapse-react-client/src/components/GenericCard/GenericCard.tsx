@@ -67,6 +67,12 @@ export type GenericCardSchema = {
   imageFileHandleColumnName?: string
   thumbnailRequiresPadding?: boolean
   secondaryLabels?: string[]
+  customSecondaryLabelConfig?: {
+    key: string
+    value: string
+    isVisible: (schema: Record<string, number>, data: string[]) => boolean
+  }
+
   link?: string
   dataTypeIconNames?: string
 }
@@ -418,6 +424,15 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
+    const customLabelConfig =
+      genericCardSchemaDefined.customSecondaryLabelConfig
+
+    if (customLabelConfig?.isVisible(schema, data)) {
+      const { key, value } = customLabelConfig
+      const keyValue = [key, value]
+      values.push(keyValue)
+    }
+
     const isView = table && !isTableEntity(table)
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]

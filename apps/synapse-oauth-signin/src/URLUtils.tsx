@@ -15,22 +15,24 @@ export const handleErrorRedirect = (
     // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
     if (isValidUrl(redirectUri) && error['error'] !== 'invalid_redirect_uri') {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
-      const errorDescription = error['error_description']
-        ? `&error_description=${encodeURIComponent(error['error_description'])}`
-        : ''
       const redirectURLSearchParams = new URLSearchParams()
+
+      redirectURLSearchParams.set('error', error['error'])
+      if (error['error_description']) {
+        redirectURLSearchParams.set(
+          'error_description',
+          //URLSearchParams.toString() already encodes value, do not encode here (would double encode)
+          error['error_description'],
+        )
+      }
+      let redirectUrl = `${redirectUri}?${redirectURLSearchParams.toString()}`
       const state = searchParams.get('state')
       if (state) {
-        redirectURLSearchParams.set('state', encodeURIComponent(state))
+        // SWC-7272 - append raw state to the end of the URL
+        // We do not use URLSearchParams for state because it encodes the value, and it should be passed untouched.
+        redirectUrl += `&state=${state}`
       }
-      redirectURLSearchParams.set(
-        'error',
-        `${encodeURIComponent(error['error'])}${errorDescription}`,
-      )
-
-      window.location.replace(
-        `${redirectUri}?${redirectURLSearchParams.toString()}`,
-      )
+      window.location.replace(redirectUrl)
       return true
     }
     // no need to pop up an alert here, since the error should be shown on the page (and we already sent to console.error)

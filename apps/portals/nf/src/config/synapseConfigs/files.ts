@@ -22,3 +22,5 @@ export const filesPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   columnAliases,
 }
+
+export default filesPlotNavProps
