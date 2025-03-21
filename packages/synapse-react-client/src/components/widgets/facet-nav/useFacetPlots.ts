@@ -5,12 +5,12 @@ import {
   FacetColumnResultValues,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { useCallback, useMemo } from 'react'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
-import { useMemo, useCallback } from 'react'
-import { FacetNavPanelProps } from './FacetNavPanel'
 import { useQueryContext } from '../../QueryContext'
+import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { FacetNavPanelProps } from './FacetNavPanel'
 
 // Custom hook for generating properties for FacetNavPanel components with filter controls based on the given facets
 export default function useFacetPlots(
@@ -19,13 +19,9 @@ export default function useFacetPlots(
   FacetNavPanelProps,
   'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
 >[] {
-  const {
-    getCurrentQueryRequest,
-    executeQueryRequest,
-    queryMetadataQueryOptions,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, executeQueryRequest } = useQueryContext()
 
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
 
   const lastQueryRequest = useMemo(
     () => getCurrentQueryRequest(),

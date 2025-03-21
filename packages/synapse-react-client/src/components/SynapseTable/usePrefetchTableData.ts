@@ -8,7 +8,9 @@ import {
   RowSet,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
+import { useQueryClient } from '@tanstack/react-query'
+import { cloneDeep } from 'lodash-es'
+import { useCallback, useMemo } from 'react'
 import {
   useGetEntity,
   useGetEntityHeaders,
@@ -16,21 +18,19 @@ import {
   useGetRestrictionInformationBatch,
   useGetUserGroupHeaders,
 } from '../../synapse-queries'
-import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
-import { useQueryContext } from '../QueryContext'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
 import { useSynapseContext } from '../../utils'
+import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
 import { goToPage as transformQueryToGoToPage } from '../../utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
-import { cloneDeep } from 'lodash-es'
+import { useQueryContext } from '../QueryContext'
 import { getTableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
 
 function usePrefetchFileHandleData(rowSet: RowSet) {
-  const { entityId, versionNumber, queryMetadataQueryOptions } =
-    useQueryContext()
+  const { entityId, versionNumber } = useQueryContext()
 
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   const fileHandleIdColumnIndices = getTypeIndices(
     ColumnTypeEnum.FILEHANDLEID,
@@ -88,10 +88,9 @@ function usePrefetchFileHandleData(rowSet: RowSet) {
 }
 
 function useGetEntitiesInTable(rowSet: RowSet) {
-  const { entityId, versionNumber, queryMetadataQueryOptions } =
-    useQueryContext()
+  const { entityId, versionNumber } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   let entitiesInTable: ReferenceList = []
 
@@ -168,8 +167,7 @@ function usePrefetchEntityData(entitiesToPrefetch: ReferenceList) {
 }
 
 function usePrefetchUserGroupHeaderData(rowSet: RowSet) {
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
   const userIdColumnIndices = getTypeIndices(
     ColumnTypeEnum.USERID,

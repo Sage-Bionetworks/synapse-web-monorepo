@@ -5,7 +5,6 @@ import {
   FacetColumnResultValues,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
 import {
   CellContext,
   createColumnHelper,
@@ -24,6 +23,7 @@ import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
@@ -201,8 +201,8 @@ export function TableDataColumnHeader(
   props: HeaderContext<Row, string | null>,
 ) {
   const { column } = props
-  const { queryMetadataQueryOptions, lockedColumn } = useQueryContext()
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { lockedColumn } = useQueryContext()
+  const { data: queryMetadata } = useGetQueryMetadata()
   const columnModels = queryMetadata?.columnModels ?? []
   const selectColumns = queryMetadata?.selectColumns ?? []
   const selectColumn = selectColumns.find(sc => sc.name === column.id)
@@ -263,8 +263,7 @@ export function TableDataColumnHeader(
 
 export function TableDataCell(props: CellContext<Row, string | null>) {
   const { cell, table } = props
-  const { queryMetadataQueryOptions } = useQueryContext()
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const entityOrRowId = getEntityOrRowId(props)
   const entityOrRowVersion = getEntityOrRowVersion(props)
   const versionNumber =
