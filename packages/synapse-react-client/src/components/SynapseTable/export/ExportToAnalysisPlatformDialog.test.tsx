@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
+import * as test from 'node:test'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
@@ -25,6 +26,25 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
     mockSetIsShowingExportToAnalysisPlatformModal,
   enabledExternalAnalysisPlatforms: ['cavatica', 'terra', 'adworkbench'],
   // rest are unused
+  NoContentPlaceholder: jest.fn(),
+  columnsToShowInTable: [],
+  getColumnDisplayName: jest.fn(),
+  getDisplayValue: jest.fn(),
+  getHelpText: jest.fn(),
+  setColumnsToShowInTable: jest.fn(),
+  setShowCopyToClipboard: jest.fn(),
+  setShowDownloadConfirmation: jest.fn(),
+  setShowFacetFilter: jest.fn(),
+  setShowPlots: jest.fn(),
+  setShowSearchBar: jest.fn(),
+  setShowSqlEditor: jest.fn(),
+  showCopyToClipboard: false,
+  showDownloadConfirmation: false,
+  showFacetFilter: false,
+  showPlots: false,
+  showSearchBar: false,
+  showSqlEditor: false,
+  unitDescription: '',
 }
 
 const mockUseQueryVisualizationContext = jest

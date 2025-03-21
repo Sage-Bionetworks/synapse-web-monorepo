@@ -64,7 +64,7 @@ function ShowModalTrigger() {
 }
 
 export const Demo: Story = {
-  name: 'Send to CAVATICA Dialog',
+  name: 'Send to Analysis Platform Dialog',
   args: {
     platformInstructionProps: {
       cavaticaConnectAccountURL:
