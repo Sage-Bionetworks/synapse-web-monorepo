@@ -95,7 +95,10 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
   // on search field value update, update the special search parameter FTS_SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
-      <PortalFullTextSearchField disabled={selectedTabIndex == undefined} />
+      <PortalFullTextSearchField
+        disabled={selectedTabIndex == undefined}
+        path={location.pathname}
+      />
       {selectedTabIndex != undefined && (
         <PortalSearchTabs tabConfig={searchPageTabsState} />
       )}
