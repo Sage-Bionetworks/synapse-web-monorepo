@@ -1,14 +1,12 @@
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import Header from '../Header'
-import {
-  FeatureFlagEnum,
-  Query,
-  TextMatchesQueryFilter,
-} from '@sage-bionetworks/synapse-types'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
+import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 
-const StandardsHeader = () => {
+export type StandardsHeaderProps = {
+  dataSql: string
+}
+
+const StandardsHeader = (props: StandardsHeaderProps) => {
   const searchPlaceholder = 'Search for a biomedical data standard'
   const searchExampleTerms = [
     'MRI data processing',
@@ -21,9 +19,6 @@ const StandardsHeader = () => {
     'Lab automation',
   ]
 
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SEARCH_HEADER,
-  )
   const content = (
     <>
       <Box
@@ -65,57 +60,53 @@ const StandardsHeader = () => {
       </Box>
     </>
   )
-  if (isFeatureEnabled) {
-    return (
-      <header id="header">
+  return (
+    <header id="header">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px 0',
+        }}
+      >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', lg: 'row' },
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '20px 0',
+            margin: 0,
+            flex: 1,
+            padding: { xs: '40px', lg: '40px 80px' },
           }}
         >
-          <Box
-            sx={{
-              margin: 0,
-              flex: 1,
-              padding: { xs: '40px', lg: '40px 80px' },
-            }}
-          >
-            {content}
-          </Box>
-          <HeaderSearchBox
-            searchExampleTerms={searchExampleTerms}
-            searchPlaceholder={searchPlaceholder}
-            callback={searchString => {
-              const filter: TextMatchesQueryFilter = {
-                concreteType:
-                  'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-                searchExpression: searchString,
-              }
-              const query: Query = {
-                sql: 'select * from syn64960277',
-                additionalFilters: [filter],
-              }
-              window.location.assign(
-                `/Explore/?QueryWrapper0=${JSON.stringify(query)}`,
-              )
-            }}
-            sx={{
-              flex: 1,
-              '& > :first-child': {
-                background: 'rgba(184, 204, 226, 0.60)',
-              },
-            }}
-          />
+          {content}
         </Box>
-      </header>
-    )
-  }
-
-  return <Header />
+        <HeaderSearchBox
+          searchExampleTerms={searchExampleTerms}
+          searchPlaceholder={searchPlaceholder}
+          callback={searchString => {
+            const filter: TextMatchesQueryFilter = {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+              searchExpression: searchString,
+            }
+            const query: Query = {
+              sql: props.dataSql,
+              additionalFilters: [filter],
+            }
+            window.location.assign(
+              `/Explore/?QueryWrapper0=${JSON.stringify(query)}`,
+            )
+          }}
+          sx={{
+            flex: 1,
+            '& > :first-child': {
+              background: 'rgba(184, 204, 226, 0.60)',
+            },
+          }}
+        />
+      </Box>
+    </header>
+  )
 }
 
 export default StandardsHeader

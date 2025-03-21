@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
-import { useSearchParams } from 'react-router'
+import { useNavigate } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
@@ -40,20 +40,21 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps) => {
   const [role, setRole] = useState('')
-  const [, setSearchParams] = useSearchParams()
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
     if (path) {
-      setSearchParams(prev => {
-        prev.set(FTS_SEARCH_TERM, trimmedTerm)
-        if (role) {
-          prev.set(FTS_SEARCH_ROLE, role)
-        }
-        return prev
+      const params = new URLSearchParams()
+      params.set(FTS_SEARCH_TERM, trimmedTerm)
+      if (role) {
+        params.set(FTS_SEARCH_ROLE, role)
+      }
+      navigate({
+        pathname: path,
+        search: `?${params.toString()}`,
       })
-      window.location.pathname = `${path}`
     }
     if (callback) {
       callback(trimmedTerm)

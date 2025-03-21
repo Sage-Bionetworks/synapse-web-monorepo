@@ -1,12 +1,13 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
+import { dataSql } from '../config/resources'
 import { FeaturedDataTabs, Goals, SynapseConstants } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
   return (
     <>
-      <StandardsHeader />
+      <StandardsHeader dataSql={dataSql} />
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout>
