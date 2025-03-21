@@ -1,4 +1,3 @@
-import ShareIcon from '@mui/icons-material/IosShare'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import {
   Query,
@@ -267,7 +266,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   onClick={() => {
                     setIsShowingExportToAnalysisPlatformModal(true)
                   }}
-                  startIcon={<ShareIcon />}
                   id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
                 >
                   Send {numberOfResultsToInvokeActionAsText} to Analysis
