@@ -12,7 +12,7 @@ const mockQuery: Query = {
   sql: 'SELECT * FROM syn52694652',
 }
 const meta = {
-  title: 'UI/RowDataTableWithQuery',
+  title: 'UI/RowDataTable/RowDataTableWithQuery',
   component: RowDataTableWithQuery,
   parameters: {
     chromatic: { viewports: [600, 1200] },
