@@ -6,7 +6,6 @@ import { useGetEntity } from '../../../synapse-queries'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { Cavatica } from '../../../assets/icons/Cavatica'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { getFileColumnModelId } from '../SynapseTableUtils'
@@ -14,10 +13,10 @@ import CustomControlButton from '../TopLevelControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
 
-const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
+const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
+  'SendToAnalysisPlatformRowSelectionControlButton'
 
 export type RowSelectionControlsProps = {
-  showExportToCavatica?: boolean
   customControls?: CustomControl[]
   remount?: () => void
 }
@@ -29,14 +28,20 @@ export type RowSelectionControlsProps = {
  * @constructor
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
-  const { customControls = [], showExportToCavatica = false, remount } = props
+  const { customControls = [], remount } = props
   const { entityId, versionNumber, getCurrentQueryRequest } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
-  const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
-    useQueryVisualizationContext()
+  const {
+    setIsShowingExportToAnalysisPlatformModal,
+    setShowDownloadConfirmation,
+    enabledExternalAnalysisPlatforms,
+  } = useQueryVisualizationContext()
+
+  const showExportToAnalysisPlatformButton =
+    enabledExternalAnalysisPlatforms.length > 0
 
   const refresh = () => {
     // clear selection
@@ -75,16 +80,16 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               />
             )
           })}
-          {showExportToCavatica && (
+          {/* TODO: Generic button */}
+          {showExportToAnalysisPlatformButton && (
             <Button
               variant="outlined"
               onClick={() => {
-                setIsShowingExportToCavaticaModal(true)
+                setIsShowingExportToAnalysisPlatformModal(true)
               }}
-              startIcon={<Cavatica />}
-              id={SEND_TO_CAVATICA_BUTTON_ID}
+              id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
             >
-              Send to CAVATICA
+              Send to Analysis Platform
             </Button>
           )}
           {showAddToDownloadCart && (

@@ -1,5 +1,9 @@
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
-import { cavaticaConnectAccountURL, dataSql } from '../resources'
+import {
+  cavaticaConnectAccountURL,
+  dataSql,
+  enabledAnalysisPlatforms,
+} from '../resources'
 import { STUDY_TABLE_COLUMN_NAMES } from './studies'
 
 const rgbIndex = 1
@@ -12,7 +16,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Data',
   visibleColumnCount: 10,
-  showExportToCavatica: true,
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   cavaticaConnectAccountURL: cavaticaConnectAccountURL,
   isRowSelectionVisible: true,
   tableConfiguration: {

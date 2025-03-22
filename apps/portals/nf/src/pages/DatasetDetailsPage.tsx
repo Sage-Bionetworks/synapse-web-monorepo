@@ -3,7 +3,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { datasetsSql } from 'src/config/resources'
+import { datasetsSql, enabledAnalysisPlatforms } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import {
   datasetCardConfiguration,
@@ -79,7 +79,9 @@ export default function DatasetDetailsPage() {
                       shouldDeepLink={false}
                       columnAliases={columnAliases}
                       defaultShowPlots={false}
-                      showExportToCavatica={true}
+                      enabledExternalAnalysisPlatforms={
+                        enabledAnalysisPlatforms
+                      }
                       isRowSelectionVisible={true}
                       rowSelectionPrimaryKey={['id']}
                       fileIdColumnName="id"

@@ -1,3 +1,5 @@
+import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
+
 export const datasetsSql = 'SELECT * FROM syn50913342'
 export const publicationsSql = 'SELECT * FROM syn16857542'
 export const studiesSql = 'SELECT * FROM syn52694652'
@@ -25,3 +27,5 @@ export const popularSearchesSql =
   'SELECT displayText, fullTextSearch FROM syn26436892'
 export const topProjectsSql =
   'SELECT * FROM syn53698263 order by "f.n_unique_users" desc limit 10'
+
+export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = ['cavatica']
