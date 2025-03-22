@@ -16,7 +16,7 @@ export default defineConfig({
     outputFile: { html: './coverage/report/index.html' },
     coverage: {
       provider: 'v8',
-      reporter: ['text-summary', 'html-spa'],
+      reporter: ['text-summary', 'html-spa', 'lcov'],
       reportsDirectory: './coverage/cov',
     },
   },
