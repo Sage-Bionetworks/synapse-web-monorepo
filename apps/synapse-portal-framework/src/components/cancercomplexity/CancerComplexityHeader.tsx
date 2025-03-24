@@ -25,7 +25,7 @@ const CancerComplexityHeader = () => {
     { value: 'researcher', label: 'Researcher' },
     { value: 'principalInvestigator', label: 'Principal Investigator' },
     { value: 'funder', label: 'Funder' },
-    { value: 'student', label: 'Student' },
+    { value: 'trainee', label: 'Trainee' },
     { value: 'patientAdvocate', label: 'Patient Advocate' },
   ]
   const content = (

@@ -34,7 +34,7 @@ type CCKPSearchRole =
   | 'researcher'
   | 'principalInvestigator'
   | 'funder'
-  | 'student'
+  | 'trainee'
   | 'patientAdvocate'
 const roleMapping: Record<
   CCKPSearchRole,
@@ -43,7 +43,7 @@ const roleMapping: Record<
   researcher: 'Datasets',
   principalInvestigator: 'Grants',
   funder: 'Grants',
-  student: 'Educational Resources',
+  trainee: 'Educational Resources',
   patientAdvocate: 'Educational Resources',
 }
 
