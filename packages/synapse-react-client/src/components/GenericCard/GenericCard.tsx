@@ -62,6 +62,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   includeCitation?: boolean
+  defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
   citationBoilerplateText?: string
   icon?: string
   imageFileHandleColumnName?: string
@@ -387,6 +388,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       link = '',
       type,
       includeCitation,
+      defaultCitationFormat,
       citationBoilerplateText,
     } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
@@ -663,6 +665,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
                 title={title}
                 doi={doiValue}
                 boilerplateText={citationBoilerplateText}
+                defaultCitationFormat={defaultCitationFormat}
               />
             </Box>
           )}
