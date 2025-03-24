@@ -45,6 +45,17 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
   )
 }
 
+/**
+ * A button component that allows users to add an entity to the download cart.
+ * Depending on the type of entity, it displays a confirmation dialog for either
+ * downloading a folder or downloading a table/query.
+ *
+ * @param {AddToDownloadCartButtonProps} props - The properties for the component.
+ * @param {string} props.entityId - The ID of the entity to be added to the download cart.
+ * @param {string} [props.buttonText='Download'] - The text to display on the button.
+ *
+ * @returns {JSX.Element} The rendered AddToDownloadCartButton component.
+ */
 export function AddToDownloadCartButton({
   entityId,
   buttonText = 'Download',
