@@ -21,7 +21,7 @@ export type AddToDownloadCartButtonProps = {
   buttonText?: string
 }
 
-const TableTsx: React.FC<{
+const QueryWrapperTableDownloadConfirmation: React.FC<{
   entityId: string
 }> = ({ entityId }) => {
   const initQueryRequest: QueryBundleRequest = {
@@ -81,7 +81,7 @@ export function AddToDownloadCartButton({
               fnClose={handleClose}
             />
           ) : (
-            <TableTsx entityId={entityId} />
+            <QueryWrapperTableDownloadConfirmation entityId={entityId} />
           ))}
       </div>
     </div>
