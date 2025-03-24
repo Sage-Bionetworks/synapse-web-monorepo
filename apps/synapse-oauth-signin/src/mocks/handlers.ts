@@ -1,10 +1,17 @@
 import { rest } from 'msw'
+import { Mock, vi } from 'vitest'
 import mockOauthClient from './MockOAuthClient'
 
 let hasConsented = false
 
 export function resetConsentedInMockService(newValue: boolean) {
   hasConsented = newValue
+}
+
+let mockPostConsentFn = vi.fn()
+
+export function setMockPostConsentFn(fn: Mock<any, any>) {
+  mockPostConsentFn = fn
 }
 
 export const ACCESS_CODE_PROVIDED_BY_SERVER = 'some Access Code' //contains value that will be encoded in the redirect to test for double-encoding
@@ -72,6 +79,7 @@ export const handlers = [
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
     (req, res, ctx) => {
       hasConsented = true
+      mockPostConsentFn()
       return res(
         ctx.status(200),
         ctx.json({
