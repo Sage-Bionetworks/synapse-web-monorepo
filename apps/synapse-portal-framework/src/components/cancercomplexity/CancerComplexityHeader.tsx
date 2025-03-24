@@ -58,23 +58,28 @@ const CancerComplexityHeader = () => {
           programs, explore computational methods, and find insights from
           peer-reviewed studies.
         </Typography>
-        <Link
-          href="https://sagebionetworks.us7.list-manage.com/subscribe?u=b146de537186191a9d2110f3a&id=e933dc6962"
-          target="_blank"
-          sx={{
-            color: 'white',
-            '&:hover': { color: 'white', textDecorationColor: 'white' },
-            '&:focus': { color: 'white' },
-            textDecorationColor: 'white',
-            marginTop: '15px',
-            display: 'block',
-          }}
+        <Typography
+          variant="body1"
+          sx={{ fontSize: '18px', lineHeight: '144%' }}
         >
-          <AddAlertTwoTone
-            sx={{ width: '16px', height: '16px', marginRight: '7px' }}
-          />
-          Subscribe to our newsletter
-        </Link>
+          <Link
+            href="https://sagebionetworks.us7.list-manage.com/subscribe?u=b146de537186191a9d2110f3a&id=e933dc6962"
+            target="_blank"
+            sx={{
+              color: 'white',
+              '&:hover': { color: 'white', textDecorationColor: 'white' },
+              '&:focus': { color: 'white' },
+              textDecorationColor: 'white',
+              marginTop: '15px',
+              display: 'block',
+            }}
+          >
+            <AddAlertTwoTone
+              sx={{ width: '24px', height: '24px', mb: '-5px', mr: '7px' }}
+            />
+            Subscribe to our newsletter
+          </Link>
+        </Typography>
       </Box>
     </>
   )
