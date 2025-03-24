@@ -1,13 +1,5 @@
 import { Collapse } from '@mui/material'
 import {
-  Component,
-  createRef,
-  FormEvent,
-  RefObject,
-  SyntheticEvent,
-} from 'react'
-import { CSSTransition } from 'react-transition-group'
-import {
   ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
@@ -16,15 +8,23 @@ import {
   ColumnTypeEnum,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { QueryContextType } from '../QueryContext'
-import IconSvg from '../IconSvg/IconSvg'
+import {
+  Component,
+  createRef,
+  FormEvent,
+  RefObject,
+  SyntheticEvent,
+} from 'react'
+import { CSSTransition } from 'react-transition-group'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
   LockedColumn,
 } from '../../utils'
-import { useQuery } from '@tanstack/react-query'
+import IconSvg from '../IconSvg/IconSvg'
+import { QueryContextType } from '../QueryContext'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 
 type SearchState = {
   show: boolean
@@ -346,8 +346,6 @@ class _Search extends Component<InternalSearchProps, SearchState> {
 }
 
 export default function Search(props: SearchV2Props) {
-  const { data: queryMetadata } = useQuery(
-    props.queryContext.queryMetadataQueryOptions,
-  )
+  const { data: queryMetadata } = useGetQueryMetadata()
   return <_Search {...props} columnModels={queryMetadata?.columnModels} />
 }

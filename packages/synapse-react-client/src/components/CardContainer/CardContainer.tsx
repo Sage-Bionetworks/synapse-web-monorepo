@@ -1,3 +1,10 @@
+import { Box } from '@mui/material'
+import {
+  ColumnTypeEnum,
+  EntityHeader,
+  Row,
+  RowSet,
+} from '@sage-bionetworks/synapse-types'
 import { Suspense } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
@@ -8,27 +15,20 @@ import {
   OBSERVATION_CARD,
   RELEASE_CARD,
 } from '../../utils/SynapseConstants'
-import {
-  ColumnTypeEnum,
-  EntityHeader,
-  Row,
-  RowSet,
-} from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { Dataset, Funder } from '../row_renderers'
+import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { ReleaseCard } from '../ReleaseCard'
+import { Dataset, Funder } from '../row_renderers'
 import {
   LoadingObservationCard,
   ObservationCard,
 } from '../row_renderers/ObservationCard'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
-import { Box } from '@mui/material'
-import { useSuspenseQuery } from '@tanstack/react-query'
 
 const defaultListSx = { display: 'block' }
 const releaseCardMediumListSx = {
@@ -92,8 +92,7 @@ function CardContainerInternal(props: CardContainerProps) {
   } = props
   const { NoContentPlaceholder } = useQueryVisualizationContext()
   const queryContext = useQueryContext()
-  const { queryMetadataQueryOptions } = queryContext
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const dataRows: Row[] = rowSet.rows

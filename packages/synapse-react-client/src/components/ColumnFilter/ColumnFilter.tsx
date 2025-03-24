@@ -1,16 +1,16 @@
-import { SyntheticEvent } from 'react'
-import { useQueryContext } from '../QueryContext/QueryContext'
+import { Autocomplete, TextField } from '@mui/material'
 import {
   FacetColumnResultValues,
   FacetColumnValuesRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { Autocomplete, TextField } from '@mui/material'
+import { SyntheticEvent } from 'react'
+import { UniqueFacetIdentifier } from '../../utils'
 import {
   facetObjectMatchesDefinition,
   getCorrespondingSelectedFacet,
 } from '../../utils/functions/queryUtils'
-import { UniqueFacetIdentifier } from '../../utils'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 
 export type FilterProps = {
   topLevelEnumeratedFacetToFilter: UniqueFacetIdentifier
@@ -19,12 +19,11 @@ export type FilterProps = {
 function ColumnFilter(props: FilterProps) {
   const queryContext = useQueryContext()
   const {
-    queryMetadataQueryOptions,
     getCurrentQueryRequest,
     addValueToSelectedFacet,
     removeSelectedFacet,
   } = queryContext
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
   const { topLevelEnumeratedFacetToFilter } = props
 
   const currentQuery = getCurrentQueryRequest()

@@ -13,7 +13,7 @@ import {
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
-
+import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELNewsletterSection'
 import {
   topPublicationsSql,
   whatWeDoSql,
@@ -341,6 +341,9 @@ export default function HomePage() {
         >
           <ELSupportedByNIH />
         </SectionLayout>
+      </div>
+      <div className={'home-bg-dark'}>
+        <ElNewsletterSection />
       </div>
     </>
   )

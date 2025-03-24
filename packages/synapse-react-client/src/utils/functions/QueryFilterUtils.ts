@@ -6,6 +6,12 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 
+/**
+ * Given a list of selected rows, return a QueryFilter that will only return those rows
+ * @param primaryKeyColumnNames
+ * @param selectedRows
+ * @param selectColumns
+ */
 export function getPrimaryKeyINFilter(
   primaryKeyColumnNames: string[],
   selectedRows: Row[],
