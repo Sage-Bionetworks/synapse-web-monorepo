@@ -1,7 +1,7 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
 import { dataSql } from '../config/resources'
-import { FeaturedDataTabs, SynapseConstants } from 'synapse-react-client'
+import { FeaturedDataTabs } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
@@ -27,11 +27,14 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
+                  // sql: `${dataSql} where Org_Name is not null`,
                   sql: dataSql,
                   configs: [
                     {
                       facetsToPlot: ['Topic', 'Org_Name'],
                       unitDescription: 'standard',
+                      // plotType: 'BAR'
+                      plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                   ],
                 },
