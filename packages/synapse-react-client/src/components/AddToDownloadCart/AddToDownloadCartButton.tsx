@@ -72,6 +72,17 @@ export function AddToDownloadCartButton({
     setShowConfirmation(true)
   }
 
+  if (!isLoading && entity) {
+    if (
+      entityConcreteType !== 'org.sagebionetworks.repo.model.Folder' &&
+      entityConcreteType !==
+        'org.sagebionetworks.repo.model.table.TableEntity' &&
+      entityConcreteType !== 'org.sagebionetworks.repo.model.table.Dataset'
+    ) {
+      return <></>
+    }
+  }
+
   return (
     <div>
       <div>
