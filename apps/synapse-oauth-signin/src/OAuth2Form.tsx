@@ -54,7 +54,7 @@ export function OAuth2Form() {
   const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
 
   const oneSageURL = SynapseHookUtils.useOneSageURL()
-  // SWC-7287: consent is called exactly once.  It is not re-triggered by re-renders, or re-called accidentally
+  // SWC-7287: Only call consent once (at most).  Do not attempt to auto-consent after the user consents the first time.
   const hasCalledOnConsent = useRef(false)
 
   const onError = useCallback(
