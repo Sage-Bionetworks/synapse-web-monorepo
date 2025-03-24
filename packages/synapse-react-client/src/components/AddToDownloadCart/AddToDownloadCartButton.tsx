@@ -10,6 +10,12 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { useGetEntity } from '../../synapse-queries/'
 
+/**
+ * Props for the AddToDownloadCartButton component.
+ *
+ * @property entityId - The ID of the entity to be added to the download cart.
+ * @property buttonText - Optional text to display on the button. Defaults to a standard label if not provided.
+ */
 export type AddToDownloadCartButtonProps = {
   entityId: string
   buttonText?: string
