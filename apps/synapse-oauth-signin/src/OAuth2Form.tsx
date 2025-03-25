@@ -10,7 +10,7 @@ import {
   FileHandleAssociateType,
   OIDCAuthorizationRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   AppUtils,
@@ -54,6 +54,8 @@ export function OAuth2Form() {
   const isHandlingSignInFromExternalIdP = Boolean(searchParams.get('provider'))
 
   const oneSageURL = SynapseHookUtils.useOneSageURL()
+  // SWC-7287: Only call consent once (at most).  Do not attempt to auto-consent after the user consents the first time.
+  const hasCalledOnConsent = useRef(false)
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
@@ -222,8 +224,12 @@ export function OAuth2Form() {
   )
 
   const onConsent = useCallback(() => {
-    sendGTagEvent('UserConsented')
-    if (oidcAuthorizationRequestFromSearchParams) {
+    if (
+      oidcAuthorizationRequestFromSearchParams &&
+      !hasCalledOnConsent.current
+    ) {
+      hasCalledOnConsent.current = true
+      sendGTagEvent('UserConsented')
       consentToRequest(oidcAuthorizationRequestFromSearchParams)
     }
   }, [consentToRequest, oidcAuthorizationRequestFromSearchParams])

@@ -19,6 +19,7 @@ import {
   getOAuth2DescriptionWithInvalidRedirectUriHandler,
   getOAuth2DescriptionWithUnverifiedClientHandler,
   resetConsentedInMockService,
+  setMockPostConsentFn,
   URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER,
 } from '../mocks/handlers'
 import mockOauthClient from '../mocks/MockOAuthClient'
@@ -196,7 +197,8 @@ describe('App integration tests', () => {
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
     const { params } = renderApp()
-
+    const mockPostConsentFn = vi.fn()
+    setMockPostConsentFn(mockPostConsentFn)
     // The user has logged in but has not granted consent, so check for the consent text
     await screen.findByText(
       /requests permission/,
@@ -218,6 +220,8 @@ describe('App integration tests', () => {
           'state',
         )}`,
       )
+      // SWC-7287: verify consent is only called once.
+      expect(mockPostConsentFn).toBeCalledTimes(1)
     })
   })
 
