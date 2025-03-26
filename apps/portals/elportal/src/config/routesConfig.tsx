@@ -6,7 +6,6 @@ import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-conf
 import { RouteObject } from 'react-router'
 import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 import { Markdown } from 'synapse-react-client'
-import HomePage from '../pages/HomePage'
 import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
@@ -23,10 +22,6 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'HomepageV2',
         element: (
           <HomePageThemeProvider>
             <HomePageV2 />
