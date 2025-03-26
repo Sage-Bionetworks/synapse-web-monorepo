@@ -23,11 +23,26 @@ import {
 } from './synapseConfigs/onPointClick'
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
+import { FullWidthAlert } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
+    element: (
+      <App>
+        {/* PORTALS-3505 */}
+        <FullWidthAlert
+          sx={{ m: 0 }}
+          isGlobal={false}
+          variant={'warning'}
+          show={true}
+          title={'Please note:'}
+          description={
+            'This repository is under review for potential modification in compliance with Administration directives.'
+          }
+        />
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {
