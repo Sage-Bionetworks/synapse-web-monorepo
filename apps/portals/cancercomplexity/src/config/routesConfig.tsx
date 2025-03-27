@@ -24,7 +24,6 @@ import {
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import { FullWidthAlert } from 'synapse-react-client'
-import { Typography } from '@mui/material'
 
 const routes: RouteObject[] = [
   {
