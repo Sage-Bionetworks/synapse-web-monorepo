@@ -1,2 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://prod.dhealth.synapse.org
-export CF_PRODUCTION_DIST_ID=
+export CF_PRODUCTION_DIST_ID=E10U4765KQQW5P
