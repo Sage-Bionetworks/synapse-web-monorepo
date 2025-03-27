@@ -18,7 +18,7 @@ const links: LinkProps[] = [
     title: 'Research',
     icon: PeopleIconSvg,
     description:
-      'Funded grant programs comprising institutions and investigators that are pursuing common cancer research themes with diverse approaches. This network drives the activity and output presented in this portal and provides a rich community for potential collaborations.',
+      'Looking for funding or collaboration? Find active cancer research programs, connect with leading investigators, and explore opportunities to advance your your work.',
     linkText: 'Explore Grants',
     to: 'Explore/Grants',
   },
@@ -26,15 +26,15 @@ const links: LinkProps[] = [
     title: 'Data',
     icon: DataIconSvg,
     description:
-      'Collected from tumor samples and cell lines, assayed or simulated, across a spectrum of indications and experimental conditions. Data in the portal are shared freely to enable reuse by researchers to develop, validate, or apply new methods.',
+      'Need high quality cancer datasets? Access available datasets from cancer specimens and model systems hosted across various repositories in one spot.',
     linkText: 'Explore Data',
     to: 'Explore/Datasets',
   },
   {
-    title: 'Methods',
+    title: 'Research Software',
     icon: MethodsIconSvg,
     description:
-      'Software tools and algorithms, models, and applications for interrogating and exploring a variety of data types and characterizing cancer related features. The catalog of tools developed by investigators can be used to derive new insights from existing data.',
+      'Building or refining analytical tools? Or looking for an appropriate tool for your analysis? Leverage investigator developed software, models, or algorithms to explore cancer complexity and extract deeper insights.',
     linkText: 'Explore Tools',
     to: 'Explore/Tools',
   },
@@ -42,7 +42,7 @@ const links: LinkProps[] = [
     title: 'Publications',
     icon: InsightIconSvg,
     description:
-      'Lessons learned from consortia data and methods, shared as peer-reviewed journal articles. The growing library of publications is annotated by disease area, experimental metadata, and scientific theme to allow users to hone in on the most relevant knowledge.',
+      'Seeking the latest research breakthroughs? Browse peer reviewed studies filtered by disease, experiment, or research theme to stay informed or guide your next steps.',
     linkText: 'Explore Publications',
     to: 'Explore/Publications',
   },

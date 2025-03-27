@@ -22,7 +22,7 @@ const homePageHeader: HomePageHeaderConfig = {
         }}
       >
         <AddAlertTwoTone
-          sx={{ width: '16px', height: '16px', marginRight: '7px' }}
+          sx={{ width: '24px', height: '24px', mb: '-5px', mr: '7px' }}
         />
         Subscribe to the ELITE Portal Newsletter
       </Link>

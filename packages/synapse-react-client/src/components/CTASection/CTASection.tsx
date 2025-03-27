@@ -6,15 +6,14 @@ export type CTASectionProps = {
   content: React.ReactNode
 }
 
-const blobStyles = {
-  position: 'absolute',
-  height: '100%',
-  overflow: 'hidden',
-  display: { xs: 'none', md: 'block' },
-}
-
 const CTASection = ({ content, themeMode }: CTASectionProps) => {
   const theme = useTheme()
+  const blobStyles = {
+    position: 'absolute',
+    height: '100%',
+    overflow: 'hidden',
+    display: { xs: 'none', md: 'block' },
+  }
   return (
     <Stack
       sx={{
@@ -28,6 +27,9 @@ const CTASection = ({ content, themeMode }: CTASectionProps) => {
             : theme.palette.primary.main,
         position: 'relative',
         overflow: 'hidden',
+        svg: {
+          mixBlendMode: themeMode === 'light' ? 'soft-light' : '',
+        },
       }}
     >
       <Box
