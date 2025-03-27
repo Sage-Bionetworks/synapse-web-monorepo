@@ -24,6 +24,7 @@ import {
 import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import { FullWidthAlert } from 'synapse-react-client'
+import { Typography } from '@mui/material'
 
 const routes: RouteObject[] = [
   {
@@ -36,11 +37,20 @@ const routes: RouteObject[] = [
           isGlobal={false}
           variant={'warning'}
           show={true}
-          title={
-            'This repository is under review for potential modification in compliance with Administration directives.'
-          }
+          title={''}
           description={
-            'This repository is developed by Sage Bionetworks to host and share resources related to Cancer research, and remains fully operational. We continue to maintain and accept cancer-related data and resources throughout this review process.'
+            <>
+              <p>
+                This repository is under review for potential modification in
+                compliance with Administration directives.
+              </p>
+              <p>
+                This repository is developed by Sage Bionetworks to host and
+                share resources related to Cancer research, and remains fully
+                operational. We continue to maintain and accept cancer-related
+                data and resources throughout this review process.
+              </p>
+            </>
           }
         />
       </App>
