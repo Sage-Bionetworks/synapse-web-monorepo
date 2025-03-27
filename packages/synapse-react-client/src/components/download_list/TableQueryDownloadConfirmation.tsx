@@ -1,37 +1,30 @@
 import { useMemo } from 'react'
-import { SynapseConstants, useSynapseContext } from '../../utils'
 import {
   useAddQueryToDownloadList,
   useGetQueryResultBundleWithAsyncStatus,
 } from '../../synapse-queries'
-import { displayToast } from '../ToastMessage'
-import { DownloadConfirmationUI } from './DownloadConfirmationUI'
+import { SynapseConstants, useSynapseContext } from '../../utils'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
-import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
-import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
-import { useAtomValue } from 'jotai'
 import {
-  hasSelectedRowsAtom,
-  rowSelectionPrimaryKeyAtom,
-  selectedRowsAtom,
+  useHasSelectedRowsAtomValue,
+  useRowSelectionPrimaryKeyAtomValue,
+  useSelectedRowsAtomValue,
 } from '../QueryWrapper/TableRowSelectionState'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
+import { displayToast } from '../ToastMessage'
+import { DownloadConfirmationUI } from './DownloadConfirmationUI'
+import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 
 export function TableQueryDownloadConfirmation() {
-  const {
-    getCurrentQueryRequest,
-    queryMetadataQueryOptions,
-    fileIdColumnName,
-    fileVersionColumnName,
-  } = useQueryContext()
-  const { data: originalQueryMetadata } = useSuspenseQuery(
-    queryMetadataQueryOptions,
-  )
-  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
-  const selectedRows = useAtomValue(selectedRowsAtom)
-  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
+  const { getCurrentQueryRequest, fileIdColumnName, fileVersionColumnName } =
+    useQueryContext()
+  const { data: originalQueryMetadata } = useSuspenseGetQueryMetadata()
+  const hasSelectedRows = useHasSelectedRowsAtomValue()
+  const selectedRows = useSelectedRowsAtomValue()
+  const rowSelectionPrimaryKey = useRowSelectionPrimaryKeyAtomValue()
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
   const downloadStatsQueryBundleRequest = useMemo(() => {

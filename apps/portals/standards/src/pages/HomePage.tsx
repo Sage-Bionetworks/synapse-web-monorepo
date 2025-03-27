@@ -1,17 +1,13 @@
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  FeaturedDataTabs,
-  Goals,
-  SynapseConstants,
-  TableFeedCards,
-} from 'synapse-react-client'
+import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
+import { dataSql } from '../config/resources'
+import { FeaturedDataTabs, Goals, SynapseConstants } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
   return (
     <>
-      <Header />
+      <StandardsHeader dataSql={dataSql} />
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout>
@@ -69,9 +65,6 @@ export default function HomePage() {
               },
             ]}
           />
-        </SectionLayout>
-        <SectionLayout title={"What's New"} centerTitle>
-          <TableFeedCards tableEntityId={'syn23520190'} />
         </SectionLayout>
       </div>
     </>

@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
-import { useSearchParams } from 'react-router'
+import { useNavigate } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
@@ -24,7 +24,9 @@ import {
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
-  path?: string
+  // in practice, either set the path or callback.
+  path?: string // redirect to this path with the search term in the search params
+  callback?: (searchString: string) => void // call back this function with the search term
   sx?: SxProps
   roles?: { value: string; label: string }[]
 }
@@ -33,25 +35,29 @@ const HeaderSearchBox = ({
   searchPlaceholder,
   searchExampleTerms,
   path,
+  callback,
   sx,
   roles,
 }: HeaderSearchBoxProps) => {
   const [role, setRole] = useState('')
-  const [, setSearchParams] = useSearchParams()
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    setSearchParams(prev => {
-      prev.set(FTS_SEARCH_TERM, trimmedTerm)
-      if (role) {
-        prev.set(FTS_SEARCH_ROLE, role)
-      }
-      return prev
-    })
-
     if (path) {
-      window.location.pathname = `${path}`
+      const params = new URLSearchParams()
+      params.set(FTS_SEARCH_TERM, trimmedTerm)
+      if (role) {
+        params.set(FTS_SEARCH_ROLE, role)
+      }
+      navigate({
+        pathname: path,
+        search: `?${params.toString()}`,
+      })
+    }
+    if (callback) {
+      callback(trimmedTerm)
     }
   }
 
@@ -147,6 +153,7 @@ const HeaderSearchBox = ({
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
             path={path}
+            callback={callback}
             role={role}
             sx={{
               boxShadow: 'none',

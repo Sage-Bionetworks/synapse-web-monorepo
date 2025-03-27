@@ -13,6 +13,10 @@ import { ReactComponent as Teams } from './teams_illustration.svg'
 import { ReactComponent as TrashCan } from './trash_can_illustration.svg'
 import { ReactComponent as Wikis } from './wikis_illustration.svg'
 import { ReactComponent as Donate } from './donation_illustration.svg'
+import { ReactComponent as LeftDotBlob } from './left_dot_blob_illustration.svg'
+import { ReactComponent as RightDotBlob } from './right_dot_blob_illustration.svg'
+import { ReactComponent as LeftDotBlobDark } from './left_dot_blob_dark_illustration.svg'
+import { ReactComponent as RightDotBlobDark } from './right_dot_blob_dark_illustration.svg'
 const Illustrations = {
   Challenges,
   CohortBuilder,
@@ -29,5 +33,9 @@ const Illustrations = {
   TrashCan,
   Wikis,
   Donate,
+  LeftDotBlob,
+  RightDotBlob,
+  LeftDotBlobDark,
+  RightDotBlobDark,
 }
 export default Illustrations

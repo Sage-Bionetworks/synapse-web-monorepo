@@ -1,13 +1,12 @@
 import { Box, Collapse } from '@mui/material'
-import { useState } from 'react'
-import { FacetFilterHeader } from './FacetFilterHeader'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useState } from 'react'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
+import { FacetFilterHeader } from './FacetFilterHeader'
 import { RangeFacetFilter } from './RangeFacetFilter'
-import { useQueryContext } from '../../QueryContext'
-import { useSuspenseQuery } from '@tanstack/react-query'
 
 export type JsonColumnFacetFiltersProps = {
   /* The parent ColumnModel that contains the JSON Subcolumns to show in this panel */
@@ -25,10 +24,9 @@ export default function JsonColumnFacetFilters(
   props: JsonColumnFacetFiltersProps,
 ) {
   const { columnModel, facets } = props
-  const { queryMetadataQueryOptions } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
-  const { data: queryMetadata } = useSuspenseQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
 
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 

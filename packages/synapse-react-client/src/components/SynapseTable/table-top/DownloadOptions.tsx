@@ -1,7 +1,5 @@
 import { MenuItem, Tooltip } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
-import { useAtomValue } from 'jotai'
 import { ReactNode, useMemo, useState } from 'react'
 import { useGetEntity } from '../../../synapse-queries'
 import { useSynapseContext } from '../../../utils'
@@ -11,9 +9,10 @@ import ModalDownload from '../../ModalDownload/ModalDownload'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { useQueryContext } from '../../QueryContext'
 import {
-  hasSelectedRowsAtom,
-  selectedRowsAtom,
+  useHasSelectedRowsAtomValue,
+  useSelectedRowsAtomValue,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
@@ -31,13 +30,12 @@ export function DownloadOptions(props: DownloadOptionsProps) {
     versionNumber,
     getCurrentQueryRequest,
     hasResettableFilters,
-    queryMetadataQueryOptions,
   } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useQuery(queryMetadataQueryOptions)
+  const { data: queryMetadata } = useGetQueryMetadata()
 
-  const selectedRows = useAtomValue(selectedRowsAtom)
-  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+  const selectedRows = useSelectedRowsAtomValue()
+  const hasSelectedRows = useHasSelectedRowsAtomValue()
 
   const queryBundleRequest = useMemo(
     () => getCurrentQueryRequest(),
