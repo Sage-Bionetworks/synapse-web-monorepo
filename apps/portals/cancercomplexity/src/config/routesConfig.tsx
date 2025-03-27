@@ -36,9 +36,20 @@ const routes: RouteObject[] = [
           isGlobal={false}
           variant={'warning'}
           show={true}
-          title={'Please note:'}
+          title={''}
           description={
-            'This repository is under review for potential modification in compliance with Administration directives.'
+            <>
+              <p>
+                This repository is under review for potential modification in
+                compliance with Administration directives.
+              </p>
+              <p>
+                This repository is developed by Sage Bionetworks to host and
+                share resources related to Cancer research, and remains fully
+                operational. We continue to maintain and accept cancer-related
+                data and resources throughout this review process.
+              </p>
+            </>
           }
         />
       </App>
