@@ -72,7 +72,7 @@ export function AddToDownloadCartButton({
     setShowConfirmation(true)
   }
 
-  if (!isLoading && entity) {
+  if (isLoading || (!isLoading && entity)) {
     if (
       entityConcreteType !== 'org.sagebionetworks.repo.model.Folder' &&
       entityConcreteType !==
