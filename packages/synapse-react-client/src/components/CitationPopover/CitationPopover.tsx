@@ -19,10 +19,13 @@ import { useCitation } from './useCitation'
 import { ReactComponent as DoubleQuotes } from '../../assets/icons/DoubleQuotes.svg'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 
+type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
+
 type CitationPopoverProps = {
   doi: string | undefined
   title?: string
   boilerplateText?: string
+  defaultCitationFormat?: CitationFormat
 }
 
 const selectSx: SxProps = {
@@ -53,12 +56,15 @@ function CitationPopover({
   doi,
   title,
   boilerplateText,
+  defaultCitationFormat,
 }: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const [citationFormat, setCitationFormat] = useState('bibtex')
+  const [citationFormat, setCitationFormat] = useState<CitationFormat>(
+    defaultCitationFormat || 'bibtex',
+  )
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setCitationFormat(event.target.value)
+  const handleChange = (event: SelectChangeEvent<CitationFormat>) => {
+    setCitationFormat(event.target.value as CitationFormat)
   }
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
