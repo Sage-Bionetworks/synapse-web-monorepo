@@ -67,12 +67,14 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
 
   return (
     <Box
-      sx={{
-        width: '330px',
+      sx={theme => ({
+        [theme.breakpoints.up('sm')]: {
+          width: '330px',
+        },
         p: 0,
         mx: 'auto',
         bgColor: 'transparent',
-      }}
+      })}
     >
       <LoginFlowBackButton
         step={step}
