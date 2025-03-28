@@ -24,6 +24,5 @@ jobs:
         with:
           projectBaseDir: packages/synapse-react-client
           args: |
-            '-Dsonar.pullrequest.key=${{ github.event.pull_request.number }}' \
             '-Dsonar.branch.target=${{ github.base_ref }}' \
-            '-Dsonar.branch.name=${{ github.ref }}'
+            '-Dsonar.branch.name=${{ github.head_ref }}'
