@@ -2,6 +2,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
 import { dataSql } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
+import columnAliases from '../config/columnAliases'
 
 //TODO
 export default function HomePage() {
@@ -31,10 +32,11 @@ export default function HomePage() {
                   sql: dataSql,
                   configs: [
                     {
-                      facetsToPlot: ['Topic', 'Org_Name'],
+                      facetsToPlot: ['topic', 'responsibleOrgName'],
                       unitDescription: 'standard',
                       // plotType: 'BAR'
                       plotType: 'STACKED_HORIZONTAL_BAR',
+                      columnAliases: columnAliases,
                     },
                   ],
                 },

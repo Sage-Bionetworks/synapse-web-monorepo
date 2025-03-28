@@ -10,10 +10,10 @@ import { dataSql } from '../resources'
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
   {
-    matchColumnName: 'Name',
     isMarkdown: false,
     baseURL: 'Explore/Standard/DetailsPage',
-    URLColumnName: 'Name',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
   },
 ]
 
@@ -28,8 +28,9 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: dataColumnLinks,
   },
+
   facetsToPlot: [
-    'Data_Topic',
+    'topic',
     // 'Organizations',
   ],
   initialPlotType: 'BAR',
