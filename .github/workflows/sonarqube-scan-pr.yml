@@ -23,4 +23,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: packages/synapse-react-client
-          args: '-Dsonar.pullrequest.key=${{ github.event.pull_request.number }}'
+          args: |
+            '-Dsonar.pullrequest.key=${{ github.event.pull_request.number }}' \
+            '-Dsonar.branch.target=${{ github.base_ref }}' \
+            '-Dsonar.branch.name=${{ github.ref }}'
