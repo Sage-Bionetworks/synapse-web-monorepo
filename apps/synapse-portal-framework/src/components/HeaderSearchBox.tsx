@@ -88,10 +88,8 @@ const HeaderSearchBox = ({
             display: 'flex',
             gap: '20px',
             alignItems: 'center',
-            height: '48px',
             [theme.breakpoints.down('md')]: {
               flexDirection: 'column',
-              marginBottom: '50px',
             },
           })}
         >
@@ -109,7 +107,7 @@ const HeaderSearchBox = ({
               <Select
                 sx={{
                   backgroundColor: '#FFFF',
-                  height: '100%',
+                  height: '48px',
                   svg: {
                     color: '#878E95',
                     width: '24px',
@@ -158,7 +156,7 @@ const HeaderSearchBox = ({
             sx={{
               boxShadow: 'none',
               margin: 0,
-              height: '100%',
+              height: '48px',
               borderRadius: '3px',
               '.MuiInputBase-root': {
                 height: '100%',
