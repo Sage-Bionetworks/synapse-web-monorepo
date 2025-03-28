@@ -1,5 +1,5 @@
 import { Button, Stack, Typography } from '@mui/material'
-import { CTASection } from 'synapse-react-client'
+import { CTASectionWrapper } from 'synapse-react-client'
 
 const StandardsContributeToTheRegistry = () => {
   const title = 'Contribute to the registry'
@@ -56,7 +56,7 @@ const StandardsContributeToTheRegistry = () => {
     </Stack>
   )
   return (
-    <CTASection
+    <CTASectionWrapper
       sx={{ padding: '60px 0' }}
       showBlobs={false}
       themeMode={'dark'}

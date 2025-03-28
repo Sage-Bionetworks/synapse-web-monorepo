@@ -1,19 +1,19 @@
 import { Box, Stack, SxProps, useTheme } from '@mui/material'
 import Illustrations from '../../assets/illustrations'
 
-export type CTASectionProps = {
+export type CTASectionWrapperProps = {
   themeMode: 'dark' | 'light'
   showBlobs?: boolean
   content: React.ReactNode
   sx?: SxProps
 }
 
-const CTASection = ({
+const CTASectionWrapper = ({
   content,
   themeMode,
   showBlobs = true,
   sx,
-}: CTASectionProps) => {
+}: CTASectionWrapperProps) => {
   const theme = useTheme()
   const blobStyles = {
     position: 'absolute',
@@ -87,4 +87,4 @@ const CTASection = ({
   )
 }
 
-export default CTASection
+export default CTASectionWrapper
