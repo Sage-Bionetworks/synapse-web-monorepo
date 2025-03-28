@@ -55,7 +55,14 @@ const StandardsContributeToTheRegistry = () => {
       </Button>
     </Stack>
   )
-  return <CTASection showBlobs={false} themeMode={'dark'} content={content} />
+  return (
+    <CTASection
+      sx={{ padding: '60px 0' }}
+      showBlobs={false}
+      themeMode={'dark'}
+      content={content}
+    />
+  )
 }
 
 export default StandardsContributeToTheRegistry

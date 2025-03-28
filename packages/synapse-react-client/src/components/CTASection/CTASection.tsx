@@ -1,16 +1,18 @@
-import { Box, Stack, useTheme } from '@mui/material'
+import { Box, Stack, SxProps, useTheme } from '@mui/material'
 import Illustrations from '../../assets/illustrations'
 
 export type CTASectionProps = {
   themeMode: 'dark' | 'light'
   showBlobs?: boolean
   content: React.ReactNode
+  sx?: SxProps
 }
 
 const CTASection = ({
   content,
   themeMode,
   showBlobs = true,
+  sx,
 }: CTASectionProps) => {
   const theme = useTheme()
   const blobStyles = {
@@ -36,6 +38,7 @@ const CTASection = ({
         svg: {
           mixBlendMode: themeMode === 'light' ? 'soft-light' : '',
         },
+        ...sx,
       }}
     >
       {showBlobs && (
