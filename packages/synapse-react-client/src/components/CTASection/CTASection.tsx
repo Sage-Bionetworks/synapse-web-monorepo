@@ -3,10 +3,15 @@ import Illustrations from '../../assets/illustrations'
 
 export type CTASectionProps = {
   themeMode: 'dark' | 'light'
+  showBlobs?: boolean
   content: React.ReactNode
 }
 
-const CTASection = ({ content, themeMode }: CTASectionProps) => {
+const CTASection = ({
+  content,
+  themeMode,
+  showBlobs = true,
+}: CTASectionProps) => {
   const theme = useTheme()
   const blobStyles = {
     position: 'absolute',
@@ -27,48 +32,53 @@ const CTASection = ({ content, themeMode }: CTASectionProps) => {
             : theme.palette.primary.main,
         position: 'relative',
         overflow: 'hidden',
+        color: themeMode === 'dark' ? '#FFFF' : '',
         svg: {
           mixBlendMode: themeMode === 'light' ? 'soft-light' : '',
         },
       }}
     >
-      <Box
-        sx={theme => ({
-          ...blobStyles,
-          left: 0,
-          [theme.breakpoints.down('lg')]: {
-            svg: {
-              width: '280px',
-              height: '100%',
-            },
-          },
-        })}
-      >
-        {themeMode === 'light' ? (
-          <Illustrations.LeftDotBlob />
-        ) : (
-          <Illustrations.LeftDotBlobDark />
-        )}
-      </Box>
-      <Box
-        sx={theme => ({
-          ...blobStyles,
-          right: 0,
-          top: '30%',
-          [theme.breakpoints.down('lg')]: {
-            svg: {
-              width: '370px',
-              height: '100%',
-            },
-          },
-        })}
-      >
-        {themeMode === 'light' ? (
-          <Illustrations.RightDotBlob />
-        ) : (
-          <Illustrations.RightDotBlobDark />
-        )}
-      </Box>
+      {showBlobs && (
+        <>
+          <Box
+            sx={theme => ({
+              ...blobStyles,
+              left: 0,
+              [theme.breakpoints.down('lg')]: {
+                svg: {
+                  width: '280px',
+                  height: '100%',
+                },
+              },
+            })}
+          >
+            {themeMode === 'light' ? (
+              <Illustrations.LeftDotBlob />
+            ) : (
+              <Illustrations.LeftDotBlobDark />
+            )}
+          </Box>
+          <Box
+            sx={theme => ({
+              ...blobStyles,
+              right: 0,
+              top: '30%',
+              [theme.breakpoints.down('lg')]: {
+                svg: {
+                  width: '370px',
+                  height: '100%',
+                },
+              },
+            })}
+          >
+            {themeMode === 'light' ? (
+              <Illustrations.RightDotBlob />
+            ) : (
+              <Illustrations.RightDotBlobDark />
+            )}
+          </Box>
+        </>
+      )}
       {content}
     </Stack>
   )
