@@ -14,6 +14,9 @@ import {
   QueryVisualizationContextType,
 } from './QueryVisualizationContext'
 
+// By default, show no external analysis platforms.
+const DEFAULT_ENABLED_ANALYSIS_PLATFORMS: ExternalAnalysisPlatform[] = []
+
 type ColumnOrFacetHelpConfig = {
   /** Text that describes the column or facet */
   helpText: string
@@ -48,6 +51,8 @@ export type QueryVisualizationWrapperProps = {
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
   hasCustomPlots?: boolean
+  /** The set of external analysis platform to which the UI will support exporting data.
+   * @default [] (no platforms are enabled) */
   enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
 }
 
@@ -67,7 +72,7 @@ export function QueryVisualizationWrapper(
     helpConfiguration,
     hasCustomPlots = false,
     visibleColumnCount = Infinity,
-    enabledExternalAnalysisPlatforms = [],
+    enabledExternalAnalysisPlatforms = DEFAULT_ENABLED_ANALYSIS_PLATFORMS,
   } = props
 
   const columnAliases = useMemo(
@@ -114,8 +119,10 @@ export function QueryVisualizationWrapper(
     setShowDownloadConfirmation,
   ] = useMutuallyExclusiveState(defaultShowSearchBar, false)
 
-  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
-    useState<boolean>(false)
+  const [
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  ] = useState<boolean>(false)
 
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
 
@@ -196,9 +203,10 @@ export function QueryVisualizationWrapper(
       getDisplayValue,
       getHelpText,
       NoContentPlaceholder,
-      isShowingExportToAnalysisPlatformModal: isShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal:
+        isShowingExportToAnalysisPlatformModal,
       setIsShowingExportToAnalysisPlatformModal:
-        setIsShowingExportToCavaticaModal,
+        setIsShowingExportToAnalysisPlatformModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
@@ -218,7 +226,7 @@ export function QueryVisualizationWrapper(
       getColumnDisplayName,
       getHelpText,
       hasFacetedSelectColumn,
-      isShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal,
       props.rgbIndex,
       props.showLastUpdatedOn,
       setShowDownloadConfirmation,
