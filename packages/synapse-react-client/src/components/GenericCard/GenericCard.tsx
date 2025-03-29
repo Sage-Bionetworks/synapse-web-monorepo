@@ -45,6 +45,7 @@ import { useQueryContext } from '../QueryContext'
 import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 import { Stack } from '@mui/material'
 import CitationPopover from '../CitationPopover'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 
 export type KeyToAlias = {
   key: string
@@ -76,6 +77,7 @@ export type GenericCardSchema = {
 
   link?: string
   dataTypeIconNames?: string
+  downloadCartSynId?: string
 }
 
 export type GenericCardPropsInternal = {
@@ -390,6 +392,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       includeCitation,
       defaultCitationFormat,
       citationBoilerplateText,
+      downloadCartSynId = 'synapseLink',
     } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -422,6 +425,9 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       schema,
       rowId,
     )
+    const synapseLinkId: string = data[schema.synapseLink]?.match(
+      SYNAPSE_ENTITY_ID_REGEX,
+    )?.[1]
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
     const customLabelConfig =
@@ -560,6 +566,23 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     const doiValue =
       doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
+    let downloadCartSynIdColumnIndex: number | undefined
+    let downloadCartSynIdValue: string | undefined
+    if (genericCardSchemaDefined.downloadCartSynId) {
+      downloadCartSynIdColumnIndex = getColumnIndex(
+        genericCardSchemaDefined.downloadCartSynId,
+        selectColumns,
+        columnModels,
+      )
+      downloadCartSynIdValue =
+        downloadCartSynIdColumnIndex !== undefined
+          ? data[downloadCartSynIdColumnIndex]
+          : undefined
+    }
+    downloadCartSynIdValue = downloadCartSynIdValue?.match(
+      SYNAPSE_ENTITY_ID_REGEX,
+    )?.[1]
+
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
@@ -586,6 +609,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               }}
             >
               <div className="SRC-type">{type}</div>
+              {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+              {downloadCartSynIdValue && (
+                <div style={{ marginLeft: 'auto' }}>
+                  <AddToDownloadCartButton entityId={downloadCartSynIdValue} />
+                </div>
+              )}
             </Stack>
             {
               // If the portal configs has columnIconOptions.columns.dataType option
