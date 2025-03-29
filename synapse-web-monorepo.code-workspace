@@ -1,0 +1,31 @@
+{
+  // Shared VS Code settings for synapse-web-monorepo
+  // This file is used to configure the workspace settings and suggested extensions used by all devs
+  // Your preferred overrides can go in .vscode/settings.json
+
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    // General settings
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+    // Jest extension settings
+    "jest.runMode": "on-demand",
+    "jest.rootPath": "packages/synapse-react-client", // synapse-react-client is the only Jest project
+
+    // Vitest extension settings
+    "vitest.maximumConfigs": 99
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "orta.vscode-jest",
+      "esbenp.prettier-vscode",
+      "vitest.explorer"
+    ]
+  }
+}
