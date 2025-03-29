@@ -1,25 +1,25 @@
-import { rest, server } from '../../mocks/msw/server'
-import { render, screen } from '@testing-library/react'
+import {
+  mockAccessApprovalSearchResult2,
+  mockApprovalSearchResponse,
+} from '@/mocks/MockAccessApprovals'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
   AccessApprovalSearchResult,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
 } from './AccessApprovalsTable'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import {
-  mockAccessApprovalSearchResult2,
-  mockApprovalSearchResponse,
-} from '../../mocks/MockAccessApprovals'
-import userEvent from '@testing-library/user-event'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 
 const page2: AccessApprovalSearchResult[] = [mockAccessApprovalSearchResult2]
 

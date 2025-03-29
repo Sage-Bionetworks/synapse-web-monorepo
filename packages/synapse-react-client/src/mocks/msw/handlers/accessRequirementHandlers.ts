@@ -1,4 +1,3 @@
-import { rest } from 'msw'
 import {
   ACCESS_REQUIREMENT,
   ACCESS_REQUIREMENT_BY_ID,
@@ -6,7 +5,7 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ENTITY_ACCESS_REQUIREMENTS,
-} from '../../../utils/APIConstants'
+} from '@/utils/APIConstants'
 import {
   AccessApproval,
   AccessRequirement,
@@ -19,7 +18,7 @@ import {
   SubmissionState,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
+import { rest } from 'msw'
 import {
   MOCK_AR_ETAG,
   MOCK_NEWLY_CREATED_AR_ID,
@@ -31,6 +30,7 @@ import {
 } from '../../accessRequirement/mockAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../handlers'
 
 const accessRequirementStatuses: Map<string, AccessRequirementStatus> =
   new Map()

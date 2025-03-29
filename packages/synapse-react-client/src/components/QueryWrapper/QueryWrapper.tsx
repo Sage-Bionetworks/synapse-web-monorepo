@@ -1,3 +1,6 @@
+import { LockedColumn } from '@/utils'
+import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functions/queryUtils'
+import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import {
   QueryBundleRequest,
   QueryResultBundle,
@@ -6,9 +9,6 @@ import { Provider, useSetAtom } from 'jotai'
 import { noop } from 'lodash-es'
 import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { LockedColumn } from '../../utils'
-import { hasResettableFilters as hasResettableFiltersUtil } from '../../utils/functions/queryUtils'
-import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import {
   CombineRangeFacetConfig,

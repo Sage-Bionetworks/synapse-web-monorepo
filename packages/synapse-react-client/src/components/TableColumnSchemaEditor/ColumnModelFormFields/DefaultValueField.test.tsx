@@ -1,11 +1,11 @@
-import DefaultValueField, { DefaultValueFieldProps } from './DefaultValueField'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { act, render, screen, within } from '@testing-library/react'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { formatDate } from '../../../utils/functions/DateFormatter'
 import dayjs, { isDayjs } from 'dayjs'
 import DateTimePicker from '../../DateTimePicker/DateTimePicker'
+import DefaultValueField, { DefaultValueFieldProps } from './DefaultValueField'
 
 const MOCK_DATETIME_PICKER_TEST_ID = 'MockDateTimePicker'
 

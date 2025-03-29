@@ -1,4 +1,12 @@
+import {
+  useCreateAccessRequirementACL,
+  useDeleteAccessRequirementACL,
+  useGetAccessRequirementACL,
+  useUpdateAccessRequirementACL,
+} from '@/synapse-queries'
+import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Box, Stack, Typography } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ACCESS_TYPE, AccessControlList } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import {
@@ -8,16 +16,8 @@ import {
   useImperativeHandle,
   useState,
 } from 'react'
-import {
-  useCreateAccessRequirementACL,
-  useDeleteAccessRequirementACL,
-  useGetAccessRequirementACL,
-  useUpdateAccessRequirementACL,
-} from '../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AclEditor } from '../AclEditor/AclEditor'
-import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
+import useUpdateAcl from '../AclEditor/useUpdateAcl'
 
 const textSx = {
   variant: 'body1',

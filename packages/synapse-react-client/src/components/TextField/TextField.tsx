@@ -1,10 +1,10 @@
-import { PropsWithChildren, useId, useMemo } from 'react'
+import StyledFormControl from '@/components/styled/StyledFormControl'
 import {
   InputBase,
   InputLabel,
   TextFieldProps as MuiTextFieldProps,
 } from '@mui/material'
-import StyledFormControl from '../styled/StyledFormControl'
+import { PropsWithChildren, useId, useMemo } from 'react'
 
 export type TextFieldProps = Pick<
   MuiTextFieldProps,

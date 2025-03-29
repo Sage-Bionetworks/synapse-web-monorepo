@@ -1,7 +1,7 @@
+import { useGetEntityActionsRequired } from '@/synapse-queries'
+import useTrackTransientListItems from '@/utils/hooks/useTrackTransientListItems'
 import { Action } from '@sage-bionetworks/synapse-types'
-import { useGetEntityActionsRequired } from '../../synapse-queries'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
-import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 
 export type EntityActionsRequiredProps = {
   entityId: string

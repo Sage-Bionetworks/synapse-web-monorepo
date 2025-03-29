@@ -1,10 +1,10 @@
+import { getFiles } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Button, ButtonProps } from '@mui/material'
 import {
   BatchFileRequest,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { getFiles } from '../synapse-client/SynapseClient'
-import { useSynapseContext } from '../utils/context/SynapseContext'
 
 export type DirectFileDownloadButtonProps = Omit<ButtonProps, 'onClick'> & {
   fileHandleAssociation: FileHandleAssociation

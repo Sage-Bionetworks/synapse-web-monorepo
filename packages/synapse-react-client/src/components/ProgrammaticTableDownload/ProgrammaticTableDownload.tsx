@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
 import { Link } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import { SynapseConstants } from '../../utils'
+import { useEffect, useMemo, useState } from 'react'
 import {
   PYTHON_CLIENT_IMPORT_AND_LOGIN,
   R_CLIENT_IMPORT_AND_LOGIN,
 } from '../DownloadCart/DirectProgrammaticDownload'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 
 export type ProgrammaticTableDownloadProps = {
   queryBundleRequest: QueryBundleRequest

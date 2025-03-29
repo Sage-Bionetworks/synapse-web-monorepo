@@ -1,5 +1,5 @@
+import { parseSynId } from '@/utils/functions/RegularExpressions'
 import EntityPreview from '../../FilePreview/EntityPreview'
-import { parseSynId } from '../../../utils/functions/RegularExpressions'
 
 export type MarkdownEntityPreviewProps = {
   /** A Synapse Entity ID that may optionally contain a "dot" version, e.g. syn123 or syn123.2 */

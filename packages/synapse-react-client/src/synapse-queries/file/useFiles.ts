@@ -1,20 +1,20 @@
-import {
-  UseQueryOptions,
-  UseQueryResult,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { fetchBlob, useCreateUrlForData } from '@/utils/hooks'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,
   FileHandle,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query'
 import { cloneDeep } from 'lodash-es'
-import { fetchBlob, useCreateUrlForData } from '../../utils/hooks'
 import { useEffect } from 'react'
 
 export type StablePresignedUrl = {

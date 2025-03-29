@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
-import ConfirmationDialog from '../ConfirmationDialog'
-import EntityViewScopeEditor from './EntityViewScopeEditor'
-import EntityViewMaskEditor from './EntityViewMaskEditor'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
+import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
+import { Alert } from '@mui/material'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityView,
 } from '@sage-bionetworks/synapse-types'
+import { useEffect, useState } from 'react'
+import ConfirmationDialog from '../ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Alert } from '@mui/material'
+import EntityViewMaskEditor from './EntityViewMaskEditor'
+import EntityViewScopeEditor from './EntityViewScopeEditor'
 
 export type EntityViewScopeEditorModalProps = {
   entityId: string

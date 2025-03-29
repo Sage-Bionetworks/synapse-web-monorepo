@@ -1,21 +1,22 @@
 /* eslint jest/no-conditional-expect: 0 */
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { cloneDeep } from 'lodash-es'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseConstants } from '../../utils'
-import {
-  QueryVisualizationWrapper,
-  QueryVisualizationWrapperProps,
-} from '../QueryVisualizationWrapper'
-import { SynapseTable, SynapseTableProps } from './SynapseTable'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import { mockProjectIds } from '@/mocks/entity/mockProject'
+import { mockProjectViewEntity } from '@/mocks/entity/mockProjectView'
+import { MOCK_TABLE_ENTITY_ID, mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { rest, server } from '@/mocks/msw/server'
+import { mockQueryResult } from '@/mocks/query/mockProjectViewQueryResults'
+import queryResultBundle from '@/mocks/query/syn16787123'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
+import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   EntityHeader,
   FileEntity,
@@ -29,32 +30,17 @@ import {
   RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
-import queryResultBundle from '../../mocks/query/syn16787123'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import * as HasAccessModule from '../HasAccess/HasAccessV2'
-import * as UserCardModule from '../UserCard/UserCard'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { QueryContextConsumer, QueryContextType, QueryWrapper, QueryWrapperProps } from '../../index'
 import * as AddToDownloadListV2Module from '../AddToDownloadListV2'
-import {
-  QueryContextConsumer,
-  QueryContextType,
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../index'
-import {
-  MOCK_TABLE_ENTITY_ID,
-  mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
-import { mockProjectIds } from '../../mocks/entity/mockProject'
-import { mockFileHandle } from '../../mocks/mock_file_handle'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
-import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
-import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
-import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
+import * as HasAccessModule from '../HasAccess/HasAccessV2'
+import { QueryVisualizationWrapper, QueryVisualizationWrapperProps } from '../QueryVisualizationWrapper'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
-import { normalizeNumericId } from '../../utils/functions/StringUtils'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
-import mockQueryResponseData from '../../mocks/mockQueryResponseData'
+import * as UserCardModule from '../UserCard/UserCard'
+import { SynapseTable, SynapseTableProps } from './SynapseTable'
 
 const synapseTableEntityId = 'syn16787123'
 

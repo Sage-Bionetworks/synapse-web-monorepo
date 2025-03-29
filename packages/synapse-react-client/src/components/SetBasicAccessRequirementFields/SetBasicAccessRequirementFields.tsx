@@ -1,3 +1,7 @@
+import {
+  useGetAccessRequirements,
+  useUpdateAccessRequirement,
+} from '@/synapse-queries'
 import { Alert } from '@mui/material'
 import {
   AccessRequirement,
@@ -11,14 +15,10 @@ import {
   useImperativeHandle,
   useState,
 } from 'react'
-import {
-  useGetAccessRequirements,
-  useUpdateAccessRequirement,
-} from '../../synapse-queries'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { AccessorRequirements } from './AccessorRequirements'
 import { AccessRequirementTextInstructions } from './AccessRequirementTextInstructions'
 import { AccessRequirementWikiInstructions } from './AccessRequirementWikiInstructions'
-import { AccessorRequirements } from './AccessorRequirements'
 
 export type BasicAccessRequirement = Exclude<
   AccessRequirement,

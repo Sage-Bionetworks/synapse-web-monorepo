@@ -1,3 +1,5 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   render,
   screen,
@@ -9,8 +11,6 @@ import OrientationBanner, {
   OrientationBannerName,
   OrientationBannerProps,
 } from './OrientationBanner'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
 
 const onPrimaryButtonClicked = jest.fn()
 window.open = jest.fn()

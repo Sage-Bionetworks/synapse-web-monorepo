@@ -1,3 +1,6 @@
+import { getFileColumnModelId } from '@/components/SynapseTable/SynapseTableUtils'
+import { SynapseConstants } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ActionRequiredCount,
   AsynchronousJobStatus,
@@ -5,13 +8,10 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { useMemo } from 'react'
-import { cloneDeep } from 'lodash-es'
-import { getFileColumnModelId } from '../../components/SynapseTable/SynapseTableUtils'
-import { SynapseConstants } from '../../utils'
-import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
 import { UseQueryOptions } from '@tanstack/react-query'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { cloneDeep } from 'lodash-es'
+import { useMemo } from 'react'
+import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
 
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,

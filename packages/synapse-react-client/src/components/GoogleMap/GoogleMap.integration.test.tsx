@@ -1,24 +1,14 @@
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
+import { MOCK_USER_ID, MOCK_USER_ID_2, MOCK_USER_NAME, MOCK_USER_NAME_2 } from '@/mocks/user/mock_user_profile'
+import { GeoData } from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { initialize } from '@googlemaps/jest-mocks'
+import { GoogleMap as ReactGoogleMap, InfoWindow, LoadScript, Marker } from '@react-google-maps/api'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentProps, MouseEventHandler } from 'react'
-import { GeoData } from '../../synapse-client'
 import GoogleMap, { MapProps } from './GoogleMap'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-  MOCK_USER_NAME,
-  MOCK_USER_NAME_2,
-} from '../../mocks/user/mock_user_profile'
-import {
-  GoogleMap as ReactGoogleMap,
-  InfoWindow,
-  LoadScript,
-  Marker,
-} from '@react-google-maps/api'
-import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
 
 /** Mock the Google Maps library */
 jest.mock('@react-google-maps/api', () => ({

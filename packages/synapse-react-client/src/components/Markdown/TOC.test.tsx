@@ -1,8 +1,8 @@
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import MarkdownSynapse from './MarkdownSynapse'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import * as SynapseClient from '../../synapse-client/SynapseClient'
 
 const mockGetEntityWiki = jest.spyOn(SynapseClient, 'getEntityWiki')
 const mockGetWikiAttachmentsFromEntity = jest.spyOn(

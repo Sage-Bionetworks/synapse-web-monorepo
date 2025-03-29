@@ -1,11 +1,5 @@
-import { useAtomValue, useSetAtom } from 'jotai/index'
-import {
-  getIsAllSelected,
-  getNumberOfSelectedItems,
-  tableColumnSchemaFormDataAtom,
-} from './TableColumnSchemaFormReducer'
-import { useState } from 'react'
-import { getNumberOfColumnModelsWithValuesBelowMinimumRecommendedSizes } from './TableColumnSchemaEditorUtils'
+import { useGetAnnotationColumnModels } from '@/synapse-queries/table/useColumnModel'
+import { Healing, North, South } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -15,12 +9,18 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { Healing, North, South } from '@mui/icons-material'
-import IconSvg from '../IconSvg'
-import { ConfirmationDialog } from '../ConfirmationDialog'
+import { useAtomValue, useSetAtom } from 'jotai/index'
 import pluralize from 'pluralize'
+import { useState } from 'react'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import IconSvg from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { useGetAnnotationColumnModels } from '../../synapse-queries/table/useColumnModel'
+import { getNumberOfColumnModelsWithValuesBelowMinimumRecommendedSizes } from './TableColumnSchemaEditorUtils'
+import {
+  getIsAllSelected,
+  getNumberOfSelectedItems,
+  tableColumnSchemaFormDataAtom,
+} from './TableColumnSchemaFormReducer'
 
 export const USE_RECOMMENDED_SIZES_BUTTON_TEXT = 'Use Recommended Sizes'
 

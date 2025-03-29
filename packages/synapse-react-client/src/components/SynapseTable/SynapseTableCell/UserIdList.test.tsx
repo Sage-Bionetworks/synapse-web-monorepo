@@ -1,10 +1,7 @@
-import UserIdList, { UserIdListProps } from './UserIdList'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-} from '../../../mocks/user/mock_user_profile'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import UserIdList, { UserIdListProps } from './UserIdList'
 
 const USER_OR_TEAM_BADGE_TEST_ID = 'UserOrTeamBadge'
 

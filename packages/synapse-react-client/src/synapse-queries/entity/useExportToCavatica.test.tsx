@@ -1,17 +1,17 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { useExportToCavatica } from './useExportToCavatica'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
 import {
   ColumnTypeEnum,
   DownloadFromTableResult,
   QueryBundleRequest,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { SynapseError } from '../../utils/SynapseError'
-import * as ToastMessage from '../../components/ToastMessage/ToastMessage'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { SynapseError } from '@/utils/SynapseError'
+import * as ToastMessage from '@/components/ToastMessage/ToastMessage'
 import { noop } from 'lodash-es'
-import * as SynapseConstants from '../../utils/SynapseConstants'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 window.open = jest.fn()
 
 const mockToastFn = jest

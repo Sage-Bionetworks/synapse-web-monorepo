@@ -1,14 +1,14 @@
+import { ReactComponent as Fisma } from '@/assets/homepage/fisma.svg'
+import { ReactComponent as Hipaa } from '@/assets/homepage/hipaa-compliant.svg'
+import { ReactComponent as PoweredBySynapse } from '@/assets/homepage/powered-by-synapse-feature.svg'
+import { ReactComponent as PrecisionGovernance } from '@/assets/homepage/precision-governance-feature.svg'
+import { ReactComponent as Python } from '@/assets/homepage/python.svg'
+import { ReactComponent as R } from '@/assets/homepage/r.svg'
+import { ReactComponent as ResearchCredit } from '@/assets/homepage/research-credit-feature.svg'
+import { ReactComponent as SeamlessIntegration } from '@/assets/homepage/seamless-integration-feature.svg'
+import { useOneSageURL } from '@/utils/hooks'
 import { Box } from '@mui/material'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
-import { ReactComponent as SeamlessIntegration } from '../../assets/homepage/seamless-integration-feature.svg'
-import { ReactComponent as ResearchCredit } from '../../assets/homepage/research-credit-feature.svg'
-import { ReactComponent as PrecisionGovernance } from '../../assets/homepage/precision-governance-feature.svg'
-import { ReactComponent as PoweredBySynapse } from '../../assets/homepage/powered-by-synapse-feature.svg'
-import { ReactComponent as Python } from '../../assets/homepage/python.svg'
-import { ReactComponent as R } from '../../assets/homepage/r.svg'
-import { ReactComponent as Fisma } from '../../assets/homepage/fisma.svg'
-import { ReactComponent as Hipaa } from '../../assets/homepage/hipaa-compliant.svg'
-import { useOneSageURL } from '../../utils/hooks'
 
 export function SynapseFeatures() {
   const sageResourcesUrl = useOneSageURL('/sageresources')

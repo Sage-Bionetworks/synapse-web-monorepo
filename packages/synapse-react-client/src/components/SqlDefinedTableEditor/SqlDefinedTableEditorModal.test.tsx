@@ -1,19 +1,19 @@
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SqlDefinedTableEditorModal from './SqlDefinedTableEditorModal'
-import { SqlDefinedTableEditorModalProps } from './SqlDefinedTableEditorModal'
-import { render, screen, within } from '@testing-library/react'
 import mockTableEntityData, {
   mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
-import { waitFor } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
+} from '@/mocks/entity/mockTableEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import userEvent from '@testing-library/user-event'
 import {
-  MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   Entity,
+  MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import SqlDefinedTableEditorModal, {
+  SqlDefinedTableEditorModalProps,
+} from './SqlDefinedTableEditorModal'
 
 const mockTableEntityInstance = mockTableEntityData.entity
 

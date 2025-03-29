@@ -1,10 +1,6 @@
+import RedirectWithQuery from '@/components/RedirectWithQuery'
 import { RouteObject } from 'react-router'
-import {
-  DownloadCartPage,
-  ErrorPage,
-  SynapseErrorType,
-} from 'synapse-react-client'
-import RedirectWithQuery from '../components/RedirectWithQuery'
+import { DownloadCartPage, ErrorPage, SynapseErrorType } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {

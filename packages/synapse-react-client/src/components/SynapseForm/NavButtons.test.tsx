@@ -1,3 +1,4 @@
+import { steps } from '@/mocks/mock_drug_tool_data'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as _ from 'lodash-es'
@@ -8,7 +9,6 @@ import {
   NextStepLinkProps,
 } from './NavButtons'
 import { NavActionEnum, Step } from './types'
-import { steps } from '../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(steps)
 

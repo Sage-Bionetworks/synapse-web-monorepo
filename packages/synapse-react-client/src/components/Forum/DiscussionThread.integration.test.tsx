@@ -1,31 +1,31 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { THREAD, THREAD_ID, THREAD_REPLIES } from '../../utils/APIConstants'
+import {
+  mockDiscussionReplyBundle,
+  mockDiscussionThreadBundle,
+} from '@/mocks/discussion/mock_discussion'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import {
+  mockUserProfileData,
+  mockUserProfileData2,
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { THREAD, THREAD_ID, THREAD_REPLIES } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { DiscussionReplyBundle } from '@sage-bionetworks/synapse-types'
-import { MessageURL } from '@sage-bionetworks/synapse-types'
+} from '@/utils/functions/getEndpoint'
 import {
+  DiscussionReplyBundle,
+  MessageURL,
+  PaginatedResults,
   SubscriptionObjectType,
   SubscriptionPagedResults,
   Topic,
 } from '@sage-bionetworks/synapse-types'
-import {
-  mockDiscussionReplyBundle,
-  mockDiscussionThreadBundle,
-} from '../../mocks/discussion/mock_discussion'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  mockUserProfileData,
-  mockUserProfileData2,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
 
 const MOCK_THREAD_ID = '123'
 const MOCK_SUBSCRIPTION_ID = '999'

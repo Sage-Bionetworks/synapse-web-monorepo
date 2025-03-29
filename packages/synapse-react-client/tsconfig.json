@@ -12,6 +12,7 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@/*": ["./src/*"],
       // HMR will work if we uncomment these, but doing so causes various build/typecheck errors
       //
       // In the markdown-it packages, the TypeScript compiler had an issue with the output type declaration file being

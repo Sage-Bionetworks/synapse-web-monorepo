@@ -1,12 +1,12 @@
-import { Box, TextField } from '@mui/material'
-import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
-import { usePostReply, usePutReply } from '../../synapse-queries/forum/useReply'
+import { usePostReply, usePutReply } from '@/synapse-queries/forum/useReply'
 import {
   useCreateThread,
   useUpdateThreadMessage,
   useUpdateThreadTitle,
-} from '../../synapse-queries/forum/useThread'
+} from '@/synapse-queries/forum/useThread'
+import { Box, TextField } from '@mui/material'
+import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
 import {
   ConfirmationButtons,
   ConfirmationDialog,

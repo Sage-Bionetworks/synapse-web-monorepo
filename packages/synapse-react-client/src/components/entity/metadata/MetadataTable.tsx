@@ -1,17 +1,17 @@
-import dayjs from 'dayjs'
-import { formatDate } from '../../../utils/functions/DateFormatter'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
+import { useGetUploadDestinationForStorageLocation } from '@/synapse-queries/file/useUploadDestination'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   entityTypeToFriendlyName,
   getVersionDisplay,
   isVersionableEntity,
-} from '../../../utils/functions/EntityTypeUtils'
+} from '@/utils/functions/EntityTypeUtils'
 import {
   getDataFileHandle,
   getStorageLocationName,
-} from '../../../utils/functions/FileHandleUtils'
-import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
+} from '@/utils/functions/FileHandleUtils'
+import dayjs from 'dayjs'
 import { UserBadge } from '../../UserCard/UserBadge'
-import { useGetUploadDestinationForStorageLocation } from '../../../synapse-queries/file/useUploadDestination'
 
 export type MetadataTableProps = {
   readonly entityId: string

@@ -1,17 +1,17 @@
-import { render, screen } from '@testing-library/react'
-import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_JSON } from '../../../utils/APIConstants'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { mockSchemaBinding } from '@/mocks/mockSchema'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY_JSON } from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../utils/context/SynapseContext'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { mockSchemaBinding } from '../../../mocks/mockSchema'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
-import { getFeatureFlagsOverride } from '../../../mocks/msw/handlers/featureFlagHandlers'
+} from '@/utils/functions/getEndpoint'
+import { render, screen } from '@testing-library/react'
+import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
 
 const { id: MOCK_FILE_ENTITY_ID, json: mockFileEntityJson } = mockFileEntityData
 

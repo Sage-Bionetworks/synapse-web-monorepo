@@ -1,6 +1,6 @@
+import StyledFormControl from '@/components/styled/StyledFormControl'
 import { InputLabel, Select, TextField } from '@mui/material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
-import StyledFormControl from '../../styled/StyledFormControl'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 
 export type EvaluationRoundLimitOptionsProps = {

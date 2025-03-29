@@ -1,17 +1,17 @@
+import {
+  useGetAllOpenMembershipInvitations,
+  useGetChallengeTeamList,
+  useGetCurrentUserProfile,
+  useGetTeamList,
+} from '@/synapse-queries'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { EmailTwoTone } from '@mui/icons-material'
 import { Box, Link, Radio, Tooltip } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Team } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
-import {
-  useGetAllOpenMembershipInvitations,
-  useGetChallengeTeamList,
-  useGetCurrentUserProfile,
-  useGetTeamList,
-} from '../../synapse-queries'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 
 export type ChallengeTeamTableProps = {

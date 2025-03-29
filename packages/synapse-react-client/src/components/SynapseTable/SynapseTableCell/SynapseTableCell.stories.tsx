@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
-import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
 import { QueryContextProvider } from '../../../index'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
 
 const meta: Meta<SynapseTableCellProps> = {
   title: 'Explore/SynapseTableCell',

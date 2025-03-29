@@ -1,27 +1,24 @@
+import {
+  mockManagedACTAccessRequirement as mockAccessRequirement,
+  mockSearchResultsPageOne,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import { getLocationTracker } from '@/testutils/LocationTracker'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import selectEvent from 'react-select-event'
-import {
-  mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResultsPageOne,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
-import { getLocationTracker } from '../../testutils/LocationTracker'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_SEARCH,
-} from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
 import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import {

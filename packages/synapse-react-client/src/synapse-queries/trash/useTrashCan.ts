@@ -1,3 +1,9 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  PaginatedResults,
+  TrashedEntity,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -7,12 +13,6 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import {
-  PaginatedResults,
-  TrashedEntity,
-} from '@sage-bionetworks/synapse-types'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetItemsInTrashCanInfinite<

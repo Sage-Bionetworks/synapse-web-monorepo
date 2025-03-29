@@ -1,3 +1,11 @@
+import mockDatasetEntityData from '@/mocks/entity/mockDataset'
+import mockDatasetCollectionData from '@/mocks/entity/mockDatasetCollection'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
+import { ENTITY_ID } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   EntityRef,
   EntityType,
@@ -12,14 +20,6 @@ import {
 import userEvent from '@testing-library/user-event'
 import { cloneDeep, noop, uniqueId } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
-import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../../utils'
-import { ENTITY_ID } from '../../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../../utils/functions'
 import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
 import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
 import { displayToast } from '../../ToastMessage'

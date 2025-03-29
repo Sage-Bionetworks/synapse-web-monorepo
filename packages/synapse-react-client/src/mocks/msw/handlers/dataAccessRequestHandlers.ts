@@ -1,19 +1,19 @@
-import { Renewal, Request } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
 import {
   ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
-} from '../../../utils/APIConstants'
+} from '@/utils/APIConstants'
+import { Renewal, Request } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
+import {
+  MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
+  mockManagedACTAccessRequirement,
+} from '../../accessRequirement/mockAccessRequirements'
 import {
   MOCK_DATA_ACCESS_RENEWAL,
   MOCK_DATA_ACCESS_REQUEST,
 } from '../../dataaccess/MockDataAccessRequest'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
-import {
-  MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
-  mockManagedACTAccessRequirement,
-} from '../../accessRequirement/mockAccessRequirements'
 
 const mockDataAccessRequestService = new BasicMockedCrudService<
   Request | Renewal,

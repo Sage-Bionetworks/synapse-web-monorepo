@@ -1,3 +1,18 @@
+import { rest, server } from '@/mocks/msw/server'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
+import { PROFILE_IMAGE_PREVIEW } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  AVATAR,
+  LARGE_USER_CARD,
+  MEDIUM_USER_CARD,
+  SEPERATOR,
+} from '@/utils/SynapseConstants'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
@@ -6,21 +21,6 @@ import UserCardContextMenu, {
   MenuAction,
   UserCardContextMenuProps,
 } from './UserCardContextMenu'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
-import { PROFILE_IMAGE_PREVIEW } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  AVATAR,
-  LARGE_USER_CARD,
-  MEDIUM_USER_CARD,
-  SEPERATOR,
-} from '../../utils/SynapseConstants'
-import { rest, server } from '../../mocks/msw/server'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 
 const { firstName } = mockUserProfileData
 

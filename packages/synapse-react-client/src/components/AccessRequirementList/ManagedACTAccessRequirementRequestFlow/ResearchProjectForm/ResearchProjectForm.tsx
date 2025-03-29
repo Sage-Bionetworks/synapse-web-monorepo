@@ -1,4 +1,8 @@
 import {
+  useGetResearchProject,
+  useUpdateResearchProject,
+} from '@/synapse-queries'
+import {
   Alert,
   Box,
   Button,
@@ -14,10 +18,6 @@ import {
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useEffect, useState } from 'react'
-import {
-  useGetResearchProject,
-  useUpdateResearchProject,
-} from '../../../../synapse-queries'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
   getWordCount,

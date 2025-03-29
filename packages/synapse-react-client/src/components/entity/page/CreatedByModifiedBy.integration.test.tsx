@@ -1,20 +1,20 @@
-import { formatDate } from '../../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
+import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import {
+  mockUserProfileData,
+  mockUserProfileData2,
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { render, screen } from '@testing-library/react'
+import dayjs from 'dayjs'
 import {
   CreatedByModifiedBy,
   CreatedByModifiedByProps,
 } from './CreatedByModifiedBy'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { server } from '../../../mocks/msw/server'
-import mockFileEntity from '../../../mocks/entity/mockFileEntity'
-import {
-  mockUserProfileData,
-  mockUserProfileData2,
-} from '../../../mocks/user/mock_user_profile'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { mockDatasetEntity } from '../../../mocks/entity/mockDataset'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 function renderComponent(props: CreatedByModifiedByProps) {
   return render(<CreatedByModifiedBy {...props} />, {

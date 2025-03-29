@@ -1,3 +1,36 @@
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  mockApprovedSubmission,
+  mockRejectedSubmission,
+  mockSubmissions,
+  mockSubmittedSubmission,
+} from '@/mocks/dataaccess/MockSubmission'
+import { rest, server } from '@/mocks/msw/server'
+import { mockActTeam } from '@/mocks/team/mockTeam'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_ID_3,
+  MOCK_USER_NAME,
+  MOCK_USER_NAME_2,
+  MOCK_USER_NAME_3,
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ACCESS_REQUIREMENT_ACL,
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  DATA_ACCESS_SUBMISSION_BY_ID,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  ACCESS_TYPE,
+  AccessControlList,
+  FileHandleAssociation,
+  SubmissionState,
+} from '@sage-bionetworks/synapse-types'
 import {
   render,
   screen,
@@ -6,42 +39,9 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  ACCESS_REQUIREMENT_ACL,
-  ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
-  DATA_ACCESS_SUBMISSION_BY_ID,
-} from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  ACCESS_TYPE,
-  AccessControlList,
-  FileHandleAssociation,
-  SubmissionState,
-} from '@sage-bionetworks/synapse-types'
-import {
-  mockApprovedSubmission,
-  mockRejectedSubmission,
-  mockSubmissions,
-  mockSubmittedSubmission,
-} from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_3,
-  MOCK_USER_NAME,
-  MOCK_USER_NAME_2,
-  MOCK_USER_NAME_3,
-} from '../../mocks/user/mock_user_profile'
-import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
 import failOnConsoleError from 'jest-fail-on-console'
-import { mockActTeam } from '../../mocks/team/mockTeam'
+import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
+import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {

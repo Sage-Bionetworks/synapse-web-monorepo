@@ -1,18 +1,19 @@
+import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { server } from '@/mocks/msw/server'
+import {
+  MOCK_TEAM_ID,
+  MOCK_TEAM_ID_2,
+  MOCK_TEAM_ID_3,
+  mockTeamData,
+} from '@/mocks/team/mockTeam'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   RestrictableObjectDescriptor,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MOCK_FILE_ENTITY_ID } from '../../mocks/entity/mockFileEntity'
-import { server } from '../../mocks/msw/server'
-import {
-  MOCK_TEAM_ID,
-  MOCK_TEAM_ID_2,
-  MOCK_TEAM_ID_3,
-  mockTeamData,
-} from '../../mocks/team/mockTeam'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import TeamSubjectsSelector, {
   HELP_TEXT,
   NO_TEAMS_SELECTED,
@@ -21,7 +22,6 @@ import TeamSubjectsSelector, {
   TEAM_PARSING_ERROR,
   TeamSubjectsSelectorProps,
 } from './TeamSubjectsSelector'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 
 const onUpdate = jest.fn()
 const onUpdateTeamIDsTextbox = jest.fn()

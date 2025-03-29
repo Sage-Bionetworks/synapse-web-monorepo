@@ -1,16 +1,16 @@
-import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
-import { SynapseConstants } from '../../utils'
+import { useGetFullTableQueryResults } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
+import { Skeleton } from '@mui/material'
 import {
   FacetColumnRequest,
   QueryBundleRequest,
   QueryFilter,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
-import { Skeleton } from '@mui/material'
-import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
 import { QueryContextType } from '../QueryContext'
+import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import Plot from './Plot'
 
 export type SynapsePlotWidgetParams = {

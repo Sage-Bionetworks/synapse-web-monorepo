@@ -1,9 +1,9 @@
+import { useGetStablePresignedUrl } from '@/synapse-queries'
+import Skeleton from '@mui/material/Skeleton'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import Skeleton from '@mui/material/Skeleton'
-import { useGetStablePresignedUrl } from '../synapse-queries'
 
 export type SourceAppImageProps = {
   sourceAppConfigTableID: string

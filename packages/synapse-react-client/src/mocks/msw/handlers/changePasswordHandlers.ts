@@ -1,10 +1,10 @@
-import { rest } from 'msw'
-import { CHANGE_PASSWORD } from '../../../utils/APIConstants'
+import { CHANGE_PASSWORD } from '@/utils/APIConstants'
 import {
   ChangePasswordInterface,
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 
 export function getSuccessfulChangePasswordHandler(backendOrigin: string) {
   return rest.post(backendOrigin + CHANGE_PASSWORD, (req, res, ctx) => {

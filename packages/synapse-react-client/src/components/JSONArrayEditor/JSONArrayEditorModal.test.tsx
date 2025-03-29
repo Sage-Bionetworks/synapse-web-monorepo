@@ -1,9 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import JSONArrayEditorModal, {
   JSONArrayEditorModalProps,
 } from './JSONArrayEditorModal'
-import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 function renderComponent(props: JSONArrayEditorModalProps) {
   return render(<JSONArrayEditorModal {...props} />, {

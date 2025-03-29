@@ -1,9 +1,9 @@
-import { useQueryContext } from '../QueryContext'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { cloneDeep } from 'lodash-es'
+import { queryRequestsHaveSameTotalResults } from '@/utils/functions/queryUtils'
 import { RowSet } from '@sage-bionetworks/synapse-types'
-import { queryRequestsHaveSameTotalResults } from '../../utils/functions/queryUtils'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { cloneDeep } from 'lodash-es'
+import { useMemo } from 'react'
+import { useQueryContext } from '../QueryContext'
 
 function useGetInfiniteRowSet() {
   const { isInfinite, rowDataInfiniteQueryOptions } = useQueryContext()

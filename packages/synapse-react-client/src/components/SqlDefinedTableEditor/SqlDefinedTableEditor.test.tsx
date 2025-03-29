@@ -1,9 +1,9 @@
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
 import SqlDefinedTableEditor, {
   SqlDefinedTableEditorProps,
 } from './SqlDefinedTableEditor'
-import { render, screen } from '@testing-library/react'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 
 describe('SqlDefinedTableEditor tests', () => {
   function renderComponent(props: SqlDefinedTableEditorProps) {

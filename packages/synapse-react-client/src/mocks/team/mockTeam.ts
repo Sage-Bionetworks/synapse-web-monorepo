@@ -1,15 +1,15 @@
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import {
   MembershipInvitation,
   Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
+import { uniqueId } from 'lodash-es'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MockUserOrTeamData,
 } from '../user/mock_user_profile'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { uniqueId } from 'lodash-es'
 
 export const MOCK_TEAM_ID = 987654
 export const MOCK_TEAM_ID_2 = 987655

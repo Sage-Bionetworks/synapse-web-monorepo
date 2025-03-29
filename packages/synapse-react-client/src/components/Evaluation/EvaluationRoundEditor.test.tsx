@@ -1,3 +1,6 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import {
   render,
@@ -8,9 +11,6 @@ import {
 import userEvent from '@testing-library/user-event'
 import dayjs, { Dayjs } from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   EvaluationRoundEditor,
   EvaluationRoundEditorProps,

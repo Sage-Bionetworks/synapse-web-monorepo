@@ -1,6 +1,6 @@
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import { Button, Link, Skeleton, Stack } from '@mui/material'
 import IconSvg, { IconName } from '../IconSvg'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
 
 export type TopicProps = {
   isSubscribed: boolean

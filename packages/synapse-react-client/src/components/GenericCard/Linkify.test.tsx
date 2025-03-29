@@ -1,5 +1,5 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import Linkify from './Linkify'
 
 describe('Linkify tests', () => {

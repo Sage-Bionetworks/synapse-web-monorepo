@@ -1,14 +1,16 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  GetProjectsParameters,
+  ProjectHeaderList,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { ProjectHeaderList } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
 
 export function useGetUserProjectsInfinite<
   TData = InfiniteData<ProjectHeaderList>,

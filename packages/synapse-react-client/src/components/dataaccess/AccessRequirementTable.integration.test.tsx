@@ -1,22 +1,3 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import dayjs from 'dayjs'
-import { QueryClient } from '@tanstack/react-query'
-import {
-  AccessRequirementTable,
-  AccessRequirementTableProps,
-} from './AccessRequirementTable'
-import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import {
-  ACCESS_TYPE,
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
-} from '@sage-bionetworks/synapse-types'
-import mockProjectData from '../../mocks/entity/mockProject'
 import {
   mockACTAccessRequirement,
   mockLockAccessRequirement,
@@ -25,12 +6,31 @@ import {
   mockSearchResultsPageTwo,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { server } from '../../mocks/msw/server'
-import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import mockProjectData from '@/mocks/entity/mockProject'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import {
+  ACCESS_TYPE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+} from '@sage-bionetworks/synapse-types'
+import { QueryClient } from '@tanstack/react-query'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import dayjs from 'dayjs'
+import {
+  AccessRequirementTable,
+  AccessRequirementTableProps,
+} from './AccessRequirementTable'
 import { accessRequirementConcreteTypeValueToDisplayValue } from './UseAccessRequirementTable'
-import SynapseClient from '../../synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const MOCK_PROJECT_NAME = mockProjectData.name
 

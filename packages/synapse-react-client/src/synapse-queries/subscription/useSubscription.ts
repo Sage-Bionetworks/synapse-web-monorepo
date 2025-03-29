@@ -1,3 +1,5 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   Direction,
   SortByType,
@@ -20,10 +22,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import SynapseClient from '../../synapse-client'
-import { useCallback } from 'react'
 import { isEmpty } from 'lodash-es'
+import { useCallback } from 'react'
 
 export function useGetSubscribers(
   topic: Topic,

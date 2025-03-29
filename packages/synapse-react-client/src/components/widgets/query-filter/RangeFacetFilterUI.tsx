@@ -1,17 +1,14 @@
+import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Collapse, FormControlLabel, Radio, RadioGroup } from '@mui/material'
-import { useState } from 'react'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
 import {
   ColumnType,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import { useState } from 'react'
 import { Range, RangeValues } from '../Range'
 import RangeSlider from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
-import dayjs from 'dayjs'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
