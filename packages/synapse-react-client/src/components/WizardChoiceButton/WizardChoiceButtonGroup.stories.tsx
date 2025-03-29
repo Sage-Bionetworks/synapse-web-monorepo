@@ -1,3 +1,4 @@
+import { FolderTwoTone, InsertDriveFileTwoTone } from '@mui/icons-material'
 import { Meta, StoryObj } from '@storybook/react'
 import WizardChoiceButton from './WizardChoiceButton'
 import WizardChoiceButtonGroup from './WizardChoiceButtonGroup'
@@ -16,7 +17,7 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Demo: Story = {
+export const Basic: Story = {
   args: {
     children: (
       <>
@@ -31,6 +32,27 @@ export const Demo: Story = {
           description={
             'The Data Use Ontology (DUO) is an open standard for describing access requirement conditions. Access Requirements managed under DUO support additional automation features.'
           }
+        />
+      </>
+    ),
+  },
+}
+
+export const WithIcons: Story = {
+  args: {
+    children: (
+      <>
+        <WizardChoiceButton
+          title={'File'}
+          description={
+            'Some option with a file icon. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines.'
+          }
+          icon={<InsertDriveFileTwoTone fontSize={'large'} />}
+        />
+        <WizardChoiceButton
+          title={'Folder or Directory'}
+          description={'Select this option for "Folder or Directory".'}
+          icon={<FolderTwoTone fontSize={'large'} />}
         />
       </>
     ),
