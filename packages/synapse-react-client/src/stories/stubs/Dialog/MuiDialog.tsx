@@ -1,3 +1,5 @@
+import { HelpPopover } from '@/components/HelpPopover/HelpPopover'
+import IconSvg from '@/components/IconSvg/IconSvg'
 import {
   Box,
   Button,
@@ -10,8 +12,6 @@ import {
   Stack,
 } from '@mui/material'
 import { ReactNode } from 'react'
-import { HelpPopover } from '../../../components/HelpPopover/HelpPopover'
-import IconSvg from '../../../components/IconSvg/IconSvg'
 
 export interface DialogProps extends Omit<MuiDialogProps, 'content'> {
   title: string

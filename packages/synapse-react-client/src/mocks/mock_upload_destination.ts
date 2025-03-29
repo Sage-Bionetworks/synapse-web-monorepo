@@ -1,3 +1,4 @@
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import {
   ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreUploadDestination,
@@ -7,7 +8,6 @@ import {
   UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../synapse-client'
 
 export const MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID = 1111
 export const MOCK_EXTERNAL_GOOGLE_CLOUD_STORAGE_LOCATION_ID = 2222

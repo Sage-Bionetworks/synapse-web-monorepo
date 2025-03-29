@@ -1,11 +1,11 @@
-import useGetInfoFromIds, { UseGetInfoFromIdsProps } from './useGetInfoFromIds'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   UserGroupHeader,
   UserGroupHeaderResponsePage,
 } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
 import { renderHook, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import useGetInfoFromIds, { UseGetInfoFromIdsProps } from './useGetInfoFromIds'
 
 const mockGroupHeaders: UserGroupHeaderResponsePage = {
   children: [{ ownerId: 'aaa', userName: 'aaa', isIndividual: true }],

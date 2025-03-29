@@ -1,3 +1,25 @@
+import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '@/mocks/accessRequirement/mockAccessRequirementAcls'
+import {
+  MOCK_AR_ETAG,
+  MOCK_NEWLY_CREATED_AR_ID,
+  mockACTAccessRequirement,
+  mockManagedACTAccessRequirement,
+  mockToUAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+} from '@/mocks/entity/mockFileEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '@/testutils/MarkdownSynapseUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ACCESS_TYPE,
   RestrictableObjectDescriptor,
@@ -7,33 +29,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import {
-  MOCK_FILE_ENTITY_ID,
-  MOCK_FILE_NAME,
-} from '../../mocks/entity/mockFileEntity'
-import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
-import {
-  MOCK_AR_ETAG,
-  MOCK_NEWLY_CREATED_AR_ID,
-  mockACTAccessRequirement,
-  mockManagedACTAccessRequirement,
-  mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { server } from '../../mocks/msw/server'
-import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { REMOVE_BUTTON_LABEL } from '../AclEditor/ResourceAccessItem'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import CreateOrUpdateAccessRequirementWizard, {
   CreateOrUpdateAccessRequirementWizardProps,
 } from './CreateOrUpdateAccessRequirementWizard'
-import {
-  confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
-} from '../../testutils/MarkdownSynapseUtils'
-import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 
 const entitySubject: RestrictableObjectDescriptor = {
   id: MOCK_FILE_ENTITY_ID,

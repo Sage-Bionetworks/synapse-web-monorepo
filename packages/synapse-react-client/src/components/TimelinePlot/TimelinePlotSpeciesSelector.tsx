@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { StyledFormControl } from '@/components/styled'
+import { useGetFullTableQueryResults } from '@/synapse-queries'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import { InputLabel, MenuItem, Select } from '@mui/material'
 import { Box } from '@mui/system'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
-import { InputLabel, Select, MenuItem } from '@mui/material'
-import { StyledFormControl } from '../styled'
 import { QueryFilter } from '@sage-bionetworks/synapse-types'
+import { Dispatch, SetStateAction } from 'react'
 
 export type TimelinePlotSpeciesSelectorProps = {
   sql: string

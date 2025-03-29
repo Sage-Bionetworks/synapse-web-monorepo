@@ -1,23 +1,23 @@
+import SynapseClient, {
+  getAccessTokenFromCookie,
+  getAuthenticatedOn,
+  getUserProfile,
+  signOut,
+} from '@/synapse-client'
+import {
+  defaultQueryClientConfig,
+  SynapseClientError,
+  SynapseContextProvider,
+  SynapseContextType,
+} from '@/utils'
+import { STACK_MAP, SynapseStack } from '@/utils/functions/getEndpoint'
+import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
 import { ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
-import SynapseClient, {
-  getAccessTokenFromCookie,
-  getAuthenticatedOn,
-  getUserProfile,
-  signOut,
-} from '../synapse-client'
-import {
-  defaultQueryClientConfig,
-  SynapseClientError,
-  SynapseContextProvider,
-  SynapseContextType,
-} from '../utils'
-import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
-import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
 import { SynapseToastContainer } from './ToastMessage'
 
 export async function sessionChangeHandler() {

@@ -1,7 +1,9 @@
-import { useGetProjectsInfinite } from '../../../../synapse-queries/user/useProjects'
-import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import { ProjectHeader } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
+import { useGetProjectsInfinite } from '@/synapse-queries/user/useProjects'
+import useGetIsAllSelectedFromInfiniteList from '@/utils/hooks/useGetIsAllSelectedInfiniteList'
+import {
+  GetProjectsParameters,
+  ProjectHeader,
+} from '@sage-bionetworks/synapse-types'
 import { EntityHeaderFromProjectHeader } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'

@@ -1,12 +1,13 @@
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { datasetsSql, filesSql } from 'src/config/resources'
+import { datasetsSql, filesSql } from '@/config/resources'
+import { columnAliases, searchConfiguration } from '@/config/synapseConfigs/commonProps'
+import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
 import {
-  columnAliases,
-  searchConfiguration,
-} from 'src/config/synapseConfigs/commonProps'
-import { datasetCardConfiguration } from 'src/config/synapseConfigs/datasets'
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  useDetailsPageContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 
 export default function OrganizationDataTab() {

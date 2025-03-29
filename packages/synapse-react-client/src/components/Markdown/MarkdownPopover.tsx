@@ -1,4 +1,5 @@
-import { PropsWithChildren, ReactNode, useId } from 'react'
+import LightTooltip from '@/components/styled/LightTooltip'
+import { spreadSx } from '@/theme/spreadSx'
 import {
   Box,
   Button,
@@ -8,10 +9,9 @@ import {
   TooltipProps,
   Typography,
 } from '@mui/material'
-import { spreadSx } from '../../theme/spreadSx'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
-import LightTooltip from '../styled/LightTooltip'
 import { atom, useAtom } from 'jotai'
+import { PropsWithChildren, ReactNode, useId } from 'react'
+import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 
 export type MarkdownPopoverProps = PropsWithChildren<{
   contentProps: MarkdownSynapseProps

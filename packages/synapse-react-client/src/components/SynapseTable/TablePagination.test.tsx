@@ -1,13 +1,13 @@
+import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
-import { TablePagination } from './TablePagination'
+import userEvent from '@testing-library/user-event'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../QueryContext/QueryContext'
-import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
+import { TablePagination } from './TablePagination'
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
 jest.mock('./usePrefetchTableData', () => {

@@ -1,5 +1,10 @@
-import { useState } from 'react'
 import {
+  CookiePreference,
+  useCookiePreferences,
+} from '@/utils/hooks/useCookiePreferences'
+import { PRIVACY_POLICY_LINK } from '@/utils/SynapseConstants'
+import {
+  Box,
   Button,
   Checkbox,
   Dialog,
@@ -8,13 +13,8 @@ import {
   Link,
   Typography,
 } from '@mui/material'
+import { useState } from 'react'
 import { DialogBaseTitle } from '../DialogBase'
-import { Box } from '@mui/material'
-import {
-  CookiePreference,
-  useCookiePreferences,
-} from '../../utils/hooks/useCookiePreferences'
-import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
 
 export type CookiePreferencesDialogProps = {
   isOpen: boolean

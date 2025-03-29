@@ -1,6 +1,6 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import TextFieldWithWordLimit, {
   TextFieldWithWordLimitProps,
 } from './TextFieldWithWordLimit'

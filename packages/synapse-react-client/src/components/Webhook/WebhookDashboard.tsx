@@ -1,3 +1,8 @@
+import {
+  useGetWebhooksInfinite,
+  useResendVerificationCode,
+} from '@/synapse-queries/webhook/useWebhook'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import {
   Box,
@@ -21,11 +26,6 @@ import {
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  useGetWebhooksInfinite,
-  useResendVerificationCode,
-} from '../../synapse-queries/webhook/useWebhook'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { EntityLink } from '../EntityLink'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

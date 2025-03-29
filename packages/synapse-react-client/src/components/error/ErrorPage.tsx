@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState } from 'react'
-import { ReactComponent as MaintenanceSvg } from '../../assets/icons/error_page/maintenance.svg'
-import { ReactComponent as NoAccessSvg } from '../../assets/icons/error_page/no-access.svg'
-import { ReactComponent as UnavailableSvg } from '../../assets/icons/error_page/unavailable.svg'
+import { ReactComponent as MaintenanceSvg } from '@/assets/icons/error_page/maintenance.svg'
+import { ReactComponent as NoAccessSvg } from '@/assets/icons/error_page/no-access.svg'
+import { ReactComponent as UnavailableSvg } from '@/assets/icons/error_page/unavailable.svg'
+import { useSynapseContext } from '@/utils'
 import { Box, Link, Typography } from '@mui/material'
-import { useSynapseContext } from '../../utils'
-import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
+import { useCallback, useMemo, useState } from 'react'
 import EntityDOIInfo from './EntityDOIInfo'
+import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
 
 export type ErrorPageProps = {
   type: SynapseErrorType

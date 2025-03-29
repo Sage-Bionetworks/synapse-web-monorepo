@@ -1,10 +1,10 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditorList', () => {
   const evaluationId = '123123123'

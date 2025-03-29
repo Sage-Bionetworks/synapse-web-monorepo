@@ -1,16 +1,16 @@
-import PortalFeaturedPartners, {
-  PortalFeaturedPartnersProps,
-} from './PortalFeaturedPartners'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { screen, render, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
+import { render, screen, waitFor } from '@testing-library/react'
 import { SynapseClient } from '../../index'
+import PortalFeaturedPartners, {
+  PortalFeaturedPartnersProps,
+} from './PortalFeaturedPartners'
 
 jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
 const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)

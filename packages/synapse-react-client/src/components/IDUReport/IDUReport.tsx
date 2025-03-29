@@ -1,7 +1,7 @@
+import { useGetApprovedSubmissionInfoInfinite } from '@/synapse-queries'
+import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import { Fragment, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { useGetApprovedSubmissionInfoInfinite } from '../../synapse-queries'
-import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import {
   LoadingSubmissionInfoCard,
   SubmissionInfoCard,

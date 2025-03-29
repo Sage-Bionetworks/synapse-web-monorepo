@@ -1,20 +1,17 @@
-import { ErrorResponse } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import {
-  mockEntityRootWikiPage,
-  mockEntityWikiPage,
-} from '../../mocks/mockWiki'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { mockEntityRootWikiPage, mockEntityWikiPage } from '@/mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
-} from '../../mocks/mockWikiPageKey'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_PAGE_ID } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+} from '@/mocks/mockWikiPageKey'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { WIKI_PAGE_ID } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { ErrorResponse } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   ERROR_SAVING_WIKI,
   NAVIGATE_AWAY_CONFIRMATION_MESSAGE,

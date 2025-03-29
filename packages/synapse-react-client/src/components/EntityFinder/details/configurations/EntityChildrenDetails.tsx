@@ -1,8 +1,8 @@
+import { useGetEntityChildrenInfinite } from '@/synapse-queries/entity/useGetEntityChildren'
+import useGetIsAllSelectedFromInfiniteList from '@/utils/hooks/useGetIsAllSelectedInfiniteList'
 import { Direction, SortBy } from '@sage-bionetworks/synapse-types'
 import { SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
-import { useGetEntityChildrenInfinite } from '../../../../synapse-queries/entity/useGetEntityChildren'
-import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView, DetailsViewColumn } from '../view/DetailsView'
 

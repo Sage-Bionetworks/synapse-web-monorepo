@@ -1,11 +1,11 @@
-import { Box } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
 import {
   generatedEvaulations,
   mockEvaluationQueue,
   sevenGeneratedEvaulations,
-} from '../../mocks/entity/mockEvaluationQueue'
+} from '@/mocks/entity/mockEvaluationQueue'
+import { Box } from '@mui/material'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import AvailableEvaluationQueueList from './AvailableEvaluationQueueList'
 
 const meta: Meta = {

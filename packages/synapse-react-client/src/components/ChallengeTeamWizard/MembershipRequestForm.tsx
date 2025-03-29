@@ -1,18 +1,18 @@
 import {
+  useGetCurrentUserProfile,
+  useGetTeam,
+  useRequestToJoinTeam,
+} from '@/synapse-queries'
+import { Alert, Box, TextField, Typography } from '@mui/material'
+import { noop } from 'lodash-es'
+import {
   ChangeEvent,
   ForwardedRef,
   forwardRef,
   useImperativeHandle,
   useState,
 } from 'react'
-import { Alert, Box, TextField, Typography } from '@mui/material'
-import {
-  useGetCurrentUserProfile,
-  useGetTeam,
-  useRequestToJoinTeam,
-} from '../../synapse-queries'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { noop } from 'lodash-es'
 
 type JoinRequestFormProps = {
   teamId: string

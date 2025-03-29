@@ -1,12 +1,14 @@
-import { render, screen, within } from '@testing-library/react'
-import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
-import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
-import { PreviewRendererType } from './PreviewRendererType'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import mockDatasetData from '@/mocks/entity/mockDataset'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
 import {
   BatchFileResult,
   EntityBundle,
@@ -15,12 +17,10 @@ import {
   FileHandleAssociation,
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { MOCK_FILE_HANDLE_ID } from '../../mocks/mock_file_handle'
-import { rest, server } from '../../mocks/msw/server'
-import mockDatasetData from '../../mocks/entity/mockDataset'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { render, screen, within } from '@testing-library/react'
+import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
+import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
+import { PreviewRendererType } from './PreviewRendererType'
 
 jest
   .spyOn(FileHandleContentRendererModule, 'default')

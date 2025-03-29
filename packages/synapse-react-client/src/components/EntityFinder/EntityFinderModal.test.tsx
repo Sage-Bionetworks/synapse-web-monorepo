@@ -1,10 +1,12 @@
 import '@testing-library/jest-dom'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import {
   render,
-  waitFor,
   screen,
-  within,
+  waitFor,
   waitForElementToBeRemoved,
+  within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as EntityFinderModule from './EntityFinder'
@@ -14,8 +16,6 @@ import {
   UNSAVED_CHANGES,
 } from './EntityFinderModal'
 import { FinderScope } from './tree/EntityTree'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined
 

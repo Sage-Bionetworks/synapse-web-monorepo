@@ -1,17 +1,17 @@
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { VERIFICATION_SUBMISSION_STATE } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 import { userEvent } from '@storybook/test'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import failOnConsoleError from 'jest-fail-on-console'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { VERIFICATION_SUBMISSION_STATE } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import {
   DEFAULT_MESSAGE_APPEND,

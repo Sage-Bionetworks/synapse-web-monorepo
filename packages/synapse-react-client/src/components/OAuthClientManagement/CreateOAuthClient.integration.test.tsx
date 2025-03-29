@@ -1,9 +1,17 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import { mockClientList1 } from '@/mocks/oauth/MockClient'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { OIDCSigningAlgorithm } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
+import { noop } from 'lodash-es'
+import { WarningDialog } from '../SynapseForm/WarningDialog'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   CreateOAuthModal,
   CreateOAuthModalProps,
@@ -11,14 +19,6 @@ import {
   warningBody,
   warningHeader,
 } from './CreateOAuthClient'
-import { mockClientList1 } from '../../mocks/oauth/MockClient'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { WarningDialog } from '../SynapseForm/WarningDialog'
-import { noop } from 'lodash-es'
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')

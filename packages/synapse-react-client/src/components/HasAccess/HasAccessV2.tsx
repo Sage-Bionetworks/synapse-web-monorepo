@@ -1,19 +1,19 @@
-import { useCallback, useMemo, useState } from 'react'
-import SynapseClient from '../../synapse-client'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { useGetRestrictionInformation } from '../../synapse-queries'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils'
+import SynapseClient from '@/synapse-client'
+import { useGetRestrictionInformation } from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
+import { Box, Button, Theme, useTheme } from '@mui/material'
 import {
   AccessRequirement,
   RestrictableObjectType,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
+import { useCallback, useMemo, useState } from 'react'
 import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { Box, Button, Theme, useTheme } from '@mui/material'
 
 export type HasAccessProps = {
   onHide?: () => void

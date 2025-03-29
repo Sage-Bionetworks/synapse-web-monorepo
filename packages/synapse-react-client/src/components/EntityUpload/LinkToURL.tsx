@@ -1,3 +1,5 @@
+import { useGetEntity } from '@/synapse-queries/index'
+import { useLinkFileEntityToURL } from '@/utils/hooks/useUploadFileEntity/useLinkFileEntityToURL'
 import { Alert, Box, Stack, TextField, Typography } from '@mui/material'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
@@ -8,8 +10,6 @@ import {
   useImperativeHandle,
   useState,
 } from 'react'
-import { useGetEntity } from '../../synapse-queries/index'
-import { useLinkFileEntityToURL } from '../../utils/hooks/useUploadFileEntity/useLinkFileEntityToURL'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type LinkToURLProps = {

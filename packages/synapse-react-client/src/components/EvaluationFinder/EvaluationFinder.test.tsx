@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import EvaluationFinder, { EvaluationFinderProps } from './EvaluationFinder'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Evaluation, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import EvaluationFinder, { EvaluationFinderProps } from './EvaluationFinder'
 
 function renderComponent(props: EvaluationFinderProps) {
   return render(<EvaluationFinder {...props} />, { wrapper: createWrapper() })

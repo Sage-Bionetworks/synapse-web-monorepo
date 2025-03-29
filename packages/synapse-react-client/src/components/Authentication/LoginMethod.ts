@@ -2,7 +2,7 @@ import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
 
 export const LoginMethods = [
   LOGIN_METHOD_OAUTH2_GOOGLE,

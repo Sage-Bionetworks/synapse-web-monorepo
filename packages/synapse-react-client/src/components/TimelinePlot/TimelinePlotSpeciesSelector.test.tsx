@@ -1,12 +1,12 @@
+import queryResultBundleJson from '@/mocks/query/syn51735464GroupBySpecies'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import queryResultBundleJson from '../../mocks/query/syn51735464GroupBySpecies'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
 import TimelinePlotSpeciesSelector, {
   TimelinePlotSpeciesSelectorProps,
 } from './TimelinePlotSpeciesSelector'
-import userEvent from '@testing-library/user-event'
-import { cloneDeep } from 'lodash-es'
 
 const setSpecies = jest.fn()
 

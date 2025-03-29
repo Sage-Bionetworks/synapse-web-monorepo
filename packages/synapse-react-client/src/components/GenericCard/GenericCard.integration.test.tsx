@@ -1,3 +1,15 @@
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import mockTableEntityData, {
+  mockTableEntity,
+} from '@/mocks/entity/mockTableEntity'
+import {
+  mockQueryBundleRequest,
+  mockQueryResultBundle,
+} from '@/mocks/mockFileViewQuery'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -6,21 +18,6 @@ import {
 import { render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
-import mockTableEntityData, {
-  mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
-import {
-  mockQueryBundleRequest,
-  mockQueryResultBundle,
-} from '../../mocks/mockFileViewQuery'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
-import { server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { CardLink, TargetEnum } from '../CardContainerLogic'
 import * as IconSvg from '../IconSvg/IconSvg'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'

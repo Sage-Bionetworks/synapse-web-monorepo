@@ -1,8 +1,8 @@
-import { SynapseApiResponse } from '../handlers'
+import { ACCESS_REQUIREMENT_ACL } from '@/utils/APIConstants'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { mockAccessRequirementAcls } from '../../accessRequirement/mockAccessRequirementAcls'
 import { rest } from 'msw'
-import { ACCESS_REQUIREMENT_ACL } from '../../../utils/APIConstants'
+import { mockAccessRequirementAcls } from '../../accessRequirement/mockAccessRequirementAcls'
+import { SynapseApiResponse } from '../handlers'
 
 export function getAccessRequirementAclHandler(backendOrigin: string) {
   return rest.get(

@@ -1,5 +1,5 @@
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import { ProjectStorageUsage } from '@sage-bionetworks/synapse-types'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
 
 export const OVER_LIMIT_PROJECT_ID = 'syn54321'
 export const UNDER_LIMIT_PROJECT_ID = 'syn12345'

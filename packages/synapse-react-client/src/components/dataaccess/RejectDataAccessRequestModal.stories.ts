@@ -1,11 +1,11 @@
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
 import { fn } from '@storybook/test'
-import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
 
 const meta = {
   title: 'Governance/RejectDataAccessRequestModal',

@@ -4,7 +4,7 @@ import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
@@ -17,8 +17,8 @@ import QueryWrapperPlotNav, {
 } from './QueryWrapperPlotNav'
 import { displayToast } from '../ToastMessage'
 import { CustomControlCallbackData } from '../SynapseTable'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
-import { SynapseClient } from '../../index'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '@/utils/functions'
+import  SynapseClient  from '@/synapse-client'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
 import { fn } from '@storybook/test'
 

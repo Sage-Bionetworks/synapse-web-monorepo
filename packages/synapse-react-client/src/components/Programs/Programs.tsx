@@ -1,18 +1,18 @@
+import { useGetEntity } from '@/synapse-queries/entity/useEntity'
+
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import {
   FileHandleAssociation,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import ProgramsMobile from './Programs.Mobile'
-import ProgramsDesktop from './Programs.Desktop'
-import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { CardLink } from '../CardContainerLogic'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
+import ProgramsDesktop from './Programs.Desktop'
+import ProgramsMobile from './Programs.Mobile'
 
 export type ProgramsProps = {
   entityId: string

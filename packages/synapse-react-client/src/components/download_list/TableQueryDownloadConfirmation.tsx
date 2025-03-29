@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
 import {
   useAddQueryToDownloadList,
   useGetQueryResultBundleWithAsyncStatus,
-} from '../../synapse-queries'
-import { SynapseConstants, useSynapseContext } from '../../utils'
-import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+} from '@/synapse-queries'
+import { SynapseConstants, useSynapseContext } from '@/utils'
+import { getPrimaryKeyINFilter } from '@/utils/functions/QueryFilterUtils'
+import { useMemo } from 'react'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {

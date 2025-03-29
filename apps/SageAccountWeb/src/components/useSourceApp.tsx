@@ -1,5 +1,6 @@
-import { sourceAppConfigTableID } from '../resources'
-import { SourceAppConfig } from './SourceAppConfigs'
+import { sageAccountWebThemeOverrides } from '@/style/theme'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { useLocalStorageValue } from '@react-hookz/web'
 import {
   createContext,
   PropsWithChildren,
@@ -7,15 +8,14 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { getSearchParam } from '../URLUtils'
-import { useLocalStorageValue } from '@react-hookz/web'
 import {
   SynapseHookUtils,
   SynapseTheme,
   useLastLoginInfoState,
 } from 'synapse-react-client'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { sageAccountWebThemeOverrides } from '../style/theme'
+import { sourceAppConfigTableID } from '../resources'
+import { getSearchParam } from '../URLUtils'
+import { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppContextType = SourceAppConfig
 

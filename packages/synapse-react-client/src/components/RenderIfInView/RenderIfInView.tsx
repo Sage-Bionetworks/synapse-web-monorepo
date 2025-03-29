@@ -1,5 +1,5 @@
+import VisibilityObserver from '@/components/utils/VisibilityObserver'
 import { Component, PropsWithChildren } from 'react'
-import VisibilityObserver from '../utils/VisibilityObserver'
 
 export class RenderIfInView extends Component<PropsWithChildren<unknown>> {
   public render() {

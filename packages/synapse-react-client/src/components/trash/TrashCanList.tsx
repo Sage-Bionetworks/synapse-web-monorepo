@@ -1,18 +1,13 @@
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import {
   useGetItemsInTrashCanInfinite,
   usePurgeEntities,
   useRestoreEntities,
-} from '../../synapse-queries/trash/useTrashCan'
+} from '@/synapse-queries/trash/useTrashCan'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { Alert, Box, Button, Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { TrashedEntity } from '@sage-bionetworks/synapse-types'
-import { Alert, Box, Button, Typography } from '@mui/material'
-import { EntityLink } from '../EntityLink'
-import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import WarningDialog from '../SynapseForm/WarningDialog'
 import {
   ColumnDef,
   createColumnHelper,
@@ -21,10 +16,12 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  CheckBoxCell,
-  CheckBoxHeader,
-} from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
+import dayjs from 'dayjs'
+import { useMemo, useState } from 'react'
+import { CheckBoxCell, CheckBoxHeader } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
+import { EntityLink } from '../EntityLink'
+import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import WarningDialog from '../SynapseForm/WarningDialog'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
 /**

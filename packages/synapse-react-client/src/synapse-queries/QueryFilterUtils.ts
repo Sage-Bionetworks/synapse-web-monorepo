@@ -1,8 +1,8 @@
-import { QueryClient, QueryKey } from '@tanstack/react-query'
-import { KeyFactory } from './KeyFactory'
-import { BUNDLE_MASK_ACTIONS_REQUIRED } from '../utils/SynapseConstants'
-import { isEqual, isNumber, isObject } from 'lodash-es'
+import { BUNDLE_MASK_ACTIONS_REQUIRED } from '@/utils/SynapseConstants'
 import { matchQuery, QueryFilters } from '@tanstack/query-core'
+import { QueryClient, QueryKey } from '@tanstack/react-query'
+import { isEqual, isNumber, isObject } from 'lodash-es'
+import { KeyFactory } from './KeyFactory'
 
 /**
  * Invalidate all queries for the given entity. Table queries will be reset, i.e. the stale data will be removed from the cache.

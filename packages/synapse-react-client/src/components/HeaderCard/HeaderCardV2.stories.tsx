@@ -1,7 +1,7 @@
+import { Study } from '@/assets/themed_icons'
+import { LaunchOutlined } from '@mui/icons-material'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCardV2 from './HeaderCardV2'
-import { Study } from '../../assets/themed_icons'
-import { LaunchOutlined } from '@mui/icons-material'
 
 const meta = {
   title: 'Synapse/HeaderCardV2',

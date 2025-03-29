@@ -1,19 +1,19 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import UnmanagedACTAccessRequirementItem, {
-  UnmanagedACTAccessRequirementItemProps,
-} from './UnmanagedACTAccessRequirementItem'
-import { SynapseClient, SynapseContextType } from '../../../index'
+import {
+  mockACTAccessRequirement,
+  mockManagedACTAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   AccessRequirementStatus,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
-import {
-  mockACTAccessRequirement,
-  mockManagedACTAccessRequirement,
-} from '../../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { SynapseClient, SynapseContextType } from '../../../index'
+import UnmanagedACTAccessRequirementItem, {
+  UnmanagedACTAccessRequirementItemProps,
+} from './UnmanagedACTAccessRequirementItem'
 
 function renderComponent(
   props: UnmanagedACTAccessRequirementItemProps,

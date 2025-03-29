@@ -1,23 +1,23 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { noop } from 'lodash-es'
 import {
   getBadRequestChangePasswordHandler,
   getRequires2FAChangePasswordHandler,
   getSuccessfulChangePasswordHandler,
-} from '../../mocks/msw/handlers/changePasswordHandlers'
-import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
-import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
-import { server } from '../../mocks/msw/server'
+} from '@/mocks/msw/handlers/changePasswordHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { getResetTwoFactorAuthHandlers } from '@/mocks/msw/handlers/resetTwoFactorAuthHandlers'
+import { server } from '@/mocks/msw/server'
 import {
   MOCK_USER_ID,
   mockUserProfileData,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { KeyFactory } from '../../synapse-queries'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { KeyFactory } from '@/synapse-queries'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { noop } from 'lodash-es'
 import {
   BEGIN_RESET_2FA_BUTTON_TEXT,
   SEND_RESET_2FA_EMAIL_BUTTON_TEXT,

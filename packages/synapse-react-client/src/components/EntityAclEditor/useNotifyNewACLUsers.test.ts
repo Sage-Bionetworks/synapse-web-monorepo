@@ -1,29 +1,29 @@
-import { server } from '../../mocks/msw/server'
-import { act, renderHook, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import useNotifyNewACLUsers, {
-  shouldNotifyUserInNewResourceAccess,
-} from './useNotifyNewACLUsers'
-import SynapseClient from '../../synapse-client'
-import { ResourceAccess } from '@sage-bionetworks/synapse-types'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { MOCK_TEAM_ID, mockTeamUserGroups } from '@/mocks/team/mockTeam'
 import {
   mockUserData1,
   mockUserData2,
   mockUserData3,
-} from '../../mocks/user/mock_user_profile'
-import { getAccessTypeFromPermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { MOCK_TEAM_ID, mockTeamUserGroups } from '../../mocks/team/mockTeam'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
+} from '@/mocks/user/mock_user_profile'
 import {
   mockAnonymousUserGroupData,
   mockAuthenticatedGroupData,
   mockPublicGroupData,
-} from '../../mocks/usergroup/mockUserGroup'
+} from '@/mocks/usergroup/mockUserGroup'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+} from '@/utils/SynapseConstants'
+import { ResourceAccess } from '@sage-bionetworks/synapse-types'
+import { act, renderHook, waitFor } from '@testing-library/react'
+import useNotifyNewACLUsers, {
+  shouldNotifyUserInNewResourceAccess,
+} from './useNotifyNewACLUsers'
 
 const subject = 'the message subject'
 const body = 'the message body'

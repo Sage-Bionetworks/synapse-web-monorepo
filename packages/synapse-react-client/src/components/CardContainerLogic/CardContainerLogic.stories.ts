@@ -1,11 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import { MOCK_RELEASE_CARDS_TABLE_ID } from '@/mocks/entity/mockReleaseCardsTable'
+import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import {
   mockCurrentReleaseCardsQueryResultBundle,
   mockPreviousReleaseCardsQueryResultBundle,
-} from '../../mocks/query/mockReleaseCardsTableQueryResultBundle'
+} from '@/mocks/query/mockReleaseCardsTableQueryResultBundle'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   DATASET,
   FUNDER,
@@ -13,17 +15,15 @@ import {
   OBSERVATION_CARD,
   PUBLICATION,
   RELEASE_CARD,
-} from '../../utils/SynapseConstants'
-import CardContainerLogic from './index'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+} from '@/utils/SynapseConstants'
+import { Meta, StoryObj } from '@storybook/react'
 import { GenericCardSchema } from '../GenericCard'
 import { StatConfig } from '../ReleaseCard'
-import { MOCK_RELEASE_CARDS_TABLE_ID } from '../../mocks/entity/mockReleaseCardsTable'
 import {
   ReleaseMetadataConfig,
   SelectedFacetConfig,
 } from '../ReleaseCard/ReleaseCardTypes'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import CardContainerLogic from './index'
 
 const meta = {
   title: 'Explore/CardContainerLogic',

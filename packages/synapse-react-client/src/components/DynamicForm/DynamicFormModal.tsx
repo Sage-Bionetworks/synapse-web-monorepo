@@ -1,7 +1,7 @@
+import WideButton from '@/components/styled/WideButton'
+import { Box } from '@mui/material'
 import { useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { Box } from '@mui/material'
-import WideButton from '../styled/WideButton'
 import DynamicForm, { DynamicFormProps } from './DynamicForm'
 
 type ModalProps = {

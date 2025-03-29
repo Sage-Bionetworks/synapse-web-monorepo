@@ -1,6 +1,6 @@
+import { Study } from '@/assets/themed_icons'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCard from './HeaderCard'
-import { Study } from '../assets/themed_icons'
 
 const meta = {
   title: 'Synapse/HeaderCard',

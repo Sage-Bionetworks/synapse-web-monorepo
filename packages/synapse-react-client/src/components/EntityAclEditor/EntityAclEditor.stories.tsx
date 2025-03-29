@@ -1,16 +1,16 @@
-import { Meta, StoryObj } from '@storybook/react'
-import mockProject from '../../mocks/entity/mockProject'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import EntityAclEditorModal, {
-  EntityAclEditorModalProps,
-} from './EntityAclEditorModal'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import {
   mockFileEntityCurrentUserCannotEdit,
   mockFileEntityWithLocalSharingSettingsData,
   mockFileOpenDataWithNoPublicRead,
   mockFileOpenDataWithPublicRead,
   mockFilePublicReadNoOpenData,
-} from '../../mocks/entity/mockFileEntityACLVariants'
+} from '@/mocks/entity/mockFileEntityACLVariants'
+import mockProject from '@/mocks/entity/mockProject'
+import { Meta, StoryObj } from '@storybook/react'
+import EntityAclEditorModal, {
+  EntityAclEditorModalProps,
+} from './EntityAclEditorModal'
 
 const meta: Meta<EntityAclEditorModalProps> = {
   title: 'Synapse/Entity ACL Editor',

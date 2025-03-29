@@ -1,12 +1,9 @@
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import {
-  MOCK_FOLDER_ID,
-  mockFolderEntity,
-} from '../../../mocks/entity/mockEntity'
+import { MOCK_FOLDER_ID, mockFolderEntity } from '@/mocks/entity/mockEntity'
 import mockFileEntity, {
   MOCK_FILE_ENTITY_ID,
-} from '../../../mocks/entity/mockFileEntity'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+} from '@/mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { getFileEntityIdWithSameName } from './getFileEntityIdWithSameName'
 
 const lookupEntitySpy = jest.spyOn(

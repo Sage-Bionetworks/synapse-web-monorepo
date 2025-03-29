@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { useGetEntityBundle, useGetFeatureFlag } from '../../synapse-queries'
-import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
+import { useGetEntityBundle, useGetFeatureFlag } from '@/synapse-queries'
+import { DOWNLOAD_PERMISSION_REQUIRED } from '@/utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
-import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
 import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type RequestDownloadCardProps = {
   entityId: string

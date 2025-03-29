@@ -1,15 +1,15 @@
 import {
-  ResourceAccess,
-  UserGroupHeader,
-} from '@sage-bionetworks/synapse-types'
-import {
   useGetCurrentUserProfile,
   useGetUserGroupHeaders,
   useSendMessage,
-} from '../../synapse-queries'
-import { PUBLIC_PRINCIPAL_IDS } from '../../utils/SynapseConstants'
-import { displayToast } from '../ToastMessage'
+} from '@/synapse-queries'
+import { PUBLIC_PRINCIPAL_IDS } from '@/utils/SynapseConstants'
+import {
+  ResourceAccess,
+  UserGroupHeader,
+} from '@sage-bionetworks/synapse-types'
 import { useCallback } from 'react'
+import { displayToast } from '../ToastMessage'
 
 type UseNotifyNewACLUsersOptions = {
   subject: string

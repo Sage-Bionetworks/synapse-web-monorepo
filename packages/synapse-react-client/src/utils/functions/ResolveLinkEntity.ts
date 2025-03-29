@@ -1,8 +1,8 @@
-import { QueryOptions, useQuery } from '@tanstack/react-query'
-import { getEntity } from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../context/SynapseContext'
+import { getEntity } from '@/synapse-client/SynapseClient'
+import { isLink } from '@/utils/types/IsType'
 import { Entity } from '@sage-bionetworks/synapse-types'
-import { isLink } from '../types/IsType'
+import { QueryOptions, useQuery } from '@tanstack/react-query'
+import { useSynapseContext } from '../context/SynapseContext'
 
 /**
  * Follows a Synapse entity ID to the end of the chain of links

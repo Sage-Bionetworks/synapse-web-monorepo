@@ -1,13 +1,13 @@
-import { renderHook, waitFor } from '@testing-library/react'
-import { useGetEntityHeaders } from './useGetEntityHeaders'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   EntityHeader,
   PaginatedResults,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
+import { renderHook, waitFor } from '@testing-library/react'
+import { useGetEntityHeaders } from './useGetEntityHeaders'
 
 const expected: PaginatedResults<EntityHeader> = {
   results: [

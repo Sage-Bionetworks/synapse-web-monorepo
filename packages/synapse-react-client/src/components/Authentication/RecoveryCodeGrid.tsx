@@ -1,5 +1,5 @@
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import { Box } from '@mui/material'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
 import Skeleton from '@mui/material/Skeleton'
 import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 

@@ -1,9 +1,3 @@
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import ToggleSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/ToggleSynapseObjects'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   computationalSql,
   experimentalModelsSql,
@@ -12,38 +6,37 @@ import {
   publicationsSql,
   studiesSql,
   targetEnablingResourcesDetailsPageSql,
-} from 'src/config/resources'
+} from '@/config/resources'
 import {
   COMPUTATIONAL_TOOLS_COLUMN_NAMES,
   computationalCardConfiguration,
-} from 'src/config/synapseConfigs/computational_tools'
+} from '@/config/synapseConfigs/computational_tools'
 import {
   EXPERIMENTAL_MODELS_COLUMN_NAMES,
   experimentalDetailsTableConfigurationColumnLinks,
   experimentalToolsCardConfiguration,
-} from 'src/config/synapseConfigs/experimental_tools'
-import { PEOPLE_COLUMN_NAMES } from 'src/config/synapseConfigs/people'
-import {
-  PROJECT_TABLE_COLUMN_NAMES,
-  projectCardConfiguration,
-} from 'src/config/synapseConfigs/projects'
-import {
-  publicationCardProps,
-  PUBLICATIONS_TABLE_COLUMN_NAMES,
-} from 'src/config/synapseConfigs/publications'
-import {
-  STUDY_TABLE_COLUMN_NAMES,
-  studyCardConfiguration,
-} from 'src/config/synapseConfigs/studies'
+} from '@/config/synapseConfigs/experimental_tools'
+import { PEOPLE_COLUMN_NAMES } from '@/config/synapseConfigs/people'
+import { PROJECT_TABLE_COLUMN_NAMES, projectCardConfiguration } from '@/config/synapseConfigs/projects'
+import { publicationCardProps, PUBLICATIONS_TABLE_COLUMN_NAMES } from '@/config/synapseConfigs/publications'
+import { STUDY_TABLE_COLUMN_NAMES, studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import {
   TARGET_ENABLING_RESOURCES_COLUMN_NAMES,
   targetEnablingResourcesCardConfiguration,
-} from 'src/config/synapseConfigs/target_enabling_resources'
+} from '@/config/synapseConfigs/target_enabling_resources'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-  SynapseConstants,
-} from 'synapse-react-client'
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  DetailsPageContextConsumer,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import ToggleSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/ToggleSynapseObjects'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { CardContainerLogic, StandaloneQueryWrapper, SynapseConstants } from 'synapse-react-client'
 
 export default function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

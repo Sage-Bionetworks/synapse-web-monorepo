@@ -1,8 +1,8 @@
-import { rest } from 'msw'
-import { EVALUATION, EVALUATION_BY_ID } from '../../../utils/APIConstants'
+import { EVALUATION, EVALUATION_BY_ID } from '@/utils/APIConstants'
 import { Evaluation, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
+import { rest } from 'msw'
 import { mockEvaluations } from '../../entity/mockEvaluationQueue'
+import { SynapseApiResponse } from '../handlers'
 
 export function getEvaluationHandlers(backendOrigin: string) {
   return [

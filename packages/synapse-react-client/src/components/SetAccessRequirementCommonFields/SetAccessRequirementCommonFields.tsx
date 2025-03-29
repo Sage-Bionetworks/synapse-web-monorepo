@@ -1,8 +1,14 @@
+import {
+  useCreateAccessRequirement,
+  useGetAccessRequirements,
+  useUpdateAccessRequirement,
+} from '@/synapse-queries'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,
-  Radio,
+  Checkbox,
   FormControlLabel,
+  Radio,
   RadioGroup,
   Skeleton,
   Stack,
@@ -10,8 +16,8 @@ import {
   Tooltip,
   Typography,
   TypographyProps,
-  Checkbox,
 } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
   ACCESS_TYPE,
@@ -30,15 +36,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import {
-  useCreateAccessRequirement,
-  useGetAccessRequirements,
-  useUpdateAccessRequirement,
-} from '../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import EntitySubjectsSelector from '../EntitySubjectsSelector'
-import TeamSubjectsSelector from '../TeamSubjectsSelector'
 import { SynapseErrorBoundary } from '../error'
+import TeamSubjectsSelector from '../TeamSubjectsSelector'
 
 export const EMPTY_SUBJECT_LIST_ERROR_MESSAGE =
   'Please select at least one resource for this Access Requirement to be associated with.'

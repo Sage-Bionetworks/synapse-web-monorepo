@@ -1,14 +1,14 @@
-import $RefParser from '@apidevtools/json-schema-ref-parser'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { createMemoryRouter, RouterProvider } from 'react-router'
 import {
   mockFormData as submissionData,
   mockFormSchema as formSchema,
   mockNavSchema as formNavSchema,
   mockUiSchema as formUiSchema,
-} from '../../mocks/mock_drug_tool_data'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/mocks/mock_drug_tool_data'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import $RefParser from '@apidevtools/json-schema-ref-parser'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import SynapseForm, { SynapseFormProps } from './SynapseForm'
 
 // import { Engine } from 'json-rules-engine'

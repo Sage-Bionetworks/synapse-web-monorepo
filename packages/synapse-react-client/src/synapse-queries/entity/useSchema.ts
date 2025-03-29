@@ -2,11 +2,11 @@
  * Hooks for accessing services related to JSON Schemas in the Synapse REST API
  */
 
-import { JSONSchema7 } from 'json-schema'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { JSONSchema7 } from 'json-schema'
 
 export function useGetSchema(
   schema$id: string,

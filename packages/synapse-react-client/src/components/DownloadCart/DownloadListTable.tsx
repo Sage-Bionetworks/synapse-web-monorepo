@@ -1,3 +1,10 @@
+import {
+  useGetAvailableFilesToDownloadInfinite,
+  useRemoveFilesFromDownloadList,
+} from '@/synapse-queries'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Button, Select, Tooltip } from '@mui/material'
 import {
   AvailableFilter,
@@ -17,13 +24,6 @@ import {
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import {
-  useGetAvailableFilesToDownloadInfinite,
-  useRemoveFilesFromDownloadList,
-} from '../../synapse-queries'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import IconSvg from '../IconSvg/IconSvg'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'

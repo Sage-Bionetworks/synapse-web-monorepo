@@ -1,20 +1,18 @@
+import { programsSql, projectsSql, studiesSql } from '@/config/resources'
+import programCardConfiguration, { PROGRAM_TABLE_COLUMN_NAMES } from '@/config/synapseConfigs/programs'
+import { PROJECT_TABLE_COLUMN_NAMES, projectCardConfiguration } from '@/config/synapseConfigs/projects'
+import { STUDY_TABLE_COLUMN_NAMES, studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import {
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  DetailsPageContextConsumer,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { programsSql, projectsSql, studiesSql } from 'src/config/resources'
-import programCardConfiguration, {
-  PROGRAM_TABLE_COLUMN_NAMES,
-} from 'src/config/synapseConfigs/programs'
-import {
-  PROJECT_TABLE_COLUMN_NAMES,
-  projectCardConfiguration,
-} from 'src/config/synapseConfigs/projects'
-import {
-  STUDY_TABLE_COLUMN_NAMES,
-  studyCardConfiguration,
-} from 'src/config/synapseConfigs/studies'
 import { CardContainerLogic } from 'synapse-react-client'
 
 export default function ProgramDetailsPage() {

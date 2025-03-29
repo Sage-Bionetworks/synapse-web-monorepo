@@ -1,17 +1,17 @@
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import QueryWrapper from '../../QueryWrapper'
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from './FacetFilterControls'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
-import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import QueryWrapper from '../../QueryWrapper'
-import { server } from '../../../mocks/msw/server'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import { getDefaultShownFacetFilters } from './FacetFilterUtils'
 
 const MockFacetFilter = (props: { testid: string }) => {

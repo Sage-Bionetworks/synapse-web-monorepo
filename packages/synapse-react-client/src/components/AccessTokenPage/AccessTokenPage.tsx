@@ -1,11 +1,11 @@
-import { ReactNode, useState } from 'react'
+import { useGetPersonalAccessTokensInfinite } from '@/synapse-queries/user/usePersonalAccessToken'
+import { AddCircleTwoTone } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
-import { useGetPersonalAccessTokensInfinite } from '../../synapse-queries/user/usePersonalAccessToken'
+import { ReactNode, useState } from 'react'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard/AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
-import { AddCircleTwoTone } from '@mui/icons-material'
 
 export type AccessTokenPageProps = {
   title: string

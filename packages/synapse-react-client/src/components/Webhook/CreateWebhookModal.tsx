@@ -1,19 +1,24 @@
+import {
+  useCreateWebhook,
+  useDeleteWebhook,
+  useUpdateWebhook,
+} from '@/synapse-queries/webhook/useWebhook'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import {
+  Alert,
+  Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
   IconButton,
   InputLabel,
-  TextField,
-  Switch,
-  Unstable_Grid2 as Grid,
-  Alert,
-  Box,
-  Typography,
-  Button,
   Link,
+  Switch,
+  TextField,
+  Typography,
+  Unstable_Grid2 as Grid,
 } from '@mui/material'
 import {
   ErrorResponseCode,
@@ -24,11 +29,6 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { upperFirst } from 'lodash-es'
 import { Fragment, PropsWithChildren, useEffect, useState } from 'react'
-import {
-  useCreateWebhook,
-  useDeleteWebhook,
-  useUpdateWebhook,
-} from '../../synapse-queries/webhook/useWebhook'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'

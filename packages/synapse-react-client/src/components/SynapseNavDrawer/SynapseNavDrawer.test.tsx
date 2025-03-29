@@ -1,17 +1,19 @@
-import { render, screen, within } from '@testing-library/react'
-import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   mockUserBundle,
-} from '../../mocks/user/mock_user_profile'
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  SubmissionSearchResult,
+  SubmissionState,
+} from '@sage-bionetworks/synapse-types'
+import { render, screen, within } from '@testing-library/react'
 import { SynapseClient } from '../../index'
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
+import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,

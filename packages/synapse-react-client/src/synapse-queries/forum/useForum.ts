@@ -1,3 +1,5 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
 import {
   DiscussionSearchRequest,
   DiscussionSearchResponse,
@@ -19,8 +21,6 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetModerators(

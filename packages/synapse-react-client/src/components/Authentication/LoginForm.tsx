@@ -1,13 +1,13 @@
+import { OAuth2State } from '@/utils'
+import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
+import { UseLoginReturn, useOneSageURL } from '@/utils/hooks'
 import { Box, Link } from '@mui/material'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { UseLoginReturn, useOneSageURL } from '../../utils/hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
-import UsernamePasswordForm from './UsernamePasswordForm'
+import { noop } from 'lodash-es'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import OneTimePasswordForm from './OneTimePasswordForm'
-import { OAuth2State } from '../../utils'
-import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
-import { noop } from 'lodash-es'
+import UsernamePasswordForm from './UsernamePasswordForm'
 
 type Props = {
   ssoRedirectUrl?: string

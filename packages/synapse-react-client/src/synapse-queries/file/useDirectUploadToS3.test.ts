@@ -1,9 +1,9 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Upload } from '@aws-sdk/lib-storage'
 import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
 import { act, renderHook as _renderHook } from '@testing-library/react'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { server } from '../../mocks/msw/server'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import * as UploadToS3Module from './UploadToS3'
 import { useDirectUploadToS3 } from './useDirectUploadToS3'
 

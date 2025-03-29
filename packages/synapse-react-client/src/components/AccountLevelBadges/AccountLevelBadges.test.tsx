@@ -1,18 +1,18 @@
-import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   mockUserBundle,
   mockUserProfileData,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   accountLevelBadgeConfig,
   AccountLevelBadgeType,
 } from '../AccountLevelBadge/AccountLevelBadge'
 import { AccountLevelBadges } from './AccountLevelBadges'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import userEvent from '@testing-library/user-event'
 
 const USER_ID = '345424'
 

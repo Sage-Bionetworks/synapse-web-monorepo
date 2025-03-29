@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetNotificationEmail,
-} from '../synapse-queries/user/useUserBundle'
-import { useSynapseContext } from '../utils/context/SynapseContext'
+} from '@/synapse-queries/user/useUserBundle'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useEffect } from 'react'
 
 type IssueCollector = 'SWC' | 'Flagged Content' | 'Request Access'
 

@@ -1,12 +1,12 @@
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { registerTableQueryResult } from '../msw/handlers/tableQueryService'
 import {
   featuredDatasetsTable,
   generalStatsMetricsTable,
   past30DaysDownloadMetricsTable,
   searchAutocompleteTable,
   synapseInActionTable,
-} from '../../components/SynapseHomepageV2/SynapseHomepageV2'
+} from '@/components/SynapseHomepageV2/SynapseHomepageV2'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { registerTableQueryResult } from '../msw/handlers/tableQueryService'
 
 export const mockHomepageTrendingQueryResultBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

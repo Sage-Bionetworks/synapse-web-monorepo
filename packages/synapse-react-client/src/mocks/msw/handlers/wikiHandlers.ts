@@ -1,3 +1,4 @@
+import { WIKI_OBJECT_TYPE, WIKI_PAGE, WIKI_PAGE_ID } from '@/utils/APIConstants'
 import {
   FileHandleResults,
   ObjectType,
@@ -5,11 +6,6 @@ import {
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { rest } from 'msw'
-import {
-  WIKI_OBJECT_TYPE,
-  WIKI_PAGE,
-  WIKI_PAGE_ID,
-} from '../../../utils/APIConstants'
 import { MOCK_WIKI_ETAG, mockWikiPages } from '../../mockWiki'
 import { mockWikiPageKeys } from '../../mockWikiPageKey'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'

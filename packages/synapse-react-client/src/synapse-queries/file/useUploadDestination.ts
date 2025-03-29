@@ -1,10 +1,10 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import { UploadDestination } from '@sage-bionetworks/synapse-types'
 import {
   getDefaultUploadDestination,
   getUploadDestinationForStorageLocation,
-} from '../../synapse-client'
+} from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { UploadDestination } from '@sage-bionetworks/synapse-types'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetDefaultUploadDestination(
   containerEntityId: string,

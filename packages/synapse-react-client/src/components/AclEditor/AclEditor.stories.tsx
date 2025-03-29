@@ -1,9 +1,9 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { AclEditor, AclEditorProps } from './AclEditor'
+import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
+import { AclEditor, AclEditorProps } from './AclEditor'
 
 const meta: Meta<AclEditorProps> = {
   title: 'Synapse/ACL Editor',

@@ -1,15 +1,15 @@
+import { useGetEntity } from '@/synapse-queries'
+import { useGetForumMetadata } from '@/synapse-queries/forum/useForum'
+import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   Subscription,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import Topic from './Topic'
-import { useGetForumMetadata } from '../../synapse-queries/forum/useForum'
-import { useGetEntity } from '../../synapse-queries'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 
 export type SubscriptionItemProps = {
   subscription: Subscription

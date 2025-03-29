@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { useGetEvaluationsInfinite } from '../../synapse-queries/evaluation/useEvaluation'
-import { HelpPopover } from '../HelpPopover'
+import { useGetEvaluationsInfinite } from '@/synapse-queries/evaluation/useEvaluation'
 import {
   Alert,
   Box,
@@ -12,6 +10,8 @@ import {
   LinearProgress,
 } from '@mui/material'
 import { GetEvaluationParameters } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
+import { HelpPopover } from '../HelpPopover'
 
 export type EvaluationFinderProps = Pick<
   GetEvaluationParameters,

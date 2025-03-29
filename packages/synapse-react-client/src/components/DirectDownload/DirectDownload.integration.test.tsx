@@ -1,19 +1,19 @@
-import { render, screen } from '@testing-library/react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
 import {
   BatchFileResult,
   FileHandleAssociateType,
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { render, screen } from '@testing-library/react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 const mockFileEntity = mockFileEntityData.entity

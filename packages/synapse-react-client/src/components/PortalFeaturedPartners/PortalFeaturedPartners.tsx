@@ -1,10 +1,10 @@
-import { Box, Typography, CardMedia, Skeleton, Link } from '@mui/material'
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
+import { Box, CardMedia, Link, Skeleton, Typography } from '@mui/material'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
-import { SynapseConstants } from '../../utils'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import PortalSectionHeader from '../PortalSectionHeader'
 
 export type PortalFeaturedPartnersProps = {

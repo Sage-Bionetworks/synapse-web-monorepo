@@ -1,23 +1,12 @@
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import { DetailsPageProps } from '@/types/portal-util-types'
+import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
+import { Box, Button, Container, Stack, Typography, useTheme } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { BarLoader } from 'react-spinners'
-import {
-  SynapseConstants,
-  SynapseQueries,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
-import { DetailsPageProps } from '../../types/portal-util-types'
-import { useGetPortalComponentSearchParams } from '../../utils/UseGetPortalComponentSearchParams'
+import { SynapseConstants, SynapseQueries, SynapseUtilityFunctions } from 'synapse-react-client'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'

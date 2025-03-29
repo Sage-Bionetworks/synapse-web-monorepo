@@ -1,14 +1,14 @@
+import { useGetThread } from '@/synapse-queries/forum/useThread'
+import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   Subscription,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
 import Topic from './Topic'
-import { useGetThread } from '../../synapse-queries/forum/useThread'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 
 export type SubscriptionItemProps = {
   subscription: Subscription

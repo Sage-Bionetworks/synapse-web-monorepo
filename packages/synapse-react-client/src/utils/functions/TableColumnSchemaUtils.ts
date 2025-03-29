@@ -1,10 +1,10 @@
+import { createColumnModels } from '@/synapse-client'
 import {
   ColumnChange,
   ColumnModel,
   TableUpdateTransactionRequest,
 } from '@sage-bionetworks/synapse-types'
 import { SetOptional } from 'type-fest'
-import { createColumnModels } from '../../synapse-client'
 import { isEqualTreatUndefinedAsMissing } from './IsEqualTreatUndefinedAsMissing'
 
 function validateProposedSchema(

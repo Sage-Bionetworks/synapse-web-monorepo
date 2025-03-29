@@ -1,6 +1,6 @@
-import fetch from 'isomorphic-fetch' // polyfill for fetch
-import { server } from '../mocks/server'
+import { server } from '@/mocks/server'
 import { cleanup } from '@testing-library/react'
+import fetch from 'isomorphic-fetch' // polyfill for fetch
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
 declare const global: any

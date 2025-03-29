@@ -1,23 +1,23 @@
-import { Component } from 'react'
+import { ReactComponent as NoSubmissionsIcon } from '@/assets/icons/json-form-tool-no-submissions.svg'
+import WideButton from '@/components/styled/WideButton'
 
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
+import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone'
+import { Box, Button, IconButton, Link, Typography } from '@mui/material'
 import {
   FormData,
   ListRequest,
-  StatusEnum,
   ListResponse,
+  StatusEnum,
 } from '@sage-bionetworks/synapse-types'
-import WarningDialog from './WarningDialog'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import WideButton from '../styled/WideButton'
-import { Box, Button, IconButton, Link, Typography } from '@mui/material'
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
-import { useSynapseContext } from '../../utils'
+import { Component } from 'react'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import WarningDialog from './WarningDialog'
 
 dayjs.extend(calendar)
 /**

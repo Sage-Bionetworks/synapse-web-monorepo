@@ -1,13 +1,13 @@
+import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SubscriptionObjectType, Topic } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ForumPage, ForumPageProps } from './ForumPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SubscriptionObjectType, Topic } from '@sage-bionetworks/synapse-types'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
 import failOnConsole from 'jest-fail-on-console'
-import { MOCK_FORUM_ID } from '../../mocks/discussion/mock_discussion'
+import { ForumPage, ForumPageProps } from './ForumPage'
 
 const defaultProps: ForumPageProps = {
   forumId: MOCK_FORUM_ID,

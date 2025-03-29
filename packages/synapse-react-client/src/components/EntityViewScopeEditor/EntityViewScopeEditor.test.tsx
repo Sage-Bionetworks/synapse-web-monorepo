@@ -1,12 +1,12 @@
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import { FinderScope } from '../EntityFinder/tree/EntityTree'
+import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
+import EntityHeaderTable from '../EntityHeaderTable'
 import EntityViewScopeEditor, {
   EntityViewScopeEditorProps,
 } from './EntityViewScopeEditor'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import EntityHeaderTable from '../EntityHeaderTable'
-import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { FinderScope } from '../EntityFinder/tree/EntityTree'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 
 jest.mock('../EntityHeaderTable', () => ({
   __esModule: true,

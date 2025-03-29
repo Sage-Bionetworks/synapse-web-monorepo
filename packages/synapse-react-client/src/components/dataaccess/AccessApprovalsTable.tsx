@@ -1,3 +1,6 @@
+import { useSearchAccessApprovalsInfinite } from '@/synapse-queries/dataaccess/useAccessApprovals'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Button, Typography } from '@mui/material'
 import {
   AccessApprovalSearchRequest,
@@ -15,9 +18,6 @@ import {
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useMemo, useState } from 'react'
-import { useSearchAccessApprovalsInfinite } from '../../synapse-queries/dataaccess/useAccessApprovals'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'

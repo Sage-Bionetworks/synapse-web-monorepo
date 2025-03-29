@@ -1,6 +1,6 @@
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Button, Link, Typography } from '@mui/material'
 import { Link as ReactRouterLink } from 'react-router'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardMediumConfig, ReleaseCardStat } from './ReleaseCardTypes'
 import { formatReleaseCardData } from './ReleaseCardUtils'

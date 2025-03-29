@@ -1,15 +1,15 @@
-import { upperFirst } from 'lodash-es'
-import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFacetedUniqueValues as defaultGetFacetedUniqueValues,
   Table,
   useReactTable,
-  getFacetedUniqueValues as defaultGetFacetedUniqueValues,
 } from '@tanstack/react-table'
-import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
+import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
+import { upperFirst } from 'lodash-es'
+import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 
 type TestTableRow = {
   multiSelect: string

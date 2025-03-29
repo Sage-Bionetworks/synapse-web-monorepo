@@ -1,10 +1,10 @@
+import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
+import { Alert } from '@mui/material'
+import { SubmissionView } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
-import { SubmissionView } from '@sage-bionetworks/synapse-types'
-import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
-import { Alert } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
 
 export type SubmissionViewScopeEditorModalProps = {
   open: boolean

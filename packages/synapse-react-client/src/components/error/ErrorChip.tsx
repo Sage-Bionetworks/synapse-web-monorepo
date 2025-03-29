@@ -1,9 +1,9 @@
-import { Avatar, Chip, Tooltip } from '@mui/material'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
+import { Avatar, Chip, Tooltip } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useJiraIssueCollector } from '../JiraIssueCollector'
 import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type ErrorChipProps = {
   chipText: string

@@ -1,16 +1,16 @@
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import {
+  BUNDLE_MASK_ACTIONS_REQUIRED,
+  BUNDLE_MASK_QUERY_RESULTS,
+} from '@/utils/SynapseConstants'
+import { Query, QueryCache } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/react-query'
 import { KeyFactory } from './KeyFactory'
-import { MOCK_ACCESS_TOKEN } from '../mocks/MockSynapseContext'
 import {
   getAllActionsRequiredQueryFilters,
   invalidateAllQueriesForEntity,
 } from './QueryFilterUtils'
 import { doesQueryFilterMatch } from './QueryMatchingTestUtils'
-import {
-  BUNDLE_MASK_ACTIONS_REQUIRED,
-  BUNDLE_MASK_QUERY_RESULTS,
-} from '../utils/SynapseConstants'
-import { QueryClient } from '@tanstack/react-query'
-import { Query, QueryCache } from '@tanstack/query-core'
 
 const keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
 

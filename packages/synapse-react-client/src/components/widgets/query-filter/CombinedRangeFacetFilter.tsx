@@ -1,17 +1,17 @@
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Skeleton } from '@mui/material'
-import { useMemo } from 'react'
 import {
   ColumnType,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
-import { RangeValues } from '../Range'
-import { useQueryContext } from '../../QueryContext'
-import { SynapseConstants } from '../../../utils'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { RangeFacetFilterUI } from './RangeFacetFilterUI'
-import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { isNumber } from 'lodash-es'
+import { useMemo } from 'react'
+import { useQueryContext } from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { RangeValues } from '../Range'
+import { RangeFacetFilterUI } from './RangeFacetFilterUI'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]

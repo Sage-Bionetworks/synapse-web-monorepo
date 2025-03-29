@@ -1,9 +1,5 @@
-import dayjs from 'dayjs'
-import { useCallback, useState } from 'react'
-import {
-  AccessTokenRecord,
-  scopeDescriptions,
-} from '@sage-bionetworks/synapse-types'
+import { useDeletePersonalAccessToken } from '@/synapse-queries/user/usePersonalAccessToken'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import {
   Box,
   Card,
@@ -12,12 +8,16 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
+import {
+  AccessTokenRecord,
+  scopeDescriptions,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { noop } from 'lodash-es'
+import { useCallback, useState } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
 import WarningDialog from '../../SynapseForm/WarningDialog'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import { useDeletePersonalAccessToken } from '../../../synapse-queries/user/usePersonalAccessToken'
-import { noop } from 'lodash-es'
 
 dayjs.extend(relativeTime)
 

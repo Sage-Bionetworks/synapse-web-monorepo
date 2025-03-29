@@ -1,4 +1,11 @@
 import {
+  createEvaluationRound,
+  deleteEvaluationRound,
+  updateEvaluationRound,
+} from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useListState } from '@/utils/hooks/useListState'
+import {
   Alert,
   Box,
   Button,
@@ -19,13 +26,6 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import utc from 'dayjs/plugin/utc'
 import { upperFirst } from 'lodash-es'
 import { useEffect, useState } from 'react'
-import {
-  createEvaluationRound,
-  deleteEvaluationRound,
-  updateEvaluationRound,
-} from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { useListState } from '../../utils/hooks/useListState'
 import DateTimePicker from '../DateTimePicker/DateTimePicker'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'

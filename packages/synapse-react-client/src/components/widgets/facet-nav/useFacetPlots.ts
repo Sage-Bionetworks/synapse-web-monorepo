@@ -1,3 +1,4 @@
+import { isSingleNotSetValue } from '@/utils/functions/queryUtils'
 import {
   FacetColumnRequest,
   FacetColumnResult,
@@ -6,7 +7,6 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { useCallback, useMemo } from 'react'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'

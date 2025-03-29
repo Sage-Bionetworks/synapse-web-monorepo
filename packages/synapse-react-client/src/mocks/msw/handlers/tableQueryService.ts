@@ -1,10 +1,4 @@
 import {
-  Query,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import { cloneDeep, omit } from 'lodash-es'
-import {
   BUNDLE_MASK_LAST_UPDATED_ON,
   BUNDLE_MASK_QUERY_COLUMN_MODELS,
   BUNDLE_MASK_QUERY_COUNT,
@@ -13,7 +7,13 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
   BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
-} from '../../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
+import {
+  Query,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
+import { cloneDeep, omit } from 'lodash-es'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {

@@ -1,5 +1,5 @@
-import { WithContext, Thing } from 'schema-dts'
-import useJsonLdScriptElement from '../utils/hooks/useJsonLdScriptElement'
+import useJsonLdScriptElement from '@/utils/hooks/useJsonLdScriptElement'
+import { Thing, WithContext } from 'schema-dts'
 
 export type JsonLdScriptProps = {
   thing: WithContext<Thing>

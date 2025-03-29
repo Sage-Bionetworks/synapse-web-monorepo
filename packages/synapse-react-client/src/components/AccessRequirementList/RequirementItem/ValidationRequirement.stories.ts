@@ -1,7 +1,7 @@
+import { getCurrentUserCertifiedValidatedHandler } from '@/mocks/msw/handlers/userProfileHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import ValidationRequirement from './ValidationRequirement'
-import { getCurrentUserCertifiedValidatedHandler } from '../../../mocks/msw/handlers/userProfileHandlers'
 
 const meta: Meta = {
   title:

@@ -1,8 +1,8 @@
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import TwoFactorAuthEnabledRequirement from './TwoFactorAuthEnabledRequirement'
-import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 
 const meta: Meta = {
   title:

@@ -1,15 +1,15 @@
-import { PropsWithChildren, useState } from 'react'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { Optional } from '@/utils/types/Optional'
 import { Box, Button, Collapse, Stack } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { PropsWithChildren, useState } from 'react'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
   FallbackProps,
 } from 'react-error-boundary'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Optional } from '../../utils/types/Optional'
-import { useJiraIssueCollector } from '../JiraIssueCollector'
 import FullWidthAlert from '../FullWidthAlert'
+import { useJiraIssueCollector } from '../JiraIssueCollector'
 import SignInButton from '../SignInButton'
 
 type ErrorBannerProps = {

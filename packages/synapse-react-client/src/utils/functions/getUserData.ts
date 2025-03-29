@@ -1,4 +1,4 @@
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
 import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
 
 /*

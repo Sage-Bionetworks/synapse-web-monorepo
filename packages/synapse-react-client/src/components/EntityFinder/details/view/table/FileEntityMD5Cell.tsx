@@ -1,7 +1,7 @@
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { Skeleton, Tooltip } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { CellContext } from '@tanstack/react-table'
-import useGetEntityBundle from '../../../../../synapse-queries/entity/useEntityBundle'
 import { displayToast } from '../../../../ToastMessage/index'
 import { EntityFinderTableViewRowData } from '../DetailsView'
 import { FileHandleWithPreview } from './TableCellTypes'

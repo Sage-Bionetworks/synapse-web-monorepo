@@ -1,33 +1,38 @@
-import { ReactNode, useEffect, useRef, useState } from 'react'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  QuizResponse,
-  Quiz,
-  MultichoiceQuestion,
-  MultichoiceResponse,
-} from '@sage-bionetworks/synapse-types'
-import {
-  MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
-  QuestionResponse,
-} from '@sage-bionetworks/synapse-types'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { Alert, AlertTitle, Button, Link, Skeleton } from '@mui/material'
-import { MarkdownPopover } from '../Markdown/MarkdownPopover'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
-import { ButtonProps, Typography } from '@mui/material'
-import { useErrorHandler } from 'react-error-boundary'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
-import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
+import SynapseClient from '@/synapse-client'
+import { useGetCurrentUserBundle } from '@/synapse-queries'
 import {
   useGetPassingRecord,
   usePostCertifiedUserTestResponse,
-} from '../../synapse-queries/user/useCertificationQuiz'
-import { formatDate } from '../../utils/functions/DateFormatter'
+} from '@/synapse-queries/user/useCertificationQuiz'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { USER_BUNDLE_MASK_IS_CERTIFIED } from '@/utils/SynapseConstants'
+import { HelpOutlineTwoTone } from '@mui/icons-material'
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  ButtonProps,
+  Link,
+  Skeleton,
+  Typography,
+} from '@mui/material'
+import {
+  MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
+  MultichoiceQuestion,
+  MultichoiceResponse,
+  QuestionResponse,
+  Quiz,
+  QuizResponse,
+} from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import CertificationAnswer from './CertificationAnswer'
+import { ReactNode, useEffect, useRef, useState } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
+import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
-import { Box } from '@mui/material'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import CertificationAnswer from './CertificationAnswer'
 
 function CertificationQuiz() {
   const { accessToken } = useSynapseContext()

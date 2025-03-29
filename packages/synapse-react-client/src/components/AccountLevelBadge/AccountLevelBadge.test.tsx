@@ -1,10 +1,10 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   AccountLevelBadge,
-  AccountLevelBadgeType,
   accountLevelBadgeConfig,
+  AccountLevelBadgeType,
 } from './AccountLevelBadge'
 
 describe('AccountLevelBadge', () => {

@@ -1,8 +1,8 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { Tooltip, Typography } from '@mui/material'
+import { Activity } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { Activity } from '@sage-bionetworks/synapse-types'
-import { Tooltip, Typography } from '@mui/material'
 import { UserBadge } from '../UserCard/UserBadge'
 
 export const ActivityNodeLabel = (data: Activity) => {

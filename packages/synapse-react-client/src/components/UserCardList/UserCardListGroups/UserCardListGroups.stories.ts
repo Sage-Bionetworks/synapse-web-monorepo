@@ -1,5 +1,5 @@
+import { MEDIUM_USER_CARD } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react'
-import { MEDIUM_USER_CARD } from '../../../utils/SynapseConstants'
 import UserCardListGroups from './UserCardListGroups'
 
 const meta = {

@@ -1,7 +1,7 @@
+import { COOKIES_AGREEMENT_COOKIE_KEY } from '@/utils/hooks/useCookiePreferences'
 import { Meta, StoryObj } from '@storybook/react'
-import CookiesNotification from './CookiesNotification'
 import UniversalCookies from 'universal-cookie'
-import { COOKIES_AGREEMENT_COOKIE_KEY } from '../../utils/hooks/useCookiePreferences'
+import CookiesNotification from './CookiesNotification'
 
 const cookies = new UniversalCookies()
 

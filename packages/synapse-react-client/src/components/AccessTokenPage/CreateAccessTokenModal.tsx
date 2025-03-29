@@ -1,16 +1,16 @@
-import { FormControlLabel, Checkbox, Stack, Typography } from '@mui/material'
+import { useCreatePersonalAccessToken } from '@/synapse-queries/user/usePersonalAccessToken'
+import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
 import {
   AccessTokenGenerationRequest,
   scopeDescriptions,
 } from '@sage-bionetworks/synapse-types'
+import { noop } from 'lodash-es'
 import { ChangeEvent, useState } from 'react'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { CopyToClipboardInput } from '../CopyToClipboardInput/CopyToClipboardInput'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import TextField from '../TextField/TextField'
-import { useCreatePersonalAccessToken } from '../../synapse-queries/user/usePersonalAccessToken'
-import { noop } from 'lodash-es'
 
 const INVALID_INPUT_MSG =
   'You must provide a token name and at least one permission.'

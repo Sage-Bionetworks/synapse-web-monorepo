@@ -1,6 +1,6 @@
-import { rest } from 'msw'
-import { REPO } from '../../../utils/APIConstants'
+import { REPO } from '@/utils/APIConstants'
 import { Doi } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 import { MOCK_DOI } from '../../doi/MockDoi'
 
 export function getDoiHandler(

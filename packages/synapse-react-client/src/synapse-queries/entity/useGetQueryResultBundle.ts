@@ -1,5 +1,17 @@
-import { merge } from 'lodash-es'
-import { useMemo } from 'react'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
+import { partitionQueryBundleRequestIntoRowsAndMetadata } from '@/utils/functions/queryUtils'
+import {
+  BUNDLE_MASK_QUERY_COUNT,
+  BUNDLE_MASK_QUERY_RESULTS,
+  DEFAULT_PAGE_SIZE,
+} from '@/utils/SynapseConstants'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  AsynchronousJobStatus,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -8,20 +20,8 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  BUNDLE_MASK_QUERY_COUNT,
-  BUNDLE_MASK_QUERY_RESULTS,
-  DEFAULT_PAGE_SIZE,
-} from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils'
-import {
-  AsynchronousJobStatus,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import { partitionQueryBundleRequestIntoRowsAndMetadata } from '../../utils/functions/queryUtils'
+import { merge } from 'lodash-es'
+import { useMemo } from 'react'
 import { KeyFactory } from '../KeyFactory'
 
 export const tableQueryUseQueryDefaults = {

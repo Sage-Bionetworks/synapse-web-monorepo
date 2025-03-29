@@ -1,16 +1,13 @@
+import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
+import { Paper } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../../utils/SynapseConstants'
+import { fn } from '@storybook/test'
 import { cloneDeep } from 'lodash-es'
+import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 import EnumFacetFilterUI, {
   EnumFacetFilterUIProps,
   RenderedFacetValue,
 } from './EnumFacetFilterUI'
-import { fn } from '@storybook/test'
-import { Paper } from '@mui/material'
-import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 
 const meta: Meta<EnumFacetFilterUIProps> = {
   title: 'Explore/Components/Facets/EnumFacetFilter',

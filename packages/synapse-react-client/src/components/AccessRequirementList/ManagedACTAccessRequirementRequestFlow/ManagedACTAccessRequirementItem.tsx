@@ -1,19 +1,19 @@
-import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import {
+  useCancelDataAccessRequest,
+  useGetAccessRequirementStatus,
+  useGetAccessRequirementWikiPageKey,
+} from '@/synapse-queries'
+import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
   ManagedACTAccessRequirement,
   ManagedACTAccessRequirementStatus,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
-import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
-import RequirementItem from '../RequirementItem/RequirementItem'
-import {
-  useCancelDataAccessRequest,
-  useGetAccessRequirementStatus,
-  useGetAccessRequirementWikiPageKey,
-} from '../../../synapse-queries'
+import { useState } from 'react'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from '../RequirementItem/RequirementItem'
+import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 
 export type ManagedACTAccessRequirementItemProps = {
   accessRequirement: ManagedACTAccessRequirement

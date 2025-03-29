@@ -1,3 +1,4 @@
+import LightTooltip from '@/components/styled/LightTooltip'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Autocomplete,
@@ -14,7 +15,6 @@ import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import LightTooltip from '../styled/LightTooltip'
 
 type TextWithHelpIconProps = {
   text: string

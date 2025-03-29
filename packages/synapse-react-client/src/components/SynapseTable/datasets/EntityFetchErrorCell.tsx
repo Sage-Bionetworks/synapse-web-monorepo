@@ -1,6 +1,6 @@
+import { useGetEntity } from '@/synapse-queries/index'
 import { Tooltip } from '@mui/material'
 import { CellContext } from '@tanstack/react-table'
-import { useGetEntity } from '../../../synapse-queries/index'
 import { EntityIdAndVersionNumber } from '../../EntityFinder/details/view/table/TableCellTypes'
 import IconSvg from '../../IconSvg/IconSvg'
 

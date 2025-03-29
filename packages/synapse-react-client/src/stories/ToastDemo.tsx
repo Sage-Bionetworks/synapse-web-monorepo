@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { displayToast } from '@/components/ToastMessage/index'
 import {
   Button,
   FormControlLabel,
@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { displayToast } from '../components/ToastMessage/index'
+import { useState } from 'react'
 
 export const ToastDemo = () => {
   const [variant, setVariant] = useState<

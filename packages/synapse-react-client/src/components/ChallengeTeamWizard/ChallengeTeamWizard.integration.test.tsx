@@ -1,17 +1,17 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import ChallengeTeamWizard from './index'
-import userEvent from '@testing-library/user-event'
-import { server } from '../../mocks/msw/server'
-import mockProject from '../../mocks/entity/mockProject'
+import mockProject from '@/mocks/entity/mockProject'
+import { server } from '@/mocks/msw/server'
 import {
   mockTeamData2,
   mockTeamData3,
   mockTeamData4,
   mockTeamData5,
-} from '../../mocks/team/mockTeam'
+} from '@/mocks/team/mockTeam'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import SynapseClient from '../../synapse-client'
+import ChallengeTeamWizard from './index'
 
 const createTeamSpy = jest.spyOn(SynapseClient, 'createTeam')
 const registerChallengeTeamSpy = jest.spyOn(

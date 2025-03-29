@@ -1,3 +1,8 @@
+import DatasetDetailsPage from '@/pages/DatasetDetailsPage'
+import { hackathonDetailsPageRoutesConfig } from '@/pages/HackathonDetailsPage/HackathonDetailsPage'
+import { searchPageChildRoutes } from '@/pages/NFSearchPage'
+import { organizationsDetailsPageRoute } from '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
+import { toolDetailsPageRoutesConfig } from '@/pages/ToolDetailsPage/ToolDetailsPage'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import NFBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/nf/NFBrowseToolsPage'
@@ -5,19 +10,16 @@ import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/compon
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import {
+  sharePageLinkExplorePageButtonProps,
+} from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { Navigate, RouteObject } from 'react-router'
-import DatasetDetailsPage from 'src/pages/DatasetDetailsPage'
-import { hackathonDetailsPageRoutesConfig } from 'src/pages/HackathonDetailsPage/HackathonDetailsPage'
-import { organizationsDetailsPageRoute } from 'src/pages/OrganizationDetailsPage/OrganizationDetailsPage'
-import { toolDetailsPageRoutesConfig } from 'src/pages/ToolDetailsPage/ToolDetailsPage'
 import { DynamicForm, SharePageLinkButton } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import InitiativeDetailsPage from '../pages/InitiativeDetailsPage'
 import { studyDetailsPageRoute } from '../pages/StudyDetailsPage/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { popularSearchesSql, toolsSql } from './resources'
-import { searchPageChildRoutes } from 'src/pages/NFSearchPage'
 
 const routes: RouteObject[] = [
   {

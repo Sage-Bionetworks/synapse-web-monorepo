@@ -1,10 +1,10 @@
-import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
+import { useGetEntityHeader } from '@/synapse-queries/entity/useGetEntityHeaders'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
-} from '../../utils/functions/EntityTypeUtils'
-import { EntityLink } from '../EntityLink'
+} from '@/utils/functions/EntityTypeUtils'
 import { Link, Typography } from '@mui/material'
+import { EntityLink } from '../EntityLink'
 
 type InheritanceMessageProps = {
   isProject: boolean

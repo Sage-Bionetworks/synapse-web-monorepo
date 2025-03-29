@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react'
-import { useIsCurrentUserACTMember } from '../../synapse-queries'
-import { useRevokeCertification } from '../../synapse-queries/user/useRevokeCertification'
-import { displayToast } from '../ToastMessage'
+import { useIsCurrentUserACTMember } from '@/synapse-queries'
+import { useRevokeCertification } from '@/synapse-queries/user/useRevokeCertification'
 import { ButtonProps, Link, Typography } from '@mui/material'
+import { useMemo, useState } from 'react'
 import { ConfirmationDialogProps } from '../ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { displayToast } from '../ToastMessage'
 
 export type RevokeCertificationUIOptions = {
   /* The ID of the user whose certification may be revoked. */

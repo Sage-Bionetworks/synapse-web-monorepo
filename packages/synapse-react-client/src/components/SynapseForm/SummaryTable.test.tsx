@@ -1,14 +1,14 @@
-import $RefParser from '@apidevtools/json-schema-ref-parser'
-import { render, screen, within } from '@testing-library/react'
-import * as _ from 'lodash-es'
-import SummaryTable, { SummaryTableProps } from './SummaryTable'
-import { Step } from './types'
 import {
   mockFormData as submissionData,
   mockFormSchema as formSchema,
   mockUiSchema as formUiSchema,
   stepsWithUserData,
-} from '../../mocks/mock_drug_tool_data'
+} from '@/mocks/mock_drug_tool_data'
+import $RefParser from '@apidevtools/json-schema-ref-parser'
+import { render, screen, within } from '@testing-library/react'
+import * as _ from 'lodash-es'
+import SummaryTable, { SummaryTableProps } from './SummaryTable'
+import { Step } from './types'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithUserData)
 

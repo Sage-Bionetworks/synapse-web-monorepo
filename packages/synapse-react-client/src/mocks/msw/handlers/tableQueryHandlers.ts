@@ -1,13 +1,6 @@
-import { uniqueId } from 'lodash-es'
-import { rest } from 'msw'
-import {
-  TABLE_QUERY_ASYNC_GET,
-  TABLE_QUERY_ASYNC_START,
-} from '../../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
+import { TABLE_QUERY_ASYNC_GET, TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import { SynapseError } from '@/utils/SynapseError'
 import {
   ColumnModel,
   QueryBundleRequest,
@@ -17,9 +10,10 @@ import {
   ViewColumnModelRequest,
   ViewColumnModelResponse,
 } from '@sage-bionetworks/synapse-types'
-import { generateAsyncJobHandlers } from './asyncJobHandlers'
+import { uniqueId } from 'lodash-es'
+import { rest } from 'msw'
 import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
-import { SynapseError } from '../../../utils/SynapseError'
+import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { getTableQueryResult } from './tableQueryService'
 
 /**

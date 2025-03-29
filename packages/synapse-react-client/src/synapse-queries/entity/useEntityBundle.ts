@@ -1,15 +1,15 @@
-import {
-  useQuery,
-  UseQueryOptions,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
   EntityBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import {
+  useQuery,
+  UseQueryOptions,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 
 export function useGetEntityBundleQueryOptions<
   T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS,

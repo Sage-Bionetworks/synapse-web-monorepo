@@ -1,11 +1,11 @@
+import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '@/mocks/accessRequirement/mockAccessRequirementAcls'
+import { MOCK_DUC_TEMPLATE_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../../mocks/accessRequirement/mockAccessRequirementAcls'
-import { MOCK_DUC_TEMPLATE_FILE_HANDLE_ID } from '../../../mocks/mock_file_handle'
 import { UploadDocumentField } from './UploadDocumentField'
 
 const meta: Meta = {

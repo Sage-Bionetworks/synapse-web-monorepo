@@ -1,29 +1,29 @@
+import BlinkingLiveIcon from '@/assets/homepage/BlinkingLiveIcon'
+import { backgroundInlineJpeg } from '@/assets/homepage/header-splash'
+import { ReactComponent as Image1 } from '@/assets/homepage/image1.svg'
+import SageFullLogo from '@/assets/icons/SageFullLogo'
+import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import {
   Box,
   Button,
+  Link,
   SxProps,
   Typography,
-  useTheme,
   useMediaQuery,
-  Link,
+  useTheme,
 } from '@mui/material'
+import { useInView } from 'react-intersection-observer'
 import { TypeAnimation } from 'react-type-animation'
-import { ReactComponent as Image1 } from '../../assets/homepage/image1.svg'
-import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
-import { SynapseTrendingProjects } from './SynapseTrendingProjects'
 import { SynapseByTheNumbers } from './SynapseByTheNumbers'
+import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 import { SynapseFeatures } from './SynapseFeatures'
+import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
+import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import { SynapseInAction } from './SynapseInAction'
-import { backgroundInlineJpeg } from '../../assets/homepage/header-splash'
 import { SynapsePartners } from './SynapsePartners'
 import { SynapsePlans } from './SynapsePlans'
-import { useInView } from 'react-intersection-observer'
-import SageFullLogo from '../../assets/icons/SageFullLogo'
-import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
-import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
-import BlinkingLiveIcon from '../../assets/homepage/BlinkingLiveIcon'
 import { SynapseSearchChips } from './SynapseSearchChips'
-import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
+import { SynapseTrendingProjects } from './SynapseTrendingProjects'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'

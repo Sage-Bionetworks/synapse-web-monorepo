@@ -1,13 +1,12 @@
+import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
+import { Box } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import StandardsDetailsPage from 'src/pages/StandardsDetailsPage'
-import { MarkdownSynapse } from 'synapse-react-client'
+import { MarkdownSynapse, QueryWrapperPlotNav } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
-import {Box} from '@mui/material'
 
 const routes: RouteObject[] = [
   {
@@ -21,16 +20,20 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: <Box sx={{
-          '.QueryWrapperPlotNav > *' : {
-            p: '0px 20px'
-          },
-          '.QueryWrapperPlotNav > .TopLevelControls': {
-            mt: '0'
-          }
-        }}>
+        element: (
+          <Box
+            sx={{
+              '.QueryWrapperPlotNav > *': {
+                p: '0px 20px',
+              },
+              '.QueryWrapperPlotNav > .TopLevelControls': {
+                mt: '0',
+              },
+            }}
+          >
             <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />
-          </Box>,
+          </Box>
+        ),
       },
       {
         path: 'Explore/Standard/DetailsPage',

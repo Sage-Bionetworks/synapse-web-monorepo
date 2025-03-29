@@ -1,8 +1,8 @@
+import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
 import { RJSFValidationError } from '@rjsf/utils'
-import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import { ENTITY_CONCRETE_TYPE } from '@sage-bionetworks/synapse-types'
-import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import { JSONSchema7 } from 'json-schema'
+import { flatMap, groupBy, isEmpty } from 'lodash-es'
 
 /**
  * Strips null values from arrays in the provided form data. If the array is empty after

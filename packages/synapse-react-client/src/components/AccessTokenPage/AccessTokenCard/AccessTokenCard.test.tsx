@@ -1,3 +1,10 @@
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '@/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import * as SynapseContext from '@/utils/context/SynapseContext'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from '../../../index'
@@ -6,13 +13,6 @@ import {
   AccessTokenCardProps,
   EXPIRED_PAT_WARNING,
 } from './AccessTokenCard'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import * as SynapseContext from '../../../utils/context/SynapseContext'
-import {
-  MOCK_ACCESS_TOKEN,
-  MOCK_CONTEXT_VALUE,
-} from '../../../mocks/MockSynapseContext'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 
 const mockOnDelete = jest.fn(() => null)
 

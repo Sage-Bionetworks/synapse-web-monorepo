@@ -1,11 +1,11 @@
+import { useUpdateVerificationSubmission } from '@/synapse-queries/verificationSubmission/useVerificationSubmission'
+import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { TextField } from '@mui/material'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
+import { noop } from 'lodash-es'
 import { useState } from 'react'
-import { useUpdateVerificationSubmission } from '../../synapse-queries/verificationSubmission/useVerificationSubmission'
-import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { noop } from 'lodash-es'
 
 export const DEFAULT_MESSAGE_PREPEND =
   'Thank you for submitting your Synapse profile for validation. Before we can accept your request:'

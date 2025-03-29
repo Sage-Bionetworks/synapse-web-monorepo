@@ -1,17 +1,17 @@
+import { useGetEntity } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
+import {
+  getAdditionalFilters,
+  parseEntityIdAndVersionFromSqlStatement,
+  SQLOperator,
+} from '@/utils/functions'
+import { isTable } from '@/utils/functions/EntityTypeUtils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
-import { useGetEntity } from '../../synapse-queries'
-import { SynapseConstants } from '../../utils'
-import {
-  getAdditionalFilters,
-  parseEntityIdAndVersionFromSqlStatement,
-  SQLOperator,
-} from '../../utils/functions'
-import { isTable } from '../../utils/functions/EntityTypeUtils'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { CardConfiguration } from '../CardContainerLogic'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { SynapseErrorBoundary } from '../error'

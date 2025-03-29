@@ -1,11 +1,11 @@
-import { memo, Fragment } from 'react'
-import dayjs from 'dayjs'
-import { formatDate } from '../../../utils/functions/DateFormatter'
+import { useGetEntity } from '@/synapse-queries'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   isDataset,
   isDatasetCollection,
   isEntityView,
-} from '../../../utils/functions/EntityTypeUtils'
+} from '@/utils/functions/EntityTypeUtils'
+import { Link, Typography } from '@mui/material'
 import {
   ColumnModel,
   ColumnType,
@@ -15,26 +15,26 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import { Fragment, memo } from 'react'
 import {
   CardLink,
   ColumnSpecifiedLink,
   MarkdownLink,
 } from '../../CardContainerLogic'
-import DirectDownload from '../../DirectDownload/DirectDownload'
-import EntityIdList from './EntityIdList'
-import { EntityLink, EntityLinkProps } from '../../EntityLink'
-import EvaluationIdRenderer from './EvaluationIdRenderer'
-import { SynapseCardLabel } from '../../GenericCard'
-import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
-import UserIdList from './UserIdList'
-import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
-import { Link, Typography } from '@mui/material'
-import UserOrTeamBadge from '../../UserOrTeamBadge'
-import { isFileViewOrDataset } from '../SynapseTableUtils'
 import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
+import DirectDownload from '../../DirectDownload/DirectDownload'
+import { EntityLink, EntityLinkProps } from '../../EntityLink'
+import { SynapseCardLabel } from '../../GenericCard'
 import Linkify from '../../GenericCard/Linkify'
-import { useGetEntity } from '../../../synapse-queries'
 import { useQueryContext } from '../../QueryContext'
+import UserOrTeamBadge from '../../UserOrTeamBadge'
+import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
+import { isFileViewOrDataset } from '../SynapseTableUtils'
+import EntityIdList from './EntityIdList'
+import EvaluationIdRenderer from './EvaluationIdRenderer'
+import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
+import UserIdList from './UserIdList'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType

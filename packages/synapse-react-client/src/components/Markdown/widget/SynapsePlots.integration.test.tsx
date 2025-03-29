@@ -1,9 +1,9 @@
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, waitFor } from '@testing-library/react'
 import MarkdownSynapse from '../MarkdownSynapse'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { server } from '../../../mocks/msw/server'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

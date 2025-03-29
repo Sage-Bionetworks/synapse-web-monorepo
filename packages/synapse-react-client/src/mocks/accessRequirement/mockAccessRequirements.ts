@@ -1,3 +1,4 @@
+import { DAY_IN_MS } from '@/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   AccessRequirement,
@@ -17,16 +18,15 @@ import {
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import mockProjectData from '../entity/mockProject'
-import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { mockDucTemplateFileHandle } from '../mock_file_handle'
 import {
   mockACTAccessRequirementWikiPage,
   mockManagedACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
   mockToUAccessRequirementWikiPage,
 } from '../mockWiki'
-import { mockDucTemplateFileHandle } from '../mock_file_handle'
 import { MOCK_TEAM_ID } from '../team/mockTeam'
-import { DAY_IN_MS } from '../../utils/SynapseConstants'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
 
 export const MOCK_NEWLY_CREATED_AR_ID = 1000
 export const MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID = 1234567

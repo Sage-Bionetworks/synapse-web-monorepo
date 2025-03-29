@@ -1,3 +1,6 @@
+import { useSearchAccessSubmissionsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { Button, Stack, Typography } from '@mui/material'
 import {
   Direction,
@@ -18,9 +21,6 @@ import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'

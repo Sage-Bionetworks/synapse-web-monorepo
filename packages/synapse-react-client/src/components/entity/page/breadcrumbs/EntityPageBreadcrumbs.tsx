@@ -1,7 +1,7 @@
+import { truncateString } from '@/utils/functions/StringUtils'
 import { Breadcrumbs, Link, SxProps, Tooltip, Typography } from '@mui/material'
 import { MouseEventHandler } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { truncateString } from '../../../../utils/functions/StringUtils'
 
 type BreadcrumbItem = {
   /* The text to show in the breadcrumb item. Strings > 25 characters will be truncated */

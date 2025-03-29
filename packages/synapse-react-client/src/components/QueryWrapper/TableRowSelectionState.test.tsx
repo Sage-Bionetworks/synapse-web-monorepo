@@ -1,8 +1,8 @@
+import { mockQueryResultBundle } from '@/mocks/mockFileViewQuery'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { act, renderHook } from '@testing-library/react'
 import { Provider, useAtom, useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
-import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import {
   hasSelectedRowsAtom,
   isRowSelectedAtom,

@@ -1,18 +1,18 @@
-import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import {
+  useGetAccessRequirementStatus,
+  useGetAccessRequirementWikiPageKey,
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import { Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
   ACTAccessRequirement,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
-import { Box, ButtonProps, Link, Typography } from '@mui/material'
-import {
-  useGetAccessRequirementStatus,
-  useGetAccessRequirementWikiPageKey,
-} from '../../../synapse-queries'
-import RequirementItem from './RequirementItem'
+import { useState } from 'react'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from './RequirementItem'
 
 export type UnmanagedACTAccessRequirementItemProps = {
   subjectId?: string

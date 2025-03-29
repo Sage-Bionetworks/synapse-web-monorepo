@@ -1,14 +1,14 @@
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
-import SynapseClient from '../../synapse-client'
 import {
   EvaluationCard,
   EvaluationCardProps,
   ExistingEvaluation,
 } from './EvaluationCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
-import { server } from '../../mocks/msw/server'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions

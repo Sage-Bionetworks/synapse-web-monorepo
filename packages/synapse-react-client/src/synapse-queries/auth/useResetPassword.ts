@@ -1,6 +1,6 @@
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import SynapseClient from '@/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import SynapseClient from '../../synapse-client'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 export function useResetPassword(
   options?: Partial<UseMutationOptions<'', SynapseClientError, string>>,

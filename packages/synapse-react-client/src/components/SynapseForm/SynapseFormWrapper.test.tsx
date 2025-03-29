@@ -1,17 +1,17 @@
-import { FormData, StatusEnum } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
-import _ from 'lodash-es'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import {
   mockFileEntityWithVersion,
   mockFormData,
   mockFormSchema as formschemaJson,
-} from '../../mocks/mock_drug_tool_data'
-import { mockFileHandle } from '../../mocks/mock_file_handle'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client/index'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/mocks/mock_drug_tool_data'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client/index'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { FormData, StatusEnum } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import _ from 'lodash-es'
 import * as SynapseFormModule from './SynapseForm'
 import { IFormData } from './SynapseForm'
 import * as SynapseFormUtils from './SynapseFormUtils'

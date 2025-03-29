@@ -1,13 +1,13 @@
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
+import { spreadSx } from '@/theme/spreadSx'
 import {
   AccessTimeFilled,
   CheckTwoTone,
   LockTwoTone,
 } from '@mui/icons-material'
+import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
 import { ReactNode } from 'react'
-import { spreadSx } from '../../theme/spreadSx'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
-import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 
 export enum RequirementItemStatus {
   COMPLETE = 'COMPLETE',

@@ -1,3 +1,11 @@
+import mockDataset from '@/mocks/entity/mockDataset'
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import {
+  ColumnModel,
+  ColumnTypeEnum,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   getColumnIndicesWithType,
   getDefaultPrimaryKey,
@@ -5,14 +13,6 @@ import {
   getUniqueEntities,
   isSortableColumn,
 } from './SynapseTableUtils'
-import {
-  ColumnModel,
-  ColumnTypeEnum,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
-import mockDataset from '../../mocks/entity/mockDataset'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 
 describe('Synapse Table Utilities tests', () => {
   describe('Table cell renderer utilities', () => {

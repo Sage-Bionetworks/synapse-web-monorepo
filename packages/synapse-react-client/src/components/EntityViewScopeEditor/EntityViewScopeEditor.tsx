@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
-import EntityHeaderTable from '../EntityHeaderTable'
-import { EntityType, ReferenceList } from '@sage-bionetworks/synapse-types'
-import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { FinderScope } from '../EntityFinder/tree/EntityTree'
-import { EntityTypeGroup } from '../../utils/functions/EntityTypeUtils'
+import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { Typography } from '@mui/material'
+import { EntityType, ReferenceList } from '@sage-bionetworks/synapse-types'
+import { useMemo } from 'react'
+import { FinderScope } from '../EntityFinder/tree/EntityTree'
+import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
+import EntityHeaderTable from '../EntityHeaderTable'
 
 const DEFAULT_SELECTABLE_TYPES = EntityTypeGroup.CONTAINER
 const PROJECT_VIEW_SELECTABLE_TYPES = [EntityType.PROJECT]

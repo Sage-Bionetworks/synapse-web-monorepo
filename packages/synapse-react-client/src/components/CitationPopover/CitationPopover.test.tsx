@@ -1,14 +1,14 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import CitationPopover from './CitationPopover'
-import { useCitation } from './useCitation'
-import { createLinkAndDownload } from './CitationPopoverUtils'
 import {
   getUseQueryErrorMock,
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+} from '@/testutils/ReactQueryMockUtils'
 import { UseQueryResult } from '@tanstack/react-query'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import CitationPopover from './CitationPopover'
+import { createLinkAndDownload } from './CitationPopoverUtils'
+import { useCitation } from './useCitation'
 
 jest.mock('./useCitation', () => ({
   useCitation: jest.fn(),

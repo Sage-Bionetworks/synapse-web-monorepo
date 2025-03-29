@@ -1,11 +1,10 @@
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import UniversalCookies from 'universal-cookie'
-import { isInSynapseExperimentalMode } from '../../synapse-client/SynapseClient'
-import { EXPERIMENTAL_MODE_COOKIE } from '../../utils/SynapseConstants'
+import { isInSynapseExperimentalMode } from '@/synapse-client/SynapseClient'
+import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
+import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material'
+import { useEffect, useState } from 'react'
 import Switch from 'react-switch'
-import { useTheme } from '@mui/material'
+import UniversalCookies from 'universal-cookie'
 
 const EXPERIMENTAL_MODE_SWITCH_ID = 'experimental-mode'
 const experimentalModeText =

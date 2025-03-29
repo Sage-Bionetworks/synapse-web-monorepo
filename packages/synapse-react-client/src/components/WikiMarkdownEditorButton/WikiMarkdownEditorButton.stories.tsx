@@ -1,9 +1,9 @@
-import { ObjectType } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
 import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
-} from '../../mocks/mockWikiPageKey'
+} from '@/mocks/mockWikiPageKey'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
 import { WikiMarkdownEditorButton } from './WikiMarkdownEditorButton'
 
 const meta: Meta<typeof WikiMarkdownEditorButton> = {

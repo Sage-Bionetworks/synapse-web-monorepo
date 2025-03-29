@@ -1,6 +1,6 @@
-import { EntityLink, EntityLinkProps } from '../../EntityLink'
-import { useGetEntityHeaders } from '../../../synapse-queries'
+import { useGetEntityHeaders } from '@/synapse-queries'
 import { Stack } from '@mui/material'
+import { EntityLink, EntityLinkProps } from '../../EntityLink'
 
 export type EntityIdListProps = {
   entityIdList: string[]

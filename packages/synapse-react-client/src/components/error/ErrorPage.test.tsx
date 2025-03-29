@@ -1,4 +1,10 @@
+import { MOCK_DOI } from '@/mocks/doi/MockDoi'
+
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
   ACCESS_DENIED_ANONYMOUS_MESSAGE,
@@ -13,12 +19,6 @@ import ErrorPage, {
   SYNAPSE_DOWN_TITLE,
   SynapseErrorType,
 } from './ErrorPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
-import { server } from '../../mocks/msw/server'
-import { MOCK_DOI } from '../../mocks/doi/MockDoi'
-
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 const mockGotoPlace = jest.fn()
 

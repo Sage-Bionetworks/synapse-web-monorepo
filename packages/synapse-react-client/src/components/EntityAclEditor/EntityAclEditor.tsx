@@ -1,4 +1,33 @@
 import {
+  useCreateEntityACL,
+  useDeleteEntityACL,
+  useSuspenseGetCurrentUserProfile,
+  useSuspenseGetEntityBenefactorACL,
+  useSuspenseGetEntityBundle,
+  useUpdateEntityACL,
+} from '@/synapse-queries'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { resourceAccessListIsEqual } from '@/utils/functions/AccessControlListUtils'
+import { getDisplayNameFromProfile } from '@/utils/functions/DisplayUtils'
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import {
+  getAccessTypeFromPermissionLevel,
+  PermissionLevel,
+  permissionLevelToLabel,
+} from '@/utils/PermissionLevelToAccessType'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+} from '@/utils/SynapseConstants'
+import { Alert, Link, Stack } from '@mui/material'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityType,
+  ResourceAccess,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
+import {
   ForwardedRef,
   forwardRef,
   Suspense,
@@ -7,44 +36,15 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
-import OpenData from './OpenData'
 import { AclEditor, AclEditorProps } from '../AclEditor/AclEditor'
-import useUpdateAcl from '../AclEditor/useUpdateAcl'
-import {
-  getAccessTypeFromPermissionLevel,
-  PermissionLevel,
-  permissionLevelToLabel,
-} from '../../utils/PermissionLevelToAccessType'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityType,
-  ResourceAccess,
-  UserProfile,
-} from '@sage-bionetworks/synapse-types'
-import {
-  useCreateEntityACL,
-  useDeleteEntityACL,
-  useSuspenseGetEntityBenefactorACL,
-  useSuspenseGetCurrentUserProfile,
-  useSuspenseGetEntityBundle,
-  useUpdateEntityACL,
-} from '../../synapse-queries'
-import { Alert, Link, Stack } from '@mui/material'
-import { InheritanceMessage } from './InheritanceMessage'
-import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
-import { resourceAccessListIsEqual } from '../../utils/functions/AccessControlListUtils'
-import useNotifyNewACLUsers from './useNotifyNewACLUsers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { getDisplayNameFromProfile } from '../../utils/functions/DisplayUtils'
 import { AclEditorSkeleton } from '../AclEditor/AclEditorSkeleton'
+import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { SynapseErrorBoundary } from '../error'
 import FullWidthAlert from '../FullWidthAlert'
+import { CreateOrDeleteLocalSharingSettingsButton } from './CreateOrDeleteLocalSharingSettingsButton'
+import { InheritanceMessage } from './InheritanceMessage'
+import OpenData from './OpenData'
+import useNotifyNewACLUsers from './useNotifyNewACLUsers'
 
 const availablePermissionLevels: PermissionLevel[] = [
   'CAN_VIEW',

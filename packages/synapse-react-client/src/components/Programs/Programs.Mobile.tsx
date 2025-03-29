@@ -1,7 +1,7 @@
-import { ProgramsDataProps } from './Programs'
+import LargeButton from '@/components/styled/LargeButton'
 import ExpandableContent from '../home_page/ExpandableContent'
-import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import { ProgramsDataProps } from './Programs'
 
 export default function ProgramsMobile({
   link,

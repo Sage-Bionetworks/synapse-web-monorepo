@@ -1,12 +1,11 @@
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { getColumnIndex } from '../GenericCard/index'
 import {
   SynapseTrendingProjectItem,
   trendingProjectsGridTemplateColumns,
 } from './SynapseTrendingProjectsItem'
-import { Box, useTheme, useMediaQuery } from '@mui/material'
-import { Typography } from '@mui/material'
 
 export type SynapseTrendingProjectsProps = {
   past30DaysDownloadMetricsTable: string

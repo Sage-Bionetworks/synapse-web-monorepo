@@ -1,5 +1,5 @@
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { SynapseByTheNumbersItem } from './SynapseByTheNumbersItem'
 

@@ -1,5 +1,5 @@
+import { ProgressCallback } from '@/synapse-client/index'
 import { useState } from 'react'
-import { ProgressCallback } from '../../../synapse-client/index'
 import { FilePreparedForUpload } from './usePrepareFileEntityUpload'
 
 export type TrackedUploadProgress = {

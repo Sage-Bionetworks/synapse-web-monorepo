@@ -1,8 +1,8 @@
-import useShowDesktop from '../../../utils/hooks/useShowDesktop'
-import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
+import LargeButton from '@/components/styled/LargeButton'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
+import { UserCardSize } from '@/utils/SynapseConstants'
 import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'
-import LargeButton from '../../../components/styled/LargeButton'
-import { UserCardSize } from '../../../utils/SynapseConstants'
+import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
 
 export type UserCardListGroupsProps = {
   sql: string

@@ -1,18 +1,18 @@
-import { render, screen } from '@testing-library/react'
-import { SynapseConstants } from '../utils'
-import { QueryVisualizationWrapper } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
-import TotalQueryResults, { TotalQueryResultsProps } from './TotalQueryResults'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
-import { server } from '../mocks/msw/server'
+import { render, screen } from '@testing-library/react'
+import { QueryVisualizationWrapper } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
 import QueryWrapper from './QueryWrapper'
-import { mockTableEntity } from '../mocks/entity/mockTableEntity'
-import { registerTableQueryResult } from '../mocks/msw/handlers/tableQueryService'
+import TotalQueryResults, { TotalQueryResultsProps } from './TotalQueryResults'
 
 const mockQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

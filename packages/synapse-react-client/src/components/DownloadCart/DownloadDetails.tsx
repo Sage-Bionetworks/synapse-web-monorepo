@@ -1,8 +1,8 @@
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip, Box } from '@mui/material'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { Box, Tooltip } from '@mui/material'
 import pluralize from 'pluralize'
+import IconSvg from '../IconSvg/IconSvg'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 
 export type DownloadDetailsProps = {
   numFiles: number

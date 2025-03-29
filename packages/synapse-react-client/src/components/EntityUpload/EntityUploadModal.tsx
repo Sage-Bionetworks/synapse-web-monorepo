@@ -1,3 +1,4 @@
+import { UploaderState } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { Box, Button, Tab, Tabs } from '@mui/material'
 import {
   ForwardedRef,
@@ -7,7 +8,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { UploaderState } from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {

@@ -1,6 +1,5 @@
-import { Alert, Typography } from '@mui/material'
-import { Box } from '@mui/material'
-import { useGetTeam } from '../../synapse-queries'
+import { useGetTeam } from '@/synapse-queries'
+import { Alert, Box, Typography } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type RegistrationSuccessfulProps = {

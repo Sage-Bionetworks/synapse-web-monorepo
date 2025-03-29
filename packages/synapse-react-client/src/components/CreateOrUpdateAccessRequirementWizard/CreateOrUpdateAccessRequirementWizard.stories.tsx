@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import CreateOrUpdateAccessRequirementWizard from './CreateOrUpdateAccessRequirementWizard'
-import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import {
   mockACTAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import CreateOrUpdateAccessRequirementWizard from './CreateOrUpdateAccessRequirementWizard'
 
 const meta = {
   title: 'Governance/CreateOrUpdateAccessRequirementWizard',

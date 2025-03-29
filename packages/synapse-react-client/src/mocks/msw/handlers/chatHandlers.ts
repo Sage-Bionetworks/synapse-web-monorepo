@@ -1,16 +1,3 @@
-import { rest } from 'msw'
-import {
-  AGENT_CHAT_TRACE,
-  AGENT_SESSION,
-  AGENT_SESSION_HISTORY,
-  GET_CHAT_ASYNC,
-  LIST_AGENT_SESSIONS,
-  START_CHAT_ASYNC,
-} from '../../../utils/APIConstants'
-import {
-  AgentChatRequest,
-  AgentChatResponse,
-} from '@sage-bionetworks/synapse-types'
 import {
   mockAgentChatResponse,
   mockAgentSession,
@@ -21,9 +8,22 @@ import {
   mockTraceEventsResponse1,
   mockTraceEventsResponse2,
   mockTraceEventsResponse3,
-} from 'src/mocks/chat/mockChat'
+} from '@/mocks/chat/mockChat'
+import {
+  AGENT_CHAT_TRACE,
+  AGENT_SESSION,
+  AGENT_SESSION_HISTORY,
+  GET_CHAT_ASYNC,
+  LIST_AGENT_SESSIONS,
+  START_CHAT_ASYNC,
+} from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
+  AgentChatRequest,
+  AgentChatResponse,
+} from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
-import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
 
 let traceCallCount = 0
 export const getChatbotHandlers = (

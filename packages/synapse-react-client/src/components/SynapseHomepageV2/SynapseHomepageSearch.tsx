@@ -1,17 +1,20 @@
-import { useState } from 'react'
-import { PopperProps } from '@mui/material'
-import { FormControl } from '@mui/material'
-import { InputAdornment } from '@mui/material'
-import { Search } from '../../assets/themed_icons'
-import { Autocomplete, useTheme } from '@mui/material'
-import { SynapseConstants } from '../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import { TextField } from '@mui/material'
-import { Popper } from '@mui/material'
-import { styled } from '@mui/material'
-import { Box } from '@mui/material'
+import { Search } from '@/assets/themed_icons'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
+import {
+  Autocomplete,
+  Box,
+  FormControl,
+  InputAdornment,
+  Popper,
+  PopperProps,
+  styled,
+  TextField,
+  useTheme,
+} from '@mui/material'
 import { ColorPartial } from '@mui/material/styles/createPalette'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
 
 export type SynapseHomepageSearchProps = {
   sourceTable: string

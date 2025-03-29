@@ -1,6 +1,6 @@
+import mockProject from '@/mocks/entity/mockProject'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import mockProject from '../../mocks/entity/mockProject'
 import ChallengeTeamWizard, {
   ChallengeTeamWizardProps,
 } from './ChallengeTeamWizard'

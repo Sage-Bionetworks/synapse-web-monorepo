@@ -1,14 +1,10 @@
-import type {
-  CardConfiguration,
-  ColumnIconConfigs,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import studyActiveHeaderSvg from '@/config/style/study-active-header.svg?url'
+import studyActiveSvg from '@/config/style/study-active.svg?url'
+import studyCompleteSvg from '@/config/style/study-complete.svg?url'
+import studyCompleteHeaderSvg from '@/config/style/study-completed-header.svg?url'
+import type { CardConfiguration, ColumnIconConfigs, QueryWrapperPlotNavProps } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import { studiesSql } from '../resources'
-import studyActiveHeaderSvg from '../style/study-active-header.svg?url'
-import studyActiveSvg from '../style/study-active.svg?url'
-import studyCompleteSvg from '../style/study-complete.svg?url'
-import studyCompleteHeaderSvg from '../style/study-completed-header.svg?url'
 import { columnAliases } from './commonProps'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`

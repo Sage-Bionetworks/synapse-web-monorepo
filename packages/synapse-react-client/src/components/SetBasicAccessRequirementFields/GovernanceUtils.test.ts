@@ -4,11 +4,11 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
-  LOCK_ACCESS_REQUIREMENT_TEXT,
   getOldAccessRequirementInstructions,
   hasAccessorRequirement,
+  LOCK_ACCESS_REQUIREMENT_TEXT,
 } from './GovernanceUtils'
 
 describe('GovernanceUtils', () => {
