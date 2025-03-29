@@ -26,9 +26,9 @@ export const dataColumnAliases = {
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.GENERIC_CARD,
-  title: 'Name',
+  title: 'Acronym',
   // subTitle: '',
-  // description: '',
+  description: 'Name',
   secondaryLabels: ['Collections', 'Data_Topic', 'Organizations'],
 }
 
@@ -112,6 +112,7 @@ export default function StandardsDetailsPage() {
         genericCardSchema={standardsCardSchema}
         secondaryLabelLimit={6}
         isHeader={true}
+        headerCardVariant="HeaderCardV2"
         searchParams={{ Name }}
       />
 
