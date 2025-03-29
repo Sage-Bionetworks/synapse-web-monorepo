@@ -1,1 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://stopadportal.synapse.org
+export CF_PRODUCTION_DIST_ID=E3T3BUO9I33NZX

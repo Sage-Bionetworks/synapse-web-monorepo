@@ -1,1 +1,2 @@
 export S3_STAGING_BUCKET_LOCATION=s3://staging-genie-synapse-org-websitebucket-8tvf8x9dwuqe
+export CF_STAGING_DIST_ID=E1ULMEK3W2VXOF

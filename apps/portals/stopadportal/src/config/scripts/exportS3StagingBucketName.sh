@@ -1,1 +1,2 @@
 export S3_STAGING_BUCKET_LOCATION=s3://staging.stopadportal.synapse.org
+export CF_STAGING_DIST_ID=E27UC0961FPD8C

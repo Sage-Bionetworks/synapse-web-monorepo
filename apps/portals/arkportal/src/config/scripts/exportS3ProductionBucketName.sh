@@ -1,1 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://prod-arkportal-synapse-org-websitebucket-1557e1kxr3if1
+export CF_PRODUCTION_DIST_ID=E53UUZGXFL713

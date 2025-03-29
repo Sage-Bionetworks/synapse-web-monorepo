@@ -1,1 +1,2 @@
 export S3_STAGING_BUCKET_LOCATION=s3://staging.cancercomplexity.synapse.org
+export CF_STAGING_DIST_ID=E2R3JZH26UN6SC

@@ -1,1 +1,2 @@
 export S3_STAGING_BUCKET_LOCATION=s3://staging.nf.synapse.org
+export CF_STAGING_DIST_ID=E1I74M7N2K06XT
