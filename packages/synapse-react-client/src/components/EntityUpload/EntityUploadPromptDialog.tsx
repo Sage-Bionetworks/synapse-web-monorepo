@@ -1,4 +1,8 @@
 import {
+  PromptInfo,
+  UseUploadFileEntitiesReturn,
+} from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import {
   Box,
   Button,
   Checkbox,
@@ -8,10 +12,6 @@ import {
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import { useState } from 'react'
-import {
-  PromptInfo,
-  UseUploadFileEntitiesReturn,
-} from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { DialogBase } from '../DialogBase'
 
 type EntityUploadPromptDialogProps = {

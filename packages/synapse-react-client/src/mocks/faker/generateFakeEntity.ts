@@ -1,3 +1,8 @@
+import {
+  convertToConcreteEntityType,
+  isContainerType,
+} from '@/utils/functions/EntityTypeUtils'
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import { faker } from '@faker-js/faker'
 import {
   AccessControlList,
@@ -8,14 +13,9 @@ import {
   RestrictionLevel,
   UserEntityPermissions,
 } from '@sage-bionetworks/synapse-types'
-import { pickRandomMockUser } from './fakerUtils'
 import { MockEntityData } from '../entity/MockEntityData'
-import {
-  convertToConcreteEntityType,
-  isContainerType,
-} from '../../utils/functions/EntityTypeUtils'
 import mockProjectEntityData from '../entity/mockProject'
-import { normalizeNumericId } from '../../utils/functions/StringUtils'
+import { pickRandomMockUser } from './fakerUtils'
 
 export function generateBaseEntity<T extends Entity = Entity>(
   overrides: {

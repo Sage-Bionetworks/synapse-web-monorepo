@@ -1,7 +1,7 @@
+import { getPersonalAccessTokenHandlers } from '@/mocks/msw/handlers/personalAccessTokenHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
 import { AccessTokenPage } from '../AccessTokenPage'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
-import { getPersonalAccessTokenHandlers } from '../../../mocks/msw/handlers/personalAccessTokenHandlers'
 
 const meta = {
   title: 'Synapse/AccessTokenPage',

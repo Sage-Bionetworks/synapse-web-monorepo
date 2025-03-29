@@ -1,22 +1,22 @@
 import {
+  createWikiPage,
+  getRootWikiPageKey,
+  getWikiPage,
+  updateWikiPage,
+} from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
   ObjectType,
   WikiPage,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import {
-  UseMutationOptions,
-  UseQueryOptions,
   useMutation,
+  UseMutationOptions,
   useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from '@tanstack/react-query'
-import {
-  createWikiPage,
-  getRootWikiPageKey,
-  getWikiPage,
-  updateWikiPage,
-} from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
 
 export const useGetRootWikiPageKey = (
   ownerObjectType: ObjectType,

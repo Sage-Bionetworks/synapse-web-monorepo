@@ -1,5 +1,5 @@
+import { spreadSx } from '@/theme/spreadSx'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
-import { spreadSx } from '../../theme/spreadSx'
 
 const Proteomics = (props: SvgIconProps) => {
   const { sx } = props

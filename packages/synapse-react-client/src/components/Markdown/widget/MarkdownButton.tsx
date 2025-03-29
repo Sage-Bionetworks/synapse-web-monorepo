@@ -1,4 +1,4 @@
-import WideButton from '../../styled/WideButton'
+import WideButton from '@/components/styled/WideButton'
 
 export type ButtonLinkWidgetParams = {
   align?: string

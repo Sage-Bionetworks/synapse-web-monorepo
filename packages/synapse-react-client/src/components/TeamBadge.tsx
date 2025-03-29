@@ -1,10 +1,10 @@
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import IconSvg, { IconName } from './IconSvg/IconSvg'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
-} from '../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
 import { Box, Link } from '@mui/material'
+import IconSvg, { IconName } from './IconSvg/IconSvg'
 
 export const AUTHENTICATED_GROUP_DISPLAY_TEXT = 'All registered Synapse users'
 export const PUBLIC_GROUP_DISPLAY_TEXT = 'Anyone on the web'

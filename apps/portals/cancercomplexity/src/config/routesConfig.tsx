@@ -21,7 +21,7 @@ import {
   onIndividualThemeBarPlotPointClick,
   onPointClick,
 } from './synapseConfigs/onPointClick'
-import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
+import { searchPageChildRoutes } from '@/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import { FullWidthAlert } from 'synapse-react-client'
 

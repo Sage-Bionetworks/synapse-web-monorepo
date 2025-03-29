@@ -1,6 +1,6 @@
+import mockProject from '@/mocks/entity/mockProject'
 import { Meta, StoryObj } from '@storybook/react'
 import { ChallengeDetailPage } from './ChallengeDetailPage'
-import mockProject from '../../mocks/entity/mockProject'
 
 const meta = {
   title: 'Synapse/Challenge/ChallengeDetailPage',

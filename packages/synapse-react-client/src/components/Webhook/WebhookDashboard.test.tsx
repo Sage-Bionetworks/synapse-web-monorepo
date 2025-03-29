@@ -1,3 +1,9 @@
+import mockProject from '@/mocks/entity/mockProject'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { webhookService } from '@/mocks/msw/handlers/webhookHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/index'
 import {
   ErrorResponseCode,
   SynapseObjectType,
@@ -8,15 +14,6 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { rest } from 'msw'
-import mockProject from '../../mocks/entity/mockProject'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { webhookService } from '../../mocks/msw/handlers/webhookHandlers'
-import { server } from '../../mocks/msw/server'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/index'
 import * as ToastMessageModule from '../ToastMessage/ToastMessage'
 import WebhookDashboard from './WebhookDashboard'
 

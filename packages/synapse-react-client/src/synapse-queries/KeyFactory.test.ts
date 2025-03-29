@@ -1,15 +1,15 @@
-import { KeyFactory } from './KeyFactory'
-import { QueryKey } from '@tanstack/react-query'
-import { MOCK_ACCESS_TOKEN } from '../mocks/MockSynapseContext'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import {
-  expectQueryKeyToMatch,
-  expectQueryKeyNotToMatch,
-} from './QueryMatchingTestUtils'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,
-} from '../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { QueryKey } from '@tanstack/react-query'
+import { KeyFactory } from './KeyFactory'
+import {
+  expectQueryKeyNotToMatch,
+  expectQueryKeyToMatch,
+} from './QueryMatchingTestUtils'
 
 describe('KeyFactory tests', () => {
   let keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)

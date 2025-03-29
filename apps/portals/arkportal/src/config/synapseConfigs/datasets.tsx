@@ -1,3 +1,5 @@
+import experimentalDataSvg from '@/config/style/experimentalData.svg?url'
+import publicationDataSvg from '@/config/style/publicationData.svg?url'
 import type {
   CardConfiguration,
   GenericCardSchema,
@@ -7,8 +9,6 @@ import type {
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
-import experimentalDataSvg from '../style/experimentalData.svg?url'
-import publicationDataSvg from '../style/publicationData.svg?url'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [

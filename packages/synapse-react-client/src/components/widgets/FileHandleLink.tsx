@@ -1,12 +1,12 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseConstants } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import { SynapseConstants } from '../../utils'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'
 
 type FileHandleLinkProps = {

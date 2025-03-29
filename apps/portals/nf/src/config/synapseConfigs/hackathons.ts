@@ -1,11 +1,8 @@
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import hackathonActiveSvg from '@/config/style/hackathon-active.svg?url'
+import hackathonCompleteSvg from '@/config/style/hackathon-complete.svg?url'
+import type { CardConfiguration, QueryWrapperPlotNavProps } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import { hackathonsSql } from '../resources'
-import hackathonActiveSvg from '../style/hackathon-active.svg?url'
-import hackathonCompleteSvg from '../style/hackathon-complete.svg?url'
 import { columnAliases } from './commonProps'
 
 const type = SynapseConstants.GENERIC_CARD

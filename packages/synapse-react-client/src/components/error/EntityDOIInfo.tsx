@@ -1,5 +1,5 @@
+import { useGetDOI } from '@/synapse-queries/doi/useDOI'
 import { Box, Typography } from '@mui/material'
-import { useGetDOI } from '../../synapse-queries/doi/useDOI'
 
 export type EntityDOIInfoProps = {
   entityId: string

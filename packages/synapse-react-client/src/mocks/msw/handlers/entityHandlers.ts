@@ -1,4 +1,15 @@
 import {
+  ENTITY,
+  ENTITY_BUNDLE_V2,
+  ENTITY_HEADERS,
+  ENTITY_ID,
+  ENTITY_ID_VERSION,
+  ENTITY_ID_VERSIONS,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+} from '@/utils/APIConstants'
+import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
+import {
   AccessControlList,
   Entity,
   EntityBundle,
@@ -14,17 +25,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { rest } from 'msw'
-import {
-  ENTITY,
-  ENTITY_BUNDLE_V2,
-  ENTITY_HEADERS,
-  ENTITY_ID,
-  ENTITY_ID_VERSION,
-  ENTITY_ID_VERSIONS,
-  ENTITY_JSON,
-  ENTITY_SCHEMA_BINDING,
-} from '../../../utils/APIConstants'
-import { normalizeSynPrefix } from '../../../utils/functions/EntityTypeUtils'
 import mockEntities, { mockProjectsEntityData } from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { MockEntityData } from '../../entity/MockEntityData'

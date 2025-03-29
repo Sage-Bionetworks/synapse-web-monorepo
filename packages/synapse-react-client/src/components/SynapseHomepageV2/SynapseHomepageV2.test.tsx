@@ -1,11 +1,11 @@
+import { SynapseTestContext } from '@/mocks/MockSynapseContext'
+import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
+import { server } from '@/mocks/msw/server'
+import { registerSynapseHomepageMockQueries } from '@/mocks/query/mockHomepageQueryResultData'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { act, render } from '@testing-library/react'
-import { server } from '../../mocks/msw/server'
-import { SynapseHomepageV2 } from './SynapseHomepageV2'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
-import { registerSynapseHomepageMockQueries } from '../../mocks/query/mockHomepageQueryResultData'
+import { SynapseHomepageV2 } from './SynapseHomepageV2'
 
 describe('SynapseHomepageV2 Snapshot test', () => {
   beforeAll(() => server.listen())

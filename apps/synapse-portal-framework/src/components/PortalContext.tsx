@@ -1,10 +1,6 @@
+import { FooterConfig, HomePageHeaderConfig, LogoConfig } from '@/types/portal-config'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router'
-import {
-  FooterConfig,
-  HomePageHeaderConfig,
-  LogoConfig,
-} from '../types/portal-config'
 import { NavbarConfig } from './navbar/Navbar'
 
 export type PortalContextType = {

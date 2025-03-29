@@ -1,3 +1,7 @@
+import { getFullQueryTableResults } from '@/synapse-client'
+import { SynapseConstants, useSynapseContext } from '@/utils'
+import { resultToJson } from '@/utils/functions'
+import { unCamelCase } from '@/utils/functions/unCamelCase'
 import { Tooltip } from '@mui/material'
 import {
   QueryBundleRequest,
@@ -8,10 +12,6 @@ import _ from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
 import { useEffect, useState } from 'react'
 import { RequiredKeysOf } from 'type-fest'
-import { getFullQueryTableResults } from '../../synapse-client'
-import { SynapseConstants, useSynapseContext } from '../../utils'
-import { resultToJson } from '../../utils/functions'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import BarPlot from './BarPlot'
 import DotPlot from './DotPlot'

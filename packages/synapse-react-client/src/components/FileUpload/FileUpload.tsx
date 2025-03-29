@@ -1,14 +1,11 @@
+import { ProgressCallback, uploadFile } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Button, ButtonProps } from '@mui/material'
-import { ChangeEvent, useRef } from 'react'
-import {
-  uploadFile,
-  ProgressCallback,
-} from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   FileUploadComplete,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
+import { ChangeEvent, useRef } from 'react'
 
 export type FileUploadProps = {
   id?: string

@@ -1,7 +1,7 @@
+import SourceAppImage from '@/components/SourceAppImage'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import Palettes from '@/theme/palette/Palettes'
 import { PaletteOptions } from '@mui/material'
-import SourceAppImage from '../../components/SourceAppImage'
-import Palettes from '../../theme/palette/Palettes'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 
 export type SourceAppConfig = {

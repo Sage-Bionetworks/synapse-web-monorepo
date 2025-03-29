@@ -1,7 +1,5 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { clearLastLoginInfo } from './LastLoginInfo'
-import LoginMethodButton, { LoginMethodButtonProps } from './LoginMethodButton'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
@@ -10,9 +8,11 @@ import {
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
-} from '../../utils/SynapseConstants'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/utils/SynapseConstants'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { clearLastLoginInfo } from './LastLoginInfo'
+import LoginMethodButton, { LoginMethodButtonProps } from './LoginMethodButton'
 
 const onClick = jest.fn()
 

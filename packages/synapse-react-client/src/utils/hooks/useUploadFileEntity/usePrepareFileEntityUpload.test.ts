@@ -1,7 +1,7 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { renderHook as _renderHook } from '@testing-library/react'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { getUseMutationMock } from '../../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as GetFileEntityIdWithSameNameModule from './getFileEntityIdWithSameName'
 import * as UseCreatePathsAndGetParentIdModule from './useCreatePathsAndGetParentId'
 

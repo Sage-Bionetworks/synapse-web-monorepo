@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { UseLoginReturn } from '@/utils/hooks'
 import { Box, Button } from '@mui/material'
+import { useState } from 'react'
 import TextField from '../TextField/TextField'
-import { UseLoginReturn } from '../../utils/hooks'
 
 // 16 characters separated into chunks of 4 by 3 hyphens
 const RECOVERY_CODE_LENGTH = 19

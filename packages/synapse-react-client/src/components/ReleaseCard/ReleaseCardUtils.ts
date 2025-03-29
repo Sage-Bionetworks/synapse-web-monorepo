@@ -1,5 +1,5 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { generateEncodedPathAndQueryForSelectedFacetURL } from '../QueryWrapper'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCardSchema } from './ReleaseCard'

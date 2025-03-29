@@ -1,20 +1,20 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockSubmissions } from '@/mocks/dataaccess/MockSubmission'
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
+import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
+import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
-} from '../../utils/APIConstants'
-import { mockSubmissions } from '../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
+} from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
+import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
 import SubmissionPage from './SubmissionPage'
-import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
-import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
-import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const meta = {
   title: 'Governance/SubmissionPage',

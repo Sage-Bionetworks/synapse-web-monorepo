@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
-import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
+import { getEntity, getFiles } from '@/synapse-client/SynapseClient'
+import { SynapseConstants } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
+  BatchFileRequest,
+  BatchFileResult,
   FileEntity,
   FileHandleAssociateType,
   FileHandleAssociation,
-  BatchFileRequest,
-  BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useEffect, useState } from 'react'
 
 export type SynapseVideoProps = {
   params: {

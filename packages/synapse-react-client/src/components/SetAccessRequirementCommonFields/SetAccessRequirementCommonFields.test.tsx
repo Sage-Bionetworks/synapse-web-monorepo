@@ -1,4 +1,22 @@
 import {
+  MOCK_NEWLY_CREATED_AR_ID,
+  mockACTAccessRequirement,
+  mockManagedACTAccessRequirement,
+  mockSelfSignAccessRequirement,
+  mockSelfSignAnnotationBasedSubjectsAccessRequirement,
+  mockTeamSelfSignAccessRequirement,
+  mockToUAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+} from '@/mocks/entity/mockFileEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { MOCK_TEAM_ID, mockTeamData } from '@/mocks/team/mockTeam'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
   ACCESS_TYPE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
@@ -14,24 +32,6 @@ import SetAccessRequirementCommonFields, {
   SetAccessRequirementCommonFieldsHandle,
   SetAccessRequirementCommonFieldsProps,
 } from '.'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import {
-  MOCK_FILE_ENTITY_ID,
-  MOCK_FILE_NAME,
-} from '../../mocks/entity/mockFileEntity'
-import {
-  MOCK_NEWLY_CREATED_AR_ID,
-  mockACTAccessRequirement,
-  mockManagedACTAccessRequirement,
-  mockSelfSignAccessRequirement,
-  mockSelfSignAnnotationBasedSubjectsAccessRequirement,
-  mockTeamSelfSignAccessRequirement,
-  mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { server } from '../../mocks/msw/server'
-import { MOCK_TEAM_ID, mockTeamData } from '../../mocks/team/mockTeam'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { REMOVE_TEXT } from '../TeamSubjectsSelector/TeamSubjectsSelector'
 import {
   EMPTY_SUBJECT_LIST_ERROR_MESSAGE,

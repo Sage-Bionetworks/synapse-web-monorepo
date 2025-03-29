@@ -1,17 +1,17 @@
-import { BackendDestinationEnum } from '../functions'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   bindOAuthProviderToAccount,
   getRootURL,
   oAuthRegisterAccountStep2,
   oAuthSessionRequest,
   setAccessTokenCookie,
-} from '../../synapse-client'
+} from '@/synapse-client'
+import { OAuth2State } from '@/utils/types'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
+import { BackendDestinationEnum } from '../functions'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
-import { OAuth2State } from '../types'
 import { useOneSageURL } from './useOneSageURL'
 
 export type UseDetectSSOCodeReturnType = {

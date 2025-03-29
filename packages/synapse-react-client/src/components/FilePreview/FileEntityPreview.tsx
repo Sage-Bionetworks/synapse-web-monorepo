@@ -1,20 +1,20 @@
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import {
+  implementsCloudProviderFileHandleInterface,
+  isFileEntity,
+} from '@/utils/types/IsType'
+import { Alert } from '@mui/material'
 import {
   EntityBundle,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
+import { SignInPrompt } from '../error/ErrorBanner'
 import FileHandleContentRenderer from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'
 import {
   getOriginalFileHandleRenderer,
   getPreviewFileHandleRenderer,
 } from './PreviewUtils'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Alert } from '@mui/material'
-import { SignInPrompt } from '../error/ErrorBanner'
-import {
-  implementsCloudProviderFileHandleInterface,
-  isFileEntity,
-} from '../../utils/types/IsType'
 
 export type FileEntityPreviewProps = {
   /** An entity bundle containing a FileEntity, and its fileHandles */

@@ -1,16 +1,16 @@
-import EntityViewMaskEditor, {
-  EntityViewMaskEditorProps,
-  isMaskSupportedInUI,
-} from './EntityViewMaskEditor'
-import { render, screen, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ENTITY_VIEW_TYPE_MASK_DOCKER,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_TABLE,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import EntityViewMaskEditor, {
+  EntityViewMaskEditorProps,
+  isMaskSupportedInUI,
+} from './EntityViewMaskEditor'
 
 describe('EntityViewMaskEditor tests', () => {
   function renderComponent(props: EntityViewMaskEditorProps) {

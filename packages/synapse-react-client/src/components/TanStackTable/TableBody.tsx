@@ -1,8 +1,8 @@
+import { getSlotProps } from '@/utils/slots/SlotUtils'
 import { styled } from '@mui/material'
 import { Row, Table } from '@tanstack/react-table'
 import { identity } from 'lodash-es'
 import { memo } from 'react'
-import { getSlotProps } from '../../utils/slots/SlotUtils'
 import { TableCellRenderer as DefaultTableCellRenderer } from './TableCellRenderer'
 import {
   TableBodyPropsRowOverride,

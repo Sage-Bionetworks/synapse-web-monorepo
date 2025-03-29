@@ -1,14 +1,14 @@
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
-import SynapseClient from '../../synapse-client'
+import * as AccessRequirementListModule from '../AccessRequirementList/AccessRequirementList'
 import {
   EnableTwoFaRequirementCard,
   EnableTwoFaRequirementCardProps,
   REQUIRES_2FA_CARD_TITLE,
 } from './EnableTwoFaRequirementCard'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import * as AccessRequirementListModule from '../AccessRequirementList/AccessRequirementList'
 
 const MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT =
   'mock-access-requirement-list-component'

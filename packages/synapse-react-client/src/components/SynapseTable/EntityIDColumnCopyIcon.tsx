@@ -1,16 +1,16 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useQueryContext } from '../QueryContext/QueryContext'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { getFullQueryTableResults } from '@/synapse-client/SynapseClient'
+import { SynapseConstants } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { parseEntityIdAndVersionFromSqlStatement } from '@/utils/functions/SqlFunctions'
+import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import { useEffect, useMemo, useState } from 'react'
 import {
   InteractiveCopyIdsIcon,
   InteractiveCopyIdsIconProps,
 } from '../InteractiveCopyIdsIcon'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { SynapseConstants } from '../../utils'
-import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
-import { parseEntityIdAndVersionFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import { displayToast } from '../ToastMessage/ToastMessage'
 
 type EntityIDColumnCopyIconProps = Omit<InteractiveCopyIdsIconProps, 'onCopy'>
 

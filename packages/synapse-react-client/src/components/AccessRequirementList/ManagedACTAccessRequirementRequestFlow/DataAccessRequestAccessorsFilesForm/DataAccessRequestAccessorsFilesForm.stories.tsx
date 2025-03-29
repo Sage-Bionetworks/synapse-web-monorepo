@@ -1,20 +1,20 @@
+import {
+  mockManagedAccessRequirementWithNoACL,
+  mockManagedACTAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_RESEARCH_PROJECT_ID } from '@/mocks/dataaccess/MockResearchProject'
+import { MOCK_FOLDER_ID } from '@/mocks/entity/mockEntity'
+import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequirementHandlers'
+import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
+import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
+import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
 } from './DataAccessRequestAccessorsFilesForm'
-import {
-  mockManagedAccessRequirementWithNoACL,
-  mockManagedACTAccessRequirement,
-} from '../../../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_FOLDER_ID } from '../../../../mocks/entity/mockEntity'
-import { MOCK_RESEARCH_PROJECT_ID } from '../../../../mocks/dataaccess/MockResearchProject'
-import { MOCK_REPO_ORIGIN } from '../../../../utils/functions/getEndpoint'
-import { getDataAccessRequestHandlers } from '../../../../mocks/msw/handlers/dataAccessRequestHandlers'
-import { getUserProfileHandlers } from '../../../../mocks/msw/handlers/userProfileHandlers'
-import { getFileHandlers } from '../../../../mocks/msw/handlers/fileHandlers'
-import { getWikiHandlers } from '../../../../mocks/msw/handlers/wikiHandlers'
-import { getAccessRequirementHandlers } from '../../../../mocks/msw/handlers/accessRequirementHandlers'
-import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 
 const meta: Meta<
   DataAccessRequestAccessorsFilesFormProps & { isAuthenticated: boolean }

@@ -1,31 +1,28 @@
-import { ReactNode } from 'react'
+import { useGetEntityBundle, useGetEntityChildren } from '@/synapse-queries'
+import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import {
-  useGetEntityBundle,
-  useGetEntityChildren,
-} from '../../../../synapse-queries'
-import {
-  EntityRefCollectionView,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
+  useGetDefaultUploadDestination,
+  useGetUploadDestinationForStorageLocation,
+} from '@/synapse-queries/file/useUploadDestination'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   isContainerType,
   isEntityRefCollectionView,
   isVersionableEntity,
-} from '../../../../utils/functions/EntityTypeUtils'
-import {
-  useGetDefaultUploadDestination,
-  useGetUploadDestinationForStorageLocation,
-} from '../../../../synapse-queries/file/useUploadDestination'
+} from '@/utils/functions/EntityTypeUtils'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,
   getUploadDestinationString,
-} from '../../../../utils/functions/FileHandleUtils'
-import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
+} from '@/utils/functions/FileHandleUtils'
 import { Box, Link } from '@mui/material'
-import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
+import {
+  EntityRefCollectionView,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
+import { ReactNode } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
-import { useGetDOIAssociation } from '../../../../synapse-queries/doi/useDOI'
+import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 
 export type EntityProperty = {
   key: string

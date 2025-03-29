@@ -1,8 +1,8 @@
+import { UniqueFacetIdentifier } from '@/utils'
+import { facetObjectMatchesDefinition } from '@/utils/functions/queryUtils'
 import { Box, Button } from '@mui/material'
 import { PlotType as PlotlyPlotType } from 'plotly.js-basic-dist'
 import { Suspense, useEffect, useMemo, useState } from 'react'
-import { UniqueFacetIdentifier } from '../../../utils'
-import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import QueryWrapperSynapsePlot, {

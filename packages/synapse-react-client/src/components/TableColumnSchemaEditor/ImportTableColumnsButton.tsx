@@ -1,18 +1,18 @@
-import { useCallback, useState } from 'react'
-import { Button, ButtonProps } from '@mui/material'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
+import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { DownloadTwoTone } from '@mui/icons-material'
-import { SetOptional } from 'type-fest'
+import { Button, ButtonProps } from '@mui/material'
 import {
   ColumnModel,
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
+import { useCallback, useState } from 'react'
+import { SetOptional } from 'type-fest'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { EntityTypeGroup } from '../../utils/functions/EntityTypeUtils'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
 import { displayToast } from '../ToastMessage'
 
 export type ImportTableColumnsButtonProps = Omit<ButtonProps, 'onClick'> & {

@@ -1,12 +1,8 @@
-import type {
-  CardConfiguration,
-  GenericCardSchema,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import tagCloudSvg from '@/config/style/tagCloud.svg?url'
+import type { CardConfiguration, GenericCardSchema, QueryWrapperPlotNavProps } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { programSql } from '../resources'
-import tagCloudSvg from '../style/tagCloud.svg?url'
 
 export const programsRgbIndex = 9
 
@@ -25,7 +21,7 @@ export const programsCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     baseURL: 'Explore/Programs/DetailsPage',
     URLColumnName: 'Program',
-    matchColumnName: 'Program',
+    matchColumnName: 'Program'
   },
   labelLinkConfig: [
     {

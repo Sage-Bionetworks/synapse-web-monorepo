@@ -1,10 +1,10 @@
-import { useGetEntityBundle } from '../../../../synapse-queries'
+import { useGetEntityBundle } from '@/synapse-queries'
 import {
   isEntityRefCollectionView,
   isTable,
   isVersionableEntity,
-} from '../../../../utils/functions/EntityTypeUtils'
-import { truncateString } from '../../../../utils/functions/StringUtils'
+} from '@/utils/functions/EntityTypeUtils'
+import { truncateString } from '@/utils/functions/StringUtils'
 import { Box, Link, Tooltip, Typography } from '@mui/material'
 import { Entity } from '@sage-bionetworks/synapse-types'
 import { ActionConfiguration } from '../action_menu/EntityActionMenu'

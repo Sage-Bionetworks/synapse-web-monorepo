@@ -1,13 +1,13 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  CookiePreference,
+  COOKIES_AGREEMENT_COOKIE_KEY,
+} from '@/utils/hooks/useCookiePreferences'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import CookiesNotification, { alertConfig } from './CookiesNotification'
 import UniversalCookies from 'universal-cookie'
-import {
-  COOKIES_AGREEMENT_COOKIE_KEY,
-  CookiePreference,
-} from '../../utils/hooks/useCookiePreferences'
+import CookiesNotification, { alertConfig } from './CookiesNotification'
 
 const cookies = new UniversalCookies()
 const mockOnCloseFn = jest.fn()

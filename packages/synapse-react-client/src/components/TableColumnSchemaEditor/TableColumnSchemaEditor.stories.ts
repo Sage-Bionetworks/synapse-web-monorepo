@@ -1,17 +1,17 @@
-import { Meta, StoryObj } from '@storybook/react'
-import TableColumnSchemaEditor from './TableColumnSchemaEditor'
+import mockEntities from '@/mocks/entity'
+import mockTableEntityData from '@/mocks/entity/mockTableEntity'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '@/mocks/mockAnnotationColumns'
+import { mockQueryResultBundle } from '@/mocks/mockFileViewQuery'
 import {
   getAnnotationColumnHandlers,
   getDefaultColumnHandlers,
-} from '../../mocks/msw/handlers/tableQueryHandlers'
-import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+} from '@/mocks/msw/handlers/tableQueryHandlers'
+import { ENTITY_BUNDLE_V2 } from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TableBundle } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
-import mockTableEntityData from '../../mocks/entity/mockTableEntity'
-import mockEntities from '../../mocks/entity'
-import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
+import TableColumnSchemaEditor from './TableColumnSchemaEditor'
 
 const meta = {
   title: 'Synapse/Table Column Schema Editor',

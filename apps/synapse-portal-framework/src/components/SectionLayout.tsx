@@ -1,8 +1,8 @@
+import { scrollToWithOffset } from '@/utils'
 import { Box, Container, ContainerProps } from '@mui/material'
-import { PropsWithChildren, useRef, useEffect } from 'react'
+import { PropsWithChildren, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 import { HelpPopover } from 'synapse-react-client'
-import { scrollToWithOffset } from '../utils'
 
 type SectionLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps

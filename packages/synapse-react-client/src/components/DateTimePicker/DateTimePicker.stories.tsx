@@ -1,8 +1,8 @@
+import { SynapseContextProvider, useSynapseContext } from '@/utils'
 import { Meta, StoryObj } from '@storybook/react'
+import dayjs from 'dayjs'
 import { PropsWithChildren } from 'react'
 import DateTimePicker from './DateTimePicker'
-import { SynapseContextProvider, useSynapseContext } from '../../utils'
-import dayjs from 'dayjs'
 
 const meta = {
   title: 'UI/DateTimePicker',

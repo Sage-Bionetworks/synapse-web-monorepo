@@ -1,3 +1,6 @@
+import { useSearchUserGroupHeaders } from '@/synapse-queries'
+import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
+import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import { Skeleton, useTheme } from '@mui/material'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -7,9 +10,6 @@ import Select, {
   PropsValue,
   SelectComponentsConfig,
 } from 'react-select'
-import { useSearchUserGroupHeaders } from '../../synapse-queries'
-import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
-import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 type UserSearchBoxValueType = {

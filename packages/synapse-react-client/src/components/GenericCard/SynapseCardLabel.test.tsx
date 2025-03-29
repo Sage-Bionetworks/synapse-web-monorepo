@@ -1,8 +1,8 @@
-import { LabelLinkConfig } from '../CardContainerLogic'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ColumnTypeEnum, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import { LabelLinkConfig } from '../CardContainerLogic'
 import { SynapseCardLabel } from './SynapseCardLabel'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 describe('SynapseCardLabel tests', () => {
   const DATASETS = 'datasets'

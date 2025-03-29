@@ -1,3 +1,14 @@
+import AddToList from '@/assets/icons/AddToList'
+import {
+  useGetAnnotationColumnModels,
+  useGetDefaultColumnModels,
+} from '@/synapse-queries/table/useColumnModel'
+import {
+  convertToConcreteEntityType,
+  entityTypeToFriendlyName,
+} from '@/utils/functions/EntityTypeUtils'
+import { AddCircleTwoTone } from '@mui/icons-material'
+import { Box, Button, styled } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -6,6 +17,9 @@ import {
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
+import { selectAtom, useAtomCallback } from 'jotai/utils'
+import { groupBy, isEqual, noop, omit, times } from 'lodash-es'
+import pluralize from 'pluralize'
 import {
   ForwardedRef,
   forwardRef,
@@ -15,34 +29,20 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
-import { Box, Button, styled } from '@mui/material'
-import { groupBy, isEqual, noop, omit, times } from 'lodash-es'
-import { selectAtom, useAtomCallback } from 'jotai/utils'
+import { SetOptional } from 'type-fest'
+import { ZodError, ZodIssue } from 'zod'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { displayToast } from '../ToastMessage'
 import ColumnModelForm from './ColumnModelForm'
-import AddToList from '../../assets/icons/AddToList'
-import { AddCircleTwoTone } from '@mui/icons-material'
-import {
-  convertToConcreteEntityType,
-  entityTypeToFriendlyName,
-} from '../../utils/functions/EntityTypeUtils'
+import ImportTableColumnsButton from './ImportTableColumnsButton'
 import {
   findMatchingColumnModel,
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
 } from './TableColumnSchemaEditorUtils'
-import {
-  useGetAnnotationColumnModels,
-  useGetDefaultColumnModels,
-} from '../../synapse-queries/table/useColumnModel'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { displayToast } from '../ToastMessage'
-import ImportTableColumnsButton from './ImportTableColumnsButton'
-import { SetOptional } from 'type-fest'
-import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
-import { ZodError, ZodIssue } from 'zod'
-import pluralize from 'pluralize'
 import { TableColumnSchemaFormActions } from './TableColumnSchemaFormActions'
+import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
+import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'

@@ -1,3 +1,19 @@
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockSchemaBinding, mockValidationSchema } from '@/mocks/mockSchema'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ASYNCHRONOUS_JOB_TOKEN,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+  SCHEMA_VALIDATION_GET,
+  SCHEMA_VALIDATION_START,
+} from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   act,
   queryByAttribute,
@@ -9,28 +25,12 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep, noop } from 'lodash-es'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   SchemaDrivenAnnotationEditor,
   SchemaDrivenAnnotationEditorProps,
 } from './SchemaDrivenAnnotationEditor'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  ASYNCHRONOUS_JOB_TOKEN,
-  ENTITY_JSON,
-  ENTITY_SCHEMA_BINDING,
-  SCHEMA_VALIDATION_GET,
-  SCHEMA_VALIDATION_START,
-} from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import { mockSchemaBinding, mockValidationSchema } from '../../mocks/mockSchema'
-import { rest, server } from '../../mocks/msw/server'
-import { cloneDeep, noop } from 'lodash-es'
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {
   await userEvent.clear(el)

@@ -1,11 +1,11 @@
-import { useEffect, useState, MouseEvent } from 'react'
-import { CheckIcon } from '../../assets/icons/terms/CheckIcon'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
+import { useGetPresignedUrlContentFromFHA } from '@/synapse-queries/file/useFiles'
 import { Link, Skeleton } from '@mui/material'
-import { SkeletonParagraph } from '../Skeleton'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { times } from 'lodash-es'
-import { useGetPresignedUrlContentFromFHA } from '../../synapse-queries/file/useFiles'
+import { MouseEvent, useEffect, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { SkeletonParagraph } from '../Skeleton'
 
 export type tcItem = {
   iconFileHandleId: string

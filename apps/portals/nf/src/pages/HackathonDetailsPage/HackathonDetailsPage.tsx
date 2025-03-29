@@ -1,15 +1,17 @@
+import { hackathonsSql } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
+import { hackathonCardConfiguration } from '@/config/synapseConfigs/hackathons'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
-import { hackathonsSql } from 'src/config/resources'
-import { columnAliases } from 'src/config/synapseConfigs/commonProps'
-import { hackathonCardConfiguration } from 'src/config/synapseConfigs/hackathons'
 import { CardContainerLogic } from 'synapse-react-client'
 import HackathonBackgroundResultsTab from './HackathonBackgroundResultsTab'
 import HackathonMethodologyTab from './HackathonMethodologyTab'

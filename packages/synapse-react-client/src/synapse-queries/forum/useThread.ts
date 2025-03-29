@@ -1,4 +1,11 @@
-import { useCallback } from 'react'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  CreateDiscussionThread,
+  DiscussionThreadBundle,
+  UpdateThreadMessageRequest,
+  UpdateThreadTitleRequest,
+} from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
@@ -6,14 +13,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import {
-  CreateDiscussionThread,
-  DiscussionThreadBundle,
-  UpdateThreadMessageRequest,
-  UpdateThreadTitleRequest,
-} from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { useCallback } from 'react'
 
 export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =

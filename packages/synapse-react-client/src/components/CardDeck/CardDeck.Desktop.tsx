@@ -1,7 +1,7 @@
-import { CardDeckDataProps } from './CardDeck'
-import LargeButton from '../../components/styled/LargeButton'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import LargeButton from '@/components/styled/LargeButton'
 import classNames from 'classnames'
+import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import { CardDeckDataProps } from './CardDeck'
 
 export default function CardDeckDesktop({
   title,

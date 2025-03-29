@@ -1,17 +1,17 @@
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { act, render, waitFor } from '@testing-library/react'
-import failOnConsoleError from 'jest-fail-on-console'
-import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../utils/APIConstants'
+import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DATA_ACCESS_SUBMISSION_BY_ID } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
+} from '@/utils/functions/getEndpoint'
+import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
+import { SubmissionState } from '@sage-bionetworks/synapse-types'
+import { act, render, waitFor } from '@testing-library/react'
+import failOnConsoleError from 'jest-fail-on-console'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import RejectDataAccessRequestModal, {
   DEFAULT_MESSAGE_APPEND,

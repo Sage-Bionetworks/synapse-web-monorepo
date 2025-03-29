@@ -1,7 +1,11 @@
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { filesPlotNavProps } from '@/config/synapseConfigs/files'
+import {
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  useDetailsPageContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { filesPlotNavProps } from 'src/config/synapseConfigs/files'
 import { QueryWrapperPlotNav } from 'synapse-react-client'
 
 export default function StudyFilesTab() {

@@ -1,4 +1,4 @@
-import Layout from '../../components/Layout'
+import Layout from '@/components/Layout'
 import { Typography } from '@mui/material'
 import logoPath from './assets/arklogomark.png'
 

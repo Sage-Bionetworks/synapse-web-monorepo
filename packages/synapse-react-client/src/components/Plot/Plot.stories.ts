@@ -1,7 +1,7 @@
+import rawData from '@/mocks/distribution_data.json'
 import { Meta, StoryObj } from '@storybook/react'
-import Plot from './Plot'
-import rawData from '../../mocks/distribution_data.json'
 import Plotly from 'plotly.js-basic-dist'
+import Plot from './Plot'
 
 const meta = {
   title: 'Components/PlotlyPlot',

@@ -1,13 +1,13 @@
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import RowDataTable from './RowDataTable'
-import { LabelLinkConfig } from '../CardContainerLogic'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
-} from '../../utils/SynapseConstants'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+} from '@/utils/SynapseConstants'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { LabelLinkConfig } from '../CardContainerLogic'
 import { SkeletonTable } from '../Skeleton'
+import RowDataTable from './RowDataTable'
 
 export type RowDataTableWithQueryProps = {
   /** The query used to retrieve data */

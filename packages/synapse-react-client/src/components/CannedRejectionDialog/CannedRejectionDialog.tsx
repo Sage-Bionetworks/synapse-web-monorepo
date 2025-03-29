@@ -1,3 +1,5 @@
+import { useGetFullTableQueryResults } from '@/synapse-queries'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import {
   Checkbox,
   Collapse,
@@ -7,13 +9,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { UseQueryResult } from '@tanstack/react-query'
 import { Set } from 'immutable'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'

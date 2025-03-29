@@ -1,9 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import userEvent from '@testing-library/user-event'
 import TableTypeSelection, {
   TableTypeSelectionProps,
 } from './TableTypeSelection'
-import userEvent from '@testing-library/user-event'
 
 describe('TableTypeSelection', () => {
   function renderComponent(props: TableTypeSelectionProps) {

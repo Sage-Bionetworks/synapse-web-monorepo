@@ -1,9 +1,9 @@
-import { useMemo, useEffect, useState, useRef } from 'react'
-import { useGetIsUserMemberOfTeam } from '../../../synapse-queries/team/useTeamMembers'
-import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
-import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
+import { useGetIsUserMemberOfTeam } from '@/synapse-queries/team/useTeamMembers'
+import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
+import { TRUSTED_HTML_USERS_TEAM_ID } from '@/utils/SynapseConstants'
 import { Alert } from '@mui/material'
-import { sanitize } from '../../../utils/functions/SanitizeHtmlUtils'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 
 /**
  * @param options

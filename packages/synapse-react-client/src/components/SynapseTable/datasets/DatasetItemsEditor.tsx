@@ -1,3 +1,17 @@
+import WideButton from '@/components/styled/WideButton'
+import {
+  useGetEntity,
+  useGetEntityPath,
+  useUpdateEntity,
+} from '@/synapse-queries'
+import { RequiredProperties } from '@/utils'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+  isDataset,
+  isDatasetCollection,
+} from '@/utils/functions/EntityTypeUtils'
+import { useSet } from '@/utils/hooks'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import {
   Alert,
@@ -23,26 +37,10 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import WideButton from '../../../components/styled/WideButton'
-import {
-  useGetEntity,
-  useGetEntityPath,
-  useUpdateEntity,
-} from '../../../synapse-queries'
-import { RequiredProperties } from '../../../utils'
-import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-  isDataset,
-  isDatasetCollection,
-} from '../../../utils/functions/EntityTypeUtils'
-import { useSet } from '../../../utils/hooks'
-import { EntityBadgeIconsCell } from '../../EntityFinder/details/view/table/EntityBadgeIconsCell'
 import { CreatedOnCell } from '../../EntityFinder/details/view/table/CreatedOnCell'
+import { EntityBadgeIconsCell } from '../../EntityFinder/details/view/table/EntityBadgeIconsCell'
 import { EntityNameCell } from '../../EntityFinder/details/view/table/EntityNameCell'
 import { ModifiedByCell } from '../../EntityFinder/details/view/table/ModifiedByCell'
-import { DatasetEditorCheckboxCell } from './DatasetEditorCheckboxCell'
-import { DatasetEditorVersionCell } from './DatasetEditorVersionCell'
 import { ModifiedOnCell } from '../../EntityFinder/details/view/table/ModifiedOnCell'
 import { ParentProjectCell } from '../../EntityFinder/details/view/table/ParentProjectCell'
 import { EntityFinderModal } from '../../EntityFinder/EntityFinderModal'
@@ -54,6 +52,8 @@ import WarningDialog from '../../SynapseForm/WarningDialog'
 import ColumnHeader from '../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../TanStackTable/StyledVirtualTanStackTable'
 import { displayToast } from '../../ToastMessage'
+import { DatasetEditorCheckboxCell } from './DatasetEditorCheckboxCell'
+import { DatasetEditorVersionCell } from './DatasetEditorVersionCell'
 import { EntityFetchErrorCell } from './EntityFetchErrorCell'
 
 export type DatasetItemsEditorTableData = EntityRef & {

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useGetDockerTags } from '@/synapse-queries/docker'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { Box, Radio, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import {
@@ -6,9 +7,8 @@ import {
   DockerCommit,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { useGetDockerTags } from '../../synapse-queries/docker'
+import { useState } from 'react'
 import { EntityItem } from './ChallengeSubmission'
 
 type SubmissionCommitRow = {

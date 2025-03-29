@@ -1,9 +1,6 @@
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/index'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/index'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { getColumnIndex } from '../GenericCard/index'
 import { SynapseFeaturedDatasetItem } from './SynapseFeaturedDatasetItem'

@@ -1,11 +1,11 @@
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import TwoFactorAuthSettingsPanel, {
   TwoFactorAuthSettingsPanelProps,
 } from './TwoFactorAuthSettingsPanel'
-import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 
 const enabledStatus: TwoFactorAuthStatus = {
   status: 'ENABLED',

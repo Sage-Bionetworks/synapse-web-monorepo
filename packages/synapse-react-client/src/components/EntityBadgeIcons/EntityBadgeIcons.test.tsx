@@ -1,3 +1,29 @@
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import {
+  mockSchemaBinding,
+  mockSchemaValidationResults,
+} from '@/mocks/mockSchema'
+import {
+  getEntityBundleHandler,
+  getEntityJsonHandler,
+} from '@/mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ENTITY_ID,
+  ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
+} from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+} from '@/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   Annotations,
@@ -8,32 +34,6 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import {
-  mockSchemaBinding,
-  mockSchemaValidationResults,
-} from '../../mocks/mockSchema'
-import {
-  getEntityBundleHandler,
-  getEntityJsonHandler,
-} from '../../mocks/msw/handlers/entityHandlers'
-import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
-import { rest, server } from '../../mocks/msw/server'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  ENTITY_ID,
-  ENTITY_SCHEMA_BINDING,
-  ENTITY_SCHEMA_VALIDATION,
-} from '../../utils/APIConstants'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
 import { EntityBadgeIcons, EntityBadgeIconsProps } from './EntityBadgeIcons'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id

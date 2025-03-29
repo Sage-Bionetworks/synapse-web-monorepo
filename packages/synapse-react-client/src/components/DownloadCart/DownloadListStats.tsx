@@ -1,4 +1,4 @@
-import { useGetDownloadListStatistics } from '../../synapse-queries/index'
+import { useGetDownloadListStatistics } from '@/synapse-queries/index'
 import DownloadDetails from './DownloadDetails'
 
 export default function DownloadListStats() {

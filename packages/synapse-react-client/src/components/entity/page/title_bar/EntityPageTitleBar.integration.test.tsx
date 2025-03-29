@@ -1,25 +1,25 @@
-import EntityPageTitleBar, {
-  EntityPageTitleBarProps,
-} from './EntityPageTitleBar'
-import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
-import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
-import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { getVersionedEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   DockerRepository,
   EntityBundle,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { server } from '../../../../mocks/msw/server'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../utils/functions/getEndpoint'
+import { render, screen } from '@testing-library/react'
 import * as FavoriteButtonModule from '../../../favorites/FavoriteButton'
-import * as TitleBarPropertiesModule from './TitleBarProperties'
+import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
+import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
+import EntityPageTitleBar, {
+  EntityPageTitleBarProps,
+} from './EntityPageTitleBar'
 import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
-import { getVersionedEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
+import * as TitleBarPropertiesModule from './TitleBarProperties'
 
 const TITLE_BAR_PROPERTIES_TEST_ID = 'title-bar-properties'
 const TITLE_BAR_VERSION_INFO_TEST_ID = 'title-bar-version-info'

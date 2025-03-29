@@ -1,3 +1,4 @@
+import { getIsAllSelectedFromInfiniteList } from '@/utils/hooks/useGetIsAllSelectedInfiniteList'
 import {
   EntityType,
   GetProjectsParameters,
@@ -6,7 +7,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'

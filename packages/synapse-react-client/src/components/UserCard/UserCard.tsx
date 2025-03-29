@@ -1,19 +1,19 @@
-import { useMemo } from 'react'
-import { SynapseConstants } from '../../utils'
-import { useGetProfileImage } from '../../synapse-queries/file/useFiles'
+import { useGetProfileImage } from '@/synapse-queries/file/useFiles'
 import {
   useGetPrincipalIdForAlias,
   useGetUserProfile,
-} from '../../synapse-queries/user/useUserBundle'
+} from '@/synapse-queries/user/useUserBundle'
+import { SynapseConstants } from '@/utils'
 import usePreFetchResource, {
   useCreateUrlForData,
-} from '../../utils/hooks/usePreFetchResource'
+} from '@/utils/hooks/usePreFetchResource'
+import { UserCardSize } from '@/utils/SynapseConstants'
 import { AliasType, UserProfile } from '@sage-bionetworks/synapse-types'
+import { useMemo } from 'react'
 import { Avatar, AvatarSize } from './Avatar'
+import { UserBadge } from './UserBadge'
 import { MenuAction } from './UserCardContextMenu'
 import UserCardMedium from './UserCardMedium'
-import { UserBadge } from './UserBadge'
-import { UserCardSize } from '../../utils/SynapseConstants'
 
 export type UserCardProps = {
   /** A UserProfile may be used for data for the card. You must supply one of `userProfile`, `alias`, `ownerId` */

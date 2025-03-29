@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { isExternalFileHandle, isFileEntity } from '@/utils/types/IsType'
+import { OpenInNewTwoTone } from '@mui/icons-material'
 import {
   BatchFileRequest,
-  FileHandleAssociateType,
-  FileEntity,
   ExternalFileHandle,
+  FileEntity,
+  FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
-import { OpenInNewTwoTone } from '@mui/icons-material'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { isFileEntity, isExternalFileHandle } from '../../utils/types/IsType'
+import { useEffect, useState } from 'react'
 
 export type ExternalFileHandleLinkProps = {
   synId: string

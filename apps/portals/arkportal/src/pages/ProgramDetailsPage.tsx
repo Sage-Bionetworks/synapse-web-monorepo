@@ -1,3 +1,4 @@
+import { datasetCardConfiguration, datasetColumnAliases } from '@/config/synapseConfigs/datasets'
 import {
   DetailsPageContent,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
@@ -8,7 +9,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import {
   useGetPortalComponentSearchParams,
 } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { datasetCardConfiguration, datasetColumnAliases } from 'src/config/synapseConfigs/datasets'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'

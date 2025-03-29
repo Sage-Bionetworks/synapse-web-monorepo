@@ -1,12 +1,12 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import RecentPublicationsGrid, {
   RecentPublicationsGridProps,
 } from './RecentPublicationsGrid'

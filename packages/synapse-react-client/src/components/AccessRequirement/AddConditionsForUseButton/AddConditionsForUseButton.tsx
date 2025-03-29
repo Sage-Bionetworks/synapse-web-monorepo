@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import { Button } from '@mui/material'
-import IconSvg from '../../IconSvg/IconSvg'
-import ImposeRestrictionDialog from '../ImposeRestrictionDialog/ImposeRestrictionDialog'
 import {
   useGetEntityBundle,
   useIsCurrentUserACTMember,
-} from '../../../synapse-queries'
-import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
+} from '@/synapse-queries'
 import {
   isEntityRefCollectionView,
   isEntityView,
-} from '../../../utils/functions/EntityTypeUtils'
+} from '@/utils/functions/EntityTypeUtils'
+import { Button } from '@mui/material'
+import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
+import IconSvg from '../../IconSvg/IconSvg'
+import ImposeRestrictionDialog from '../ImposeRestrictionDialog/ImposeRestrictionDialog'
 
 export type AddConditionsForUseButtonProps = {
   entityId: string

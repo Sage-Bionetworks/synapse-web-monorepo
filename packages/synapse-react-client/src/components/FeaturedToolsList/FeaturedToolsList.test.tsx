@@ -1,10 +1,10 @@
-import FeaturedToolsList from './FeaturedToolsList'
+import syn26344826Json from '@/mocks/query/syn26344826.json'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn26344826Json from '../../mocks/query/syn26344826.json'
 import { render, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import FeaturedToolsList from './FeaturedToolsList'
 
 jest.mock('../../synapse-client', () => ({
   getQueryTableResults: jest.fn(),

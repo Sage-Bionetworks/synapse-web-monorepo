@@ -1,3 +1,4 @@
+import { isTypeViaConcreteTypeFactory } from '@/utils/types/IsType'
 import {
   Dataset,
   DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
@@ -30,7 +31,6 @@ import {
   VIEW_CONCRETE_TYPE_VALUES,
   VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { isTypeViaConcreteTypeFactory } from '../types/IsType'
 
 export function getEntityTypeFromHeader(
   header:

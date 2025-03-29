@@ -1,12 +1,12 @@
-import { Meta, StoryObj } from '@storybook/react'
-import FeaturedDataTabs from './FeaturedDataTabs'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import {
   mockQueryPerCardResult,
   mockSingleQueryResult,
-} from '../../mocks/query/mockFeaturedDataTabsQueryData'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+} from '@/mocks/query/mockFeaturedDataTabsQueryData'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { Meta, StoryObj } from '@storybook/react'
+import FeaturedDataTabs from './FeaturedDataTabs'
 
 const meta = {
   title: 'Home Page/FeaturedDataTabs',

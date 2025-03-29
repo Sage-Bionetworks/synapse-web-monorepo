@@ -1,29 +1,29 @@
-import { render, screen } from '@testing-library/react'
-import { HasAccessProps, HasAccessV2 } from './HasAccessV2'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import {
+  mockOpenRestrictionInformation,
+  mockUnmetControlledDataRestrictionInformationACT,
+  mockUnmetControlledDataRestrictionInformationRestricted,
+} from '@/mocks/mock_has_access_data'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
+} from '@/utils/functions/getEndpoint'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import {
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import {
-  MOCK_ACCESS_TOKEN,
-  MOCK_CONTEXT_VALUE,
-} from '../../mocks/MockSynapseContext'
-import {
-  mockOpenRestrictionInformation,
-  mockUnmetControlledDataRestrictionInformationACT,
-  mockUnmetControlledDataRestrictionInformationRestricted,
-} from '../../mocks/mock_has_access_data'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
+import { render, screen } from '@testing-library/react'
+import { HasAccessProps, HasAccessV2 } from './HasAccessV2'
 
 const entityId = mockFileEntityData.id
 

@@ -1,11 +1,6 @@
-import {
-  CardConfiguration,
-  GenericCardSchema,
-  QueryWrapperPlotNavProps,
-  SynapseConstants,
-} from 'synapse-react-client'
+import personSvg from '@/config/style/Person.svg?url'
+import { CardConfiguration, GenericCardSchema, QueryWrapperPlotNavProps, SynapseConstants } from 'synapse-react-client'
 import { peopleSql } from '../resources'
-import personSvg from '../style/Person.svg?url'
 
 const rgbIndex = 3
 

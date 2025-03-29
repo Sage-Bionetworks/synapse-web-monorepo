@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { useGetCurrentUserProfile } from '@/synapse-queries'
 import {
   ANONYMOUS_PRINCIPAL_ID,
   AVATAR,
@@ -6,10 +6,10 @@ import {
   MEDIUM_USER_CARD,
   SEPERATOR,
   SMALL_USER_CARD,
-} from '../../utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
-import UserCard, { UserCardProps } from './UserCard'
+} from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
+import { Meta, StoryObj } from '@storybook/react'
+import UserCard, { UserCardProps } from './UserCard'
 
 const meta = {
   title: 'UI/UserCard',

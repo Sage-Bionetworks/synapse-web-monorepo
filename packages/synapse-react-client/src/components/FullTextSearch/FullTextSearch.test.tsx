@@ -1,26 +1,26 @@
+import {
+  mockQueryBundleRequest,
+  mockQueryResultBundle,
+} from '@/mocks/mockFileViewQuery'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ColumnSingleValueFilterOperator,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { FullTextSearch } from './FullTextSearch'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../QueryVisualizationWrapper'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../QueryContext/QueryContext'
 import {
-  ColumnSingleValueFilterOperator,
-  QueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
-import {
-  mockQueryBundleRequest,
-  mockQueryResultBundle,
-} from '../../mocks/mockFileViewQuery'
-import { server } from '../../mocks/msw/server'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../QueryVisualizationWrapper'
+import { FullTextSearch } from './FullTextSearch'
 import { updateQueryUsingSearchTerm } from './FullTextSearchUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const initialQueryRequest = mockQueryBundleRequest
 

@@ -1,22 +1,22 @@
-import { createRef } from 'react'
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import {
-  CreateChallengeTeam,
-  CreateChallengeTeamHandle,
-  TOO_MANY_INVITEES_ERROR,
-} from './CreateChallengeTeam'
 import {
   MOCK_CHALLENGE_ID,
   mockChallengeTeam,
-} from '../../mocks/challenge/mockChallenge'
-import userEvent from '@testing-library/user-event'
-import { mockTeamData } from '../../mocks/team/mockTeam'
+} from '@/mocks/challenge/mockChallenge'
+import { mockTeamData } from '@/mocks/team/mockTeam'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ChallengeTeam,
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { createRef } from 'react'
+import {
+  CreateChallengeTeam,
+  CreateChallengeTeamHandle,
+  TOO_MANY_INVITEES_ERROR,
+} from './CreateChallengeTeam'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
 
 jest.mock('./useCreateAndRegisterChallengeTeam')

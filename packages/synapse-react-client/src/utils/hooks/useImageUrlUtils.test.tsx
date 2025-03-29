@@ -1,6 +1,6 @@
-import { useImageUrl } from './useImageUrlUtils'
-import { useGetStablePresignedUrl } from '../../synapse-queries'
+import { useGetStablePresignedUrl } from '@/synapse-queries'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { useImageUrl } from './useImageUrlUtils'
 
 jest.mock('../../synapse-queries', () => ({
   useGetStablePresignedUrl: jest.fn(),

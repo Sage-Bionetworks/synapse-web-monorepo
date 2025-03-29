@@ -1,16 +1,16 @@
-import { InfoTwoTone } from '@mui/icons-material'
-import { Box, Link, Tooltip, Typography } from '@mui/material'
-import { useLocalStorageValue } from '@react-hookz/web'
-import dayjs from 'dayjs'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
   LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
   LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
-} from '../../utils/SynapseConstants'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
+} from '@/utils/SynapseConstants'
+import { InfoTwoTone } from '@mui/icons-material'
+import { Box, Link, Tooltip, Typography } from '@mui/material'
+import { useLocalStorageValue } from '@react-hookz/web'
+import dayjs from 'dayjs'
+import { getLoginMethodFriendlyName, LoginMethod } from './LoginMethod'
 
 export type LastLoginInfoProps = {
   currentSourceAppName: string | undefined

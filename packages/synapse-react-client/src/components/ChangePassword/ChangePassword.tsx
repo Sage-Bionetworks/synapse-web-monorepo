@@ -1,9 +1,9 @@
+import { useGetCurrentUserProfile } from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { validatePassword } from '@/utils/functions/StringUtils'
 import { Alert, Button, Link, TextField } from '@mui/material'
 import { FormEvent, useEffect, useState } from 'react'
 import { Link as RouterLink, Navigate } from 'react-router'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
-import { useSynapseContext } from '../../utils'
-import { validatePassword } from '../../utils/functions/StringUtils'
 import { displayToast } from '../ToastMessage'
 import useChangePasswordFormState from './useChangePasswordFormState'
 

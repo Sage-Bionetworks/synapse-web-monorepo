@@ -1,3 +1,4 @@
+import { useGetCurrentUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { Typography } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 import {
@@ -7,11 +8,10 @@ import {
   NavLink,
   Outlet,
   RouteObject,
-  useParams,
   RouterProvider,
+  useParams,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
-import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

@@ -17,14 +17,14 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
-import { dataOnStudiesPageSql, dataSql, studiesSql } from 'src/config/resources'
-import { DATA_TABLE_COLUMN_NAMES } from 'src/config/synapseConfigs/data'
+import { dataOnStudiesPageSql, dataSql, studiesSql } from '@/config/resources'
+import { DATA_TABLE_COLUMN_NAMES } from '@/config/synapseConfigs/data'
 import {
   STUDY_TABLE_COLUMN_NAMES,
   studyCardConfiguration,
   studyColumnAliases,
   studyRgbIndex,
-} from 'src/config/synapseConfigs/studies'
+} from '@/config/synapseConfigs/studies'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -33,7 +33,7 @@ import {
   RssFeedCards,
   SynapseErrorType,
 } from 'synapse-react-client'
-import studyHeaderSvg from '../config/style/study-header.svg?url'
+import studyHeaderSvg from '@/config/style/study-header.svg?url'
 
 const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
   {

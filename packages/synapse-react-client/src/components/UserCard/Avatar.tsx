@@ -1,9 +1,9 @@
-import { CSSProperties, useRef } from 'react'
-import { getColor } from '../../utils/functions/getUserData'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import UserCardMedium from './UserCardMedium'
-import { useOverlay } from '../../utils/hooks'
+import { getColor } from '@/utils/functions/getUserData'
+import { useOverlay } from '@/utils/hooks'
 import { Avatar as MUIAvatar, Skeleton, SxProps, useTheme } from '@mui/material'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { CSSProperties, useRef } from 'react'
+import UserCardMedium from './UserCardMedium'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500

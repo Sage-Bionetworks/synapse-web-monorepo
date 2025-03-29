@@ -1,21 +1,21 @@
-import { useState, MouseEvent } from 'react'
-import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
+import SynapseFullLogo from '@/assets/icons/SynapseFullLogo'
+import { useSynapseContext } from '@/utils'
+import { useOneSageURL } from '@/utils/hooks'
 import { Close, MenuOutlined } from '@mui/icons-material'
 import {
   Box,
   Button,
-  SxProps,
-  useTheme,
-  useMediaQuery,
-  Menu,
-  MenuItem,
   Divider,
   IconButton,
+  Menu,
+  MenuItem,
   styled,
+  SxProps,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
-import { useOneSageURL } from '../../utils/hooks'
 import { ColorPartial } from '@mui/material/styles/createPalette'
-import { useSynapseContext } from '../../utils'
+import { MouseEvent, useState } from 'react'
 import SageResourcesPopover from '../SageResourcesPopover'
 
 const LOGIN_LINK = '/LoginPlace:0'

@@ -1,6 +1,6 @@
-import { UserBadge } from '../UserCard/UserBadge'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type CreatedOnByUserDivProps = {
   userId: string

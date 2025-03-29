@@ -1,3 +1,10 @@
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  MonthlyFilesStatistics,
+  ProjectFilesStatisticsRequest,
+  ProjectFilesStatisticsResponse,
+} from '@sage-bionetworks/synapse-types'
 import {
   act,
   Queries,
@@ -5,14 +12,7 @@ import {
   RenderResult,
   waitFor,
 } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
 import StatisticsPlot, { StatisticsPlotProps } from '../StatisticsPlot'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  MonthlyFilesStatistics,
-  ProjectFilesStatisticsRequest,
-  ProjectFilesStatisticsResponse,
-} from '@sage-bionetworks/synapse-types'
 
 const projectFilesStatsRequest: ProjectFilesStatisticsRequest = {
   concreteType:

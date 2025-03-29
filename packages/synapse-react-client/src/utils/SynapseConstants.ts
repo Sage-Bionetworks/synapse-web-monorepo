@@ -1,4 +1,4 @@
-import { ORIENTATION_BANNER_KEYS } from '../components/OrientationBanner'
+import { ORIENTATION_BANNER_KEYS } from '@/components/OrientationBanner'
 
 /** Bootstrapped principals */
 /** The group representing all users logged-in to Synapse */

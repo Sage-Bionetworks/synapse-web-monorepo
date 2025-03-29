@@ -1,11 +1,11 @@
-import { PropsWithChildren, Suspense } from 'react'
+import { ThemeProvider } from '@/theme'
+import { ThemeOptions } from '@mui/material'
 import {
   QueryClient,
   QueryClientConfig,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import { ThemeProvider } from '../../theme'
-import { ThemeOptions } from '@mui/material'
+import { PropsWithChildren, Suspense } from 'react'
 import { SynapseContextProvider, SynapseContextType } from './SynapseContext'
 
 export const defaultQueryClientConfig = {

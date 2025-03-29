@@ -1,32 +1,32 @@
-import { Button, Skeleton, Typography } from '@mui/material'
-import { isEmpty, toLower, upperFirst } from 'lodash-es'
-import dayjs from 'dayjs'
-import { useMemo, Fragment, useState } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import useGetDataAccessSubmission, {
-  useUpdateDataAccessSubmissionState,
-} from '../../synapse-queries/dataaccess/useDataAccessSubmission'
 import {
   useGetAccessRequirementACL,
   useGetAccessRequirements,
   useGetAccessRequirementWikiPageKey,
-} from '../../synapse-queries/dataaccess/useAccessRequirements'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
+} from '@/synapse-queries/dataaccess/useAccessRequirements'
+import useGetDataAccessSubmission, {
+  useUpdateDataAccessSubmissionState,
+} from '@/synapse-queries/dataaccess/useDataAccessSubmission'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
+import { Button, Skeleton, Typography } from '@mui/material'
 import {
   ACCESS_TYPE,
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import { isEmpty, toLower, upperFirst } from 'lodash-es'
+import { Fragment, useMemo, useState } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import WarningDialog, { WarningDialogProps } from '../SynapseForm/WarningDialog'
+import { UserBadge } from '../UserCard/UserBadge'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
-import duration from 'dayjs/plugin/duration'
 import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
-import { UserBadge } from '../UserCard/UserBadge'
 
 dayjs.extend(duration)
 

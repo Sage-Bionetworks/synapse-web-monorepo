@@ -1,11 +1,11 @@
-import { convertToConcreteEntityType } from '../../../../utils/functions/EntityTypeUtils'
-import { useSearchInfinite } from '../../../../synapse-queries/search/useSearch'
+import NoSearchResults from '@/assets/icons/NoSearchResults'
+import SearchImage from '@/assets/icons/SearchImage'
+import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
+import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
 import { Hit, SearchQuery } from '@sage-bionetworks/synapse-types'
 import { EntityHeaderFromHit } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import NoSearchResults from '../../../../assets/icons/NoSearchResults'
-import SearchImage from '../../../../assets/icons/SearchImage'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery

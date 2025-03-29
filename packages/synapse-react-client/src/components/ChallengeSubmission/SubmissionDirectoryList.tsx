@@ -1,3 +1,15 @@
+import SynapseClient from '@/synapse-client'
+import {
+  invalidateAllQueriesForEntity,
+  useGetEntities,
+  useGetEntityChildren,
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { InfoTwoTone } from '@mui/icons-material'
 import { Box, Button, Radio, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
@@ -19,18 +31,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import SynapseClient from '../../synapse-client'
-import {
-  invalidateAllQueriesForEntity,
-  useGetEntities,
-  useGetEntityChildren,
-} from '../../synapse-queries'
-import { useSynapseContext } from '../../utils'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 import ConfirmationDialog from '../ConfirmationDialog'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { ErrorBanner } from '../error/ErrorBanner'

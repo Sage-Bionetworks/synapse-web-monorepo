@@ -1,3 +1,16 @@
+import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '@/mocks/accessRequirement/mockAccessRequirementAcls'
+import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import { mockTeamData, mockTeamData2 } from '@/mocks/team/mockTeam'
+import {
+  MOCK_USER_ID_2,
+  MOCK_USER_NAME,
+  MOCK_USER_NAME_2,
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   ACCESS_TYPE,
   AccessControlList,
@@ -6,25 +19,6 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '../../mocks/accessRequirement/mockAccessRequirementAcls'
-import { rest, server } from '../../mocks/msw/server'
-import { mockTeamData, mockTeamData2 } from '../../mocks/team/mockTeam'
-import {
-  MOCK_USER_ID_2,
-  MOCK_USER_NAME,
-  MOCK_USER_NAME_2,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import {
-  AccessRequirementAclEditor,
-  AccessRequirementAclEditorHandle,
-  AccessRequirementAclEditorProps,
-  EMPTY_RESOURCE_ACCESS_LIST_TEXT,
-} from './AccessRequirementAclEditor'
 import {
   addUserToAcl,
   confirmItem,
@@ -32,6 +26,12 @@ import {
   updatePermissionLevel,
 } from '../AclEditor/AclEditorTestUtils'
 import { PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE } from '../AclEditor/useUpdateAcl'
+import {
+  AccessRequirementAclEditor,
+  AccessRequirementAclEditorHandle,
+  AccessRequirementAclEditorProps,
+  EMPTY_RESOURCE_ACCESS_LIST_TEXT,
+} from './AccessRequirementAclEditor'
 
 const onSaveComplete = jest.fn()
 const deleteAccessRequirementAclSpy = jest.spyOn(
@@ -214,7 +214,7 @@ describe('AccessRequirementAclEditor', () => {
             return res(ctx.status(200), ctx.json(aclWithOneResourceAccessItem))
           },
         ),
-      )
+    )
 
       const props: AccessRequirementAclEditorProps = {
         accessRequirementId,

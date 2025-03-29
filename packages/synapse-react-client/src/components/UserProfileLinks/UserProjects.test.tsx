@@ -1,10 +1,10 @@
 import '@testing-library/jest-dom'
+import { SynapseTestContext } from '@/mocks/MockSynapseContext'
+import { useGetUserProjectsInfinite } from '@/synapse-queries/user/useGetUserProjects'
+import { ProjectHeader } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserProjects from './UserProjects'
-import { useGetUserProjectsInfinite } from '../../synapse-queries/user/useGetUserProjects'
-import { ProjectHeader } from '@sage-bionetworks/synapse-types'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 
 jest.mock('../../../src/synapse-queries/user/useGetUserProjects', () => {
   return {

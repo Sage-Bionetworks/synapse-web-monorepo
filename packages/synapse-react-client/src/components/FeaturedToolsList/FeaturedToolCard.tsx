@@ -1,6 +1,6 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { HTMLAttributes } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import ShowMore from '../ShowMore'
 
 export type FeaturedToolCardProps = {

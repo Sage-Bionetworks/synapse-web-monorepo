@@ -1,6 +1,6 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { FacetChip, FacetChipProps } from './FacetChip'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 
 const mockOnClick = jest.fn()
 

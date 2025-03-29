@@ -1,12 +1,5 @@
-import {
-  UseMutationOptions,
-  useMutation,
-  useQuery,
-  UseQueryOptions,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   AccessCodeResponse,
   OAuthClientPublic,
@@ -14,6 +7,13 @@ import {
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
 } from '@sage-bionetworks/synapse-types'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 export function useGetOAuth2RequestDescription(
   request: OIDCAuthorizationRequest,

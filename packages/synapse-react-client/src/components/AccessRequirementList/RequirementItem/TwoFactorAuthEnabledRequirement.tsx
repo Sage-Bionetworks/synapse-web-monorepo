@@ -1,14 +1,14 @@
-import { ButtonProps, Typography } from '@mui/material'
+import { useGetTwoFactorEnrollmentStatus } from '@/synapse-queries/auth/useTwoFactorEnrollment'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm'
-import { useGetTwoFactorEnrollmentStatus } from '../../../synapse-queries/auth/useTwoFactorEnrollment'
-import RequirementItem, { RequirementItemProps } from './RequirementItem'
+} from '@/utils/functions/getEndpoint'
+import { ButtonProps, Typography } from '@mui/material'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
+import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem, { RequirementItemProps } from './RequirementItem'
 
 const TWO_FACTOR_ENROLLMENT_LINK = `${getEndpoint(
   BackendDestinationEnum.PORTAL_ENDPOINT,

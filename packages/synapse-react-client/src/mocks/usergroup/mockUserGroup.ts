@@ -1,15 +1,15 @@
 import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+} from '@/utils/SynapseConstants'
+import { mockTeamUserGroups } from '../team/mockTeam'
+import {
   mockUserData1,
   mockUserData2,
   mockUserData3,
   MockUserOrTeamData,
 } from '../user/mock_user_profile'
-import { mockTeamUserGroups } from '../team/mockTeam'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
 
 export const mockPublicGroupData: MockUserOrTeamData = {
   id: PUBLIC_PRINCIPAL_ID,

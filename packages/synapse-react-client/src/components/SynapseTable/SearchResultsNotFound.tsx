@@ -1,4 +1,4 @@
-import NoSearchResults from '../../assets/icons/NoSearchResults'
+import NoSearchResults from '@/assets/icons/NoSearchResults'
 
 export default function SearchResultsNotFound() {
   return (

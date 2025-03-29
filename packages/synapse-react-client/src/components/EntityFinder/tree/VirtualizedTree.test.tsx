@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
@@ -6,6 +8,7 @@ import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { VariableSizeNodePublicState } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
+import { WritableDeep } from 'type-fest'
 import {
   EntityHeaderNode,
   EntityTreeNodeType,
@@ -15,9 +18,6 @@ import {
   RootNodeConfiguration,
   TreeData,
 } from './VirtualizedTree'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { WritableDeep } from 'type-fest'
 
 describe('VirtualizedTree tests', () => {
   beforeEach(() => {

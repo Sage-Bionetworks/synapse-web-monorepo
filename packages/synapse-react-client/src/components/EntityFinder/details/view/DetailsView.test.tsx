@@ -1,4 +1,18 @@
 import '@testing-library/jest-dom'
+import * as EntityBadgeModule from '@/components/EntityBadgeIcons/EntityBadgeIcons'
+import { mockProjectHeader } from '@/mocks/entity/mockEntity'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY_ID_VERSIONS } from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   EntityHeader,
   EntityType,
@@ -10,20 +24,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import * as EntityBadgeModule from '../../../../components/EntityBadgeIcons/EntityBadgeIcons'
-import { mockProjectHeader } from '../../../../mocks/entity/mockEntity'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { mockFileHandle } from '../../../../mocks/mock_file_handle'
-import { rest, server } from '../../../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import { ENTITY_ID_VERSIONS } from '../../../../utils/APIConstants'
-import { SynapseContextType } from '../../../../utils/context/SynapseContext'
-import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../utils/functions/getEndpoint'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { toEntityHeader } from '../configurations/ProjectListDetails'

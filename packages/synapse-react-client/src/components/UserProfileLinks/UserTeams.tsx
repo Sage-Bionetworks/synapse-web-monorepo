@@ -1,9 +1,9 @@
+import { useGetUserTeamsInfinite } from '@/synapse-queries/user/useGetUserTeams'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import { Team } from '@sage-bionetworks/synapse-types'
 import { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetUserTeamsInfinite } from '../../synapse-queries/user/useGetUserTeams'
-import { Team } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 
 export type UserTeamsProps = {

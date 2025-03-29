@@ -1,4 +1,11 @@
 import {
+  convertToEntityType,
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isSubmissionView,
+} from '@/utils/functions/EntityTypeUtils'
+import {
   ColumnModel,
   ColumnType,
   ColumnTypeEnum,
@@ -9,19 +16,9 @@ import {
   ViewEntityType,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
-import { SetOptional } from 'type-fest'
-import {
-  ColumnModelFormData,
-  JsonSubColumnModelFormData,
-} from './Validators/ColumnModelValidator'
-import {
-  convertToEntityType,
-  isDataset,
-  isDatasetCollection,
-  isEntityView,
-  isSubmissionView,
-} from '../../utils/functions/EntityTypeUtils'
 import { JSONSchema7Definition } from 'json-schema'
+import { SetOptional } from 'type-fest'
+import { ColumnModelFormData, JsonSubColumnModelFormData } from './Validators/ColumnModelValidator'
 
 /**
  * These column types can only be used in Tables. They can not be used in views.

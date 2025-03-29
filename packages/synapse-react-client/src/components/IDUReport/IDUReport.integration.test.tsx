@@ -1,22 +1,18 @@
-import { render, screen } from '@testing-library/react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { APPROVED_SUBMISSION_INFO } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
 } from '@sage-bionetworks/synapse-types'
+import { act, render, screen } from '@testing-library/react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import IDUReport from './IDUReport'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-} from '../../mocks/user/mock_user_profile'
-import { rest, server } from '../../mocks/msw/server'
-import { APPROVED_SUBMISSION_INFO } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { act } from '@testing-library/react'
 
 const page1: SubmissionInfoPage = {
   results: [

@@ -1,12 +1,12 @@
-import { ResetTwoFactorAuth } from './ResetTwoFactorAuth'
-import { render, screen, waitFor, within } from '@testing-library/react'
-import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
+import { oauth2PromptFor2FAHandler } from '@/mocks/handlers/oauth2Handlers'
+import { server } from '@/mocks/node.js'
 import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
-import { vitest } from 'vitest'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { server } from '../../mocks/node.js'
-import { oauth2PromptFor2FAHandler } from '../../mocks/handlers/oauth2Handlers'
+import { vitest } from 'vitest'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
+import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'
+import { ResetTwoFactorAuth } from './ResetTwoFactorAuth'
 
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {

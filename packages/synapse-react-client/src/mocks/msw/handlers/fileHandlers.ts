@@ -1,3 +1,4 @@
+import { FILE, FILE_HANDLE_BATCH } from '@/utils/APIConstants'
 import { ExternalFileHandleInterface } from '@sage-bionetworks/synapse-client'
 import {
   BatchFileRequest,
@@ -6,7 +7,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { rest } from 'msw'
-import { FILE, FILE_HANDLE_BATCH } from '../../../utils/APIConstants'
 import { MOCK_FILE_HANDLE_ID, mockFileHandles } from '../../mock_file_handle'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'

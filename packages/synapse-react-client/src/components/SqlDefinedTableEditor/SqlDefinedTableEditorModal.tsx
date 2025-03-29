@@ -1,11 +1,11 @@
+import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import { Alert } from '@mui/material'
+import { MaterializedView, VirtualTable } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
-import SqlDefinedTableEditor from './SqlDefinedTableEditor'
-import { useGetEntity, useUpdateEntity } from '../../synapse-queries'
-import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
-import { MaterializedView, VirtualTable } from '@sage-bionetworks/synapse-types'
-import { Alert } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import SqlDefinedTableEditor from './SqlDefinedTableEditor'
 
 export type SqlDefinedTableEditorModalProps = {
   open: boolean

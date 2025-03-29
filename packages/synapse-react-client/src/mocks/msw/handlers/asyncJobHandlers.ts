@@ -1,15 +1,15 @@
-import { DefaultBodyType, rest } from 'msw'
+import { ASYNCHRONOUS_JOB_TOKEN } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
+import { SynapseError } from '@/utils/SynapseError'
 import {
   AsynchJobState,
   AsynchronousJobStatus,
   AsyncJobId,
 } from '@sage-bionetworks/synapse-types'
-import { ASYNCHRONOUS_JOB_TOKEN } from '../../../utils/APIConstants'
-import { SynapseError } from '../../../utils/SynapseError'
+import { DefaultBodyType, rest } from 'msw'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 type AsyncJobDetails<TRequestBody, TResponseBody> = {

@@ -1,24 +1,24 @@
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import EntityViewScopeEditorModal from './EntityViewScopeEditorModal'
-import EntityViewScopeEditor from './EntityViewScopeEditor'
-import { EntityViewScopeEditorModalProps } from './EntityViewScopeEditorModal'
-import { act, render, screen, within } from '@testing-library/react'
-import { waitFor } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
-import userEvent from '@testing-library/user-event'
+import { mockProjectViewEntity } from '@/mocks/entity/mockProjectView'
 import mockTableEntityData, {
   mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
+} from '@/mocks/entity/mockTableEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
+  Entity,
+  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
-  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
-  Entity,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import EntityViewScopeEditor from './EntityViewScopeEditor'
+import EntityViewScopeEditorModal, {
+  EntityViewScopeEditorModalProps,
+} from './EntityViewScopeEditorModal'
 
 const mockTableEntityInstance = mockTableEntityData.entity
 

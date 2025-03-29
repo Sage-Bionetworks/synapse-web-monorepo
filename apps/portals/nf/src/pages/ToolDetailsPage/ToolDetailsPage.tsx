@@ -1,15 +1,19 @@
+import { toolsSql } from '@/config/resources'
+import { toolsSchema } from '@/config/synapseConfigs/tools'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import {
+  sharePageLinkButtonDetailPageProps,
+} from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
-import { toolsSql } from 'src/config/resources'
-import { toolsSchema } from 'src/config/synapseConfigs/tools'
 import {
   CardContainerLogic,
   ErrorPage,

@@ -1,11 +1,11 @@
+import { server } from '@/mocks/msw/server'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
+import { getUserProfileWithProfilePicAttached } from '@/utils/functions/getUserData'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { render } from '@testing-library/react'
 import UserCardList, { UserCardListProps } from './UserCardList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
-import { server } from '../../mocks/msw/server'
-import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 
 jest.mock('../../utils/functions/getUserData', () => ({
   getUserProfileWithProfilePicAttached: jest.fn(),

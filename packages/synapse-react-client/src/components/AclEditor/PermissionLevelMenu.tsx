@@ -1,11 +1,11 @@
-import { MenuItem, TextField, Typography } from '@mui/material'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import {
   getAccessTypeFromPermissionLevel,
   getPermissionLevelFromAccessType,
   PermissionLevel,
   permissionLevelToLabel,
-} from '../../utils/PermissionLevelToAccessType'
+} from '@/utils/PermissionLevelToAccessType'
+import { MenuItem, TextField, Typography } from '@mui/material'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 
 export type PermissionLevelMenuProps = {
   currentAccessType: ACCESS_TYPE[]

@@ -1,18 +1,18 @@
-import { forwardRef } from 'react'
+import { getFiles } from '@/synapse-client/SynapseClient'
+import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { implementsExternalFileHandleInterface } from '@/utils/types/IsType'
+import { Tooltip } from '@mui/material'
 import {
   BatchFileRequest,
   ExternalFileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { getFiles } from '../../synapse-client/SynapseClient'
-import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { forwardRef } from 'react'
 import { UAParser } from 'ua-parser-js'
-import { Tooltip } from '@mui/material'
-import { implementsExternalFileHandleInterface } from '../../utils/types/IsType'
-import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
+import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string

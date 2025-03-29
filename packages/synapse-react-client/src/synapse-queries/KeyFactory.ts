@@ -1,3 +1,14 @@
+import { removeTrailingUndefinedElements } from '@/utils/functions/ArrayUtils'
+import { hashCode, normalizeNumericId } from '@/utils/functions/StringUtils'
+import {
+  USER_BUNDLE_MASK_IS_ACT_MEMBER,
+  USER_BUNDLE_MASK_IS_AR_REVIEWER,
+  USER_BUNDLE_MASK_IS_CERTIFIED,
+  USER_BUNDLE_MASK_IS_VERIFIED,
+  USER_BUNDLE_MASK_ORCID,
+  USER_BUNDLE_MASK_USER_PROFILE,
+  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
+} from '@/utils/SynapseConstants'
 import {
   DiscussionSearchRequest,
   EntityLookupRequest,
@@ -38,17 +49,6 @@ import {
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
-import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
-import { hashCode, normalizeNumericId } from '../utils/functions/StringUtils'
-import {
-  USER_BUNDLE_MASK_IS_ACT_MEMBER,
-  USER_BUNDLE_MASK_IS_AR_REVIEWER,
-  USER_BUNDLE_MASK_IS_CERTIFIED,
-  USER_BUNDLE_MASK_IS_VERIFIED,
-  USER_BUNDLE_MASK_ORCID,
-  USER_BUNDLE_MASK_USER_PROFILE,
-  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
-} from '../utils/SynapseConstants'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */

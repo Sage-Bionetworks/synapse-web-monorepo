@@ -1,16 +1,18 @@
+import { useGetCurrentUserProfile } from '@/synapse-queries'
+import { useGetModerators } from '@/synapse-queries/forum/useForum'
+import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
+import {
+  DiscussionFilter,
+  SubscriptionObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import { useGetCurrentUserProfile } from '../../synapse-queries'
-import { useGetModerators } from '../../synapse-queries/forum/useForum'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { DiscussionFilter } from '@sage-bionetworks/synapse-types'
-import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { ForumTable } from './ForumTable'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export type ForumPageProps = {
   forumId: string

@@ -1,16 +1,16 @@
-import { render, waitFor, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import PdfPreview, { maxPdfSize, PdfPreviewProps } from './PdfPreview'
+} from '@/utils/functions/getEndpoint'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { mockFileHandle } from '../../mocks/mock_file_handle'
-import SynapseClient from '../../synapse-client'
+import { render, screen, waitFor } from '@testing-library/react'
+import PdfPreview, { maxPdfSize, PdfPreviewProps } from './PdfPreview'
 
 function renderComponent(props: PdfPreviewProps) {
   return render(<PdfPreview {...props} />, { wrapper: createWrapper() })

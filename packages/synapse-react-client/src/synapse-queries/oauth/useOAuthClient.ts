@@ -1,3 +1,8 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
+import { OAuthClientList } from '@sage-bionetworks/synapse-client/generated/models/OAuthClientList'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   InfiniteData,
   QueryKey,
@@ -7,11 +12,6 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
-import { OAuthClientList } from '@sage-bionetworks/synapse-client/generated/models/OAuthClientList'
 
 export function useGetOAuthClientInfinite<
   TData = InfiniteData<OAuthClientList>,

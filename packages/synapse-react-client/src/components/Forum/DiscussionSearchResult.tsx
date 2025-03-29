@@ -1,3 +1,13 @@
+import {
+  getReply,
+  getReplyMessageUrl,
+  getThread,
+  getThreadMessageUrl,
+  getUserProfileById,
+} from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Skeleton, Typography } from '@mui/material'
 import {
   DiscussionReplyBundle,
@@ -6,16 +16,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import {
-  getReply,
-  getReplyMessageUrl,
-  getThread,
-  getThreadMessageUrl,
-  getUserProfileById,
-} from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg/IconSvg'
 import { SkeletonParagraph } from '../Skeleton/SkeletonParagraph'
 import { UserBadge } from '../UserCard/UserBadge'

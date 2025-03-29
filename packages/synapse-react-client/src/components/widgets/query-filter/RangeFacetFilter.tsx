@@ -1,11 +1,8 @@
+import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
+import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { isNumber } from 'lodash-es'
 import { useMemo } from 'react'
-import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'

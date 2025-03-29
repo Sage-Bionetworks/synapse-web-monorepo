@@ -1,5 +1,5 @@
+import SynapseClient from '@/synapse-client'
 import { screen, waitFor } from '@testing-library/react'
-import SynapseClient from '../synapse-client'
 
 const getEntityWikiSpy = jest.spyOn(SynapseClient, 'getEntityWiki')
 const getWikiAttachmentsFromEntitySpy = jest.spyOn(

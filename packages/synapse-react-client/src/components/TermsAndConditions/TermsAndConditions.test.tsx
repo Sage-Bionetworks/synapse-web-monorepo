@@ -1,11 +1,11 @@
+import mockSyn51718002 from '@/mocks/query/syn51718002.json'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import { SynapseClient, SynapseContextType } from '../../index'
 import TermsAndConditions, {
   TermsAndConditionsProps,
 } from './TermsAndConditions'
-import { SynapseClient, SynapseContextType } from '../../index'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import mockSyn51718002 from '../../mocks/query/syn51718002.json'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { render, screen, waitFor } from '@testing-library/react'
 
 const defaultProps: TermsAndConditionsProps = {
   termsAndConditionsTableID: 'syn51718002',

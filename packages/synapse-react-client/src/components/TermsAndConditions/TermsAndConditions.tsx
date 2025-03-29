@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
-import { LoadingItem, tcItem } from './TermsAndConditionsItem'
-import TermsAndConditionsItem from './TermsAndConditionsItem'
-import { Alert, AlertTitle, Button, Link, Typography } from '@mui/material'
+import { useGetFullTableQueryResults } from '@/synapse-queries'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
   URL_TERMS_CONDITIONS_AGREEMENT,
-} from '../../utils/SynapseConstants'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
+} from '@/utils/SynapseConstants'
+import { Alert, AlertTitle, Button, Link, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import TermsAndConditionsItem, {
+  LoadingItem,
+  tcItem,
+} from './TermsAndConditionsItem'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void

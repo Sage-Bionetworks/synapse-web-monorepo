@@ -1,25 +1,19 @@
-import dayjs from 'dayjs'
-import { useState } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import { useGetCurrentUserProfile, useGetEntityBundle } from '@/synapse-queries'
+import { useDeleteReply, useGetReply } from '@/synapse-queries/forum/useReply'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   DiscussionReplyBundle,
   ObjectType,
 } from '@sage-bionetworks/synapse-types'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import dayjs from 'dayjs'
+import { useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
-import { ForumThreadEditor } from './ForumThreadEditor'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityBundle,
-} from '../../synapse-queries'
-import {
-  useDeleteReply,
-  useGetReply,
-} from '../../synapse-queries/forum/useReply'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import WarningDialog from '../SynapseForm/WarningDialog'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import WarningDialog from '../SynapseForm/WarningDialog'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
+import { ForumThreadEditor } from './ForumThreadEditor'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle

@@ -1,9 +1,9 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { UserBadge } from '../UserCard/UserBadge'
 
 export type SubmissionInfoCardProps = {

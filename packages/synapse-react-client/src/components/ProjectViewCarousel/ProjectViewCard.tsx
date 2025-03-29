@@ -1,6 +1,6 @@
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Button, Paper, Stack, Typography } from '@mui/material'
 import { HTMLAttributes, ReactNode } from 'react'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type ProjectCardProps = {
   isLoading?: boolean

@@ -1,26 +1,26 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { DownloadOptions } from './index'
-import { DownloadOptionsProps } from './DownloadOptions'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import mockDatasetData from '../../../mocks/entity/mockDataset'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
-import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
-import QueryWrapper from '../../QueryWrapper'
-import { rest, server } from '../../../mocks/msw/server'
-import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
+import mockDatasetData from '@/mocks/entity/mockDataset'
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import { mockProjectViewEntity } from '@/mocks/entity/mockProjectView'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { mockProjectViewEntity } from '../../../mocks/entity/mockProjectView'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import QueryWrapper from '../../QueryWrapper'
+import { DownloadOptionsProps } from './DownloadOptions'
+import { DownloadOptions } from './index'
 
 const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
 

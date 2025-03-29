@@ -1,12 +1,9 @@
-import { server } from '../../mocks/msw/server'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
 import useUpdateAcl from './useUpdateAcl'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-} from '../../mocks/user/mock_user_profile'
 
 describe('useUpdateAcl', () => {
   function renderHook() {

@@ -1,3 +1,5 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   render,
   screen,
@@ -5,8 +7,6 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MarkdownPopover, MarkdownPopoverProps } from './MarkdownPopover'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
 
 const markdownText = 'This is markdown text.'
 

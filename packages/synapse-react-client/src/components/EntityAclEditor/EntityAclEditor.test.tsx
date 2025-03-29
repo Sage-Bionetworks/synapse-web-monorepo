@@ -1,15 +1,36 @@
-import { createRef } from 'react'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import {
+  mockFileEntityCurrentUserCannotEdit,
+  mockFileEntityWithLocalSharingSettingsData,
+  mockFileOpenDataWithNoPublicRead,
+  mockFileOpenDataWithPublicRead,
+  mockFilePublicReadNoOpenData,
+} from '@/mocks/entity/mockFileEntityACLVariants'
+import mockProjectEntityData from '@/mocks/entity/mockProject'
+import mockProject from '@/mocks/entity/mockProject'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { SynapseApiResponse } from '@/mocks/msw/handlers'
+import { server } from '@/mocks/msw/server'
+import {
+  MOCK_USER_ID_2,
+  MOCK_USER_NAME,
+  MOCK_USER_NAME_2,
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY_ID } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { AccessControlList } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
-import EntityAclEditor, {
-  EntityAclEditorHandle,
-  EntityAclEditorProps,
-} from './EntityAclEditor'
-import { server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
+import { rest } from 'msw'
+import { createRef } from 'react'
+import {
+  ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+  NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL,
+  REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+} from '../AclEditor/AclEditor'
 import {
   addPublicToAcl,
   addUserToAcl,
@@ -19,38 +40,17 @@ import {
   updatePermissionLevel,
 } from '../AclEditor/AclEditorTestUtils'
 import {
-  MOCK_USER_ID_2,
-  MOCK_USER_NAME,
-  MOCK_USER_NAME_2,
-} from '../../mocks/user/mock_user_profile'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import mockProjectEntityData from '../../mocks/entity/mockProject'
-import mockProject from '../../mocks/entity/mockProject'
-import {
-  mockFileEntityCurrentUserCannotEdit,
-  mockFileEntityWithLocalSharingSettingsData,
-  mockFileOpenDataWithNoPublicRead,
-  mockFileOpenDataWithPublicRead,
-  mockFilePublicReadNoOpenData,
-} from '../../mocks/entity/mockFileEntityACLVariants'
-import { rest } from 'msw'
-import { ENTITY_ID } from '../../utils/APIConstants'
-import { SynapseApiResponse } from '../../mocks/msw/handlers'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import {
-  CREATE_LOCAL_SHARING_SETTINGS,
-  DELETE_LOCAL_SHARING_SETTINGS,
-} from './CreateOrDeleteLocalSharingSettingsButton'
-import {
   AUTHENTICATED_GROUP_DISPLAY_TEXT,
   PUBLIC_GROUP_DISPLAY_TEXT,
 } from '../TeamBadge'
 import {
-  ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
-  NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL,
-  REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
-} from '../AclEditor/AclEditor'
+  CREATE_LOCAL_SHARING_SETTINGS,
+  DELETE_LOCAL_SHARING_SETTINGS,
+} from './CreateOrDeleteLocalSharingSettingsButton'
+import EntityAclEditor, {
+  EntityAclEditorHandle,
+  EntityAclEditorProps,
+} from './EntityAclEditor'
 
 const onUpdateSuccess = jest.fn()
 const onCanSaveChange = jest.fn()

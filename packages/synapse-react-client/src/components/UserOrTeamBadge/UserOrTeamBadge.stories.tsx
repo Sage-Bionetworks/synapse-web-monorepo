@@ -1,9 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
-
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
+import { Meta, StoryObj } from '@storybook/react'
 import { UserOrTeamBadge } from './index'
 
 const meta = {

@@ -1,4 +1,25 @@
+import AddToList from '@/assets/icons/AddToList'
+import {
+  useGetJson,
+  useGetSchema,
+  useGetSchemaBinding,
+  useUpdateViaJson,
+} from '@/synapse-queries'
+import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { Alert, Box, Divider, Link, Typography } from '@mui/material'
+import RJSF from '@rjsf/core'
 import Form from '@rjsf/mui'
+import { RJSFValidationError } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  ENTITY_CONCRETE_TYPE,
+  EntityJson,
+} from '@sage-bionetworks/synapse-types'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import {
@@ -9,25 +30,11 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Alert, Box, Divider, Link, Typography } from '@mui/material'
-import AddToList from '../../assets/icons/AddToList'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import {
-  useGetJson,
-  useGetSchema,
-  useGetSchemaBinding,
-  useUpdateViaJson,
-} from '../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  ENTITY_CONCRETE_TYPE,
-  EntityJson,
-} from '@sage-bionetworks/synapse-types'
+  ConfirmationButtons,
+  ConfirmationDialog,
+} from '../ConfirmationDialog/ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,
   dropNullValues,
@@ -35,31 +42,24 @@ import {
   getTransformErrors,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
-import { BooleanWidget } from './widget/BooleanWidget'
-import { DateTimeWidget } from './widget/DateTimeWidget'
-import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
-import { SelectWidget } from './widget/SelectWidget'
-import TextWidget from './widget/TextWidget'
-import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import {
-  ConfirmationButtons,
-  ConfirmationDialog,
-} from '../ConfirmationDialog/ConfirmationDialog'
-import { RJSFValidationError } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
+import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import CustomObjectField from './field/CustomObjectField'
+import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
 import ArrayFieldItemTemplate from './template/ArrayFieldItemTemplate'
 import ArrayFieldTemplate from './template/ArrayFieldTemplate'
-import WrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
-import { FieldTemplate } from './template/FieldTemplate'
 import ArrayFieldTitleTemplate from './template/ArrayFieldTitleTemplate'
+import BaseInputTemplate from './template/BaseInputTemplate'
 import ButtonTemplate from './template/ButtonTemplate'
 import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
-import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
-import BaseInputTemplate from './template/BaseInputTemplate'
-import RJSF from '@rjsf/core'
-import FieldErrorTemplate from './template/FieldErrorTemplate'
 import ErrorListTemplate from './template/ErrorListTemplate'
+import FieldErrorTemplate from './template/FieldErrorTemplate'
+import { FieldTemplate } from './template/FieldTemplate'
+import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
+import WrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
+import { BooleanWidget } from './widget/BooleanWidget'
+import { DateTimeWidget } from './widget/DateTimeWidget'
+import { SelectWidget } from './widget/SelectWidget'
+import TextWidget from './widget/TextWidget'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */

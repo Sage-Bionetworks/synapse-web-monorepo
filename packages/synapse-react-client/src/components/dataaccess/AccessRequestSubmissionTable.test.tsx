@@ -1,3 +1,19 @@
+import { mockSubmissionSearchResponse } from '@/mocks/dataaccess/mockAccessRequest'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import { mockActTeam } from '@/mocks/team/mockTeam'
+import {
+  MOCK_USER_NAME,
+  MOCK_USER_NAME_2,
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client/index'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '@/utils/APIConstants'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   AccessType,
   SubmissionReviewerFilterType,
@@ -9,22 +25,6 @@ import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { mockSubmissionSearchResponse } from '../../mocks/dataaccess/mockAccessRequest'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { rest, server } from '../../mocks/msw/server'
-import { mockActTeam } from '../../mocks/team/mockTeam'
-import {
-  MOCK_USER_NAME,
-  MOCK_USER_NAME_2,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client/index'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../utils/APIConstants'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,

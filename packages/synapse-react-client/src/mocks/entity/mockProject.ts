@@ -1,3 +1,4 @@
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   ACCESS_TYPE,
   AnnotationsValueType,
@@ -11,11 +12,10 @@ import {
   ProjectHeader,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../user/mock_user_profile'
-import { MockEntityData } from './MockEntityData'
 import { times } from 'lodash-es'
 import { MOCK_TEAM_ID } from '../team/mockTeam'
-import { normalizeNumericId } from '../../utils/functions/StringUtils'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { MockEntityData } from './MockEntityData'
 
 export const mockProjectIds = times(20).map(i => i + 10001)
 

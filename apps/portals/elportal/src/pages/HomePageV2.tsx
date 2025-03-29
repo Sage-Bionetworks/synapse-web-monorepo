@@ -1,36 +1,35 @@
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  RecentPublicationsGrid,
-  ImageCardGridWithLinks,
-  PortalFeatureHighlights,
-  FeaturedResearch,
-  UpsetPlot,
-  PortalHomePageHeader,
-  GoalsV2,
-  PortalFeaturedPartners,
-  PortalSectionHeader,
-} from 'synapse-react-client'
+import analyzetheclouds from '@/assets/analyzetheclouds.png'
+import computationaltools from '@/assets/computationaltools.png'
+import headerbackgroundvideo from '@/assets/header-video.mp4'
+import { handleUpsetPlotClick } from '@/config/synapseConfigs/handleUpsetPlotClick'
+import { Box, Link, Typography, useTheme } from '@mui/material'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELGettingStarted'
-import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
 import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELNewsletterSection'
+import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELSupportedByNIH'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { TypeAnimation } from 'react-type-animation'
 import {
-  topPublicationsSql,
-  whatWeDoSql,
-  featuredResearchSql,
+  FeaturedDataTabs,
+  FeaturedResearch,
+  GoalsV2,
+  ImageCardGridWithLinks,
+  PortalFeaturedPartners,
+  PortalFeatureHighlights,
+  PortalHomePageHeader,
+  PortalSectionHeader,
+  RecentPublicationsGrid,
+  UpsetPlot,
+} from 'synapse-react-client'
+import {
   dataSql,
-  upsetPlotSql,
+  featuredResearchSql,
   goalsV2Table,
   partnersSql2,
+  topPublicationsSql,
+  upsetPlotSql,
+  whatWeDoSql,
 } from '../config/resources'
-import { Link, Typography, useTheme } from '@mui/material'
-import analyzetheclouds from '../assets/analyzetheclouds.png'
-import computationaltools from '../assets/computationaltools.png'
-import headerbackgroundvideo from '../assets/header-video.mp4'
-import { Box } from '@mui/material'
-import { FeaturedDataTabs } from 'synapse-react-client'
-import { handleUpsetPlotClick } from 'src/config/synapseConfigs/handleUpsetPlotClick'
-import { TypeAnimation } from 'react-type-animation'
 
 export default function HomePage() {
   const theme = useTheme()

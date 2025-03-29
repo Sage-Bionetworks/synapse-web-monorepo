@@ -1,16 +1,16 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import {
-  useGetEntityChildren,
-  useGetEntityChildrenInfinite,
-} from './useGetEntityChildren'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   EntityChildrenRequest,
   EntityChildrenResponse,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
+import { act, renderHook, waitFor } from '@testing-library/react'
+import {
+  useGetEntityChildren,
+  useGetEntityChildrenInfinite,
+} from './useGetEntityChildren'
 
 const request: EntityChildrenRequest = {
   parentId: 'syn123',

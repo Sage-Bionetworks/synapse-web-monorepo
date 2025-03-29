@@ -1,16 +1,22 @@
-import { KeyboardEventHandler, useEffect, useState } from 'react'
-import { Box, List, IconButton, Typography, Alert, Fade } from '@mui/material'
-import { useTheme } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
-import { ArrowUpward } from '@mui/icons-material'
-import SynapseChatInteraction from './SynapseChatInteraction'
-import { SkeletonParagraph } from '../Skeleton'
 import {
   useCreateAgentSession,
   useGetChatAgentTraceEvents,
   useSendChatMessageToAgent,
   useUpdateAgentSession,
-} from '../../synapse-queries/chat/useChat'
+} from '@/synapse-queries/chat/useChat'
+import { useSynapseContext } from '@/utils'
+import { ArrowUpward } from '@mui/icons-material'
+import {
+  Alert,
+  Box,
+  Fade,
+  IconButton,
+  List,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import { ColorPartial } from '@mui/material/styles/createPalette'
 import {
   AgentAccessLevel,
   AgentChatRequest,
@@ -19,12 +25,13 @@ import {
   AsynchronousJobStatus,
   TraceEvent,
 } from '@sage-bionetworks/synapse-types'
-import { TextField } from '@mui/material'
-import { useSynapseContext } from '../../utils'
-import AccessLevelMenu from './AccessLevelMenu'
-import { displayToast } from '../ToastMessage'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { KeyboardEventHandler, useEffect, useState } from 'react'
 import { TransitionGroup } from 'react-transition-group'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { SkeletonParagraph } from '../Skeleton'
+import { displayToast } from '../ToastMessage'
+import AccessLevelMenu from './AccessLevelMenu'
+import SynapseChatInteraction from './SynapseChatInteraction'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message

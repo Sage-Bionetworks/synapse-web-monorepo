@@ -1,16 +1,16 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import { convertDoiToLink } from '@/utils/functions/RegularExpressions'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+} from '@/utils/SynapseConstants'
 import { Box, Chip, Link as MuiLink, Skeleton, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/index'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
-import {
-  BUNDLE_MASK_QUERY_RESULTS,
-  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
-} from '../../utils/SynapseConstants'
 import PortalSectionHeader from '../PortalSectionHeader'
 
 export type RecentPublicationsGridProps = {

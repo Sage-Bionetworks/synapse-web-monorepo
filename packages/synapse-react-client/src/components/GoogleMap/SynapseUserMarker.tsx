@@ -1,7 +1,7 @@
+import { GeoData } from '@/synapse-client'
 import { Divider, Typography } from '@mui/material'
 import { InfoWindow, Marker } from '@react-google-maps/api'
 import { Fragment, useMemo } from 'react'
-import { GeoData } from '../../synapse-client'
 import { UserBadge } from '../UserCard/UserBadge'
 
 const MAP_MARKER_IMAGE_URL =

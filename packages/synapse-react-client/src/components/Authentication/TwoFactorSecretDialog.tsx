@@ -1,3 +1,4 @@
+import { monospaceFontFamily } from '@/theme/typography/Typography'
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   Typography,
 } from '@mui/material'
 import IconSvg from '../IconSvg/IconSvg'
-import { monospaceFontFamily } from '../../theme/typography/Typography'
 
 type TwoFactorSecretDialogProps = {
   secret: string

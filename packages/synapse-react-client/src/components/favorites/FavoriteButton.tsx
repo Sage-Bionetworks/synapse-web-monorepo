@@ -1,12 +1,12 @@
-import IconSvg from '../IconSvg/IconSvg'
-import { IconButton, Skeleton, Tooltip } from '@mui/material'
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import {
   useAddFavorite,
   useIsFavorite,
   useRemoveFavorite,
-} from '../../synapse-queries'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { IconButton, Skeleton, Tooltip } from '@mui/material'
+import IconSvg from '../IconSvg/IconSvg'
 
 export type FavoriteButtonProps = {
   /* The entity for which to show a favorite button */
