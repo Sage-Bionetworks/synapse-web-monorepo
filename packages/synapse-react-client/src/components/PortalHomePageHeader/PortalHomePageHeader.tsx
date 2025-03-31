@@ -1,12 +1,13 @@
 import { Box, Stack, Typography, Button } from '@mui/material'
 
 export type PortalHomePageHeaderProps = {
-  backgroundCss: string
+  backgroundCss: string // background of entire header
   buttonLink?: string
   title: React.ReactNode
   subTitle: React.ReactNode
   description: React.ReactNode
   backgroundMp4?: string
+  backgroundMp4Css?: string // while video is loading, what should the background color be?
 }
 
 const PortalHomePageHeader = ({
@@ -16,6 +17,7 @@ const PortalHomePageHeader = ({
   subTitle,
   description,
   backgroundMp4,
+  backgroundMp4Css,
 }: PortalHomePageHeaderProps) => {
   return (
     <Box
@@ -41,6 +43,7 @@ const PortalHomePageHeader = ({
             height: '100%',
             objectFit: 'fill',
             zIndex: -1,
+            background: backgroundMp4Css,
           }}
         >
           <source src={backgroundMp4} type="video/mp4" />

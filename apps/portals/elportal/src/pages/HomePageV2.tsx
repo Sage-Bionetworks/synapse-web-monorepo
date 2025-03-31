@@ -137,6 +137,7 @@ export default function HomePage() {
         subTitle={subTitle}
         description={description}
         backgroundMp4={headerbackgroundvideo}
+        backgroundMp4Css="#024472"
       />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
