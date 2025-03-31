@@ -1,56 +1,58 @@
-import { Fragment, useState, useMemo, useCallback, useEffect } from 'react'
-import {
-  useReactTable,
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFacetedMinMaxValues,
-  getSortedRowModel,
-  ColumnDef,
-  flexRender,
-} from '@tanstack/react-table'
-import {
-  TextField,
-  Typography,
-  Box,
-  Button,
-  InputLabel,
-  Alert,
-  AlertTitle,
-  IconButton,
-  Tooltip,
-} from '@mui/material'
-import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
+import AddAd from '@/assets/icons/AddAd'
+import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
+import { useGetEntityHeaders } from '@/synapse-queries'
 import {
   entityTypeToFriendlyName,
   getEntityTypeFromHeader,
   normalizeSynPrefix,
-} from '../../utils/functions/EntityTypeUtils'
-import { useGetEntityHeaders } from '../../synapse-queries'
-import IconSvg from '../IconSvg'
-import { SkeletonTable } from '../Skeleton'
+} from '@/utils/functions/EntityTypeUtils'
+import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import { AddCircleTwoTone } from '@mui/icons-material'
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  IconButton,
+  InputLabel,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { noop, upperFirst } from 'lodash-es'
 import { parse } from 'papaparse'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import { Filter } from './Filter'
-import { EntityHeaderNameCell } from './EntityHeaderTableCellRenderers'
-import { EntityHeaderIDCell } from './EntityHeaderTableCellRenderers'
-import { EntityHeaderTypeCell } from './EntityHeaderTableCellRenderers'
-import { CheckBoxHeader } from './EntityHeaderTableCellRenderers'
-import { CheckBoxCell } from './EntityHeaderTableCellRenderers'
-import AddAd from '../../assets/icons/AddAd'
+import pluralize from 'pluralize'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   EntityFinderModal,
   EntityFinderModalProps,
 } from '../EntityFinder/EntityFinderModal'
-import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
+import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
+import IconSvg from '../IconSvg'
+import { SkeletonTable } from '../Skeleton'
+import {
+  CheckBoxCell,
+  CheckBoxHeader,
+  EntityHeaderIDCell,
+  EntityHeaderNameCell,
+  EntityHeaderTypeCell,
+} from './EntityHeaderTableCellRenderers'
+import { Filter } from './Filter'
 import { useEntityHeaderTableState } from './useEntityHeaderTableState'
-import { noop, upperFirst } from 'lodash-es'
-import pluralize from 'pluralize'
-import { StyledTableContainer } from '../styled/StyledTableContainer'
 
 const DEFAULT_FINDER_CONFIG: EntityFinderModalProps['configuration'] = {
   selectMultiple: true,

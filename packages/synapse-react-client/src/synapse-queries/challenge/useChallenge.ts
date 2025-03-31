@@ -1,14 +1,14 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  ChallengeTeam,
+  CreateChallengeTeamRequest,
+} from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import {
-  ChallengeTeam,
-  CreateChallengeTeamRequest,
-} from '@sage-bionetworks/synapse-types'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import SynapseClient from '../../synapse-client'
 
 export function useRegisterTeamForChallenge(
   options?: Partial<

@@ -1,25 +1,25 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
-import { rest, server } from '../../mocks/msw/server'
-import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import {
-  REQUEST_DOWNLOAD_TITLE,
-  RequestDownloadCard,
-  RequestDownloadCardProps,
-} from './RequestDownloadCard'
-import userEvent from '@testing-library/user-event'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
+import { ENTITY_BUNDLE_V2 } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { AUTHENTICATED_PRINCIPAL_ID } from '@/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   EntityBundle,
   ErrorResponse,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import { MOCK_USER_ID_2 } from '../../mocks/user/mock_user_profile'
-import { AUTHENTICATED_PRINCIPAL_ID } from '../../utils/SynapseConstants'
-import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import {
+  REQUEST_DOWNLOAD_TITLE,
+  RequestDownloadCard,
+  RequestDownloadCardProps,
+} from './RequestDownloadCard'
 
 const ENTITY_ID = 'syn29218'
 const onViewSharingSettingsClicked = jest.fn()

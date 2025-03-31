@@ -1,31 +1,32 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import TableNameForm from './TableNameForm'
+import { useCreateEntity } from '@/synapse-queries'
+import {
+  useCreateColumnModels,
+  useGetDefaultColumnModels,
+} from '@/synapse-queries/table/useColumnModel'
+import { useValidateDefiningSql } from '@/synapse-queries/table/useDefiningSql'
+import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
+import { Alert, Box, Button } from '@mui/material'
 import {
   ColumnModel,
   Entity,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,
+  ValidateDefiningSqlResponse,
   ViewEntityType,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
-import TableTypeSelection from './TableTypeSelection'
-import { Alert, Box, Button } from '@mui/material'
-import { useCreateEntity } from '../../synapse-queries'
-import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import ViewTypeSelection from './ViewTypeSelection'
+import { isUndefined, omitBy } from 'lodash-es'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { SetOptional } from 'type-fest'
+import { DialogBase } from '../DialogBase'
+import EntityViewMaskEditor from '../EntityViewScopeEditor/EntityViewMaskEditor'
+import EntityViewScopeEditor from '../EntityViewScopeEditor/EntityViewScopeEditor'
+import SqlDefinedTableEditor from '../SqlDefinedTableEditor/SqlDefinedTableEditor'
+import SubmissionViewScopeEditor from '../SubmissionViewScopeEditor/SubmissionViewScopeEditor'
 import TableColumnSchemaForm, {
   SubmitHandle,
 } from '../TableColumnSchemaEditor/TableColumnSchemaForm'
-import EntityViewScopeEditor from '../EntityViewScopeEditor/EntityViewScopeEditor'
-import { SetOptional } from 'type-fest'
-import SqlDefinedTableEditor from '../SqlDefinedTableEditor/SqlDefinedTableEditor'
-import {
-  useCreateColumnModels,
-  useGetDefaultColumnModels,
-} from '../../synapse-queries/table/useColumnModel'
-import EntityViewMaskEditor from '../EntityViewScopeEditor/EntityViewMaskEditor'
-import { DialogBase } from '../DialogBase'
 import {
   CreateTableViewWizardStep,
   getModalTitle,
@@ -37,10 +38,9 @@ import {
   maybeSetScopeIds,
   maybeSetViewTypeMask,
 } from './CreateTableViewWizardUtils'
-import SubmissionViewScopeEditor from '../SubmissionViewScopeEditor/SubmissionViewScopeEditor'
-import { isUndefined, omitBy } from 'lodash-es'
-import { useValidateDefiningSql } from '../../synapse-queries/table/useDefiningSql'
-import { ValidateDefiningSqlResponse } from '@sage-bionetworks/synapse-types'
+import TableNameForm from './TableNameForm'
+import TableTypeSelection from './TableTypeSelection'
+import ViewTypeSelection from './ViewTypeSelection'
 
 export type CreateTableViewWizardProps = {
   open: boolean

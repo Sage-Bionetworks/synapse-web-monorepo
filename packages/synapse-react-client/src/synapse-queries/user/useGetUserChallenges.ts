@@ -1,3 +1,11 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  Challenge,
+  ChallengeWithProjectHeaderPagedResults,
+  PaginatedResults,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -6,14 +14,6 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  Challenge,
-  ChallengeWithProjectHeaderPagedResults,
-  PaginatedResults,
-} from '@sage-bionetworks/synapse-types'
 
 export function useGetUserChallenges(
   userId: string,

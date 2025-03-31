@@ -1,8 +1,8 @@
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { Skeleton } from '@mui/material'
 import { CellContext } from '@tanstack/react-table'
-import useGetEntityBundle from '../../../../../synapse-queries/entity/useEntityBundle'
-import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { DateCell } from './DateCell'
+import { EntityIdAndVersionNumber } from './TableCellTypes'
 
 /**
  * Renders 'modifiedOn' from the entity bundle.

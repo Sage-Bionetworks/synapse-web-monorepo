@@ -1,3 +1,5 @@
+import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
+import { InfoTwoTone } from '@mui/icons-material'
 import {
   Box,
   Checkbox,
@@ -9,9 +11,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { selectAtom } from 'jotai/utils'
-import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
+import FormHelperText from '@mui/material/FormHelperText'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -19,9 +19,14 @@ import {
   FacetType,
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
-import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import { useMemo } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { selectAtom } from 'jotai/utils'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
+import { useMemo } from 'react'
+import { ZodIssue } from 'zod'
+import DefaultValueField from './ColumnModelFormFields/DefaultValueField'
+import { FieldWithRecommendedMinimum } from './ColumnModelFormFields/FieldWithRecommendedMinimum'
+import MultiValueField from './ColumnModelFormFields/MultiValueField'
 import {
   canHaveDefault,
   canHaveMaxListLength,
@@ -34,16 +39,11 @@ import {
   getMaxSizeForType,
 } from './TableColumnSchemaEditorUtils'
 import { HIERARCHY_VERTICAL_LINE_COMPONENT } from './TableColumnSchemaForm'
-import { InfoTwoTone } from '@mui/icons-material'
-import DefaultValueField from './ColumnModelFormFields/DefaultValueField'
-import MultiValueField from './ColumnModelFormFields/MultiValueField'
-import { ZodIssue } from 'zod'
-import FormHelperText from '@mui/material/FormHelperText'
+import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
 import {
   ColumnModelFormData,
   JsonSubColumnModelFormData,
 } from './Validators/ColumnModelValidator'
-import { FieldWithRecommendedMinimum } from './ColumnModelFormFields/FieldWithRecommendedMinimum'
 
 type ColumnModelFormProps = {
   entityType: EntityType

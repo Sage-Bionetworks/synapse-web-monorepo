@@ -1,3 +1,6 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
   ColumnTypeEnum,
@@ -6,9 +9,6 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { SynapseClient } from '../../index'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import ImageCardGridWithLinks, {
   ImageCardGridWithLinksProps,
 } from './ImageCardGridWithLinks'

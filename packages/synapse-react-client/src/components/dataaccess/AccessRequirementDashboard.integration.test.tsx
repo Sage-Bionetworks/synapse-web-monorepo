@@ -1,16 +1,13 @@
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { getLocationTracker } from '@/testutils/LocationTracker'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import selectEvent from 'react-select-event'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { server } from '../../mocks/msw/server'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { getLocationTracker } from '../../testutils/LocationTracker'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,

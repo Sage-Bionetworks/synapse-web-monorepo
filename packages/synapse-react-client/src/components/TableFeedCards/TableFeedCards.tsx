@@ -1,16 +1,16 @@
-import { SynapseConstants } from '../../utils'
-import SynapseClient from '../../synapse-client'
-import { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
+import LargeButton from '@/components/styled/LargeButton'
+import SynapseClient from '@/synapse-client'
+import { SynapseConstants } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   QueryBundleRequest,
   RowSet,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import dayjs from 'dayjs'
+import { useEffect, useState } from 'react'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import LargeButton from '../../components/styled/LargeButton'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type TableFeedCardsProps = {
   tableEntityId: string

@@ -1,3 +1,9 @@
+import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
+import {
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_IDS,
+} from '@/utils/SynapseConstants'
 import {
   Box,
   Button,
@@ -8,21 +14,15 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { ReactNode } from 'react'
-import { ResourceAccessItem } from './ResourceAccessItem'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
-import useUpdateAcl from './useUpdateAcl'
-import { TransitionGroup } from 'react-transition-group'
-import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_IDS,
-} from '../../utils/SynapseConstants'
-import IconSvg from '../IconSvg'
 import { noop } from 'lodash-es'
+import { ReactNode } from 'react'
+import { TransitionGroup } from 'react-transition-group'
+import IconSvg from '../IconSvg'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import { AclEditorSkeleton } from './AclEditorSkeleton'
+import { ResourceAccessItem } from './ResourceAccessItem'
+import useUpdateAcl from './useUpdateAcl'
 
 export const ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL = 'Add a user or team'
 export const ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT = 'Make Public'

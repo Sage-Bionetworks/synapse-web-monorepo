@@ -1,13 +1,14 @@
-import { Meta, StoryObj } from '@storybook/react'
-import ChangePassword from './ChangePassword'
-import { Paper } from '@mui/material'
 import {
   getRequires2FAChangePasswordHandler,
   getSuccessfulChangePasswordHandler,
-} from '../../mocks/msw/handlers/changePasswordHandlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import { getResetTwoFactorAuthHandlers } from '../../mocks/msw/handlers/resetTwoFactorAuthHandlers'
+} from '@/mocks/msw/handlers/changePasswordHandlers'
+import { getResetTwoFactorAuthHandlers } from '@/mocks/msw/handlers/resetTwoFactorAuthHandlers'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { Paper } from '@mui/material'
+import { Meta, StoryObj } from '@storybook/react'
+import ChangePassword from './ChangePassword'
+
 const meta: Meta<typeof ChangePassword> = {
   title: 'Authentication/ChangePassword/WithCurrentPassword',
   component: ChangePassword,

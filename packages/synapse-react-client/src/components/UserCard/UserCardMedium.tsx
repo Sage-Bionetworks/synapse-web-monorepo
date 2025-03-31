@@ -1,21 +1,21 @@
+import IconCopy from '@/assets/icons/IconCopy'
+import ValidatedProfileIcon from '@/assets/icons/ValidatedProfile'
+import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
+import { SynapseConstants } from '@/utils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import {
+  MouseEvent,
   MutableRefObject,
   SyntheticEvent,
   useRef,
   useState,
-  MouseEvent,
 } from 'react'
-import IconCopy from '../../assets/icons/IconCopy'
-import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
-import { SynapseConstants } from '../../utils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { Avatar } from './Avatar'
 import IconSvg from '../IconSvg/IconSvg'
+import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { ToastMessage } from '../ToastMessage/ToastMessage'
+import { Avatar } from './Avatar'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
 

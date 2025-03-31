@@ -1,8 +1,8 @@
-import { useGetCurrentUserBundle } from '../../../synapse-queries'
+import { useGetCurrentUserBundle } from '@/synapse-queries'
+import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import { Link, Typography } from '@mui/material'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
-import { useOneSageURL } from '../../../utils/hooks/useOneSageURL'
+import RequirementItem from './RequirementItem'
 
 /**
  * When creating requests for access requirements on a particular file, one or more access requirements may require that the

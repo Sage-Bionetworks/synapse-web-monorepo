@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
 import { Paper } from '@mui/material'
-import RequirementItem from './RequirementItem'
-import { displayToast } from '../../ToastMessage/ToastMessage'
+import { Meta, StoryObj } from '@storybook/react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { mockManagedACTAccessRequirementWikiPage } from '../../../mocks/mockWiki'
+import { displayToast } from '../../ToastMessage/ToastMessage'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from './RequirementItem'
 
 const meta = {
   title: 'Governance/Data Access Request Flow/Requirements/RequirementItem',

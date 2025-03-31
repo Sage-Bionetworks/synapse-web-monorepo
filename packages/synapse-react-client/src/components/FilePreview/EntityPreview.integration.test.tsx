@@ -1,12 +1,12 @@
+import mockDatasetData from '@/mocks/entity/mockDataset'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen, within } from '@testing-library/react'
-import * as FileEntityPreviewModule from './FileEntityPreview'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { server } from '../../mocks/msw/server'
-import mockDatasetData from '../../mocks/entity/mockDataset'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import EntityPreview, { EntityPreviewProps } from './EntityPreview'
+import * as FileEntityPreviewModule from './FileEntityPreview'
 
 jest.spyOn(FileEntityPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="FileEntityPreview"></div>

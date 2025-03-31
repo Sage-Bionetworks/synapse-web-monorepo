@@ -1,12 +1,12 @@
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { USER_BUNDLE_MASK_IS_CERTIFIED } from '@/utils/SynapseConstants'
+import { PassingRecord } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import { PassingRecord } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
 
 export function useRevokeCertification(
   options?: Partial<

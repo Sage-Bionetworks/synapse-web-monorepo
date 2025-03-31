@@ -1,7 +1,26 @@
+import { server } from '@/mocks/msw/server'
+import {
+  MOCK_TEAM_ID,
+  MOCK_TEAM_ID_2,
+  mockTeamData,
+  mockTeamData2,
+} from '@/mocks/team/mockTeam'
+import {
+  MOCK_USER_ID,
+  mockUserData1,
+  mockUserData2,
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_IDS,
+} from '@/utils/SynapseConstants'
+import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { server } from '../../mocks/msw/server'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   AclEditor,
   AclEditorProps,
@@ -10,31 +29,12 @@ import {
   REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
 } from './AclEditor'
 import {
-  MOCK_TEAM_ID,
-  MOCK_TEAM_ID_2,
-  mockTeamData,
-  mockTeamData2,
-} from '../../mocks/team/mockTeam'
-import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
-import {
-  MOCK_USER_ID,
-  mockUserData1,
-  mockUserData2,
-} from '../../mocks/user/mock_user_profile'
-import { PermissionLevel } from '../../utils/PermissionLevelToAccessType'
-import {
   addUserToAcl,
   confirmItem,
   queryForAddUserCombobox,
   removeItem,
   updatePermissionLevel,
 } from './AclEditorTestUtils'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_IDS,
-} from '../../utils/SynapseConstants'
 
 const DEFAULT_RESOURCE_ACCESS: ResourceAccess[] = [
   {

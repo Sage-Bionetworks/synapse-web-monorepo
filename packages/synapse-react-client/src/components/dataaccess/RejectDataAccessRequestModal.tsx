@@ -1,6 +1,6 @@
+import { useUpdateDataAccessSubmissionState } from '@/synapse-queries'
+import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { useUpdateDataAccessSubmissionState } from '../../synapse-queries'
-import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 

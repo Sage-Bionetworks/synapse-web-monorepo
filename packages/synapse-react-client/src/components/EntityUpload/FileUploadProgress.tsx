@@ -1,3 +1,4 @@
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   CheckCircleTwoTone,
   DeleteTwoTone,
@@ -13,7 +14,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
 export type FileUploadProgressProps = {
   /** The status of the upload. */

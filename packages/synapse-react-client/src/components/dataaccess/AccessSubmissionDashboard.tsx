@@ -1,10 +1,10 @@
+import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { Typography } from '@mui/material'
 import { SubmissionState, TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import {
   AccessRequestSubmissionTable,

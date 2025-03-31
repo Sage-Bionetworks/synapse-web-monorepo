@@ -1,8 +1,8 @@
+import { ACCESS_REQUIREMENT_SEARCH } from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
-import { AccessRequirementRelatedProjectsList } from './AccessRequirementRelatedProjectsList'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { rest } from 'msw'
-import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
+import { AccessRequirementRelatedProjectsList } from './AccessRequirementRelatedProjectsList'
 
 const meta = {
   title: 'Governance/AccessRequirementRelatedProjectsList',

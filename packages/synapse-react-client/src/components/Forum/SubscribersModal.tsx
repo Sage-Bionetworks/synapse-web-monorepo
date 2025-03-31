@@ -1,7 +1,7 @@
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
-import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
+import { useGetSubscribers } from '@/synapse-queries/subscription/useSubscription'
 import { Link } from '@mui/material'
+import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { UserBadge } from '../UserCard/UserBadge'
 
 export type SubscribersModalProps = {

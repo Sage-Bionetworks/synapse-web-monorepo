@@ -1,14 +1,14 @@
-import { Box, Button, Typography, Stack, Skeleton } from '@mui/material'
-import { useState } from 'react'
-import IconSvg from '../IconSvg/IconSvg'
-import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm'
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import {
   useDisableTwoFactorAuth,
   useGetTwoFactorEnrollmentStatus,
-} from '../../synapse-queries/auth/useTwoFactorEnrollment'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
-import { displayToast } from '../ToastMessage/ToastMessage'
+} from '@/synapse-queries/auth/useTwoFactorEnrollment'
+import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
+import { useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import IconSvg from '../IconSvg/IconSvg'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm'
 
 export type TwoFactorAuthSettingsPanelProps = {
   onRegenerateBackupCodes: () => void

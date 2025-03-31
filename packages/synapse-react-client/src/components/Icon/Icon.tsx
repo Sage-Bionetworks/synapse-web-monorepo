@@ -1,94 +1,93 @@
-import { ComponentType } from 'react'
-import {
-  DATABASE,
-  DATASET,
-  FUNDER,
-  PUBLICATION,
-  CHALLENGE,
-  STUDY_ACTIVE,
-  STUDY_COMPLETE,
-  TOOL,
-  STUDY,
-  EXPERIMENTAL,
-  EXPERIMENTAL_TOOL,
-  COMPUTATIONAL,
-  COMPUTATIONAL_TOOL,
-  CLINICAL,
-  PROJECT,
-  PROGRAM,
-  GRANT,
-  ORGANIZATION,
-  PERSON,
-  MOUSE,
-  TRANSLATIONAL,
-  EXPLORE,
-  SEARCH,
-  CHART,
-  FILTER,
-  DOWNLOAD,
-  EXPAND,
-  COLLAPSE,
-  CLOSE,
-  SORTUP,
-  SORTDOWN,
-  SETTINGS,
-  COLUMNS,
-  COLUMNSDARK,
-  VERTICAL_DOTS,
-  CHART2,
-  FILE,
-  EXTERNALLINK,
-  EASY_DIFFICULTY,
-  MEDIUM_DIFFICULTY,
-  VARIABLE_DIFFICULTY,
-  DOWNLOAD_PERMISSION_REQUIRED,
-  SQL_EDITOR,
-  CONTRIBUTOR,
-  EXTERNAL_RESOURCE,
-  TREE_HORIZONTAL,
-  STANDARD_DATA_MODEL,
-} from '../../utils/SynapseConstants'
-
-import { ReactComponent as Data2Svg } from '../../assets/icons/Data2.svg'
-import { ReactComponent as studyActiveSvg } from '../../assets/icons/study-active.svg'
-import { ReactComponent as studyCompleteSvg } from '../../assets/icons/study-complete.svg'
-import { ReactComponent as DNA_TwoSvg } from '../../assets/icons/DNA_Two.svg'
-import { ReactComponent as organizationsSvg } from '../../assets/icons/organizations.svg'
-import { ReactComponent as personSvg } from '../../assets/icons/person.svg'
-import { ReactComponent as mouseSvg } from '../../assets/icons/mouse.svg'
-import { ReactComponent as translationalSvg } from '../../assets/icons/translational.svg'
-import { ReactComponent as chart2Svg } from '../../assets/icons/chart2.svg'
-import { ReactComponent as fileSvg } from '../../assets/icons/file.svg'
-import { ReactComponent as institutionSvg } from '../../assets/icons/institution.svg'
-import { ReactComponent as treeHorizontalSvg } from '../../assets/icons/tree_horizontal.svg'
-import { ReactComponent as standardDataModelSvg } from '../../assets/icons/standardDataModel.svg'
+import { ReactComponent as chart2Svg } from '@/assets/icons/chart2.svg'
+import { ReactComponent as Data2Svg } from '@/assets/icons/Data2.svg'
+import { ReactComponent as DNA_TwoSvg } from '@/assets/icons/DNA_Two.svg'
+import { ReactComponent as fileSvg } from '@/assets/icons/file.svg'
+import { ReactComponent as institutionSvg } from '@/assets/icons/institution.svg'
+import { ReactComponent as mouseSvg } from '@/assets/icons/mouse.svg'
+import { ReactComponent as organizationsSvg } from '@/assets/icons/organizations.svg'
+import { ReactComponent as personSvg } from '@/assets/icons/person.svg'
+import { ReactComponent as studyActiveSvg } from '@/assets/icons/study-active.svg'
+import { ReactComponent as studyCompleteSvg } from '@/assets/icons/study-complete.svg'
+import { ReactComponent as translationalSvg } from '@/assets/icons/translational.svg'
+import { ReactComponent as treeHorizontalSvg } from '@/assets/icons/tree_horizontal.svg'
+import { ReactComponent as standardDataModelSvg } from '@/assets/icons/standardDataModel.svg'
 import {
   Challenge,
+  Chart,
+  Close,
+  Collapse,
+  Columns,
+  ColumnsDark,
+  Database,
+  Download,
+  Expand,
+  Explore,
+  ExternalLink,
+  Filter,
   Program,
   Project,
   Publication,
+  Search,
+  Settings,
+  SortDown,
+  SortUp,
+  SqlEditorIcon,
   Study,
   ToolClinical,
   ToolComputational,
   ToolExperimental,
-  Database,
-  Explore,
-  Search,
-  Chart,
-  Filter,
-  Download,
-  Expand,
-  Collapse,
-  Close,
-  SortUp,
-  SortDown,
-  Settings,
-  Columns,
-  ColumnsDark,
   VerticalDots,
-  ExternalLink,
-  SqlEditorIcon,
-} from '../../assets/themed_icons'
+} from '@/assets/themed_icons'
+import {
+  CHALLENGE,
+  CHART,
+  CHART2,
+  CLINICAL,
+  CLOSE,
+  COLLAPSE,
+  COLUMNS,
+  COLUMNSDARK,
+  COMPUTATIONAL,
+  COMPUTATIONAL_TOOL,
+  CONTRIBUTOR,
+  DATABASE,
+  DATASET,
+  DOWNLOAD,
+  DOWNLOAD_PERMISSION_REQUIRED,
+  EASY_DIFFICULTY,
+  EXPAND,
+  EXPERIMENTAL,
+  EXPERIMENTAL_TOOL,
+  EXPLORE,
+  EXTERNAL_RESOURCE,
+  EXTERNALLINK,
+  FILE,
+  FILTER,
+  FUNDER,
+  GRANT,
+  MEDIUM_DIFFICULTY,
+  MOUSE,
+  ORGANIZATION,
+  PERSON,
+  PROGRAM,
+  PROJECT,
+  PUBLICATION,
+  SEARCH,
+  SETTINGS,
+  SORTDOWN,
+  SORTUP,
+  SQL_EDITOR,
+  STANDARD_DATA_MODEL,
+  STUDY,
+  STUDY_ACTIVE,
+  STUDY_COMPLETE,
+  TOOL,
+  TRANSLATIONAL,
+  TREE_HORIZONTAL,
+  VARIABLE_DIFFICULTY,
+  VERTICAL_DOTS,
+} from '@/utils/SynapseConstants'
+import { ComponentType } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type IconOptions = Record<string, string | ComponentType<any>>

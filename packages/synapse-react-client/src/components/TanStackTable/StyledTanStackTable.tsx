@@ -1,9 +1,9 @@
-import { flexRender, Row, Table } from '@tanstack/react-table'
-import { useMemo } from 'react'
 import {
   StyledTableContainer,
   StyledTableContainerProps,
-} from '../styled/StyledTableContainer'
+} from '@/components/styled/StyledTableContainer'
+import { flexRender, Row, Table } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,

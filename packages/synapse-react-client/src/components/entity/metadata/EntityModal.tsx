@@ -1,25 +1,25 @@
-import Skeleton from '@mui/material/Skeleton'
-import Form from '@rjsf/core'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import {
   entityTypeToFriendlyName,
   isVersionableEntityType,
-} from '../../../utils/functions/EntityTypeUtils'
+} from '@/utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
+} from '@/utils/functions/getEndpoint'
+import { Button, Tooltip } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import Form from '@rjsf/core'
 import { VersionableEntity } from '@sage-bionetworks/synapse-types'
+import { noop } from 'lodash-es'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
+import { DialogBase } from '../../DialogBase'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
-import { displayToast } from '../../ToastMessage/ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../../SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
+import { displayToast } from '../../ToastMessage/ToastMessage'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
-import { Button, Tooltip } from '@mui/material'
-import { DialogBase } from '../../DialogBase'
-import { ConfirmationDialog } from '../../ConfirmationDialog'
-import { noop } from 'lodash-es'
 
 export const EntityModalTabs = [
   // non-annotation metadata about the entity

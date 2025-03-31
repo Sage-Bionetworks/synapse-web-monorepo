@@ -1,14 +1,11 @@
-import { ObjectType } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import {
-  mockEntityRootWikiPage,
-  mockEntityWikiPage,
-} from '../../mocks/mockWiki'
+import { mockEntityRootWikiPage, mockEntityWikiPage } from '@/mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
-} from '../../mocks/mockWikiPageKey'
+} from '@/mocks/mockWikiPageKey'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { WikiMarkdownEditor } from './WikiMarkdownEditor'
 
 const meta: Meta<typeof WikiMarkdownEditor> = {

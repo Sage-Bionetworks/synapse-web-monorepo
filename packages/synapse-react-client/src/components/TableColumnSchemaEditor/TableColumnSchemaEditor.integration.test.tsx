@@ -1,40 +1,40 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import TableColumnSchemaEditor, {
-  TableColumnSchemaEditorProps,
-} from './TableColumnSchemaEditor'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
-import mockTableEntityData from '../../mocks/entity/mockTableEntity'
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import mockTableEntityData from '@/mocks/entity/mockTableEntity'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '@/mocks/mockAnnotationColumns'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
 import {
   getAnnotationColumnHandlers,
   getCreateColumnModelBatchHandler,
   getDefaultColumnHandlers,
   getTableTransactionHandlers,
-} from '../../mocks/msw/handlers/tableQueryHandlers'
-import { syn17328596 as mockTableQueryData } from '../../mocks/query/syn17328596'
-import userEvent from '@testing-library/user-event'
-import { SynapseClient } from '../../index'
+} from '@/mocks/msw/handlers/tableQueryHandlers'
+import { server } from '@/mocks/msw/server'
+import defaultFileViewColumnModels from '@/mocks/query/defaultFileViewColumnModels'
+import { syn17328596 as mockTableQueryData } from '@/mocks/query/syn17328596'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import * as TableColumnSchemaUtils from '@/utils/functions/TableColumnSchemaUtils'
 import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
-import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { omit } from 'lodash-es'
 import { SetOptional } from 'type-fest'
+import { SynapseClient } from '../../index'
+import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
+import TableColumnSchemaEditor, {
+  TableColumnSchemaEditorProps,
+} from './TableColumnSchemaEditor'
 import {
   addColumnModelToForm,
   modifyColumnModelInForm,
   verifyTooltipText,
 } from './TableColumnSchemaEditorTestUtils'
-import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
-import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import * as TableColumnSchemaUtils from '../../utils/functions/TableColumnSchemaUtils'
-import { omit } from 'lodash-es'
-import { getEntityBundleHandler } from '../../mocks/msw/handlers/entityHandlers'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { USE_RECOMMENDED_SIZES_BUTTON_TEXT } from './TableColumnSchemaFormActions'
 import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from './TableColumnSchemaForm'
+import { USE_RECOMMENDED_SIZES_BUTTON_TEXT } from './TableColumnSchemaFormActions'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {

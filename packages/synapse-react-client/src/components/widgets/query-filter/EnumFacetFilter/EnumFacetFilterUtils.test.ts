@@ -1,12 +1,12 @@
-import { SynapseConstants } from '../../../../utils'
-import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockUserGroupHeader } from '@/mocks/user/mock_user_profile'
+import { SynapseConstants } from '@/utils'
 import {
   EntityHeader,
   Evaluation,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { mockUserGroupHeader } from '../../../../mocks/user/mock_user_profile'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
 
 describe('EnumFacetFilterUtils', () => {
   const id = '123'

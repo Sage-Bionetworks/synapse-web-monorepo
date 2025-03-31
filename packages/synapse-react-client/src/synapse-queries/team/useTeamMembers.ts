@@ -1,12 +1,6 @@
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
-import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import SynapseClient, { deleteMemberFromTeam } from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { Count } from '@sage-bionetworks/synapse-client'
 import {
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
@@ -16,7 +10,13 @@ import {
   TeamMember,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { Count } from '@sage-bionetworks/synapse-client'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 export function useGetTeamMembers(
   teamId: string | number,

@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import ChallengeRegisterButton from '../ChallengeRegisterButton'
-import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import {
   useDeleteTeamMembership,
   useGetCurrentUserProfile,
   useGetEntityChallenge,
   useGetUserSubmissionTeams,
-} from '../../synapse-queries'
-import ConfirmationDialog from '../ConfirmationDialog'
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { useState } from 'react'
+import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeRequirementsModal from '../ChallengeRequirementsModal/ChallengeRequirementsModal'
-import { useSynapseContext } from '../../utils'
+import ChallengeTeamWizard from '../ChallengeTeamWizard'
+import ConfirmationDialog from '../ConfirmationDialog'
 import { displayToast } from '../ToastMessage'
 
 export type ChallengeDetailPageProps = {

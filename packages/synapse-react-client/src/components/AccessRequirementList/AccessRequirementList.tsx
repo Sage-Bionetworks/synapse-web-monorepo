@@ -1,4 +1,20 @@
-import { ReactNode, useMemo, useState } from 'react'
+import {
+  useGetAccessRequirementsForEntity,
+  useGetAccessRequirementsForTeam,
+  useSortAccessRequirementIdsByCompletion,
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { StyledComponent } from '@emotion/styled'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  styled,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import {
   AccessRequirement,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -10,39 +26,23 @@ import {
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../IconSvg/IconSvg'
+import { noop } from 'lodash-es'
+import { ReactNode, useMemo, useState } from 'react'
 import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
+import { DialogBaseTitle } from '../DialogBase'
+import { EntityLink } from '../EntityLink'
+import IconSvg from '../IconSvg/IconSvg'
+import UserOrTeamBadge from '../UserOrTeamBadge'
+import { AccessRequirementListItem } from './AccessRequirementListItem'
+import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
-import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  styled,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
-import ValidationRequirement from './RequirementItem/ValidationRequirement'
-import { StyledComponent } from '@emotion/styled'
-import {
-  useGetAccessRequirementsForEntity,
-  useGetAccessRequirementsForTeam,
-  useSortAccessRequirementIdsByCompletion,
-} from '../../synapse-queries'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
-import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useSynapseContext } from '../../utils'
-import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
-import { noop } from 'lodash-es'
-import { DialogBaseTitle } from '../DialogBase'
-import UserOrTeamBadge from '../UserOrTeamBadge'
-import { EntityLink } from '../EntityLink'
+import ValidationRequirement from './RequirementItem/ValidationRequirement'
 
 export type AccessRequirementListProps = {
   /* if provided, will show this instead of the entity information */

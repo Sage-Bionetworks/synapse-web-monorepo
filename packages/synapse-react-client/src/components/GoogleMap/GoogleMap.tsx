@@ -1,12 +1,12 @@
-import { GoogleMap, LoadScript } from '@react-google-maps/api'
-import { useCallback, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import {
   GeoData,
   getAllSynapseUserGeoData,
   getGoogleMapsApiKey,
   getSynapseTeamGeoData,
-} from '../../synapse-client'
+} from '@/synapse-client'
+import { GoogleMap, LoadScript } from '@react-google-maps/api'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseUserMarker } from './SynapseUserMarker'
 

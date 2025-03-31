@@ -1,8 +1,8 @@
+import { UniqueFacetIdentifier } from '@/utils'
+import { merge } from 'lodash-es'
 import { useCallback, useMemo } from 'react'
 import IconSvg, { IconSvgProps } from './IconSvg/IconSvg'
-import { merge } from 'lodash-es'
 import { useQueryContext } from './QueryContext'
-import { UniqueFacetIdentifier } from '../utils'
 
 type IconConfigs = {
   [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg

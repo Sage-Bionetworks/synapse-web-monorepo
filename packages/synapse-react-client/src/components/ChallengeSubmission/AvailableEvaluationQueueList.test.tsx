@@ -1,7 +1,7 @@
+import { mockEvaluationQueue } from '@/mocks/entity/mockEvaluationQueue'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import AvailableEvaluationQueueList, {
   AvailableEvaluationQueueListProps,
 } from './AvailableEvaluationQueueList'

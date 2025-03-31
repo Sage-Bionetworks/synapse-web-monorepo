@@ -1,4 +1,4 @@
-import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from '../EntityIcon'
 import IconSvg from '../IconSvg/IconSvg'

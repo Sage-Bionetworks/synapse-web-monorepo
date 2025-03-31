@@ -1,3 +1,6 @@
+import NoSearchResults from '@/assets/icons/NoSearchResults'
+import { useGetEntity } from '@/synapse-queries/entity/useEntity'
+import { useSearchForumInfinite } from '@/synapse-queries/forum/useForum'
 import SearchIcon from '@mui/icons-material/Search'
 import {
   Box,
@@ -8,14 +11,11 @@ import {
   Typography,
 } from '@mui/material'
 import { Match } from '@sage-bionetworks/synapse-client'
+import { Project } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import NoSearchResults from '../../assets/icons/NoSearchResults'
-import { useSearchForumInfinite } from '../../synapse-queries/forum/useForum'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import DiscussionSearchResult from '../Forum/DiscussionSearchResult'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { Project } from '@sage-bionetworks/synapse-types'
 
 const NoSearchResultComponent = () => {
   return (

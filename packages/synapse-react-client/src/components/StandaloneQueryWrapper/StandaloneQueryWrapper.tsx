@@ -1,13 +1,13 @@
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
-import { SynapseConstants } from '../../utils'
-import { isTable } from '../../utils/functions/EntityTypeUtils'
+import { useGetEntity } from '@/synapse-queries/entity/useEntity'
+import { SynapseConstants } from '@/utils'
+import { isTable } from '@/utils/functions/EntityTypeUtils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
-} from '../../utils/functions/SqlFunctions'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+} from '@/utils/functions/SqlFunctions'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import {

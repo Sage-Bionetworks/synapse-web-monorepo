@@ -1,6 +1,6 @@
-import { getUseUtcTimeFromCookie } from '../../synapse-client'
-import { formatDate } from './DateFormatter'
+import { getUseUtcTimeFromCookie } from '@/synapse-client'
 import dayjs, { Dayjs } from 'dayjs'
+import { formatDate } from './DateFormatter'
 
 jest.mock('../../synapse-client', () => {
   return {

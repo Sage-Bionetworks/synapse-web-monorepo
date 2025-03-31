@@ -1,3 +1,11 @@
+import NoSearchResults from '@/assets/icons/NoSearchResults'
+import { useGetFavorites } from '@/synapse-queries/user/useFavorites'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '@/utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { InputAdornment, Stack, TextField } from '@mui/material'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import {
@@ -10,14 +18,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import NoSearchResults from '../../assets/icons/NoSearchResults'
-import { useGetFavorites } from '../../synapse-queries/user/useFavorites'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-} from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityTypeIcon } from '../EntityIcon'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'

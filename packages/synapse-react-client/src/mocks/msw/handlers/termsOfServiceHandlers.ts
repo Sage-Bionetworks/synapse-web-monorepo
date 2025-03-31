@@ -1,13 +1,10 @@
-import { rest } from 'msw'
-import {
-  TERMS_OF_USE_INFO,
-  TERMS_OF_USE_STATUS,
-} from '../../../utils/APIConstants'
 import {
   termsOfServiceInfo,
   termsOfServiceNewUserStatus,
-} from 'src/mocks/termsOfService/mockTermsOfService'
-import { BackendDestinationEnum, getEndpoint } from 'src/utils/functions'
+} from '@/mocks/termsOfService/mockTermsOfService'
+import { TERMS_OF_USE_INFO, TERMS_OF_USE_STATUS } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { rest } from 'msw'
 
 export const getTermsOfServiceHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),

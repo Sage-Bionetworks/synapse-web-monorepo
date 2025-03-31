@@ -7,7 +7,7 @@ import {
   getCookieDomain,
   OAuth2State,
   SynapseConstants,
-} from '../utils'
+} from '@/utils'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
@@ -101,11 +101,11 @@ import {
   TERMS_OF_USE_INFO,
   TERMS_OF_USE_STATUS,
   PROJECT_STORAGE_USAGE,
-} from '../utils/APIConstants'
-import { dispatchDownloadListChangeEvent } from '../utils/functions/dispatchDownloadListChangeEvent'
-import { BackendDestinationEnum, getEndpoint } from '../utils/functions'
-import { removeUndefined } from '../utils/functions/ObjectUtils'
-import { DATETIME_UTC_COOKIE_KEY } from '../utils/SynapseConstants'
+} from '@/utils/APIConstants'
+import { dispatchDownloadListChangeEvent } from '@/utils/functions/dispatchDownloadListChangeEvent'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { removeUndefined } from '@/utils/functions/ObjectUtils'
+import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   AccessApproval,
@@ -337,7 +337,7 @@ import {
   AccessToken,
   ProjectStorageUsage,
 } from '@sage-bionetworks/synapse-types'
-import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   allowNotFoundError,
   isOutsideSynapseOrg,
@@ -345,9 +345,9 @@ import {
 } from './SynapseClientUtils'
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import { SetOptional } from 'type-fest'
-import appendFinalQueryParamKey from '../utils/appendFinalQueryParamKey'
+import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { sanitize } from '../utils/functions/SanitizeHtmlUtils'
+import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 
 const cookies = new UniversalCookies()
 

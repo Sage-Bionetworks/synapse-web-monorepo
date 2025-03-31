@@ -1,8 +1,8 @@
+import InlineBadge from '@/components/styled/InlineBadge'
 import { Box, Button, Paper, Typography } from '@mui/material'
-import { ReactNode } from 'react'
-import InlineBadge from '../../styled/InlineBadge'
-import pluralize from 'pluralize'
 import { useAtomValue } from 'jotai'
+import pluralize from 'pluralize'
+import { ReactNode } from 'react'
 import { isRowSelectionUIFloatingAtom } from '../../QueryWrapper/TableRowSelectionState'
 
 export type RowSelectionUIProps = {

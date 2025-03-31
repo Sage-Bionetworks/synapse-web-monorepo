@@ -1,17 +1,17 @@
-import { render, screen } from '@testing-library/react'
-import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ACTIVITY_FOR_ENTITY } from '../../utils/APIConstants'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import { SynapseApiResponse } from '@/mocks/msw/handlers'
+import { rest, server } from '@/mocks/msw/server'
+import { mockActivity } from '@/mocks/provenance/mockActivity'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACTIVITY_FOR_ENTITY } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { mockActivity } from '../../mocks/provenance/mockActivity'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
-import { SynapseApiResponse } from '../../mocks/msw/handlers'
+} from '@/utils/functions/getEndpoint'
 import { Activity } from '@sage-bionetworks/synapse-types'
-import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
+import { render, screen } from '@testing-library/react'
+import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 
 function renderComponent(props: ProvenanceProps) {
   return render(<ProvenanceGraph {...props} />, { wrapper: createWrapper() })

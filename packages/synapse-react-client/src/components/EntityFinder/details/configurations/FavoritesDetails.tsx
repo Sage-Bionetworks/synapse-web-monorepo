@@ -1,5 +1,5 @@
-import { useGetFavoritesInfinite } from '../../../../synapse-queries/user/useFavorites'
-import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
+import { useGetFavoritesInfinite } from '@/synapse-queries/user/useFavorites'
+import useGetIsAllSelectedFromInfiniteList from '@/utils/hooks/useGetIsAllSelectedInfiniteList'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 

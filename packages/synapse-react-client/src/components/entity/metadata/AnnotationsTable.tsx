@@ -1,25 +1,25 @@
-import { useCallback, useState } from 'react'
-import { isEmpty } from 'lodash-es'
-import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-} from '../../../utils/functions/EntityTypeUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
 import {
   useGetFeatureFlag,
   useGetJson,
   useGetSchemaBinding,
   useGetValidationResults,
-} from '../../../synapse-queries'
-import { SkeletonTable } from '../../Skeleton'
-import dayjs from 'dayjs'
-import FullWidthAlert from '../../FullWidthAlert'
-import { isISOTimestamp } from '../../../utils/functions/DateTimeUtils'
-import { formatDate } from '../../../utils/functions/DateFormatter'
+} from '@/synapse-queries'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { isISOTimestamp } from '@/utils/functions/DateTimeUtils'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import { isEmpty } from 'lodash-es'
+import { useCallback, useState } from 'react'
+import FullWidthAlert from '../../FullWidthAlert'
+import { SkeletonTable } from '../../Skeleton'
 
 export type AnnotationsTableProps = {
   readonly entityId: string

@@ -1,9 +1,9 @@
+import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Link as MuiLink, Tooltip } from '@mui/material'
 import { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { Link } from 'react-router'
-import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 

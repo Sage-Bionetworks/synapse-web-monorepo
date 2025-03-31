@@ -1,6 +1,6 @@
+import { useGetTeam } from '@/synapse-queries'
 import { ErrorTwoTone } from '@mui/icons-material'
 import { Skeleton, Stack, Typography } from '@mui/material'
-import { useGetTeam } from '../../synapse-queries'
 import TeamBadge from '../TeamBadge'
 
 export type TeamBadgeOrErrorProps = {

@@ -1,6 +1,14 @@
 import '@testing-library/jest-dom'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  EntityHeader,
+  EntityType,
+  PaginatedResults,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Map } from 'immutable'
 import { when } from 'jest-when'
 import * as DetailsListModule from '../../../src/components/EntityFinder/details/EntityDetailsList'
 import {
@@ -13,19 +21,11 @@ import EntityFinder, {
 import * as EntityTreeModule from '../../../src/components/EntityFinder/tree/EntityTree'
 import { FinderScope } from '../../../src/components/EntityFinder/tree/EntityTree'
 import {
-  EntityHeader,
-  EntityType,
-  PaginatedResults,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
-import {
   MOCK_ACCESS_TOKEN,
   SynapseTestContext,
 } from '../../../src/mocks/MockSynapseContext'
-import { Map } from 'immutable'
-import * as useEntityBundleModule from '../../../src/synapse-queries/entity/useEntityBundle'
 import SynapseClient from '../../../src/synapse-client'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
+import * as useEntityBundleModule from '../../../src/synapse-queries/entity/useEntityBundle'
 
 jest.mock('react-reflex', () => {
   return {

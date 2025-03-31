@@ -1,8 +1,8 @@
+import { useGetVersionsInfinite } from '@/synapse-queries/index'
 import { Select } from '@mui/material'
 import { EntityRef } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
 import { useEffect } from 'react'
-import { useGetVersionsInfinite } from '../../../synapse-queries/index'
 import { DatasetItemsEditorTableData } from './DatasetItemsEditor'
 
 type DatasetEditorVersionCellProps = CellContext<

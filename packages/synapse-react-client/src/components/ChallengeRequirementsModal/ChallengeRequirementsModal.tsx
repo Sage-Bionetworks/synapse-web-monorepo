@@ -1,21 +1,21 @@
-import { useCallback } from 'react'
 import {
   useGetAccessRequirementsForTeam,
   useGetAccessRequirementStatuses,
   useGetCurrentUserProfile,
   useGetEntity,
   useGetEntityChallenge,
-} from '../../synapse-queries'
+} from '@/synapse-queries'
 import {
   useAddMemberToTeam,
   useGetMembershipStatus,
-} from '../../synapse-queries/team/useTeamMembers'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+} from '@/synapse-queries/team/useTeamMembers'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import { Alert, Button, Typography } from '@mui/material'
+import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
+import { useCallback } from 'react'
+import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type ChallengeRequirementsModalProps = {
   open: boolean

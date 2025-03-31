@@ -1,3 +1,7 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { getEntityTypeFromHeader } from '@/utils/functions/EntityTypeUtils'
+import { parseSynId } from '@/utils/functions/RegularExpressions'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 import {
@@ -20,10 +24,6 @@ import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
-import { parseSynId } from '../../utils/functions/RegularExpressions'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {

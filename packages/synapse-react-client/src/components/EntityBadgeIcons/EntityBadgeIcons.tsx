@@ -1,4 +1,13 @@
 import {
+  useDeleteEntity,
+  useGetEntityBundle,
+  useGetFeatureFlag,
+  useGetJson,
+  useGetSchemaBinding,
+  useGetValidationResults,
+} from '@/synapse-queries'
+import { PUBLIC_PRINCIPAL_IDS } from '@/utils/SynapseConstants'
+import {
   ChatBubbleTwoTone,
   CheckTwoTone,
   DescriptionTwoTone,
@@ -7,28 +16,19 @@ import {
   LockTwoTone,
   PublicTwoTone,
 } from '@mui/icons-material'
-import { isEmpty } from 'lodash-es'
-import { useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
-import {
-  useDeleteEntity,
-  useGetEntityBundle,
-  useGetFeatureFlag,
-  useGetJson,
-  useGetSchemaBinding,
-  useGetValidationResults,
-} from '../../synapse-queries'
-import { PUBLIC_PRINCIPAL_IDS } from '../../utils/SynapseConstants'
+import { Tooltip } from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
   EntityType,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
+import { isEmpty } from 'lodash-es'
+import { useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
-import { Tooltip } from '@mui/material'
-import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {

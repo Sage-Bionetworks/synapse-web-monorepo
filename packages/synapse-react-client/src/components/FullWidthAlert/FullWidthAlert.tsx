@@ -1,3 +1,4 @@
+import { spreadSx } from '@/theme/spreadSx'
 import {
   Alert,
   AlertProps,
@@ -10,7 +11,6 @@ import {
   Tooltip,
 } from '@mui/material'
 import { MouseEventHandler, ReactNode, useEffect } from 'react'
-import { spreadSx } from '../../theme/spreadSx'
 
 export type AlertButtonConfig = {
   text: string

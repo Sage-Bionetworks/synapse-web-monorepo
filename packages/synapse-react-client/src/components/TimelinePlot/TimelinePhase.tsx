@@ -1,15 +1,15 @@
-import { useMemo, useRef, useState } from 'react'
-import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
-import dayjs, { ManipulateType } from 'dayjs'
+import { OBSERVATION_CARD } from '@/utils/SynapseConstants'
 import { Dialog, DialogContent } from '@mui/material'
-import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
   ColumnSingleValueFilterOperator,
   Row,
 } from '@sage-bionetworks/synapse-types'
+import dayjs, { ManipulateType } from 'dayjs'
+import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
+import { useMemo, useRef, useState } from 'react'
 import CardContainerLogic from '../CardContainerLogic'
-import { OBSERVATION_CARD } from '../../utils/SynapseConstants'
 import Plot from '../Plot/Plot'
+import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 
 type TimepointData = {
   timepoints: dayjs.Dayjs[]

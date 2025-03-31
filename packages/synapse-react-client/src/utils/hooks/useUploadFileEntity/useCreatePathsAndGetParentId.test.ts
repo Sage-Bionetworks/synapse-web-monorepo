@@ -1,6 +1,6 @@
+import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { renderHook as _renderHook } from '@testing-library/react'
-import { getUseMutationMock } from '../../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as UseCreateFolderPathModule from './useCreateFolderPath'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 

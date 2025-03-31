@@ -1,18 +1,18 @@
-import userEvent from '@testing-library/user-event'
-import { render, screen, waitFor } from '@testing-library/react'
-import ChallengeRegisterButton, {
-  ChallengeRegisterButtonProps,
-} from './ChallengeRegisterButton'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import mockProject from '../../mocks/entity/mockProject'
-import SynapseClient from '../../synapse-client'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import {
   mockChallenge,
   mockChallengeTeamMember,
-} from '../../mocks/challenge/mockChallenge'
-import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
+} from '@/mocks/challenge/mockChallenge'
+import mockProject from '@/mocks/entity/mockProject'
+import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import ChallengeRegisterButton, {
+  ChallengeRegisterButtonProps,
+} from './ChallengeRegisterButton'
 
 const mockOnError = jest.fn()
 const mockOnJoinClick = jest.fn()

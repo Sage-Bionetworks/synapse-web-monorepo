@@ -1,8 +1,8 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
-import { ViewMoreQueryResultsButton } from './ViewMoreQueryResultsButton'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryContextProvider, QueryContextType } from '../QueryContext'
 import userEvent from '@testing-library/user-event'
+import { QueryContextProvider, QueryContextType } from '../QueryContext'
+import { ViewMoreQueryResultsButton } from './ViewMoreQueryResultsButton'
 
 function setUp(
   hasNextPage: boolean,

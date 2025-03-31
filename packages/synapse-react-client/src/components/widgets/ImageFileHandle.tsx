@@ -1,8 +1,8 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
-import SynapseClient from '../../synapse-client'
 import { useInView } from 'react-intersection-observer'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 type ImageFileHandleProps = {
   fileHandleAssociation: FileHandleAssociation
