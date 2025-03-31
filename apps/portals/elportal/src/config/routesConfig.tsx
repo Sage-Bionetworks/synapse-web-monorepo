@@ -8,14 +8,22 @@ import { RouteObject } from 'react-router'
 import { Markdown } from 'synapse-react-client'
 import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
-import StudyDetailsPage, { studyDetailsPageRoutes } from '../pages/StudyDetailsPage'
+import StudyDetailsPage, {
+  studyDetailsPageRoutes,
+} from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
+import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App></App>,
+    element: (
+      <App>
+        {/* PORTALS-3508 */}
+        <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {
