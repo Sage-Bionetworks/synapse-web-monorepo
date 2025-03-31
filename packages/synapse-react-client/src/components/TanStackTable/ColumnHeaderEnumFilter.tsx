@@ -116,6 +116,7 @@ export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
       filterIsActive={column.getIsFiltered()}
       containerAs={'Dropdown'}
       dropdownType={'Icon'}
+      defaultShowAllValues={true}
       onAddValueToSelection={newFilterValue => {
         setEnumFilterValue(column, newFilterValue)
       }}
