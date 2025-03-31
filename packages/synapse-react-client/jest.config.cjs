@@ -17,7 +17,7 @@ module.exports = {
       testPathIgnorePatterns: ['/node_modules/'],
       testEnvironment: 'jsdom',
       moduleNameMapper: {
-        '@/(.*)': '<rootDir>/src/$1',
+        '@/(.*)(?<!.svg|.s?css|.less)$': '<rootDir>/src/$1',
         '\\.(css|less|scss)$': 'identity-obj-proxy',
         // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
         '\\.svg$': '<rootDir>/src/testutils/MockSvg.js',
