@@ -1,6 +1,6 @@
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { Button, Typography, Link } from '@mui/material'
-import { CTASection } from 'synapse-react-client'
+import { CTASectionWrapper } from 'synapse-react-client'
 
 const ElNewsletterSection = () => {
   const title = 'Subscribe to the ELITE Portal Newsletter'
@@ -62,7 +62,7 @@ const ElNewsletterSection = () => {
     </>
   )
 
-  return <CTASection content={content} themeMode="light" />
+  return <CTASectionWrapper content={content} themeMode="light" />
 }
 
 export default ElNewsletterSection

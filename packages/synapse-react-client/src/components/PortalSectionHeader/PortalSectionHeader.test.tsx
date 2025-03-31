@@ -1,9 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
-import { RouterProvider, createMemoryRouter } from 'react-router'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import PortalSectionHeader, {
   PortalSectionHeaderProps,
 } from './PortalSectionHeader'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 describe('PortalSectionHeader tests', () => {
   const mockProps: PortalSectionHeaderProps = {

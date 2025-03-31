@@ -1,3 +1,12 @@
+import Checked from '@/assets/icons/Checkbox/Checked'
+import Indeterminate from '@/assets/icons/Checkbox/Indeterminate'
+import Unchecked from '@/assets/icons/Checkbox/Unchecked'
+import {
+  CheckCircleTwoTone,
+  ErrorTwoTone,
+  HighlightOffTwoTone,
+  InfoTwoTone,
+} from '@mui/icons-material'
 import {
   alpha,
   Fade,
@@ -5,18 +14,9 @@ import {
   lighten,
   ThemeOptions,
 } from '@mui/material'
-import { typographyOptions } from './typography/Typography'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
-import {
-  CheckCircleTwoTone,
-  ErrorTwoTone,
-  HighlightOffTwoTone,
-  InfoTwoTone,
-} from '@mui/icons-material'
-import Checked from '../assets/icons/Checkbox/Checked'
-import Unchecked from '../assets/icons/Checkbox/Unchecked'
-import Indeterminate from '../assets/icons/Checkbox/Indeterminate'
+import { typographyOptions } from './typography/Typography'
 
 const DIALOG_INNER_PADDING = '2px'
 

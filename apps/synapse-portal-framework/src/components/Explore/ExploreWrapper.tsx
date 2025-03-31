@@ -1,13 +1,10 @@
+import { NEGATIVE_RESPONSIVE_SIDE_MARGIN, RESPONSIVE_SIDE_PADDING } from '@/utils'
+import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router'
 import { OrientationBanner } from 'synapse-react-client'
-import {
-  NEGATIVE_RESPONSIVE_SIDE_MARGIN,
-  RESPONSIVE_SIDE_PADDING,
-} from '../../utils'
-import { useSetCanonicalUrl } from '../../utils/useSetCanonicalUrl'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 

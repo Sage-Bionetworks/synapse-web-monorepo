@@ -1,9 +1,9 @@
+import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
 import { Box, Typography } from '@mui/material'
+import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import DirectDownloadButton from '../../DirectDownloadButton'
-import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useGetFileBatch } from '../../../synapse-queries/file/useFiles'
 
 export type DownloadDocumentTemplateProps = {
   title: ReactNode

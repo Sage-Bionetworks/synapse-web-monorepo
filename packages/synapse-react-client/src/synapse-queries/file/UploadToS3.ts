@@ -1,6 +1,6 @@
+import { ProgressCallback } from '@/synapse-client/index'
 import { S3 } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
-import { ProgressCallback } from '../../synapse-client/index'
 
 /**
  * Directly (from the client runtime, e.g. browser) uploads a file to an

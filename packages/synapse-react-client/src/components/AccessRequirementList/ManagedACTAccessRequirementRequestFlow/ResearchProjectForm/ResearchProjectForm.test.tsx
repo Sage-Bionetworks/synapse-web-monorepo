@@ -1,6 +1,14 @@
-import ResearchProjectForm, {
-  ResearchProjectFormProps,
-} from './ResearchProjectForm'
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  MOCK_EMPTY_RESEARCH_PROJECT,
+  MOCK_RESEARCH_PROJECT,
+} from '@/mocks/dataaccess/MockResearchProject'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   act,
   fireEvent,
@@ -10,20 +18,12 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import {
-  mockManagedACTAccessRequirement,
-  mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../../mocks/accessRequirement/mockAccessRequirements'
 import { SynapseClient } from '../../../../index'
-import {
-  MOCK_EMPTY_RESEARCH_PROJECT,
-  MOCK_RESEARCH_PROJECT,
-} from '../../../../mocks/dataaccess/MockResearchProject'
-import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
+import ResearchProjectForm, {
+  ResearchProjectFormProps,
+} from './ResearchProjectForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
 jest.mock('../../../Markdown/MarkdownSynapse', () => ({

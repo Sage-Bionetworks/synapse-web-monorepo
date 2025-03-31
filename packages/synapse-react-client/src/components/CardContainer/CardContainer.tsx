@@ -1,3 +1,12 @@
+import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
+import {
+  DATASET,
+  FUNDER,
+  GENERIC_CARD,
+  MEDIUM_USER_CARD,
+  OBSERVATION_CARD,
+  RELEASE_CARD,
+} from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import {
   ColumnTypeEnum,
@@ -6,15 +15,6 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { Suspense } from 'react'
-import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
-import {
-  DATASET,
-  FUNDER,
-  GENERIC_CARD,
-  MEDIUM_USER_CARD,
-  OBSERVATION_CARD,
-  RELEASE_CARD,
-} from '../../utils/SynapseConstants'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'

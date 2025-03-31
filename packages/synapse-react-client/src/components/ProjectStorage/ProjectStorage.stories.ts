@@ -1,13 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react'
-import ProjectDataAvailability from './ProjectDataAvailability'
-import { MOCK_REPO_ORIGIN } from 'src/utils/functions/getEndpoint'
-import { getUserProfileHandlers } from 'src/mocks/msw/handlers/userProfileHandlers'
-import { getEntityHandlers } from 'src/mocks/msw/handlers/entityHandlers'
-import { getProjectStorageHandlers } from 'src/mocks/msw/handlers/projectStorageHandlers'
+import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
+import { getProjectStorageHandlers } from '@/mocks/msw/handlers/projectStorageHandlers'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import {
   OVER_LIMIT_PROJECT_ID,
   UNDER_LIMIT_PROJECT_ID,
-} from 'src/mocks/projectStorage/mockProjectStorageLimits'
+} from '@/mocks/projectStorage/mockProjectStorageLimits'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { Meta, StoryObj } from '@storybook/react'
+import ProjectDataAvailability from './ProjectDataAvailability'
 
 const meta = {
   title: 'Synapse/ProjectStorage',

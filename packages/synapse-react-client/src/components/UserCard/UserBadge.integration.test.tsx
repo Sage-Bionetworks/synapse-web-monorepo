@@ -1,11 +1,11 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import {
   MOCK_USER_NAME,
   mockUserProfileData,
-} from '../../mocks/user/mock_user_profile'
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { UserBadge, UserBadgeProps } from './UserBadge'
 
 const renderComponent = (props: UserBadgeProps) => {

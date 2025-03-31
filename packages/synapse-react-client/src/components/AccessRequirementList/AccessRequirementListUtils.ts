@@ -1,6 +1,6 @@
-import { sortBy } from 'lodash-es'
-import { getAccessRequirementStatus } from '../../synapse-client/SynapseClient'
+import { getAccessRequirementStatus } from '@/synapse-client/SynapseClient'
 import { useMediaQuery, useTheme } from '@mui/material'
+import { sortBy } from 'lodash-es'
 
 /**
  * Given an array of access requirement IDs, return the IDs sorted by the user's status, where

@@ -1,14 +1,14 @@
-import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { rest, server } from '../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { USER_BUNDLE } from '../../utils/APIConstants'
+import { rest, server } from '@/mocks/msw/server'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { USER_BUNDLE } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as UserAccessHistoryDashboardModule from './AccessHistoryDashboard'
 import * as AccessRequirementDashboardModule from './AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from './AccessSubmissionDashboard'

@@ -1,21 +1,21 @@
+import SynapseClient from '@/synapse-client'
+import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { DeleteTwoTone } from '@mui/icons-material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { ErrorBanner } from '../error/ErrorBanner'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { HelpPopover } from '../HelpPopover/HelpPopover'
+import IconSvg from '../IconSvg/IconSvg'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
-import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
+import { CreatePackageV2 } from './CreatePackageV2'
+import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
 } from './DownloadListActionsRequired'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import SynapseClient from '../../synapse-client'
-import IconSvg from '../IconSvg/IconSvg'
-import { CreatePackageV2 } from './CreatePackageV2'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { ErrorBanner } from '../error/ErrorBanner'
-import { Button, Tooltip, Typography } from '@mui/material'
-import { HelpPopover } from '../HelpPopover/HelpPopover'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { DeleteTwoTone } from '@mui/icons-material'
-import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
 
 const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 dl_list_file_entities = syn.get_download_list()`

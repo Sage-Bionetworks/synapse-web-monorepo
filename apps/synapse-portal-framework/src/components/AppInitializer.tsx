@@ -1,16 +1,14 @@
-import RedirectDialog, {
-  redirectInstructionsMap,
-} from '../components/RedirectDialog'
 import { PropsWithChildren, useEffect, useState } from 'react'
+import { useCookies } from 'react-cookie'
 import {
   ApplicationSessionManager,
+  storeRedirectURLForOneSageLoginAndGotoURL,
   SynapseClient,
   SynapseConstants,
-  useFramebuster,
   SynapseHookUtils,
-  storeRedirectURLForOneSageLoginAndGotoURL,
+  useFramebuster,
 } from 'synapse-react-client'
-import { useCookies } from 'react-cookie'
+import RedirectDialog, { redirectInstructionsMap } from './RedirectDialog'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 

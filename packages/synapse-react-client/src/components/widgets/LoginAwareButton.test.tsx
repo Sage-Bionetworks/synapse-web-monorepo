@@ -1,10 +1,10 @@
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ApplicationSessionManager } from '@/utils'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ApplicationSessionManager } from '../../utils'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { LoginAwareButton, LoginAwareButtonProps } from './LoginAwareButton'
 
 const defaultProps: LoginAwareButtonProps = {

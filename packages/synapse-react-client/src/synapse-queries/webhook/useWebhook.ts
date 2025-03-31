@@ -1,3 +1,4 @@
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   CreateOrUpdateWebhookRequest,
   ListUserWebhooksResponse,
@@ -17,7 +18,6 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetWebhooksInfinite<
   TData = InfiniteData<ListUserWebhooksResponse>,

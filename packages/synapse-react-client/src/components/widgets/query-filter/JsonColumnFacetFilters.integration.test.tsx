@@ -1,5 +1,8 @@
-import { render, screen } from '@testing-library/react'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -7,15 +10,12 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { render, screen } from '@testing-library/react'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
-import { server } from '../../../mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import JsonColumnFacetFilters, {
   JsonColumnFacetFiltersProps,
 } from './JsonColumnFacetFilters'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const queryRequest: QueryBundleRequest = {
   partMask: 255,

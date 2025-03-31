@@ -1,13 +1,13 @@
+import { useGetFeatureFlag } from '@/synapse-queries'
+import { Link } from '@mui/material'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
-import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
-import { Link } from '@mui/material'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'
-import { useGetFeatureFlag } from '../../synapse-queries'
+import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 
 const FILE_VIEW_DESCRIPTION = (
   <>

@@ -15,21 +15,15 @@ import {
 } from 'synapse-react-client'
 import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
-
-export const dataColumnAliases = {
-  Organizations: 'Organization(s)',
-  Is_Open: 'Is Open?',
-  Registration: 'Requires Registration?',
-  Collections: 'Collection(s)',
-  Data_Topic: 'Data Topic(s)',
-}
+import columnAliases from '../config/columnAliases'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 export const standardsCardSchema: GenericCardSchema = {
-  type: SynapseConstants.GENERIC_CARD,
-  title: 'Name',
-  // subTitle: '',
-  // description: '',
-  secondaryLabels: ['Collections', 'Data_Topic', 'Organizations'],
+  type: SynapseConstants.STANDARD_DATA_MODEL,
+  title: 'name',
+  subTitle: 'responsibleOrgName',
+  description: 'description',
+  secondaryLabels: ['collections', 'topic', 'relevantOrgName', 'URL'],
 }
 
 export const standardDetailsPageContent: DetailsPageContentType = [
@@ -37,7 +31,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'About The Standard',
     title: 'About The Standard',
     element: (
-      <DetailsPageContextConsumer columnName={'Name'}>
+      <DetailsPageContextConsumer columnName={'id'}>
         {({ context }) => {
           if (context.rowData && context.rowSet) {
             return (
@@ -45,15 +39,13 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 rowData={context.rowData.values ?? []}
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
-                  'Name',
-                  'Collections',
-                  'Organizations',
-                  'Data_Topic',
-                  'Acronym',
-                  'Is_Open',
-                  'Registration',
+                  'name',
+                  'responsibleOrgName',
+                  'relevantOrgName',
+                  'isOpen',
+                  'registration',
                 ]}
-                columnAliases={dataColumnAliases}
+                columnAliases={columnAliases}
               />
             )
           } else {
@@ -98,9 +90,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
 ]
 
 export default function StandardsDetailsPage() {
-  const { Name } = useGetPortalComponentSearchParams()
+  const { id } = useGetPortalComponentSearchParams()
 
-  if (!Name) {
+  if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
@@ -112,7 +104,8 @@ export default function StandardsDetailsPage() {
         genericCardSchema={standardsCardSchema}
         secondaryLabelLimit={6}
         isHeader={true}
-        searchParams={{ Name }}
+        searchParams={{ id }}
+        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       />
 
       <DetailsPage sql={dataSql}>

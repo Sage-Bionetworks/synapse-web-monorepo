@@ -1,16 +1,16 @@
-import { Meta, StoryObj } from '@storybook/react'
-import TimelinePlot from './TimelinePlot'
-import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
-import queryResultBundleJson from '../../mocks/query/syn51735464'
-import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
+import queryResultBundleJson from '@/mocks/query/syn51735464'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
+import TimelinePlot from './TimelinePlot'
 
 const meta = {
   title: 'Components/TimelinePlot',

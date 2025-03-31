@@ -1,13 +1,13 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import mockMultiValueColumnResultsJson from '@/mocks/query/mockMultiValueColumnResults.json'
+import syn26433429CatalogNumberJson from '@/mocks/query/syn26433429CatalogNumber.json'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn26433429CatalogNumberJson from '../../mocks/query/syn26433429CatalogNumber.json'
-import mockMultiValueColumnResultsJson from '../../mocks/query/mockMultiValueColumnResults.json'
+import { render, screen, waitFor } from '@testing-library/react'
 import SubsectionRowRenderer, {
   SubsectionRowRendererProps,
 } from './SubsectionRowRenderer'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import SynapseClient from '../../synapse-client'
 
 jest.mock('../../synapse-client', () => ({
   getQueryTableResults: jest.fn(),

@@ -1,5 +1,4 @@
-import { rest } from 'msw'
-import { FORUM, FORUM_THREAD, THREAD } from '../../../utils/APIConstants'
+import { FORUM, FORUM_THREAD, THREAD } from '@/utils/APIConstants'
 import {
   CreateDiscussionThread,
   DiscussionFilter,
@@ -8,13 +7,14 @@ import {
   PaginatedIds,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
+import { rest } from 'msw'
 import {
   mockDiscussionThreadBundles,
   mockForums,
 } from '../../discussion/mock_discussion'
-import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import mockProject from '../../entity/mockProject'
+import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../handlers'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const forumService = new BasicMockedCrudService<Forum, 'id'>({

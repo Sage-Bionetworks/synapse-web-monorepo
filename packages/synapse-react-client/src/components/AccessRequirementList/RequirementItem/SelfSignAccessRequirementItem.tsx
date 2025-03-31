@@ -1,23 +1,23 @@
-import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import {
-  ApprovalState,
-  CreateAccessApprovalRequest,
-  SelfSignAccessRequirement,
-  TermsOfUseAccessRequirement,
-} from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
   useCreateAccessApproval,
   useGetAccessRequirementStatus,
   useGetAccessRequirementWikiPageKey,
   useGetCurrentUserBundle,
   useGetCurrentUserProfile,
-} from '../../../synapse-queries'
-import RequirementItem from './RequirementItem'
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { isTermsOfUseAccessRequirement } from '@/utils/types/IsType'
+import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
+import {
+  ApprovalState,
+  CreateAccessApprovalRequest,
+  SelfSignAccessRequirement,
+  TermsOfUseAccessRequirement,
+} from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
-import { isTermsOfUseAccessRequirement } from '../../../utils/types/IsType'
+import RequirementItem from './RequirementItem'
 
 export type SelfSignAccessRequirementItemProps = {
   accessRequirement: SelfSignAccessRequirement | TermsOfUseAccessRequirement

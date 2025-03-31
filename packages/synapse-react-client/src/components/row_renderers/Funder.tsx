@@ -1,5 +1,5 @@
+import WideButton from '@/components/styled/WideButton'
 import { Component, MouseEvent } from 'react'
-import WideButton from '../styled/WideButton'
 
 export type FunderProps = {
   data?: any

@@ -1,3 +1,5 @@
+import { useGetEntity } from '@/synapse-queries'
+import { SQL_EDITOR } from '@/utils/SynapseConstants'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import {
   Query,
@@ -9,8 +11,6 @@ import {
 import { useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
-import { useGetEntity } from '../../../synapse-queries'
-import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import IconSvg from '../../IconSvg'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { useQueryContext } from '../../QueryContext'

@@ -1,5 +1,5 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, renderHook as _renderHook } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { useTrackFileUploads } from './useTrackFileUploads'
 
 describe('useTrackFileUploads', () => {

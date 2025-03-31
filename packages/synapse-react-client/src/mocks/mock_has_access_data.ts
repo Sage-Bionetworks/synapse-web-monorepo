@@ -1,13 +1,13 @@
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   RestrictionInformationResponse,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntity, { MOCK_FILE_ENTITY_ID } from './entity/mockFileEntity'
 import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
 } from './accessRequirement/mockAccessRequirements'
-import { normalizeNumericId } from '../utils/functions/StringUtils'
+import mockFileEntity, { MOCK_FILE_ENTITY_ID } from './entity/mockFileEntity'
 
 export const mockUnmetControlledDataRestrictionInformationACT = {
   objectId: normalizeNumericId(MOCK_FILE_ENTITY_ID),

@@ -1,7 +1,7 @@
+import { getEvaluation } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { getEvaluation } from '../../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
 
 export type EvaluationIdRendererProps = {
   evaluationId: string

@@ -1,3 +1,6 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, SynapseContext } from '@/utils'
+import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { Link, Typography } from '@mui/material'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
 import {
@@ -27,9 +30,6 @@ import {
   MouseEvent,
   RefObject,
 } from 'react'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, SynapseContext } from '../../utils'
-import { sanitize } from '../../utils/functions/SanitizeHtmlUtils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'

@@ -1,6 +1,6 @@
+import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import { LabelLinkConfig } from '../CardContainerLogic'
-import { StyledTableContainer } from '../styled/StyledTableContainer'
 import { SynapseCardLabel } from '../GenericCard'
 
 export type RowDataTableProps = {

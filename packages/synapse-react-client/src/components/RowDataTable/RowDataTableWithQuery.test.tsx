@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import {
+  getUseQueryLoadingMock,
+  getUseQuerySuccessMock,
+} from '@/testutils/ReactQueryMockUtils'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import {
-  getUseQueryLoadingMock,
-  getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+import { render, screen } from '@testing-library/react'
 import RowDataTableWithQuery, {
   RowDataTableWithQueryProps,
 } from './RowDataTableWithQuery'

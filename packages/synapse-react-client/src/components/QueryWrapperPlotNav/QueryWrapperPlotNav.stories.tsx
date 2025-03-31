@@ -1,3 +1,11 @@
+import SynapseClient from '@/synapse-client'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '@/utils/functions'
+import {
+  DATASET,
+  EXPERIMENTAL_TOOL,
+  GENERIC_CARD,
+  MEDIUM_USER_CARD,
+} from '@/utils/SynapseConstants'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
@@ -7,14 +15,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import { SynapseClient } from '../../index'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
-import {
-  DATASET,
-  EXPERIMENTAL_TOOL,
-  GENERIC_CARD,
-  MEDIUM_USER_CARD,
-} from '../../utils/SynapseConstants'
 import { CustomControlCallbackData } from '../SynapseTable'
 import { displayToast } from '../ToastMessage'
 import QueryWrapperPlotNav, {

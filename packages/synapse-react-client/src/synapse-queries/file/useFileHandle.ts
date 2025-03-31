@@ -1,6 +1,6 @@
+import { useSynapseContext } from '@/utils/index'
 import { PostFileV1ExternalFileHandleRequest } from '@sage-bionetworks/synapse-client'
 import { useMutation } from '@tanstack/react-query'
-import { useSynapseContext } from '../../utils/index'
 
 export function useCreateExternalFileHandle() {
   const { synapseClient } = useSynapseContext()

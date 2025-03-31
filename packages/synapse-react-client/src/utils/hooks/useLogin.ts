@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { ONE_TIME_PASSWORD_STEP } from '@/components'
+import SynapseClient from '@/synapse-client'
+import { useResetTwoFactorAuth } from '@/synapse-queries'
+import {
+  instanceOfTwoFactorAuthErrorResponse,
+  TwoFactorAuthErrorResponse,
+} from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ErrorResponseCode,
   LoginResponse,
@@ -6,17 +13,10 @@ import {
   TwoFactorAuthOtpType,
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
-import {
-  instanceOfTwoFactorAuthErrorResponse,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from '@tanstack/react-query'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import SynapseClient from '../../synapse-client'
-import { ONE_TIME_PASSWORD_STEP } from '../../components'
 import { noop } from 'lodash-es'
-import { useResetTwoFactorAuth } from '../../synapse-queries'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useOneSageURL } from './useOneSageURL'
 
 export type UseLoginOptions = {

@@ -1,23 +1,23 @@
+import {
+  mockManagedACTAccessRequirement as mockAccessRequirement,
+  mockSearchResultsPageOne as mockSearchResults,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import selectEvent from 'react-select-event'
 import AccessRequirementSearchBox, {
   getOptionLabel,
 } from './AccessRequirementSearchBox'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import {
-  ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_SEARCH,
-} from '../../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import {
-  mockManagedACTAccessRequirement as mockAccessRequirement,
-  mockSearchResultsPageOne as mockSearchResults,
-} from '../../../mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '../../../mocks/msw/server'
 
 const mockOnChange = jest.fn()
 const onServiceRecievedRequest = jest.fn()

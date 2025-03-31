@@ -1,8 +1,8 @@
-import { getColorPalette, getContrastColorPalette } from './ColorGradient'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../../utils/functions/colorPalette'
+} from '@/utils/functions/colorPalette'
+import { getColorPalette, getContrastColorPalette } from './ColorGradient'
 
 describe('the color gradient calculated is correct', () => {
   it('calculates the odd case', () => {

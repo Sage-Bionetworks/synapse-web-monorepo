@@ -1,3 +1,8 @@
+import * as ToastMessage from '@/components/ToastMessage/ToastMessage'
+import SynapseClient from '@/synapse-client'
+import * as SynapseConstants from '@/utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { SynapseError } from '@/utils/SynapseError'
 import {
   ColumnTypeEnum,
   DownloadFromTableResult,
@@ -6,11 +11,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import { noop } from 'lodash-es'
-import * as ToastMessage from '../../components/ToastMessage/ToastMessage'
-import SynapseClient from '../../synapse-client'
-import * as SynapseConstants from '../../utils/SynapseConstants'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { SynapseError } from '../../utils/SynapseError'
 import { useExportToCavatica } from './useExportToCavatica'
 
 window.open = jest.fn()

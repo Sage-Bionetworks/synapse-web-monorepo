@@ -1,3 +1,4 @@
+import { spreadSx } from '@/theme/spreadSx'
 import CloseIcon from '@mui/icons-material/Close'
 import {
   Box,
@@ -13,7 +14,6 @@ import {
 } from '@mui/material'
 import { ReactNode } from 'react'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
-import { spreadSx } from '../theme/spreadSx'
 
 const EMPTY_OBJECT = {}
 

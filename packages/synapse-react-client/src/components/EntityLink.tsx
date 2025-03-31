@@ -1,13 +1,13 @@
-import { Link, Skeleton } from '@mui/material'
+import { useGetEntity, useGetEntityHeader } from '@/synapse-queries'
 import {
   convertToEntityType,
   getEntityTypeFromHeader,
-} from '../utils/functions/EntityTypeUtils'
+} from '@/utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../utils/functions/getEndpoint'
-import { useGetEntity, useGetEntityHeader } from '../synapse-queries'
+} from '@/utils/functions/getEndpoint'
+import { Link, Skeleton } from '@mui/material'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'

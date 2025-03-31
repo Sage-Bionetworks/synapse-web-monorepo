@@ -1,10 +1,10 @@
-import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
-import { SynapseClient } from '../../index'
+import mockSyn26438037Counts from '@/mocks/query/syn26438037Counts.json'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import mockSyn26438037Counts from '../../mocks/query/syn26438037Counts.json'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { Queries, RenderResult, render, screen } from '@testing-library/react'
+import { Queries, render, RenderResult, screen } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
+import { SynapseClient } from '../../index'
+import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 
 const customPlotClickCallback = jest.fn()
 

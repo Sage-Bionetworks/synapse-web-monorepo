@@ -1,3 +1,6 @@
+import { SynapseConstants } from '@/utils'
+import { getCorrespondingSelectedFacet } from '@/utils/functions/queryUtils'
+import { isFacetColumnValuesRequest } from '@/utils/types/IsType'
 import {
   EntityHeader,
   Evaluation,
@@ -7,9 +10,6 @@ import {
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../../../utils'
-import { isFacetColumnValuesRequest } from '../../../../utils/types/IsType'
-import { getCorrespondingSelectedFacet } from '../../../../utils/functions/queryUtils'
 
 export function valueToLabel(
   facet: FacetColumnResultValueCount,

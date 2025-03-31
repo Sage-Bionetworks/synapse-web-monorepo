@@ -1,6 +1,6 @@
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-types'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import FullWidthAlert from '../FullWidthAlert'
 
 export type ProjectStorageLimitAlertProps = {

@@ -1,17 +1,10 @@
-import { ChangeEvent, useEffect, useState } from 'react'
 import {
-  AccessorChange,
-  AccessType,
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  FileUploadComplete,
-  ManagedACTAccessRequirement,
-  Renewal,
-  Request,
-  RestrictableObjectType,
-  UploadCallbackResp,
-} from '@sage-bionetworks/synapse-types'
-import IconSvg from '../../../IconSvg/IconSvg'
+  useGetCurrentUserProfile,
+  useGetDataAccessRequestForUpdate,
+  useSubmitDataAccessRequest,
+  useUpdateDataAccessRequest,
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
 import {
   Alert,
   AlertProps as MuiAlertProps,
@@ -26,23 +19,30 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import {
-  useGetCurrentUserProfile,
-  useGetDataAccessRequestForUpdate,
-  useSubmitDataAccessRequest,
-  useUpdateDataAccessRequest,
-} from '../../../../synapse-queries'
+import { deepEquals } from '@rjsf/utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  AccessorChange,
+  AccessType,
+  FileHandleAssociateType,
+  FileHandleAssociation,
+  FileUploadComplete,
+  ManagedACTAccessRequirement,
+  Renewal,
+  Request,
+  RestrictableObjectType,
+  UploadCallbackResp,
+} from '@sage-bionetworks/synapse-types'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
+import IconSvg from '../../../IconSvg/IconSvg'
 import TextField from '../../../TextField/TextField'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
-import { UploadDocumentField } from '../UploadDocumentField'
 import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
-import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
-import { deepEquals } from '@rjsf/utils'
-import { useSynapseContext } from '../../../../utils'
+import { UploadDocumentField } from '../UploadDocumentField'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement

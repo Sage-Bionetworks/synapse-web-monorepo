@@ -1,3 +1,5 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   Evaluation,
   GetEvaluationParameters,
@@ -12,8 +14,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import SynapseClient from '../../synapse-client'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetEvaluation(

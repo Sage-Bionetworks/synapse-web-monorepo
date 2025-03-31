@@ -1,11 +1,11 @@
-import { generateBaseEntity } from '../faker/generateFakeEntity'
-import { EntityType, FileEntity } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
-import { getAccessTypeFromPermissionLevel } from '../../utils/PermissionLevelToAccessType'
+import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
+import { EntityType, FileEntity } from '@sage-bionetworks/synapse-types'
+import { generateBaseEntity } from '../faker/generateFakeEntity'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 
 /*

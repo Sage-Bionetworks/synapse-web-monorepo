@@ -1,3 +1,8 @@
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  LockedColumn,
+} from '@/utils'
 import { Collapse } from '@mui/material'
 import {
   ColumnModel,
@@ -16,11 +21,6 @@ import {
   SyntheticEvent,
 } from 'react'
 import { CSSTransition } from 'react-transition-group'
-import {
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  LockedColumn,
-} from '../../utils'
 import IconSvg from '../IconSvg/IconSvg'
 import { QueryContextType } from '../QueryContext'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'

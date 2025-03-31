@@ -1,10 +1,10 @@
-import { ReactNode } from 'react'
-import { QueryClient } from '@tanstack/react-query'
-import { MOCK_CONTEXT_VALUE } from '../mocks/MockSynapseContext'
-import { SynapseContextType } from '../utils/context/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
-} from '../utils/context/FullContextProvider'
+} from '@/utils/context/FullContextProvider'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { QueryClient } from '@tanstack/react-query'
+import { ReactNode } from 'react'
 
 type RtlWrapperProps = {
   children?: ReactNode

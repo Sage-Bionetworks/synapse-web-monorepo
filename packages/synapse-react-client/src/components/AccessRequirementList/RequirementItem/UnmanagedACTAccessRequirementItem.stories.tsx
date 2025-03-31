@@ -1,25 +1,25 @@
-import { Meta, StoryObj } from '@storybook/react'
 import {
   mockACTAccessRequirement,
   mockACTAccessRequirementWithWiki,
   mockToUAccessRequirement,
   mockToUAccessRequirementWithWiki,
-} from '../../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
-import { rest } from 'msw'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequirementHandlers'
+import { getCurrentUserCertifiedValidatedHandler } from '@/mocks/msw/handlers/userProfileHandlers'
+import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import {
   ACCESS_APPROVAL,
   ACCESS_REQUIREMENT_STATUS,
-} from '../../../utils/APIConstants'
+} from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   AccessApproval,
   AccessRequirementStatus,
   ApprovalState,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
-import { getAccessRequirementHandlers } from '../../../mocks/msw/handlers/accessRequirementHandlers'
-import { getWikiHandlers } from '../../../mocks/msw/handlers/wikiHandlers'
-import { getCurrentUserCertifiedValidatedHandler } from '../../../mocks/msw/handlers/userProfileHandlers'
+import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
 import UnmanagedACTAccessRequirementItem from './UnmanagedACTAccessRequirementItem'
 
 const meta: Meta = {

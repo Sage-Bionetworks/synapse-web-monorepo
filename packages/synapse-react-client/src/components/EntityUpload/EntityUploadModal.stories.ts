@@ -1,6 +1,6 @@
+import mockProjectEntityData from '@/mocks/entity/mockProject'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import mockProjectEntityData from '../../mocks/entity/mockProject'
 import { EntityUploadModal, EntityUploadModalProps } from './EntityUploadModal'
 
 const meta: Meta<EntityUploadModalProps> = {

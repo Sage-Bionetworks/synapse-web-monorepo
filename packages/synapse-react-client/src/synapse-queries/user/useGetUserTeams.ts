@@ -1,3 +1,11 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  PaginatedIds,
+  PaginatedResults,
+  Team,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -6,14 +14,6 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  PaginatedIds,
-  PaginatedResults,
-  Team,
-} from '@sage-bionetworks/synapse-types'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetUserSubmissionTeams(

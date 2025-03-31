@@ -1,12 +1,12 @@
-import { useSynapseContext } from '../../utils'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
-} from '../../synapse-queries'
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 
 export type FolderDownloadConfirmationProps = {
   folderId: string

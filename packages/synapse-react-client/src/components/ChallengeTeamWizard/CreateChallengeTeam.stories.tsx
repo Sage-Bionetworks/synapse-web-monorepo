@@ -1,17 +1,17 @@
+import { mockChallenge } from '@/mocks/challenge/mockChallenge'
+import getAllChallengeHandlers from '@/mocks/msw/handlers/challengeHandlers'
+import getAllTeamHandlers from '@/mocks/msw/handlers/teamHandlers'
+import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { Button } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
-import getAllChallengeHandlers from '../../mocks/msw/handlers/challengeHandlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import { fn } from '@storybook/test'
 import { useRef, useState } from 'react'
-import getAllTeamHandlers from '../../mocks/msw/handlers/teamHandlers'
 import {
   CreateChallengeTeam,
   CreateChallengeTeamHandle,
   CreateChallengeTeamProps,
 } from './CreateChallengeTeam'
-import { mockChallenge } from '../../mocks/challenge/mockChallenge'
-import { Button } from '@mui/material'
-import { fn } from '@storybook/test'
 
 const meta: Meta<CreateChallengeTeamProps & { isAuthenticated: boolean }> = {
   title: 'Synapse/Challenge/CreateChallengeTeam',

@@ -1,3 +1,4 @@
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   Dataset,
   EntityBundle,
@@ -10,7 +11,6 @@ import {
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'
-import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 export const MOCK_DATASET_ENTITY_ID = `syn60000`
 export const MOCK_DATASET_NAME = 'A Mocked Dataset'

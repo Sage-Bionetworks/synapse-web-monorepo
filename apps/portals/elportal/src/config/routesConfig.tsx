@@ -1,17 +1,14 @@
+import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/elportal/ELBrowseToolsPage'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { HomePageThemeProvider } from 'src/themes/HomePageThemeProvider'
 import { Markdown } from 'synapse-react-client'
-import HomePage from '../pages/HomePage'
 import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
-import StudyDetailsPage, {
-  studyDetailsPageRoutes,
-} from '../pages/StudyDetailsPage'
+import StudyDetailsPage, { studyDetailsPageRoutes } from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
 
@@ -23,10 +20,6 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'HomepageV2',
         element: (
           <HomePageThemeProvider>
             <HomePageV2 />
@@ -93,22 +86,27 @@ const routes: RouteObject[] = [
                 loadingSkeletonRowCount={10}
               />
             </SectionLayout>
-            {
-              /* <SectionLayout title={'Aging PheWAS'}>
+            {/* <SectionLayout title={'Aging PheWAS'}>
             <Markdown
                 ownerId="syn27229419"
                 wikiId="622480"
                 loadingSkeletonRowCount={10}
               />
-          </SectionLayout>*/
-              <SectionLayout title={'LLFS'}>
-                <Markdown
-                  ownerId="syn27229419"
-                  wikiId="622486"
-                  loadingSkeletonRowCount={10}
-                />
-              </SectionLayout>
-            }
+          </SectionLayout>*/}
+            <SectionLayout title={'LLFS US'}>
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="622486"
+                loadingSkeletonRowCount={10}
+              />
+            </SectionLayout>
+            <SectionLayout title={'LLFS Danish'}>
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="631447"
+                loadingSkeletonRowCount={10}
+              />
+            </SectionLayout>
           </>
         ),
       },

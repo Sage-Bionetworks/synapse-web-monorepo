@@ -1,13 +1,13 @@
+import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
+import { Box, Button, ButtonProps } from '@mui/material'
 import {
   FileHandleAssociation,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { useGetFileBatch } from '../../../synapse-queries/file/useFiles'
-import { Box, Button, ButtonProps } from '@mui/material'
+import { useState } from 'react'
+import DirectDownloadButton from '../../DirectDownloadButton'
 import FileUpload from '../../FileUpload/FileUpload'
 import IconSvg from '../../IconSvg/IconSvg'
-import DirectDownloadButton from '../../DirectDownloadButton'
-import { useState } from 'react'
 
 type UploadDocumentFieldProps = {
   id: string

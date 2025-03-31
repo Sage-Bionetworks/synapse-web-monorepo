@@ -1,11 +1,11 @@
-import { render, screen, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
-import ViewTypeSelection, { ViewTypeSelectionProps } from './ViewTypeSelection'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import ViewTypeSelection, { ViewTypeSelectionProps } from './ViewTypeSelection'
 
 describe('ViewTypeSelection', () => {
   function renderComponent(

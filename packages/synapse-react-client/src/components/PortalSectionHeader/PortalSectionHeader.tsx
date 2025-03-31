@@ -1,14 +1,14 @@
+import { spreadSx } from '@/theme/spreadSx'
 import {
-  Stack,
-  Typography,
+  Box,
   Button,
+  Link as MuiLink,
+  Stack,
   SxProps,
   Theme,
-  Box,
-  Link as MuiLink,
+  Typography,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
-import { spreadSx } from '../../theme/spreadSx'
 
 export type PortalSectionHeaderProps = {
   title: string

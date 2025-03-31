@@ -1,7 +1,7 @@
+import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
 import { Meta, StoryObj } from '@storybook/react'
-import { MarkdownEditor } from './MarkdownEditor'
 import { useState } from 'react'
-import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
+import { MarkdownEditor } from './MarkdownEditor'
 
 const meta: Meta<typeof MarkdownEditor> = {
   title: 'Markdown/MarkdownEditor',

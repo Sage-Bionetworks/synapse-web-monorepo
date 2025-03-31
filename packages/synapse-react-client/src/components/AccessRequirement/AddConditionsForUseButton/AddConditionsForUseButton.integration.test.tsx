@@ -1,20 +1,20 @@
-import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
-import AddConditionsForUseButton, {
-  AddConditionsForUseButtonProps,
-} from './AddConditionsForUseButton'
-import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../../mocks/msw/server'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockUnmetControlledDataRestrictionInformationACT } from '@/mocks/mock_has_access_data'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { rest, server } from '@/mocks/msw/server'
+import { mockUserBundle } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { USER_BUNDLE } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { USER_BUNDLE } from '../../../utils/APIConstants'
-import mockFileEntity from '../../../mocks/entity/mockFileEntity'
+} from '@/utils/functions/getEndpoint'
+import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { mockUnmetControlledDataRestrictionInformationACT } from '../../../mocks/mock_has_access_data'
-import { mockUserBundle } from '../../../mocks/user/mock_user_profile'
-import { getEntityBundleHandler } from '../../../mocks/msw/handlers/entityHandlers'
+import AddConditionsForUseButton, {
+  AddConditionsForUseButtonProps,
+} from './AddConditionsForUseButton'
 
 function renderComponent(props: AddConditionsForUseButtonProps) {
   return render(<AddConditionsForUseButton {...props} />, {

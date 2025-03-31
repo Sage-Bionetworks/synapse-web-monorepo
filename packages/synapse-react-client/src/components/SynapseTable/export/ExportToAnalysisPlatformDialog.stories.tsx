@@ -1,13 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { useEffect } from 'react'
-import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
-import { getHandlers } from '../../../mocks/msw/handlers'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import {
   QueryVisualizationWrapper,
   useQueryVisualizationContext,
-} from '../../QueryVisualizationWrapper/index'
-import { QueryWrapper } from '../../QueryWrapper/index'
+} from '@/components/QueryVisualizationWrapper/index'
+import { QueryWrapper } from '@/components/QueryWrapper/index'
+import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
+import { getHandlers } from '@/mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { Meta, StoryObj } from '@storybook/react'
+import { useEffect } from 'react'
 import ExportToAnalysisPlatformDialog, {
   ExportToAnalysisPlatformDialogProps,
 } from './ExportToAnalysisPlatformDialog'

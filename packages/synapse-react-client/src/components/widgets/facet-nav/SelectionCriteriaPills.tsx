@@ -1,4 +1,13 @@
 import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  isFacetColumnRangeRequest,
+  isFacetColumnValuesRequest,
+  isTextMatchesQueryFilter,
+  LockedColumn,
+} from '@/utils'
+import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
+import {
   ColumnModel,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
@@ -9,18 +18,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
-import {
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  isFacetColumnRangeRequest,
-  isFacetColumnValuesRequest,
-  isTextMatchesQueryFilter,
-  LockedColumn,
-} from '../../../utils'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
 import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   QueryVisualizationContextType,

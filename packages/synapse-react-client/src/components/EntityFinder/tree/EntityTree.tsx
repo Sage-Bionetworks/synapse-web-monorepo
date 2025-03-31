@@ -1,4 +1,19 @@
 import {
+  useGetEntityHeader,
+  useGetEntityPath,
+  useGetFavorites,
+  useGetProjectsInfinite,
+} from '@/synapse-queries'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityPath,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import {
   Dispatch,
   SetStateAction,
   useCallback,
@@ -6,22 +21,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
-import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
-import {
-  useGetEntityHeader,
-  useGetEntityPath,
-  useGetFavorites,
-  useGetProjectsInfinite,
-} from '../../../synapse-queries'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityPath,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
+import DropdownSelect from '../../DropdownSelect/DropdownSelect'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
+import { displayToast } from '../../ToastMessage/ToastMessage'
 import { BreadcrumbItem } from '../Breadcrumbs'
 import { toEntityHeader } from '../details/configurations/ProjectListDetails'
 import {
@@ -35,8 +37,6 @@ import {
   RootNodeConfiguration,
   VirtualizedTree,
 } from './VirtualizedTree'
-import { displayToast } from '../../ToastMessage/ToastMessage'
-import DropdownSelect from '../../DropdownSelect/DropdownSelect'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {

@@ -1,6 +1,7 @@
-import { SynapseContextType } from '../../utils'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import OneTimePasswordForm, {
   BEGIN_RESET_2FA_BUTTON_TEXT,
@@ -9,7 +10,6 @@ import OneTimePasswordForm, {
   SHOW_RECOVERY_CODE_FORM_BUTTON_TEXT,
   SHOW_TOTP_FORM_BUTTON_TEXT,
 } from './OneTimePasswordForm'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 const defaultProps = {
   step: 'VERIFICATION_CODE',

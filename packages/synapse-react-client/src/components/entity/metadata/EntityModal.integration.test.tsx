@@ -1,23 +1,23 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { cloneDeep } from 'lodash-es'
-import { EntityModal, EntityModalProps } from './EntityModal'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import {
+  getEntityBundleHandler,
+  getVersionedEntityBundleHandler,
+} from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../utils'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { server } from '../../../mocks/msw/server'
+} from '@/utils/functions/getEndpoint'
 import {
   FileEntity,
   UserEntityPermissions,
 } from '@sage-bionetworks/synapse-types'
-import {
-  getEntityBundleHandler,
-  getVersionedEntityBundleHandler,
-} from '../../../mocks/msw/handlers/entityHandlers'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
+import { EntityModal, EntityModalProps } from './EntityModal'
 
 const {
   id: MOCK_FILE_ENTITY_ID,

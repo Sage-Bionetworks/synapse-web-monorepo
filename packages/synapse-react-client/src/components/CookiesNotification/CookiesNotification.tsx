@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import FullWidthAlert from '../FullWidthAlert'
-import { Link, Typography } from '@mui/material'
-import CookiePreferencesDialog from './CookiePreferencesDialog'
 import {
-  COOKIES_AGREEMENT_COOKIE_KEY,
-  CookiePreference,
   allowAll,
   allowNone,
+  CookiePreference,
+  COOKIES_AGREEMENT_COOKIE_KEY,
   useCookiePreferences,
-} from '../../utils/hooks/useCookiePreferences'
-import { PRIVACY_POLICY_LINK } from '../../utils/SynapseConstants'
+} from '@/utils/hooks/useCookiePreferences'
+import { PRIVACY_POLICY_LINK } from '@/utils/SynapseConstants'
+import { Link, Typography } from '@mui/material'
+import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
+import FullWidthAlert from '../FullWidthAlert'
+import CookiePreferencesDialog from './CookiePreferencesDialog'
 
 const cookies = new UniversalCookies()
 

@@ -1,14 +1,14 @@
-import { Component } from 'react'
-import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { UserProfileList } from '../../synapse-client/SynapseClient'
-import { MEDIUM_USER_CARD, UserCardSize } from '../../utils/SynapseConstants'
+import { UserProfileList } from '@/synapse-client/SynapseClient'
+import { getUserProfileWithProfilePicAttached } from '@/utils/functions/getUserData'
+import { MEDIUM_USER_CARD, UserCardSize } from '@/utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   RowSet,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
-import UserCard from '../UserCard/UserCard'
 import { without } from 'lodash-es'
+import { Component } from 'react'
+import UserCard from '../UserCard/UserCard'
 
 export type UserCardListProps = {
   /* The list of user IDs or null values to render. For null values, the card will be rendered with table data supplied by `firstName`, `lastName`, and `institution` columns supplied by the data prop.  */

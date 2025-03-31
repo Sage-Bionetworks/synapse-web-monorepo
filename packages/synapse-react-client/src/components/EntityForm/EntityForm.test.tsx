@@ -1,8 +1,8 @@
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client/index'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render } from '@testing-library/react'
 import EntityForm, { EntityFormProps } from './EntityForm'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client/index'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const targetFolderId = 'syn9988882982'
 

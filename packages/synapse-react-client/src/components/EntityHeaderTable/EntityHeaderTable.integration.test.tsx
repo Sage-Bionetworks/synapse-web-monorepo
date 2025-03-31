@@ -1,22 +1,22 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { ReferenceList } from '@sage-bionetworks/synapse-types'
-import { server } from '../../mocks/msw/server'
-import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
-import { EntityHeaderTable, EntityHeaderTableProps } from './EntityHeaderTable'
-import * as EntityFinderModule from '../EntityFinder/EntityFinderModal'
-import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
-import mockFileEntityData, {
-  MOCK_FILE_ENTITY_ID,
-  MOCK_FILE_NAME,
-} from '../../mocks/entity/mockFileEntity'
+import { mockFileEntities } from '@/mocks/entity'
 import mockDatasetData, {
   MOCK_DATASET_ENTITY_ID,
   MOCK_DATASET_NAME,
-} from '../../mocks/entity/mockDataset'
+} from '@/mocks/entity/mockDataset'
+import mockFileEntityData, {
+  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+} from '@/mocks/entity/mockFileEntity'
+import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { ReferenceList } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { mockFileEntities } from '../../mocks/entity'
+import * as EntityFinderModule from '../EntityFinder/EntityFinderModal'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import { EntityHeaderTable, EntityHeaderTableProps } from './EntityHeaderTable'
 
 function renderTable(props: EntityHeaderTableProps) {
   return render(<EntityHeaderTable {...props} />, {

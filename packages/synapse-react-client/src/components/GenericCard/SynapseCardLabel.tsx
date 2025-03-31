@@ -1,10 +1,13 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { Link, Tooltip } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { Link, Tooltip } from '@mui/material'
+import dayjs from 'dayjs'
+import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment } from 'react'
 import {
   CardLink,
@@ -12,16 +15,13 @@ import {
   MarkdownLink,
   TargetEnum,
 } from '../CardContainerLogic'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { isEmpty } from 'lodash-es'
-import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
-import { UserBadge } from '../UserCard/UserBadge'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
-import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
-import Linkify from './Linkify'
 import { EntityLink } from '../EntityLink'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { UserBadge } from '../UserCard/UserBadge'
+import { EntityColumnImage } from '../widgets/EntityColumnImage'
+import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
+import Linkify from './Linkify'
 
 type SynapseCardLabelProps = {
   value: string

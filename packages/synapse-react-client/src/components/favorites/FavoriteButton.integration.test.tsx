@@ -1,18 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import FavoriteButton from './FavoriteButton'
-import { rest, server } from '../../mocks/msw/server'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { FAVORITES } from '../../utils/APIConstants'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { FAVORITES } from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import userEvent from '@testing-library/user-event'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+} from '@/utils/functions/getEndpoint'
 import { DeferredPromise } from '@open-draft/deferred-promise'
+import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import FavoriteButton from './FavoriteButton'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(<FavoriteButton entityId={mockFileEntityData.id} />, {

@@ -15,6 +15,7 @@
     "moduleResolution": "bundler",
     "types": ["vite/client"],
     "paths": {
+      "@/*": ["./src/*"],
       "@sage-bionetworks/synapse-types": ["../../packages/synapse-types/src"],
       "@sage-bionetworks/synapse-types/*": [
         "../../packages/synapse-types/src/*"

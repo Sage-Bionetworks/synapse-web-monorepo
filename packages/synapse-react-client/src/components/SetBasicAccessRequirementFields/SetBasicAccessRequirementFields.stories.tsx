@@ -1,11 +1,11 @@
-import { Button, Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
-import { useRef, useState } from 'react'
 import {
   mockACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { Button, Paper } from '@mui/material'
+import { Meta, StoryObj } from '@storybook/react'
+import { useRef, useState } from 'react'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,

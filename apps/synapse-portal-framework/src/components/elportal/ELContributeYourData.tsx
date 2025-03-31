@@ -1,4 +1,4 @@
-import { CTASection, PortalSectionHeader } from 'synapse-react-client'
+import { CTASectionWrapper, PortalSectionHeader } from 'synapse-react-client'
 
 function ELContributeYourData() {
   const content = (
@@ -27,7 +27,7 @@ function ELContributeYourData() {
       }}
     />
   )
-  return <CTASection content={content} themeMode="dark" />
+  return <CTASectionWrapper content={content} themeMode="dark" />
 }
 
 export default ELContributeYourData

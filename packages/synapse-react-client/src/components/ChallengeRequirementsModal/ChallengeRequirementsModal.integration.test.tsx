@@ -1,19 +1,19 @@
+import { mockSelfSignAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import mockProject from '@/mocks/entity/mockProject'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { getAccessRequirementStatusHandlers } from '@/mocks/msw/handlers/accessRequirementHandlers'
+import { server } from '@/mocks/msw/server'
+import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '@/mocks/team/mockTeam'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum } from '@/utils/functions'
+import { getEndpoint } from '@/utils/functions/getEndpoint'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import userEvent from '@testing-library/user-event'
 import ChallengeRequirementsModal, {
   ChallengeRequirementsModalProps,
 } from './ChallengeRequirementsModal'
-import { server } from '../../mocks/msw/server'
-import userEvent from '@testing-library/user-event'
-import SynapseClient from '../../synapse-client'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import mockProject from '../../mocks/entity/mockProject'
-import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../../mocks/team/mockTeam'
-import { getAccessRequirementStatusHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
-import { BackendDestinationEnum } from '../../utils/functions'
-import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { mockSelfSignAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 async function renderComponent(props: ChallengeRequirementsModalProps) {
   const user = userEvent.setup()

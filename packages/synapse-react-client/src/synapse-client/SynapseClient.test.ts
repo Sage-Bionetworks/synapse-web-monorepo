@@ -1,12 +1,12 @@
-import type { FunctionReturningPaginatedResults } from './SynapseClient'
-import * as SynapseClient from './SynapseClient'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { ACCESS_TOKEN_COOKIE_KEY } from '@/utils/SynapseConstants'
 import { NETWORK_UNAVAILABLE_MESSAGE } from '@sage-bionetworks/synapse-client/util/Constants'
-import { ACCESS_TOKEN_COOKIE_KEY } from '../utils/SynapseConstants'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 import UniversalCookies from 'universal-cookie'
-import * as SynapseClientUtils from './SynapseClientUtils'
 import * as HttpClient from './HttpClient'
+import type { FunctionReturningPaginatedResults } from './SynapseClient'
+import * as SynapseClient from './SynapseClient'
+import * as SynapseClientUtils from './SynapseClientUtils'
 
 const isOutsideSynapseOrgSpy = jest.spyOn(
   SynapseClientUtils,

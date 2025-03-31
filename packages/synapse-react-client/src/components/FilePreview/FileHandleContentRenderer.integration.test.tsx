@@ -1,24 +1,24 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import FileHandleContentRenderer, {
-  FileHandleContentRendererProps,
-} from './FileHandleContentRenderer'
-import * as HtmlPreviewModule from './HtmlPreview/HtmlPreview'
-import { PreviewRendererType } from './PreviewRendererType'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { MB } from '../../utils/SynapseConstants'
+} from '@/utils/functions/getEndpoint'
+import { MB } from '@/utils/SynapseConstants'
 import {
   BatchFileResult,
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { MOCK_FILE_HANDLE_ID } from '../../mocks/mock_file_handle'
-import { rest, server } from '../../mocks/msw/server'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import FileHandleContentRenderer, {
+  FileHandleContentRendererProps,
+} from './FileHandleContentRenderer'
+import * as HtmlPreviewModule from './HtmlPreview/HtmlPreview'
+import { PreviewRendererType } from './PreviewRendererType'
 
 jest.spyOn(HtmlPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="HtmlPreview"></div>

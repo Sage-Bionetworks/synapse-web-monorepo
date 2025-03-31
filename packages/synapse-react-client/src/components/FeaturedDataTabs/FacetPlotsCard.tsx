@@ -1,3 +1,4 @@
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   Box,
   Button,
@@ -17,7 +18,6 @@ import { times } from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
 import { Fragment, Suspense, useMemo } from 'react'
 import { SizeMe } from 'react-sizeme'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import Plot from '../Plot/Plot'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'

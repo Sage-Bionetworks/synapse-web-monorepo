@@ -1,7 +1,7 @@
+import { useGetEntityEvaluations } from '@/synapse-queries'
 import { Alert, Box, Radio, TextField, Typography } from '@mui/material'
-import { useGetEntityEvaluations } from '../../synapse-queries'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 
 type EvaluationQueueListProps = {
   projectId: string

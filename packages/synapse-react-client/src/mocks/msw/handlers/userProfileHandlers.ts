@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { UserProfileList } from '@/synapse-client/SynapseClient'
 import {
   FAVORITES,
   NOTIFICATION_EMAIL,
@@ -9,7 +9,7 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
-} from '../../../utils/APIConstants'
+} from '@/utils/APIConstants'
 import {
   TwoFactorAuthStatus,
   TYPE_FILTER,
@@ -17,15 +17,15 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,
   mockUserData,
   mockUserProfileData,
 } from '../../user/mock_user_profile'
-import { SynapseApiResponse } from '../handlers'
-import { UserProfileList } from '../../../synapse-client/SynapseClient'
 import { mockUserGroupData } from '../../usergroup/mockUserGroup'
+import { SynapseApiResponse } from '../handlers'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
