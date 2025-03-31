@@ -1,3 +1,7 @@
+import {
+  useGetResearchProject,
+  useUpdateResearchProject,
+} from '@/synapse-queries'
 import { InfoTwoTone } from '@mui/icons-material'
 import {
   Alert,
@@ -16,10 +20,6 @@ import {
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useEffect, useState } from 'react'
-import {
-  useGetResearchProject,
-  useUpdateResearchProject,
-} from '../../../../synapse-queries'
 import HelpPopover from '../../../HelpPopover'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
