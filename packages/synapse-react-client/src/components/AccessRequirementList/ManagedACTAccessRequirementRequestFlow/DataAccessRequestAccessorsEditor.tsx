@@ -101,7 +101,7 @@ export default function DataAccessRequestAccessorsEditor(
         }
         value={null}
       />
-      <Stack gap={1}>
+      <Stack sx={{ my: 1, gap: 1 }}>
         {accessorChanges.map((ac, i) => {
           return (
             <div className={'list-items'} key={`accessor-${i}`}>

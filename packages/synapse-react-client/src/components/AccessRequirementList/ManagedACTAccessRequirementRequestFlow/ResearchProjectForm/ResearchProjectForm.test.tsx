@@ -17,7 +17,7 @@ import {
   waitFor,
   within,
 } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { SynapseClient } from '../../../../index'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
@@ -86,6 +86,19 @@ async function renderComponent(props: ResearchProjectFormProps) {
   }
 }
 
+async function clickSaveAndContinue(user: UserEvent) {
+  // The button will appear twice, since there is a confirmation screen
+  let saveChangesButton = await screen.findByRole('button', {
+    name: 'Save and Continue',
+  })
+  await user.click(saveChangesButton)
+
+  saveChangesButton = await screen.findByRole('button', {
+    name: 'Save and Continue',
+  })
+  await user.click(saveChangesButton)
+}
+
 async function setUp(props: ResearchProjectFormProps) {
   const user = userEvent.setup()
   const component = await renderComponent(props)
@@ -100,7 +113,7 @@ async function setUp(props: ResearchProjectFormProps) {
     exact: false,
   })
   const saveChangesButton = await screen.findByRole('button', {
-    name: 'Save changes',
+    name: 'Save and Continue',
   })
   const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
   return {
@@ -120,13 +133,7 @@ describe('ResearchProjectForm', () => {
   })
 
   it('Prompts for a project lead and institution', async () => {
-    const {
-      user,
-      projectLeadInput,
-      institutionInput,
-      iduInput,
-      saveChangesButton,
-    } = await setUp({
+    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -148,7 +155,7 @@ describe('ResearchProjectForm', () => {
     await user.type(projectLeadInput, projectLead)
     await user.type(institutionInput, institution)
 
-    await user.click(saveChangesButton)
+    await clickSaveAndContinue(user)
 
     await waitFor(() => {
       expect(mockSaveResearchProject).toHaveBeenCalledWith(
@@ -168,13 +175,7 @@ describe('ResearchProjectForm', () => {
     })
   })
   it('Prompts for an IDU statement if required', async () => {
-    const {
-      user,
-      projectLeadInput,
-      institutionInput,
-      iduInput,
-      saveChangesButton,
-    } = await setUp({
+    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -200,7 +201,7 @@ describe('ResearchProjectForm', () => {
     await user.type(institutionInput, institution)
     await user.type(iduInput!, idu)
 
-    await user.click(saveChangesButton)
+    await clickSaveAndContinue(user)
 
     await waitFor(() => {
       expect(mockSaveResearchProject).toHaveBeenCalledWith(
@@ -368,13 +369,7 @@ describe('ResearchProjectForm', () => {
       )
     })
 
-    const {
-      user,
-      projectLeadInput,
-      institutionInput,
-      iduInput,
-      saveChangesButton,
-    } = await setUp({
+    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -396,7 +391,7 @@ describe('ResearchProjectForm', () => {
     await user.type(institutionInput, institution)
     await user.type(iduInput!, idu)
 
-    await user.click(saveChangesButton)
+    await clickSaveAndContinue(user)
 
     await waitFor(() => {
       expect(mockSaveResearchProject).toHaveBeenCalledWith(
