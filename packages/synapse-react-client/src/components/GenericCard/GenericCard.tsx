@@ -390,7 +390,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       type,
       includeCitation,
       citationBoilerplateText,
-      downloadCartSynId = 'synapseLink',
+      downloadCartSynId,
     } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -423,9 +423,6 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       schema,
       rowId,
     )
-    const synapseLinkId: string = data[schema.synapseLink]?.match(
-      SYNAPSE_ENTITY_ID_REGEX,
-    )?.[1]
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
     const customLabelConfig =
@@ -566,9 +563,9 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
 
     let downloadCartSynIdColumnIndex: number | undefined
     let downloadCartSynIdValue: string | undefined
-    if (genericCardSchemaDefined.downloadCartSynId) {
+    if (downloadCartSynId) {
       downloadCartSynIdColumnIndex = getColumnIndex(
-        genericCardSchemaDefined.downloadCartSynId,
+        downloadCartSynId,
         selectColumns,
         columnModels,
       )
