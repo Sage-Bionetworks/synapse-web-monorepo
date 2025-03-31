@@ -27,7 +27,7 @@ const routes: RouteObject[] = [
         {/* PORTALS-3508 */}
         <RepositoryUnderReviewAlert
           portalSpecificDisclaimer={
-            "This repository is developed by Sage Bionetworks to host and share resources related to Alzheimer's Disease research, and remains fully operational. We continue to maintain and accept Alzheimer's-related data and resources throughout this review process."
+            "This repository is developed by Sage Bionetworks to host and share resources related to Alzheimer's Disease research, and remains fully operational. We continue to maintain and accept Alzheimer's disease-related data and resources throughout this review process."
           }
         />
         <SurveyToast
