@@ -1,6 +1,7 @@
-import { SynapseConstants } from '../../utils'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
+import { SynapseConstants } from '@/utils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { chunk } from 'lodash-es'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
@@ -8,7 +9,6 @@ import {
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import FacetPlotsCard, { FacetPlotsCardProps } from './FacetPlotsCard'
-import { chunk } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
 import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 

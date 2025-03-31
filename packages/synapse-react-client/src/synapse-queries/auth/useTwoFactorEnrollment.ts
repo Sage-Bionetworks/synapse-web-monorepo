@@ -1,10 +1,6 @@
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   TotpSecret,
   TotpSecretActivationRequest,
@@ -12,9 +8,13 @@ import {
   TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
 
 export function useStartTwoFactorEnrollment(

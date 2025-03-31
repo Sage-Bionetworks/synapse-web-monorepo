@@ -1,7 +1,7 @@
+import { convertDoiToLink } from '@/utils/functions/RegularExpressions'
 import { Component, Fragment } from 'react'
-import IconSVG from '../../IconSvg/IconSvg'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
-import { convertDoiToLink } from '../../../utils/functions/RegularExpressions'
+import IconSVG from '../../IconSvg/IconSvg'
 
 type State = {
   isShowMoreOn: boolean

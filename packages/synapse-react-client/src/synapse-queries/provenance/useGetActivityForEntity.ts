@@ -1,8 +1,8 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { Activity } from '@sage-bionetworks/synapse-types'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetActivityForEntity(
   entityId: string,

@@ -1,19 +1,19 @@
+import {
+  getBadRequestChangePasswordHandler,
+  getRequires2FAChangePasswordHandler,
+  getSuccessfulChangePasswordHandler,
+} from '@/mocks/msw/handlers/changePasswordHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { server } from '@/mocks/msw/server'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
 import { MemoryRouter } from 'react-router'
-import {
-  getBadRequestChangePasswordHandler,
-  getRequires2FAChangePasswordHandler,
-  getSuccessfulChangePasswordHandler,
-} from '../../mocks/msw/handlers/changePasswordHandlers'
-import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
-import { server } from '../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'

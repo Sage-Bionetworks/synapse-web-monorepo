@@ -1,7 +1,7 @@
+import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import { Box, Collapse } from '@mui/material'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'

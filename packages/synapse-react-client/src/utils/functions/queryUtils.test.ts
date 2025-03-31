@@ -1,4 +1,10 @@
-import syn16787123Json from '../../mocks/query/syn16787123'
+import mockDataset from '@/mocks/entity/mockDataset'
+import mockDatasetCollection from '@/mocks/entity/mockDatasetCollection'
+import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import syn16787123Json from '@/mocks/query/syn16787123'
+import { LockedColumn, UniqueFacetIdentifier } from '@/utils/types'
 import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   ColumnModel,
@@ -16,26 +22,20 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import * as SynapseConstants from '../SynapseConstants'
 import {
   canTableQueryBeAddedToDownloadList,
   facetObjectMatchesDefinition,
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
   getHeaderIndex,
-  hasResettableFilters,
   hasFacetedSelectColumn,
+  hasResettableFilters,
   isSingleNotSetValue,
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
   removeLockedColumnFromFacetData,
 } from './queryUtils'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
-import mockDataset from '../../mocks/entity/mockDataset'
-import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
-import mockDatasetCollection from '../../mocks/entity/mockDatasetCollection'
-import * as SynapseConstants from '../SynapseConstants'
-import { LockedColumn, UniqueFacetIdentifier } from '../types'
-import mockQueryResponseData from '../../mocks/mockQueryResponseData'
 
 describe('facet support', () => {
   const facetColumns: FacetColumnResult[] = [

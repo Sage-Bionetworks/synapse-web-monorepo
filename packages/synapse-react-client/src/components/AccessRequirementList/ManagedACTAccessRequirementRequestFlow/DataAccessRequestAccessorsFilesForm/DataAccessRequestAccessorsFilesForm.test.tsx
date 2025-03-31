@@ -1,11 +1,17 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import DataAccessRequestAccessorsFilesForm, {
-  DataAccessRequestAccessorsFilesFormProps,
-} from './DataAccessRequestAccessorsFilesForm'
-import { MOCK_RESEARCH_PROJECT_ID } from '../../../../mocks/dataaccess/MockResearchProject'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import { MOCK_FILE_ENTITY_ID } from '../../../../mocks/entity/mockFileEntity'
-import SynapseClient from '../../../../synapse-client'
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  MOCK_DATA_ACCESS_RENEWAL,
+  MOCK_DATA_ACCESS_RENEWAL_ID,
+  MOCK_DATA_ACCESS_REQUEST,
+  MOCK_DATA_ACCESS_REQUEST_ID,
+} from '@/mocks/dataaccess/MockDataAccessRequest'
+import { MOCK_RESEARCH_PROJECT_ID } from '@/mocks/dataaccess/MockResearchProject'
+import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
+import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -17,30 +23,24 @@ import {
   mockUserProfileData,
   mockUserProfileData2,
   mockUserProfileData3,
-} from '../../../../mocks/user/mock_user_profile'
-import {
-  MOCK_DATA_ACCESS_RENEWAL,
-  MOCK_DATA_ACCESS_RENEWAL_ID,
-  MOCK_DATA_ACCESS_REQUEST,
-  MOCK_DATA_ACCESS_REQUEST_ID,
-} from '../../../../mocks/dataaccess/MockDataAccessRequest'
-import {
-  mockManagedACTAccessRequirement,
-  mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../../mocks/accessRequirement/mockAccessRequirements'
-import { mockSubmittedSubmission } from '../../../../mocks/dataaccess/MockSubmission'
+} from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AccessorChange,
   AccessType,
   RestrictableObjectType,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
-import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
+import DataAccessRequestAccessorsFilesForm, {
+  DataAccessRequestAccessorsFilesFormProps,
+} from './DataAccessRequestAccessorsFilesForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
 jest.mock('../../../Markdown/MarkdownSynapse', () => ({

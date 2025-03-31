@@ -1,8 +1,8 @@
-import { useGetEntity } from '../../synapse-queries'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
-import { isFileEntity } from '../../utils/types/IsType'
-import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
+import { useGetEntity } from '@/synapse-queries'
+import { isFileEntity } from '@/utils/types/IsType'
 import { Skeleton } from '@mui/material'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
 
 export type FileEntityDirectDownloadProps = Omit<
   DirectFileDownloadProps,

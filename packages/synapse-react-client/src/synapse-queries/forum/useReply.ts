@@ -1,3 +1,14 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  CreateDiscussionReply,
+  DiscussionFilter,
+  DiscussionReplyBundle,
+  DiscussionReplyOrder,
+  Match,
+  PaginatedResults,
+  UpdateDiscussionReply,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -9,17 +20,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import {
-  CreateDiscussionReply,
-  DiscussionFilter,
-  DiscussionReplyBundle,
-  DiscussionReplyOrder,
-  Match,
-  PaginatedResults,
-  UpdateDiscussionReply,
-} from '@sage-bionetworks/synapse-types'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetRepliesInfinite<

@@ -1,7 +1,9 @@
-import { PortalSearchTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
-import { RouteObject } from 'react-router'
-import cckpConfigs from 'src/config/synapseConfigs'
+import cckpConfigs from '@/config/synapseConfigs'
 import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
+import {
+  PortalSearchTabConfig,
+} from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
+import { RouteObject } from 'react-router'
 
 export const searchPageTabs = [
   {

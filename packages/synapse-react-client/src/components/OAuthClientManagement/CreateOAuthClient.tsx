@@ -1,6 +1,11 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import { displayToast } from '../ToastMessage/ToastMessage'
+import {
+  useCreateOAuthClient,
+  useDeleteOAuthClient,
+  useUpdateOAuthClient,
+} from '@/synapse-queries'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useDebouncedEffect } from '@/utils/hooks'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import {
   Alert,
   Box,
@@ -14,16 +19,11 @@ import {
 } from '@mui/material'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import { OIDCSigningAlgorithm } from '@sage-bionetworks/synapse-client/generated/models/OIDCSigningAlgorithm'
-import {
-  useCreateOAuthClient,
-  useDeleteOAuthClient,
-  useUpdateOAuthClient,
-} from '../../synapse-queries'
-import { WarningDialog } from '../SynapseForm/WarningDialog'
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { useDebouncedEffect } from '../../utils/hooks'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { WarningDialog } from '../SynapseForm/WarningDialog'
+import { displayToast } from '../ToastMessage/ToastMessage'
 
 export const defaultUserInfoSignedResponseAlgorithm = 'JSON'
 export const warningHeader = 'Are you absolutely sure?'

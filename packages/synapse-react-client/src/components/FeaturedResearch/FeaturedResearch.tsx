@@ -1,19 +1,19 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
+import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import {
   Box,
   CardMedia,
+  Fade,
   Link,
+  Skeleton,
   Stack,
   Typography,
-  Skeleton,
-  Fade,
 } from '@mui/material'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import * as SynapseConstants from '../../utils/SynapseConstants'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { useImageUrl } from '../../utils/hooks/useImageUrlUtils'
 import dayjs from 'dayjs'
 import { useInView } from 'react-intersection-observer'
 import PortalSectionHeader from '../PortalSectionHeader'

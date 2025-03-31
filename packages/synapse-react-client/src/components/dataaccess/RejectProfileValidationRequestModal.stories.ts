@@ -1,12 +1,12 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { fn } from '@storybook/test'
-import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '../../utils/SynapseConstants'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
-import { RejectProfileValidationRequestModal } from './RejectProfileValidationRequestModal'
+import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { RejectProfileValidationRequestModal } from './RejectProfileValidationRequestModal'
 
 const meta = {
   title: 'Governance/RejectProfileValidationRequestModal',

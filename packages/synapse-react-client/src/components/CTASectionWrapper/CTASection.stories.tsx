@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
-import CTASection from './CTASection'
+import CTASectionWrapper from './CTASectionWrapper'
 import { Button, Typography, Link } from '@mui/material'
 import { AddAlertTwoTone } from '@mui/icons-material'
 
 const meta = {
-  title: 'Home Page/CTASection',
-  component: CTASection,
+  title: 'Home Page/CTASectionWrapper',
+  component: CTASectionWrapper,
   parameters: {
     chromatic: { viewports: [600, 1200] },
     withRouter: true,
@@ -74,7 +74,7 @@ const content = (
 )
 
 export const Demo: Story = {
-  render: args => <CTASection {...args} />,
+  render: args => <CTASectionWrapper {...args} />,
   args: {
     content: content,
     themeMode: 'light',

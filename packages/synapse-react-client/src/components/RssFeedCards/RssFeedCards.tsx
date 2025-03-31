@@ -1,10 +1,10 @@
-import { Component } from 'react'
-import Parser from 'rss-parser'
+import NoData from '@/assets/icons/NoData'
+import { ReactComponent as SubscribePlus } from '@/assets/icons/subscribe_plus.svg'
+import LargeButton from '@/components/styled/LargeButton'
 import dayjs from 'dayjs'
-import { ReactComponent as SubscribePlus } from '../../assets/icons/subscribe_plus.svg'
+import { Component } from 'react'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-import NoData from '../../assets/icons/NoData'
-import LargeButton from '../../components/styled/LargeButton'
+import Parser from 'rss-parser'
 
 const rssParser = new Parser()
 type RssState = {

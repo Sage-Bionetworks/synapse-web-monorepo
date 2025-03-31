@@ -1,8 +1,13 @@
-import { useMemo, useState } from 'react'
+import WideButton from '@/components/styled/WideButton'
 import {
   useGetAccessRequirements,
   useGetAccessRequirementStatus,
-} from '../../synapse-queries'
+} from '@/synapse-queries'
+import {
+  EASY_DIFFICULTY,
+  MEDIUM_DIFFICULTY,
+  VARIABLE_DIFFICULTY,
+} from '@/utils/SynapseConstants'
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -11,14 +16,9 @@ import {
   SelfSignAccessRequirement,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import {
-  EASY_DIFFICULTY,
-  MEDIUM_DIFFICULTY,
-  VARIABLE_DIFFICULTY,
-} from '../../utils/SynapseConstants'
+import { useMemo, useState } from 'react'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
-import WideButton from '../../components/styled/WideButton'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number

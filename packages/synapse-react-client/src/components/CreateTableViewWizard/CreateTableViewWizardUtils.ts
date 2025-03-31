@@ -1,3 +1,4 @@
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import {
   ColumnModel,
   Entity,
@@ -8,7 +9,6 @@ import {
   Table,
   VirtualTable,
 } from '@sage-bionetworks/synapse-types'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 
 export type CreateTableViewWizardStep =
   | 'CHOOSE_TABLE_TYPE'

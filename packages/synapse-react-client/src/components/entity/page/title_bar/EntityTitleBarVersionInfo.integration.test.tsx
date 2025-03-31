@@ -1,25 +1,25 @@
+import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
+import { mockFolderEntity } from '@/mocks/entity/mockEntity'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { getVersionedEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  EntityBundle,
+  VersionableEntity,
+} from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   EntityTitleBarVersionInfo,
   EntityTitleBarVersionInfoProps,
   EXPORTED_FOR_UNIT_TESTING,
 } from './EntityTitleBarVersionInfo'
-import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
-import { mockDatasetEntity } from '../../../../mocks/entity/mockDataset'
-import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
-import { server } from '../../../../mocks/msw/server'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../utils/functions/getEndpoint'
-import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
-import { getVersionedEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
-import {
-  EntityBundle,
-  VersionableEntity,
-} from '@sage-bionetworks/synapse-types'
 
 function renderComponent(props: EntityTitleBarVersionInfoProps) {
   return render(<EntityTitleBarVersionInfo {...props} />, {

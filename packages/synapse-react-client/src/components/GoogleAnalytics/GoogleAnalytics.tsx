@@ -1,4 +1,4 @@
-import { useGoogleAnalytics } from '../../utils/hooks'
+import { useGoogleAnalytics } from '@/utils/hooks'
 
 export type GoogleAnalyticsProps = {
   measurementId?: string

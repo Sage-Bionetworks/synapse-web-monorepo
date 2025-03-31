@@ -1,13 +1,13 @@
-import { Alert, Box, Button, ButtonProps } from '@mui/material'
-import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
-import { defaults } from 'lodash-es'
-import { useMemo, useState } from 'react'
 import {
   CreateWikiPageInput,
   useCreateWikiPage,
   useGetRootWikiPageKey,
   useGetWikiPage,
-} from '../../synapse-queries'
+} from '@/synapse-queries'
+import { Alert, Box, Button, ButtonProps } from '@mui/material'
+import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
+import { defaults } from 'lodash-es'
+import { useMemo, useState } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import MarkdownSynapse, {
   MarkdownSynapseProps,

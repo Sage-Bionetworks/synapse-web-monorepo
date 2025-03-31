@@ -1,3 +1,8 @@
+import { useSearchAccessRequirementsInfinite } from '@/synapse-queries'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
+import { Link, Typography } from '@mui/material'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
   ACCESS_TYPE,
@@ -27,17 +32,12 @@ import {
   Updater,
   useReactTable,
 } from '@tanstack/react-table'
-import { Fragment, useCallback, useMemo, useState } from 'react'
-import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
-import ColumnHeader from '../TanStackTable/ColumnHeader'
-import { Link, Typography } from '@mui/material'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { EntityLink } from '../EntityLink'
-import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
-import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
+import { Fragment, useCallback, useMemo, useState } from 'react'
+import { EntityLink } from '../EntityLink'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
+import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export function accessRequirementConcreteTypeValueToDisplayValue(
   accessRequirementConcreteTypeValue: ACCESS_REQUIREMENT_CONCRETE_TYPE,

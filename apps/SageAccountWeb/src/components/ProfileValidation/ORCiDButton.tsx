@@ -1,13 +1,13 @@
-import { SyntheticEvent, useState } from 'react'
+import OrcId from '@/assets/ORCID.svg?url'
+import EditIcon from '@/assets/RedEditPencil.svg?url'
 import { Button, SxProps } from '@mui/material'
+import { SyntheticEvent, useState } from 'react'
 import {
   displayToast,
-  SynapseConstants,
   SynapseClient,
+  SynapseConstants,
 } from 'synapse-react-client'
 import { ValidationWizardStep } from './ProfileValidation'
-import OrcId from '../../assets/ORCID.svg?url'
-import EditIcon from '../../assets/RedEditPencil.svg?url'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string

@@ -1,12 +1,12 @@
-import { useResolveLinkEntity } from '../../utils/functions/ResolveLinkEntity'
-import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
+import { useResolveLinkEntity } from '@/utils/functions/ResolveLinkEntity'
+import { isFileEntity } from '@/utils/types/IsType'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   FileEntity,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import FileEntityPreview from './FileEntityPreview'
-import { isFileEntity } from '../../utils/types/IsType'
 
 export type EntityPreviewProps = {
   entityId: string

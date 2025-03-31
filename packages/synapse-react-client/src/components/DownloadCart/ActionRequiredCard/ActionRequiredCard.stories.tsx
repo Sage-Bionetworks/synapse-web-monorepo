@@ -1,8 +1,8 @@
+import { WideButton } from '@/components/styled/WideButton'
+import { EASY_DIFFICULTY } from '@/utils/SynapseConstants'
+import { Button, Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
 import { ActionRequiredCard } from './ActionRequiredCard'
-import { WideButton } from '../../styled/WideButton'
-import { EASY_DIFFICULTY } from '../../../utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
 
 const meta = {
   title: 'Download/ActionRequiredCard',

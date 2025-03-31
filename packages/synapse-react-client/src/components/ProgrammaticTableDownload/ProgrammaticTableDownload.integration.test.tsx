@@ -1,21 +1,21 @@
-import { render, screen, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { TABLE_QUERY_ASYNC_START } from '../../utils/APIConstants'
-
-import { rest, server } from '../../mocks/msw/server'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { render, screen, within } from '@testing-library/react'
+import { SynapseConstants } from '../../index'
 import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
 } from './ProgrammaticTableDownload'
-import { SynapseConstants } from '../../index'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const onHide = jest.fn()
 

@@ -1,9 +1,9 @@
+import Arrow from '@/assets/icons/Arrow'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import BrainhubCarousel, {
   CarouselProps as BrainhubCarouselProps,
 } from '@brainhubeu/react-carousel'
 import { Children, cloneElement, ReactElement, useState } from 'react'
-import Arrow from '../../assets/icons/Arrow'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import { SizeMe } from 'react-sizeme'
 import '@brainhubeu/react-carousel/lib/style.css'
 

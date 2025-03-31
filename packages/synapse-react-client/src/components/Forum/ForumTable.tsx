@@ -1,16 +1,11 @@
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { useGetForumThreadsInfinite } from '../../synapse-queries/forum/useForum'
-import { AVATAR } from '../../utils/SynapseConstants'
+import { useGetForumThreadsInfinite } from '@/synapse-queries/forum/useForum'
+import { AVATAR } from '@/utils/SynapseConstants'
+import { Button, Link } from '@mui/material'
 import {
   DiscussionFilter,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
 } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../IconSvg/IconSvg'
-import UserCard from '../UserCard/UserCard'
-import { Button, Link } from '@mui/material'
-import { UserBadge } from '../UserCard/UserBadge'
 import {
   ColumnDef,
   createColumnHelper,
@@ -19,9 +14,14 @@ import {
   Table,
   useReactTable,
 } from '@tanstack/react-table'
-import ColumnHeader from '../TanStackTable/ColumnHeader'
+import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
+import { useMemo, useState } from 'react'
+import IconSvg from '../IconSvg/IconSvg'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { UserBadge } from '../UserCard/UserBadge'
+import UserCard from '../UserCard/UserCard'
 
 export type ForumTableProps = {
   forumId: string

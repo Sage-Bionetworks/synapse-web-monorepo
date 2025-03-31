@@ -1,9 +1,9 @@
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { LockedColumn } from '@/utils'
+import { ImmutableTableQueryResult } from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
-import { LockedColumn } from '../../utils'
 
 export type QueryContextType = {
   isInfinite: boolean

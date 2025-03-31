@@ -1,7 +1,7 @@
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { Button, Paper } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
 import { useRef, useState } from 'react'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
 import {
   SetManagedAccessRequirementFields,
   SetManagedAccessRequirementFieldsHandle,

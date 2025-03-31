@@ -1,10 +1,10 @@
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
+import { useProjectStorageUsage } from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import { Box, SxProps, Tooltip, Typography } from '@mui/material'
-import { useSynapseContext } from '../../utils'
-import { useProjectStorageUsage } from '../../synapse-queries'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
-import { SAGE_OFFERINGS_HELP_URL } from '../../utils/SynapseConstants'
 import HelpPopover from '../HelpPopover'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
 export type ProjectDataAvailabilityProps = {
   projectId?: string

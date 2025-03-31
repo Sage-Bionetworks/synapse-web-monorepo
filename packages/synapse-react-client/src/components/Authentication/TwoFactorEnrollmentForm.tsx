@@ -1,30 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  Box,
-  BoxProps,
-  Button,
-  Divider,
-  IconButton,
-  Link,
-  Paper,
-  Stack,
-  styled,
-  Typography,
-} from '@mui/material'
-import { StyledOuterContainer } from '../styled/LeftRightPanel'
-import { StyledComponent } from '@emotion/styled'
-import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { useGetNotificationEmail } from '../../synapse-queries'
-import { toCanvas } from 'qrcode'
-import TextField from '../TextField/TextField'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
+import { useGetNotificationEmail } from '@/synapse-queries'
 import {
   useFinishTwoFactorEnrollment,
   useStartTwoFactorEnrollment,
-} from '../../synapse-queries/auth/useTwoFactorEnrollment'
-import TwoFactorSecretDialog from './TwoFactorSecretDialog'
+} from '@/synapse-queries/auth/useTwoFactorEnrollment'
+import { StyledComponent } from '@emotion/styled'
+import { Box, BoxProps, Button, Divider, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import { TotpSecret } from '@sage-bionetworks/synapse-types'
+import { toCanvas } from 'qrcode'
+import { useEffect, useRef, useState } from 'react'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import IconSvg from '../IconSvg/IconSvg'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import TextField from '../TextField/TextField'
+import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 
 /**
  * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret

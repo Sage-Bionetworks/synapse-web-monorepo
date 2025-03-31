@@ -1,4 +1,8 @@
-import { useCallback, useState } from 'react'
+import { useChangePassword, useResetTwoFactorAuth } from '@/synapse-queries'
+import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
+import { useOneSageURL } from '@/utils/hooks'
+import { Alert, Typography } from '@mui/material'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken as ChangePasswordWithTokenObject,
@@ -7,16 +11,12 @@ import {
   TwoFactorAuthOtpType,
   TwoFactorAuthResetRequest,
 } from '@sage-bionetworks/synapse-types'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { useChangePassword, useResetTwoFactorAuth } from '../../synapse-queries'
-import { Alert, Typography } from '@mui/material'
+import { useCallback, useState } from 'react'
+import { ONE_TIME_PASSWORD_STEP, OneTimePasswordForm } from '../Authentication'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from '../Authentication/Constants'
-import { ONE_TIME_PASSWORD_STEP, OneTimePasswordForm } from '../Authentication'
-import { useOneSageURL } from '../../utils/hooks'
-import appendFinalQueryParamKey from '../../utils/appendFinalQueryParamKey'
 
 export const TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT =
   'Two-factor authentication is required to change your password. Your password has not yet been changed.'

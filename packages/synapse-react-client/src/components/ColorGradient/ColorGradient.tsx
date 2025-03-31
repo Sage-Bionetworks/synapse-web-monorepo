@@ -1,7 +1,7 @@
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../../utils/functions/colorPalette'
+} from '@/utils/functions/colorPalette'
 
 export function rgba2rgb(background: number[], color: number[]) {
   const alpha = color[3]

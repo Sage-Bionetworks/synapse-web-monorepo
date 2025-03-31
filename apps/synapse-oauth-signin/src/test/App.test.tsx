@@ -1,3 +1,12 @@
+import {
+  getOAuth2DescriptionWithInvalidRedirectUriHandler,
+  getOAuth2DescriptionWithUnverifiedClientHandler,
+  resetConsentedInMockService,
+  setMockPostConsentFn,
+  URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER,
+} from '@/mocks/handlers'
+import mockOauthClient from '@/mocks/MockOAuthClient'
+import { server } from '@/mocks/server'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { QueryClient } from '@tanstack/react-query'
 import {
@@ -15,15 +24,6 @@ import {
   SynapseConstants,
 } from 'synapse-react-client'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import {
-  getOAuth2DescriptionWithInvalidRedirectUriHandler,
-  getOAuth2DescriptionWithUnverifiedClientHandler,
-  resetConsentedInMockService,
-  setMockPostConsentFn,
-  URL_ENCODED_ACCESS_CODE_PROVIDED_BY_SERVER,
-} from '../mocks/handlers'
-import mockOauthClient from '../mocks/MockOAuthClient'
-import { server } from '../mocks/server'
 import { getRoutes } from '../routes'
 
 const overrideWaitForOptions: waitForOptions = {

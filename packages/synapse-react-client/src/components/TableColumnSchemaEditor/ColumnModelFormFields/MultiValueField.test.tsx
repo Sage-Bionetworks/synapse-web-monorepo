@@ -1,11 +1,11 @@
-import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'
-import { JSONSchema7Definition } from 'json-schema'
-import MultiValueField, { MultiValueFieldProps } from './MultiValueField'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import JSONArrayEditorModal from '../../JSONArrayEditor/JSONArrayEditorModal'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { JSONSchema7Definition } from 'json-schema'
+import JSONArrayEditorModal from '../../JSONArrayEditor/JSONArrayEditorModal'
+import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'
+import MultiValueField, { MultiValueFieldProps } from './MultiValueField'
 
 const stringDefinition: JSONSchema7Definition = {
   type: 'string',

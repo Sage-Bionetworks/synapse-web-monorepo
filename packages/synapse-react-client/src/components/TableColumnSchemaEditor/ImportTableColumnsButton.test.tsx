@@ -1,21 +1,21 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import ImportTableColumnsButton, {
-  ImportTableColumnsButtonProps,
-} from './ImportTableColumnsButton'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
-import {
-  EntityFinderModal,
-  EntityFinderModalProps,
-} from '../EntityFinder/EntityFinderModal'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnModel,
   EntityBundle,
   Reference,
 } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { SetOptional } from 'type-fest'
+import {
+  EntityFinderModal,
+  EntityFinderModalProps,
+} from '../EntityFinder/EntityFinderModal'
+import ImportTableColumnsButton, {
+  ImportTableColumnsButtonProps,
+} from './ImportTableColumnsButton'
 
 const MOCK_FINDER_MODAL_TESTID = 'MockEntityFinderModal'
 

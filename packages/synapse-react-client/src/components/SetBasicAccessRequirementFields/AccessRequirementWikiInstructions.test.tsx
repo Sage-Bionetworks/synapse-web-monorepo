@@ -1,18 +1,18 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {
   mockACTAccessRequirement,
   mockToUAccessRequirementWithWiki,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import { mockToUAccessRequirementWikiPage } from '../../mocks/mockWiki'
-import { server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockToUAccessRequirementWikiPage } from '@/mocks/mockWiki'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
   expectMarkdownSynapseNotToGetWiki,
   waitForMarkdownSynapseToGetWiki,
-} from '../../testutils/MarkdownSynapseUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/testutils/MarkdownSynapseUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   AccessRequirementWikiInstructions,

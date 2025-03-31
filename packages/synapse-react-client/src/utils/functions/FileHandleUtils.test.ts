@@ -1,3 +1,17 @@
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import {
+  mockExternalObjectStoreFileHandle,
+  mockFileHandle,
+} from '@/mocks/mock_file_handle'
+import {
+  mockExternalGoogleCloudUploadDestination,
+  mockExternalObjectStoreUploadDestination,
+  mockExternalS3UploadDestination,
+  mockExternalUploadDestination,
+  mockS3UploadDestination,
+} from '@/mocks/mock_upload_destination'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import {
   EntityBundle,
   EntityType,
@@ -18,26 +32,12 @@ import {
   S3FileHandle,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import {
-  mockExternalObjectStoreFileHandle,
-  mockFileHandle,
-} from '../../mocks/mock_file_handle'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,
   getStorageLocationName,
   getUploadDestinationString,
 } from './FileHandleUtils'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client'
-import {
-  mockExternalGoogleCloudUploadDestination,
-  mockExternalObjectStoreUploadDestination,
-  mockExternalS3UploadDestination,
-  mockExternalUploadDestination,
-  mockS3UploadDestination,
-} from '../../mocks/mock_upload_destination'
 
 describe('File Handle Utils', () => {
   describe('getDataFileHandle', () => {

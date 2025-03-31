@@ -1,3 +1,4 @@
+import educationalResourceSvg from '@/config/style/EducationalResource.svg?url'
 import {
   CardConfiguration,
   GenericCardSchema,
@@ -6,7 +7,6 @@ import {
   SynapseConstants,
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
-import educationalResourceSvg from '../style/EducationalResource.svg?url'
 
 const rgbIndex = 8
 

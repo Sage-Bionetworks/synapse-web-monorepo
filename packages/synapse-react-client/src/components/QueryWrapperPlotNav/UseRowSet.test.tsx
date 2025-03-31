@@ -1,14 +1,14 @@
-import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { useRowSet } from './UseRowSet'
-import { server } from '../../mocks/msw/server'
-import { QueryWrapper } from '../QueryWrapper'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
-} from '../../mocks/mockFileViewQuery'
+} from '@/mocks/mockFileViewQuery'
 
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
+import { QueryWrapper } from '../QueryWrapper'
+import { useRowSet } from './UseRowSet'
 
 describe('UseRowSet', () => {
   beforeAll(() => {

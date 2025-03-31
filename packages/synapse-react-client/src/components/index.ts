@@ -1,5 +1,6 @@
 import ErrorPage, { SynapseErrorType } from './error/ErrorPage'
 import NoContentAvailable from './SynapseTable/NoContentAvailable'
+
 export * from './AccessTokenPage'
 export * from './AccountLevelBadges'
 export * from './Authentication'
@@ -13,7 +14,7 @@ export * from './ChallengeSubmission'
 export * from './ChangePassword'
 export * from './ConfirmationDialog'
 export * from './CookiesNotification'
-export * from './CTASection'
+export * from './CTASectionWrapper'
 export * from './DownloadCart'
 export * from './DynamicForm'
 export * from './EntityBadgeIcons'
@@ -95,6 +96,6 @@ export * from './PortalFeaturedPartners'
 export * from './PortalSectionHeader'
 
 // TODO: Find a better way to expose Icon components
-export { Project as ProjectIcon } from '../assets/themed_icons/Project'
+export { Project as ProjectIcon } from '@/assets/themed_icons/Project'
 export { ErrorPage, SynapseErrorType }
 export { NoContentAvailable }

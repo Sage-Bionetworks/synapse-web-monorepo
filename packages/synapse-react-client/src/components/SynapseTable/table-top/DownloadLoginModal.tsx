@@ -1,6 +1,6 @@
-import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Link, Typography } from '@mui/material'
-import { SRC_SIGN_IN_CLASS } from '../../../utils/SynapseConstants'
+import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 
 export type DownloadLoginModalProps = {
   showModal?: boolean

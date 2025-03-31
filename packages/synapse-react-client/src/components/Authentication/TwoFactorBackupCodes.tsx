@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import {
+  LeftRightPanel,
+  StyledOuterContainer,
+} from '@/components/styled/LeftRightPanel'
+import { createRecoveryCodes } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useMediaPrintOnly } from '@/utils/hooks/useMediaPrintOnly'
 import {
   Alert,
   Box,
@@ -7,17 +13,14 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { LeftRightPanel, StyledOuterContainer } from '../styled/LeftRightPanel'
-import IconSvg from '../IconSvg/IconSvg'
-import { useMutation } from '@tanstack/react-query'
-import { createRecoveryCodes } from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
-import { RecoveryCodeGrid } from './RecoveryCodeGrid'
-import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useMediaPrintOnly } from '../../utils/hooks/useMediaPrintOnly'
+import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
+import { useMutation } from '@tanstack/react-query'
+import { useCallback, useEffect, useState } from 'react'
+import IconSvg from '../IconSvg/IconSvg'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import { RecoveryCodeGrid } from './RecoveryCodeGrid'
+import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
 
 export type TwoFactorBackupCodesProps = {
   /* Whether to show a warning before generating new codes, to prevent users from overwriting their existing codes */

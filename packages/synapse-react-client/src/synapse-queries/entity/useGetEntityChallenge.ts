@@ -1,7 +1,7 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import { Challenge } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetEntityChallenge(
   entityId: string,

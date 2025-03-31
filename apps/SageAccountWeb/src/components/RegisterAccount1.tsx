@@ -1,3 +1,8 @@
+import GoogleLogo from '@/assets/g-logo.png'
+import {
+  VALID_USERNAME_DESCRIPTION,
+  validateAlias,
+} from '@/utils/validateAlias'
 import {
   Box,
   Button,
@@ -25,11 +30,6 @@ import {
   useSynapseContext,
 } from 'synapse-react-client'
 import { useAppContext } from '../AppContext'
-import GoogleLogo from '../assets/g-logo.png'
-import {
-  VALID_USERNAME_DESCRIPTION,
-  validateAlias,
-} from '../utils/validateAlias'
 import { BackButton } from './BackButton'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
 import { SourceAppLogo } from './SourceApp'

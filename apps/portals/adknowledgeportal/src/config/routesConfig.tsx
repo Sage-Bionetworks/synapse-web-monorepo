@@ -1,3 +1,7 @@
+import HomePage from '@/pages/HomePage'
+import ProgramDetailsPage from '@/pages/ProgramDetailsPage'
+import ProjectDetailsPage from '@/pages/ProjectDetailsPage'
+import { StudyDetailsPage, studyDetailsPageChildRoutes } from '@/pages/StudyDetailsPage'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
@@ -6,13 +10,6 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { Navigate, RouteObject } from 'react-router'
-import HomePage from 'src/pages/HomePage'
-import ProgramDetailsPage from 'src/pages/ProgramDetailsPage'
-import ProjectDetailsPage from 'src/pages/ProjectDetailsPage'
-import {
-  StudyDetailsPage,
-  studyDetailsPageChildRoutes,
-} from 'src/pages/StudyDetailsPage'
 import { SynapseFormWrapper } from 'synapse-react-client'
 import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { explorePageRoutes } from './explorePageRoutes'

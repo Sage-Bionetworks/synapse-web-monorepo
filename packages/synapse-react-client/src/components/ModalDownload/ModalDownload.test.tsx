@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import ModalDownload, { ModalDownloadProps } from './ModalDownload'
 import {
   csvOption,
   tsvOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 const renderComponent = (props: ModalDownloadProps) => {
   return render(<ModalDownload {...props} />, {

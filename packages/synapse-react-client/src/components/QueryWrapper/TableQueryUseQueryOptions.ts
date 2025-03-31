@@ -1,15 +1,14 @@
+import SynapseClient from '@/synapse-client'
 import {
-  LockedColumn,
-  SynapseClientError,
-  useSynapseContext,
-} from '../../utils'
-import { useMemo } from 'react'
+  getInfiniteQueryResultBundleOptions,
+  KeyFactory,
+  tableQueryUseQueryDefaults,
+} from '@/synapse-queries'
+import { LockedColumn, SynapseClientError, useSynapseContext } from '@/utils'
 import {
   partitionQueryBundleRequestIntoRowsAndMetadata,
   removeLockedColumnFromFacetData,
-} from '../../utils/functions/queryUtils'
-import SynapseClient from '../../synapse-client'
-import { omit } from 'lodash-es'
+} from '@/utils/functions/queryUtils'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
@@ -17,16 +16,13 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import {
-  getInfiniteQueryResultBundleOptions,
-  KeyFactory,
-  tableQueryUseQueryDefaults,
-} from '../../synapse-queries'
-import {
   InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { omit } from 'lodash-es'
+import { useMemo } from 'react'
 
 export type TableQueryUseQueryOptions = {
   rowDataQueryOptions: UseQueryOptions<

@@ -7,6 +7,7 @@
     "moduleResolution": "bundler",
     "types": ["vite/client"],
     "paths": {
+      "@/*": ["./src/*"],
       "@sage-bionetworks/synapse-portal-framework": [
         "../../synapse-portal-framework/src"
       ],

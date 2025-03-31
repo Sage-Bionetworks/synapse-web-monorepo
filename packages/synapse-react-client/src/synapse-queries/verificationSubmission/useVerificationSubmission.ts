@@ -1,7 +1,7 @@
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { updateVerificationSubmissionState } from '../../synapse-client'
+import { updateVerificationSubmissionState } from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import { VerificationState } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 type UseUpdateVerificationSubmissionArgs = {
   id: string

@@ -1,3 +1,4 @@
+import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import {
   ColumnModel,
   ColumnSingleValueFilterOperator,
@@ -7,7 +8,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 
 export function updateQueryUsingSearchTerm(
   queryBundleRequest: QueryBundleRequest,

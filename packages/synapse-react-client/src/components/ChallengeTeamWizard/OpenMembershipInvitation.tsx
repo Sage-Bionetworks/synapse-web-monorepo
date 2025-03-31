@@ -1,15 +1,15 @@
-import { useCallback } from 'react'
 import {
   useAddMemberToTeam,
   useGetAllOpenMembershipInvitations,
   useGetCurrentUserProfile,
   useGetTeam,
-} from '../../synapse-queries'
-import { UserBadge } from '../UserCard/UserBadge'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+} from '@/synapse-queries'
 import { Alert, Button, ButtonProps, Stack, Typography } from '@mui/material'
-import UserOrTeamBadge from '../UserOrTeamBadge'
 import { noop } from 'lodash-es'
+import { useCallback } from 'react'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { UserBadge } from '../UserCard/UserBadge'
+import UserOrTeamBadge from '../UserOrTeamBadge'
 
 export type AcceptInvitationProps = {
   teamId: string

@@ -1,6 +1,9 @@
-import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
-import * as SynapseConstants from '../SynapseConstants'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  LockedColumn,
+  UniqueFacetIdentifier,
+} from '@/utils/types'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -13,12 +16,9 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import {
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  LockedColumn,
-  UniqueFacetIdentifier,
-} from '../types'
+import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
+import * as SynapseConstants from '../SynapseConstants'
+import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 import {
   hasFilesInView,
   isDataset,

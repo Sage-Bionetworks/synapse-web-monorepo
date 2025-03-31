@@ -1,24 +1,24 @@
+import { mockExternalObjectStoreUploadDestination } from '@/mocks/mock_upload_destination'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
+import {
+  useCreateEntity,
+  useUpdateEntity,
+} from '@/synapse-queries/entity/useEntity'
+import { useDirectUploadToS3 } from '@/synapse-queries/file/useDirectUploadToS3'
+import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
+import { useGetDefaultUploadDestination } from '@/synapse-queries/file/useUploadDestination'
+import {
+  getUseMutationMock,
+  getUseQuerySuccessMock,
+} from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   FileEntity,
   UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
-import { mockExternalObjectStoreUploadDestination } from '../../../mocks/mock_upload_destination'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../../synapse-client'
-import {
-  useCreateEntity,
-  useUpdateEntity,
-} from '../../../synapse-queries/entity/useEntity'
-import { useDirectUploadToS3 } from '../../../synapse-queries/file/useDirectUploadToS3'
-import { useSynapseMultipartUpload } from '../../../synapse-queries/file/useSynapseMultipartUpload'
-import { useGetDefaultUploadDestination } from '../../../synapse-queries/file/useUploadDestination'
-import {
-  getUseMutationMock,
-  getUseQuerySuccessMock,
-} from '../../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   PrepareDirsForUploadReturn,
   usePrepareFileEntityUpload,

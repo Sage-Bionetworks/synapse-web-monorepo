@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import CTASection, { CTASectionProps } from './CTASection'
+import CTASectionWrapper, { CTASectionWrapperProps } from './CTASectionWrapper'
 import '@testing-library/jest-dom'
 import { Button, Typography, Link } from '@mui/material'
 import { AddAlertTwoTone } from '@mui/icons-material'
@@ -62,20 +62,20 @@ const content = (
   </>
 )
 
-const mockProps: CTASectionProps = {
+const mockProps: CTASectionWrapperProps = {
   content: content,
   themeMode: 'light',
 }
 
-describe('CTASections tests', () => {
+describe('CTASectionWrapper tests', () => {
   it('renders title and subtitle correctly', () => {
-    render(<CTASection {...mockProps} />)
+    render(<CTASectionWrapper {...mockProps} />)
     expect(screen.getByText('Test Title')).toBeInTheDocument()
     expect(screen.getByText('Test Subtitle')).toBeInTheDocument()
   })
 
   it('renders button with external link', () => {
-    render(<CTASection {...mockProps} />)
+    render(<CTASectionWrapper {...mockProps} />)
     const button = screen.getByRole('link')
     expect(button).toHaveAttribute('href', 'https://test-link.com')
     expect(button).toHaveAttribute('target', '_blank')
@@ -83,7 +83,7 @@ describe('CTASections tests', () => {
   })
 
   it('renders the correct icon inside the button', () => {
-    render(<CTASection {...mockProps} />)
+    render(<CTASectionWrapper {...mockProps} />)
     const icon = screen.getByTestId('AddAlertTwoToneIcon')
     expect(icon).toBeInTheDocument()
   })

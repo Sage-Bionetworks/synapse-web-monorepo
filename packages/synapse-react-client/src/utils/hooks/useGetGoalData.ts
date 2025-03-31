@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import { getFiles } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
-  FileHandleAssociation,
-  FileHandleAssociateType,
   BatchFileRequest,
+  FileHandleAssociateType,
+  FileHandleAssociation,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { getFiles } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useEffect, useState } from 'react'
 
 export default function useGetGoalData(
   entityId: string,

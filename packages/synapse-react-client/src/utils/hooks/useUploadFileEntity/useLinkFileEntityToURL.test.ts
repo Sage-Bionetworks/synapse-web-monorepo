@@ -1,15 +1,15 @@
-import { ExternalFileHandle } from '@sage-bionetworks/synapse-client'
-import { renderHook as _renderHook } from '@testing-library/react'
-import mockFileEntity from '../../../mocks/entity/mockFileEntity'
-import mockProject from '../../../mocks/entity/mockProject'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import mockProject from '@/mocks/entity/mockProject'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import {
   useCreateEntity,
   useUpdateEntity,
-} from '../../../synapse-queries/entity/useEntity'
-import { useCreateExternalFileHandle } from '../../../synapse-queries/file/useFileHandle'
-import { getUseMutationMock } from '../../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+} from '@/synapse-queries/entity/useEntity'
+import { useCreateExternalFileHandle } from '@/synapse-queries/file/useFileHandle'
+import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ExternalFileHandle } from '@sage-bionetworks/synapse-client'
+import { renderHook as _renderHook } from '@testing-library/react'
 import {
   getFileNameFromExternalUrl,
   useLinkFileEntityToURL,

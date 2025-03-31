@@ -1,12 +1,12 @@
-import { useRef } from 'react'
+import SynapseClient from '@/synapse-client'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { Alert } from '@mui/material'
 import {
   FileHandle,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import SynapseClient from '../../synapse-client'
+import { useRef } from 'react'
 
 export type PdfPreviewProps = {
   fileHandle: FileHandle

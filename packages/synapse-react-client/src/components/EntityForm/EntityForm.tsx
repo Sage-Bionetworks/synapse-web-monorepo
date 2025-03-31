@@ -1,19 +1,14 @@
 // EntityForm:
+import SynapseClient from '@/synapse-client'
+import { getFileHandleContent } from '@/synapse-client/SynapseClient'
+import { SynapseContext } from '@/utils/context/SynapseContext'
 // Will generate a Form (based on your schema files).
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import Form from '@rjsf/core'
-import { Component, ContextType, createRef } from 'react'
-import SynapseClient from '../../synapse-client'
-import {
-  EntityId,
-  EntityLookupRequest,
-  FileEntity,
-  UserProfile,
-} from '@sage-bionetworks/synapse-types'
-import { getFileHandleContent } from '../../synapse-client/SynapseClient'
-import { SynapseContext } from '../../utils/context/SynapseContext'
 import validator from '@rjsf/validator-ajv8'
+import { EntityId, EntityLookupRequest, FileEntity, UserProfile } from '@sage-bionetworks/synapse-types'
+import { Component, ContextType, createRef } from 'react'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.

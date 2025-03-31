@@ -1,23 +1,23 @@
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import mockProjectEntityData from '@/mocks/entity/mockProject'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import { mockExternalS3UploadDestination } from '@/mocks/mock_upload_destination'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   EntityBundle,
   FileEntity,
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import mockProjectEntityData from '../../../mocks/entity/mockProject'
-import { mockFileHandle } from '../../../mocks/mock_file_handle'
-import { mockExternalS3UploadDestination } from '../../../mocks/mock_upload_destination'
-import { server } from '../../../mocks/msw/server'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../../utils/context/SynapseContext'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
 import { MetadataTable, MetadataTableProps } from './MetadataTable'
-import { getEntityBundleHandler } from '../../../mocks/msw/handlers/entityHandlers'
 
 const { id: MOCK_FILE_ENTITY_ID } = mockFileEntityData
 const { id: MOCK_PROJECT_ID, bundle: mockProjectEntityBundle } =

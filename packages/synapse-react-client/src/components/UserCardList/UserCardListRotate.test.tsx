@@ -1,9 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render } from '@testing-library/react'
 import UserCardListRotate, {
   getDisplayIds,
   UserCardListRotateProps,
 } from './UserCardListRotate'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 function renderComponent(props: UserCardListRotateProps) {

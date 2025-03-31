@@ -1,22 +1,21 @@
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { act, render, screen, within } from '@testing-library/react'
-import { waitFor } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
-import userEvent from '@testing-library/user-event'
 import mockTableEntityData, {
   mockTableEntity,
-} from '../../mocks/entity/mockTableEntity'
+} from '@/mocks/entity/mockTableEntity'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ACCESS_TYPE,
   Entity,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import SubmissionViewScopeEditorModal, {
   SubmissionViewScopeEditorModalProps,
 } from './SubmissionViewScopeEditorModal'
-import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 
 jest.mock('../EvaluationFinder/EvaluationFinder', () => ({
   __esModule: true,

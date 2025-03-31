@@ -1,3 +1,16 @@
+import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
+import SynapseLogoName from '@/assets/icons/SynapseLogoName'
+import SynapseClient from '@/synapse-client'
+import {
+  useGetCurrentUserBundle,
+  useGetDownloadListStatistics,
+  useSearchAccessSubmissionsInfinite,
+} from '@/synapse-queries'
+import {
+  storeRedirectURLForOneSageLoginAndGotoURL,
+  useSynapseContext,
+} from '@/utils'
+import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import {
   Badge,
   Drawer,
@@ -12,24 +25,11 @@ import {
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { useState, KeyboardEvent } from 'react'
-import SynapseIconWhite from '../../assets/icons/SynapseIconWhite'
-import SynapseLogoName from '../../assets/icons/SynapseLogoName'
-import SynapseClient from '../../synapse-client'
-import {
-  useGetCurrentUserBundle,
-  useGetDownloadListStatistics,
-  useSearchAccessSubmissionsInfinite,
-} from '../../synapse-queries'
-import {
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  useSynapseContext,
-} from '../../utils'
+import { KeyboardEvent, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import UserCard from '../UserCard/UserCard'
-import { useOneSageURL } from '../../utils/hooks/useOneSageURL'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
+import UserCard from '../UserCard/UserCard'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean

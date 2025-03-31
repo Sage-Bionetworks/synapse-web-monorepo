@@ -1,6 +1,20 @@
+import { getEntityChildren } from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import {
+  getEntityTypeFromHeader,
+  isContainerType,
+} from '@/utils/functions/EntityTypeUtils'
+import { Writable } from '@/utils/types/Writable'
+import { ChevronRight, ExpandMore } from '@mui/icons-material'
 import { Skeleton, Tooltip, Typography } from '@mui/material'
-import { cloneDeep } from 'lodash-es'
+import {
+  EntityChildrenRequest,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
+import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash-es'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -12,26 +26,12 @@ import {
   VariableSizeTree,
 } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
-import { getEntityChildren } from '../../../synapse-client'
-import { formatDate } from '../../../utils/functions/DateFormatter'
-import {
-  getEntityTypeFromHeader,
-  isContainerType,
-} from '../../../utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '../../../utils'
-import {
-  EntityChildrenRequest,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
-import { Writable } from '../../../utils/types/Writable'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
-import { EntityFinderHeader } from '../EntityFinderHeader'
 import { UserBadge } from '../../UserCard/UserBadge'
-import { useQueryClient } from '@tanstack/react-query'
+import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntitySelectionMapType } from '../useEntitySelection'
-import { ChevronRight, ExpandMore } from '@mui/icons-material'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */

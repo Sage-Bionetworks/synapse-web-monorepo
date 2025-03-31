@@ -1,23 +1,23 @@
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { mockEntityWikiPage } from '@/mocks/mockWiki'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client/index'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { WikiPage } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { mockEntityWikiPage } from '../../mocks/mockWiki'
-import * as MarkdownSynapseImageModule from './widget/MarkdownSynapseImage'
-import * as MarkdownPlotModule from './widget/MarkdownSynapsePlot'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
   NO_WIKI_CONTENT,
 } from './MarkdownSynapse'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client/index'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { WikiPage } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
 import * as MarkdownProvenanceModule from './widget/MarkdownProvenanceGraph'
+import * as MarkdownSynapseImageModule from './widget/MarkdownSynapseImage'
+import * as MarkdownPlotModule from './widget/MarkdownSynapsePlot'
 
 jest.mock('../Plot/SynapsePlot', () => {
   return {

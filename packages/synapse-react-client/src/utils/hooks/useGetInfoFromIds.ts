@@ -1,13 +1,8 @@
-import { chunk, uniq, without } from 'lodash-es'
-import { useEffect, useState } from 'react'
-import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseConstants } from '../index'
 import {
   getEntityHeaders,
   getEvaluations,
   getGroupHeadersBatch,
-} from '../../synapse-client'
-import { useSynapseContext } from '../context/SynapseContext'
+} from '@/synapse-client'
 import {
   EntityHeader,
   Evaluation,
@@ -15,6 +10,11 @@ import {
   ReferenceList,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
+import { chunk, uniq, without } from 'lodash-es'
+import { useEffect, useState } from 'react'
+import useDeepCompareEffect from 'use-deep-compare-effect'
+import { useSynapseContext } from '../context/SynapseContext'
+import { SynapseConstants } from '../index'
 
 export type UseGetInfoFromIdsProps<
   T extends EntityHeader | UserGroupHeader | Evaluation,

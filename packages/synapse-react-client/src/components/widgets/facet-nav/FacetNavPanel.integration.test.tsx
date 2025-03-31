@@ -1,19 +1,19 @@
-import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
-import { render, screen, within } from '@testing-library/react'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
+import testData from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
 import {
   FacetColumnResultValues,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { SynapseConstants } from '../../../utils'
+import { render, screen, within } from '@testing-library/react'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { truncate } from './FacetPlotLegendUtils'
-import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
 import QueryWrapper from '../../QueryWrapper'
-import { server } from '../../../mocks/msw/server'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
+import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
+import { truncate } from './FacetPlotLegendUtils'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)

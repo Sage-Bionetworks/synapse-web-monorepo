@@ -1,8 +1,8 @@
+import { uploadFile } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/index'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { FileUploadComplete } from '@sage-bionetworks/synapse-types'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { uploadFile } from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/index'
 import { FileUploadArgs } from './FileUploadArgs'
 
 type UseSynapseMultipartUploadArgs = FileUploadArgs & {

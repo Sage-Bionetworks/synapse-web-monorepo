@@ -1,14 +1,14 @@
-import { useGetPresignedUrlContent } from '../../synapse-queries/file/useFiles'
-import { MB } from '../../utils/SynapseConstants'
+import { useGetPresignedUrlContent } from '@/synapse-queries/file/useFiles'
+import { MB } from '@/utils/SynapseConstants'
 import {
+  BatchFileRequest,
   FileHandle,
   FileHandleAssociation,
-  BatchFileRequest,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
-import { PreviewRendererType } from './PreviewRendererType'
 import PdfPreview from './PdfPreview'
+import { PreviewRendererType } from './PreviewRendererType'
 
 const MAX_FILE_SIZE = 30 * MB
 

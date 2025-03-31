@@ -1,21 +1,21 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import ManagedACTAccessRequirementItem, {
-  ManagedACTAccessRequirementItemProps,
-} from './ManagedACTAccessRequirementItem'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   AccessRequirementStatus,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import {
-  mockManagedACTAccessRequirement,
-  mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../mocks/accessRequirement/mockAccessRequirements'
-import { SynapseClient, SynapseContextType } from '../../../index'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { SynapseClient, SynapseContextType } from '../../../index'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import ManagedACTAccessRequirementItem, {
+  ManagedACTAccessRequirementItemProps,
+} from './ManagedACTAccessRequirementItem'
 
 async function renderComponent(
   props: ManagedACTAccessRequirementItemProps,

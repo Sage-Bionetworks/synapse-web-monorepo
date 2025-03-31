@@ -1,23 +1,23 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { createRef } from 'react'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
-import mockProject from '../../mocks/entity/mockProject'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import mockProject from '@/mocks/entity/mockProject'
 import {
   mockExternalObjectStoreUploadDestination,
   mockExternalS3UploadDestination,
   mockSynapseStorageUploadDestination,
-} from '../../mocks/mock_upload_destination'
+} from '@/mocks/mock_upload_destination'
 import {
   useGetDefaultUploadDestination,
   useGetEntity,
-} from '../../synapse-queries/index'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '@/synapse-queries/index'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   useUploadFileEntities,
   UseUploadFileEntitiesReturn,
-} from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
+} from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { createRef } from 'react'
 import {
   EntityUpload,
   EntityUploadHandle,
