@@ -1,3 +1,4 @@
+import { InfoTwoTone } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -8,6 +9,7 @@ import {
   IconButton,
   Stack,
   TextField,
+  Typography,
 } from '@mui/material'
 import {
   ManagedACTAccessRequirement,
@@ -18,6 +20,7 @@ import {
   useGetResearchProject,
   useUpdateResearchProject,
 } from '../../../../synapse-queries'
+import HelpPopover from '../../../HelpPopover'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
   getWordCount,
@@ -46,6 +49,8 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     string | undefined
   >(undefined)
   const [alert, setAlert] = useState<AlertProps | undefined>()
+
+  const [showConfirmationScreen, setShowConfirmationScreen] = useState(false)
 
   const { data: existingResearchProject, isLoading: isLoadingInitialData } =
     useGetResearchProject(String(managedACTAccessRequirement.id), {
@@ -110,13 +115,18 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
 
   const handleSubmit = (e: FormEvent<HTMLElement>) => {
     e.preventDefault()
-    mutate({
-      ...existingResearchProject,
-      accessRequirementId: String(managedACTAccessRequirement.id),
-      institution: institution,
-      projectLead: projectLead,
-      intendedDataUseStatement: intendedDataUseStatement,
-    })
+    if (!showConfirmationScreen) {
+      setShowConfirmationScreen(true)
+    } else {
+      mutate({
+        ...existingResearchProject,
+        accessRequirementId: String(managedACTAccessRequirement.id),
+        institution: institution,
+        projectLead: projectLead,
+        intendedDataUseStatement: intendedDataUseStatement,
+      })
+      setShowConfirmationScreen(false)
+    }
   }
 
   const formIsValid =
@@ -140,74 +150,120 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           </IconButton>
         </Stack>
       </DialogTitle>
-      <DialogContent>
-        <ManagedACTAccessRequirementFormWikiWrapper
-          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
-        >
-          <Box
-            component={'form'}
-            onSubmit={handleSubmit}
-            sx={{
-              '& .MuiTextField-root': {
-                marginBottom: '20px',
-              },
-            }}
+      {showConfirmationScreen && (
+        <ConfirmationScreenContent
+          isIDURequired={managedACTAccessRequirement.isIDURequired}
+        />
+      )}
+      {!showConfirmationScreen && (
+        <DialogContent>
+          <ManagedACTAccessRequirementFormWikiWrapper
+            managedACTAccessRequirementId={String(
+              managedACTAccessRequirement.id,
+            )}
           >
-            <TextField
-              id={'project-lead'}
-              label={'First and last names of your project lead or PI'}
-              placeholder={
-                'First and last name of individual leading the project, ex: Jane Smith'
-              }
-              fullWidth
-              disabled={isLoading}
-              type="text"
-              value={projectLead}
-              required
-              onChange={e => setProjectLead(e.target.value)}
-            />
-            <TextField
-              id={'institution'}
-              label={'Your Institution'}
-              placeholder={
-                'Full, unabbreviated name of the institution you are affiliated with'
-              }
-              fullWidth
-              type="text"
-              disabled={isLoading}
-              value={institution}
-              required
-              onChange={e => setInstitution(e.target.value)}
-            />
-
-            {managedACTAccessRequirement.isIDURequired && (
-              <TextFieldWithWordLimit
-                id={'data-use'}
-                minWords={INTENDED_DATA_USE_MIN_WORD_COUNT}
-                maxWords={INTENDED_DATA_USE_MAX_WORD_COUNT}
-                label={'Intended Data Use (IDU)'}
-                helperText={
-                  managedACTAccessRequirement.isIDUPublic
-                    ? 'This will be visible to the public'
-                    : undefined
+            <Box
+              component={'form'}
+              onSubmit={handleSubmit}
+              sx={{
+                '& .MuiTextField-root': {
+                  marginBottom: '20px',
+                },
+              }}
+            >
+              <TextField
+                id={'project-lead'}
+                label={
+                  <Box sx={{ display: 'inline' }}>
+                    <span>First and last names of your project lead or PI</span>
+                    <HelpPopover
+                      Icon={InfoTwoTone}
+                      containerSx={{ float: 'right' }}
+                      markdownText={`This field is required.\n\nProvide the name of one person who serves as the project leader or PI.`}
+                    />
+                  </Box>
                 }
                 placeholder={
-                  'Outline the objectives of your proposed research involving this data, and your study design and analysis plan.'
+                  'First and last name of individual leading the project, ex: Jane Smith'
                 }
                 fullWidth
-                required
-                multiline
-                rows={9}
                 disabled={isLoading}
-                value={intendedDataUseStatement}
-                onChange={e => setIntendedDataUseStatement(e.target.value)}
+                type="text"
+                value={projectLead}
+                required
+                onChange={e => setProjectLead(e.target.value)}
+                InputLabelProps={{
+                  // allows floating the help popover all the way to the right
+                  sx: { width: '100%' },
+                }}
               />
-            )}
-          </Box>
-        </ManagedACTAccessRequirementFormWikiWrapper>
-        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
-      </DialogContent>
+              <TextField
+                id={'institution'}
+                label={'Your Institution'}
+                placeholder={
+                  'Full, unabbreviated name of the institution you are affiliated with'
+                }
+                fullWidth
+                type="text"
+                disabled={isLoading}
+                value={institution}
+                required
+                onChange={e => setInstitution(e.target.value)}
+              />
+
+              {managedACTAccessRequirement.isIDURequired && (
+                <TextFieldWithWordLimit
+                  id={'data-use'}
+                  minWords={INTENDED_DATA_USE_MIN_WORD_COUNT}
+                  maxWords={INTENDED_DATA_USE_MAX_WORD_COUNT}
+                  label={
+                    <Box sx={{ display: 'inline' }}>
+                      <span>Intended Data Use (IDU)</span>
+                      <HelpPopover
+                        Icon={InfoTwoTone}
+                        containerSx={{ float: 'right' }}
+                        markdownText={`This field is required.\n\nCheck the Access Requirements
+text to the right for instructions on
+completing the IDU statement.`}
+                      />
+                    </Box>
+                  }
+                  helperText={
+                    managedACTAccessRequirement.isIDUPublic
+                      ? 'This will be visible to the public'
+                      : undefined
+                  }
+                  placeholder={
+                    'Outline the objectives of your proposed research involving this data, and your study design and analysis plan.'
+                  }
+                  fullWidth
+                  required
+                  multiline
+                  rows={9}
+                  disabled={isLoading}
+                  value={intendedDataUseStatement}
+                  onChange={e => setIntendedDataUseStatement(e.target.value)}
+                />
+              )}
+            </Box>
+          </ManagedACTAccessRequirementFormWikiWrapper>
+          {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
+        </DialogContent>
+      )}
       <DialogActions>
+        {showConfirmationScreen && (
+          <>
+            <Button
+              variant={'outlined'}
+              onClick={() => {
+                setShowConfirmationScreen(false)
+              }}
+            >
+              Back
+            </Button>
+            <Box sx={{ flexGrow: 1 }}>{/* spacer */}</Box>
+          </>
+        )}
         <Button variant="outlined" disabled={isLoading} onClick={onHide}>
           Cancel
         </Button>
@@ -217,9 +273,43 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           disabled={isLoading || !formIsValid}
           onClick={handleSubmit}
         >
-          {updateIsPending ? 'Saving...' : 'Save changes'}
+          {updateIsPending ? 'Saving...' : 'Save and Continue'}
         </Button>
       </DialogActions>
     </>
+  )
+}
+
+function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
+  const { isIDURequired } = props
+  return (
+    <DialogContent>
+      <Typography variant="body1" fontWeight={700} gutterBottom>
+        Double-check your submission before continuing!
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        Here some common reasons a request is rejected:
+      </Typography>
+      <Box component="ul" sx={{ 'li::marker': { content: '"\u274C  "' } }}>
+        <Typography component={'li'} variant="body1" gutterBottom>
+          Your <i>Project Lead</i> is not a full name (first and last)
+        </Typography>
+        <Typography component={'li'} variant="body1" gutterBottom>
+          The <i>Institution</i> name you provided was abbreviated and therefore
+          not verifiable - you must give the full name of your institution, so
+          we can look it up.
+        </Typography>
+        {isIDURequired && (
+          <Typography component={'li'} variant="body1" gutterBottom>
+            You did not provide clear <i>study objectives</i> or your{' '}
+            <i>study design</i> and <i>analysis plan</i> in the IDU section.
+          </Typography>
+        )}
+      </Box>
+      <Typography variant="body1" gutterBottom>
+        Please take a minute to make sure your submission is correct. If your
+        submission is rejected, you’ll have to resubmit after a few days!
+      </Typography>
+    </DialogContent>
   )
 }
