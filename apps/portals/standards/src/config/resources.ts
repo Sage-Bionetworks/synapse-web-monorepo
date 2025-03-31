@@ -1,1 +1,1 @@
-export const dataSql = `SELECT * FROM syn65488135`
+export const dataSql = `SELECT * FROM syn65676531`
