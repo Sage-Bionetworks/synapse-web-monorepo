@@ -30,14 +30,12 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  // sql: `${dataSql} where Org_Name is not null`,
-                  sql: dataSql,
+                  sql: `${dataSql} where responsibleOrgName is not null`,
                   configs: [
                     {
                       facetsToPlot: ['topic', 'responsibleOrgName'],
                       unitDescription: 'standard',
-                      // plotType: 'BAR'
-                      plotType: 'STACKED_HORIZONTAL_BAR',
+                      plotType: 'BAR',
                       columnAliases: columnAliases,
                     },
                   ],
