@@ -1,4 +1,11 @@
-import { Box, Button, ButtonProps, Tooltip, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  ButtonProps,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
 import { DialogBase } from '../../DialogBase'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationContext'
@@ -252,10 +259,17 @@ export default function ExportToAnalysisPlatformDialog(
         if (PlatformInstructions) {
           return <PlatformInstructions {...platformInstructionProps} />
         }
+        console.error(
+          `No instructions component found for platform: ${selectedPlatform}`,
+        )
+        // fallback error message, but this should never happen in production
         return (
-          <Typography variant={'body1'} sx={{ backgroundColor: 'yellow' }}>
-            TODO: Instructions for {selectedPlatform}
-          </Typography>
+          <Alert severity="error">
+            <Typography variant={'body1'}>
+              {EXTERNAL_ANALYSIS_PLATFORMS[selectedPlatform!].name} has not been
+              configured for data export on this site.
+            </Typography>
+          </Alert>
         )
       }
       case ExportToAnalysisPlatformDialogStep.CHECK_REQUIREMENTS_AND_SUBMIT:
