@@ -1,19 +1,16 @@
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import { renderHook as _renderHook } from '@testing-library/react'
-import {
-  MOCK_FOLDER_ID,
-  mockFolderEntity,
-} from '../../../mocks/entity/mockEntity'
+import { MOCK_FOLDER_ID, mockFolderEntity } from '@/mocks/entity/mockEntity'
 import mockFileEntity, {
   MOCK_FILE_ENTITY_ID,
-} from '../../../mocks/entity/mockFileEntity'
+} from '@/mocks/entity/mockFileEntity'
 import {
   useCreateEntity,
   useGetEntityLookupQueryOptions,
   useGetEntityQueryOptions,
-} from '../../../synapse-queries/index'
-import { getUseMutationMock } from '../../../testutils/ReactQueryMockUtils'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+} from '@/synapse-queries/index'
+import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { renderHook as _renderHook } from '@testing-library/react'
 import { useCreateFolderPath } from './useCreateFolderPath'
 
 jest.mock('../../../synapse-queries/entity/useEntity', () => ({

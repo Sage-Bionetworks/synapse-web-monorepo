@@ -1,9 +1,9 @@
+import { useFileContent } from '@/synapse-queries/file/useFiles'
+import { useLatestTag } from '@/synapse-queries/github/useGithub'
+import { useTermsOfServiceInfo } from '@/synapse-queries/termsOfService/useTermsOfService'
+import { Box, Container } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import MarkdownSynapse from './MarkdownSynapse'
-import { Box, Container } from '@mui/material'
-import { useLatestTag } from '../../synapse-queries/github/useGithub'
-import { useFileContent } from '../../synapse-queries/file/useFiles'
-import { useTermsOfServiceInfo } from '../../synapse-queries/termsOfService/useTermsOfService'
 
 export type MarkdownGithubProps = {
   repoOwner: string

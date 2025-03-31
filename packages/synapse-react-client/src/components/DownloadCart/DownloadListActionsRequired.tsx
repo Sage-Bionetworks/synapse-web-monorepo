@@ -1,9 +1,9 @@
-import { useGetAllDownloadListActionsRequired } from '../../synapse-queries'
-import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
+import { useGetAllDownloadListActionsRequired } from '@/synapse-queries'
+import useTrackTransientListItems from '@/utils/hooks/useTrackTransientListItems'
 import { Box } from '@mui/material'
-import { ActionRequiredListItem } from './ActionRequiredListItem'
-import useTrackTransientListItems from '../../utils/hooks/useTrackTransientListItems'
 import { times } from 'lodash-es'
+import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
+import { ActionRequiredListItem } from './ActionRequiredListItem'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/

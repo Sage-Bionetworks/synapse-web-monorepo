@@ -1,3 +1,5 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   RestrictionInformationBatchRequest,
   RestrictionInformationBatchResponse,
@@ -9,8 +11,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import SynapseClient from '../../synapse-client'
 import { chunk } from 'lodash-es'
 
 // The maximum number of items allowed in a single request for restriction information

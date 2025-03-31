@@ -55,7 +55,7 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
           href="/Explore"
           sx={{ mt: '20px' }}
         >
-          Explore research STANDARDS
+          Explore research Standards
         </Button>
       </Box>
     </>

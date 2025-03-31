@@ -1,23 +1,12 @@
-import {
-  InfiniteData,
-  QueryKey,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  useMutation,
-  UseMutationOptions,
-  useQueries,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
+import { sortAccessRequirementsByCompletion } from '@/components/AccessRequirementList/AccessRequirementListUtils'
 import SynapseClient, {
   createAccessRequirement,
   createAccessRequirementAcl,
   deleteAccessRequirementAcl,
   updateAccessRequirement,
   updateAccessRequirementAcl,
-} from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+} from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   AccessApproval,
   AccessControlList,
@@ -33,7 +22,18 @@ import {
   ResearchProject,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useMutation,
+  UseMutationOptions,
+  useQueries,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { KeyFactory } from '../KeyFactory'
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
 

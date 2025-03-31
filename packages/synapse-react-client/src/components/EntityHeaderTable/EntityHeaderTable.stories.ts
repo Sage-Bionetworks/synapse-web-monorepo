@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getHandlers } from '../../mocks/msw/handlers'
-import { EntityHeaderTable } from './EntityHeaderTable'
-import { MOCK_FILE_ENTITY_ID } from '../../mocks/entity/mockFileEntity'
-import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
+import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import { getHandlers } from '@/mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { EntityHeaderTable } from './EntityHeaderTable'
 
 const meta = {
   title: 'Governance/EntityHeaderTable',

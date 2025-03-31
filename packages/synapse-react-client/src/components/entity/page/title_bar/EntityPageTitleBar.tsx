@@ -1,14 +1,14 @@
-import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
+import { useGetEntityBundle } from '@/synapse-queries'
+import { isDockerRepository } from '@/utils/types/IsType'
 import { Avatar, Box, Skeleton, Stack, Typography } from '@mui/material'
-import { useGetEntityBundle } from '../../../../synapse-queries'
 import FavoriteButton from '../../../favorites/FavoriteButton'
-import ConditionalWrapper from '../../../utils/ConditionalWrapper'
+import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
 import EntityActionMenu, {
   EntityActionMenuProps,
 } from '../action_menu/EntityActionMenu'
-import TitleBarProperties from './TitleBarProperties'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
-import { isDockerRepository } from '../../../../utils/types/IsType'
+import TitleBarProperties from './TitleBarProperties'
 
 export type EntityPageTitleBarProps = {
   entityId: string

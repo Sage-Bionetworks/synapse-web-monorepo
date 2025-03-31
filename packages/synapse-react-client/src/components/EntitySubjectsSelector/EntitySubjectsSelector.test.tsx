@@ -1,18 +1,18 @@
 import {
+  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+} from '@/mocks/entity/mockFileEntity'
+import { MOCK_FILE_VIEW_ENTITY_ID } from '@/mocks/entity/mockFileView'
+import { MOCK_PROJECT_VIEW_ENTITY_ID } from '@/mocks/entity/mockProjectView'
+import { server } from '@/mocks/msw/server'
+import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
   RestrictableObjectDescriptor,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  MOCK_FILE_ENTITY_ID,
-  MOCK_FILE_NAME,
-} from '../../mocks/entity/mockFileEntity'
-import { MOCK_FILE_VIEW_ENTITY_ID } from '../../mocks/entity/mockFileView'
-import { MOCK_PROJECT_VIEW_ENTITY_ID } from '../../mocks/entity/mockProjectView'
-import { server } from '../../mocks/msw/server'
-import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import EntitySubjectsSelector, {
   EntitySubjectsSelectorProps,
   NO_ENTITIES_SELECTED,

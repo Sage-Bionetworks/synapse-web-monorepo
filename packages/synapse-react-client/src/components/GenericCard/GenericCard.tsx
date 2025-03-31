@@ -1,11 +1,16 @@
-import { Component, CSSProperties } from 'react'
-import { SynapseConstants, SynapseContext } from '../../utils'
+import { useGetEntity } from '@/synapse-queries'
+import { SynapseConstants, SynapseContext } from '@/utils'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   isDatasetCollection,
   isTableEntity,
-} from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+} from '@/utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import {
+  convertDoiToLink,
+  SYNAPSE_ENTITY_ID_REGEX,
+} from '@/utils/functions/RegularExpressions'
+import { Box, Link, Stack } from '@mui/material'
 import {
   ColumnModel,
   ColumnType,
@@ -16,26 +21,26 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { Box, Link } from '@mui/material'
+import { Component, CSSProperties } from 'react'
 import {
   CardLink,
   ColumnIconConfigs,
   CommonCardProps,
   TargetEnum,
 } from '../CardContainerLogic'
+import CitationPopover from '../CitationPopover'
 import HeaderCard from '../HeaderCard'
+import { IconOptions } from '../Icon'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
-import { CardFooter, Icon } from '../row_renderers/utils'
-import { FileHandleLink } from '../widgets/FileHandleLink'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import { useQueryContext } from '../QueryContext'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
 } from '../QueryVisualizationWrapper'
-import { IconOptions } from '../Icon'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { SynapseCardLabel } from './SynapseCardLabel'
+import { CardFooter, Icon } from '../row_renderers/utils'
+import { FileHandleLink } from '../widgets/FileHandleLink'
+import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
@@ -46,6 +51,7 @@ import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
 import { Stack } from '@mui/material'
 import CitationPopover from '../CitationPopover'
 import { AddToDownloadCartButton } from '../AddToDownloadCart'
+import { SynapseCardLabel } from './SynapseCardLabel'
 
 export type KeyToAlias = {
   key: string
@@ -63,6 +69,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   includeCitation?: boolean
+  defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
   citationBoilerplateText?: string
   icon?: string
   imageFileHandleColumnName?: string
@@ -389,6 +396,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       link = '',
       type,
       includeCitation,
+      defaultCitationFormat,
       citationBoilerplateText,
       downloadCartSynId,
     } = genericCardSchemaDefined
@@ -689,6 +697,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
                 title={title}
                 doi={doiValue}
                 boilerplateText={citationBoilerplateText}
+                defaultCitationFormat={defaultCitationFormat}
               />
             </Box>
           )}

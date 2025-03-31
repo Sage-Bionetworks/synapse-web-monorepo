@@ -1,11 +1,11 @@
-import { Component, ContextType } from 'react'
-import SynapseClient from '../synapse-client'
+import SynapseClient from '@/synapse-client'
+import { SynapseContext } from '@/utils/context/SynapseContext'
 import {
+  FilesCountStatistics,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-  FilesCountStatistics,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseContext } from '../utils/context/SynapseContext'
+import { Component, ContextType } from 'react'
 import Plot from './Plot/Plot'
 
 const months = [

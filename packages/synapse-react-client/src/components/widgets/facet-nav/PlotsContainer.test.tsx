@@ -1,21 +1,21 @@
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import testData from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import failOnConsole from 'jest-fail-on-console'
 import { cloneDeep } from 'lodash-es'
+import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryWrapper } from '../../QueryWrapper'
 import PlotsContainer, {
   PlotsContainerProps,
 } from '../../widgets/facet-nav/PlotsContainer'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { server } from '../../../mocks/msw/server'
-import failOnConsole from 'jest-fail-on-console'
-import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
-import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
-import { QueryWrapper } from '../../QueryWrapper'
-import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

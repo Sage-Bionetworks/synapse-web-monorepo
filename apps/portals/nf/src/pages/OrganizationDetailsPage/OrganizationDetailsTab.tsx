@@ -1,18 +1,15 @@
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { publicationsSql, studiesSql } from '@/config/resources'
+import { columnAliases, searchConfiguration } from '@/config/synapseConfigs/commonProps'
+import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
+import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
+import {
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  useDetailsPageContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { publicationsSql, studiesSql } from 'src/config/resources'
-import {
-  columnAliases,
-  searchConfiguration,
-} from 'src/config/synapseConfigs/commonProps'
-import { publicationsCardConfiguration } from 'src/config/synapseConfigs/publications'
-import { studyCardConfiguration } from 'src/config/synapseConfigs/studies'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
+import { CardContainerLogic, MarkdownSynapse, QueryWrapperPlotNav } from 'synapse-react-client'
 
 export default function OrganizationDetailsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')

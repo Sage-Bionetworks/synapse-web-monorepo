@@ -1,7 +1,9 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
+import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsContributeToTheRegistry'
 import { dataSql } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
+import columnAliases from '../config/columnAliases'
 
 //TODO
 export default function HomePage() {
@@ -11,6 +13,7 @@ export default function HomePage() {
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
+      <StandardsContributeToTheRegistry />
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'Exploring the Standards'}
@@ -27,14 +30,13 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  // sql: `${dataSql} where Org_Name is not null`,
-                  sql: dataSql,
+                  sql: `${dataSql} where responsibleOrgName is not null`,
                   configs: [
                     {
-                      facetsToPlot: ['Topic', 'Org_Name'],
+                      facetsToPlot: ['topic', 'responsibleOrgName'],
                       unitDescription: 'standard',
-                      // plotType: 'BAR'
-                      plotType: 'STACKED_HORIZONTAL_BAR',
+                      plotType: 'BAR',
+                      columnAliases: columnAliases,
                     },
                   ],
                 },

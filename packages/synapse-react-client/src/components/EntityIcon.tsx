@@ -1,6 +1,6 @@
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { CSSProperties, Fragment } from 'react'
-import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 import IconSvg, {
   IconName,
   IconSvgProps,

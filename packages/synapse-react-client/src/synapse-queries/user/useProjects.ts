@@ -1,3 +1,9 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  GetProjectsParameters,
+  ProjectHeaderList,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
@@ -6,12 +12,6 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import {
-  GetProjectsParameters,
-  ProjectHeaderList,
-} from '@sage-bionetworks/synapse-types'
 
 export function useGetProjects(
   params?: GetProjectsParameters,

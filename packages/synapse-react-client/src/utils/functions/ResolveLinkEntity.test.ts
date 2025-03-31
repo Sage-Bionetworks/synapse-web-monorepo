@@ -1,6 +1,6 @@
-import SynapseClient from '../../synapse-client'
-import { resolveLinkEntity } from './ResolveLinkEntity'
+import SynapseClient from '@/synapse-client'
 import { Entity } from '@sage-bionetworks/synapse-types'
+import { resolveLinkEntity } from './ResolveLinkEntity'
 
 describe('ResolveLinkEntity tests', () => {
   const fileEntity = {

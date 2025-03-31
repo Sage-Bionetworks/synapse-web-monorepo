@@ -1,10 +1,10 @@
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AccessTokenPage, AccessTokenPageProps } from './AccessTokenPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 
 const PERSONAL_ACCESS_TOKEN = 'qwertyuiop'
 

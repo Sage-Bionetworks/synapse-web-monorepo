@@ -1,7 +1,10 @@
+import nfConfigs from '@/config/synapseConfigs'
 import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
-import { PortalSearchTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
+import {
+  PortalSearchTabConfig,
+} from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
 import { RouteObject } from 'react-router'
-import nfConfigs from 'src/config/synapseConfigs'
+
 export const searchPageTabs: PortalSearchTabConfig[] = [
   {
     title: 'Initiatives',

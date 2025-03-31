@@ -1,31 +1,31 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  CreateChallengeTeam,
-  CreateChallengeTeamHandle,
-} from './CreateChallengeTeam'
-import { SelectChallengeTeam } from './SelectChallengeTeam'
-import { RegistrationSuccessful } from './RegistrationSuccessful'
-import {
-  MembershipRequestForm,
-  MembershipRequestFormHandle,
-} from './MembershipRequestForm'
-import { useSynapseContext } from '../../utils'
 import {
   useAddMemberToTeam,
   useGetCurrentUserProfile,
   useGetEntityChallenge,
   useGetMembershipStatus,
   useGetUserSubmissionTeams,
-} from '../../synapse-queries'
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
 import { Alert, Box, Button, Tooltip, Typography } from '@mui/material'
-import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { noop } from 'lodash-es'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBase } from '../DialogBase'
+import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import {
+  CreateChallengeTeam,
+  CreateChallengeTeamHandle,
+} from './CreateChallengeTeam'
+import {
+  MembershipRequestForm,
+  MembershipRequestFormHandle,
+} from './MembershipRequestForm'
 import {
   AcceptMembershipInvitationButton,
   OpenMembershipInvitation,
 } from './OpenMembershipInvitation'
+import { RegistrationSuccessful } from './RegistrationSuccessful'
+import { SelectChallengeTeam } from './SelectChallengeTeam'
 
 enum ChallengeTeamWizardStep {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',

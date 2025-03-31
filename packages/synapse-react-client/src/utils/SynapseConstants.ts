@@ -1,4 +1,4 @@
-import { ORIENTATION_BANNER_KEYS } from '../components/OrientationBanner'
+import { ORIENTATION_BANNER_KEYS } from '@/components/OrientationBanner'
 
 /** Bootstrapped principals */
 /** The group representing all users logged-in to Synapse */
@@ -57,6 +57,7 @@ export const DATASET: string = 'dataset'
 export const AMP_CONSORTIUM: string = 'AMP_Consortium'
 export const FUNDER: string = 'funder'
 export const PUBLICATION: string = 'publication'
+export const STANDARD_DATA_MODEL: string = 'standard'
 export const TOOL: string = 'tool'
 export const EXTERNAL_RESOURCE: string = 'external resource'
 export const GENERIC_CARD: string = 'GENERIC_CARD'

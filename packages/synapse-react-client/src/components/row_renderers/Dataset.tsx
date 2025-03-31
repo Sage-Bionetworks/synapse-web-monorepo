@@ -1,12 +1,12 @@
-import { Component, MouseEvent } from 'react'
-import { DATASET } from '../../utils/SynapseConstants'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import * as Utils from './utils'
-import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
-import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import { DATASET } from '@/utils/SynapseConstants'
 import { Button } from '@mui/material'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { ColumnModel, SelectColumn } from '@sage-bionetworks/synapse-types'
+import { Component, MouseEvent } from 'react'
+import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import * as Utils from './utils'
 
 export type DatasetProps = {
   data?: any

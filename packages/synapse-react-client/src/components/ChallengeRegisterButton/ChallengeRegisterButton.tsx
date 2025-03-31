@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import { Box } from '@mui/material'
-import SpinnerButton from '../SpinnerButton/SpinnerButton'
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
   useGetIsUserMemberOfTeam,
   useGetUserSubmissionTeams,
-} from '../../synapse-queries'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+} from '@/synapse-queries'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import { Box } from '@mui/material'
+import { useEffect } from 'react'
+import SpinnerButton from '../SpinnerButton/SpinnerButton'
 
 export interface ChallengeRegisterButtonProps {
   projectId: string

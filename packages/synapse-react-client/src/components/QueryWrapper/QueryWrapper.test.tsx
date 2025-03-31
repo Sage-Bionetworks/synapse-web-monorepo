@@ -1,20 +1,20 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { cloneDeep } from 'lodash-es'
-import { QueryContextType, useQueryContext } from '../QueryContext'
-import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
-import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
+import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ALL_QUERY_BUNDLE_PARTS,
   DEFAULT_PAGE_SIZE,
-} from '../../utils/SynapseConstants'
-import SynapseClient from '../../synapse-client'
+} from '@/utils/SynapseConstants'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useAtomValue, useSetAtom } from 'jotai'
+import { cloneDeep } from 'lodash-es'
+import { QueryContextType, useQueryContext } from '../QueryContext'
+import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
 import { selectedRowsAtom } from './TableRowSelectionState'
-import mockQueryResponseData from '../../mocks/mockQueryResponseData'
-import { server } from '../../mocks/msw/server'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 import Mock = jest.Mock
 
 const getQueryTableAsyncJobResultsSpy = jest.spyOn(

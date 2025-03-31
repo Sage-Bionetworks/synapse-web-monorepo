@@ -1,12 +1,12 @@
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import SubmissionViewScopeEditor, {
   SubmissionViewScopeEditorProps,
 } from './SubmissionViewScopeEditor'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
-import userEvent from '@testing-library/user-event'
 
 jest.mock('../EvaluationFinder/EvaluationFinder', () => ({
   __esModule: true,

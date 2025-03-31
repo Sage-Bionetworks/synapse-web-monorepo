@@ -1,15 +1,15 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
+} from '@sage-bionetworks/synapse-types'
 import {
   InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import {
-  AccessApprovalSearchRequest,
-  AccessApprovalSearchResponse,
-} from '@sage-bionetworks/synapse-types'
 
 export function useSearchAccessApprovalsInfinite<
   TData = InfiniteData<AccessApprovalSearchResponse>,

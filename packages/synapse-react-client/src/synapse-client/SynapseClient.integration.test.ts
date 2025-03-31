@@ -1,11 +1,11 @@
-import SynapseClient from './index'
-import { ASYNCHRONOUS_JOB_TOKEN } from '../utils/APIConstants'
+import { rest, server } from '@/mocks/msw/server'
+import { ASYNCHRONOUS_JOB_TOKEN } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
 import { AsynchronousJobStatus } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../mocks/msw/server'
+import SynapseClient from './index'
 
 describe('SynapseClient integration tests', () => {
   beforeAll(() => server.listen())

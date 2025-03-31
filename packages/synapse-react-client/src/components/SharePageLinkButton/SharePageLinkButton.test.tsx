@@ -1,11 +1,11 @@
+import { MOCK_SHORT_IO_URL } from '@/mocks/mockShortIo'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SharePageLinkButton, {
   SharePageLinkButtonProps,
 } from './SharePageLinkButton'
-import { MOCK_SHORT_IO_URL } from '../../mocks/mockShortIo'
-import { server } from '../../mocks/msw/server'
 
 function renderComponent(props: SharePageLinkButtonProps) {
   return render(<SharePageLinkButton {...props} />, {

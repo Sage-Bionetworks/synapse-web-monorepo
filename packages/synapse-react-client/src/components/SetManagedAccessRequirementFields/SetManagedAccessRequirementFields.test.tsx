@@ -1,3 +1,21 @@
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  mockDucTemplateFileHandle,
+  mockFileHandle,
+} from '@/mocks/mock_file_handle'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  waitForMarkdownSynapseToGetWiki,
+} from '@/testutils/MarkdownSynapseUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_REQUIREMENT_BY_ID, WIKI_PAGE_ID } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { DAY_IN_MS } from '@/utils/SynapseConstants'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileUploadComplete,
   ManagedACTAccessRequirement,
@@ -8,34 +26,13 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
 import { createRef } from 'react'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { mockManagedACTAccessRequirement } from '../../mocks/accessRequirement/mockAccessRequirements'
-import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
-import {
-  mockDucTemplateFileHandle,
-  mockFileHandle,
-} from '../../mocks/mock_file_handle'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import {
-  confirmMarkdownSynapseTextContent,
-  waitForMarkdownSynapseToGetWiki,
-} from '../../testutils/MarkdownSynapseUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  ACCESS_REQUIREMENT_BY_ID,
-  WIKI_PAGE_ID,
-} from '../../utils/APIConstants'
-import { DAY_IN_MS } from '../../utils/SynapseConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DUC_TEMPLATE_UPLOAD_ERROR,
+  getValidExpirationPeriodOrErrorMessage,
   SetManagedAccessRequirementFields,
   SetManagedAccessRequirementFieldsHandle,
   SetManagedAccessRequirementFieldsProps,
-  getValidExpirationPeriodOrErrorMessage,
 } from './SetManagedAccessRequirementFields'
 
 const NEGATIVE_EXPIRATION_PERIOD_ERROR =

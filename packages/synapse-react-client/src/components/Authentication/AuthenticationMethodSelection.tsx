@@ -1,14 +1,14 @@
-import { Box } from '@mui/material'
-import SynapseClient from '../../synapse-client'
-import { OAuth2State, SynapseClientError } from '../../utils'
+import SynapseClient from '@/synapse-client'
+import { OAuth2State, SynapseClientError } from '@/utils'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
   OAUTH2_PROVIDERS,
-} from '../../utils/SynapseConstants'
-import LoginMethodButton from './LoginMethodButton'
+} from '@/utils/SynapseConstants'
+import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
+import LoginMethodButton from './LoginMethodButton'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string

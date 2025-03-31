@@ -1,31 +1,31 @@
 import {
+  mockACTAccessRequirement,
+  mockACTAccessRequirementWithWiki,
+  mockSelfSignAccessRequirement,
+  mockToUAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import {
+  mockACTAccessRequirementWikiPage,
+  mockSelfSignAccessRequirementWikiPage,
+} from '@/mocks/mockWiki'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import {
+  confirmMarkdownSynapseTextContent,
+  expectMarkdownSynapseNotToGetWiki,
+  waitForMarkdownSynapseToGetWiki,
+} from '@/testutils/MarkdownSynapseUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_REQUIREMENT_BY_ID } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
   ACTAccessRequirement,
   ErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import {
-  mockACTAccessRequirement,
-  mockACTAccessRequirementWithWiki,
-  mockSelfSignAccessRequirement,
-  mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import {
-  mockACTAccessRequirementWikiPage,
-  mockSelfSignAccessRequirementWikiPage,
-} from '../../mocks/mockWiki'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import {
-  confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
-} from '../../testutils/MarkdownSynapseUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ACCESS_REQUIREMENT_BY_ID } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,

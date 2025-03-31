@@ -1,4 +1,4 @@
-import NoData from '../../assets/icons/NoData'
+import NoData from '@/assets/icons/NoData'
 
 export default function ThisTableIsEmpty() {
   return (

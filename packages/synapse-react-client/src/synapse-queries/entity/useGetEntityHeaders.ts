@@ -1,17 +1,17 @@
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import {
   EntityHeader,
   PaginatedResults,
   Reference,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
-import { normalizeSynPrefix } from '../../utils/functions/EntityTypeUtils'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 export function useGetEntityHeaders(
   references: ReferenceList,

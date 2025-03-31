@@ -1,13 +1,13 @@
 import '@testing-library/jest-dom'
+import { SynapseTestContext } from '@/mocks/MockSynapseContext'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
 import {
   AvailableFilesResponse,
   DownloadListItemResult,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import SynapseClient from '../../synapse-client'
 import DownloadListTableV2 from './DownloadListTable'
 
 jest.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({

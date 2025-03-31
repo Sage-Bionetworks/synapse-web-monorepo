@@ -1,9 +1,6 @@
+import { scrollToWithOffset } from '@/utils'
 import { useLocation, useNavigate } from 'react-router'
-import { scrollToWithOffset } from '../../utils'
-import {
-  DetailsPageSectionLayout,
-  DetailsPageSectionLayoutType,
-} from './DetailsPageSectionLayout'
+import { DetailsPageSectionLayout, DetailsPageSectionLayoutType } from './DetailsPageSectionLayout'
 
 export type DetailsPageContentType = DetailsPageSectionLayoutType[]
 

@@ -1,4 +1,9 @@
 import {
+  facetObjectMatchesDefinition,
+  getCorrespondingColumnForFacet,
+  isSingleNotSetValue,
+} from '@/utils/functions/queryUtils'
+import {
   FacetColumnRequest,
   FacetColumnResultRange,
   FacetColumnResultValues,
@@ -8,11 +13,6 @@ import {
 import { groupBy, noop, sortBy } from 'lodash-es'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
-import {
-  facetObjectMatchesDefinition,
-  getCorrespondingColumnForFacet,
-  isSingleNotSetValue,
-} from '../../../utils/functions/queryUtils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'

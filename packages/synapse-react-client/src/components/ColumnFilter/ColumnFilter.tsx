@@ -1,14 +1,14 @@
+import { UniqueFacetIdentifier } from '@/utils'
+import {
+  facetObjectMatchesDefinition,
+  getCorrespondingSelectedFacet,
+} from '@/utils/functions/queryUtils'
 import { Autocomplete, TextField } from '@mui/material'
 import {
   FacetColumnResultValues,
   FacetColumnValuesRequest,
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent } from 'react'
-import { UniqueFacetIdentifier } from '../../utils'
-import {
-  facetObjectMatchesDefinition,
-  getCorrespondingSelectedFacet,
-} from '../../utils/functions/queryUtils'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 

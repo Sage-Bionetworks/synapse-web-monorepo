@@ -1,9 +1,9 @@
+import syn16787123Json from '@/mocks/query/syn16787123'
+import SynapseClient from '@/synapse-client/index'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import UpsetPlot, { UpsetPlotProps } from './UpsetPlot'
-import syn16787123Json from '../../mocks/query/syn16787123'
-import SynapseClient from '../../synapse-client/index'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 jest.mock('@upsetjs/react', () => ({
   __esModule: true,

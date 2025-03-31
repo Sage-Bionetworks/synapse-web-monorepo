@@ -1,8 +1,8 @@
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import {
   getPermissionLevelFromAccessType,
   permissionLevelToLabel,
-} from '../../utils/PermissionLevelToAccessType'
+} from '@/utils/PermissionLevelToAccessType'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 
 export type ReadOnlyPermissionLevelProps = {
   accessType: ACCESS_TYPE[]

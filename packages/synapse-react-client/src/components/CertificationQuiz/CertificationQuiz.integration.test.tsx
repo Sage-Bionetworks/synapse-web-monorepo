@@ -1,30 +1,30 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import CertificationQuiz from './CertificationQuiz'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   mockPassingRecordFailed,
   mockPassingRecordPassed,
   mockQuiz,
-} from '../../mocks/mockCertificationQuiz'
+} from '@/mocks/mockCertificationQuiz'
+import { rest, server } from '@/mocks/msw/server'
+import { mockUserBundle } from '@/mocks/user/mock_user_profile'
+import { useGetCurrentUserBundle } from '@/synapse-queries'
 import {
   useGetPassingRecord,
   usePostCertifiedUserTestResponse,
-} from '../../synapse-queries/user/useCertificationQuiz'
+} from '@/synapse-queries/user/useCertificationQuiz'
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
-import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
+} from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import { rest, server } from '../../mocks/msw/server'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
-import { mockUserBundle } from '../../mocks/user/mock_user_profile'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
+import CertificationQuiz from './CertificationQuiz'
 
 window.open = jest.fn()
 jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {

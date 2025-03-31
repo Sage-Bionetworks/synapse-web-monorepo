@@ -1,3 +1,11 @@
+import {
+  useAddQueryToDownloadList,
+  useGetEntityChildren,
+} from '@/synapse-queries/index'
+import {
+  getUseMutationMock,
+  getUseQuerySuccessMock,
+} from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
@@ -7,17 +15,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { FolderDownloadConfirmation } from './index'
-import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
-import {
-  useAddQueryToDownloadList,
-  useGetEntityChildren,
-} from '../../synapse-queries/index'
-import {
-  getUseMutationMock,
-  getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import { FolderDownloadConfirmation } from './index'
 
 jest.mock('../../synapse-queries/index', () => ({
   useGetEntityChildren: jest.fn(),

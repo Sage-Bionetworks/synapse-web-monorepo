@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
-import { useListState } from '../../utils/hooks/useListState'
-import { EvaluationRoundEditor } from './EvaluationRoundEditor'
+import { getEvaluationRoundsList } from '@/synapse-client/SynapseClient'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useListState } from '@/utils/hooks/useListState'
 import { Button } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { EvaluationRoundListResponse } from '@sage-bionetworks/synapse-types'
+import { useEffect, useState } from 'react'
+import shortid from 'shortid'
+import { ErrorBanner } from '../error/ErrorBanner'
+import { EvaluationRoundEditor } from './EvaluationRoundEditor'
 import {
   convertEvaluationRoundToInput,
   EvaluationRoundInput,
 } from './input_models/models'
-import { getEvaluationRoundsList } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import shortid from 'shortid'
-import { EvaluationRoundListResponse } from '@sage-bionetworks/synapse-types'
-import { ErrorBanner } from '../error/ErrorBanner'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type EvaluationRoundEditorListProps = {
   /** id of the Evaluation containing EvaluationRounds to edit*/

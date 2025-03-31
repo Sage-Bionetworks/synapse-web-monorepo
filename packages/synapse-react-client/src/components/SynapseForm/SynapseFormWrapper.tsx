@@ -1,16 +1,16 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import $RefParser from '@apidevtools/json-schema-ref-parser'
+import { Button } from '@mui/material'
+import { UiSchema } from '@rjsf/utils'
+import { FormData } from '@sage-bionetworks/synapse-types'
 import { get, includes } from 'lodash-es'
 import { Component } from 'react'
-import { Button } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert'
-import { UiSchema } from '@rjsf/utils'
-import SynapseClient from '../../synapse-client'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { FormData } from '@sage-bionetworks/synapse-types'
 import SynapseForm from './SynapseForm'
-import { StatusEnum } from './types'
 import { getFileEntityData } from './SynapseFormUtils'
-import { useSynapseContext } from '../../utils'
+import { StatusEnum } from './types'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken

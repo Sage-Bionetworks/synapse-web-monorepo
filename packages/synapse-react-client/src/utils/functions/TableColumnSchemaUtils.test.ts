@@ -1,12 +1,12 @@
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
 import {
   ColumnModel,
   ColumnTypeEnum,
   TableSchemaChangeRequest,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { SetOptional } from 'type-fest'
 import { createTableUpdateTransactionRequest } from './TableColumnSchemaUtils'
-import SynapseClient from '../../synapse-client'
 
 describe('TableColumnSchemaUtils', () => {
   beforeEach(() => jest.clearAllMocks())

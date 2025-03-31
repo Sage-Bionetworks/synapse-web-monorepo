@@ -1,6 +1,6 @@
+import { getHandlers } from '@/mocks/msw/handlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
-import { getHandlers } from '../../mocks/msw/handlers'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import WebhookDashboard from './WebhookDashboard'
 
 const meta = {

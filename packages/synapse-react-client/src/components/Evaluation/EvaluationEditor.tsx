@@ -1,3 +1,5 @@
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   Alert,
   Box,
@@ -12,8 +14,6 @@ import {
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useState } from 'react'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
 import WarningDialog from '../SynapseForm/WarningDialog'

@@ -1,3 +1,9 @@
+import { isFacetColumnValuesRequest, SynapseConstants } from '@/utils'
+import {
+  getCorrespondingColumnForFacet,
+  getCorrespondingSelectedFacet,
+} from '@/utils/functions/queryUtils'
+import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
   Direction,
@@ -12,12 +18,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, partition, pick, sortBy } from 'lodash-es'
 import { Suspense, useMemo } from 'react'
-import { isFacetColumnValuesRequest, SynapseConstants } from '../../../../utils'
-import {
-  getCorrespondingColumnForFacet,
-  getCorrespondingSelectedFacet,
-} from '../../../../utils/functions/queryUtils'
-import useGetInfoFromIds from '../../../../utils/hooks/useGetInfoFromIds'
 import { useQueryContext } from '../../../QueryContext'
 import { useQueryVisualizationContext } from '../../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../../QueryWrapper/useGetQueryMetadata'

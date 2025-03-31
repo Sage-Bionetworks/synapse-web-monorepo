@@ -1,28 +1,31 @@
-import { useState } from 'react'
-import {
-  Button,
-  Popover,
-  Typography,
-  Box,
-  Stack,
-  FormControl,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  Alert,
-  SxProps,
-} from '@mui/material'
-import CopyToClipboardIcon from '../CopyToClipboardIcon'
-import CloseIcon from '@mui/icons-material/Close'
+import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
 import { KeyboardArrowDown } from '@mui/icons-material'
-import { useCitation } from './useCitation'
-import { ReactComponent as DoubleQuotes } from '../../assets/icons/DoubleQuotes.svg'
+import CloseIcon from '@mui/icons-material/Close'
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  MenuItem,
+  Popover,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  SxProps,
+  Typography,
+} from '@mui/material'
+import { useState } from 'react'
+import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { createLinkAndDownload } from './CitationPopoverUtils'
+import { useCitation } from './useCitation'
+
+type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
 
 type CitationPopoverProps = {
   doi: string | undefined
   title?: string
   boilerplateText?: string
+  defaultCitationFormat?: CitationFormat
 }
 
 const selectSx: SxProps = {
@@ -53,12 +56,15 @@ function CitationPopover({
   doi,
   title,
   boilerplateText,
+  defaultCitationFormat,
 }: CitationPopoverProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const [citationFormat, setCitationFormat] = useState('bibtex')
+  const [citationFormat, setCitationFormat] = useState<CitationFormat>(
+    defaultCitationFormat || 'bibtex',
+  )
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setCitationFormat(event.target.value)
+  const handleChange = (event: SelectChangeEvent<CitationFormat>) => {
+    setCitationFormat(event.target.value as CitationFormat)
   }
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -1,7 +1,7 @@
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
-import { SynapseErrorBoundary } from '../../components/error/ErrorBanner'
-import { KeyFactory } from '../../synapse-queries/KeyFactory'
 import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
 
 export type SynapseContextType = {

@@ -1,9 +1,9 @@
-import SynapseClient from '../../synapse-client'
+import SynapseClient from '@/synapse-client'
 import dayjs, { Dayjs } from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)

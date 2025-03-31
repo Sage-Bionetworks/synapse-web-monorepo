@@ -1,16 +1,16 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import SynapseFormSubmissionGrid, {
-  SynapseFormSubmissionGridProps,
-} from './SynapseFormSubmissionGrid'
-import { SynapseContextConsumer } from '../../utils'
-import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,
-} from '../../mocks/mock_drug_tool_data'
-import { getHandlers } from '../../mocks/msw/handlers'
+} from '@/mocks/mock_drug_tool_data'
+import { getHandlers } from '@/mocks/msw/handlers'
+import { SynapseContextConsumer } from '@/utils'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
+import SynapseFormSubmissionGrid, {
+  SynapseFormSubmissionGridProps,
+} from './SynapseFormSubmissionGrid'
 
 const meta: Meta<
   SynapseFormSubmissionGridProps & { isAuthenticated?: boolean }

@@ -1,9 +1,9 @@
-import { ACCESS_TYPE, UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
+import { SynapseConstants } from '@/utils'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
+import { ACCESS_TYPE, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { compareResourceAccessAndUserGroupHeader } from './ResourceAccessAndUserGroupHeader'
 
 describe('ResourceAccessAndUserGroupHeader', () => {

@@ -1,6 +1,6 @@
-import { rest } from 'msw'
-import { REPO } from '../../../utils/APIConstants'
+import { REPO } from '@/utils/APIConstants'
 import { MessageToUser } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 
 export function getMessageHandlers(backendOrigin: string) {
   return [

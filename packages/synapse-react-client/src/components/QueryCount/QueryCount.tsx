@@ -1,7 +1,7 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { SynapseConstants } from '../../utils'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 
 export type QueryCountProps = {
   query: Query

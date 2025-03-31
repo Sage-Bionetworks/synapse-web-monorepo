@@ -1,3 +1,7 @@
+import {
+  StyledInnerContainer,
+  StyledOuterContainer,
+} from '@/components/StyledComponents'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -25,7 +29,6 @@ import {
 import { getSearchParam } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { SourceAppLogo } from '../SourceApp'
-import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
 import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { useSourceApp } from '../useSourceApp'
 import Attestation from './Attestation'
