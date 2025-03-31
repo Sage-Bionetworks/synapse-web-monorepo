@@ -222,9 +222,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                       <HelpPopover
                         Icon={InfoTwoTone}
                         containerSx={{ float: 'right' }}
-                        markdownText={`This field is required.\n\nCheck the Access Requirements
-text to the right for instructions on
-completing the IDU statement.`}
+                        markdownText={`This field is required.\n\nCheck the instructions for data access for information on completing the IDU statement.`}
                       />
                     </Box>
                   }
