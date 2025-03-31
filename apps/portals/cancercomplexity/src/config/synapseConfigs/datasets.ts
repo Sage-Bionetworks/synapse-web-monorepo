@@ -17,6 +17,7 @@ export const datasetSchema: GenericCardSchema = {
   title: 'datasetName',
   description: 'description',
   includeCitation: true,
+  defaultCitationFormat: 'nature',
   customSecondaryLabelConfig: {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,
