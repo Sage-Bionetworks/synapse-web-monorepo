@@ -33,6 +33,7 @@ import {
   ConfirmationButtons,
   ConfirmationDialog,
 } from '../ConfirmationDialog/ConfirmationDialog'
+import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   dropNullishArrayValues,
@@ -45,9 +46,7 @@ import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSch
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
-import { SelectWidget } from '../JsonSchemaForm/widgets/SelectWidget'
 import TextWidget from './widget/TextWidget'
-import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -290,7 +289,6 @@ export function SchemaDrivenAnnotationEditor(
             }}
             widgets={{
               TextWidget: TextWidget,
-              SelectWidget: SelectWidget,
             }}
             schema={
               {

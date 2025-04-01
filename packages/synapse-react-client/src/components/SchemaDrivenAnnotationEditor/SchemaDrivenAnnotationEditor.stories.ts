@@ -60,7 +60,6 @@ export const DirectlyProvidedSchema: Story = {
         },
         showStringArray: {
           type: 'boolean',
-          // description: 'Test description for showStringArray property',
         },
       },
       required: ['country'],
