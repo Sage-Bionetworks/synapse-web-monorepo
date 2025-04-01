@@ -1,3 +1,4 @@
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { ChangeEvent, FocusEvent } from 'react'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
 import {
@@ -27,7 +28,7 @@ export default function BaseInputTemplate<
   const {
     id,
     name, // remove this from textFieldProps
-    placeholder,
+    placeholder: placeholderFromProps,
     required,
     readonly,
     disabled,
@@ -81,12 +82,17 @@ export default function BaseInputTemplate<
       JSON.stringify(schema.default || schema.const) + ' (derived)'
   }
 
+  const placeholder = (registry.formContext as CustomFormContext)
+    .showDerivedAnnotationPlaceholder
+    ? derivedValuePlaceholder || placeholderFromProps
+    : placeholderFromProps
+
   return (
     <>
       <TextField
         id={id}
         name={id}
-        placeholder={derivedValuePlaceholder || placeholder}
+        placeholder={placeholder}
         label={labelValue(label || undefined, hideLabel, false)}
         autoFocus={autofocus}
         required={false}

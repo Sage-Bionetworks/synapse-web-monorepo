@@ -6,7 +6,7 @@ import {
   RJSFValidationError,
   StrictRJSFSchema,
 } from '@rjsf/utils'
-import { getFriendlyPropertyName } from '../AnnotationEditorUtils'
+import { getFriendlyPropertyName } from '../../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 
 export default function ErrorListTemplate<
   T = any,

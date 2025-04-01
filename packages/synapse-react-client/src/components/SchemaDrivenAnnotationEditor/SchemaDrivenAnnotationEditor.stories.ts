@@ -1,10 +1,19 @@
 import { mockSchemaBinding } from '@/mocks/mockSchema'
 import { Meta, StoryObj } from '@storybook/react'
-import { SchemaDrivenAnnotationEditor } from './SchemaDrivenAnnotationEditor'
+import {
+  SchemaDrivenAnnotationEditor,
+  SchemaDrivenAnnotationEditorProps,
+} from './SchemaDrivenAnnotationEditor'
+import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<SchemaDrivenAnnotationEditorProps> = {
   title: 'Synapse/SchemaDrivenAnnotationEditor',
   component: SchemaDrivenAnnotationEditor,
+  args: {
+    onSuccess: fn(),
+    onCancel: fn(),
+    onChange: fn(),
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -51,6 +60,7 @@ export const DirectlyProvidedSchema: Story = {
         },
         showStringArray: {
           type: 'boolean',
+          // description: 'Test description for showStringArray property',
         },
       },
       required: ['country'],

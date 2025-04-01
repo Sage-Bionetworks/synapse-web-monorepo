@@ -1,13 +1,4 @@
-import { Ref, useCallback, useMemo, useState } from 'react'
-import RJSFForm from '@rjsf/core'
-import Form from '@rjsf/mui'
-import validator from '@rjsf/validator-ajv8'
-import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
-import ArrayFieldDescriptionTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldDescriptionTemplate'
-import ArrayFieldItemTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldItemTemplate'
-import ArrayFieldTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldTemplate'
-import ArrayFieldTitleTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldTitleTemplate'
-import ButtonTemplate from '../SchemaDrivenAnnotationEditor/template/ButtonTemplate'
+import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import {
   Alert,
   AlertTitle,
@@ -17,15 +8,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import RJSFForm from '@rjsf/core'
 import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
-import TextWidget from '../SchemaDrivenAnnotationEditor/widget/TextWidget'
-import { DateTimeWidget } from '../SchemaDrivenAnnotationEditor/widget/DateTimeWidget'
-import { SelectWidget } from '../SchemaDrivenAnnotationEditor/widget/SelectWidget'
-import { BooleanWidget } from '../SchemaDrivenAnnotationEditor/widget/BooleanWidget'
-import { getTransformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
-import ErrorListTemplate from '../SchemaDrivenAnnotationEditor/template/ErrorListTemplate'
-import useParseCsv, { UseParseCsvError } from './useParseCsv'
+import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import { ParseError } from 'papaparse'
+import { Ref, useCallback, useMemo, useState } from 'react'
+import { getTransformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
+import useParseCsv, { UseParseCsvError } from './useParseCsv'
 
 const DEFAULT_ARRAY_ITEM_DEFINITION: JSONSchema7Definition = { type: 'string' }
 
@@ -99,38 +88,22 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
         },
       }}
     >
-      <Form
-        ref={formRef}
+      <JsonSchemaForm
+        formRef={formRef}
         schema={schema}
-        className="JsonSchemaForm"
         noHtml5Validate
         uiSchema={{
           'ui:submitButtonOptions': {
             norender: true,
           },
         }}
-        validator={validator}
         formData={value}
         formContext={{
           allowRemovingLastItemInArray: true,
         }}
         onChange={({ formData }) => onChange(formData)}
         onSubmit={({ formData }) => onSubmit(formData)}
-        templates={{
-          ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
-          ArrayFieldItemTemplate: ArrayFieldItemTemplate,
-          ArrayFieldTemplate: ArrayFieldTemplate,
-          ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
-          ButtonTemplates: ButtonTemplate,
-          ErrorListTemplate: ErrorListTemplate,
-        }}
         transformErrors={transformErrors}
-        widgets={{
-          TextWidget: TextWidget,
-          DateTimeWidget: DateTimeWidget,
-          SelectWidget: SelectWidget,
-          CheckboxWidget: BooleanWidget,
-        }}
       />
       <Button onClick={() => setShowPasteNewValuesForm(true)}>
         Paste new values
