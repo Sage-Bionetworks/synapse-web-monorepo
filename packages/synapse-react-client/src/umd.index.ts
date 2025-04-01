@@ -18,6 +18,7 @@ import { EvaluationCard } from './components/Evaluation/EvaluationCard'
 import { EvaluationEditorPage } from './components/Evaluation/EvaluationEditorPage'
 import FavoritesPage from './components/favorites/FavoritesPage'
 import ForumSearch from './components/ForumSearch/ForumSearch'
+import { DiscussionThread } from './components/Forum/DiscussionThread'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
 import { HasAccessV2 as HasAccess } from './components/HasAccess/HasAccessV2'
 import { HelpPopover } from './components/HelpPopover/HelpPopover'
@@ -160,6 +161,7 @@ const SynapseComponents = {
   StandaloneQueryWrapper,
   ChangePassword,
   ForumSearch,
+  DiscussionThread,
   ReviewerDashboard,
   ProvenanceGraph,
   TrashCanList,
