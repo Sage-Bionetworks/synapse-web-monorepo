@@ -40,7 +40,7 @@ export function useExportToCavatica(
         csvTableDescriptor: { separator },
         additionalFilters: queryBundleRequest.query.additionalFilters,
       }
-      const result = await SynapseClient.getDownloadFromTableRequest(
+      const result = await SynapseClient.createTableCsvForDownload(
         downloadFromTableRequest,
         accessToken,
       )

@@ -1,23 +1,5 @@
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
-import {
-  DetailsPageTabConfig,
-  DetailsPageTabs,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
-import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
-import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router'
-import { dataOnStudiesPageSql, dataSql, studiesSql } from '@/config/resources'
+import { dataOnStudiesPageSql, dataSql, enabledAnalysisPlatforms, studiesSql } from '@/config/resources'
+import studyHeaderSvg from '@/config/style/study-header.svg?url'
 import { DATA_TABLE_COLUMN_NAMES } from '@/config/synapseConfigs/data'
 import {
   STUDY_TABLE_COLUMN_NAMES,
@@ -25,6 +7,34 @@ import {
   studyColumnAliases,
   studyRgbIndex,
 } from '@/config/synapseConfigs/studies'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import {
+  DetailsPageContent,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  DetailsPageContextConsumer,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  DetailsPageSectionLayoutType,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
+import {
+  DetailsPageTabConfig,
+  DetailsPageTabs,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
+import {
+  MarkdownSynapseFromColumnData,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
+import {
+  transformStringIntoMarkdownProps,
+} from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
+import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
+import {
+  useGetPortalComponentSearchParams,
+} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { ColumnMultiValueFunction, ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { Outlet, RouteObject } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -33,7 +43,6 @@ import {
   RssFeedCards,
   SynapseErrorType,
 } from 'synapse-react-client'
-import studyHeaderSvg from '@/config/style/study-header.svg?url'
 
 const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
   {
@@ -170,7 +179,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
                 rgbIndex={studyRgbIndex}
                 name="Metadata Files"
                 visibleColumnCount={10}
-                showExportToCavatica={true}
+                enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                 isRowSelectionVisible={true}
                 tableConfiguration={{
                   showAccessColumn: true,
@@ -208,7 +217,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
                 rgbIndex={studyRgbIndex}
                 visibleColumnCount={10}
                 isRowSelectionVisible={true}
-                showExportToCavatica={true}
+                enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
                 tableConfiguration={{
                   showAccessColumn: true,
                   showDownloadColumn: true,

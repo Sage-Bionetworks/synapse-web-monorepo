@@ -1,7 +1,3 @@
-import { JSONSchema7 } from 'json-schema'
-import { memoize } from 'lodash-es'
-import SparkMD5 from 'spark-md5'
-import UniversalCookies from 'universal-cookie'
 import {
   ACCESS_TOKEN_COOKIE_KEY,
   getCookieDomain,
@@ -63,6 +59,7 @@ import {
   MEMBERSHIP_INVITATION,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
+  PROJECT_STORAGE_USAGE,
   PROJECTS,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
@@ -72,7 +69,6 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SESSION_ACCESS_TOKEN,
-  TERMS_OF_USE,
   START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -81,6 +77,9 @@ import {
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
   TEAM_MEMBER,
   TEAM_MEMBERS,
+  TERMS_OF_USE,
+  TERMS_OF_USE_INFO,
+  TERMS_OF_USE_STATUS,
   THREAD,
   THREAD_ID,
   TRASHCAN_PURGE,
@@ -98,14 +97,15 @@ import {
   WIKI_OBJECT_TYPE,
   WIKI_PAGE,
   WIKI_PAGE_ID,
-  TERMS_OF_USE_INFO,
-  TERMS_OF_USE_STATUS,
-  PROJECT_STORAGE_USAGE,
 } from '@/utils/APIConstants'
-import { dispatchDownloadListChangeEvent } from '@/utils/functions/dispatchDownloadListChangeEvent'
+import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { dispatchDownloadListChangeEvent } from '@/utils/functions/dispatchDownloadListChangeEvent'
 import { removeUndefined } from '@/utils/functions/ObjectUtils'
+import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
   AccessApproval,
@@ -117,6 +117,7 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
   AccessRequirementStatus,
+  AccessToken,
   AccessTokenGenerationRequest,
   AccessTokenGenerationResponse,
   AccessTokenRecordList,
@@ -132,6 +133,9 @@ import {
   AddPartResponse,
   AddToDownloadListRequest,
   AddToDownloadListResponse,
+  AgentChatRequest,
+  AgentChatResponse,
+  AgentSession,
   AliasCheckRequest,
   AliasCheckResponse,
   AsynchronousJobStatus,
@@ -154,6 +158,7 @@ import {
   ChangePasswordWithTwoFactorAuthToken,
   ColumnModel,
   CreateAccessApprovalRequest,
+  CreateAgentSessionRequest,
   CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
@@ -181,6 +186,8 @@ import {
   DownloadListQueryRequest,
   DownloadListQueryResponse,
   DownloadOrder,
+  DownloadPFBRequest,
+  DownloadPFBResult,
   EmailValidationSignedToken,
   Entity,
   EntityBundle,
@@ -221,6 +228,8 @@ import {
   InviteeVerificationSignedToken,
   JoinTeamSignedToken,
   JsonSchemaObjectBinding,
+  ListAgentSessionsRequest,
+  ListAgentSessionsResponse,
   ListRequest,
   ListResponse,
   ListWrapper,
@@ -252,6 +261,7 @@ import {
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   ProjectHeaderList,
+  ProjectStorageUsage,
   QueryBundleRequest,
   QueryRequestDetails,
   QueryResponseDetails,
@@ -273,6 +283,8 @@ import {
   RestrictionInformationResponse,
   SearchQuery,
   SearchResults,
+  SessionHistoryRequest,
+  SessionHistoryResponse,
   SortBy,
   Submission as DataAccessSubmission,
   SubmissionInfoPage,
@@ -291,9 +303,13 @@ import {
   TeamMember,
   TeamMembershipStatus,
   TeamSubmissionEligibility,
+  TermsOfServiceInfo,
+  TermsOfServiceStatus,
   Topic,
   TotpSecret,
   TotpSecretActivationRequest,
+  TraceEventsRequest,
+  TraceEventsResponse,
   TrashedEntity,
   TwoFactorAuthDisableRequest,
   TwoFactorAuthLoginRequest,
@@ -301,6 +317,7 @@ import {
   TwoFactorAuthResetRequest,
   TwoFactorAuthStatus,
   TYPE_FILTER,
+  UpdateAgentSessionRequest,
   UpdateDiscussionReply,
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
@@ -313,6 +330,7 @@ import {
   UserProfile,
   ValidateDefiningSqlResponse,
   ValidationResults,
+  VerificationState,
   VerificationSubmission,
   VersionInfo,
   ViewColumnModelRequest,
@@ -320,34 +338,18 @@ import {
   ViewEntityType,
   WikiPage,
   WikiPageKey,
-  CreateAgentSessionRequest,
-  AgentSession,
-  ListAgentSessionsRequest,
-  ListAgentSessionsResponse,
-  AgentChatRequest,
-  AgentChatResponse,
-  SessionHistoryResponse,
-  SessionHistoryRequest,
-  VerificationState,
-  UpdateAgentSessionRequest,
-  TraceEventsRequest,
-  TraceEventsResponse,
-  TermsOfServiceInfo,
-  TermsOfServiceStatus,
-  AccessToken,
-  ProjectStorageUsage,
 } from '@sage-bionetworks/synapse-types'
-import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { JSONSchema7 } from 'json-schema'
+import { memoize } from 'lodash-es'
+import SparkMD5 from 'spark-md5'
+import { SetOptional } from 'type-fest'
+import UniversalCookies from 'universal-cookie'
+import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import {
   allowNotFoundError,
   isOutsideSynapseOrg,
   returnIfTwoFactorAuthError,
 } from './SynapseClientUtils'
-import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
-import { SetOptional } from 'type-fest'
-import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 
 const cookies = new UniversalCookies()
 
@@ -386,7 +388,7 @@ export function validateDefiningSql(
 /**
  * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
  */
-export const getDownloadFromTableRequest = async (
+export const createTableCsvForDownload = async (
   request: DownloadFromTableRequest,
   accessToken: string | undefined = undefined,
 ): Promise<DownloadFromTableResult> => {
@@ -399,6 +401,26 @@ export const getDownloadFromTableRequest = async (
   return getAsyncResultBodyFromJobId(
     asyncJobId.token,
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
+ */
+export const createTablePfbForDownload = async (
+  request: DownloadPFBRequest,
+  accessToken: string | undefined = undefined,
+): Promise<DownloadPFBResult> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    `/repo/v1/entity/${request.entityId}/table/download/pfb/async/start`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/entity/${request.entityId}/table/download/pfb/async/get/${asyncJobId.token}`,
     accessToken,
   )
 }

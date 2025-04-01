@@ -1,5 +1,3 @@
-import { datasetsSql } from '@/config/resources'
-import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { datasetCardConfiguration, datasetsRgbIndex } from '@/config/synapseConfigs/datasets'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import {
@@ -12,6 +10,8 @@ import {
   useGetPortalComponentSearchParams,
 } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { datasetsSql, enabledAnalysisPlatforms } from 'src/config/resources'
+import { columnAliases } from 'src/config/synapseConfigs/commonProps'
 import {
   CardContainerLogic,
   DatasetJsonLdScript,
@@ -82,7 +82,9 @@ export default function DatasetDetailsPage() {
                       shouldDeepLink={false}
                       columnAliases={columnAliases}
                       defaultShowPlots={false}
-                      showExportToCavatica={true}
+                      enabledExternalAnalysisPlatforms={
+                        enabledAnalysisPlatforms
+                      }
                       isRowSelectionVisible={true}
                       rowSelectionPrimaryKey={['id']}
                       fileIdColumnName="id"

@@ -1,25 +1,25 @@
+import {
+  QueryVisualizationWrapper,
+  useQueryVisualizationContext,
+} from '@/components/QueryVisualizationWrapper/index'
+import { QueryWrapper } from '@/components/QueryWrapper/index'
 import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
 import { getHandlers } from '@/mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
 import { useEffect } from 'react'
-import {
-  QueryVisualizationWrapper,
-  useQueryVisualizationContext,
-} from '../QueryVisualizationWrapper/index'
-import { QueryWrapper } from '../QueryWrapper/index'
-import SendToCavaticaConfirmationDialog, {
-  SendToCavaticaConfirmationDialogProps,
-} from './SendToCavaticaConfirmationDialog'
+import ExportToAnalysisPlatformDialog, {
+  ExportToAnalysisPlatformDialogProps,
+} from './ExportToAnalysisPlatformDialog'
 
 const meta: Meta<
-  SendToCavaticaConfirmationDialogProps & {
+  ExportToAnalysisPlatformDialogProps & {
     hasRowSelection: boolean
     unitDescription: string
   }
 > = {
-  title: 'Explore/Send to CAVATICA Dialog',
-  component: SendToCavaticaConfirmationDialog,
+  title: 'Explore/Send to Analysis Platform Dialog',
+  component: ExportToAnalysisPlatformDialog,
   argTypes: {
     hasRowSelection: {
       description:
@@ -34,7 +34,7 @@ const meta: Meta<
   parameters: {
     design: {
       type: 'figma',
-      url: 'https://www.figma.com/file/3l3RjDnKnv8jms2XFR5BQu/Main?type=design&node-id=1909-58523',
+      url: 'https://www.figma.com/design/GWQwLZl82ZT75gYonOx8Qf/AMP-ALS-Knowledge-Portal-v1?node-id=234-115477&m=dev',
     },
     msw: {
       handlers: [
@@ -48,19 +48,28 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 function ShowModalTrigger() {
-  const { isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal } =
-    useQueryVisualizationContext()
+  const {
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  } = useQueryVisualizationContext()
   useEffect(() => {
-    if (!isShowingExportToCavaticaModal) {
-      setIsShowingExportToCavaticaModal(true)
+    if (!isShowingExportToAnalysisPlatformModal) {
+      setIsShowingExportToAnalysisPlatformModal(true)
     }
-  }, [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal])
+  }, [
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  ])
   return <></>
 }
 
 export const Demo: Story = {
-  name: 'Send to CAVATICA Dialog',
+  name: 'Send to Analysis Platform Dialog',
   args: {
+    platformInstructionProps: {
+      cavaticaConnectAccountURL:
+        'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess',
+    },
     hasRowSelection: false,
     unitDescription: 'file',
   },
@@ -71,6 +80,11 @@ export const Demo: Story = {
           <QueryVisualizationWrapper
             unitDescription={args.unitDescription}
             isRowSelectionVisible={args.hasRowSelection}
+            enabledExternalAnalysisPlatforms={[
+              'cavatica',
+              'terra',
+              'adworkbench',
+            ]}
           >
             <ShowModalTrigger />
             <Story />
