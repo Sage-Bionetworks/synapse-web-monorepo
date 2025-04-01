@@ -24,6 +24,7 @@ import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import * as FileHandleLinkModule from '../widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { GenericCardProps } from './GenericCard'
 import GenericCard, {
   CARD_SHORT_DESCRIPTION_CSS,
@@ -71,6 +72,12 @@ const mockFileHandleLink = jest
 const mockImageFileHandle = jest
   .spyOn(ImageFileHandleModule, 'ImageFileHandle')
   .mockImplementation(() => <div data-testid="ImageFileHandle" />)
+
+jest.mock('../AddToDownloadCart', () => ({
+  AddToDownloadCartButton: jest.fn(() => (
+    <div data-testid="AddToDownloadCartButton" />
+  )),
+}))
 
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',
@@ -568,6 +575,26 @@ describe('GenericCard tests', () => {
     })
     it('the found column index is 0 (falsy)', () => {
       expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
+    })
+  })
+
+  describe('creates a download cart button', () => {
+    const props = {
+      ...propsForNonHeaderMode,
+      genericCardSchema: {
+        ...genericCardSchema,
+        downloadCartSynId: 'https://www.synapse.org/Synapse:syn7248585',
+      },
+    }
+
+    it('renders the button', () => {
+      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
+      mockAddToDownloadCartButton.mockImplementation(() => (
+        <div data-testid="AddToDownloadCartButton" />
+      ))
+      renderComponent(props, 'TableEntity')
+      screen.getByTestId('AddToDownloadCartButton')
+      expect(AddToDownloadCartButton).toHaveBeenCalled()
     })
   })
 })
