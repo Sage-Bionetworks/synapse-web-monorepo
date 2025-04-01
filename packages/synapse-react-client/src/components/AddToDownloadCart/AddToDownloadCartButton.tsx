@@ -84,7 +84,13 @@ export function AddToDownloadCartButton({
   }
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+      }}
+    >
       <div>
         <Button
           onClick={onAddClick}
