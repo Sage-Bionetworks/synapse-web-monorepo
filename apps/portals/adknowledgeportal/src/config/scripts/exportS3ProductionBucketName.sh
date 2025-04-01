@@ -1,1 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://prod-adknowledgeportalsynapse-org-websitebucket-1wcys549ufmd
+export CF_PRODUCTION_DIST_ID=E3V5LOR3RVT8MS
