@@ -45,11 +45,6 @@ import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
-import { useGetEntity } from '../../synapse-queries'
-import { useQueryContext } from '../QueryContext'
-import { convertDoiToLink } from '../../utils/functions/RegularExpressions'
-import { Stack } from '@mui/material'
-import CitationPopover from '../CitationPopover'
 import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { SynapseCardLabel } from './SynapseCardLabel'
 
