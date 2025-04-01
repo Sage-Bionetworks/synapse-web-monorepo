@@ -251,7 +251,11 @@ export function TableDataColumnHeader(
       helpText={columnHelpText}
       filterControl={
         <span>
-          <EnumFacetFilter containerAs="Dropdown" facet={facet} />
+          <EnumFacetFilter
+            containerAs="Dropdown"
+            facet={facet}
+            defaultShowAllValues={true}
+          />
         </span>
       }
       additionalButtons={
