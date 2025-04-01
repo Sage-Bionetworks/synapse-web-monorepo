@@ -69,7 +69,7 @@ export function AddToDownloadCartButton({
   }
 
   const onAddClick = () => {
-    setShowConfirmation(true)
+    setShowConfirmation(!showConfirmation)
   }
 
   if (isLoading || (!isLoading && entity)) {
