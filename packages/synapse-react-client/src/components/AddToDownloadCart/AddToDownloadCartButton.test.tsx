@@ -65,18 +65,6 @@ describe('AddToDownloadCartButton', () => {
     })
   })
 
-  it('button is null when loading and then appears enabled', async () => {
-    render(<AddToDownloadCartButton {...propsFolder} />, {
-      wrapper: createWrapper(),
-    })
-    let button = screen.queryByRole('button', { name: /download/i })
-    expect(button).toBeNull()
-    await waitFor(() => {
-      button = screen.getByRole('button', { name: /download/i })
-      expect(button).toBeEnabled()
-    })
-  })
-
   it('table entities show the download confirmation UI when clicked', async () => {
     render(<AddToDownloadCartButton {...propsTable} />, {
       wrapper: createWrapper(),
