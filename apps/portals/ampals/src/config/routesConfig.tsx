@@ -7,6 +7,7 @@ import { MarkdownSynapse } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import explorePageRoutes from './explorePageRoutes'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
+import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
 
 const routes: RouteObject[] = [
   {
@@ -57,6 +58,10 @@ const routes: RouteObject[] = [
             />
           </SectionLayout>
         ),
+      },
+      {
+        path: 'Search',
+        children: searchPageChildRoutes,
       },
     ],
   },
