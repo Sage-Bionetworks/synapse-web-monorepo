@@ -48,6 +48,8 @@ export type EnumFacetFilterUIProps<TValue = string> = {
   onHoverOverValue: (value: TValue) => void
   /* Set to true if multiple values can be selected for the filter */
   canMultiSelect: boolean
+  /* By default, all values are not shown (defaultShowAllValues = false) */
+  defaultShowAllValues?: boolean
 }
 
 function removeWhitespace(value: string): string {
@@ -69,8 +71,10 @@ export default function EnumFacetFilterUI<TValue = string>(
     onRemoveAllFacetSelections,
     onHoverOverValue,
     canMultiSelect = true,
+    defaultShowAllValues = false,
   } = props
-  const [toggleShowAll, setToggleShowAll] = useState<boolean>(false)
+  const [toggleShowAll, setToggleShowAll] =
+    useState<boolean>(defaultShowAllValues)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
@@ -127,7 +131,7 @@ export default function EnumFacetFilterUI<TValue = string>(
                   size={'small'}
                   onClick={() => {
                     setShowSearch(false)
-                    setToggleShowAll(false)
+                    setToggleShowAll(defaultShowAllValues)
                   }}
                 >
                   <IconSvg

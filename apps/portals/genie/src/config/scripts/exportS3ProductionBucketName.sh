@@ -1,1 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://prod-genie-synapse-org-websitebucket-xlukn82knv8g
+export CF_PRODUCTION_DIST_ID=E2WFBXCOBA5ZU5

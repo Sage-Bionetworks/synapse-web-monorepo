@@ -32,6 +32,7 @@ import RedirectToURL from './RedirectToURL'
 import RedirectWithQuery from './RedirectWithQuery'
 import SurveyToast from './SurveyToast'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
+import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 
 const PortalComponents = {
   RouteControlWrapper: ExploreWrapper,
@@ -67,6 +68,7 @@ const PortalComponents = {
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,
+  RepositoryUnderReviewAlert,
 }
 
 export default PortalComponents
