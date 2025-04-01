@@ -14,6 +14,7 @@ export const toolsSchema: GenericCardSchema = {
   title: 'toolName',
   description: 'description',
   includeCitation: true,
+  defaultCitationFormat: 'nature',
   secondaryLabels: [
     'inputData',
     'inputFormat',
