@@ -1,7 +1,7 @@
-import ChallengeDataDownloadWrapper from '@sage-bionetworks/synapse-portal-framework/components/challengeportal/ChallengeDataDownloadWrapper'
-import ChallengeDetailPageWrapper from '@sage-bionetworks/synapse-portal-framework/components/challengeportal/ChallengeDetailPageWrapper'
-import ChallengeParticipantGoogleMap from '@sage-bionetworks/synapse-portal-framework/components/challengeportal/ChallengeParticipantGoogleMap'
-import ChallengeSubmissionWrapper from '@sage-bionetworks/synapse-portal-framework/components/challengeportal/ChallengeSubmissionWrapper'
+import ChallengeDataDownloadWrapper from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeDataDownloadWrapper'
+import ChallengeDetailPageWrapper from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeDetailPageWrapper'
+import ChallengeParticipantGoogleMap from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeParticipantGoogleMap'
+import ChallengeSubmissionWrapper from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeSubmissionWrapper'
 import {
   DetailsPageContent,
   DetailsPageContentType,

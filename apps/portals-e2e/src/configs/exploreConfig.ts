@@ -41,12 +41,12 @@ const exploreConfig: ExploreConfig = {
       'Educational Resources',
     ],
   },
-  challengeportal: {},
+  challenges: {},
   digitalhealth: {
     cards_charts: ['Collections', 'Tools', 'Publications'],
     table_charts: ['Data'],
   },
-  elportal: {
+  eliteportal: {
     table_charts: ['Data', 'Cohort Builder'],
     cards_charts: [
       'Projects',
