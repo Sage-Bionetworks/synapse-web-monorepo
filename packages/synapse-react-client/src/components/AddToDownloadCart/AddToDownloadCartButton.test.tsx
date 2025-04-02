@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import { userEvent } from '@testing-library/user-event'
 import AddToDownloadCartButton, {
   AddToDownloadCartButtonProps,
 } from './AddToDownloadCartButton'
@@ -42,49 +41,36 @@ describe('AddToDownloadCartButton', () => {
   const propsFolder: AddToDownloadCartButtonProps = {
     entityId: 'syn7248585',
     buttonText: 'Download',
+    onIsLoadingChange: jest.fn(),
+    handleClose: jest.fn(),
   }
 
   const propsTable: AddToDownloadCartButtonProps = {
     entityId: 'syn53132831',
     buttonText: 'Download',
+    onIsLoadingChange: jest.fn(),
+    handleClose: jest.fn(),
   }
 
   const propsFile: AddToDownloadCartButtonProps = {
     entityId: 'syn59954313',
     buttonText: 'Download',
+    onIsLoadingChange: jest.fn(),
+    handleClose: jest.fn(),
   }
 
-  it('renders the button', async () => {
-    render(<AddToDownloadCartButton {...propsFolder} />, {
-      wrapper: createWrapper(),
-    })
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /download/i }),
-      ).toBeInTheDocument()
-    })
-  })
-
-  it('table entities show the download confirmation UI when clicked', async () => {
+  it('table entities show the download confirmation UI when clicked', () => {
     render(<AddToDownloadCartButton {...propsTable} />, {
       wrapper: createWrapper(),
     })
-    const button = await screen.findByRole('button', {
-      name: /download/i,
-    })
-    await userEvent.click(button)
     screen.getByTestId('TableQueryDownloadConfirmation')
   })
 
-  it('folder entities show the download confirmation UI when clicked', async () => {
+  it('folder entities show the download confirmation UI when clicked', () => {
     mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockFolderEntity))
     render(<AddToDownloadCartButton {...propsFolder} />, {
       wrapper: createWrapper(),
     })
-    const button = await screen.findByRole('button', {
-      name: /download/i,
-    })
-    await userEvent.click(button)
     screen.getByTestId('FolderDownloadConfirmation')
   })
 
