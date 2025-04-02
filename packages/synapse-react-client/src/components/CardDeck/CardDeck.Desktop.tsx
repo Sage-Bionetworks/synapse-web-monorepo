@@ -89,6 +89,10 @@ export default function CardDeckDesktop({
               backgroundColor: 'white',
               boxShadow: 'none',
               color: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+              },
             }),
             ...(cardDeckType === 'cckp' && {
               width: '170px',
@@ -96,6 +100,10 @@ export default function CardDeckDesktop({
               boxShadow: 'none',
               borderColor: 'primary.main',
               color: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+              },
             }),
           }}
         >

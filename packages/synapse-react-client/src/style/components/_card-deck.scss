@@ -120,8 +120,8 @@
     &__Header {
       @extend %hv-center;
 
-      .iconImg {
-        width: 40px;
+      &__icon {
+        height: 40px;
       }
 
       &__Title {
