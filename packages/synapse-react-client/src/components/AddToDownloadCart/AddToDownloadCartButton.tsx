@@ -1,7 +1,7 @@
 import { GetAppTwoTone } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useState, useEffect } from 'react'
 import { useGetEntity } from '../../synapse-queries/'
 import { SynapseConstants } from '../../utils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
@@ -19,6 +19,8 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 export type AddToDownloadCartButtonProps = {
   entityId: string
   buttonText?: string
+  onIsLoadingChange: (isLoading: boolean) => void
+  handleClose: () => void
 }
 
 const QueryWrapperTableDownloadConfirmation: React.FC<{
@@ -62,18 +64,15 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
 export function AddToDownloadCartButton({
   entityId,
   buttonText = 'Download',
+  handleClose,
+  onIsLoadingChange,
 }: AddToDownloadCartButtonProps) {
-  const [showConfirmation, setShowConfirmation] = useState(false)
   const { data: entity, isLoading } = useGetEntity(entityId)
   const entityConcreteType = entity?.concreteType
 
-  const handleClose = () => {
-    setShowConfirmation(false)
-  }
-
-  const onAddClick = () => {
-    setShowConfirmation(!showConfirmation)
-  }
+  useEffect(() => {
+    onIsLoadingChange(isLoading)
+  }, [isLoading, onIsLoadingChange])
 
   if (isLoading || (!isLoading && entity)) {
     if (
@@ -87,37 +86,15 @@ export function AddToDownloadCartButton({
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-      }}
-    >
-      <div>
-        <Button
-          onClick={onAddClick}
-          variant="outlined"
-          startIcon={<GetAppTwoTone />}
-          disabled={isLoading}
-        >
-          {buttonText}
-        </Button>
-      </div>
-      <div>
-        {showConfirmation &&
-          (entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
-            <FolderDownloadConfirmation
-              folderId={entityId}
-              fnClose={handleClose}
-            />
-          ) : (
-            <QueryWrapperTableDownloadConfirmation
-              entityId={entityId}
-              onHide={handleClose}
-            />
-          ))}
-      </div>
+    <div>
+      {entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
+        <FolderDownloadConfirmation folderId={entityId} fnClose={handleClose} />
+      ) : (
+        <QueryWrapperTableDownloadConfirmation
+          entityId={entityId}
+          onHide={handleClose}
+        />
+      )}
     </div>
   )
 }
