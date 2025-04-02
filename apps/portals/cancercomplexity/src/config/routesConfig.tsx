@@ -21,13 +21,23 @@ import {
   onIndividualThemeBarPlotPointClick,
   onPointClick,
 } from './synapseConfigs/onPointClick'
-import { searchPageChildRoutes } from 'src/pages/CCKPSearchPage'
+import { searchPageChildRoutes } from '@/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
+import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
+    element: (
+      <App>
+        {/* PORTALS-3505 & PORTALS-3508*/}
+        <RepositoryUnderReviewAlert
+          portalSpecificDisclaimer={
+            'This repository is developed by Sage Bionetworks to host and share resources related to cancer research, and remains fully operational. We continue to maintain and accept cancer-related data and resources throughout this review process.'
+          }
+        />
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {

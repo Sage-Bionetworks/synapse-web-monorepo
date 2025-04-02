@@ -1,20 +1,10 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import {
-  AccessToken,
-  TermsOfServiceInfo,
-  TermsOfServiceStatus,
-} from '@sage-bionetworks/synapse-types'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { AccessToken, TermsOfServiceInfo, TermsOfServiceStatus } from '@sage-bionetworks/synapse-types'
+import { useMutation, UseMutationOptions, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 
 export function useTermsOfServiceInfo(
   options?: Partial<UseQueryOptions<TermsOfServiceInfo, SynapseClientError>>,

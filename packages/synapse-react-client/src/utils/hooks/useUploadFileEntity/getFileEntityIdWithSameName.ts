@@ -1,5 +1,5 @@
+import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
 import { SynapseClient } from '@sage-bionetworks/synapse-client'
-import { allowNotFoundError } from '../../../synapse-client/SynapseClientUtils'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,

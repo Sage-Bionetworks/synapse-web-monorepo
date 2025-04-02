@@ -1,9 +1,9 @@
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { RangeFacetFilterProps, RangeFacetFilterUI } from './RangeFacetFilterUI'
-import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
-import { fn } from '@storybook/test'
 
 const meta: Meta<RangeFacetFilterProps> = {
   title: 'Explore/Components/Facets/RangeFacetFilter',

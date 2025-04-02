@@ -1,6 +1,9 @@
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DEFAULT_PAGE_SIZE, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Collapse as MockCollapse } from '@mui/material'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -8,23 +11,17 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import QueryWrapper from '../../QueryWrapper'
+import { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import {
   CombinedRangeFacetFilter,
   CombinedRangeFacetFilterProps,
 } from './CombinedRangeFacetFilter'
-import {
-  DEFAULT_PAGE_SIZE,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
-import { RangeSliderProps } from '../RangeSlider/RangeSlider'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
-import QueryWrapper from '../../QueryWrapper'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { server } from '../../../mocks/msw/server'
-import { cloneDeep } from 'lodash-es'
-import { QueryContextType, useQueryContext } from '../../QueryContext'
-import { registerTableQueryResult } from '../../../mocks/msw/handlers/tableQueryService'
 
 let capturedOnApplyClicked:
   | ((range: { min: string | number; max: string | number }) => void)

@@ -1,9 +1,9 @@
+import { calculateMd5 } from '@/synapse-client/SynapseClient'
 import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { calculateMd5 } from '../../synapse-client/SynapseClient'
+import { FileUploadArgs } from './FileUploadArgs'
 import { uploadToS3 } from './UploadToS3'
 import { useCreateExternalFileHandle } from './useFileHandle'
-import { FileUploadArgs } from './FileUploadArgs'
 
 type UseDirectUploadToS3Args = FileUploadArgs & {
   readonly accessKey: string

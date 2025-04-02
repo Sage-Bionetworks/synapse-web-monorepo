@@ -1,3 +1,5 @@
+import { useGetEntity } from '@/synapse-queries'
+import { SQL_EDITOR } from '@/utils/SynapseConstants'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import {
   Query,
@@ -9,9 +11,6 @@ import {
 import { useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
-import { Cavatica } from '../../../assets/icons/Cavatica'
-import { useGetEntity } from '../../../synapse-queries'
-import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import IconSvg from '../../IconSvg'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { useQueryContext } from '../../QueryContext'
@@ -24,8 +23,8 @@ import {
 } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import ExportToAnalysisPlatformDialog from '../export/ExportToAnalysisPlatformDialog'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
-import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
 import { ColumnSelection, DownloadOptions } from '../table-top'
 import CustomControlButton from './CustomControlButton'
 import {
@@ -33,7 +32,8 @@ import {
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
 
-const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaTopLevelControlButton'
+const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
+  'SendToAnalysisPlatformTopLevelControlButton'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -44,7 +44,6 @@ export type TopLevelControlsProps = {
   hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
-  showExportToCavatica?: boolean
   cavaticaConnectAccountURL?: string
   remount?: () => void
 }
@@ -82,7 +81,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     hideQueryCount = false,
     hideSqlEditorControl = true,
     customControls,
-    showExportToCavatica = false,
     cavaticaConnectAccountURL,
     remount,
   } = props
@@ -105,7 +103,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setShowSearchBar,
     columnsToShowInTable,
     setColumnsToShowInTable,
-    setIsShowingExportToCavaticaModal,
+    enabledExternalAnalysisPlatforms,
+    setIsShowingExportToAnalysisPlatformModal,
     unitDescription,
     setShowDownloadConfirmation,
     showCopyToClipboard,
@@ -114,6 +113,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     showFacetFilter,
     setShowFacetFilter,
   } = useQueryVisualizationContext()
+
+  const showExportToAnalysisPlatformButton =
+    enabledExternalAnalysisPlatforms.length > 0
 
   const [hasRecentlyCopiedToClipboard, setHasRecentlyCopiedToClipboard] =
     useState(false)
@@ -233,7 +235,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 </Fragment>
               )
             })}
-          {showExportToCavatica && (
+          {showExportToAnalysisPlatformButton && (
             <>
               <Tooltip
                 title={
@@ -242,7 +244,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     {hasSelectedRows
                       ? 'each selected file'
                       : 'every file in the current table'}{' '}
-                    to CAVATICA.{' '}
+                    to a chosen external analysis platform.{' '}
                     {!hasSelectedRows && showFacetFilter && (
                       <>
                         You can change what is sent by applying filters using
@@ -262,12 +264,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   variant="text"
                   disabled={!numberOfResultsToInvokeAction}
                   onClick={() => {
-                    setIsShowingExportToCavaticaModal(true)
+                    setIsShowingExportToAnalysisPlatformModal(true)
                   }}
-                  startIcon={<Cavatica />}
-                  id={SEND_TO_CAVATICA_BUTTON_ID}
+                  id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
                 >
-                  Send {numberOfResultsToInvokeActionAsText} to CAVATICA
+                  Send {numberOfResultsToInvokeActionAsText} to Analysis
+                  Platform
                 </Button>
               </Tooltip>
               <Divider orientation="vertical" variant="middle" flexItem />
@@ -324,7 +326,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           {isRowSelectionVisible && (
             <RowSelectionControls
               customControls={customControls}
-              showExportToCavatica={showExportToCavatica}
               remount={remount}
             />
           )}
@@ -336,8 +337,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <SendToCavaticaConfirmationDialog
-            cavaticaConnectAccountURL={cavaticaConnectAccountURL}
+          <ExportToAnalysisPlatformDialog
+            platformInstructionProps={{
+              cavaticaConnectAccountURL: cavaticaConnectAccountURL,
+            }}
           />
         </div>
       </div>

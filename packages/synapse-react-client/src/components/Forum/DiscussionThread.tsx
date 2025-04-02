@@ -1,3 +1,13 @@
+import { useGetCurrentUserProfile, useGetEntityBundle } from '@/synapse-queries'
+import { useGetRepliesInfinite } from '@/synapse-queries/forum/useReply'
+import {
+  useDeleteThread,
+  useGetThread,
+  useRestoreThread,
+} from '@/synapse-queries/forum/useThread'
+import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
@@ -6,19 +16,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import {
-  useGetCurrentUserProfile,
-  useGetEntityBundle,
-} from '../../synapse-queries'
-import { useGetRepliesInfinite } from '../../synapse-queries/forum/useReply'
-import {
-  useDeleteThread,
-  useGetThread,
-  useRestoreThread,
-} from '../../synapse-queries/forum/useThread'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'

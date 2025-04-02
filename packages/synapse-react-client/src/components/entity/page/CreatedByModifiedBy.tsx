@@ -1,3 +1,17 @@
+import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
+import {
+  useGetEntity,
+  useGetQueryResultBundleWithAsyncStatus,
+} from '@/synapse-queries'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+  isDataset,
+  isTable,
+} from '@/utils/functions/EntityTypeUtils'
+import { BUNDLE_MASK_LAST_UPDATED_ON } from '@/utils/SynapseConstants'
+import { InfoTwoTone } from '@mui/icons-material'
 import {
   Box,
   Breadcrumbs,
@@ -8,21 +22,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { BUNDLE_MASK_LAST_UPDATED_ON } from '../../../utils/SynapseConstants'
-import {
-  useGetEntity,
-  useGetQueryResultBundleWithAsyncStatus,
-} from '../../../synapse-queries'
-import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-  isDataset,
-  isTable,
-} from '../../../utils/functions/EntityTypeUtils'
-import { formatDate } from '../../../utils/functions/DateFormatter'
-import ConditionalWrapper from '../../utils/ConditionalWrapper'
 import dayjs from 'dayjs'
-import { InfoTwoTone } from '@mui/icons-material'
 import { UserBadge } from '../../UserCard/UserBadge'
 
 export type CreatedByModifiedByProps = {

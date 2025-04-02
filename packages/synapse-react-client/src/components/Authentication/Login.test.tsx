@@ -1,16 +1,17 @@
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
+import {
+  ErrorResponse,
+  ErrorResponseCode,
+  LoginResponse,
+  TwoFactorAuthErrorResponse,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StandaloneLoginForm, {
   StandaloneLoginFormProps,
 } from './StandaloneLoginForm'
-import SynapseClient from '../../synapse-client'
-import { ErrorResponse, LoginResponse } from '@sage-bionetworks/synapse-types'
-import {
-  ErrorResponseCode,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../utils/SynapseConstants'
 
 const username = 'myUsername'
 const password = 'myPassword'

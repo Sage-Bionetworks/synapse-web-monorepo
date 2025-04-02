@@ -1,9 +1,9 @@
-import { rest } from 'msw'
 import {
   ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
   RESEARCH_PROJECT,
-} from '../../../utils/APIConstants'
+} from '@/utils/APIConstants'
 import { ResearchProject } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
 import { MOCK_RESEARCH_PROJECT } from '../../dataaccess/MockResearchProject'
 
 export function getResearchProjectHandlers(backendOrigin: string) {

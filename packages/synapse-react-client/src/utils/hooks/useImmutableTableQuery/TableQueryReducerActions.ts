@@ -1,4 +1,9 @@
-import { UniqueFacetIdentifier } from '../../types/UniqueFacetIdentifier'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  isFacetColumnValuesRequest,
+} from '@/utils/types/IsType'
+import { UniqueFacetIdentifier } from '@/utils/types/UniqueFacetIdentifier'
 import {
   FacetColumnRangeRequest,
   FacetColumnValuesRequest,
@@ -6,13 +11,8 @@ import {
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
-import {
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  isFacetColumnValuesRequest,
-} from '../../types/IsType'
-import { facetObjectMatchesDefinition } from '../../functions/queryUtils'
 import * as React from 'react'
+import { facetObjectMatchesDefinition } from '../../functions/queryUtils'
 import { DEFAULT_PAGE_SIZE } from '../../SynapseConstants'
 import { QueryChangeCommitOptions } from './useTableQueryReducer'
 

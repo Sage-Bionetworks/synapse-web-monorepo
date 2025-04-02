@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   useCreateEntity,
   useGetEntityLookupQueryOptions,
   useGetEntityQueryOptions,
-} from '../../../synapse-queries/entity/useEntity'
+} from '@/synapse-queries/entity/useEntity'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,

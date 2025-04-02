@@ -1,3 +1,4 @@
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   AnnotationsValueType,
   EntityBundle,
@@ -18,7 +19,6 @@ import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProject from './mockProject'
 import mockProjectEntityData from './mockProject'
-import { normalizeNumericId } from '../../utils/functions/StringUtils'
 
 const parentId = mockProject.id
 const projectName = mockProject.name

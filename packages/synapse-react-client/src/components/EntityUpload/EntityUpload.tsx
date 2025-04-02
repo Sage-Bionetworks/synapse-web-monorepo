@@ -1,3 +1,10 @@
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client/index'
+import { useGetDefaultUploadDestination, useGetEntity } from '@/synapse-queries'
+import { getUploadDestinationString } from '@/utils/functions/FileHandleUtils'
+import {
+  UploaderState,
+  useUploadFileEntities,
+} from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import {
   Box,
   Fade,
@@ -21,16 +28,6 @@ import {
   useState,
 } from 'react'
 import { FixedSizeList } from 'react-window'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/index'
-import {
-  useGetDefaultUploadDestination,
-  useGetEntity,
-} from '../../synapse-queries'
-import { getUploadDestinationString } from '../../utils/functions/FileHandleUtils'
-import {
-  UploaderState,
-  useUploadFileEntities,
-} from '../../utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage/ToastMessage'

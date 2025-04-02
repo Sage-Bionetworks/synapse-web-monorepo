@@ -1,5 +1,5 @@
+import { useGetUserGroupHeader } from '@/synapse-queries'
 import { Skeleton } from '@mui/material'
-import { useGetUserGroupHeader } from '../../synapse-queries'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'
 import { UserBadge } from '../UserCard/UserBadge'

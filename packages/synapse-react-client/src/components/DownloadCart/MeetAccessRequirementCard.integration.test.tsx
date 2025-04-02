@@ -1,3 +1,21 @@
+import {
+  mockLockAccessRequirement,
+  mockManagedACTAccessRequirement,
+  mockSelfSignAccessRequirement,
+  mockToUAccessRequirement,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_STATUS,
+} from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
+  AccessRequirement,
+  AccessRequirementStatus,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import {
   ACT_TITLE,
@@ -7,24 +25,6 @@ import {
   SELF_SIGN_TITLE,
   TERMS_OF_USE_TITLE,
 } from './MeetAccessRequirementCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
-import { rest, server } from '../../mocks/msw/server'
-import {
-  mockLockAccessRequirement,
-  mockManagedACTAccessRequirement,
-  mockSelfSignAccessRequirement,
-  mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import {
-  ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_STATUS,
-} from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import {
-  AccessRequirement,
-  AccessRequirementStatus,
-} from '@sage-bionetworks/synapse-types'
 
 const ACCESS_REQUIREMENT_ID = 1111
 const defaultProps: MeetAccessRequirementCardProps = {

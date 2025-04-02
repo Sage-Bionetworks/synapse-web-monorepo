@@ -1,3 +1,10 @@
+import HomePage from '@/pages/HomePage'
+import ProgramDetailsPage from '@/pages/ProgramDetailsPage'
+import ProjectDetailsPage from '@/pages/ProjectDetailsPage'
+import {
+  StudyDetailsPage,
+  studyDetailsPageChildRoutes,
+} from '@/pages/StudyDetailsPage'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
@@ -6,23 +13,23 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { Navigate, RouteObject } from 'react-router'
-import HomePage from 'src/pages/HomePage'
-import ProgramDetailsPage from 'src/pages/ProgramDetailsPage'
-import ProjectDetailsPage from 'src/pages/ProjectDetailsPage'
-import {
-  StudyDetailsPage,
-  studyDetailsPageChildRoutes,
-} from 'src/pages/StudyDetailsPage'
 import { SynapseFormWrapper } from 'synapse-react-client'
 import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { explorePageRoutes } from './explorePageRoutes'
 import { experimentalModelsSql, modelADStrainsSelectedFacet } from './resources'
+import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 
 const routes: RouteObject[] = [
   {
     path: '/',
     element: (
       <App>
+        {/* PORTALS-3508 */}
+        <RepositoryUnderReviewAlert
+          portalSpecificDisclaimer={
+            "This repository is developed by Sage Bionetworks to host and share resources related to Alzheimer's Disease research, and remains fully operational. We continue to maintain and accept Alzheimer's disease-related data and resources throughout this review process."
+          }
+        />
         <SurveyToast
           localStorageKey="org.sagebionetworks.security.cookies.portal.adkpsurvey.dismissed"
           title="What Metrics Matter to You? Help Us Improve the AD Knowledge Portal!"

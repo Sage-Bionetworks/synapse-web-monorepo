@@ -1,10 +1,8 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
-import SynapseClient from '../../synapse-client'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import { uniqueId } from 'lodash-es'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ChallengeTeam,
   CreateChallengeTeamRequest,
@@ -13,7 +11,9 @@ import {
   MembershipInvitation,
   Team,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { act, renderHook, waitFor } from '@testing-library/react'
+import { uniqueId } from 'lodash-es'
+import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
 
 function render() {
   const renderedHook = renderHook(() => useCreateAndRegisterChallengeTeam(), {

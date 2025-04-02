@@ -1,7 +1,7 @@
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../utils/functions/colorPalette'
+} from '@/utils/functions/colorPalette'
 import { Box } from '@mui/material'
 import tinycolor from 'tinycolor2'
 

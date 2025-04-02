@@ -1,15 +1,15 @@
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import TwoFactorEnrollmentForm, {
   EXPORTED_FOR_UNIT_TESTING,
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
-import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 const returnedSecret: TotpSecret = {
   secretId: '1234',

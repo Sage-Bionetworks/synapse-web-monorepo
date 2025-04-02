@@ -1,17 +1,17 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import dayjs from 'dayjs'
-import { OAuthManagement } from './OAuthManagement'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import { server } from '@/mocks/msw/server'
+import { mockClientList1, mockClientList2 } from '@/mocks/oauth/MockClient'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
   useGetOAuthClientInfinite,
   useUpdateOAuthClient,
-} from '../../synapse-queries'
-import { server } from '../../mocks/msw/server'
-import { mockClientList1, mockClientList2 } from '../../mocks/oauth/MockClient'
+} from '@/synapse-queries'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import dayjs from 'dayjs'
+import { OAuthManagement } from './OAuthManagement'
 
 jest.mock('../../../src/synapse-queries/oauth/useOAuthClient', () => {
   return {

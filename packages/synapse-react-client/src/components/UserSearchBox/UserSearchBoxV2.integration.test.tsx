@@ -1,14 +1,14 @@
+import { server } from '@/mocks/msw/server'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+  mockUserGroupHeader,
+} from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import selectEvent from 'react-select-event'
 import UserSearchBox from './UserSearchBoxV2'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
-import {
-  mockUserGroupHeader,
-  MOCK_USER_ID,
-  MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
 
 describe('UserSearchBoxV2 tests', () => {
   beforeAll(() => server.listen())

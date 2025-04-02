@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { useGetEntity } from '../../synapse-queries'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
-import { ImageFileHandle } from './ImageFileHandle'
+import { useGetEntity } from '@/synapse-queries'
 import { Box } from '@mui/system'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { useState } from 'react'
+import { ImageFileHandle } from './ImageFileHandle'
 
 type EntityColumnImageProps = {
   entityId: string

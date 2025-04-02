@@ -1,3 +1,6 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseContext } from '@/utils/context/SynapseContext'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { Button } from '@mui/material'
 import Form, { IChangeEvent } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
@@ -8,10 +11,10 @@ import {
   SortItem,
 } from '@sage-bionetworks/synapse-types'
 import { Component, ContextType, CSSProperties, Fragment } from 'react'
-import SynapseClient from '../../synapse-client'
-import { SynapseContext } from '../../utils/context/SynapseContext'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { DialogBase } from '../DialogBase'
+import SynapseFormCheckboxesWidget from '../SynapseForm/SynapseFormCheckboxesWidget'
+import SynapseFormCheckboxWidget from '../SynapseForm/SynapseFormCheckboxWidget'
+import SynapseFormRadioWidget from '../SynapseForm/SynapseFormRadioWidget'
 import {
   csvOption,
   formSchemaArray,
@@ -19,9 +22,6 @@ import {
   includeRowIdAndRowVersionOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
-import SynapseFormCheckboxesWidget from '../SynapseForm/SynapseFormCheckboxesWidget'
-import SynapseFormCheckboxWidget from '../SynapseForm/SynapseFormCheckboxWidget'
-import SynapseFormRadioWidget from '../SynapseForm/SynapseFormRadioWidget'
 
 type ModalDownloadState = {
   isLoading: boolean
@@ -93,7 +93,7 @@ export class ModalDownload extends Component<
       csvTableDescriptor: { separator },
       additionalFilters: queryRequest.query.additionalFilters,
     }
-    SynapseClient.getDownloadFromTableRequest(
+    SynapseClient.createTableCsvForDownload(
       downloadFromTableRequest,
       this.context.accessToken,
     )

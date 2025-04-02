@@ -4,7 +4,7 @@ import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 
-type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
+export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
 export type HeaderCardProps = {
   type: string

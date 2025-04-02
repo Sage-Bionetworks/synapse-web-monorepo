@@ -1,10 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react'
+import SynapseClient from '@/synapse-client'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '@/utils/functions'
 import {
   DATASET,
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-} from '../../utils/SynapseConstants'
+} from '@/utils/SynapseConstants'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
@@ -12,15 +13,14 @@ import {
   Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
+import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { CustomControlCallbackData } from '../SynapseTable'
+import { displayToast } from '../ToastMessage'
 import QueryWrapperPlotNav, {
   QueryWrapperPlotNavProps,
 } from './QueryWrapperPlotNav'
-import { displayToast } from '../ToastMessage'
-import { CustomControlCallbackData } from '../SynapseTable'
-import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions'
-import { SynapseClient } from '../../index'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
-import { fn } from '@storybook/test'
 
 const meta: Meta<QueryWrapperPlotNavProps> = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -244,7 +244,7 @@ export const FileViewWithLockedColumn: Story = {
 
 export const SendToCavatica: Story = {
   args: {
-    sql: 'SELECT * FROM syn51186974',
+    sql: 'SELECT * FROM syn11346063.69',
     isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
@@ -254,7 +254,7 @@ export const SendToCavatica: Story = {
     name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
   },
 }
 
@@ -380,7 +380,7 @@ export const Dataset: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     helpConfiguration: [
       {
         columnName: 'id',
@@ -439,7 +439,7 @@ export const MaterializedViewOfFiles: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'currentVersion',
@@ -461,7 +461,7 @@ export const TableWithClickWrap: Story = {
     name: 'Table with Click Wrap',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: true,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'currentVersion',
@@ -480,6 +480,6 @@ export const TableWithRange: Story = {
     name: 'Table with Range Types',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    showExportToCavatica: false,
+    enabledExternalAnalysisPlatforms: [],
   },
 }

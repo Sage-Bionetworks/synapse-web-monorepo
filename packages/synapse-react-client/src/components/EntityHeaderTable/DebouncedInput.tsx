@@ -1,6 +1,6 @@
+import { useDebouncedEffect } from '@/utils/hooks'
+import { Autocomplete, TextField, TextFieldProps } from '@mui/material'
 import { useState } from 'react'
-import { TextField, TextFieldProps, Autocomplete } from '@mui/material'
-import { useDebouncedEffect } from '../../utils/hooks'
 
 // A debounced input react component
 

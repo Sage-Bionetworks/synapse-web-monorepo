@@ -1,13 +1,13 @@
+import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
+import { SynapseConstants } from '@/utils'
 import { Box } from '@mui/material'
-import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
-import { SynapseConstants } from '../../utils'
 import {
   AccountLevelBadge,
   AccountLevelBadgeType,
 } from '../AccountLevelBadge/AccountLevelBadge'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useRevokeCertificationUI from './useRevokeCertificationUI'
-import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type AccountLevelBadgesProps = {
   userId: string

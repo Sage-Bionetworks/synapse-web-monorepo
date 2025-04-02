@@ -1,32 +1,32 @@
-import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { ACCESS_APPROVAL } from '../../utils/APIConstants'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/accessRequirement/mockAccessRequirements'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockApprovedSubmission } from '@/mocks/dataaccess/MockSubmission'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import {
+  getAccessRequirementEntityBindingHandlers,
+  getAccessRequirementHandlers,
+  getAccessRequirementStatusHandlers,
+} from '@/mocks/msw/handlers/accessRequirementHandlers'
+import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
+import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
+import { getCurrentUserCertifiedValidatedHandler } from '@/mocks/msw/handlers/userProfileHandlers'
+import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { ACCESS_APPROVAL } from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   AccessApproval,
   ApprovalState,
   SubmissionState,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
 import AccessRequirementList from './AccessRequirementList'
-import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
-import {
-  getAccessRequirementEntityBindingHandlers,
-  getAccessRequirementHandlers,
-  getAccessRequirementStatusHandlers,
-} from '../../mocks/msw/handlers/accessRequirementHandlers'
-import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
-import { mockApprovedSubmission } from '../../mocks/dataaccess/MockSubmission'
-import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
-import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchProjectHandlers'
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',

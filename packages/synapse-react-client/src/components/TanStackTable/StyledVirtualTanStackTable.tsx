@@ -1,7 +1,7 @@
+import { mergeSlotProps } from '@/utils/slots/SlotUtils'
 import { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { noop } from 'lodash-es'
 import React, { useContext } from 'react'
-import { mergeSlotProps } from '../../utils/slots/SlotUtils'
 import StyledTanStackTable, {
   StyledTanStackTableProps,
 } from './StyledTanStackTable'

@@ -1,3 +1,4 @@
+import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Menu, MenuItem } from '@mui/material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useRef, useState } from 'react'
@@ -10,11 +11,7 @@ import {
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from 'synapse-react-client/utils/functions/index'
-import { RESPONSIVE_SIDE_PADDING } from '../../utils'
+import { BackendDestinationEnum, getEndpoint } from 'synapse-react-client/utils/functions/index'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'

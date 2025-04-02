@@ -1,17 +1,16 @@
+import { UniqueFacetIdentifier } from '@/utils/types'
+import { useDebouncedEffect } from '@react-hookz/web'
 import {
   QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { useMemo, useReducer, useState } from 'react'
-import * as React from 'react'
-import { UniqueFacetIdentifier } from '../../types'
 import { cloneDeep, isEqual } from 'lodash-es'
+import * as React from 'react'
+import { useMemo, useReducer, useState } from 'react'
 import {
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
 } from '../../functions/queryUtils'
-import { useDebouncedEffect } from '@react-hookz/web'
-import { DEBOUNCE_DELAY_MS } from './useImmutableTableQuery'
 import {
   addValueToSelectedFacet,
   getQueryFromSetStateAction,
@@ -23,6 +22,7 @@ import {
   setPageSize,
   setRangeFacetValue,
 } from './TableQueryReducerActions'
+import { DEBOUNCE_DELAY_MS } from './useImmutableTableQuery'
 
 export type QueryChangeCommitOptions =
   | {

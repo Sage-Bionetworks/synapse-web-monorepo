@@ -1,10 +1,10 @@
+import queryResultBundleJson from '@/mocks/query/syn51735464'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import TimelinePlot, { TimelinePlotProps } from './TimelinePlot'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 import { SynapseClient } from '../../index'
-import queryResultBundleJson from '../../mocks/query/syn51735464'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import TimelinePlot, { TimelinePlotProps } from './TimelinePlot'
 
 const timelineProps: TimelinePlotProps = {
   sql: 'select * from syn123',

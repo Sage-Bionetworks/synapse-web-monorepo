@@ -2,32 +2,11 @@
  * Hooks to access Entity Services in Synapse
  */
 
+import SynapseClient from '@/synapse-client'
+import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
+import { createTableUpdateTransactionRequest, SynapseClientError, useSynapseContext } from '@/utils'
+import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
 import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
-import { omit, pick } from 'lodash-es'
-import { useMemo } from 'react'
-import {
-  InfiniteData,
-  QueryClient,
-  QueryKey,
-  queryOptions,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  useMutation,
-  UseMutationOptions,
-  useQueries,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { allowNotFoundError } from '../../synapse-client/SynapseClientUtils'
-import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import {
-  createTableUpdateTransactionRequest,
-  SynapseClientError,
-  useSynapseContext,
-} from '../../utils'
 import {
   AccessControlList,
   ColumnModel,
@@ -43,10 +22,27 @@ import {
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
+import {
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+  queryOptions,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useMutation,
+  UseMutationOptions,
+  useQueries,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import { omit, pick } from 'lodash-es'
+import { useMemo } from 'react'
 import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { KeyFactory } from '../KeyFactory'
+import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
 import { useGetEntityBundleQueryOptions } from './useEntityBundle'
 
 export function useGetEntityQueryOptions<T extends Entity>() {

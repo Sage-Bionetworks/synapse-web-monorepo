@@ -1,28 +1,28 @@
-import { ErrorResponse, ObjectType } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { mockToUAccessRequirementWithWikiPageKey } from '../../mocks/accessRequirement/mockAccessRequirements'
+import { mockToUAccessRequirementWithWikiPageKey } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   mockEntityRootWikiPage,
   mockEntityWikiPage,
   mockToUAccessRequirementWikiPage,
-} from '../../mocks/mockWiki'
+} from '@/mocks/mockWiki'
 import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
-} from '../../mocks/mockWikiPageKey'
-import { rest, server } from '../../mocks/msw/server'
-import SynapseClient from '../../synapse-client'
-import { CreateWikiPageInput } from '../../synapse-queries'
+} from '@/mocks/mockWikiPageKey'
+import { rest, server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { CreateWikiPageInput } from '@/synapse-queries'
 import {
   confirmMarkdownSynapseTextContent,
   expectMarkdownSynapseNotToGetWiki,
   waitForMarkdownSynapseToGetWiki,
-} from '../../testutils/MarkdownSynapseUtils'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { WIKI_PAGE } from '../../utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
+} from '@/testutils/MarkdownSynapseUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { WIKI_PAGE } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { ErrorResponse, ObjectType } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,

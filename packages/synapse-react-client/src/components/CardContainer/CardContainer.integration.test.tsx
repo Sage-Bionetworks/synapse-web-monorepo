@@ -1,22 +1,22 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { CardContainer, CardContainerProps } from './CardContainer'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123'
+import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import mockUserCardTableQueryResultBundle from '@/mocks/query/mockUserCardTableQueryResultBundle'
+import syn16787123Json from '@/mocks/query/syn16787123'
+import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DEFAULT_PAGE_SIZE,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
   STUDY,
-} from '../../utils/SynapseConstants'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
-import mockUserCardTableQueryResultBundle from '../../mocks/query/mockUserCardTableQueryResultBundle'
-import { server } from '../../mocks/msw/server'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
+} from '@/utils/SynapseConstants'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
-import SynapseClient from '../../synapse-client'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import { CardContainer, CardContainerProps } from './CardContainer'
 
 const tableId = 'syn16787123'
 const sql = `SELECT * FROM ${tableId}`

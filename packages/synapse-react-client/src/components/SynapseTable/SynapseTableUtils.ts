@@ -1,4 +1,9 @@
 import {
+  hasFilesInView,
+  isDataset,
+  isEntityView,
+} from '@/utils/functions/EntityTypeUtils'
+import {
   ColumnModel,
   ColumnType,
   ColumnTypeEnum,
@@ -9,11 +14,6 @@ import {
   UserGroupHeader,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
-import {
-  hasFilesInView,
-  isDataset,
-  isEntityView,
-} from '../../utils/functions/EntityTypeUtils'
 
 export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,

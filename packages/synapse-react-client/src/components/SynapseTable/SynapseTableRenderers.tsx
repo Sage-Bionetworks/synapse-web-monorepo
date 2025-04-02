@@ -1,3 +1,4 @@
+import { useGetEntityHeader } from '@/synapse-queries'
 import { Checkbox } from '@mui/material'
 import {
   ColumnTypeEnum,
@@ -13,7 +14,6 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { isEqual } from 'lodash-es'
 import { useCallback } from 'react'
-import { useGetEntityHeader } from '../../synapse-queries'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
@@ -251,7 +251,11 @@ export function TableDataColumnHeader(
       helpText={columnHelpText}
       filterControl={
         <span>
-          <EnumFacetFilter containerAs="Dropdown" facet={facet} />
+          <EnumFacetFilter
+            containerAs="Dropdown"
+            facet={facet}
+            defaultShowAllValues={true}
+          />
         </span>
       }
       additionalButtons={

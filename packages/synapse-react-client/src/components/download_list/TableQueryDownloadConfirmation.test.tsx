@@ -1,28 +1,28 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
+import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { generateAsyncJobHandlers } from '@/mocks/msw/handlers/asyncJobHandlers'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   AddToDownloadListResponse,
   Query,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
-import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
-import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation'
-import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
-import QueryWrapper from '../QueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
-import { server } from '../../mocks/msw/server'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
-import { generateAsyncJobHandlers } from '../../mocks/msw/handlers/asyncJobHandlers'
-import { BackendDestinationEnum, getEndpoint } from '../../utils/functions'
-import SynapseClient from '../../synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from '../QueryVisualizationWrapper'
+import QueryWrapper from '../QueryWrapper'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import { DownloadConfirmationUIProps } from './DownloadConfirmationUI'
+import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation'
 
 const ID_COLUMN_ID = 11112
 const CURRENT_VERSION_COLUMN_ID = 11113

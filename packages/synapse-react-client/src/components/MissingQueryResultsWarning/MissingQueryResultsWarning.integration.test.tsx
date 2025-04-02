@@ -1,11 +1,11 @@
+import mockDatasetEntityData from '@/mocks/entity/mockDataset'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { EntityRef, Table } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MissingQueryResultsWarning from './MissingQueryResultsWarning'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { EntityRef, Table } from '@sage-bionetworks/synapse-types'
-import mockDatasetEntityData from '../../mocks/entity/mockDataset'
-import { server } from '../../mocks/msw/server'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
 
 const mockDatasetEntity = mockDatasetEntityData.entity
 

@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { useGetCurrentUserProfile } from '@/synapse-queries'
 import {
   Button,
-  RadioGroup,
-  Radio,
   FormControlLabel,
+  Radio,
+  RadioGroup,
   Stack,
   Typography,
 } from '@mui/material'
@@ -13,10 +13,10 @@ import {
   TYPE_FILTER,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
+import { ReactNode } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useGetCurrentUserProfile } from '../../../synapse-queries'
-import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
 import { UserBadge } from '../../UserCard/UserBadge'
+import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
 
 export type DataAccessRequestAccessorsEditorProps = {
   /* The current set of accessor changes for a data access request */
@@ -101,7 +101,7 @@ export default function DataAccessRequestAccessorsEditor(
         }
         value={null}
       />
-      <Stack gap={1}>
+      <Stack sx={{ my: 1, gap: 1 }}>
         {accessorChanges.map((ac, i) => {
           return (
             <div className={'list-items'} key={`accessor-${i}`}>

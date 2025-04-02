@@ -1,26 +1,28 @@
+import { useGetFullTableQueryResults } from '@/synapse-queries'
+import {
+  getAdditionalFilters,
+  parseEntityIdFromSqlStatement,
+  SQLOperator,
+} from '@/utils/functions'
+import { getHeaderIndex } from '@/utils/functions/queryUtils'
+import useRefDimensions from '@/utils/hooks/useRefDimensions'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import { Skeleton, Typography } from '@mui/material'
+import { Box } from '@mui/system'
+import {
+  ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { createRef, useMemo, useState } from 'react'
-import { useGetFullTableQueryResults } from '../../synapse-queries'
-import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
+import { getColorPalette } from '../ColorGradient/ColorGradient'
+import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import hardcodedPhasesQueryResponseData, {
   phaseObservationIndex,
   phaseSpeciesIndex,
 } from './phasesQueryResponseData'
-import TimelinePhase from './TimelinePhase'
-import { getColorPalette } from '../ColorGradient/ColorGradient'
-import { Box } from '@mui/system'
-import { ObservationCardSchema } from '../row_renderers/ObservationCard'
-import {
-  SQLOperator,
-  getAdditionalFilters,
-  parseEntityIdFromSqlStatement,
-} from '../../utils/functions'
 import TimelineLegendItem from './TimelineLegendItem'
-import { Skeleton, Typography } from '@mui/material'
+import TimelinePhase from './TimelinePhase'
 import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
-import { getHeaderIndex } from '../../utils/functions/queryUtils'
-import useRefDimensions from '../../utils/hooks/useRefDimensions'
-import { ColumnMultiValueFunctionQueryFilter } from '@sage-bionetworks/synapse-types'
-import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'observationphase'
 const OBSERVATION_TIME_COLUMN_NAME = 'observationtime'

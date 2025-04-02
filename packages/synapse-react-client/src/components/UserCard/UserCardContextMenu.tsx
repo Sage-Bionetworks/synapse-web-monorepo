@@ -1,6 +1,6 @@
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { SEPERATOR } from '../../utils/SynapseConstants'
+import { SEPERATOR } from '@/utils/SynapseConstants'
 import { Divider, Menu, MenuItem } from '@mui/material'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 
 export type MenuAction = {
   field: string

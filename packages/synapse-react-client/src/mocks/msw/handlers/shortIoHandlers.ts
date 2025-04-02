@@ -1,5 +1,5 @@
+import { mockShortIoResponse } from '@/mocks/mockShortIo'
 import { rest } from 'msw'
-import { mockShortIoResponse } from '../../../mocks/mockShortIo'
 
 export const getShortIoHandlers = () => [
   rest.post('https://api.short.io/links/public', async (req, res, ctx) => {

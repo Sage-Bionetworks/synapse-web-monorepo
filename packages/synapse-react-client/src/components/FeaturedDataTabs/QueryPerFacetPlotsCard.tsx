@@ -1,6 +1,6 @@
-import { SynapseConstants } from '../../utils'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { SynapseConstants } from '@/utils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,

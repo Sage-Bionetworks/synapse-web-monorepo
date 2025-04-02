@@ -1,10 +1,10 @@
+import { validateDefiningSql } from '@/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { UseMutationOptions, useMutation } from '@tanstack/react-query'
-import { validateDefiningSql } from '../../synapse-client'
 import {
-  ValidateDefiningSqlResponse,
   ValidateDefiningSqlRequest,
+  ValidateDefiningSqlResponse,
 } from '@sage-bionetworks/synapse-types'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 export function useValidateDefiningSql(
   options?: UseMutationOptions<

@@ -1,3 +1,22 @@
+import mockDataset from '@/mocks/entity/mockDataset'
+import { mockFolderEntity } from '@/mocks/entity/mockEntity'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockDoiAssociation } from '@/mocks/entity/mockProject'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import {
+  MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
+  mockExternalS3UploadDestination,
+} from '@/mocks/mock_upload_destination'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { rest, server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DOI_ASSOCIATION } from '@/utils/APIConstants'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   DoiAssociation,
   EntityBundle,
@@ -12,30 +31,11 @@ import {
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
-import mockDataset from '../../../../mocks/entity/mockDataset'
-import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
-import { mockDoiAssociation } from '../../../../mocks/entity/mockProject'
-import { mockFileHandle } from '../../../../mocks/mock_file_handle'
-import { rest, server } from '../../../../mocks/msw/server'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import { DOI_ASSOCIATION } from '../../../../utils/APIConstants'
-import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../utils/functions/getEndpoint'
 import * as HasAccessModule from '../../../HasAccess/HasAccessV2'
 import TitleBarProperties, {
   TitleBarPropertiesProps,
 } from './TitleBarProperties'
 import * as UseGetEntityPropertiesModule from './useGetEntityTitleBarProperties'
-import {
-  MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
-  mockExternalS3UploadDestination,
-} from '../../../../mocks/mock_upload_destination'
-import { getEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
-import { getFeatureFlagsOverride } from '../../../../mocks/msw/handlers/featureFlagHandlers'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 

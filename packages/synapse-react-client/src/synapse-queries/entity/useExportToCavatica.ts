@@ -1,7 +1,7 @@
-import SynapseClient from '../../synapse-client'
-import { displayToast } from '../../components/ToastMessage/ToastMessage'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import SynapseClient from '@/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import {
   DownloadFromTableRequest,
   QueryBundleRequest,
@@ -40,7 +40,7 @@ export function useExportToCavatica(
         csvTableDescriptor: { separator },
         additionalFilters: queryBundleRequest.query.additionalFilters,
       }
-      const result = await SynapseClient.getDownloadFromTableRequest(
+      const result = await SynapseClient.createTableCsvForDownload(
         downloadFromTableRequest,
         accessToken,
       )

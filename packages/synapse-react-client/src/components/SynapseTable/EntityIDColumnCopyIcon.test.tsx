@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom'
+import idsQueryResponse from '@/mocks/mockIDListQueryResponseData.json'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
@@ -8,8 +10,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseClient, SynapseConstants } from '../../index'
-import idsQueryResponse from '../../mocks/mockIDListQueryResponseData.json'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 

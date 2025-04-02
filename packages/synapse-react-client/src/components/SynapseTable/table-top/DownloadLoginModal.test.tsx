@@ -1,12 +1,12 @@
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { CANCEL_BUTTON_TEXT } from '../../ConfirmationDialog/ConfirmationDialog'
 import {
   CONFIRM_BUTTON_TEXT,
   DownloadLoginModal,
   DownloadLoginModalProps,
 } from './DownloadLoginModal'
-import { SRC_SIGN_IN_CLASS } from '../../../utils/SynapseConstants'
-import { CANCEL_BUTTON_TEXT } from '../../ConfirmationDialog/ConfirmationDialog'
 
 const mockCallback = jest.fn()
 

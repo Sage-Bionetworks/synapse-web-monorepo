@@ -1,9 +1,9 @@
-import { useGetCurrentUserProfile } from '../../../synapse-queries'
+import { useGetCurrentUserProfile } from '@/synapse-queries'
+import { SynapseConstants, useSynapseContext } from '@/utils'
+import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import { Link, Typography } from '@mui/material'
-import { SynapseConstants, useSynapseContext } from '../../../utils'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
-import { useOneSageURL } from '../../../utils/hooks/useOneSageURL'
+import RequirementItem from './RequirementItem'
 
 /**
  * Displays a data access request requirement prompts the user to authenticate if not already signed in.

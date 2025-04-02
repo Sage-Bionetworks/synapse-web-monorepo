@@ -1,17 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
-import {
-  AccessorChange,
-  AccessType,
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  FileUploadComplete,
-  ManagedACTAccessRequirement,
-  Renewal,
-  Request,
-  RestrictableObjectType,
-  UploadCallbackResp,
-} from '@sage-bionetworks/synapse-types'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { NewReleasesOutlined } from '@mui/icons-material'
 import {
   Alert,
   AlertProps as MuiAlertProps,
@@ -26,23 +13,37 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { deepEquals } from '@rjsf/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  AccessorChange,
+  AccessType,
+  FileHandleAssociateType,
+  FileHandleAssociation,
+  FileUploadComplete,
+  ManagedACTAccessRequirement,
+  Renewal,
+  Request,
+  RestrictableObjectType,
+  UploadCallbackResp,
+} from '@sage-bionetworks/synapse-types'
+import { ChangeEvent, useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
 } from '../../../../synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { useSynapseContext } from '../../../../utils'
+import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
+import IconSvg from '../../../IconSvg/IconSvg'
 import TextField from '../../../TextField/TextField'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
-import { UploadDocumentField } from '../UploadDocumentField'
 import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
-import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
-import { deepEquals } from '@rjsf/utils'
-import { useSynapseContext } from '../../../../utils'
+import { UploadDocumentField } from '../UploadDocumentField'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -70,10 +71,13 @@ function AccessorRequirementHelpText(props: {
   return link && msg ? (
     <>
       {managedACTAccessRequirement.isDUCRequired ? (
-        <>
-          This list should match those listed on your DUC.
-          <br />
-        </>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1 }}>
+          <NewReleasesOutlined sx={{ color: 'error.main' }} />
+          <div>
+            You must list the Synapse user names of all collaborators listed in
+            your Data Use Certificate (DUC).
+          </div>
+        </Box>
       ) : (
         ''
       )}

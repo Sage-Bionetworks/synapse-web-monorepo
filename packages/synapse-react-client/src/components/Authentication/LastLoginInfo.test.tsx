@@ -1,9 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { LOGIN_METHOD_OAUTH2_GOOGLE } from '@/utils/SynapseConstants'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import LastLoginInfo, { LastLoginInfoProps } from './LastLoginInfo'
-import { LOGIN_METHOD_OAUTH2_GOOGLE } from '../../utils/SynapseConstants'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const defaultProps = {
   currentSourceAppName: 'AD Knowledge Portal',

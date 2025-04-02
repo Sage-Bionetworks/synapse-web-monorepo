@@ -6,7 +6,7 @@ import {
   TextFieldProps,
   useTheme,
 } from '@mui/material'
-import { useSearchParams } from 'react-router'
+import { useSearchParams, useNavigate } from 'react-router'
 import {
   FTS_SEARCH_TERM,
   FTS_SEARCH_ROLE,
@@ -14,21 +14,24 @@ import {
 
 type PortalFullTextSearchFieldProps = TextFieldProps & {
   placeholder?: string
-  path?: string
   role?: string
+  path?: string
+  callback?: (searchString: string) => void
 }
 
 export function PortalFullTextSearchField({
   placeholder = 'Search by keyword',
   path,
+  callback,
   role,
   ...props
 }: PortalFullTextSearchFieldProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [searchInput, setSearchInput] = useState(
     searchParams.get(FTS_SEARCH_TERM),
   )
   const theme = useTheme()
+  const navigate = useNavigate()
 
   return (
     <TextField
@@ -42,16 +45,19 @@ export function PortalFullTextSearchField({
       onKeyDown={(event: any) => {
         if (event.key === 'Enter') {
           const trimmedInput = event.target.value.trim()
-          setSearchParams(prev => {
-            prev.set(FTS_SEARCH_TERM, trimmedInput)
-            if (role) {
-              prev.set(FTS_SEARCH_ROLE, role)
-            }
-            return prev
-          })
-
           if (path) {
-            window.location.pathname = `${path}`
+            const params = new URLSearchParams()
+            params.set(FTS_SEARCH_TERM, trimmedInput)
+            if (role) {
+              params.set(FTS_SEARCH_ROLE, role)
+            }
+            navigate({
+              pathname: path,
+              search: `?${params.toString()}`,
+            })
+          }
+          if (callback) {
+            callback(trimmedInput)
           }
         }
       }}

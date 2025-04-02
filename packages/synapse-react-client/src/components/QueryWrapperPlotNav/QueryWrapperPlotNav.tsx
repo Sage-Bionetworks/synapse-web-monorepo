@@ -1,17 +1,17 @@
+import { useGetEntity } from '@/synapse-queries'
+import { SynapseConstants } from '@/utils'
+import {
+  getAdditionalFilters,
+  parseEntityIdAndVersionFromSqlStatement,
+  SQLOperator,
+} from '@/utils/functions'
+import { isTable } from '@/utils/functions/EntityTypeUtils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
-import { useGetEntity } from '../../synapse-queries'
-import { SynapseConstants } from '../../utils'
-import {
-  getAdditionalFilters,
-  parseEntityIdAndVersionFromSqlStatement,
-  SQLOperator,
-} from '../../utils/functions'
-import { isTable } from '../../utils/functions/EntityTypeUtils'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { CardConfiguration } from '../CardContainerLogic'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { SynapseErrorBoundary } from '../error'
@@ -107,6 +107,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'additionalFiltersSessionStorageKey'
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
+    | 'enabledExternalAnalysisPlatforms'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -135,7 +136,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
   | 'searchConfiguration'
-  | 'showExportToCavatica'
+  | 'enabledExternalAnalysisPlatforms'
   | 'cavaticaConnectAccountURL'
   | 'customControls'
   | 'customPlots'
@@ -162,7 +163,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     hideQueryCount,
     hideSqlEditorControl,
     searchConfiguration,
-    showExportToCavatica = false,
     cavaticaConnectAccountURL,
     customControls,
     remount,
@@ -236,7 +236,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   hideFacetFilterControl={!isFaceted}
                   hideVisualizationsControl={!isFaceted}
                   hideSqlEditorControl={hideSqlEditorControl}
-                  showExportToCavatica={showExportToCavatica}
                   cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                   customControls={customControls}
                   remount={remount}
@@ -295,6 +294,7 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
     additionalFiltersSessionStorageKey,
     helpConfiguration,
     customPlots,
+    enabledExternalAnalysisPlatforms,
   } = props
 
   const entityIdAndVersion = parseEntityIdAndVersionFromSqlStatement(sql)
@@ -366,6 +366,7 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}
+        enabledExternalAnalysisPlatforms={enabledExternalAnalysisPlatforms}
       >
         <QueryWrapperPlotNavContents
           {...props}

@@ -9,6 +9,7 @@ import {
   cohortBuilderFilesSql,
   cohortBuilderSql,
   defaultSearchConfiguration,
+  enabledAnalysisPlatforms,
 } from '../resources'
 import { handleSelectedFilesToParticipants } from './handleFilesToParticipants'
 import { handleSelectedParticipantsToFiles } from './handleParticipantsToFiles'
@@ -117,7 +118,7 @@ export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
 export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Data',
-  showExportToCavatica: true,
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   fileIdColumnName: 'id',
   fileNameColumnName: 'name',
   fileVersionColumnName: 'fileVersion',

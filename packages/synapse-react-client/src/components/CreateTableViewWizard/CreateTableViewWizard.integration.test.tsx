@@ -1,11 +1,17 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { server } from '../../mocks/msw/server'
-import CreateTableViewWizard, {
-  CreateTableViewWizardProps,
-} from './CreateTableViewWizard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import mockProjectEntityData from '../../mocks/entity/mockProject'
-import userEvent from '@testing-library/user-event'
+import { mockEvaluationQueue } from '@/mocks/entity/mockEvaluationQueue'
+import mockProjectEntityData from '@/mocks/entity/mockProject'
+import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '@/mocks/mockAnnotationColumns'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '@/mocks/MockSynapseContext'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { server } from '@/mocks/msw/server'
+import defaultFileViewColumnModels from '@/mocks/query/defaultFileViewColumnModels'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum } from '@/utils/functions'
+import { getEndpoint } from '@/utils/functions/getEndpoint'
 import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
@@ -17,22 +23,16 @@ import {
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
   VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { addColumnModelToForm } from '../TableColumnSchemaEditor/TableColumnSchemaEditorTestUtils'
-import SynapseClient from '../../synapse-client'
-import {
-  MOCK_ACCESS_TOKEN,
-  MOCK_CONTEXT_VALUE,
-} from '../../mocks/MockSynapseContext'
-import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
-import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
-import { rest } from 'msw'
-import { BackendDestinationEnum } from '../../utils/functions'
-import { getEndpoint } from '../../utils/functions/getEndpoint'
-import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../../mocks/mockAnnotationColumns'
-import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { omit } from 'lodash-es'
-import { getFeatureFlagsOverride } from '../../mocks/msw/handlers/featureFlagHandlers'
+import { rest } from 'msw'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import { addColumnModelToForm } from '../TableColumnSchemaEditor/TableColumnSchemaEditorTestUtils'
 import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from '../TableColumnSchemaEditor/TableColumnSchemaForm'
+import CreateTableViewWizard, {
+  CreateTableViewWizardProps,
+} from './CreateTableViewWizard'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (

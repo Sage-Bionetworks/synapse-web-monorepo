@@ -1,12 +1,13 @@
+import { mockQueryResult } from '@/mocks/query/mockProjectViewQueryResults'
+import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import SizeMe from 'react-sizeme'
 import ProjectViewCarousel, {
   ProjectViewCarouselProps,
 } from './ProjectViewCarousel'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
-import { ObjectType } from '@sage-bionetworks/synapse-types'
+
 SizeMe.noPlaceholders = true
 
 jest

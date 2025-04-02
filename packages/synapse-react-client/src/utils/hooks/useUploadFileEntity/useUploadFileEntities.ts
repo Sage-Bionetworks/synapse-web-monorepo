@@ -1,20 +1,20 @@
+import {
+  ProgressCallback,
+  SYNAPSE_STORAGE_LOCATION_ID,
+} from '@/synapse-client/SynapseClient'
+import {
+  useCreateEntity,
+  useGetDefaultUploadDestination,
+  useUpdateEntity,
+} from '@/synapse-queries'
+import { FileUploadArgs } from '@/synapse-queries/file/FileUploadArgs'
+import { useDirectUploadToS3 } from '@/synapse-queries/file/useDirectUploadToS3'
+import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
 import { instanceOfExternalObjectStoreUploadDestination } from '@sage-bionetworks/synapse-client'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import pLimit from 'p-limit'
 import { useCallback, useMemo } from 'react'
-import {
-  ProgressCallback,
-  SYNAPSE_STORAGE_LOCATION_ID,
-} from '../../../synapse-client/SynapseClient'
-import {
-  useCreateEntity,
-  useGetDefaultUploadDestination,
-  useUpdateEntity,
-} from '../../../synapse-queries'
-import { FileUploadArgs } from '../../../synapse-queries/file/FileUploadArgs'
-import { useDirectUploadToS3 } from '../../../synapse-queries/file/useDirectUploadToS3'
-import { useSynapseMultipartUpload } from '../../../synapse-queries/file/useSynapseMultipartUpload'
 import { fixDefaultContentType } from '../../ContentTypeUtils'
 import { useSynapseContext } from '../../context/index'
 import useConfirmItems from '../useConfirmItems'

@@ -1,13 +1,13 @@
+import { OAuth2State } from '@/utils'
+import useLogin from '@/utils/hooks/useLogin'
 import { Box, Typography } from '@mui/material'
-import useLogin from '../../utils/hooks/useLogin'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import LoginForm from './LoginForm'
-import LoginFlowBackButton from './LoginFlowBackButton'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
 } from './Constants'
-import { OAuth2State } from '../../utils'
+import LoginFlowBackButton from './LoginFlowBackButton'
+import LoginForm from './LoginForm'
 
 export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string
@@ -67,12 +67,14 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
 
   return (
     <Box
-      sx={{
-        width: '330px',
+      sx={theme => ({
+        [theme.breakpoints.up('sm')]: {
+          width: '330px',
+        },
         p: 0,
         mx: 'auto',
         bgColor: 'transparent',
-      }}
+      })}
     >
       <LoginFlowBackButton
         step={step}

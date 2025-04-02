@@ -1,3 +1,6 @@
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
+import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
@@ -5,9 +8,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
-import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
 
 export function useGetTeam(
   teamId: string,

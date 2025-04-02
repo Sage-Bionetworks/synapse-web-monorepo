@@ -1,6 +1,6 @@
+import { scrollToWithOffset } from '@/utils'
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
-import { scrollToWithOffset } from '../../utils'
 
 export function useScrollOnMount() {
   const scrolledRef = useRef(false)

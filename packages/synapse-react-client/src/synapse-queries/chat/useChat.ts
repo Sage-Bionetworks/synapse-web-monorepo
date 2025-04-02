@@ -1,18 +1,8 @@
 /*
  * Hooks to access Chat Services in Synapse
  */
-import {
-  InfiniteData,
-  QueryKey,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError, useSynapseContext } from '../../utils'
+import SynapseClient from '@/synapse-client'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   AgentChatRequest,
   AgentChatResponse,
@@ -25,6 +15,16 @@ import {
   TraceEventsResponse,
   UpdateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 export function useCreateAgentSession(
   options?: UseMutationOptions<

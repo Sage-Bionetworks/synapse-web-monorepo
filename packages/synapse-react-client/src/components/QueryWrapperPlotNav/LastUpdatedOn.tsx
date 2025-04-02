@@ -1,7 +1,7 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { Skeleton, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { Suspense } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 

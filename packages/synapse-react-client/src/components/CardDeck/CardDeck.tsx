@@ -1,17 +1,17 @@
+import { useGetEntity } from '@/synapse-queries/entity/useEntity'
+
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import {
   FileHandleAssociation,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
-
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import CardDeckMobile from './CardDeck.Mobile'
-import CardDeckDesktop from './CardDeck.Desktop'
 import { CardLink } from '../CardContainerLogic'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
+import CardDeckDesktop from './CardDeck.Desktop'
+import CardDeckMobile from './CardDeck.Mobile'
 
 export type CardDeckProps = {
   entityId: string /* The table entity which should be queried */

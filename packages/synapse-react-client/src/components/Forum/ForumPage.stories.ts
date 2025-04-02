@@ -1,6 +1,6 @@
+import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
 import { Meta, StoryObj } from '@storybook/react'
 import { ForumPage } from './ForumPage'
-import { MOCK_FORUM_ID } from '../../mocks/discussion/mock_discussion'
 
 const meta = {
   title: 'Synapse/ForumPage',

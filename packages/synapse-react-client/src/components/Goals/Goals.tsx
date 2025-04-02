@@ -1,14 +1,14 @@
+import { EvenlyDistributedWrappedContainer } from '@/components/styled/EvenlyDistributedWrappedContainer'
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import useGetGoalData from '@/utils/hooks/useGetGoalData'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
-import { SynapseConstants } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import { EvenlyDistributedWrappedContainer } from '../styled/EvenlyDistributedWrappedContainer'
-import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
-import useGetGoalData from '../../utils/hooks/useGetGoalData'
+import GoalsMobile from './Goals.Mobile'
 
 export type GoalsProps = {
   entityId: string

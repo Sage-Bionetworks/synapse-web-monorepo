@@ -1,9 +1,9 @@
-import { CSSProperties } from 'react'
+import { useGetStablePresignedUrl } from '@/synapse-queries'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { useGetStablePresignedUrl } from '../synapse-queries'
+import { CSSProperties } from 'react'
 
 export type ImageFromSynapseTableProps = {
   tableId: string

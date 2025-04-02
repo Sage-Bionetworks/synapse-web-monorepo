@@ -1,11 +1,11 @@
-import { useCallback, useState } from 'react'
-import { TextField, Typography } from '@mui/material'
 import {
   useGetCurrentUserProfile,
   useSendMessageToEntityOwner,
-} from '../../synapse-queries'
-import { displayToast } from '../ToastMessage'
+} from '@/synapse-queries'
+import { TextField, Typography } from '@mui/material'
+import { useCallback, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
+import { displayToast } from '../ToastMessage'
 
 export const CONTACT_ADMIN_DIALOG_TITLE = 'Contact the Administrator'
 

@@ -1,28 +1,28 @@
-import { act, render, waitFor } from '@testing-library/react'
-import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
-import {
-  QueryVisualizationWrapper,
-  QueryVisualizationWrapperProps,
-} from './QueryVisualizationWrapper'
-import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
+import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
+import queryResponse from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseConstants } from '@/utils'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   Query,
   QueryBundleRequest,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { server } from '../../mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { act, render, waitFor } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
-import { registerTableQueryResult } from '../../mocks/msw/handlers/tableQueryService'
+import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
 } from './QueryVisualizationContext'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from './QueryVisualizationWrapper'
 
 const onQueryContextReceived = jest.fn<void, [QueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()

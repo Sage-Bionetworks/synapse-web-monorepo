@@ -1,17 +1,21 @@
+import { getDisplayValue } from '@/utils/functions/getDataFromFromStorage'
+import { unCamelCase } from '@/utils/functions/unCamelCase'
+import useMutuallyExclusiveState from '@/utils/hooks/useMutuallyExclusiveState'
 import { useQuery } from '@tanstack/react-query'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
-import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
 import { useQueryContext } from '../QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { NoContentPlaceholderType } from '../SynapseTable'
+import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from './QueryVisualizationContext'
+
+// By default, show no external analysis platforms.
+const DEFAULT_ENABLED_ANALYSIS_PLATFORMS: ExternalAnalysisPlatform[] = []
 
 type ColumnOrFacetHelpConfig = {
   /** Text that describes the column or facet */
@@ -47,6 +51,9 @@ export type QueryVisualizationWrapperProps = {
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
   hasCustomPlots?: boolean
+  /** The set of external analysis platform to which the UI will support exporting data.
+   * @default [] (no platforms are enabled) */
+  enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
 }
 
 /**
@@ -65,6 +72,7 @@ export function QueryVisualizationWrapper(
     helpConfiguration,
     hasCustomPlots = false,
     visibleColumnCount = Infinity,
+    enabledExternalAnalysisPlatforms = DEFAULT_ENABLED_ANALYSIS_PLATFORMS,
   } = props
 
   const columnAliases = useMemo(
@@ -111,8 +119,10 @@ export function QueryVisualizationWrapper(
     setShowDownloadConfirmation,
   ] = useMutuallyExclusiveState(defaultShowSearchBar, false)
 
-  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
-    useState<boolean>(false)
+  const [
+    isShowingExportToAnalysisPlatformModal,
+    setIsShowingExportToAnalysisPlatformModal,
+  ] = useState<boolean>(false)
 
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
 
@@ -193,8 +203,10 @@ export function QueryVisualizationWrapper(
       getDisplayValue,
       getHelpText,
       NoContentPlaceholder,
-      isShowingExportToCavaticaModal,
-      setIsShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal:
+        isShowingExportToAnalysisPlatformModal,
+      setIsShowingExportToAnalysisPlatformModal:
+        setIsShowingExportToAnalysisPlatformModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       showSearchBar,
@@ -207,13 +219,14 @@ export function QueryVisualizationWrapper(
       setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
+      enabledExternalAnalysisPlatforms,
     }),
     [
       NoContentPlaceholder,
       getColumnDisplayName,
       getHelpText,
       hasFacetedSelectColumn,
-      isShowingExportToCavaticaModal,
+      isShowingExportToAnalysisPlatformModal,
       props.rgbIndex,
       props.showLastUpdatedOn,
       setShowDownloadConfirmation,
@@ -227,6 +240,7 @@ export function QueryVisualizationWrapper(
       unitDescription,
       visibleColumns,
       hasCustomPlots,
+      enabledExternalAnalysisPlatforms,
     ],
   )
   /**

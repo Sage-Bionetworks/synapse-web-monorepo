@@ -23,3 +23,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: packages/synapse-react-client
+          args: |
+            '-Dsonar.branch.target=${{ github.base_ref }}' \
+            '-Dsonar.branch.name=${{ github.head_ref }}'

@@ -1,20 +1,11 @@
-import { useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils'
+import { useGetEntity } from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
 import {
   ColumnTypeEnum,
   Row,
   RowSet,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { LabelLinkConfig } from '../CardContainerLogic'
-import ModalDownload from '../ModalDownload/ModalDownload'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext'
-import {
-  isEntityViewOrDataset,
-  isFileViewOrDataset,
-  isSortableColumn,
-} from './SynapseTableUtils'
 import {
   Cell,
   createColumnHelper,
@@ -22,7 +13,15 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { useTableSort } from './useTableSort'
+import { useAtomValue } from 'jotai'
+import { useMemo, useState } from 'react'
+import { LabelLinkConfig } from '../CardContainerLogic'
+import ModalDownload from '../ModalDownload/ModalDownload'
+import { useQueryContext } from '../QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
+import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { SynapseTableContext } from './SynapseTableContext'
 import {
   accessColumn,
   addToDownloadListColumn,
@@ -31,12 +30,13 @@ import {
   TableDataCell,
   TableDataColumnHeader,
 } from './SynapseTableRenderers'
-import { SynapseTableContext } from './SynapseTableContext'
+import {
+  isEntityViewOrDataset,
+  isFileViewOrDataset,
+  isSortableColumn,
+} from './SynapseTableUtils'
 import { usePrefetchResourcesInTable } from './usePrefetchTableData'
-import { useAtomValue } from 'jotai'
-import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
-import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
-import { useGetEntity } from '../../synapse-queries'
+import { useTableSort } from './useTableSort'
 
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,

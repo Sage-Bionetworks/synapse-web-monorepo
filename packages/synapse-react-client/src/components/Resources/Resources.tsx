@@ -1,11 +1,11 @@
+import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { SynapseConstants } from '@/utils'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
+import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
-import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'
-import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import { getFieldIndex } from '../../utils/functions/queryUtils'
 
 export type ResourcesProps = {
   entityId: string

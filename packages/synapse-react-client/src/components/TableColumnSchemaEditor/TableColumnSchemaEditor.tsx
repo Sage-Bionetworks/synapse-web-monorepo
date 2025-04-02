@@ -1,18 +1,15 @@
-import { useCallback, useMemo, useRef } from 'react'
-import {
-  useGetEntityBundle,
-  useUpdateTableColumns,
-} from '../../synapse-queries'
-import { SkeletonTable } from '../Skeleton'
-import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
-import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
+import { useGetEntityBundle, useUpdateTableColumns } from '@/synapse-queries'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { Alert } from '@mui/material'
-import { getViewScopeForEntity } from './TableColumnSchemaEditorUtils'
 import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
-import { SetOptional } from 'type-fest'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { isUndefined, noop, omitBy } from 'lodash-es'
+import { useCallback, useMemo, useRef } from 'react'
+import { SetOptional } from 'type-fest'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { SkeletonTable } from '../Skeleton'
+import { getViewScopeForEntity } from './TableColumnSchemaEditorUtils'
+import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string

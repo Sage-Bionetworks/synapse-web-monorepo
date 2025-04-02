@@ -1,13 +1,13 @@
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BatchFileResult,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { server } from '../../mocks/msw/server'
-import GoalsV2 from './GoalsV2'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  QueryResultBundle,
-  BatchFileResult,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../../index'
+import GoalsV2 from './GoalsV2'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

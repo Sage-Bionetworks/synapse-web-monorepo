@@ -1,7 +1,9 @@
-import { PortalSearchTabConfig } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
-import { RouteObject } from 'react-router'
-import cckpConfigs from 'src/config/synapseConfigs'
+import cckpConfigs from '@/config/synapseConfigs'
 import { PortalSearchPage } from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchPage'
+import {
+  PortalSearchTabConfig,
+} from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/PortalSearchTabs'
+import { RouteObject } from 'react-router'
 
 export const searchPageTabs = [
   {
@@ -34,7 +36,7 @@ type CCKPSearchRole =
   | 'researcher'
   | 'principalInvestigator'
   | 'funder'
-  | 'student'
+  | 'trainee'
   | 'patientAdvocate'
 const roleMapping: Record<
   CCKPSearchRole,
@@ -43,7 +45,7 @@ const roleMapping: Record<
   researcher: 'Datasets',
   principalInvestigator: 'Grants',
   funder: 'Grants',
-  student: 'Educational Resources',
+  trainee: 'Educational Resources',
   patientAdvocate: 'Educational Resources',
 }
 

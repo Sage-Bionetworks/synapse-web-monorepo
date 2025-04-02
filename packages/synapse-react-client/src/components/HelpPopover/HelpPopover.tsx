@@ -10,6 +10,7 @@ export type HelpPopoverProps = {
   className?: string
   containerSx?: SxProps
   iconSx?: SxProps
+  Icon?: React.ComponentType<{ className?: string; sx?: SxProps }>
 }
 
 export function HelpPopover({
@@ -20,6 +21,7 @@ export function HelpPopover({
   className = '',
   iconSx,
   containerSx,
+  Icon = HelpOutlineTwoTone,
 }: HelpPopoverProps) {
   const actionButtonConfig = helpUrl
     ? {
@@ -39,7 +41,7 @@ export function HelpPopover({
         maxWidth="350px"
         containerSx={containerSx}
       >
-        <HelpOutlineTwoTone className={`HelpButton ${className}`} sx={iconSx} />
+        <Icon className={`HelpButton ${className}`} sx={iconSx} />
       </MarkdownPopover>
     </>
   )

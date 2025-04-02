@@ -1,8 +1,8 @@
+import Columns from '@/assets/icons/columns'
 import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import { ComponentProps } from 'react'
-import Columns from '../../assets/icons/columns'
 import { IconSvgProps } from '../IconSvg/IconSvg'
 import { ElementWithTooltip } from './ElementWithTooltip'
 

@@ -1,4 +1,14 @@
 import {
+  useGetEntity,
+  useGetEntityHeaders,
+  useGetFileBatch,
+  useGetRestrictionInformationBatch,
+  useGetUserGroupHeaders,
+} from '@/synapse-queries'
+import { useSynapseContext } from '@/utils'
+import { getFieldIndex, getTypeIndices } from '@/utils/functions/queryUtils'
+import { goToPage as transformQueryToGoToPage } from '@/utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
+import {
   ColumnTypeEnum,
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -11,16 +21,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { cloneDeep } from 'lodash-es'
 import { useCallback, useMemo } from 'react'
-import {
-  useGetEntity,
-  useGetEntityHeaders,
-  useGetFileBatch,
-  useGetRestrictionInformationBatch,
-  useGetUserGroupHeaders,
-} from '../../synapse-queries'
-import { useSynapseContext } from '../../utils'
-import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
-import { goToPage as transformQueryToGoToPage } from '../../utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
 import { useQueryContext } from '../QueryContext'
 import { getTableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'

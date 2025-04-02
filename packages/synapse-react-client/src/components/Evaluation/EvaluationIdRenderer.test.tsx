@@ -1,15 +1,14 @@
+import { mockEvaluationQueue } from '@/mocks/entity/mockEvaluationQueue'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EvaluationIdRenderer, {
   EvaluationIdRendererProps,
 } from '../SynapseTable/SynapseTableCell/EvaluationIdRenderer'
-import { act } from '@testing-library/react'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../mocks/MockSynapseContext'
-import { render, screen, waitFor } from '@testing-library/react'
-import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
-import SynapseClient from '../../synapse-client'
 
 jest
   .spyOn(SynapseClient, 'getEvaluation')
