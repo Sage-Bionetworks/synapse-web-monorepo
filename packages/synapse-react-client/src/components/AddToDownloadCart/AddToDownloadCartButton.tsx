@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import { GetAppTwoTone } from '@mui/icons-material'
 import { Button } from '@mui/material'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React, { Suspense, useState } from 'react'
+import { useGetEntity } from '../../synapse-queries/'
+import { SynapseConstants } from '../../utils'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { FolderDownloadConfirmation } from '../download_list/FolderDownloadConfirmation'
 import { TableQueryDownloadConfirmation } from '../download_list/TableQueryDownloadConfirmation'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { SynapseConstants } from '../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import { GetAppTwoTone } from '@mui/icons-material'
-import { useGetEntity } from '../../synapse-queries/'
 
 /**
  * Props for the AddToDownloadCartButton component.
@@ -23,7 +23,8 @@ export type AddToDownloadCartButtonProps = {
 
 const QueryWrapperTableDownloadConfirmation: React.FC<{
   entityId: string
-}> = ({ entityId }) => {
+  onHide: () => void
+}> = ({ entityId, onHide }) => {
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: entityId,
@@ -37,11 +38,13 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
   }
 
   return (
-    <QueryWrapper initQueryRequest={initQueryRequest}>
-      <QueryWrapperErrorBoundary>
-        <TableQueryDownloadConfirmation />
-      </QueryWrapperErrorBoundary>
-    </QueryWrapper>
+    <Suspense fallback={<></>}>
+      <QueryWrapper initQueryRequest={initQueryRequest}>
+        <QueryWrapperErrorBoundary>
+          <TableQueryDownloadConfirmation onClose={onHide} />
+        </QueryWrapperErrorBoundary>
+      </QueryWrapper>
+    </Suspense>
   )
 }
 
@@ -109,7 +112,10 @@ export function AddToDownloadCartButton({
               fnClose={handleClose}
             />
           ) : (
-            <QueryWrapperTableDownloadConfirmation entityId={entityId} />
+            <QueryWrapperTableDownloadConfirmation
+              entityId={entityId}
+              onHide={handleClose}
+            />
           ))}
       </div>
     </div>
