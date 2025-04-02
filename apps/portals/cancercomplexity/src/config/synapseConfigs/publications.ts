@@ -1,12 +1,14 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
 import type {
   CardConfiguration,
+  ColumnIconConfigs,
   GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
+import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 1
 
@@ -28,6 +30,7 @@ export const publicationSchema: GenericCardSchema = {
     'doi',
     'consortium',
   ],
+  dataTypeIconNames: 'dataType',
 }
 
 export const publicationsCardConfiguration: CardConfiguration = {
@@ -62,6 +65,7 @@ export const publicationsCardConfiguration: CardConfiguration = {
       matchColumnName: 'dataset',
     },
   ],
+  columnIconOptions: columnIconConfigs,
 }
 
 export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {

@@ -1,11 +1,13 @@
 import type {
   CardConfiguration,
+  ColumnIconConfigs,
   GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
+import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 0
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
@@ -35,6 +37,7 @@ export const datasetSchema: GenericCardSchema = {
     'externalLink',
     'consortium',
   ],
+  dataTypeIconNames: 'dataType',
 }
 
 export const datasetCardConfiguration: CardConfiguration = {
@@ -65,6 +68,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     URLColumnName: 'datasetId',
     matchColumnName: 'datasetId',
   },
+  columnIconOptions: columnIconConfigs,
 }
 
 export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
