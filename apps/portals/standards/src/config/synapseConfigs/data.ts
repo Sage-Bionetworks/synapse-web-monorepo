@@ -12,6 +12,8 @@ export const dataColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: false,
     baseURL: 'Explore/Standard/DetailsPage',
+    // URLColumnName: 'name',
+    // matchColumnName: 'name',
     URLColumnName: 'id',
     matchColumnName: 'id',
   },
@@ -30,8 +32,10 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
 
   facetsToPlot: [
-    'topic',
+    // 'Data_Topic',  // what it's called in DataRegistry
+    'topic', // what it's called in DST_denormalized
     // 'Organizations',
+    'relevantOrgName',
   ],
   initialPlotType: 'BAR',
 }

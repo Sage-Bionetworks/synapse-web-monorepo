@@ -165,8 +165,8 @@ function HeaderCardV2({
       return
     }
 
-    const dHeight = descriptionRef.current.offsetHeight
-    const mHeight = metadataRef.current.offsetHeight
+    const dHeight = descriptionRef.current?.offsetHeight || 0
+    const mHeight = metadataRef.current?.offsetHeight || 0
     // const { dHeight } = descriptionRef.current.getBoundingClientRect();
     setDescriptionHeight(dHeight)
     // const { mHight } = metadataRef.current.getBoundingClientRect();
@@ -376,7 +376,7 @@ function HeaderCardV2({
             }}
           >
             <CollapsibleDescription
-              description={description.repeat(30)}
+              description={description}
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
             />
