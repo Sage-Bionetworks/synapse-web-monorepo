@@ -585,18 +585,14 @@ class _GenericCard extends Component<
     let downloadCartSynIdColumnIndex: number | undefined
     let downloadCartSynIdValue: string | undefined
     if (downloadCartSynId) {
-      downloadCartSynIdColumnIndex = getColumnIndex(
-        downloadCartSynId,
-        selectColumns,
-        columnModels,
-      )
+      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
       downloadCartSynIdValue =
         downloadCartSynIdColumnIndex !== undefined
           ? data[downloadCartSynIdColumnIndex]
           : undefined
     }
     downloadCartSynIdValue = downloadCartSynIdValue?.match(
-      SYNAPSE_ENTITY_ID_REGEX,
+      /syn\d+/i, // regex to extract the synapse ID from the URL
     )?.[0]
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
@@ -720,8 +716,7 @@ class _GenericCard extends Component<
                         )
                       }
                       variant="outlined"
-                      startIcon={<GetAppTwoTone />} //shrink this to height of text
-                      // disabled={isLoading}
+                      startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
                       sx={{
                         display: 'flex',
                         height: '20px',
