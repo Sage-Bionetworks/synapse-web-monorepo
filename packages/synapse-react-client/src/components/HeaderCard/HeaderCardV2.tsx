@@ -202,7 +202,9 @@ function HeaderCardV2({
   if (forceStackedLayout || isMobile) {
     useStackedLayout = true
   } else {
-    useStackedLayout = metadataHeight > descriptionHeight
+    // useStackedLayout = metadataHeight > descriptionHeight
+    // as per https://github.com/bridge2ai/b2ai-standards-registry/issues/210#issuecomment-2773706202,
+    // constrain metadata to 5-line expandable block
   }
   console.log({
     windowWidth,
@@ -303,25 +305,42 @@ function HeaderCardV2({
       >
         <Box
           sx={{
+            border: '3px solid blue',
             display: 'flex',
             flexDirection: 'row',
-            alignItems: 'flex-end',
+            alignItems: 'center',
+            minHeight: '64px', // Set minimum height to ensure proper centering space
             gap: 2,
           }}
         >
           {icon && (
             <Box
               sx={{
+                border: '3px solid green',
                 flexShrink: 0, // Prevent icon from shrinking
-                flexBasis: '50px',
-                // alignSelf: 'flex-start',
-                // marginTop: '0.25rem',  // Slight adjustment to align with text
+                flexBasis: '120px',
+                height: '120px', // Set explicit height to match flexBasis
+                /*
+                display: 'flex', // Add flex display for icon centering
+                justifyContent: 'center', // Center icon horizontally
+                alignItems: 'center', // Center icon vertically
+                alignSelf: 'center', // Ensure box itself is centered in parent flex container
+                */
                 '& > *': {
                   width: '100% !important',
                   maxWidth: '100% !important',
+                  display: 'flex !important', // Force flex on icon children
+                  justifyContent: 'center !important',
+                  alignItems: 'center !important',
+                  height: '100% !important',
                 },
                 '& img.iconImg': {
                   width: '100% !important',
+                  objectFit: 'contain',
+                },
+                '& svg': {
+                  display: 'block', // Ensure SVG displays as block
+                  margin: 'auto', // Center SVG
                 },
               }}
             >
@@ -330,7 +349,18 @@ function HeaderCardV2({
           )}
 
           {/* Title */}
-          <Typography sx={{ fontWeight: 700, mb: 1, fontSize: '1.75rem' }}>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              mb: 1,
+              fontSize: '1.75rem',
+              border: '3px solid green',
+
+              display: 'flex', // Add flex to enable vertical centering
+              alignItems: 'center', // Center text vertically
+              height: '100%', // Take full height of parent for vertical centering
+            }}
+          >
             {href ? (
               <Link
                 href={href}
