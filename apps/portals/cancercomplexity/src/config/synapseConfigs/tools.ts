@@ -15,6 +15,8 @@ export const toolsSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText:
+    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
   secondaryLabels: [
     'inputData',
     'inputFormat',

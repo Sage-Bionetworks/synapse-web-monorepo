@@ -18,6 +18,8 @@ export const datasetSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText:
+    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
   customSecondaryLabelConfig: {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,

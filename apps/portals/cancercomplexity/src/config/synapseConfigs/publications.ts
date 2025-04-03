@@ -14,6 +14,8 @@ export const publicationSchema: GenericCardSchema = {
   type: SynapseConstants.PUBLICATION,
   title: 'publicationTitle',
   subTitle: 'authors',
+  includeCitation: true,
+  defaultCitationFormat: 'nature',
   citationBoilerplateText:
     'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
   secondaryLabels: [

@@ -17,6 +17,8 @@ export const educationSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText:
+    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
   secondaryLabels: [
     'link',
     'activityType',
