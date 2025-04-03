@@ -1,7 +1,5 @@
-import { GetAppTwoTone } from '@mui/icons-material'
-import { Button } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { Suspense, useState, useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { useGetEntity } from '../../synapse-queries/'
 import { SynapseConstants } from '../../utils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
