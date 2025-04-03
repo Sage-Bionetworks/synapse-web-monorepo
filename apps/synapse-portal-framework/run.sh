@@ -46,15 +46,15 @@ cd ./"$PORTAL_APP"
 chmod +x ./src/config/scripts/exportS3StagingBucketName.sh
 # source lets the child process run in the current shell instead of creating its own
 source ./src/config/scripts/exportS3StagingBucketName.sh
-# check they defined the s3 bucket variable
-if [ -z "$S3_STAGING_BUCKET_LOCATION" ]; then
-  echo 'Error: exportS3StagingBucketName.sh must export bash variable S3_STAGING_BUCKET_LOCATION'
+# check they defined the s3 bucket variables
+if [[ -z "$S3_STAGING_BUCKET_LOCATION" || -z "$CF_STAGING_DIST_ID" ]]; then
+  echo 'Error: exportS3StagingBucketName.sh must export bash variables S3_STAGING_BUCKET_LOCATION and CF_STAGING_DIST_ID'
   exit 1
 fi
 chmod +x ./src/config/scripts/exportS3ProductionBucketName.sh
 source  ./src/config/scripts/exportS3ProductionBucketName.sh
-if [ -z "$S3_PRODUCTION_BUCK_LOCATION" ]; then
-  echo 'Error: exportS3ProductionBucketName.sh must export bash variable S3_PRODUCTION_BUCK_LOCATION'
+if [[ -z "$S3_PRODUCTION_BUCK_LOCATION" || -z "$CF_PRODUCTION_DIST_ID" ]]; then
+  echo 'Error: exportS3ProductionBucketName.sh must export bash variables S3_PRODUCTION_BUCK_LOCATION and CF_PRODUCTION_DIST_ID'
   exit 1
 fi
 
@@ -69,6 +69,7 @@ EOL
   aws s3 cp --cache-control max-age=3000 ./robots.txt "$S3_PRODUCTION_BUCK_LOCATION"
   date > ./deploy_date.txt
   aws s3 cp --cache-control max-age=3000 ./deploy_date.txt "$S3_PRODUCTION_BUCK_LOCATION"
+  aws cloudfront create-invalidation --distribution-id "$CF_PRODUCTION_DIST_ID" --paths "/*"
 
 elif [ "$1" = "push-staging" ]; then
   # sync current with staging
@@ -80,6 +81,7 @@ Disallow: /
 EOL
   date > ./build/deploy_date.txt
   aws s3 sync --delete --cache-control max-age=0 ./build "$S3_STAGING_BUCKET_LOCATION"
+  aws cloudfront create-invalidation --distribution-id "$CF_STAGING_DIST_ID" --paths "/*"
 fi
 echo 'Success - finished!'
 exit 0

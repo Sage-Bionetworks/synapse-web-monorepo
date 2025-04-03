@@ -75,11 +75,11 @@ const expectTopLevelControls = async (
       let exploreTabHeading = exploreTab
       if (
         (getPortal() === 'arkportal' && exploreTab === 'All Data') ||
-        (getPortal() === 'elportal' && exploreTab === 'Data')
+        (getPortal() === 'eliteportal' && exploreTab === 'Data')
       ) {
         exploreTabHeading = 'Data'
       } else if (
-        getPortal() === 'elportal' &&
+        getPortal() === 'eliteportal' &&
         exploreTab === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'
@@ -94,7 +94,7 @@ const expectTopLevelControls = async (
         'Show / Hide Visualizations',
         // 'Download Options', - hidden in some portal tabs
       ]
-      if (getPortal() !== 'elportal')
+      if (getPortal() !== 'eliteportal')
         buttonNames.push('Copy this search to the clipboard')
       if (isTableTab) buttonNames.push('Show/Hide Columns')
       await expectButtons(header, buttonNames)

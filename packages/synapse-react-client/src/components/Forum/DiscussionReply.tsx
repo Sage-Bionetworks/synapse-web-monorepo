@@ -14,6 +14,7 @@ import WarningDialog from '../SynapseForm/WarningDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
+import { Box } from '@mui/material'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
@@ -63,7 +64,14 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                   <span>
                     posted {formatDate(dayjs(reply.createdOn), 'M/D/YYYY')}
                   </span>
-                  <div style={{ float: 'right' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      marginTop: { xs: '8px', sm: 0 },
+                      float: { sm: 'right' },
+                    }}
+                  >
                     <button onClick={() => onClickLink()}>
                       <IconSvg icon="link" />
                     </button>
@@ -77,7 +85,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                         <IconSvg icon="delete" />
                       </button>
                     )}
-                  </div>
+                  </Box>
                 </div>
               </div>
               <ForumThreadEditor
