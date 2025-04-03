@@ -17,8 +17,10 @@ import GeneExpression from '@/assets/mui_components/GeneExpression'
 import GeneVariants from '@/assets/mui_components/GeneVariants'
 import HelpChatBubble from '@/assets/mui_components/HelpChatBubble'
 import Imaging from '@/assets/mui_components/Imaging'
+import InSilicoModel from '@/assets/mui_components/InSilicoModel'
 import Kinomics from '@/assets/mui_components/Kinomics'
 import LineGraph from '@/assets/mui_components/LineGraph'
+import ModelSystem from '@/assets/mui_components/ModelSystem'
 import Other from '@/assets/mui_components/Other'
 import PackagableFile from '@/assets/mui_components/PackagableFile'
 import Proteomics from '@/assets/mui_components/Proteomics'
@@ -180,6 +182,8 @@ export const IconStrings = [
   'geneVariants',
   'github',
   'imaging',
+  'inSilicoModel',
+  'ModelSystem',
   'lineGraph',
   'kinomics',
   'proteomics',
@@ -410,6 +414,10 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <GeneVariants {...otherProps} />
     case 'imaging':
       return <Imaging {...otherProps} />
+    case 'inSilicoModel':
+      return <InSilicoModel {...otherProps} />
+    case 'ModelSystem':
+      return <ModelSystem {...otherProps} />
     case 'lineGraph':
       return <LineGraph {...otherProps} />
     case 'kinomics':

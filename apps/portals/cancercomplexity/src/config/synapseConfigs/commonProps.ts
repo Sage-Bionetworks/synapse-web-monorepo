@@ -25,7 +25,8 @@ export const columnIconConfigs: ColumnIconConfigs = {
   columns: {
     dataType: {
       bioChemicalPhysical: {
-        icon: 'imaging',
+        // todo
+        icon: 'lineGraph',
         label: 'Bio Chemical Physical Data Available',
       },
       clinical: {
@@ -33,36 +34,43 @@ export const columnIconConfigs: ColumnIconConfigs = {
         label: 'Clinical Data Available',
       },
       computationalTool: {
+        // what existing image?
         icon: 'imaging',
         label: 'Computational Tool Data Available',
       },
       dataReuse: {
+        // what existing image?
         icon: 'imaging',
         label: 'Data Reuse Data Available',
       },
       epigenomeProfiling: {
-        icon: 'imaging',
+        icon: 'chromatin',
         label: 'Epigenome Profiling Data Available',
       },
       expressionProfiling: {
-        icon: 'imaging',
+        icon: 'geneExpression',
         label: 'Expression Profiling Data Available',
       },
       genomeProfiling: {
-        icon: 'imaging',
+        icon: 'geneVariants',
         label: 'Genome Profiling Data Available',
       },
       imaging: { icon: 'imaging', label: 'Image Data Available' },
       inSilicoModel: {
-        icon: 'imaging',
+        icon: 'inSilicoModel',
         label: 'In Silico Model Data Available',
       },
-      modelSystem: { icon: 'imaging', label: 'Model System Data Available' },
+      modelSystem: {
+        icon: 'ModelSystem',
+        label: 'Model System Data Available',
+      }, // todo
       proteomics: { icon: 'proteomics', label: 'Proteomics Data Available' },
       spatialProfiling: {
+        // what existing image?
         icon: 'imaging',
         label: 'Spatial Profiling Data Available',
       },
+      other: { icon: 'other', label: 'Other Data Available' },
     },
   },
 }
