@@ -12,8 +12,8 @@ export const dataColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: false,
     baseURL: 'Explore/Standard/DetailsPage',
-    URLColumnName: 'id',
-    matchColumnName: 'id',
+    URLColumnName: 'acronym',
+    matchColumnName: 'acronym',
   },
 ]
 
