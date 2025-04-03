@@ -45,7 +45,10 @@ import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { SynapseCardLabel } from './SynapseCardLabel'
+import { GetAppTwoTone } from '@mui/icons-material'
+import GenericCardActionButton from './GenericCardActionButton'
 
 export type KeyToAlias = {
   key: string
@@ -77,6 +80,7 @@ export type GenericCardSchema = {
 
   link?: string
   dataTypeIconNames?: string
+  downloadCartSynId?: string
 }
 
 export type GenericCardPropsInternal = {
@@ -303,16 +307,27 @@ export function getLinkParams(
   return { href, target }
 }
 
+type GenericCardState = {
+  hasClickedShowMore: boolean
+  isShowingDownloadConfirmation: boolean
+  downloadButtonDisabled: boolean
+}
+
 /**
  * Renders a card from a table query
  */
-class _GenericCard extends Component<GenericCardPropsInternal> {
+class _GenericCard extends Component<
+  GenericCardPropsInternal,
+  GenericCardState
+> {
   static contextType = SynapseContext
 
   constructor(props: GenericCardPropsInternal) {
     super(props)
     this.state = {
+      isShowingDownloadConfirmation: false,
       hasClickedShowMore: false,
+      downloadButtonDisabled: false,
     }
   }
 
@@ -332,6 +347,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
   toggleShowMore = () => {
     this.setState({
       hasClickedShowMore: true,
+    })
+  }
+
+  setShowDownloadConfirmation = (showDownloadConfirmation: boolean) => {
+    this.setState({
+      isShowingDownloadConfirmation: showDownloadConfirmation,
     })
   }
 
@@ -391,6 +412,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       includeCitation,
       defaultCitationFormat,
       citationBoilerplateText,
+      downloadCartSynId,
     } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -561,6 +583,18 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     const doiValue =
       doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
+    let downloadCartSynIdColumnIndex: number | undefined
+    let downloadCartSynIdValue: string | undefined
+    if (downloadCartSynId) {
+      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
+      downloadCartSynIdValue =
+        downloadCartSynIdColumnIndex !== undefined
+          ? data[downloadCartSynIdColumnIndex]
+          : undefined
+    }
+    downloadCartSynIdValue = downloadCartSynIdValue?.match(
+      /syn\d+/i, // regex to extract the synapse ID from the URL
+    )?.[0]
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
@@ -578,6 +612,15 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
 
     return (
       <div style={style} className={'SRC-portalCard'}>
+        {this.state.isShowingDownloadConfirmation && downloadCartSynIdValue && (
+          <AddToDownloadCartButton
+            entityId={downloadCartSynIdValue}
+            handleClose={() => this.setShowDownloadConfirmation(false)}
+            onIsLoadingChange={isLoading => {
+              this.setState({ downloadButtonDisabled: isLoading })
+            }}
+          />
+        )}
         <div className={'SRC-portalCardMain'}>
           {icon}
           <div className="SRC-cardContent">
@@ -654,22 +697,42 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               </Box>
             )}
           </div>
-          {includeCitation && (
-            <Box
-              sx={{
-                marginLeft: 'auto',
-                paddingTop: '21px',
-                paddingRight: '40px',
-              }}
-            >
-              <CitationPopover
-                title={title}
-                doi={doiValue}
-                boilerplateText={citationBoilerplateText}
-                defaultCitationFormat={defaultCitationFormat}
-              />
-            </Box>
-          )}
+
+          {includeCitation ||
+            (downloadCartSynIdValue && (
+              <Box
+                sx={{
+                  marginLeft: 'auto',
+                  paddingTop: '21px',
+                  paddingRight: '40px',
+                }}
+              >
+                {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+                {downloadCartSynIdValue && (
+                  <>
+                    <GenericCardActionButton
+                      onClick={() =>
+                        this.setShowDownloadConfirmation(
+                          !this.state.isShowingDownloadConfirmation,
+                        )
+                      }
+                      variant="outlined"
+                      startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+                    >
+                      Download
+                    </GenericCardActionButton>
+                  </>
+                )}
+                {includeCitation && (
+                  <CitationPopover
+                    title={title}
+                    doi={doiValue}
+                    boilerplateText={citationBoilerplateText}
+                    defaultCitationFormat={defaultCitationFormat}
+                  />
+                )}
+              </Box>
+            ))}
         </div>
         {showFooter && (
           <CardFooter

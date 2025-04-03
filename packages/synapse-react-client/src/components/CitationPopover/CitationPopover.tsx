@@ -18,6 +18,7 @@ import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { useCitation } from './useCitation'
+import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 
 type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
 
@@ -106,22 +107,15 @@ function CitationPopover({
   return (
     <div>
       {doi && (
-        <Button
+        <GenericCardActionButton
           onClick={handleClick}
           variant="outlined"
           startIcon={<DoubleQuotes />}
-          sx={{
-            display: 'flex',
-            height: '20px',
-            padding: '2px 8px',
-            borderColor: 'grey.400',
-            '& .MuiButton-startIcon': { marginRight: '4px', marginLeft: 0 },
-          }}
         >
           <Typography variant="label" sx={{ lineHeight: '20px' }}>
             Cite As
           </Typography>
-        </Button>
+        </GenericCardActionButton>
       )}
       <Popover
         aria-label="Citation options"

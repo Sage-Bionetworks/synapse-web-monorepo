@@ -3,6 +3,7 @@ import NoContentAvailable from './SynapseTable/NoContentAvailable'
 
 export * from './AccessTokenPage'
 export * from './AccountLevelBadges'
+export * from './AddToDownloadCart'
 export * from './Authentication'
 export * from './CardContainer'
 export * from './CardContainerLogic'

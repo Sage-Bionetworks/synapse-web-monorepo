@@ -15,7 +15,7 @@ import {
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { CardLink, TargetEnum } from '../CardContainerLogic'
@@ -24,6 +24,7 @@ import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import * as FileHandleLinkModule from '../widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { GenericCardProps } from './GenericCard'
 import GenericCard, {
   CARD_SHORT_DESCRIPTION_CSS,
@@ -72,6 +73,12 @@ const mockImageFileHandle = jest
   .spyOn(ImageFileHandleModule, 'ImageFileHandle')
   .mockImplementation(() => <div data-testid="ImageFileHandle" />)
 
+jest.mock('../AddToDownloadCart', () => ({
+  AddToDownloadCartButton: jest.fn(() => (
+    <div data-testid="AddToDownloadCartButton" />
+  )),
+}))
+
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',
 }
@@ -106,6 +113,7 @@ const schema = {
   image: 8,
   userIdList: 9,
   type: 10,
+  synapseLink: 11,
 }
 
 const MOCKED_TITLE = 'MOCKED TITLE'
@@ -119,6 +127,8 @@ const MOCKED_ID = 'MOCKED_ID'
 const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
 const MOCKED_USER_ID = `[${MOCK_USER_ID}]`
 const MOCKED_TYPE = 'folder'
+const MOCKED_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:syn52623570'
+const MOCKED_INVALID_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:1234560/'
 
 const data = [
   MOCKED_TITLE,
@@ -132,6 +142,7 @@ const data = [
   MOCKED_IMAGE_FILE_HANDLE_ID,
   MOCKED_USER_ID,
   MOCKED_TYPE,
+  MOCKED_SYNAPSE_LINK,
 ]
 
 const propsForNonHeaderMode: GenericCardProps = {
@@ -568,6 +579,55 @@ describe('GenericCard tests', () => {
     })
     it('the found column index is 0 (falsy)', () => {
       expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
+    })
+  })
+
+  describe('creates a download cart button', () => {
+    const props = {
+      ...propsForNonHeaderMode,
+      genericCardSchema: {
+        ...genericCardSchema,
+        downloadCartSynId: 'synapseLink',
+      },
+    }
+
+    it('renders the button', async () => {
+      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
+      mockAddToDownloadCartButton.mockImplementation(() => (
+        <div data-testid="AddToDownloadCartButton" />
+      ))
+      renderComponent(props, 'TableEntity')
+      const button = await screen.findByRole('button', {
+        name: /download/i,
+      })
+      fireEvent.click(button)
+      expect(AddToDownloadCartButton).toHaveBeenCalled()
+    })
+
+    it('does not render the button with invalid synID', () => {
+      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
+      mockAddToDownloadCartButton.mockImplementation(() => (
+        <div data-testid="AddToDownloadCartButton" />
+      ))
+
+      const dataForInvalidSynapseLink = cloneDeep(data)
+      dataForInvalidSynapseLink[11] = MOCKED_INVALID_SYNAPSE_LINK
+
+      renderComponent(
+        {
+          ...props,
+          data: dataForInvalidSynapseLink,
+          genericCardSchema: {
+            ...genericCardSchema,
+            downloadCartSynId: 'synapseLink',
+          },
+        },
+        'TableEntity',
+      )
+      const button = screen.queryByRole('button', {
+        name: /download/i,
+      })
+      expect(button).not.toBeInTheDocument()
     })
   })
 })
