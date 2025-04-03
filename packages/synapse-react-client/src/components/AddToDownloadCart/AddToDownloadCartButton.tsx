@@ -12,11 +12,9 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
  * Props for the AddToDownloadCartButton component.
  *
  * @property entityId - The ID of the entity to be added to the download cart.
- * @property buttonText - Optional text to display on the button. Defaults to a standard label if not provided.
  */
 export type AddToDownloadCartButtonProps = {
   entityId: string
-  buttonText?: string
   onIsLoadingChange: (isLoading: boolean) => void
   handleClose: () => void
 }
@@ -61,7 +59,6 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
  */
 export function AddToDownloadCartButton({
   entityId,
-  buttonText = 'Download',
   handleClose,
   onIsLoadingChange,
 }: AddToDownloadCartButtonProps) {
