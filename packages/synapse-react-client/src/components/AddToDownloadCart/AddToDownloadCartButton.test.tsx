@@ -40,21 +40,18 @@ beforeEach(() => {
 describe('AddToDownloadCartButton', () => {
   const propsFolder: AddToDownloadCartButtonProps = {
     entityId: 'syn7248585',
-    buttonText: 'Download',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }
 
   const propsTable: AddToDownloadCartButtonProps = {
     entityId: 'syn53132831',
-    buttonText: 'Download',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }
 
   const propsFile: AddToDownloadCartButtonProps = {
     entityId: 'syn59954313',
-    buttonText: 'Download',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }

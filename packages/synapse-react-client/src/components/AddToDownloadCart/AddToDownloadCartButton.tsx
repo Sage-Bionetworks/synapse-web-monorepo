@@ -53,7 +53,6 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
  *
  * @param {AddToDownloadCartButtonProps} props - The properties for the component.
  * @param {string} props.entityId - The ID of the entity to be added to the download cart.
- * @param {string} [props.buttonText='Download'] - The text to display on the button.
  *
  * @returns {JSX.Element} The rendered AddToDownloadCartButton component.
  */
