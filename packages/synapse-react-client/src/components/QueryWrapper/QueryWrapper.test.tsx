@@ -250,7 +250,10 @@ describe('QueryWrapper', () => {
         '/any/url/you/like?QueryWrapper0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
-      renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({
+        initQueryRequest: initialQueryRequest,
+        shouldDeepLink: true,
+      })
       await waitFor(() => {
         expect(providedContext).toBeDefined()
         const lastQuery = providedContext!.getCurrentQueryRequest()
