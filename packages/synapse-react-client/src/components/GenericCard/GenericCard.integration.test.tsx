@@ -15,7 +15,7 @@ import {
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { CardLink, TargetEnum } from '../CardContainerLogic'
@@ -113,6 +113,7 @@ const schema = {
   image: 8,
   userIdList: 9,
   type: 10,
+  synapseLink: 11,
 }
 
 const MOCKED_TITLE = 'MOCKED TITLE'
@@ -126,6 +127,8 @@ const MOCKED_ID = 'MOCKED_ID'
 const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
 const MOCKED_USER_ID = `[${MOCK_USER_ID}]`
 const MOCKED_TYPE = 'folder'
+const MOCKED_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:syn52623570'
+const MOCKED_INVALID_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:1234560/'
 
 const data = [
   MOCKED_TITLE,
@@ -139,6 +142,7 @@ const data = [
   MOCKED_IMAGE_FILE_HANDLE_ID,
   MOCKED_USER_ID,
   MOCKED_TYPE,
+  MOCKED_SYNAPSE_LINK,
 ]
 
 const propsForNonHeaderMode: GenericCardProps = {
@@ -583,18 +587,47 @@ describe('GenericCard tests', () => {
       ...propsForNonHeaderMode,
       genericCardSchema: {
         ...genericCardSchema,
-        downloadCartSynId: 'https://www.synapse.org/Synapse:syn7248585',
+        downloadCartSynId: 'synapseLink',
       },
     }
 
-    it('renders the button', () => {
+    it('renders the button', async () => {
       const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
       mockAddToDownloadCartButton.mockImplementation(() => (
         <div data-testid="AddToDownloadCartButton" />
       ))
       renderComponent(props, 'TableEntity')
-      screen.getByTestId('AddToDownloadCartButton')
+      const button = await screen.findByRole('button', {
+        name: /download/i,
+      })
+      fireEvent.click(button)
       expect(AddToDownloadCartButton).toHaveBeenCalled()
+    })
+
+    it('does not render the button with invalid synID', () => {
+      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
+      mockAddToDownloadCartButton.mockImplementation(() => (
+        <div data-testid="AddToDownloadCartButton" />
+      ))
+
+      const dataForInvalidSynapseLink = cloneDeep(data)
+      dataForInvalidSynapseLink[11] = MOCKED_INVALID_SYNAPSE_LINK
+
+      renderComponent(
+        {
+          ...props,
+          data: dataForInvalidSynapseLink,
+          genericCardSchema: {
+            ...genericCardSchema,
+            downloadCartSynId: 'synapseLink',
+          },
+        },
+        'TableEntity',
+      )
+      const button = screen.queryByRole('button', {
+        name: /download/i,
+      })
+      expect(button).not.toBeInTheDocument()
     })
   })
 })
