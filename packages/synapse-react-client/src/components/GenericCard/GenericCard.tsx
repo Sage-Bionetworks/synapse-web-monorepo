@@ -10,7 +10,7 @@ import {
   convertDoiToLink,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '@/utils/functions/RegularExpressions'
-import { Box, Button, Link, Stack } from '@mui/material'
+import { Box, Link, Stack } from '@mui/material'
 import {
   ColumnModel,
   ColumnType,
@@ -48,6 +48,7 @@ import {
 import { AddToDownloadCartButton } from '../AddToDownloadCart'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { GetAppTwoTone } from '@mui/icons-material'
+import GenericCardActionButton from './GenericCardActionButton'
 
 export type KeyToAlias = {
   key: string
@@ -709,7 +710,7 @@ class _GenericCard extends Component<
                 {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
                 {downloadCartSynIdValue && (
                   <>
-                    <Button
+                    <GenericCardActionButton
                       onClick={() =>
                         this.setShowDownloadConfirmation(
                           !this.state.isShowingDownloadConfirmation,
@@ -717,19 +718,9 @@ class _GenericCard extends Component<
                       }
                       variant="outlined"
                       startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                      sx={{
-                        display: 'flex',
-                        height: '20px',
-                        padding: '2px 8px',
-                        borderColor: 'grey.400',
-                        '& .MuiButton-startIcon': {
-                          marginRight: '4px',
-                          marginLeft: 0,
-                        },
-                      }}
                     >
                       Download
-                    </Button>
+                    </GenericCardActionButton>
                   </>
                 )}
                 {includeCitation && (
