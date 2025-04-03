@@ -121,7 +121,10 @@
       @extend %hv-center;
 
       &__icon {
-        height: 40px;
+        img {
+          width: auto;
+          height: 50px;
+        }
       }
 
       &__Title {

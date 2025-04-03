@@ -13,7 +13,7 @@ export default function CardDeckMobile({
 }: CardDeckDataProps) {
   const titleElement = (
     <div className="CardDeck__Mobile__Header">
-      <span className="CardDeck__Card__header__icon">
+      <span className="CardDeck__Mobile__Header__icon">
         {titleIconFileHandleAssociation && (
           <ImageFileHandle
             fileHandleAssociation={titleIconFileHandleAssociation}
