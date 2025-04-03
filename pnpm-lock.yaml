@@ -534,7 +534,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
-  apps/portals/challengeportal:
+  apps/portals/challenges:
     dependencies:
       '@mui/material':
         specifier: ^5.15.13
@@ -638,7 +638,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
-  apps/portals/elportal:
+  apps/portals/eliteportal:
     dependencies:
       '@mui/icons-material':
         specifier: ^5.15.13

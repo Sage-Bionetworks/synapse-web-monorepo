@@ -3,9 +3,9 @@ export type Portal =
   | 'arkportal'
   | 'bsmn'
   | 'cancercomplexity'
-  | 'challengeportal'
+  | 'challenges'
   | 'digitalhealth'
-  | 'elportal'
+  | 'eliteportal'
   | 'genie'
   | 'nf'
   | 'stopadportal'
@@ -31,7 +31,7 @@ const routesConfig: RouteConfig = {
     buttons: ['Home', 'Explore', 'Sign In'],
     links: ['News', 'Help'],
   },
-  challengeportal: {
+  challenges: {
     buttons: ['Home'],
     links: [],
   },
@@ -39,7 +39,7 @@ const routesConfig: RouteConfig = {
     buttons: ['Home', 'Explore', 'Sign In'],
     links: ['About', 'Help'],
   },
-  elportal: {
+  eliteportal: {
     buttons: ['Explore', 'Sign In'],
     links: [
       'Home',
