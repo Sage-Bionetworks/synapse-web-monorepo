@@ -1,4 +1,5 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import TextWidget from '@/components/SchemaDrivenAnnotationEditor/widget/TextWidget'
 import {
   Alert,
   AlertTitle,
@@ -104,6 +105,9 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
         onChange={({ formData }) => onChange(formData)}
         onSubmit={({ formData }) => onSubmit(formData)}
         transformErrors={transformErrors}
+        widgets={{
+          TextWidget: TextWidget,
+        }}
       />
       <Button onClick={() => setShowPasteNewValuesForm(true)}>
         Paste new values
