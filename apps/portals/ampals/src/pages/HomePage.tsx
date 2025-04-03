@@ -1,9 +1,10 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
-import { dataSql } from '../config/resources'
-import { FeaturedDataTabs } from 'synapse-react-client'
-import columnAliases from '../config/columnAliases'
+// import { dataSql } from '../config/resources'
+// import { FeaturedDataTabs } from 'synapse-react-client'
+// import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
+import { FullWidthAlert } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
@@ -19,7 +20,15 @@ export default function HomePage() {
           centerTitle
           ContainerProps={{ className: 'home-spacer' }}
         >
-          <FeaturedDataTabs
+          <FullWidthAlert
+            sx={{ m: 0 }}
+            isGlobal={false}
+            variant={'warning'}
+            show={true}
+            title={''}
+            description={'This area is under construction'}
+          />
+          {/* <FeaturedDataTabs
             sql={dataSql}
             rgbIndex={3}
             configs={[
@@ -41,7 +50,7 @@ export default function HomePage() {
                 },
               },
             ]}
-          />
+          /> */}
         </SectionLayout>
       </div>
     </>
