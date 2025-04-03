@@ -50,7 +50,7 @@ const links: LinkProps[] = [
     title: 'Educational Resources',
     icon: <SchoolIconCircle />,
     description:
-      'Interested in learning more about cancer research or running your own training event? Explore existing educational program offerings across topics and activity types. Adapt templates to meet your training goals for different audiences and education levels.',
+      'Interested in learning more about cancer research or running your own training event? Explore existing resources and adapt templates to meet your training goals for different audiences and education levels.',
     linkText: 'Explore Educational Resources',
     to: 'Explore/Educational Resources',
   },
