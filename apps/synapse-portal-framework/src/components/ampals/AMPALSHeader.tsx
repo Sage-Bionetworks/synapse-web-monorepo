@@ -42,10 +42,7 @@ const AMPALSHeader = (props: AMPALSHeaderProps) => {
           variant="body1"
           sx={{ fontSize: '18px', lineHeight: '144%' }}
         >
-          Welcome to the AMP-ALS Knowledge Portal, a comprehensive resource for
-          ALS researchers. Explore rich datasets, build custom cohorts, and
-          access the latest publications to advance your research. Join a
-          collaborative community dedicated to accelerating discoveries in ALS.
+          {import.meta.env.VITE_PORTAL_DESCRIPTION}
         </Typography>
         {/* <Typography
           variant="body1"
