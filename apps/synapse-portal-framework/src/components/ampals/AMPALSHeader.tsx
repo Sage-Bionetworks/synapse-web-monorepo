@@ -36,7 +36,7 @@ const AMPALSHeader = (props: AMPALSHeaderProps) => {
             lineHeight: '54px',
           }}
         >
-          Welcome to the AMP-ALS Knowledge Portal
+          Welcome to the {import.meta.env.VITE_PORTAL_NAME}
         </Typography>
         <Typography
           variant="body1"
