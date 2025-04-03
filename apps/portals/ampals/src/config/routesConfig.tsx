@@ -46,6 +46,41 @@ const routes: RouteObject[] = [
         element: <DatasetDetailsPage />,
       },
       {
+        path: 'Resources',
+        children: [
+          {
+            path: 'For Researchers',
+            element: (
+              <MarkdownSynapse
+                ownerId="syn64892175"
+                wikiId="631452"
+                loadingSkeletonRowCount={20}
+              />
+            ),
+          },
+          {
+            path: 'For Contributors',
+            element: (
+              <MarkdownSynapse
+                ownerId="syn64892175"
+                wikiId="631451"
+                loadingSkeletonRowCount={20}
+              />
+            ),
+          },
+          {
+            path: 'For Persons With Lived Experience',
+            element: (
+              <MarkdownSynapse
+                ownerId="syn64892175"
+                wikiId="631453"
+                loadingSkeletonRowCount={20}
+              />
+            ),
+          },
+        ],
+      },
+      {
         path: 'About',
         element: (
           <SectionLayout

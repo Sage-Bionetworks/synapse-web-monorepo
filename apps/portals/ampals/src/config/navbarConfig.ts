@@ -29,6 +29,18 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
+      name: 'Resources',
+      path: '/Resources',
+      children: [
+        { name: 'For Researchers', path: '/Resources/For Researchers' },
+        { name: 'For Contributors', path: '/Resources/For Contributors' },
+        {
+          name: 'For Persons With Lived Experience',
+          path: '/Resources/For Persons With Lived Experience',
+        },
+      ],
+    },
+    {
       name: 'Contribute Data',
       path: '/Contribute Data',
     },

@@ -1,5 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/amlals/AMPALSHeader'
+import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
 import { dataSql } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
