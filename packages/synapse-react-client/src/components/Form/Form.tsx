@@ -7,6 +7,7 @@ import {
   MenuItem,
   FormHelperText,
   Button,
+  useTheme,
 } from '@mui/material'
 import { useState } from 'react'
 
@@ -41,6 +42,7 @@ export type FormProps = {
 
 export default function Form({ fields, onSubmit }: FormProps) {
   const [formData, setFormData] = useState<FormData>({})
+  const theme = useTheme()
 
   const handleChange = (id: string, value: string) => {
     setFormData((prev: FormData) => {
@@ -65,6 +67,17 @@ export default function Form({ fields, onSubmit }: FormProps) {
             id={id}
             value={formData[id]}
             onChange={e => handleChange(id, e.target.value)}
+            displayEmpty
+            renderValue={selected => {
+              if (!selected) {
+                return (
+                  <span style={{ color: theme.palette.text.disabled }}>
+                    Select a Category
+                  </span>
+                )
+              }
+              return selected
+            }}
             {...config.additionalOptions}
           >
             {Object.entries(config.selections ?? {}).map(([label, value]) => (
