@@ -1,7 +1,7 @@
 import { Box, Select, TextField } from '@mui/material'
 import Form, {
   FormData,
-  FormSchema,
+  FieldSchema,
 } from 'synapse-react-client/components/Form/Form'
 
 export default function ContributeAStandard() {
@@ -9,7 +9,7 @@ export default function ContributeAStandard() {
     console.log(formData)
   }
 
-  const fields: FormSchema = {
+  const fields: FieldSchema = {
     type: {
       componentType: Select,
       label: 'Entity Type',
