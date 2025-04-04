@@ -32,27 +32,20 @@ export default function CardDeckMobile({
         href={ctaButtonURL}
         sx={{
           marginLeft: 0,
+          fontSize: '14px',
+          boxShadow: 'none',
+          color: 'primary.main',
+          '&:hover': {
+            backgroundColor: 'primary.main',
+            color: 'white',
+          },
           ...(cardDeckType === 'b2ai' && {
             width: '200px',
-            fontSize: '14px',
             backgroundColor: 'white',
-            boxShadow: 'none',
-            color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
           }),
           ...(cardDeckType === 'cckp' && {
             width: '170px',
-            fontSize: '14px',
-            boxShadow: 'none',
             borderColor: 'primary.main',
-            color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
           }),
         }}
       >
