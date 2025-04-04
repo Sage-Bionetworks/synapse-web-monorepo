@@ -6,7 +6,7 @@ import { ReactComponent as PeopleIconSvg } from './assets/people-icon.svg'
 import SchoolIconCircle from './assets/SchoolIconCircle'
 
 type LinkProps = {
-  icon: React.ReactElement
+  icon: React.ReactNode
   description: string
   title: string
   linkText: string
