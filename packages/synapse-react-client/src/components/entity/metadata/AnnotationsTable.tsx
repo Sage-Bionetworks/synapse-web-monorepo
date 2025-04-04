@@ -1,20 +1,8 @@
-import {
-  useGetFeatureFlag,
-  useGetJson,
-  useGetSchemaBinding,
-  useGetValidationResults,
-} from '@/synapse-queries'
+import { useGetJson, useGetSchemaBinding, useGetValidationResults } from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { isISOTimestamp } from '@/utils/functions/DateTimeUtils'
-import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-} from '@/utils/functions/EntityTypeUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { convertToEntityType, entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { useCallback, useState } from 'react'
@@ -40,12 +28,6 @@ export function getDisplayedAnnotation(
 export function AnnotationsTable(props: AnnotationsTableProps) {
   const { entityId, versionNumber } = props
   const [isManuallyRefetching, setIsManuallyRefetching] = useState(false)
-  /**
-   * Currently, schema/validation features are only shown in experimental mode.
-   */
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
-  )
 
   const {
     data: entityData,
@@ -55,16 +37,14 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
   const entityMetadata = entityData?.entityMetadata
   const annotations = entityData?.annotations
 
-  const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: isFeatureEnabled,
-  })
+  const { data: boundSchema } = useGetSchemaBinding(entityId)
 
   const { data: validationResults, refetch: refetchValidationInformation } =
     useGetValidationResults(entityId, {
-      enabled: isFeatureEnabled && Boolean(boundSchema),
+      enabled: Boolean(boundSchema),
     })
 
-  const showSchemaInformation = isFeatureEnabled && Boolean(boundSchema)
+  const showSchemaInformation = Boolean(boundSchema)
 
   // If the entity has not yet been validated since the last fetch, then derived annotations may not have been calculated.
   const recentChangesHaveNotBeenValidated =
