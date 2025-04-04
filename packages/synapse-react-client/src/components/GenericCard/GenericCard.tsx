@@ -699,8 +699,7 @@ class _GenericCard extends Component<
             )}
           </div>
 
-          {includeCitation ||
-            (downloadCartSynIdValue && (
+          {(includeCitation || downloadCartSynIdValue) && (
               <Box
                 sx={{
                   marginLeft: 'auto',
