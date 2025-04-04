@@ -52,7 +52,7 @@ export default function ContributeAStandard() {
       helperText:
         'What is the description of this entity, in a sentence or two?',
       placeholder:
-        'e.g., "Any data concerning studies of the structure, function, and interactinos of biological materials."',
+        'e.g., "Any data concerning studies of the structure, function, and interactions of biological materials."',
       isRequired: false,
       additionalOptions: {
         multiline: true,
