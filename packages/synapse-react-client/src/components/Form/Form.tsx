@@ -19,6 +19,7 @@ type FormConfig = {
   label: string
   helperText: string
   isRequired: boolean
+  placeholder?: string
   selections?: {
     [id: string]: string
   }
@@ -90,6 +91,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           onChange={e => handleChange(id, e.target.value)}
           required={config.isRequired}
           helperText={config.helperText}
+          placeholder={config?.placeholder}
           {...config.additionalOptions}
         />
       )
