@@ -5,11 +5,20 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
 import { FullWidthAlert } from 'synapse-react-client'
+import { OrientationBanner } from 'synapse-react-client'
 
 //TODO
 export default function HomePage() {
   return (
     <>
+      <OrientationBanner
+        name="UnderConstruction"
+        title="Welcome to a design preview of our portal!"
+        text="The ALS Knowledge Portal is actively under construction, but we wanted to give you a preview. As we build out the portal, this page will be updated with more to see and explore. Stay tuned!"
+        sx={{
+          width: 'auto',
+        }}
+      />
       <AMPALSHeader headerSvgURL={headerSvg} />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
