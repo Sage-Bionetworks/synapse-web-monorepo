@@ -56,6 +56,7 @@
       &__icon {
         img {
           width: 50px;
+          margin-right: 10px;
         }
 
         &--cckp {
@@ -73,8 +74,6 @@
       }
 
       &__info {
-        margin-left: 10px;
-
         a:hover,
         a:focus {
           text-decoration: none;
