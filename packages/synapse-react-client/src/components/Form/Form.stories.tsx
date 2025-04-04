@@ -22,7 +22,7 @@ export const BasicForm: Story = {
         componentType: Select,
         label: 'Entity Type',
         helperText: 'What kind of thing is this?',
-        options: {
+        selections: {
           DataStandardOrTool: 'Data Standard or Tool',
           DataSubstrate: 'Data Substrate',
           DataTopic: 'Data Topic',
@@ -37,6 +37,9 @@ export const BasicForm: Story = {
         helperText:
           '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
         isRequired: false,
+        additionalOptions: {
+          multiline: true,
+        },
       },
     },
     onSubmit: () => {

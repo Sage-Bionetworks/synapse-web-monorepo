@@ -16,12 +16,15 @@ type FormComponent = typeof TextField | typeof Select
 type FormConfig = {
   componentType: FormComponent
   label: string
-  options?: {
+  helperText: string
+  isRequired: boolean
+  selections?: {
     [id: string]: string
   }
   validation?: () => any
-  helperText: string
-  isRequired: boolean
+  additionalOptions?: {
+    [id: string]: any
+  }
 }
 
 type FormSchema = {
@@ -56,10 +59,10 @@ export default function Form({ fields, onSubmit }: FormProps) {
             labelId={`${id}-label`}
             id={id}
             value={formData[id]}
-            // label={config.label}
             onChange={e => handleChange(id, e.target.value)}
+            {...config.additionalOptions}
           >
-            {Object.entries(config.options ?? {}).map(([label, value]) => (
+            {Object.entries(config.selections ?? {}).map(([label, value]) => (
               <MenuItem key={value} value={value}>
                 {label}
               </MenuItem>
@@ -79,6 +82,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           onChange={e => handleChange(id, e.target.value)}
           required={config.isRequired}
           helperText={config.helperText}
+          {...config.additionalOptions}
         />
       )
     }
