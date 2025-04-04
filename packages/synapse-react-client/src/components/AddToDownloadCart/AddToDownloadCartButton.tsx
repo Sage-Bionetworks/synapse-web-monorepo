@@ -9,11 +9,11 @@ import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 
 /**
- * Props for the AddToDownloadCartButton component.
+ * Props for the EntityDownloadConfirmation component.
  *
  * @property entityId - The ID of the entity to be added to the download cart.
  */
-export type AddToDownloadCartButtonProps = {
+export type EntityDownloadConfirmationProps = {
   entityId: string
   onIsLoadingChange: (isLoading: boolean) => void
   handleClose: () => void
