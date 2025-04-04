@@ -120,7 +120,7 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Data',
   enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   fileIdColumnName: 'id',
-  fileNameColumnName: 'name',
+  fileNameColumnName: 'fileName',
   fileVersionColumnName: 'fileVersion',
   cavaticaConnectAccountURL: cavaticaConnectAccountURL,
   visibleColumnCount: 10,
