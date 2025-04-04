@@ -15,11 +15,13 @@ export const BasicForm: Story = {
       title: {
         componentType: TextField,
         label: 'Entity Title',
+        helperText: 'The name of the entity',
         isRequired: true,
       },
       type: {
         componentType: Select,
         label: 'Entity Type',
+        helperText: 'What kind of thing is this?',
         options: {
           DataStandardOrTool: 'Data Standard or Tool',
           DataSubstrate: 'Data Substrate',
@@ -28,6 +30,13 @@ export const BasicForm: Story = {
           UseCase: 'Use Case',
         },
         isRequired: true,
+      },
+      relatedTo: {
+        componentType: TextField,
+        label: 'Related To',
+        helperText:
+          '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
+        isRequired: false,
       },
     },
     onSubmit: () => {

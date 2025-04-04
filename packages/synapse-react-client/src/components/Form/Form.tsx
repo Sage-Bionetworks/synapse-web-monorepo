@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Button,
 } from '@mui/material'
 import { useState } from 'react'
 
@@ -19,6 +20,7 @@ type FormConfig = {
     [id: string]: string
   }
   validation?: () => any
+  helperText: string
   isRequired: boolean
 }
 
@@ -40,7 +42,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
 
   const handleChange = (id: string, value: string) => {
     setFormData((prev: FormDataRecord) => {
-      if (prev[id] === value) return prev // avoid unnecessary state update
+      if (prev[id] === value) return prev
       return { ...prev, [id]: value }
     })
   }
@@ -48,13 +50,13 @@ export default function Form({ fields, onSubmit }: FormProps) {
   const createField = (id: string, config: FormConfig) => {
     if (config.componentType === Select) {
       return (
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth margin="normal" required={config.isRequired}>
           <InputLabel id={`${id}-label`}>{config.label}</InputLabel>
           <Select
             labelId={`${id}-label`}
             id={id}
             value={formData[id]}
-            label={config.label}
+            // label={config.label}
             onChange={e => handleChange(id, e.target.value)}
           >
             {Object.entries(config.options ?? {}).map(([label, value]) => (
@@ -63,16 +65,30 @@ export default function Form({ fields, onSubmit }: FormProps) {
               </MenuItem>
             ))}
           </Select>
+          <FormHelperText id={`${id}-helper-text`}>
+            {config.helperText}
+          </FormHelperText>
         </FormControl>
       )
-    } else {
-      return <div>id</div>
+    } else if (config.componentType === TextField) {
+      return (
+        <TextField
+          id={id}
+          value={formData[id]}
+          label={config.label}
+          onChange={e => handleChange(id, e.target.value)}
+          required={config.isRequired}
+          helperText={config.helperText}
+        />
+      )
     }
+    return
   }
 
   return (
     <Box component="form" onSubmit={onSubmit} noValidate sx={{ maxWidth: 400 }}>
       {Object.entries(fields).map(([id, config]) => createField(id, config))}
+      <Button onSubmit={onSubmit}>Submit</Button>
     </Box>
   )
 }
