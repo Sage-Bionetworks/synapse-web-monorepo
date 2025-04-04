@@ -60,7 +60,7 @@ export function EntityDownloadConfirmation({
   entityId,
   handleClose,
   onIsLoadingChange,
-}: AddToDownloadCartButtonProps) {
+}: EntityDownloadConfirmationProps) {
   const { data: entity, isLoading } = useGetEntity(entityId)
   const entityConcreteType = entity?.concreteType
 
@@ -93,4 +93,4 @@ export function EntityDownloadConfirmation({
   )
 }
 
-export default AddToDownloadCartButton
+export default EntityDownloadConfirmation
