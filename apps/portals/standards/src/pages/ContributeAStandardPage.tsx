@@ -1,11 +1,11 @@
 import { Box, Select, TextField } from '@mui/material'
 import Form, {
-  FormDataRecord,
+  FormData,
   FormSchema,
 } from 'synapse-react-client/components/Form/Form'
 
 export default function ContributeAStandard() {
-  const onSubmit = (formData: FormDataRecord) => {
+  const onSubmit = (formData: FormData) => {
     console.log(formData)
   }
 
@@ -52,8 +52,12 @@ export default function ContributeAStandard() {
       helperText:
         'What is the description of this entity, in a sentence or two?',
       placeholder:
-        'e.g., "Any data concerning studies of the structure, function, and interactinos of biological materials."', // TODO: This is too long
+        'e.g., "Any data concerning studies of the structure, function, and interactinos of biological materials."',
       isRequired: false,
+      additionalOptions: {
+        multiline: true,
+        rows: 3,
+      },
     },
     subclassOf: {
       componentType: TextField,

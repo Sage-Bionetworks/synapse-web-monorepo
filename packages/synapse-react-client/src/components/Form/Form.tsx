@@ -10,47 +10,46 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 
-type FormComponent = typeof TextField | typeof Select
+type FieldType = typeof TextField | typeof Select
 
-type FormConfig = {
-  componentType: FormComponent
+type FieldConfig = {
+  componentType: FieldType
   label: string
   helperText: string
-  isRequired: boolean
   placeholder?: string
+  isRequired: boolean
   selections?: {
     [id: string]: string
   }
-  validation?: () => any
   additionalOptions?: {
     [id: string]: any
   }
 }
 
-export type FormSchema = {
-  [fieldId: string]: FormConfig
+export type FieldSchema = {
+  [fieldId: string]: FieldConfig
 }
 
-export type FormDataRecord = {
+export type FormData = {
   [id: string]: string
 }
 
 export type FormProps = {
-  fields: FormSchema
-  onSubmit: (data: FormDataRecord) => any
+  fields: FieldSchema
+  onSubmit: (data: FormData) => any
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
-  const [formData, setFormData] = useState<FormDataRecord>({})
+  const [formData, setFormData] = useState<FormData>({})
 
   const handleChange = (id: string, value: string) => {
-    setFormData((prev: FormDataRecord) => {
+    setFormData((prev: FormData) => {
       if (prev[id] === value) return prev
       return { ...prev, [id]: value }
     })
   }
 
-  const createField = (id: string, config: FormConfig) => {
+  const createField = (id: string, config: FieldConfig) => {
     if (config.componentType === Select) {
       return (
         <FormControl fullWidth margin="normal" required={config.isRequired}>
