@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import EntityDownloadConfirmation, {
   EntityDownloadConfirmationProps,
-} from './AddToDownloadCartButton'
+} from './EntityDownloadConfirmation'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useGetEntity } from '../../synapse-queries/'
 import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
