@@ -305,88 +305,61 @@ function HeaderCardV2({
       >
         <Box
           sx={{
-            border: '3px solid blue',
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
             minHeight: '64px', // Set minimum height to ensure proper centering space
-            gap: 2,
+            gap: 1,
           }}
         >
           {icon && (
             <Box
               sx={{
-                border: '3px solid green',
-                flexShrink: 0, // Prevent icon from shrinking
-                flexBasis: '120px',
-                height: '120px', // Set explicit height to match flexBasis
-                /*
-                display: 'flex', // Add flex display for icon centering
-                justifyContent: 'center', // Center icon horizontally
-                alignItems: 'center', // Center icon vertically
-                alignSelf: 'center', // Ensure box itself is centered in parent flex container
-                */
-                '& > *': {
-                  width: '100% !important',
-                  maxWidth: '100% !important',
-                  display: 'flex !important', // Force flex on icon children
-                  justifyContent: 'center !important',
-                  alignItems: 'center !important',
-                  height: '100% !important',
-                },
-                '& img.iconImg': {
-                  width: '100% !important',
-                  objectFit: 'contain',
-                },
-                '& svg': {
-                  display: 'block', // Ensure SVG displays as block
-                  margin: 'auto', // Center SVG
-                },
+                height: '120px',
               }}
             >
               {icon}
             </Box>
           )}
 
-          {/* Title */}
-          <Typography
-            sx={{
-              fontWeight: 700,
-              mb: 1,
-              fontSize: '1.75rem',
-              border: '3px solid green',
-
-              display: 'flex', // Add flex to enable vertical centering
-              alignItems: 'center', // Center text vertically
-              height: '100%', // Take full height of parent for vertical centering
-            }}
-          >
-            {href ? (
-              <Link
-                href={href}
-                target={target}
-                underline="hover"
+          <Box sx={{}}>
+            {/* Title */}
+            <Typography
+              sx={{
+                // fontWeight: 700,
+                mb: 1,
+                fontSize: '2.5rem',
+                letterSpacing: '0.1em', // Add letter spacing
+              }}
+            >
+              {href ? (
+                <Link
+                  href={href}
+                  target={target}
+                  underline="hover"
+                  color="inherit"
+                >
+                  {title}
+                </Link>
+              ) : (
+                title
+              )}
+            </Typography>
+            {/* Subtitle */}
+            {subTitle && (
+              <Typography
+                variant="body1"
                 color="inherit"
+                fontStyle="italic"
+                sx={{
+                  fontSize: '1.5rem',
+                }}
               >
-                {title}
-              </Link>
-            ) : (
-              title
+                {subTitle}
+              </Typography>
             )}
-          </Typography>
+          </Box>
         </Box>
-
-        {/* Subtitle */}
-        {subTitle && (
-          <Typography
-            variant="body1"
-            color="inherit"
-            fontStyle="italic"
-            paddingBottom="17px"
-          >
-            {subTitle}
-          </Typography>
-        )}
 
         <Box
           sx={{

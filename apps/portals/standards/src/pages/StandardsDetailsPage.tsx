@@ -13,19 +13,22 @@ import {
   RowDataTable,
   SkeletonTable,
 } from 'synapse-react-client'
-import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { standardsDetailsPageSQL } from '../config/resources'
+// import { ReactComponent as standardDataModelSvg } from '@sage-bionetworks/synapse-react-client/src/assets/icons/standardDataModel.svg'
+const dataSql = standardsDetailsPageSQL
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
   // include acronym somewhere?
   title: 'acronym',
-  subTitle: 'name',
+  subTitle: 'standardName',
   description: 'description',
   link: 'URL',
-  secondaryLabels: ['collections', 'topic', 'responsibleOrgName'],
+  // icon: standardDataModelSvg,
+  secondaryLabels: ['SDO', 'collections', 'topic'],
 }
 
 export const standardDetailsPageContent: DetailsPageContentType = [
