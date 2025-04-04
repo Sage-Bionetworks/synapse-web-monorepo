@@ -16,7 +16,6 @@ export default function HomePage() {
         title="Welcome to a design preview of our portal!"
         text="The ALS Knowledge Portal is actively under construction, but we wanted to give you a preview. As we build out the portal, this page will be updated with more to see and explore. Stay tuned!"
         sx={{
-          margin: '-20px -30px 20px -30px',
           width: 'auto',
         }}
       />
