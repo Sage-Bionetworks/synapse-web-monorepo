@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Card,
@@ -7,12 +7,20 @@ import {
   Stack,
   Button,
   ButtonProps,
-  Grid,
   useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-import { CardFooter } from '../row_renderers/utils'
+
+interface CTAButton {
+  label: string
+  href?: string
+  variant?: ButtonProps['variant']
+  sx?: ButtonProps['sx']
+  endIcon?: JSX.Element
+  // Add other button props as needed
+}
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -42,7 +50,7 @@ export type HeaderCardV2Props = {
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
   /** Optional array of CTA buttons to display below description */
-  ctaButtons?: (ButtonProps & { label: string })[]
+  ctaButtons?: CTAButton[]
 }
 
 /**
@@ -81,6 +89,7 @@ export type HeaderCardV2Props = {
  * - Default: Icon + Content | Metadata (on desktop)
  * - Stacked: Full width content with metadata below
  * - Mobile: All sections stack vertically
+ * - Height-Based: Stacks when metadata height exceeds description height
  *
  * @component
  * @example
@@ -96,10 +105,12 @@ export type HeaderCardV2Props = {
  *   ]}
  * />
  * ```
+
  * Core component logic:
  * 1. Responsive Layout:
  *    - Uses MUI Grid for flexible layouts
- *    - Switches to stacked layout on mobile or when forceStackedLayout is true
+ *    - Switches to stacked layout on mobile, when forceStackedLayout is true,
+ *      or when the metadata table height exceeds the description height
  *
  * 2. Meta Tags:
  *    - Manages document title and meta description
@@ -134,6 +145,57 @@ function HeaderCardV2({
   ctaButtons,
 }: HeaderCardV2Props) {
   const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  // State for dynamic layout
+  // const [useStackedLayout, setUseStackedLayout] = useState(
+  //   forceStackedLayout || isMobile,
+  // )
+
+  // Refs for measuring heights
+  const descriptionRef = useRef<HTMLDivElement>(null)
+  const metadataRef = useRef<HTMLDivElement>(null)
+  const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
+  const [metadataHeight, setMetadataHeight] = useState<number>(0)
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
+
+  useEffect(() => {
+    // Only set up height checking if not already forced to stack
+    if (forceStackedLayout || isMobile) {
+      return
+    }
+
+    const dHeight = descriptionRef.current?.offsetHeight || 0
+    const mHeight = metadataRef.current?.offsetHeight || 0
+    // const { dHeight } = descriptionRef.current.getBoundingClientRect();
+    setDescriptionHeight(dHeight)
+    // const { mHight } = metadataRef.current.getBoundingClientRect();
+    setMetadataHeight(mHeight)
+
+    const sww = () => setWindowWidth(window.innerWidth)
+
+    window.addEventListener('resize', sww)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', sww)
+    }
+  }, [forceStackedLayout, isMobile, values, description, windowWidth])
+
+  let useStackedLayout = false
+  if (forceStackedLayout || isMobile) {
+    useStackedLayout = true
+  } else {
+    // useStackedLayout = metadataHeight > descriptionHeight
+    // as per https://github.com/bridge2ai/b2ai-standards-registry/issues/210#issuecomment-2773706202,
+    // constrain metadata to 5-line expandable block
+  }
+  console.log({
+    windowWidth,
+    useStackedLayout,
+    descriptionHeight,
+    metadataHeight,
+  })
+
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
@@ -148,6 +210,7 @@ function HeaderCardV2({
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
 
+  // Effect to handle meta tags
   useEffect(() => {
     if (title && document.title !== title) {
       document.title = title
@@ -196,121 +259,195 @@ function HeaderCardV2({
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
-        <Grid container spacing={3}>
-          {/* Icon Column */}
+      {/* <Typography
+        className="SRC-type"
+        sx={{
+          fontSize: '14px',
+          textTransform: 'uppercase',
+          fontWeight: 700,
+          color: '#000000',
+        }}
+      >
+        {type}
+      </Typography> */}
+
+      <Box
+        sx={{
+          // align: 'center',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          // border: '1px solid #000',
+          maxWidth: '1400px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 12fr 1fr',
+          '& > *': {
+            gridColumn: 2,
+          },
+          paddingBottom: '25px',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            minHeight: '64px', // Set minimum height to ensure proper centering space
+            gap: 1,
+          }}
+        >
           {icon && (
-            <Grid item xs={12} md="auto">
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: { xs: 'center', md: 'flex-start' },
-                }}
-              >
-                {icon}
-              </Box>
-            </Grid>
-          )}
-
-          {/* Main Content Grid */}
-          <Grid item xs={12} md={values && !forceStackedLayout ? 7 : 12}>
-            <Stack spacing={2}>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  gutterBottom
-                >
-                  {type}
-                </Typography>
-
-                <Typography
-                  variant="h4"
-                  component="h3"
-                  sx={{ fontWeight: 700, mb: 1 }}
-                >
-                  {href ? (
-                    <Link
-                      href={href}
-                      target={target}
-                      underline="hover"
-                      color="inherit"
-                    >
-                      {title}
-                    </Link>
-                  ) : (
-                    title
-                  )}
-                </Typography>
-
-                {subTitle && (
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    className="SRC-author"
-                  >
-                    {subTitle}
-                  </Typography>
-                )}
-
-                <CollapsibleDescription
-                  description={description}
-                  descriptionSubTitle=""
-                  descriptionConfig={descriptionConfiguration}
-                />
-
-                {ctaButtons && ctaButtons.length > 0 && (
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={2}
-                    sx={{ mt: 2 }}
-                  >
-                    {ctaButtons.map((buttonProps, index) => (
-                      <Button
-                        key={index}
-                        {...buttonProps}
-                        sx={{
-                          width: { xs: '100%', sm: 'auto' },
-                          ...buttonProps.sx,
-                        }}
-                      >
-                        {buttonProps.label}
-                      </Button>
-                    ))}
-                  </Stack>
-                )}
-              </Box>
-            </Stack>
-          </Grid>
-
-          {/* Values Section */}
-          {values && (
-            <Grid
-              item
-              xs={12}
-              md={forceStackedLayout ? 12 : 4}
+            <Box
               sx={{
-                borderLeft: {
-                  xs: 'none',
-                  md: forceStackedLayout
-                    ? 'none'
-                    : `1px solid ${theme.palette.divider}`,
-                },
-                pl: { xs: 0, md: forceStackedLayout ? 0 : 3 },
-                mt: { xs: 2, md: 0 },
+                height: '120px',
               }}
             >
-              <CardFooter
-                isHeader={true}
-                secondaryLabelLimit={secondaryLabelLimit}
-                values={values}
-              />
-            </Grid>
+              {icon}
+            </Box>
           )}
-        </Grid>
+
+          <Box sx={{}}>
+            {/* Title */}
+            <Typography
+              sx={{
+                // fontWeight: 700,
+                mb: 1,
+                fontSize: '2.5rem',
+                letterSpacing: '0.1em', // Add letter spacing
+              }}
+            >
+              {href ? (
+                <Link
+                  href={href}
+                  target={target}
+                  underline="hover"
+                  color="inherit"
+                >
+                  {title}
+                </Link>
+              ) : (
+                title
+              )}
+            </Typography>
+            {/* Subtitle */}
+            {subTitle && (
+              <Typography
+                variant="body1"
+                color="inherit"
+                fontStyle="italic"
+                sx={{
+                  fontSize: '1.5rem',
+                }}
+              >
+                {subTitle}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: useStackedLayout ? 'column' : 'row',
+            flexWrap: useStackedLayout ? 'nowrap' : 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 2,
+          }}
+        >
+          <Box
+            ref={descriptionRef}
+            style={{
+              flexBasis: useStackedLayout ? '100%' : 'min(65ch, 100%)',
+              width: useStackedLayout ? '100%' : 'auto',
+            }}
+          >
+            <CollapsibleDescription
+              description={description}
+              descriptionSubTitle=""
+              descriptionConfig={descriptionConfiguration}
+            />
+          </Box>
+          {values && (
+            <Box
+              ref={metadataRef}
+              sx={{
+                width: useStackedLayout ? '100%' : 'auto',
+                marginTop: useStackedLayout ? 2 : 0,
+                alignItems: 'flex-start',
+              }}
+            >
+              <MetadataTable data={values} />
+            </Box>
+          )}
+        </Box>
+
+        {ctaButtons && ctaButtons.length > 0 && (
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            sx={{ mt: 2 }}
+          >
+            {ctaButtons.map((buttonProps, index) => (
+              <Button
+                key={index}
+                variant={buttonProps.variant || 'contained'}
+                href={buttonProps.href}
+                sx={{
+                  width: { xs: '100%', sm: 'auto' },
+                  ...(buttonProps.sx || {}),
+                }}
+                endIcon={buttonProps.endIcon}
+              >
+                {buttonProps.label}
+              </Button>
+            ))}
+          </Stack>
+        )}
       </Box>
     </Card>
+  )
+}
+
+type MetadataTableProps = {
+  data: string[][]
+}
+
+function MetadataTable({ data }: MetadataTableProps) {
+  return (
+    <table
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+      }}
+    >
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={item[2] || index}>
+            <td
+              style={{
+                width: '1%',
+                whiteSpace: 'nowrap',
+                padding: '0px 16px 8px 0',
+                verticalAlign: 'top',
+                fontWeight: 'bold',
+              }}
+            >
+              {item[0]}
+            </td>
+            <td
+              style={{
+                width: 'auto',
+                paddingBottom: '12px',
+                verticalAlign: 'top',
+                wordBreak: 'break-word',
+              }}
+            >
+              {item[1]}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
