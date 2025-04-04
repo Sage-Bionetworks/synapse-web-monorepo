@@ -80,6 +80,7 @@ export type GenericCardSchema = {
 
   link?: string
   dataTypeIconNames?: string
+  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
 }
 
