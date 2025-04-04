@@ -15,7 +15,7 @@ import { JSONSchema7Definition } from 'json-schema'
 /**
  * Extends the @rjsf/core `ObjectField` and just adds a custom hook for Synapse annotation business logic
  */
-export function CustomObjectField<
+export function SynapseAnnotationsRJSFObjectField<
   T extends Record<string, any> | null | undefined = Record<string, any>,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
@@ -77,4 +77,4 @@ export function CustomObjectField<
   return <ObjectField {...props} />
 }
 
-export default CustomObjectField
+export default SynapseAnnotationsRJSFObjectField

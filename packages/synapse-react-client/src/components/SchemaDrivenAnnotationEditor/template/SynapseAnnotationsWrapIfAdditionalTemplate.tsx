@@ -14,7 +14,7 @@ import { Grid, TextField } from '@mui/material'
  *
  * @param props - The `WrapIfAdditionalProps` for this component
  */
-export default function WrapIfAdditionalTemplate<
+export default function SynapseAnnotationsWrapIfAdditionalTemplate<
   T = any,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
