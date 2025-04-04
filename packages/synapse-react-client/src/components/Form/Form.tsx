@@ -54,7 +54,12 @@ export default function Form({ fields, onSubmit }: FormProps) {
   const createField = (id: string, config: FieldConfig) => {
     if (config.componentType === Select) {
       return (
-        <FormControl fullWidth margin="normal" required={config.isRequired}>
+        <FormControl
+          fullWidth
+          margin="normal"
+          required={config.isRequired}
+          key={id}
+        >
           <InputLabel
             id={`${id}-label`}
             sx={{ position: 'relative', bottom: '20px' }}
@@ -65,7 +70,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
             fullWidth
             labelId={`${id}-label`}
             id={id}
-            value={formData[id]}
+            value={formData[id] || ''}
             onChange={e => handleChange(id, e.target.value)}
             displayEmpty
             renderValue={selected => {
@@ -80,6 +85,9 @@ export default function Form({ fields, onSubmit }: FormProps) {
             }}
             {...config.additionalOptions}
           >
+            <MenuItem value="" disabled>
+              Select a Category
+            </MenuItem>
             {Object.entries(config.selections ?? {}).map(([label, value]) => (
               <MenuItem key={value} value={value}>
                 {label}
@@ -94,7 +102,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
     } else if (config.componentType === TextField) {
       return (
         <TextField
-          fullWidth
+          key={id}
           id={id}
           value={formData[id]}
           label={config.label}
@@ -102,6 +110,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           required={config.isRequired}
           helperText={config.helperText}
           placeholder={config?.placeholder}
+          fullWidth
           {...config.additionalOptions}
         />
       )
