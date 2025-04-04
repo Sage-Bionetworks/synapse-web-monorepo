@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+    Any changes should be made to ALL portals HTML files.
+    Shared template chunks can be added to the shared portals Vite config file
+    -->
+    <%- headContent %>
+
+    <!-- <script>
+      // Endpoint override snippet to simplify testing against different environments
+      const endpoint = {
+        REPO: 'https://repo-staging.prod.sagebase.org',
+        PORTAL: 'https://staging.synapse.org/',
+      }
+      window.SRC_OVERRIDE_ENDPOINT_CONFIG = endpoint;
+    </script> -->
+    <script type="module" src='./src/index.tsx'></script>
+  </head>
+  <body>
+    <%- gtmNoscript %>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

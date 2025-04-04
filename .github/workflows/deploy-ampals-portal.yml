@@ -1,0 +1,21 @@
+name: 'Deploy AMP-ALS portal'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**' # temporarily track GH Actions changes to test
+      - 'apps/portals/ampals/**'
+      - 'apps/synapse-portal-framework/**'
+      - 'packages/synapse-react-client/**'
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-portal.yml
+    with:
+      portal-name: ampals
+      branch-or-tag: main
