@@ -103,9 +103,9 @@ export default function ContributeAStandard() {
     <Box
       display="flex"
       flexDirection="column"
-      alignItems={'center'}
+      alignItems="center"
       width="100%"
-      margin={'100px'}
+      padding="100px 50px"
     >
       <Form fields={fields} onSubmit={onSubmit} />
     </Box>

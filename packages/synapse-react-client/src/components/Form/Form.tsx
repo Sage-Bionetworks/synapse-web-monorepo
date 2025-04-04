@@ -104,15 +104,17 @@ export default function Form({ fields, onSubmit }: FormProps) {
       component="form"
       display="flex"
       flexDirection="column"
+      sx={{
+        width: '100%',
+        maxWidth: 700,
+        minWidth: { xs: '90%', sm: 400 },
+        rowGap: '20px',
+      }}
       onSubmit={evt => {
         evt.preventDefault()
         onSubmit(formData)
       }}
       noValidate
-      sx={{
-        maxWidth: 700,
-        rowGap: '20px',
-      }}
     >
       {Object.entries(fields).map(([id, config]) => createField(id, config))}
       <Button>Submit</Button>
