@@ -1,5 +1,3 @@
-import columns from '@/assets/icons/columns'
-import { event } from '@googlemaps/jest-mocks'
 import {
   FormControl,
   InputLabel,
