@@ -7,6 +7,7 @@ import {
   SynapseConstants,
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 8
 
@@ -17,8 +18,7 @@ export const educationSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
-  citationBoilerplateText:
-    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
+  citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [
     'link',
     'activityType',

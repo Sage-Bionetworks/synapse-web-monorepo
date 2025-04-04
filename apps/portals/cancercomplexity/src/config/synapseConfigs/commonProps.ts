@@ -18,3 +18,5 @@ export const detailPageLinks = [
     matchColumnName: 'datasets',
   },
 ]
+export const citationBoilerplateText =
+  'Searched and Downloaded through the Cancer Complexity Knowledge Portal'

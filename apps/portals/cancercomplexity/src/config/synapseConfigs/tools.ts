@@ -6,6 +6,7 @@ import type {
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 6
 
@@ -15,8 +16,7 @@ export const toolsSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
-  citationBoilerplateText:
-    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
+  citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [
     'inputData',
     'inputFormat',

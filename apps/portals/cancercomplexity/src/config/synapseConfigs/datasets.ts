@@ -6,6 +6,7 @@ import type {
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 0
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
@@ -18,8 +19,7 @@ export const datasetSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
-  citationBoilerplateText:
-    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
+  citationBoilerplateText: citationBoilerplateText,
   customSecondaryLabelConfig: {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,
