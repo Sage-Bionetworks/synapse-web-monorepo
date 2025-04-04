@@ -52,7 +52,7 @@ export const columnIconConfigs: ColumnIconConfigs = {
         icon: 'geneVariants',
         label: 'Genome Profiling Data Available',
       },
-      imaging: { icon: 'imagingMicroscope', label: 'Image Data Available' },
+      imaging: { icon: 'imaging', label: 'Image Data Available' },
       inSilicoModel: {
         icon: 'inSilicoModel',
         label: 'In Silico Model Data Available',

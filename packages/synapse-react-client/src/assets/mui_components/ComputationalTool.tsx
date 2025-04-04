@@ -6,11 +6,10 @@ const ComputationalTool = (props: SvgIconProps) => {
   const { sx } = props
   return (
     <SvgIcon
-      // viewBox="0 0 17 14"
+      viewBox="-4 -5 24 24"
       sx={spreadSx(sx, {
-        '*': {
+        path: {
           fill: 'none !important',
-          stroke: 'currentColor !important',
         },
       })}
     >

@@ -20,7 +20,6 @@ import GeneExpression from '@/assets/mui_components/GeneExpression'
 import GeneVariants from '@/assets/mui_components/GeneVariants'
 import HelpChatBubble from '@/assets/mui_components/HelpChatBubble'
 import Imaging from '@/assets/mui_components/Imaging'
-import ImagingMicroscope from '@/assets/mui_components/ImagingMicroscope'
 import InSilicoModel from '@/assets/mui_components/InSilicoModel'
 import Kinomics from '@/assets/mui_components/Kinomics'
 import LineGraph from '@/assets/mui_components/LineGraph'
@@ -191,7 +190,6 @@ export const IconStrings = [
   'modelSystem',
   'bioChemicalPhysical',
   'computationalTool',
-  'imagingMicroscope',
   'spatialProfiling',
   'dataReuse',
   'lineGraph',
@@ -432,8 +430,6 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <BioChemicalPhysical {...otherProps} />
     case 'computationalTool':
       return <ComputationalTool {...otherProps} />
-    case 'imagingMicroscope':
-      return <ImagingMicroscope {...otherProps} />
     case 'spatialProfiling':
       return <SpatialProfiling {...otherProps} />
     case 'dataReuse':

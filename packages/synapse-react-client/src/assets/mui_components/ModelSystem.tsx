@@ -6,9 +6,9 @@ const ModelSystem = (props: SvgIconProps) => {
   const { sx } = props
   return (
     <SvgIcon
+      {...props}
       sx={spreadSx(sx, {
         fill: 'none !important',
-        // stroke: 'currentColor !important',
       })}
     >
       <ModelSystemSvg />
