@@ -158,7 +158,6 @@ function HeaderCardV2({
   const [metadataHeight, setMetadataHeight] = useState<number>(0)
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
 
-  // Effect to check heights and update layout if needed
   useEffect(() => {
     // Only set up height checking if not already forced to stack
     if (forceStackedLayout || isMobile) {
@@ -172,30 +171,14 @@ function HeaderCardV2({
     // const { mHight } = metadataRef.current.getBoundingClientRect();
     setMetadataHeight(mHeight)
 
-    console.log('in useEffect', {
-      windowWidth,
-      useStackedLayout,
-      dHeight,
-      mHeight,
-    })
-
     const sww = () => setWindowWidth(window.innerWidth)
 
-    // Add resize listener
     window.addEventListener('resize', sww)
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', sww)
     }
-    // If metadata is taller than description, use stacked layout
-    // if (mHeight > dHeight) {
-    //   setUseStackedLayout(true)
-    //   console.log(`should stack -- ${mHeight} > ${dHeight}`)
-    // } else {
-    //   // console.l`g('should not st -- ${mHeight} <= ${dHeight}`ck')
-    //   UseStackedLayout(false)
-    // }
   }, [forceStackedLayout, isMobile, values, description, windowWidth])
 
   let useStackedLayout = false
