@@ -1,1 +1,0 @@
-import{b as o}from"./_baseSlice-F8doVSIJ.js";import{i as f}from"./_isIterateeCall-DxE_HXvA.js";import{t as m}from"./toInteger-hwymBMnv.js";var h=Math.ceil,u=Math.max;function p(e,t,l){(l?f(e,t,l):t===void 0)?t=1:t=u(m(t),0);var n=e==null?0:e.length;if(!n||t<1)return[];for(var r=0,i=0,a=Array(h(n/t));r<n;)a[i++]=o(e,r,r+=t);return a}export{p as c};

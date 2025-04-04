@@ -1,1 +1,0 @@
-import{i as e,a as t,e as f}from"./isArrayLike-DBJ5VOVB.js";import{i as n}from"./_baseTimes-36S_kd0L.js";function p(s,a,r){if(!n(r))return!1;var i=typeof a;return(i=="number"?e(r)&&t(a,r.length):i=="string"&&a in r)?f(r[a],s):!1}export{p as i};
