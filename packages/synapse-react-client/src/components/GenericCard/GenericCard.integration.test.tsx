@@ -24,7 +24,7 @@ import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import * as FileHandleLinkModule from '../widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
-import { AddToDownloadCartButton } from '../AddToDownloadCart'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { GenericCardProps } from './GenericCard'
 import GenericCard, {
   CARD_SHORT_DESCRIPTION_CSS,
@@ -73,9 +73,9 @@ const mockImageFileHandle = jest
   .spyOn(ImageFileHandleModule, 'ImageFileHandle')
   .mockImplementation(() => <div data-testid="ImageFileHandle" />)
 
-jest.mock('../AddToDownloadCart', () => ({
-  AddToDownloadCartButton: jest.fn(() => (
-    <div data-testid="AddToDownloadCartButton" />
+jest.mock('../EntityDownloadConfirmation', () => ({
+  EntityDownloadConfirmation: jest.fn(() => (
+    <div data-testid="EntityDownloadConfirmation" />
   )),
 }))
 
@@ -592,22 +592,26 @@ describe('GenericCard tests', () => {
     }
 
     it('renders the button', async () => {
-      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
-      mockAddToDownloadCartButton.mockImplementation(() => (
-        <div data-testid="AddToDownloadCartButton" />
+      const mockEntityDownloadConfirmation = jest.mocked(
+        EntityDownloadConfirmation,
+      )
+      mockEntityDownloadConfirmation.mockImplementation(() => (
+        <div data-testid="EntityDownloadConfirmation" />
       ))
       renderComponent(props, 'TableEntity')
       const button = await screen.findByRole('button', {
         name: /download/i,
       })
       fireEvent.click(button)
-      expect(AddToDownloadCartButton).toHaveBeenCalled()
+      expect(EntityDownloadConfirmation).toHaveBeenCalled()
     })
 
     it('does not render the button with invalid synID', () => {
-      const mockAddToDownloadCartButton = jest.mocked(AddToDownloadCartButton)
-      mockAddToDownloadCartButton.mockImplementation(() => (
-        <div data-testid="AddToDownloadCartButton" />
+      const mockEntityDownloadConfirmation = jest.mocked(
+        EntityDownloadConfirmation,
+      )
+      mockEntityDownloadConfirmation.mockImplementation(() => (
+        <div data-testid="EntityDownloadConfirmation" />
       ))
 
       const dataForInvalidSynapseLink = cloneDeep(data)
