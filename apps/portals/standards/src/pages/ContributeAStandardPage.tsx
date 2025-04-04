@@ -75,6 +75,28 @@ export default function ContributeAStandard() {
         rows: 3,
       },
     },
+    contributorName: {
+      componentType: TextField,
+      label: 'Contributor Name',
+      helperText: 'What is your name? This will be used for attribution.',
+      placeholder: 'e.g., "Tabatha Butterscotch"',
+      isRequired: true,
+    },
+    contributorGithub: {
+      // TODO: Do we even still want this field, now that you don't need a GitHub to submit a new entity?
+      componentType: TextField,
+      label: 'Contributor GitHub',
+      helperText: 'What is your GitHub name, without the @ symbol?',
+      placeholder: 'e.g., "tbuttersco"',
+      isRequired: false,
+    },
+    contributorORCID: {
+      componentType: TextField,
+      label: 'Contributor ORCID',
+      helperText: 'What is your ORCID?',
+      placeholder: 'e.g., "0000-0001-2345-6789"',
+      isRequired: true,
+    },
   }
 
   return (
