@@ -6,10 +6,13 @@ import AccountCertified from '@/assets/mui_components/AccountCertified'
 import AccountRegistered from '@/assets/mui_components/AccountRegistered'
 import AccountValidated from '@/assets/mui_components/AccountValidated'
 import ActionKey from '@/assets/mui_components/ActionKey'
+import BioChemicalPhysical from '@/assets/mui_components/BioChemicalPhysical'
 import Chromatin from '@/assets/mui_components/Chromatin'
 import Clinical from '@/assets/mui_components/Clinical'
+import ComputationalTool from '@/assets/mui_components/ComputationalTool'
 import Data from '@/assets/mui_components/Data'
 import DataLocked from '@/assets/mui_components/DataLocked'
+import DataReuse from '@/assets/mui_components/DataReuse'
 import Dataset from '@/assets/mui_components/Dataset'
 import DatasetCollection from '@/assets/mui_components/DatasetCollection'
 import Docker from '@/assets/mui_components/Docker'
@@ -17,6 +20,7 @@ import GeneExpression from '@/assets/mui_components/GeneExpression'
 import GeneVariants from '@/assets/mui_components/GeneVariants'
 import HelpChatBubble from '@/assets/mui_components/HelpChatBubble'
 import Imaging from '@/assets/mui_components/Imaging'
+import ImagingMicroscope from '@/assets/mui_components/ImagingMicroscope'
 import InSilicoModel from '@/assets/mui_components/InSilicoModel'
 import Kinomics from '@/assets/mui_components/Kinomics'
 import LineGraph from '@/assets/mui_components/LineGraph'
@@ -25,6 +29,7 @@ import Other from '@/assets/mui_components/Other'
 import PackagableFile from '@/assets/mui_components/PackagableFile'
 import Proteomics from '@/assets/mui_components/Proteomics'
 import Rat from '@/assets/mui_components/Rat'
+import SpatialProfiling from '@/assets/mui_components/SpatialProfiling'
 import {
   AccessTimeTwoTone,
   AddBoxOutlined,
@@ -183,7 +188,12 @@ export const IconStrings = [
   'github',
   'imaging',
   'inSilicoModel',
-  'ModelSystem',
+  'modelSystem',
+  'bioChemicalPhysical',
+  'computationalTool',
+  'imagingMicroscope',
+  'spatialProfiling',
+  'dataReuse',
   'lineGraph',
   'kinomics',
   'proteomics',
@@ -416,8 +426,18 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Imaging {...otherProps} />
     case 'inSilicoModel':
       return <InSilicoModel {...otherProps} />
-    case 'ModelSystem':
+    case 'modelSystem':
       return <ModelSystem {...otherProps} />
+    case 'bioChemicalPhysical':
+      return <BioChemicalPhysical {...otherProps} />
+    case 'computationalTool':
+      return <ComputationalTool {...otherProps} />
+    case 'imagingMicroscope':
+      return <ImagingMicroscope {...otherProps} />
+    case 'spatialProfiling':
+      return <SpatialProfiling {...otherProps} />
+    case 'dataReuse':
+      return <DataReuse {...otherProps} />
     case 'lineGraph':
       return <LineGraph {...otherProps} />
     case 'kinomics':

@@ -1,0 +1,27 @@
+<svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="dataTypeIcons/spatialProfiling">
+<g id="Group 3311">
+<g id="Rectangle 40383">
+<mask id="path-1-inside-1_743_3935" fill="white">
+<rect x="1.71875" y="2.02499" width="13.3678" height="12.803" rx="0.991029"/>
+</mask>
+<rect x="1.71875" y="2.02499" width="13.3678" height="12.803" rx="0.991029" fill="#314C83" fill-opacity="0.5" stroke="#314C83" stroke-width="2.25" mask="url(#path-1-inside-1_743_3935)"/>
+</g>
+<g id="Group 3310">
+<circle id="Ellipse 387" cx="5.57061" cy="5.65844" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 391" cx="5.57061" cy="8.43697" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 395" cx="5.57061" cy="11.2154" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 388" cx="8.34991" cy="5.65847" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 392" cx="8.34991" cy="8.43697" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 396" cx="8.34991" cy="11.2154" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 389" cx="11.1273" cy="5.65847" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 393" cx="11.1273" cy="8.43697" r="1.06866" fill="#314C83"/>
+<circle id="Ellipse 397" cx="11.1273" cy="11.2154" r="1.06866" fill="#314C83"/>
+</g>
+<g id="Group 3309">
+<circle id="Ellipse 385" cx="12.3041" cy="8.33001" r="3.4984" fill="#E4E1EC" stroke="#314C83" stroke-width="1.125"/>
+<path id="Vector 280" d="M15.2891 11.2347L17.5687 13.5143" stroke="#314C83" stroke-width="1.575" stroke-linecap="round"/>
+</g>
+</g>
+</g>
+</svg>
