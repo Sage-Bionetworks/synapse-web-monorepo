@@ -103,6 +103,70 @@ export type UseImmutableTableQueryOptions = {
 export const DEBOUNCE_DELAY_MS = 750
 
 /**
+ * Utility to synchronize the URL with the current query request. Synchronization only occurs if `shouldDeepLink` is true.
+ * @param shouldDeepLink whether the query should be synchronized with the URL
+ * @param componentIndex the index of the component to synchronize with the URL - essential if multiple components to synchronize are on the page
+ * @param setQuery - callback used to update the current query
+ * @param initQueryRequest - the initial query request passed via props
+ * @param currentQueryRequest - the query request that is currently used
+ */
+function useSynchronizeQueryWithUrl(
+  shouldDeepLink: boolean,
+  componentIndex: number,
+  setQuery: (
+    queryRequest: React.SetStateAction<QueryBundleRequest>,
+    commitOptions?: QueryChangeCommitOptions,
+  ) => void,
+  initQueryRequest: QueryBundleRequest,
+  currentQueryRequest: QueryBundleRequest,
+) {
+  /**
+   * Inspect the URL on mount to see if we have a particular query request that we must show.
+   */
+  useEffect(() => {
+    // Only run this effect if deep linking is enabled
+    if (shouldDeepLink) {
+      const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
+        'QueryWrapper',
+        componentIndex,
+      )
+      if (queryRequestFromLink && queryRequestFromLink.query) {
+        setQuery(prevState => ({
+          ...prevState,
+          ...queryRequestFromLink,
+          query: {
+            ...prevState.query,
+            ...queryRequestFromLink.query,
+          },
+        }))
+      }
+    }
+    // should only run on mount, or if the component index changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [componentIndex])
+
+  // If `shouldDeepLink` is true, synchronize the URL
+  useEffect(() => {
+    if (shouldDeepLink) {
+      if (isEqual(initQueryRequest, currentQueryRequest)) {
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          componentIndex,
+          null,
+        )
+      } else {
+        const queryJsonString = JSON.stringify(currentQueryRequest.query)
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          componentIndex,
+          queryJsonString,
+        )
+      }
+    }
+  }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
+}
+
+/**
  * Custom hook that maintains and manages the state of a Synapse Table query.
  * @param options
  * @returns
@@ -180,47 +244,13 @@ export default function useImmutableTableQuery(
     [dispatch],
   )
 
-  /**
-   * Inspect the URL on mount to see if we have a particular query request that we must show.
-   */
-  useEffect(() => {
-    const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
-      'QueryWrapper',
-      componentIndex,
-    )
-    if (queryRequestFromLink && queryRequestFromLink.query) {
-      setQuery(prevState => ({
-        ...prevState,
-        ...queryRequestFromLink,
-        query: {
-          ...prevState.query,
-          ...queryRequestFromLink.query,
-        },
-      }))
-    }
-    // should only run on mount, or if the component index changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentIndex])
-
-  // If `shouldDeepLink` is true, synchronize the URL
-  useEffect(() => {
-    if (shouldDeepLink) {
-      if (isEqual(initQueryRequest, currentQueryRequest)) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          componentIndex,
-          null,
-        )
-      } else {
-        const queryJsonString = JSON.stringify(currentQueryRequest.query)
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          componentIndex,
-          queryJsonString,
-        )
-      }
-    }
-  }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
+  useSynchronizeQueryWithUrl(
+    shouldDeepLink,
+    componentIndex,
+    setQuery,
+    initQueryRequest,
+    currentQueryRequest,
+  )
 
   const onCancelChange = useCallback(() => {
     dispatch({ type: 'cancelChanges' })

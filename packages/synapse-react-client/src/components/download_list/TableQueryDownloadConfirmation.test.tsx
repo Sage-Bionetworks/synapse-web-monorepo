@@ -14,10 +14,6 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
@@ -81,10 +77,7 @@ async function setUp(
   fileIdColumnName?: string,
   fileVersionColumnName?: string,
 ) {
-  const mockQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-    {
-      setShowDownloadConfirmation: jest.fn(),
-    }
+  const mockOnClose = jest.fn()
   const user = userEvent.setup()
   const component = render(
     <QueryWrapper
@@ -92,13 +85,7 @@ async function setUp(
       fileIdColumnName={fileIdColumnName}
       fileVersionColumnName={fileVersionColumnName}
     >
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={
-          mockQueryVisualizationContext as QueryVisualizationContextType
-        }
-      >
-        <TableQueryDownloadConfirmation />
-      </QueryVisualizationContextProvider>
+      <TableQueryDownloadConfirmation onClose={mockOnClose} />
     </QueryWrapper>,
     {
       wrapper: createWrapper(),
@@ -114,8 +101,7 @@ async function setUp(
     component,
     user,
     downloadConfirmationUiPassedProps,
-    mockSetShowDownloadConfirmation:
-      mockQueryVisualizationContext.setShowDownloadConfirmation,
+    mockOnClose,
   }
 }
 
@@ -170,10 +156,9 @@ describe('TableQueryDownloadConfirmation', () => {
   afterAll(() => server.close())
 
   it('adds files to download list using a table query when invoked', async () => {
-    const {
-      downloadConfirmationUiPassedProps,
-      mockSetShowDownloadConfirmation,
-    } = await setUp(expectedFileCountWithSelectFileColumn)
+    const { downloadConfirmationUiPassedProps, mockOnClose } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
@@ -198,15 +183,14 @@ describe('TableQueryDownloadConfirmation', () => {
         'success',
         expect.any(Object),
       )
-      expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+      expect(mockOnClose).toHaveBeenCalled()
     })
   })
 
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
-    const {
-      downloadConfirmationUiPassedProps,
-      mockSetShowDownloadConfirmation,
-    } = await setUp(expectedFileCountWithSelectFileColumn)
+    const { downloadConfirmationUiPassedProps, mockOnClose } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
@@ -214,7 +198,7 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     expect(addToDownloadListSpy).not.toHaveBeenCalled()
-    expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+    expect(mockOnClose).toHaveBeenCalled()
   })
 
   it('handles case where adding files to the download list results in an error', async () => {
@@ -230,10 +214,9 @@ describe('TableQueryDownloadConfirmation', () => {
       ),
     )
 
-    const {
-      downloadConfirmationUiPassedProps,
-      mockSetShowDownloadConfirmation,
-    } = await setUp(expectedFileCountWithSelectFileColumn)
+    const { downloadConfirmationUiPassedProps, mockOnClose } = await setUp(
+      expectedFileCountWithSelectFileColumn,
+    )
 
     // Call under test
     act(() => {
@@ -243,7 +226,7 @@ describe('TableQueryDownloadConfirmation', () => {
     await waitFor(() => {
       expect(addToDownloadListSpy).toHaveBeenCalledTimes(1)
       expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
-      expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+      expect(mockOnClose).toHaveBeenCalled()
     })
   })
   it('setting the fileIdColumnName and fileVersionColumnName should update the AddToDownloadListRequest query if ColumnModels are available in the result', async () => {

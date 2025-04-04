@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
 
@@ -36,12 +37,17 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
   const navigate = useNavigate()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const pathnameWithoutTrailingSlash = useMemo(
+    () => pathname.replace(/\/$/, ''),
+    [pathname],
+  )
+
   /**
    * In the desktop view, we use Material UI tabs
    */
   return (
     <Tabs
-      value={pathname}
+      value={pathnameWithoutTrailingSlash}
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"

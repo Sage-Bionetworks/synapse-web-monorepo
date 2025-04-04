@@ -6,7 +6,6 @@ import { SynapseConstants, useSynapseContext } from '@/utils'
 import { getPrimaryKeyINFilter } from '@/utils/functions/QueryFilterUtils'
 import { useMemo } from 'react'
 import { useQueryContext } from '../QueryContext'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   useHasSelectedRowsAtomValue,
   useRowSelectionPrimaryKeyAtomValue,
@@ -18,14 +17,20 @@ import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 
-export function TableQueryDownloadConfirmation() {
+type TableQueryDownloadConfirmationProps = {
+  onClose: () => void
+}
+
+export function TableQueryDownloadConfirmation(
+  props: TableQueryDownloadConfirmationProps,
+) {
+  const { onClose } = props
   const { getCurrentQueryRequest, fileIdColumnName, fileVersionColumnName } =
     useQueryContext()
   const { data: originalQueryMetadata } = useSuspenseGetQueryMetadata()
   const hasSelectedRows = useHasSelectedRowsAtomValue()
   const selectedRows = useSelectedRowsAtomValue()
   const rowSelectionPrimaryKey = useRowSelectionPrimaryKeyAtomValue()
-  const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
   const downloadStatsQueryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
@@ -85,10 +90,6 @@ export function TableQueryDownloadConfirmation() {
   ])
 
   const { downloadCartPageUrl } = useSynapseContext()
-
-  function onClose() {
-    setShowDownloadConfirmation(false)
-  }
 
   const { mutate: addToDownloadList, isPending: isAddingToDownloadCart } =
     useAddQueryToDownloadList({

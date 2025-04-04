@@ -250,13 +250,40 @@ describe('QueryWrapper', () => {
         '/any/url/you/like?QueryWrapper0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
-      renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({
+        initQueryRequest: initialQueryRequest,
+        shouldDeepLink: true,
+      })
       await waitFor(() => {
         expect(providedContext).toBeDefined()
         const lastQuery = providedContext!.getCurrentQueryRequest()
         expect(lastQuery).not.toEqual(initialQueryRequest)
         expect(lastQuery.entityId).toBe('syn12345')
         expect(lastQuery.query.sql).toBe(lqr.query.sql)
+      })
+    })
+    it('does not change query when shouldDeepLink is false', async () => {
+      const lqr = cloneDeep(initialQueryRequest)
+      lqr.query.sql = 'SELECT * FROM syn12345'
+
+      registerTableQueryResult(lqr.query, mockQueryResponseData)
+
+      window.history.pushState(
+        {},
+        'Page Title',
+        '/any/url/you/like?QueryWrapper0=' +
+          encodeURIComponent(JSON.stringify(lqr.query)),
+      )
+      renderComponent({
+        initQueryRequest: initialQueryRequest,
+        shouldDeepLink: false,
+      })
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        const lastQuery = providedContext!.getCurrentQueryRequest()
+        expect(lastQuery).toEqual(initialQueryRequest)
+        expect(lastQuery.entityId).toBe('syn16787123')
+        expect(lastQuery.query.sql).toBe(initialQueryRequest.query.sql)
       })
     })
     it('when there are multiple params in the url', async () => {
@@ -272,7 +299,10 @@ describe('QueryWrapper', () => {
           encodeURIComponent(JSON.stringify(lqr.query)) +
           '&anotherPram=somethingElse',
       )
-      renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({
+        initQueryRequest: initialQueryRequest,
+        shouldDeepLink: true,
+      })
       await waitFor(() => expect(providedContext).toBeDefined())
 
       const lastQuery = providedContext!.getCurrentQueryRequest()
