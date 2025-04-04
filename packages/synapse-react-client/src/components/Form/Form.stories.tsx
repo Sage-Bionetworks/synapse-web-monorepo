@@ -39,6 +39,7 @@ export const BasicForm: Story = {
         isRequired: false,
         additionalOptions: {
           multiline: true,
+          rows: 3,
         },
       },
     },

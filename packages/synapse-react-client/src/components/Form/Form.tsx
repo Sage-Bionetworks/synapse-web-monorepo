@@ -1,7 +1,8 @@
+import columns from '@/assets/icons/columns'
+import { event } from '@googlemaps/jest-mocks'
 import {
   FormControl,
   InputLabel,
-  Input,
   Box,
   TextField,
   Select,
@@ -27,17 +28,17 @@ type FormConfig = {
   }
 }
 
-type FormSchema = {
+export type FormSchema = {
   [fieldId: string]: FormConfig
 }
 
-type FormDataRecord = {
+export type FormDataRecord = {
   [id: string]: string
 }
 
 export type FormProps = {
   fields: FormSchema
-  onSubmit: () => any
+  onSubmit: (data: FormDataRecord) => any
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
@@ -54,8 +55,14 @@ export default function Form({ fields, onSubmit }: FormProps) {
     if (config.componentType === Select) {
       return (
         <FormControl fullWidth margin="normal" required={config.isRequired}>
-          <InputLabel id={`${id}-label`}>{config.label}</InputLabel>
+          <InputLabel
+            id={`${id}-label`}
+            sx={{ position: 'relative', bottom: '20px' }}
+          >
+            {config.label}
+          </InputLabel>
           <Select
+            fullWidth
             labelId={`${id}-label`}
             id={id}
             value={formData[id]}
@@ -76,6 +83,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
     } else if (config.componentType === TextField) {
       return (
         <TextField
+          fullWidth
           id={id}
           value={formData[id]}
           label={config.label}
@@ -90,9 +98,22 @@ export default function Form({ fields, onSubmit }: FormProps) {
   }
 
   return (
-    <Box component="form" onSubmit={onSubmit} noValidate sx={{ maxWidth: 400 }}>
+    <Box
+      component="form"
+      display="flex"
+      flexDirection="column"
+      onSubmit={evt => {
+        evt.preventDefault()
+        onSubmit(formData)
+      }}
+      noValidate
+      sx={{
+        maxWidth: 700,
+        rowGap: '20px',
+      }}
+    >
       {Object.entries(fields).map(([id, config]) => createField(id, config))}
-      <Button onSubmit={onSubmit}>Submit</Button>
+      <Button>Submit</Button>
     </Box>
   )
 }
