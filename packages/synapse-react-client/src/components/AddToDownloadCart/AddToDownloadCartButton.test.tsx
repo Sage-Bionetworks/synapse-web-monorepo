@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import AddToDownloadCartButton, {
-  AddToDownloadCartButtonProps,
+import EntityDownloadConfirmation, {
+  EntityDownloadConfirmationProps,
 } from './AddToDownloadCartButton'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useGetEntity } from '../../synapse-queries/'
@@ -37,27 +37,27 @@ beforeEach(() => {
 // getUseQueryLoadingMock for loading test
 // folder mock for folder test
 
-describe('AddToDownloadCartButton', () => {
-  const propsFolder: AddToDownloadCartButtonProps = {
+describe('EntityDownloadConfirmation', () => {
+  const propsFolder: EntityDownloadConfirmationProps = {
     entityId: 'syn7248585',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }
 
-  const propsTable: AddToDownloadCartButtonProps = {
+  const propsTable: EntityDownloadConfirmationProps = {
     entityId: 'syn53132831',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }
 
-  const propsFile: AddToDownloadCartButtonProps = {
+  const propsFile: EntityDownloadConfirmationProps = {
     entityId: 'syn59954313',
     onIsLoadingChange: jest.fn(),
     handleClose: jest.fn(),
   }
 
   it('table entities show the download confirmation UI when clicked', () => {
-    render(<AddToDownloadCartButton {...propsTable} />, {
+    render(<EntityDownloadConfirmation {...propsTable} />, {
       wrapper: createWrapper(),
     })
     screen.getByTestId('TableQueryDownloadConfirmation')
@@ -65,7 +65,7 @@ describe('AddToDownloadCartButton', () => {
 
   it('folder entities show the download confirmation UI when clicked', () => {
     mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockFolderEntity))
-    render(<AddToDownloadCartButton {...propsFolder} />, {
+    render(<EntityDownloadConfirmation {...propsFolder} />, {
       wrapper: createWrapper(),
     })
     screen.getByTestId('FolderDownloadConfirmation')
@@ -75,7 +75,7 @@ describe('AddToDownloadCartButton', () => {
     mockUseGetEntity.mockReturnValue(
       getUseQuerySuccessMock(mockFileEntityData.entity),
     )
-    render(<AddToDownloadCartButton {...propsFile} />, {
+    render(<EntityDownloadConfirmation {...propsFile} />, {
       wrapper: createWrapper(),
     })
     await waitFor(() => {
