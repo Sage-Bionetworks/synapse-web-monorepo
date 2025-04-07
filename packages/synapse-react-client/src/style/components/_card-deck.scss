@@ -31,6 +31,7 @@
 
     &--b2ai {
       box-shadow: none;
+      margin: 20px;
     }
 
     &__header__image {
@@ -49,7 +50,6 @@
 
     &__header {
       min-height: 75px;
-      @extend %side-padding;
       display: flex;
       align-items: center;
 
@@ -109,6 +109,11 @@
 
       p {
         margin-bottom: 40px;
+      }
+
+      &--b2ai {
+        padding: 0px;
+        margin-bottom: 0px;
       }
     }
   }

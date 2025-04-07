@@ -74,7 +74,12 @@ export default function CardDeckDesktop({
           )} */}
         </div>
       </div>
-      <div className="CardDeck__Card__summary">
+      <div
+        className={classNames(
+          `CardDeck__Card__summary`,
+          cardDeckType && `CardDeck__Card__summary--${cardDeckType}`,
+        )}
+      >
         <p> {description} </p>
         <LargeButton
           color="secondary"
