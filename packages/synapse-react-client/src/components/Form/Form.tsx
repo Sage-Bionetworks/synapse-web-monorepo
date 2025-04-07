@@ -37,7 +37,7 @@ export type FormData = {
 
 export type FormProps = {
   fields: FieldSchema
-  onSubmit: (data: FormData) => any
+  onSubmit: (data: FormData) => boolean
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
@@ -49,6 +49,15 @@ export default function Form({ fields, onSubmit }: FormProps) {
       if (prev[id] === value) return prev
       return { ...prev, [id]: value }
     })
+  }
+
+  const handleSubmission = (evt: Event) => {
+    evt.preventDefault()
+    const wasSuccessful = onSubmit(formData)
+
+    if (wasSuccessful) {
+      setFormData({})
+    }
   }
 
   const createField = (id: string, config: FieldConfig) => {
@@ -129,10 +138,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         minWidth: { xs: '90%', sm: 400 },
         rowGap: '20px',
       }}
-      onSubmit={evt => {
-        evt.preventDefault()
-        onSubmit(formData)
-      }}
+      onSubmit={handleSubmission}
       noValidate
     >
       {Object.entries(fields).map(([id, config]) => createField(id, config))}

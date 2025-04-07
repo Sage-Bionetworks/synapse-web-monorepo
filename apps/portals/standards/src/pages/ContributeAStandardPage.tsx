@@ -7,6 +7,7 @@ import Form, {
 export default function ContributeAStandard() {
   const onSubmit = (formData: FormData) => {
     console.log(formData)
+    return true
   }
 
   const fields: FieldSchema = {
