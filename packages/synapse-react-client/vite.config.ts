@@ -8,11 +8,12 @@ const config = new ConfigBuilder()
   .setIncludeReactConfig(true)
   .setIncludeLibraryConfig(true, {
     except: [
-      // Include @sage-bionetworks/synapse-types because the local version may drift from the version released on NPM
+      // Include certain monorepo projects because the local versions may drift from the versions released on NPM
       '@sage-bionetworks/synapse-types',
+      '@sage-bionetworks/synapse-client',
     ],
   })
-  .setBuildLibEntry(resolve(__dirname, 'src/umd.index.ts'))
+  .setBuildLibEntry(resolve(__dirname, 'src/SWC.index.ts'))
   .setConfigOverrides({
     root: '.',
     build: {
