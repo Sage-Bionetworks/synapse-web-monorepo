@@ -9,7 +9,7 @@ import {
   Button,
   useTheme,
 } from '@mui/material'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 
 type FieldType = typeof TextField | typeof Select
 
@@ -51,7 +51,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
     })
   }
 
-  const handleSubmission = (evt: Event) => {
+  const handleSubmission = (evt: FormEvent) => {
     evt.preventDefault()
     const wasSuccessful = onSubmit(formData)
 
@@ -138,7 +138,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         minWidth: { xs: '90%', sm: 400 },
         rowGap: '20px',
       }}
-      onSubmit={handleSubmission}
+      onSubmit={evt => handleSubmission(evt)}
       noValidate
     >
       {Object.entries(fields).map(([id, config]) => createField(id, config))}
