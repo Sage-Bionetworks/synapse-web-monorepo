@@ -13,6 +13,9 @@ const InSilicoModel = (props: SvgIconProps) => {
         rect: {
           fill: theme.palette.primary.main,
         },
+        'path[fill="white"]': {
+          fill: 'white !important',
+        },
       })}
     >
       <InSilicoModelSvg />
