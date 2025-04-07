@@ -1,6 +1,5 @@
 import type {
   CardConfiguration,
-  ColumnIconConfigs,
   GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'

@@ -1,7 +1,6 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
 import type {
   CardConfiguration,
-  ColumnIconConfigs,
   GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
