@@ -1,4 +1,4 @@
-import { Box, Select, TextField } from '@mui/material'
+import { Box, Select, TextField, Typography } from '@mui/material'
 import Form, {
   FormData,
   FieldSchema,
@@ -112,6 +112,9 @@ export default function ContributeAStandard() {
       width="100%"
       padding="50px"
     >
+      <Typography variant="h3" component="h1">
+        Contribute a Standard
+      </Typography>
       <Form fields={fields} onSubmit={onSubmit} />
     </Box>
   )
