@@ -5,7 +5,7 @@ import Select from 'react-select'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
-import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
+import { findValueOption } from './JsonSchemaForm/widgets/SelectWidget'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration

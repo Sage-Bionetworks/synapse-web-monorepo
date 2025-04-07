@@ -1,7 +1,6 @@
 import {
   useDeleteEntity,
   useGetEntityBundle,
-  useGetFeatureFlag,
   useGetJson,
   useGetSchemaBinding,
   useGetValidationResults,
@@ -21,7 +20,6 @@ import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
   EntityType,
-  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
 import { useEffect, useState } from 'react'
@@ -35,8 +33,6 @@ function isPublic(bundle: EntityBundle): boolean {
     return PUBLIC_PRINCIPAL_IDS.includes(ra.principalId)
   })
 }
-
-export const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID'
 
 export type EntityBadgeIconsProps = {
   entityId: string
@@ -121,17 +117,14 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.JSONSCHEMA_VALIDATION_STATUS,
-  )
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: isFeatureEnabled && inView,
+    enabled: inView,
     staleTime: 60 * 1000, // 60 seconds
   })
 
   const { data: schemaValidationResults } = useGetValidationResults(entityId, {
-    enabled: isFeatureEnabled && inView && !!boundSchema,
+    enabled: inView && !!boundSchema,
     staleTime: 60 * 1000, // 60 seconds
   })
 
@@ -140,7 +133,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   const annotationsCount =
     annotations && !isEmpty(annotations) ? Object.keys(annotations).length : 0
   useEffect(() => {
-    if (isFeatureEnabled && schemaValidationResults) {
+    if (schemaValidationResults) {
       if (schemaValidationResults.isValid) {
         setSchemaConformance(SchemaConformanceState.VALID)
       } else if (annotationsCount) {
@@ -153,7 +146,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     }
   }, [
     schemaValidationResults,
-    isFeatureEnabled,
     annotationsCount,
     annotations,
     SchemaConformanceState.VALID,
@@ -211,7 +203,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   // We also show the schema name if there is one (and we're in experimental mode)
   const valiationSchemaTableRow = (
     <>
-      {isFeatureEnabled && boundSchema ? (
+      {boundSchema ? (
         <tr>
           <td>
             <b>Validation Schema</b>

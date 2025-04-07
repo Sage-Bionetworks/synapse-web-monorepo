@@ -1,18 +1,29 @@
 import { LockedColumn, SynapseConstants, UniqueFacetIdentifier } from '@/utils'
-import { getAdditionalFilters, parseEntityIdFromSqlStatement, SQLOperator } from '@/utils/functions/SqlFunctions'
+import {
+  getAdditionalFilters,
+  parseEntityIdFromSqlStatement,
+  SQLOperator,
+} from '@/utils/functions/SqlFunctions'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { QueryBundleRequest, SortDirection } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  SortDirection,
+} from '@sage-bionetworks/synapse-types'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
 import { GenericCardSchema } from '../GenericCard'
 import { IconOptions } from '../Icon/Icon'
 import { IconSvgProps } from '../IconSvg'
 import QuerySortSelector from '../QuerySortSelector'
-import { QueryVisualizationWrapper, QueryVisualizationWrapperProps } from '../QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { ReleaseCardConfig } from '../ReleaseCard'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { HeaderCardVariant } from '../HeaderCard'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -144,6 +155,7 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: Record<string, string>
   isHeader?: boolean
+  headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
   sql: string
   sortConfig?: SortConfiguration

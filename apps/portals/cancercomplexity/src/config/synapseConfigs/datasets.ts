@@ -7,6 +7,7 @@ import type {
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 0
@@ -20,6 +21,7 @@ export const datasetSchema: GenericCardSchema = {
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText: citationBoilerplateText,
   customSecondaryLabelConfig: {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,

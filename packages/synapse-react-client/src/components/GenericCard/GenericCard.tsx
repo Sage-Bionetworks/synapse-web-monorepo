@@ -29,7 +29,7 @@ import {
   TargetEnum,
 } from '../CardContainerLogic'
 import CitationPopover from '../CitationPopover'
-import HeaderCard from '../HeaderCard'
+import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { IconOptions } from '../Icon'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
@@ -85,6 +85,7 @@ export type GenericCardPropsInternal = {
   iconOptions?: IconOptions
   useTypeColumnForIcon?: boolean
   isHeader?: boolean
+  headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
   // Maps columnName to index
   schema: Record<string, number>
@@ -373,6 +374,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       iconOptions,
       useTypeColumnForIcon = false,
       isHeader = false,
+      headerCardVariant,
       titleLinkConfig,
       ctaLinkConfig,
       labelLinkConfig,
@@ -532,6 +534,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     if (isHeader) {
       return (
         <HeaderCard
+          headerCardVariant={headerCardVariant}
           descriptionConfig={descriptionConfig}
           title={title}
           subTitle={subTitle}

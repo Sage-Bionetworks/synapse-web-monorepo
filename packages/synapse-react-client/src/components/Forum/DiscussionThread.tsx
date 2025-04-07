@@ -180,7 +180,12 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       ) : (
         <></>
       )}
-      <div className="control-container">
+      <Box
+        sx={{
+          float: 'right',
+          margin: { xs: '8px 0', sm: '0 24px 0 0' },
+        }}
+      >
         {threadData?.isDeleted ? (
           <button onClick={() => setShowRestoreModal(true)}>
             <IconSvg icon="restore" label="Restore deleted thread" />
@@ -227,7 +232,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             ) : null}
           </>
         )}
-      </div>
+      </Box>
       <Box sx={{ mt: 2, mb: 3 }}>
         {!showReplyEditor1 ? (
           <TextField

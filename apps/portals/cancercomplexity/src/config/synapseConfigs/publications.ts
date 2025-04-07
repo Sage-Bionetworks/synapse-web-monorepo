@@ -8,6 +8,7 @@ import type {
 import { SynapseConstants } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 1
@@ -16,8 +17,9 @@ export const publicationSchema: GenericCardSchema = {
   type: SynapseConstants.PUBLICATION,
   title: 'publicationTitle',
   subTitle: 'authors',
-  citationBoilerplateText:
-    'Searched and Downloaded through the Cancer Complexity Knowledge Portal',
+  includeCitation: true,
+  defaultCitationFormat: 'nature',
+  citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [
     'pubMedLink',
     'journal',

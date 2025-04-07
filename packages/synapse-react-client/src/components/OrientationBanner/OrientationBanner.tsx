@@ -25,6 +25,7 @@ const OrientationBannerNameStrings = [
   'TrashCan',
   'Wikis',
   'Donate',
+  'UnderConstruction',
 ] as const
 export type OrientationBannerName =
   (typeof OrientationBannerNameStrings)[number]
