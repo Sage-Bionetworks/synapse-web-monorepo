@@ -104,7 +104,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         <TextField
           key={id}
           id={id}
-          value={formData[id]}
+          value={formData[id] || ''}
           label={config.label}
           onChange={e => handleChange(id, e.target.value)}
           required={config.isRequired}
@@ -136,7 +136,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
       noValidate
     >
       {Object.entries(fields).map(([id, config]) => createField(id, config))}
-      <Button>Submit</Button>
+      <Button type="submit">Submit</Button>
     </Box>
   )
 }
