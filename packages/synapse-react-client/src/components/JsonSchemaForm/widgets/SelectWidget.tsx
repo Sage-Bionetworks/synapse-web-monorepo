@@ -1,3 +1,4 @@
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { Widget, WidgetProps, EnumOptionsType } from '@rjsf/utils'
 import { Autocomplete, TextField } from '@mui/material'
 import { createFilterOptions } from '@mui/material/Autocomplete'
@@ -50,15 +51,20 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
     placeholder,
     isClearable = true,
     rawErrors,
+    registry,
   } = props
   const { enumOptions } = options as {
     enumOptions: EnumOptionsType[]
   }
+  const allowFreeSolo = Boolean(
+    (registry.formContext as CustomFormContext).allowFreeSoloEnum,
+  )
+
   return (
     <Autocomplete
       id={id}
       value={findValueOption(value, enumOptions)}
-      freeSolo
+      freeSolo={allowFreeSolo}
       forcePopupIcon
       selectOnFocus
       clearOnBlur
@@ -97,7 +103,7 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
         const { inputValue } = params
         // Suggest the creation of a new value
         const isExisting = options.some(option => inputValue === option.label)
-        if (inputValue !== '' && !isExisting) {
+        if (allowFreeSolo && inputValue !== '' && !isExisting) {
           filtered.push({
             value: inputValue,
             label: `Set to custom value "${inputValue}"`,

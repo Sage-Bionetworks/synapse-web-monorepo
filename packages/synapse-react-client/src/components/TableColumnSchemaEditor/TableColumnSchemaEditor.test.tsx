@@ -713,7 +713,7 @@ describe('TableColumnSchemaEditor', () => {
       onCancel: mockOnCancel,
     })
 
-    // Add a column
+    // Find the column
     let restrictedValuesInput = await screen.findByRole('textbox', {
       name: 'Restrict Values',
     })

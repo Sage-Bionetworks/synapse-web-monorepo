@@ -12,7 +12,6 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import RJSF from '@rjsf/core'
-import Form from '@rjsf/mui'
 import { RJSFValidationError } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -34,6 +33,7 @@ import {
   ConfirmationButtons,
   ConfirmationDialog,
 } from '../ConfirmationDialog/ConfirmationDialog'
+import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   dropNullishArrayValues,
@@ -43,22 +43,9 @@ import {
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
 import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
-import CustomObjectField from './field/CustomObjectField'
-import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
-import ArrayFieldItemTemplate from './template/ArrayFieldItemTemplate'
-import ArrayFieldTemplate from './template/ArrayFieldTemplate'
-import ArrayFieldTitleTemplate from './template/ArrayFieldTitleTemplate'
-import BaseInputTemplate from './template/BaseInputTemplate'
-import ButtonTemplate from './template/ButtonTemplate'
-import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
-import ErrorListTemplate from './template/ErrorListTemplate'
-import FieldErrorTemplate from './template/FieldErrorTemplate'
-import { FieldTemplate } from './template/FieldTemplate'
+import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
-import WrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
-import { BooleanWidget } from './widget/BooleanWidget'
-import { DateTimeWidget } from './widget/DateTimeWidget'
-import { SelectWidget } from './widget/SelectWidget'
+import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
 import TextWidget from './widget/TextWidget'
 
 export type SchemaDrivenAnnotationEditorProps = {
@@ -277,33 +264,32 @@ export function SchemaDrivenAnnotationEditor(
               </Box>
             </Alert>
           )}
-          <Form
+          <JsonSchemaForm
             validator={validator}
-            className="JsonSchemaForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
+            formRef={ref}
+            disabled={updateIsPending}
+            formContext={{
+              showDerivedAnnotationPlaceholder: true,
+              descriptionVariant: 'expand',
+              descriptionFormat: 'table',
+              allowFreeSoloEnum: true,
+            }}
             experimental_defaultFormStateBehavior={{
               emptyObjectFields: 'skipDefaults',
             }}
             fields={{
-              ObjectField: CustomObjectField,
+              ObjectField: SynapseAnnotationsRJSFObjectField,
             }}
             templates={{
-              ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
-              ArrayFieldItemTemplate: ArrayFieldItemTemplate,
-              ArrayFieldTemplate: ArrayFieldTemplate,
-              ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
-              BaseInputTemplate: BaseInputTemplate,
-              FieldErrorTemplate: FieldErrorTemplate,
-              FieldTemplate: FieldTemplate,
               ObjectFieldTemplate: ObjectFieldTemplate,
-              WrapIfAdditionalTemplate: WrapIfAdditionalTemplate,
-              ButtonTemplates: ButtonTemplate,
-              DescriptionFieldTemplate: DescriptionFieldTemplate,
-              ErrorListTemplate: ErrorListTemplate,
+              WrapIfAdditionalTemplate:
+                SynapseAnnotationsWrapIfAdditionalTemplate,
             }}
-            ref={ref}
-            disabled={updateIsPending}
+            widgets={{
+              TextWidget: TextWidget,
+            }}
             schema={
               {
                 ...(validationSchema ?? {}),
@@ -360,12 +346,6 @@ export function SchemaDrivenAnnotationEditor(
                 setShowConfirmation(true)
               }
             }}
-            widgets={{
-              TextWidget: TextWidget,
-              DateTimeWidget: DateTimeWidget,
-              SelectWidget: SelectWidget,
-              CheckboxWidget: BooleanWidget,
-            }}
           >
             {submissionError && showSubmissionError && (
               <Alert severity="error" sx={{ my: 2 }}>
@@ -397,7 +377,7 @@ export function SchemaDrivenAnnotationEditor(
                 </Box>
               </>
             )}
-          </Form>
+          </JsonSchemaForm>
           {showConfirmation && (
             <ConfirmationDialog
               open={true}

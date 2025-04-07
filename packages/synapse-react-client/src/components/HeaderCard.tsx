@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import { useState, useEffect } from 'react'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
+import HeaderCardV2 from './HeaderCard/HeaderCardV2'
+
+export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
 export type HeaderCardProps = {
   type: string
@@ -15,21 +18,25 @@ export type HeaderCardProps = {
   href?: string
   target?: string
   icon: JSX.Element
+  headerCardVariant?: HeaderCardVariant
 }
 
-function HeaderCard({
-  type,
-  title,
-  subTitle = '',
-  description,
-  values,
-  secondaryLabelLimit,
-  isAlignToLeftNav,
-  descriptionConfig,
-  href,
-  target,
-  icon,
-}: HeaderCardProps) {
+function HeaderCard(props: HeaderCardProps) {
+  const {
+    type,
+    title,
+    subTitle = '',
+    description,
+    values,
+    secondaryLabelLimit,
+    isAlignToLeftNav,
+    descriptionConfig,
+    href,
+    target,
+    icon,
+    headerCardVariant = 'HeaderCard',
+  } = props
+
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
@@ -61,6 +68,10 @@ function HeaderCard({
       descriptionElement?.setAttribute('content', docDescription)
     }
   })
+
+  if (headerCardVariant === 'HeaderCardV2') {
+    return <HeaderCardV2 {...props} />
+  }
 
   return (
     <div
