@@ -35,16 +35,28 @@ export type FormData = {
   [id: string]: string
 }
 
+type Errors = {
+  [id: string]: boolean
+}
+
 export type FormProps = {
   fields: FieldSchema
   onSubmit: (data: FormData) => boolean
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
-  const [formData, setFormData] = useState<FormData>({})
+  const [formData, setFormData] = useState(
+    Object.fromEntries(Object.keys(fields).map(id => [id, ''])),
+  )
+  const [errors, setErrors] = useState<Errors>({})
   const theme = useTheme()
 
   const handleChange = (id: string, value: string) => {
+    setErrors((prev: Errors) => {
+      if (!prev[id]) return prev
+      return { ...prev, [id]: false }
+    })
+
     setFormData((prev: FormData) => {
       if (prev[id] === value) return prev
       return { ...prev, [id]: value }
@@ -53,8 +65,26 @@ export default function Form({ fields, onSubmit }: FormProps) {
 
   const handleSubmission = (evt: FormEvent) => {
     evt.preventDefault()
-    const wasSuccessful = onSubmit(formData)
 
+    // Error handling
+    const newErrors: Errors = {}
+    for (const id of Object.keys(formData)) {
+      if (fields[id].isRequired && formData[id].length === 0) {
+        newErrors[id] = true
+      }
+    }
+
+    setErrors(() => {
+      return newErrors
+    })
+
+    // Prevent submission if there are errors
+    let wasSuccessful = false
+    if (Object.keys(newErrors).length === 0) {
+      wasSuccessful = onSubmit(formData)
+    }
+
+    // Clear the form on successful submission
     if (wasSuccessful) {
       setFormData({})
     }
@@ -72,6 +102,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           <InputLabel
             id={`${id}-label`}
             sx={{ position: 'relative', bottom: '20px' }}
+            error={errors[id] ?? false}
           >
             {config.label}
           </InputLabel>
@@ -119,6 +150,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           required={config.isRequired}
           helperText={config.helperText}
           placeholder={config?.placeholder}
+          error={errors[id] ?? false}
           fullWidth
           {...config.additionalOptions}
         />
