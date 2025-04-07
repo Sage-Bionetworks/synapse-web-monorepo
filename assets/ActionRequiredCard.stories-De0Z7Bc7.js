@@ -1,0 +1,14 @@
+import{j as t}from"./jsx-runtime-Du8NFWEI.js";import{A as s,W as d}from"./ActionRequiredCard-CgPvdxDl.js";import{E as c}from"./SynapseConstants-CMdv2tqR.js";import{T as u}from"./Typography-u5-eOh5K.js";import{B as g}from"./Button-JnyLG7Y6.js";import"./index-Dl6G-zuu.js";import"./styled-GqwmQbHR.js";import"./createTheme-DCAEEeQ9.js";import"./index-GEGPABih.js";import"./createSvgIcon-IuIKk-AJ.js";import"./IconSvg-CEagjwNL.js";import"./spreadSx-CwcO6WA9.js";import"./Tooltip-BN1O7Byi.js";import"./index-pKvUPVqT.js";import"./useTheme-C2nLQS7p.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DdGCipi8.js";import"./mergeSlotProps-D-cfru4O.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-CEBgoE3Z.js";import"./index-BIzb42Jq.js";import"./utils-BUDe8ykH.js";import"./TransitionGroupContext-TdpM2qIg.js";import"./useControlled-1Y2rT-1r.js";import"./useId-BkqTTtmk.js";import"./useIsFocusVisible-ByxglBfx.js";import"./LayersTwoTone-fKfzxiPS.js";import"./ErrorOutlined-BKx_L9lY.js";import"./GetAppTwoTone-CD3TgP2w.js";import"./InfoOutlined-DpeT4h8X.js";import"./DeleteTwoTone-XAGzVgvj.js";import"./CheckCircleTwoTone-CDfc8b31.js";import"./Paper-Dap2c6xL.js";import"./Box-sTghsUmj.js";import"./Skeleton-h9JRD3HJ.js";import"./OrientationBanner-N5yxtprX.js";import"./index-CZCSLsz_.js";import"./FullWidthAlert-CTZAZdOF.js";import"./Alert-NNHAfyKq.js";import"./IconButton-BUqwv789.js";import"./ButtonBase-CWW9SwzN.js";import"./Stack-CMgji9n-.js";import"./AlertTitle-CogUI_yl.js";import"./ClickAwayListener-D7YV5tOA.js";const et={title:"Download/ActionRequiredCard",component:s,tags:["autodocs"],argTypes:{actionNode:{options:["Button","Button with text (Sharing Settings)"],mapping:{Button:t.jsx(d,{variant:"contained",children:"Start"}),"Button with text (Sharing Settings)":t.jsxs(t.Fragment,{children:[t.jsx(u,{variant:"smallText1",sx:{color:"grey.700"},children:"Contact an administrator to request download permission"}),t.jsx(g,{variant:"outlined",children:"View Sharing Settings"})]})}}}},o={args:{isLoading:!0}},r={args:{isLoading:!1,title:"The title of the card",description:"The description of the card",actionNode:"Button",iconType:c,count:42}};var i,e,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    isLoading: true
+  }
+}`,...(a=(e=o.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var n,p,m;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isLoading: false,
+    title: 'The title of the card',
+    description: 'The description of the card',
+    actionNode: 'Button',
+    iconType: EASY_DIFFICULTY,
+    count: 42
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const at=["Loading","Card"];export{r as Card,o as Loading,at as __namedExportsOrder,et as default};
