@@ -28,7 +28,7 @@ const routes: RouteObject[] = [
           show={true}
           title={''}
           description={
-            'The AACR Project GENIE Registry is offline to ensure compliance with new U.S. regulations and users will be notified once the registry is online again. We apologize for any inconvenience.'
+            'Data access to the AACR Project GENIE Registry is offline to ensure compliance with new U.S. regulations and users will be notified once the registry is online again. We apologize for any inconvenience.'
           }
         />
         <SurveyToast
