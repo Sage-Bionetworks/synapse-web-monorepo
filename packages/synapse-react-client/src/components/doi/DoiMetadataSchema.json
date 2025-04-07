@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "org.sagebionetworks.repo.model.doi.v2.NameIdentifierScheme": {
+      "type": "string",
+      "enum": ["ORCID", "ISNI"]
+    },
+    "org.sagebionetworks.repo.model.doi.v2.DoiNameIdentifier": {
+      "type": "object",
+      "properties": {
+        "identifier": { "type": "string" },
+        "nameIdentifierScheme": {
+          "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.NameIdentifierScheme"
+        }
+      },
+      "description": "Uniquely identifies an individual or legal entity, according to various schemas."
+    },
+    "org.sagebionetworks.repo.model.doi.v2.DoiCreator": {
+      "type": "object",
+      "properties": {
+        "creatorName": { "type": "string" },
+        "nameIdentifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiNameIdentifier",
+            "description": "Uniquely identifies an individual or legal entity, according to various schemas."
+          },
+          "description": "Optional. Uniquely identifies an individual or legal entity, according to various schemas."
+        }
+      },
+      "description": "JSON schema for DOI Metadata Creator."
+    },
+    "org.sagebionetworks.repo.model.doi.v2.DoiTitle": {
+      "type": "object",
+      "properties": { "title": { "type": "string" } },
+      "description": "JSON schema for DOI Metadata Title."
+    },
+    "org.sagebionetworks.repo.model.doi.v2.DoiResourceType": {
+      "type": "object",
+      "properties": { "resourceTypeGeneral": { "type": "string" } },
+      "description": "Required. Describes the type of media that the DOI Metadata refers to."
+    },
+    "org.sagebionetworks.repo.model.doi.v2.DataciteMetadata": {
+      "type": "object",
+      "properties": {
+        "creators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiCreator",
+            "description": "JSON schema for DOI Metadata Creator."
+          },
+          "description": "Required. The main researchers involved in producing the data, or the authors of the publication, in priority order."
+        },
+        "titles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "JSON schema for DOI Metadata Title."
+          },
+          "description": "Required. A name or title by which a resource is known."
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "resourceType": {
+          "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiResourceType",
+          "description": "Required. Describes the type of media that the DOI Metadata refers to."
+        }
+      },
+      "description": "JSON schema for metadata that is submitted to DataCite and can later be retrieved via DOI in Synapse, with the DataCite REST API, or with external citation services."
+    },
+    "org.sagebionetworks.repo.model.doi.v2.Doi": {
+      "type": "object",
+      "properties": {
+        "creators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiCreator",
+            "description": "JSON schema for DOI Metadata Creator."
+          },
+          "description": "Required. The main researchers involved in producing the data, or the authors of the publication, in priority order."
+        },
+        "titles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiTitle",
+            "description": "JSON schema for DOI Metadata Title."
+          },
+          "description": "Required. A name or title by which a resource is known."
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "resourceType": {
+          "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiResourceType",
+          "description": "Required. Describes the type of media that the DOI Metadata refers to."
+        },
+        "associationId": {
+          "type": "string"
+        },
+        "etag": {
+          "type": "string"
+        },
+        "doiUri": {
+          "type": "string"
+        },
+        "doiUrl": {
+          "type": "string"
+        },
+        "objectId": {
+          "type": "string"
+        },
+        "objectType": {
+          "type": "string"
+        },
+        "objectVersion": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "associatedBy": {
+          "type": "string"
+        },
+        "associatedOn": {
+          "type": "string"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "updatedOn": {
+          "type": "string"
+        }
+      },
+      "description": "JSON schema for fields associated with a DOI and its metadata. This object contains fields from both <a href=\"${org.sagebionetworks.repo.model.doi.v2.DoiAssociation}\">DoiAssociation</a> and <a href=\"${org.sagebionetworks.repo.model.doi.v2.DataciteMetadata}\">DataciteMetadata</a>.<br>To mint a DOI, the following fields are required: <ul> <li>Information that uniquely identifies an object in Synapse <ul><li> The object ID <i>(e.g. \"syn12345\")</i></li><li>The object type <i>(Note: as of this writing, only ENTITY is supported)</i></li><li>The version number of the object <i>(Optional. A \"null\" version will mint a DOI that will point to the most recent version of the object, even if the object changes)</i></li><li>An eTag <i>(Necessary when updating an existing DOI)</i></li></ul></li> <li>Additional supplementary information to mint a DOI <ul><li>Creator(s)</li><li>Title(s)</li><li>The general resource type</li><li>A publication year (no later than one year after the current year)</li></ul></li> </ul><br>For more information, see the <a href=\"${org.sagebionetworks.repo.model.doi.v2.DoiAssociation}\">DoiAssociation</a> and <a href=\"${org.sagebionetworks.repo.model.doi.v2.DataciteMetadata}\">DataciteMetadata</a> objects."
+    }
+  },
+  "$ref": "#/definitions/org.sagebionetworks.repo.model.doi.v2.DataciteMetadata"
+}
