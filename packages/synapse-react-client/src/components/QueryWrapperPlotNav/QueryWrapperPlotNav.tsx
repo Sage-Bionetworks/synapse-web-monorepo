@@ -304,9 +304,9 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const entityIdAndVersion = parseEntityIdAndVersionFromSqlStatement(sql)
   const { entityId, versionNumber } = entityIdAndVersion ?? { entityId: '' }
   const additionalFilters = getAdditionalFilters(
-    additionalFiltersSessionStorageKey,
     searchParams,
     sqlOperator,
+    additionalFiltersSessionStorageKey,
   )
   // use initQuery if set, otherwise use sql
   const query: Query = initQueryJson

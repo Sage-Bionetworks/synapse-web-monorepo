@@ -120,9 +120,9 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
   const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
     getAdditionalFilters(
-      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
+      additionalFiltersSessionStorageKey,
     )
   const { data: entity } = useGetEntity(entityId)
 

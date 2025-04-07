@@ -179,9 +179,9 @@ export type CardContainerLogicProps = {
 export function CardContainerLogic(props: CardContainerLogicProps) {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
   const queryFilters = getAdditionalFilters(
-    props.additionalFiltersSessionStorageKey,
     props.searchParams,
     props.sqlOperator,
+    props.additionalFiltersSessionStorageKey,
   )
   const { sortConfig, columnAliases, topLevelEnumeratedFacetToFilter } = props
   const defaultSortItems = sortConfig

@@ -46,9 +46,9 @@ export const FTS_SEARCH_ROLE = 'FTS_SEARCH_ROLE'
  * @returns
  */
 export const getAdditionalFilters = (
-  sessionStorageKey?: string,
   searchParams?: Record<string, string>,
   operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
+  sessionStorageKey?: string,
 ): QueryFilter[] | undefined => {
   const sessionStorageQueryFiltersString = sessionStorageKey
     ? sessionStorage.getItem(

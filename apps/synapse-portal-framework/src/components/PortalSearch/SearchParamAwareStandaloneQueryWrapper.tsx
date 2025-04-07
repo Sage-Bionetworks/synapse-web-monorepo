@@ -40,7 +40,7 @@ export function SearchParamAwareStandaloneQueryWrapper(
   const { sql } = standaloneQueryWrapperProps
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(undefined, filteredSearchParams, undefined)
+    getAdditionalFilters(filteredSearchParams, undefined)
   return (
     <QueryWrapper
       {...standaloneQueryWrapperProps}
