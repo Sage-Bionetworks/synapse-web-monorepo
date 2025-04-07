@@ -14,12 +14,23 @@ import GenieHomePage from '../pages/GenieHomePage'
 import routeControlWrapperProps from './explorePageRoutes'
 import { dataReleasesSql } from './resources'
 import { currentDataReleasesProps } from './synapseConfigs/dataReleases'
+import { FullWidthAlert } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {
     path: '/',
     element: (
       <App>
+        <FullWidthAlert
+          sx={{ m: 0 }}
+          isGlobal={false}
+          variant={'warning'}
+          show={true}
+          title={''}
+          description={
+            'The AACR Project GENIE Registry is offline to ensure compliance with new U.S. regulations and users will be notified once the registry is online again. We apologize for any inconvenience.'
+          }
+        />
         <SurveyToast
           localStorageKey={
             'org.sagebionetworks.security.cookies.portal.geniesurvey.dismissed'
