@@ -4,7 +4,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import { FullWidthAlert } from 'synapse-react-client'
+import { FullWidthAlert, MoreResources } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 
 //TODO
@@ -60,6 +60,7 @@ export default function HomePage() {
               },
             ]}
           /> */}
+          <MoreResources />
         </SectionLayout>
       </div>
     </>
