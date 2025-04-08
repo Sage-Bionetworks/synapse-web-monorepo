@@ -15,6 +15,7 @@ export default function ContributeAStandard() {
       componentType: Select,
       label: 'Entity Type',
       helperText: 'What kind of thing is this?',
+      placeholder: 'Select a Category',
       isRequired: true,
       selections: {
         DataStandardOrTool: 'Data Standard or Tool',
@@ -65,7 +66,7 @@ export default function ContributeAStandard() {
       placeholder:
         'e.g., "Any data concerning studies of the structure, function, and interactions of biological materials."',
       isRequired: false,
-      additionalOptions: {
+      additionalProperties: {
         multiline: true,
         rows: 3,
       },
@@ -85,7 +86,7 @@ export default function ContributeAStandard() {
         '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
       placeholder: 'e.g., "B2AI_TOPIC:5"',
       isRequired: false,
-      additionalOptions: {
+      additionalProperties: {
         multiline: true,
         rows: 3,
       },

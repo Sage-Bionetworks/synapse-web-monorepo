@@ -17,14 +17,14 @@ type FieldConfig = {
   componentType: FieldType
   label: string
   helperText: string | React.ReactElement<'span'>
-  placeholder?: string
+  placeholder: string
   isRequired: boolean
   selections?: {
     [id: string]: string
-  }
-  additionalOptions?: {
+  } // Dropdown options for 'Select' componentTypes
+  additionalProperties?: {
     [id: string]: any
-  }
+  } // intentionally flexible
 }
 
 export type FieldSchema = {
@@ -92,7 +92,6 @@ export default function Form({ fields, onSubmit }: FormProps) {
 
   const createField = (id: string, config: FieldConfig) => {
     if (config.componentType === Select) {
-      const placeholderText = 'Select a Category'
       return (
         <FormControl
           fullWidth
@@ -118,16 +117,16 @@ export default function Form({ fields, onSubmit }: FormProps) {
               if (!selected) {
                 return (
                   <span style={{ color: theme.palette.text.disabled }}>
-                    {placeholderText}
+                    {config.placeholder}
                   </span>
                 )
               }
               return selected
             }}
-            {...config.additionalOptions}
+            {...config.additionalProperties}
           >
             <MenuItem value="" disabled>
-              {placeholderText}
+              {config.placeholder}
             </MenuItem>
             {Object.entries(config.selections ?? {}).map(([label, value]) => (
               <MenuItem key={value} value={value}>
@@ -153,7 +152,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           placeholder={config?.placeholder}
           error={errors[id] ?? false}
           fullWidth
-          {...config.additionalOptions}
+          {...config.additionalProperties}
         />
       )
     }

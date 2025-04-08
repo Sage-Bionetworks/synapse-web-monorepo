@@ -37,7 +37,7 @@ export const BasicForm: Story = {
         helperText:
           '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
         isRequired: false,
-        additionalOptions: {
+        additionalProperties: {
           multiline: true,
           rows: 3,
         },
