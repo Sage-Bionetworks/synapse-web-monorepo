@@ -4,18 +4,18 @@
 
 ### Setup
 
-[vscode](https://code.visualstudio.com/) should be used for development. A few extensions will be needed -
+You may use any IDE you like. If you use [Visual Studio Code](https://code.visualstudio.com/), you can load the [workspace file](../../synapse-web-monorepo.code-workspace), which preconfigures and recommends some extensions, such as:
 
 - The [eslint](https://github.com/Microsoft/vscode-eslint) extension, which is a js linter and rough style guide.
-- The [prettier](https://github.com/prettier/prettier) extension, which is a more opininiated js linter. You will need to ensure you have vscode configured to format on saving by modifying ,.vscode/setting.json to include the line `"editor.formatOnSave": true`. See [here](https://code.visualstudio.com/updates/v1_6#_format-on-save) for more details.
+- The [prettier](https://github.com/prettier/prettier) extension, which is a more opinionated js linter. You will need to ensure you have vscode configured to format on saving by modifying ,.vscode/setting.json to include the line `"editor.formatOnSave": true`. See [here](https://code.visualstudio.com/updates/v1_6#_format-on-save) for more details.
 
 ### Git Workflow
 
 1. Fork this repository
 2. Create your feature branch, if applicable name it after the specific JIRA issue being fixed.
-3. Create a pull request against `develop` from your forked branch.
+3. Create a pull request against `main` from your forked branch.
 4. To keep commits organized consider `squashing` closely related commits (optional). When it makes sense format your commit in the following way: `(<JIRA>): <subject><BLANK LINE><body or link to the JIRA if applicable (optional)>`.
-5. Ensure someone else review's the pull request and that person should be the one to merge the PR.
+5. Ensure someone else reviews the pull request. Once approved, the PR can be merged.
 
 ### Development Guide
 
@@ -23,18 +23,16 @@
 
 Hooks have a number of advantages, they can be read about in depth [here](https://reactjs.org/docs/hooks-faq.html). Additionally, any stateful piece of code that can be reused should be made an effect hook. These should be created in this folder `src/utils/hooks`.
 
-#### UMD Build
+#### Bundled distribution
 
-We create a UMD bundle using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). Note - not all components are exported as part of the UMD bundle - only those in [umd.index.ts](src/umd.index.ts).
+We create an ESM/CJS bundle using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). Note - not all components are exported as part of the UMD bundle - only those in [SWC.index.ts](src/SWC.index.ts).
 
 #### Submitting a new component
 
 1. Create a component in `src/components`, if it's a complex component consider creating a folder with the subcomponents
    that comprise it.
-2. To work on a component, create a corresponding demo page - e.g. src/demo/playground/_ComponentNameDemo_.tsx
-   - See [Playground](./src/demo/containers/playground/Playground.tsx) and [TemplateComponentDemo](src/demo/containers/playground/TemplateComponentDemo.tsx) and [TemplateComponent](src/components/TemplateComponent.tsx) for example usage.
+2. To work on a component, create a corresponding Story file so it can be seen in Storybook.
 3. To export that component through ESM/CJS bundles, it should be imported/exported in `src/index.ts`
-4. To export that component in the UMD bundle it should be imported/exported in `src/umd.index.ts`
 
 #### CSS
 

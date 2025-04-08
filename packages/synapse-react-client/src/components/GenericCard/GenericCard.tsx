@@ -29,7 +29,7 @@ import {
   TargetEnum,
 } from '../CardContainerLogic'
 import CitationPopover from '../CitationPopover'
-import HeaderCard from '../HeaderCard'
+import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { IconOptions } from '../Icon'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
@@ -45,7 +45,10 @@ import {
   CHAR_COUNT_CUTOFF,
   CollapsibleDescription,
 } from './CollapsibleDescription'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { SynapseCardLabel } from './SynapseCardLabel'
+import { GetAppTwoTone } from '@mui/icons-material'
+import GenericCardActionButton from './GenericCardActionButton'
 
 export type KeyToAlias = {
   key: string
@@ -77,6 +80,8 @@ export type GenericCardSchema = {
 
   link?: string
   dataTypeIconNames?: string
+  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
+  downloadCartSynId?: string
 }
 
 export type GenericCardPropsInternal = {
@@ -85,6 +90,7 @@ export type GenericCardPropsInternal = {
   iconOptions?: IconOptions
   useTypeColumnForIcon?: boolean
   isHeader?: boolean
+  headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
   // Maps columnName to index
   schema: Record<string, number>
@@ -303,16 +309,27 @@ export function getLinkParams(
   return { href, target }
 }
 
+type GenericCardState = {
+  hasClickedShowMore: boolean
+  isShowingDownloadConfirmation: boolean
+  downloadButtonDisabled: boolean
+}
+
 /**
  * Renders a card from a table query
  */
-class _GenericCard extends Component<GenericCardPropsInternal> {
+class _GenericCard extends Component<
+  GenericCardPropsInternal,
+  GenericCardState
+> {
   static contextType = SynapseContext
 
   constructor(props: GenericCardPropsInternal) {
     super(props)
     this.state = {
+      isShowingDownloadConfirmation: false,
       hasClickedShowMore: false,
+      downloadButtonDisabled: false,
     }
   }
 
@@ -332,6 +349,12 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
   toggleShowMore = () => {
     this.setState({
       hasClickedShowMore: true,
+    })
+  }
+
+  setShowDownloadConfirmation = (showDownloadConfirmation: boolean) => {
+    this.setState({
+      isShowingDownloadConfirmation: showDownloadConfirmation,
     })
   }
 
@@ -373,6 +396,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       iconOptions,
       useTypeColumnForIcon = false,
       isHeader = false,
+      headerCardVariant,
       titleLinkConfig,
       ctaLinkConfig,
       labelLinkConfig,
@@ -391,6 +415,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
       includeCitation,
       defaultCitationFormat,
       citationBoilerplateText,
+      downloadCartSynId,
     } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -532,6 +557,7 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     if (isHeader) {
       return (
         <HeaderCard
+          headerCardVariant={headerCardVariant}
           descriptionConfig={descriptionConfig}
           title={title}
           subTitle={subTitle}
@@ -561,6 +587,18 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
     const doiValue =
       doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
+    let downloadCartSynIdColumnIndex: number | undefined
+    let downloadCartSynIdValue: string | undefined
+    if (downloadCartSynId) {
+      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
+      downloadCartSynIdValue =
+        downloadCartSynIdColumnIndex !== undefined
+          ? data[downloadCartSynIdColumnIndex]
+          : undefined
+    }
+    downloadCartSynIdValue = downloadCartSynIdValue?.match(
+      /syn\d+/i, // regex to extract the synapse ID from the URL
+    )?.[0]
     let ctaHref: string | undefined = undefined,
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
@@ -578,6 +616,15 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
 
     return (
       <div style={style} className={'SRC-portalCard'}>
+        {this.state.isShowingDownloadConfirmation && downloadCartSynIdValue && (
+          <EntityDownloadConfirmation
+            entityId={downloadCartSynIdValue}
+            handleClose={() => this.setShowDownloadConfirmation(false)}
+            onIsLoadingChange={isLoading => {
+              this.setState({ downloadButtonDisabled: isLoading })
+            }}
+          />
+        )}
         <div className={'SRC-portalCardMain'}>
           {icon}
           <div className="SRC-cardContent">
@@ -654,7 +701,8 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
               </Box>
             )}
           </div>
-          {includeCitation && (
+
+          {(includeCitation || downloadCartSynIdValue) && (
             <Box
               sx={{
                 marginLeft: 'auto',
@@ -662,12 +710,30 @@ class _GenericCard extends Component<GenericCardPropsInternal> {
                 paddingRight: '40px',
               }}
             >
-              <CitationPopover
-                title={title}
-                doi={doiValue}
-                boilerplateText={citationBoilerplateText}
-                defaultCitationFormat={defaultCitationFormat}
-              />
+              {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+              {downloadCartSynIdValue && (
+                <>
+                  <GenericCardActionButton
+                    onClick={() =>
+                      this.setShowDownloadConfirmation(
+                        !this.state.isShowingDownloadConfirmation,
+                      )
+                    }
+                    variant="outlined"
+                    startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+                  >
+                    Download
+                  </GenericCardActionButton>
+                </>
+              )}
+              {includeCitation && (
+                <CitationPopover
+                  title={title}
+                  doi={doiValue}
+                  boilerplateText={citationBoilerplateText}
+                  defaultCitationFormat={defaultCitationFormat}
+                />
+              )}
             </Box>
           )}
         </div>

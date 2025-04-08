@@ -99,7 +99,7 @@ In this example, make sure that your `node_modules` folder is in your Dart Sass 
 
 To expose a component from the library you must export it from [index.ts](src/index.ts). Ideally, your component will get its own subfolder within `src/components/`, which will contain an `index.ts` file that exports the public API of the component (typically the component and its props type). In `src/components/index.ts`, you can then export the contents of the new subfolder.
 
-To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). Note that certain dependencies are not included in the UMD bundle. See the config used to build the bundle, `vite.config.umd.ts`, for more details.
+To expose a component for use in synapse.org, you must export it from [SWC.index.ts](src/SWC.index.ts). Note that certain dependencies are not included in this bundle. See the config used to build the bundle, `vite.config.ts`, for more details.
 
 ## Available Scripts
 
@@ -131,44 +131,3 @@ Bundles the library for production to the `dist` folder.
 Bundles the library for production to the `dist` folder using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). This command creates CJS and ESM bundles with all dependencies removed, and also outputs a single TypeScript declaration file.
 
 > Note - this script is run automatically as part of the build command.
-
-### `pnpm build:umd`
-
-This project can be built as a umd bundle. It produces four files
-
-- `synapse-react-client.production.min.cjs`
-- `synapse-react-client.production.min.css`.
-- `synapse-react-client.development.cjs`
-- `synapse-react-client.development.css`.
-
-> Note - this script is run automatically as part of the build command.
-
-## Testing Synapse React Client (SRC) in Synapse Web Client (SWC)
-
-This guide explains how to test changes made in the Synapse React Client (SRC) on the Synapse Web Client (SWC) using **Chrome DevTools**.
-
-1. Make Your Changes in SRC
-
-Edit the code in the `synapse-react-client` package as needed.
-
-2. Build the UMD Files
-
-Run the following command to build the UMD files for SRC:
-
-```bash
-pnpm build:umd
-```
-
-3. Go to https://www.synapse.org in Chrome and open the **Developer Tools**.
-
-4. Locate the synapse-react-client.production.min.js file in the Network tab and right click on the file and select **Override Content**.
-
-5. Go to the **Sources** tab in Developer Tools and go to the **Overrides** section. Make sure **Enabled Local Overrides** is checked.
-
-6. Right-click cdn-www.synapse.org/generated or synapse-react-client.production.min.js and select **Open Folder** or **Open Containing Folder** respectively
-
-7. In your file explore, navigate to packages/synapse-react-client/dist/umd/ and find the updated synapse-react-client.production.min.js file. Drag and drop this file to the generated folder to replace the old synapse-react-client.production.min.js file.
-
-8. Refresh https://www.synapse.org and the site should now be using your override file.
-
-9. Repeat steps above for any SRC changes you want to see in https://www.synapse.org.

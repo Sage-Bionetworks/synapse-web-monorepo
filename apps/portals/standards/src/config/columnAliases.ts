@@ -1,8 +1,6 @@
 export default {
-  concerns_data_topic: 'Concerns Data Topic',
-  registration: 'Requires Registration?',
-  responsibleOrgName: 'Responsible Organization',
-  relevantOrgName: 'Relevant Organization',
-  name: 'Name',
+  organizations: 'Relevant Organizations',
+  standardName: 'Name of Standard',
   isOpen: 'Is Open?',
+  registration: 'Requires Registration?',
 }
