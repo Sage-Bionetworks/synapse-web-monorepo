@@ -98,7 +98,6 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     element: (
       <DetailsPageContextConsumer columnName={'relatedTo'}>
         {({ value, context }) => {
-          console.log(value, context)
           return (
             <CardContainerLogic
               {...linkedStandardCardConfiguration}
