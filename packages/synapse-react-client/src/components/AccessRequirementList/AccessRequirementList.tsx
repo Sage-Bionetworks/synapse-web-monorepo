@@ -255,9 +255,12 @@ export default function AccessRequirementList(
       const sortedByTypeAndStatus =
         SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.map(type => {
           const arsOfType = groupedAccessRequirementsByType[type]
-          return sortedAccessRequirementIds.map(
-            id => arsOfType.find(ar => id === String(ar.id))!,
-          )
+          if (arsOfType) {
+            return sortedAccessRequirementIds.map(
+              id => arsOfType.find(ar => id === String(ar.id))!,
+            )
+          }
+          return []
         })
           .flat()
           .filter((item): item is AccessRequirement => item !== undefined)
