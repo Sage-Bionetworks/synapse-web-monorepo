@@ -26,7 +26,7 @@ import {
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { noop } from 'lodash-es'
+import { groupBy, noop } from 'lodash-es'
 import { ReactNode, useMemo, useState } from 'react'
 import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
 import { DialogBaseTitle } from '../DialogBase'
@@ -220,21 +220,6 @@ export default function AccessRequirementList(
     fetchedRequirementsForEntity ??
     fetchedRequirementsForTeam
 
-  // SWC-7218: Group by access requirement type
-  const groupedAccessRequirementsByType = useMemo(() => {
-    if (accessRequirements) {
-      return accessRequirements.reduce((acc, item) => {
-        // init if we have not seen this concrete type before
-        if (!acc[item.concreteType]) {
-          acc[item.concreteType] = []
-        }
-        acc[item.concreteType].push(item)
-        return acc
-      }, {} as Record<AccessRequirement['concreteType'], AccessRequirement[]>)
-    }
-    return undefined
-  }, [accessRequirements])
-
   /**
    * Set the initial ordering of the Access Requirements to show complete ARs first. The individual AR Item components
    * retrieve and render status independently, so this data only determines ordering. For this reason, the query data
@@ -252,7 +237,11 @@ export default function AccessRequirementList(
 
   const sortedGroupedAcessRequirementsByType = useMemo(() => {
     if (accessRequirements && sortedAccessRequirementIds) {
-      const groupedAccessRequirementsByType = groupBy(accessRequirements, 'concreteType')
+      // SWC-7218: Group by access requirement type
+      const groupedAccessRequirementsByType = groupBy(
+        accessRequirements,
+        'concreteType',
+      )
       const sortedByTypeAndStatus =
         SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.map(type => {
           const arsOfType = groupedAccessRequirementsByType[type]
@@ -268,7 +257,7 @@ export default function AccessRequirementList(
       return sortedByTypeAndStatus
     }
     return undefined
-  }, [groupedAccessRequirementsByType, sortedAccessRequirementIds])
+  }, [sortedAccessRequirementIds])
 
   const requestDataStepCallback = (props: RequestDataStepCallbackArgs) => {
     const {
