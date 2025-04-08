@@ -16,7 +16,7 @@ type FieldType = typeof TextField | typeof Select
 type FieldConfig = {
   componentType: FieldType
   label: string
-  helperText: string
+  helperText: string | React.ReactElement<'span'>
   placeholder?: string
   isRequired: boolean
   selections?: {

@@ -27,8 +27,18 @@ export default function ContributeAStandard() {
     category: {
       componentType: TextField,
       label: 'Category',
-      helperText:
-        'What should the category be, based on the classes of the Bridge2AI Standards Schemas (https://bridge2ai.github.io/standards-schemas)? If in doubt, leave blank.', // TODO: Can we make this a real hyperlink?
+      helperText: (
+        <span>
+          What should the category be, based on the classes of the{' '}
+          <a
+            href="https://bridge2ai.github.io/standards-schemas"
+            target="_blank"
+          >
+            Bridge2AI Standards Schemas
+          </a>
+          ? If in doubt, leave blank.
+        </span>
+      ),
       placeholder: 'e.g., "NamedThing"',
       isRequired: false,
     },
