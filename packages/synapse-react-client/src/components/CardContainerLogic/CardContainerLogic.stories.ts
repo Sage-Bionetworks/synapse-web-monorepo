@@ -17,7 +17,7 @@ import {
   RELEASE_CARD,
 } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react'
-import { GenericCardSchema } from '../GenericCard'
+import { TableToGenericCardMapping } from '../GenericCard/TableRowGenericCard'
 import { StatConfig } from '../ReleaseCard'
 import {
   ReleaseMetadataConfig,
@@ -93,7 +93,7 @@ export const DatasetCard: Story = {
   },
 }
 
-const publicationSchema: GenericCardSchema = {
+const publicationSchema: TableToGenericCardMapping = {
   type: PUBLICATION,
   title: 'publicationTitle',
   subTitle: 'authors',

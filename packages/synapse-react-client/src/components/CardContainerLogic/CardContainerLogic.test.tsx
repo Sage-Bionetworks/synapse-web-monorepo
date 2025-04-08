@@ -43,7 +43,7 @@ describe('it performs basic functionality', () => {
     sql,
     limit: 5,
     unitDescription: 'files',
-    type: SynapseConstants.STUDY,
+    type: SynapseConstants.DATASET,
     rgbIndex: 2,
     columnAliases: { facetName: 'alias' },
   }
@@ -76,7 +76,7 @@ describe('it performs basic functionality', () => {
               SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
               SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
             query: {
-              sql: props.sql,
+              sql: props.sql!,
               limit: props.limit,
             },
           }),

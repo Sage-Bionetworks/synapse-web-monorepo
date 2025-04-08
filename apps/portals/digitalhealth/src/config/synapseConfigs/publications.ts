@@ -2,15 +2,15 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import type {
   CardConfiguration,
   CardContainerLogicProps,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { publicationSql } from '../resources'
 
 const rgbIndex = 7
 
-export const publicationSchema: GenericCardSchema = {
+export const publicationSchema: TableToGenericCardMapping = {
   type: SynapseConstants.PUBLICATION,
   title: 'Title',
   subTitle: 'Author',

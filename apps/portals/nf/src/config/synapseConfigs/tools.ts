@@ -2,13 +2,13 @@ import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
 import { toolsSql } from '../resources'
 import { columnAliases } from './commonProps'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 
-export const toolsSchema: GenericCardSchema = {
+export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.EXPERIMENTAL_TOOL,
   title: 'resourceName',
   subTitle: 'resourceType',

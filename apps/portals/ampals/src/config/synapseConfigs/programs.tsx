@@ -1,14 +1,14 @@
 import type {
   CardConfiguration,
   CardContainerLogicProps,
-  GenericCardSchema,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { programsSql } from '../resources'
 
 export const programsRgbIndex = 9
 
-export const programSchema: GenericCardSchema = {
+export const programSchema: TableToGenericCardMapping = {
   type: 'program',
   title: 'Program',
   // subTitle: 'Short Description',

@@ -1,6 +1,6 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
+  TableToGenericCardMapping,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
@@ -11,7 +11,7 @@ export const COMPUTATIONAL_TOOLS_COLUMN_NAMES = {
   GRANT: 'grant',
 }
 
-const computationalSchema: GenericCardSchema = {
+const computationalSchema: TableToGenericCardMapping = {
   type: SynapseConstants.COMPUTATIONAL,
   title: 'name',
   description: 'summary',

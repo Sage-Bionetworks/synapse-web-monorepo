@@ -1,19 +1,17 @@
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import type {
-  GenericCardSchema,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client'
 import {
   CardConfiguration,
   CardContainerLogicProps,
   SynapseConstants,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 
 const rgbIndex = 3
 
-export const toolsSchema: GenericCardSchema = {
+export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.COMPUTATIONAL,
   title: 'softwareName',
   subTitle: 'softwareType',

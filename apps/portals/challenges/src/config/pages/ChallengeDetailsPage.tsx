@@ -26,14 +26,14 @@ import {
   CardContainerLogic,
   CardLink,
   ErrorPage,
-  GenericCardSchema,
   NoContentAvailable,
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { challengeProjectsSql } from '../resources'
 
-export const challengesSchema: GenericCardSchema = {
+export const challengesSchema: TableToGenericCardMapping = {
   type: 'challenge',
   title: 'name',
   subTitle: 'Status',

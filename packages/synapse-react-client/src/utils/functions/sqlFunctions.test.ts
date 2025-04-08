@@ -1,15 +1,18 @@
 import {
   getAdditionalFilters,
+  getColumnIndex,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
   QUERY_FILTERS_SESSION_STORAGE_KEY,
   SQLOperator,
 } from './SqlFunctions'
 import {
+  ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
+  ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
 
 describe('parseEntityIdFromSqlStatement', () => {
@@ -328,5 +331,25 @@ describe('Local Storage QueryFilter[] tests', () => {
       searchParamFilter,
     ]
     expect(result).toEqual(expectedResult)
+  })
+})
+
+describe('getColumnIndex', () => {
+  const columnModels: ColumnModel[] = [
+    { id: '1', name: 'foo', columnType: ColumnTypeEnum.STRING },
+    { id: '2', name: 'bar', columnType: ColumnTypeEnum.DOUBLE },
+  ]
+
+  it('finds the column in the selectColumns', () => {
+    expect(getColumnIndex('bar', columnModels, undefined)).toBe(1)
+  })
+  it('finds the column in the columnModels', () => {
+    expect(getColumnIndex('bar', undefined, columnModels)).toBe(1)
+  })
+  it('does not include the column', () => {
+    expect(getColumnIndex('baz', columnModels, undefined)).toBe(undefined)
+  })
+  it('the found column index is 0 (falsy)', () => {
+    expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
   })
 })

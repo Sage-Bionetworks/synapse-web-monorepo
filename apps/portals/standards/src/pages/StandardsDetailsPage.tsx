@@ -7,7 +7,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   ErrorPage,
-  GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
   RowDataTable,
@@ -15,12 +14,14 @@ import {
   CardConfiguration,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
+import { getAdditionalFilters } from 'synapse-react-client/utils/functions/index'
+import { DEFAULT_PAGE_SIZE } from 'synapse-react-client/utils/SynapseConstants'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { standardsDetailsPageSQL } from '../config/resources'
 const dataSql = standardsDetailsPageSQL
 
-export const standardsCardSchema: GenericCardSchema = {
+export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
   title: 'acronym',
   subTitle: 'standardName',
@@ -123,14 +124,23 @@ export default function StandardsDetailsPage() {
     <>
       {/* TODO: header card */}
       <CardContainerLogic
-        sql={dataSql}
+        query={{
+          sql: dataSql,
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+              columnName: 'id',
+              operator: ColumnSingleValueFilterOperator.EQUAL,
+              values: [id],
+            },
+          ],
+        }}
         type={SynapseConstants.GENERIC_CARD}
         genericCardSchema={standardsCardSchema}
         secondaryLabelLimit={6}
         isHeader={true}
         headerCardVariant="HeaderCardV2"
-        searchParams={{ id }}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       />
 
       <DetailsPage sql={dataSql}>

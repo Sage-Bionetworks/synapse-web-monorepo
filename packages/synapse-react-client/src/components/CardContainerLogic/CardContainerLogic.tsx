@@ -1,3 +1,5 @@
+import { CardConfiguration } from '@/components/CardContainer/CardConfiguration'
+import { CardLink } from '@/components/CardContainer/CardLink'
 import { LockedColumn, SynapseConstants, UniqueFacetIdentifier } from '@/utils'
 import {
   getAdditionalFilters,
@@ -6,12 +8,13 @@ import {
 } from '@/utils/functions/SqlFunctions'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
+  Query,
   QueryBundleRequest,
   SortDirection,
 } from '@sage-bionetworks/synapse-types'
+import { useMemo } from 'react'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
-import { GenericCardSchema } from '../GenericCard'
-import { IconOptions } from '../Icon/Icon'
+import { HeaderCardVariant } from '../HeaderCard'
 import { IconSvgProps } from '../IconSvg'
 import QuerySortSelector from '../QuerySortSelector'
 import {
@@ -21,9 +24,7 @@ import {
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
-import { ReleaseCardConfig } from '../ReleaseCard'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { HeaderCardVariant } from '../HeaderCard'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -55,37 +56,6 @@ export enum TargetEnum {
   PARENT_FRAME = '_parent',
   FULL_WINDOW_BODY = '_top',
 }
-
-export type CardLink =
-  | {
-      // the column name whose value will be used as the display text
-      matchColumnName: string
-      // If set, use the rowID as the column value.  Otherwise, use the value in the matchColumnName column
-      overrideValueWithRowID?: boolean
-      // If true, value will be processed as Markdown
-      isMarkdown: false
-      // If set, also show a tooltip
-      tooltipText?: string
-      // If set, will specify where to open the link
-      target?: TargetEnum
-    } & (
-      | {
-          baseURL: string
-          // the key that will go into the url
-          URLColumnName: string
-          // the value that will go into the url link should be surrounded with parenthesis, making the search
-          // param study=(ROSMAP) instead of study=ROSMAP
-          wrapValueWithParens?: boolean
-          // If true, the data is a synID and the entity name should be resolved
-          resolveEntityName?: boolean
-        }
-      | {
-          // If set and a value exists in this column for the row, just use this value (or a transform of this value) for the href
-          overrideLinkURLColumnName: string
-          // Optionally apply a transform to each value of the overrideLinkURLColumn
-          overrideLinkURLColumnTransform?: (columnValue: string) => string
-        }
-    )
 
 export type MarkdownLink = {
   isMarkdown: true
@@ -132,35 +102,38 @@ export type ColumnIconConfigs = {
   }
 }
 
-export type CommonCardProps = {
-  genericCardSchema?: GenericCardSchema
-  secondaryLabelLimit?: number
-  titleLinkConfig?: CardLink
-  ctaLinkConfig?: CTACardLink
-  labelLinkConfig?: LabelLinkConfig
-  descriptionConfig?: DescriptionConfig
-  rgbIndex?: number
-  columnIconOptions?: ColumnIconConfigs
-  releaseCardConfig?: ReleaseCardConfig
-}
-export type CardConfiguration = {
-  type: string
-  hasInternalLink?: boolean
-  iconOptions?: IconOptions
-} & CommonCardProps
-
 export type CardContainerLogicProps = {
-  limit?: number
-  title?: string
+  /** The SQL query which will be used to populate the cards */
+  query?: Query
+  /** @deprecated use `query` */
+  sql?: string
+  /** @deprecated use `query` */
   sqlOperator?: SQLOperator
+  /** Optional limit for the number of cards shown per page
+   * @deprecated use `query */
+  limit?: number
+  /** Optional title to display above the component */
+  title?: string
+  /** @deprecated use `query` */
   searchParams?: Record<string, string>
+  /**
+   * If true, the card(s) will be rendered using the 'HeaderCard' component.
+   * @default false
+   */
   isHeader?: boolean
+  /**
+   * The variant of the HeaderCard to use, if `isHeader` is true
+   * @default 'HeaderCard'
+   */
   headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
-  sql: string
+  /** Provide a `SortConfiguration` that can be used to render UI to toggle the sorting of the cards. */
   sortConfig?: SortConfiguration
+  /** Configuration used to render UI that can be used to alter a filter against a column with enumerated facets. */
   topLevelEnumeratedFacetToFilter?: UniqueFacetIdentifier
+  /** Optional column to 'lock'; Values and filter controls for a locked column will not be displayed in the UI. */
   lockedColumn?: LockedColumn
+  /** Optionally limit the initial number of cards shown on the first page */
   initialLimit?: number
   multiCardList?: boolean
 } & CardConfiguration &
@@ -177,40 +150,71 @@ export type CardContainerLogicProps = {
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
  */
 export function CardContainerLogic(props: CardContainerLogicProps) {
-  const entityId = parseEntityIdFromSqlStatement(props.sql)
-  const queryFilters = getAdditionalFilters(
-    props.searchParams,
-    props.sqlOperator,
-    props.additionalFiltersSessionStorageKey,
-  )
+  const { sql: deprecatedSql } = props
+  const sql = props.query?.sql ?? deprecatedSql ?? ''
+  const entityId = parseEntityIdFromSqlStatement(sql)
+
   const { sortConfig, columnAliases, topLevelEnumeratedFacetToFilter } = props
-  const defaultSortItems = sortConfig
-    ? [
-        {
-          column: sortConfig.defaultColumn,
-          direction: sortConfig.defaultDirection,
-        },
-      ]
-    : undefined
-  const initQueryRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: entityId,
-    query: {
-      sql: props.sql,
-      limit: props.limit ?? DEFAULT_PAGE_SIZE,
-      sort: defaultSortItems,
-      additionalFilters: queryFilters,
-    },
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
-      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
-  }
+  const defaultSortItems = useMemo(
+    () =>
+      sortConfig
+        ? [
+            {
+              column: sortConfig.defaultColumn,
+              direction: sortConfig.defaultDirection,
+            },
+          ]
+        : undefined,
+    [sortConfig],
+  )
+
+  const initQueryRequest: QueryBundleRequest = useMemo(() => {
+    let query: Query
+    if (props.query) {
+      query = {
+        sort: defaultSortItems,
+        limit: DEFAULT_PAGE_SIZE,
+        ...props.query,
+      }
+    } else {
+      // Deprecated props were used
+      const queryFilters = getAdditionalFilters(
+        props.searchParams,
+        props.sqlOperator,
+        props.additionalFiltersSessionStorageKey,
+      )
+      query = {
+        sql: props.sql!,
+        limit: props.limit ?? DEFAULT_PAGE_SIZE,
+        sort: defaultSortItems,
+        additionalFilters: queryFilters,
+      }
+    }
+
+    return {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: entityId,
+      query: query,
+      partMask:
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+        SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+        SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+        SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+        SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
+    }
+  }, [
+    defaultSortItems,
+    entityId,
+    props.additionalFiltersSessionStorageKey,
+    props.limit,
+    props.query,
+    props.searchParams,
+    props.sql,
+    props.sqlOperator,
+  ])
 
   /**
    * Fully re-render the uncontrolled QueryWrapper component when the initial query changes. This eliminates a class of

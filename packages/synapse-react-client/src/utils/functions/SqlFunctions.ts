@@ -1,4 +1,5 @@
 import {
+  ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
@@ -182,4 +183,34 @@ export const resultToJson = (
     })
     return obj
   })
+}
+
+/**
+ * Finds the index of the given column name in the selectColumns or columnModels.
+ *
+ * @returns a non-negative integer if the column is found, or undefined if the column is not found
+ * @param columnName
+ * @param selectColumns
+ * @param columnModels
+ */
+export const getColumnIndex = (
+  columnName?: string,
+  selectColumns?: SelectColumn[],
+  columnModels?: ColumnModel[],
+): number | undefined => {
+  if (selectColumns) {
+    const findIndexResult = selectColumns.findIndex(
+      el => el.name === columnName,
+    )
+    if (findIndexResult != -1) {
+      return findIndexResult
+    }
+  }
+  if (columnModels) {
+    const findIndexResult = columnModels.findIndex(el => el.name === columnName)
+    if (findIndexResult != -1) {
+      return findIndexResult
+    }
+  }
+  return undefined
 }
