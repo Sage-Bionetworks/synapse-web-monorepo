@@ -47,7 +47,6 @@ const StandardsContributeToTheRegistry = () => {
             fontSize: '16px',
             fontWeight: '600',
             lineHeight: '144%',
-            textTransform: 'uppercase',
           }}
         >
           {buttonText}

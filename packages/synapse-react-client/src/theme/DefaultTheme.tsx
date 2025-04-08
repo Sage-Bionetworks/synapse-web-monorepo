@@ -97,7 +97,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             fontWeight: 900,
             padding: padding,
             borderRadius: '3px',
-            textTransform: 'capitalize',
+            textTransform: 'var(--synapse-button-text-transform)',
             '&:hover': {
               transition: '0.2s',
             },
