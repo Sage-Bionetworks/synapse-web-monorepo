@@ -24,7 +24,8 @@ type FieldConfig = {
   } // Dropdown options for 'Select' componentTypes
   additionalProperties?: {
     [id: string]: any
-  } // intentionally flexible
+  } // intentionally flexible,
+  validationFunc?: (input: string) => boolean
 }
 
 export type FieldSchema = {
@@ -35,7 +36,7 @@ export type FormData = {
   [id: string]: string
 }
 
-type Errors = {
+type ValidFields = {
   [id: string]: boolean
 }
 
@@ -45,16 +46,23 @@ export type FormProps = {
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
-  const [formData, setFormData] = useState(
-    Object.fromEntries(Object.keys(fields).map(id => [id, ''])),
+  const blankFormData = Object.fromEntries(
+    Object.keys(fields).map(id => [id, '']),
   )
-  const [errors, setErrors] = useState<Errors>({})
+  const [formData, setFormData] = useState(blankFormData)
+
+  const defaultValidFields = Object.fromEntries(
+    Object.keys(fields).map(id => [id, true]),
+  )
+  const [validFields, setValidFields] =
+    useState<ValidFields>(defaultValidFields)
+
   const theme = useTheme()
 
   const handleChange = (id: string, value: string) => {
-    setErrors((prev: Errors) => {
-      if (!prev[id]) return prev
-      return { ...prev, [id]: false }
+    setValidFields((prev: ValidFields) => {
+      if (prev[id]) return prev
+      return { ...prev, [id]: true }
     })
 
     setFormData((prev: FormData) => {
@@ -67,26 +75,29 @@ export default function Form({ fields, onSubmit }: FormProps) {
     evt.preventDefault()
 
     // Error handling
-    const newErrors: Errors = {}
+    const newValidFields: ValidFields = defaultValidFields
     for (const id of Object.keys(formData)) {
       if (fields[id].isRequired && formData[id].length === 0) {
-        newErrors[id] = true
+        newValidFields[id] = false
+      }
+      if (fields[id].validationFunc) {
+        newValidFields[id] = fields[id].validationFunc(formData[id])
       }
     }
 
-    setErrors(() => {
-      return newErrors
+    setValidFields(() => {
+      return newValidFields
     })
 
     // Prevent submission if there are errors
     let wasSuccessful = false
-    if (Object.keys(newErrors).length === 0) {
+    if (!Object.values(newValidFields).some(value => value === false)) {
       wasSuccessful = onSubmit(formData)
     }
 
     // Clear the form on successful submission
     if (wasSuccessful) {
-      setFormData({})
+      setFormData(blankFormData)
     }
   }
 
@@ -102,7 +113,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           <InputLabel
             id={`${id}-label`}
             sx={{ position: 'relative', bottom: '20px' }}
-            error={errors[id] ?? false}
+            error={!validFields[id]}
           >
             {config.label}
           </InputLabel>
@@ -150,7 +161,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           required={config.isRequired}
           helperText={config.helperText}
           placeholder={config?.placeholder}
-          error={errors[id] ?? false}
+          error={!validFields[id]}
           fullWidth
           {...config.additionalProperties}
         />

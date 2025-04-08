@@ -112,6 +112,10 @@ export default function ContributeAStandard() {
       helperText: 'What is your ORCID?',
       placeholder: 'e.g., "0000-0001-2345-6789"',
       isRequired: true,
+      validationFunc: (input: string) => {
+        const regex = /^\d{4}-\d{4}-\d{4}-\d{4}$/
+        return regex.test(input)
+      },
     },
   }
 
