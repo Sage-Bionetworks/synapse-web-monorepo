@@ -24,7 +24,7 @@ type FieldConfig = {
   } // Dropdown options for 'Select' componentTypes
   additionalProperties?: {
     [id: string]: any
-  } // intentionally flexible,
+  } // intentionally flexible
   validationFunc?: (input: string) => boolean
 }
 
@@ -36,13 +36,13 @@ export type FormData = {
   [id: string]: string
 }
 
-type ValidFields = {
-  [id: string]: boolean
-}
-
 export type FormProps = {
   fields: FieldSchema
   onSubmit: (data: FormData) => boolean
+}
+
+type ValidFields = {
+  [id: string]: boolean
 }
 
 export default function Form({ fields, onSubmit }: FormProps) {
@@ -89,9 +89,9 @@ export default function Form({ fields, onSubmit }: FormProps) {
       return newValidFields
     })
 
-    // Prevent submission if there are errors
     let wasSuccessful = false
     if (!Object.values(newValidFields).some(value => value === false)) {
+      // Prevent submission if there are errors
       wasSuccessful = onSubmit(formData)
     }
 
@@ -121,7 +121,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
             fullWidth
             labelId={`${id}-label`}
             id={id}
-            value={formData[id] || ''}
+            value={formData[id]}
             onChange={e => handleChange(id, e.target.value)}
             displayEmpty
             renderValue={selected => {
@@ -155,7 +155,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         <TextField
           key={id}
           id={id}
-          value={formData[id] || ''}
+          value={formData[id]}
           label={config.label}
           onChange={e => handleChange(id, e.target.value)}
           required={config.isRequired}
