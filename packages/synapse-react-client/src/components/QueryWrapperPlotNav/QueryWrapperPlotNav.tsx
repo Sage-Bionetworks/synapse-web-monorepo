@@ -225,7 +225,11 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               )}
               <SqlEditor />
               {queryVisualizationContext.showDownloadConfirmation && (
-                <TableQueryDownloadConfirmation />
+                <TableQueryDownloadConfirmation
+                  onClose={() =>
+                    queryVisualizationContext.setShowDownloadConfirmation(false)
+                  }
+                />
               )}
               <SynapseErrorBoundary>
                 <TopLevelControls
