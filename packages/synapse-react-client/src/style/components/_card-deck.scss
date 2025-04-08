@@ -52,6 +52,11 @@
       min-height: 75px;
       display: flex;
       align-items: center;
+      padding-left: 25px;
+
+      &--b2ai {
+        padding-left: 0px;
+      }
 
       &__icon {
         img {
@@ -128,13 +133,13 @@
         img {
           width: auto;
           height: 50px;
+          margin-right: 10px;
         }
       }
 
       &__Title {
         font-weight: bold;
         font-size: 18px;
-        margin-left: 10px;
       }
     }
   }
