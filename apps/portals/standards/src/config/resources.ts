@@ -11,15 +11,18 @@ export const dataSql = `
 
 // for details page:
 export const standardsDetailsPageSQL = `
-    SELECT  acronym,
+    SELECT  id,
+            acronym,
             name as standardName,
             description,
             category,
             collections,
             topic as topics,
-            relevantOrgAcronym as orranizations,
+            relevantOrgAcronym as organizations,
             responsibleOrgName as SDO,
             isOpen,
+            relatedTo,
+            trainingResources,
             registration
     FROM ${DST_TABLE_ID}
 `
