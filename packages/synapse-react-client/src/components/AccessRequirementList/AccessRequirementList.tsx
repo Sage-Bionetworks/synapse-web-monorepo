@@ -251,7 +251,8 @@ export default function AccessRequirementList(
     )
 
   const sortedGroupedAcessRequirementsByType = useMemo(() => {
-    if (groupedAccessRequirementsByType && sortedAccessRequirementIds) {
+    if (accessRequirements && sortedAccessRequirementIds) {
+      const groupedAccessRequirementsByType = groupBy(accessRequirements, 'concreteType')
       const sortedByTypeAndStatus =
         SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.map(type => {
           const arsOfType = groupedAccessRequirementsByType[type]
