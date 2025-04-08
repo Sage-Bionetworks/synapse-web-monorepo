@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { ReactComponent as ALLALSLogo } from '../../../../portals/ampals/src/config/style/ALLALSLogo.svg'
 import { IconSvg } from 'synapse-react-client'
-import backgroundImage from '../../../../portals/ampals/src/config/style/backgroundImage.png'
+import backgroundImage from '../../../../portals/ampals/src/config/style/ALLALSSlatBackground.png'
 import { Link as RouterLink } from 'react-router'
 
 const AllALSSlat = () => {
