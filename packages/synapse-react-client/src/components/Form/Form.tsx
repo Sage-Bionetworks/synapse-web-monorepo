@@ -92,6 +92,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
 
   const createField = (id: string, config: FieldConfig) => {
     if (config.componentType === Select) {
+      const placeholderText = 'Select a Category'
       return (
         <FormControl
           fullWidth
@@ -117,7 +118,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
               if (!selected) {
                 return (
                   <span style={{ color: theme.palette.text.disabled }}>
-                    Select a Category
+                    {placeholderText}
                   </span>
                 )
               }
@@ -126,7 +127,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
             {...config.additionalOptions}
           >
             <MenuItem value="" disabled>
-              Select a Category
+              {placeholderText}
             </MenuItem>
             {Object.entries(config.selections ?? {}).map(([label, value]) => (
               <MenuItem key={value} value={value}>
