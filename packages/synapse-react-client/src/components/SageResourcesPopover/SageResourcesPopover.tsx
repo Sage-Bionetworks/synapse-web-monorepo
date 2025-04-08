@@ -24,7 +24,7 @@ export function SageResourcesPopover({
 }: SageResourcesPopoverProps) {
   const theme = useTheme()
   const open = Boolean(anchorEl)
-  const hostname = 'www.synapse.org'
+  const hostname = window.location.hostname
   const additionalFilters: ColumnSingleValueQueryFilter[] | undefined =
     filterByType
       ? [
@@ -89,7 +89,13 @@ export function SageResourcesPopover({
           <Grid item xs={12} lg={9}>
             <Grid container>
               {sourceAppConfigs
-                ?.filter(config => !config.appURL.includes(hostname))
+                ?.filter(config => {
+                  if (config.appURL.toLowerCase().startsWith('http')) {
+                    const url = new URL(config.appURL)
+                    return url.hostname !== hostname
+                  }
+                  return true
+                })
                 .map(config => {
                   if (config.isPublicized) {
                     return (
