@@ -2,6 +2,7 @@ import LargeButton from '@/components/styled/LargeButton'
 import classNames from 'classnames'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import { CardDeckDataProps } from './CardDeck'
+import { Link } from '@mui/material'
 
 export default function CardDeckDesktop({
   title,
@@ -60,18 +61,6 @@ export default function CardDeckDesktop({
             {' '}
             {title}{' '}
           </span>
-          {/* {link && (
-            <p className="Programs__Card__header__info__link">
-              <a
-                className="highlight-link"
-                href={link}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Visit website
-              </a>
-            </p>
-          )} */}
         </div>
       </div>
       <div
@@ -81,35 +70,38 @@ export default function CardDeckDesktop({
         )}
       >
         <p> {description} </p>
-        <LargeButton
-          color="secondary"
-          variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
-          href={ctaButtonURL}
-          sx={{
-            marginLeft: 0,
-            fontSize: '14px',
-            boxShadow: 'none',
-            color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
-            ...(cardDeckType === 'b2ai' && {
-              width: '200px',
-              backgroundColor: 'white',
-            }),
-            ...(cardDeckType === 'cckp' && {
-              width: '170px',
-              borderColor: 'primary.main',
+
+        {cardDeckType === 'b2ai' ? (
+          <Link href={ctaButtonURL} underline="none">
+            {ctaButtonText}
+          </Link>
+        ) : (
+          <LargeButton
+            color="secondary"
+            variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
+            href={ctaButtonURL}
+            sx={{
+              marginLeft: 0,
+              fontSize: '14px',
+              boxShadow: 'none',
+              color: 'primary.main',
               '&:hover': {
                 backgroundColor: 'primary.main',
                 color: 'white',
               },
-            }),
-          }}
-        >
-          {ctaButtonText}
-        </LargeButton>
+              ...(cardDeckType === 'cckp' && {
+                width: '170px',
+                borderColor: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                },
+              }),
+            }}
+          >
+            {ctaButtonText}
+          </LargeButton>
+        )}
       </div>
     </div>
   )
