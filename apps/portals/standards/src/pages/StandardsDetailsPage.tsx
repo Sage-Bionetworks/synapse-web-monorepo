@@ -12,23 +12,38 @@ import {
   SynapseErrorType,
   RowDataTable,
   SkeletonTable,
+  CardConfiguration,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { standardsDetailsPageSQL } from '../config/resources'
-// import { ReactComponent as standardDataModelSvg } from '@sage-bionetworks/synapse-react-client/src/assets/icons/standardDataModel.svg'
 const dataSql = standardsDetailsPageSQL
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
-  // include acronym somewhere?
   title: 'acronym',
   subTitle: 'standardName',
   description: 'description',
   link: 'URL',
-  // icon: standardDataModelSvg,
   secondaryLabels: ['SDO', 'collections', 'topic'],
+}
+
+export const linkedStandardCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  genericCardSchema: {
+    type: SynapseConstants.STANDARD_DATA_MODEL,
+    title: 'acronym',
+    subTitle: 'standardName',
+    description: 'description',
+    link: '',
+  },
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Standard/DetailsPage',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
+  },
 }
 
 export const standardDetailsPageContent: DetailsPageContentType = [
@@ -37,29 +52,26 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'About The Standard',
     element: (
       <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ context }) => {
-            if (context.rowData && context.rowSet) {
-              return (
-                <RowDataTable
-                  rowData={context.rowData.values ?? []}
-                  headers={context.rowSet?.headers ?? []}
-                  displayedColumns={[
-                    'name',
-                    'responsibleOrgName',
-                    'relevantOrgName',
-                    'isOpen',
-                    'registration',
-                  ]}
-                  columnAliases={columnAliases}
-                />
-              )
-            } else {
-              return <SkeletonTable numRows={6} numCols={1} />
-            }
+        {({ context }) => {
+          if (context.rowData && context.rowSet) {
+            return (
+              <RowDataTable
+                rowData={context.rowData.values ?? []}
+                headers={context.rowSet?.headers ?? []}
+                displayedColumns={[
+                  'name',
+                  'responsibleOrgName',
+                  'relevantOrgName',
+                  'isOpen',
+                  'registration',
+                ]}
+                columnAliases={columnAliases}
+              />
+            )
+          } else {
+            return <SkeletonTable numRows={6} numCols={1} />
           }
-        }
+        }}
       </DetailsPageContextConsumer>
     ),
   },
@@ -67,18 +79,16 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Linked Training Resources',
     title: 'Linked Training Resources',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ value }) => (
-            <>{value}</>
-            // TODO:
-            // <CardContainerLogic
-            //   {...trainingResourcesCardContainerProps}
-            //   searchParams={{ standardId: value! }}
-            // />
-          )
-        }
+      <DetailsPageContextConsumer columnName={'trainingResources'}>
+        {({ value }) => (
+          <CardContainerLogic
+            {...linkedStandardCardConfiguration}
+            sql={dataSql}
+            // need a dummy value for search to properly exclude null values and an empty string doesn't work
+            searchParams={{ id: value || 'notreal' }}
+            sqlOperator={ColumnSingleValueFilterOperator.IN}
+          />
+        )}
       </DetailsPageContextConsumer>
     ),
   },
@@ -86,18 +96,18 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Related Standards',
     title: 'Related Standards',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ value }) => (
-            <>{value}</>
-            // TODO:
-            // <CardContainerLogic
-            //   {...standardCardContainerProps}
-            //   searchParams={{ standardId: value! }}
-            // />
+      <DetailsPageContextConsumer columnName={'relatedTo'}>
+        {({ value, context }) => {
+          return (
+            <CardContainerLogic
+              {...linkedStandardCardConfiguration}
+              sql={dataSql}
+              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+              searchParams={{ id: value || 'notreal' }}
+              sqlOperator={ColumnSingleValueFilterOperator.IN}
+            />
           )
-        }
+        }}
       </DetailsPageContextConsumer>
     ),
   },
