@@ -160,7 +160,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
           onChange={e => handleChange(id, e.target.value)}
           required={config.isRequired}
           helperText={config.helperText}
-          placeholder={config?.placeholder}
+          placeholder={config.placeholder}
           error={!validFields[id]}
           fullWidth
           {...config.additionalProperties}
