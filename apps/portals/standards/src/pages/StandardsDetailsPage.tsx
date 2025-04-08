@@ -25,8 +25,8 @@ export const standardsCardSchema: GenericCardSchema = {
   title: 'acronym',
   subTitle: 'standardName',
   description: 'description',
-  link: 'URL',
-  secondaryLabels: ['SDO', 'collections', 'topic'],
+  link: 'url',
+  secondaryLabels: ['SDO', 'collections', 'topics'],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {
@@ -59,9 +59,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 rowData={context.rowData.values ?? []}
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
-                  'name',
-                  'responsibleOrgName',
-                  'relevantOrgName',
+                  'standardName',
+                  'SDO',
+                  'organizations',
                   'isOpen',
                   'registration',
                 ]}
