@@ -223,16 +223,14 @@ export default function AccessRequirementList(
   // SWC-7218: Group by access requirement type
   const groupedAccessRequirementsByType = useMemo(() => {
     if (accessRequirements) {
-      return accessRequirements.reduce<
-        Record<AccessRequirement['concreteType'], AccessRequirement[]>
-      >((acc, item) => {
+      return accessRequirements.reduce((acc, item) => {
         // init if we have not seen this concrete type before
         if (!acc[item.concreteType]) {
           acc[item.concreteType] = []
         }
         acc[item.concreteType].push(item)
         return acc
-      }, {} as Record<string, AccessRequirement[]>)
+      }, {} as Record<AccessRequirement['concreteType'], AccessRequirement[]>)
     }
     return undefined
   }, [accessRequirements])
