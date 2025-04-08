@@ -82,14 +82,17 @@ export type AccessRequirementListProps = {
     }
 )
 
+const SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED: AccessRequirement['concreteType'][] =
+  [
+    SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+    TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+    MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+    ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ]
+
 const SUPPORTED_ACCESS_REQUIREMENT_TYPES = new Set<
   AccessRequirement['concreteType']
->([
-  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-])
+>(SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED)
 
 const DialogSubsectionHeader: StyledComponent<TypographyProps> = styled(
   Typography,
@@ -217,6 +220,23 @@ export default function AccessRequirementList(
     fetchedRequirementsForEntity ??
     fetchedRequirementsForTeam
 
+  // SWC-7218: Group by access requirement type
+  const groupedAccessRequirementsByType = useMemo(() => {
+    if (accessRequirements) {
+      return accessRequirements.reduce<
+        Record<AccessRequirement['concreteType'], AccessRequirement[]>
+      >((acc, item) => {
+        // init if we have not seen this concrete type before
+        if (!acc[item.concreteType]) {
+          acc[item.concreteType] = []
+        }
+        acc[item.concreteType].push(item)
+        return acc
+      }, {} as Record<string, AccessRequirement[]>)
+    }
+    return undefined
+  }, [accessRequirements])
+
   /**
    * Set the initial ordering of the Access Requirements to show complete ARs first. The individual AR Item components
    * retrieve and render status independently, so this data only determines ordering. For this reason, the query data
@@ -231,6 +251,22 @@ export default function AccessRequirementList(
         staleTime: Infinity,
       },
     )
+
+  const sortedGroupedAcessRequirementsByType = useMemo(() => {
+    if (groupedAccessRequirementsByType && sortedAccessRequirementIds) {
+      const sortedByTypeAndStatus =
+        SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.map(type => {
+          const arsOfType = groupedAccessRequirementsByType[type]
+          return sortedAccessRequirementIds.map(
+            id => arsOfType.find(ar => id === String(ar.id))!,
+          )
+        })
+          .flat()
+          .filter((item): item is AccessRequirement => item !== undefined)
+      return sortedByTypeAndStatus
+    }
+    return undefined
+  }, [groupedAccessRequirementsByType, sortedAccessRequirementIds])
 
   const requestDataStepCallback = (props: RequestDataStepCallbackArgs) => {
     const {
@@ -392,28 +428,26 @@ export default function AccessRequirementList(
             {anyARsRequireCertification && <CertificationRequirement />}
             {anyARsRequireProfileValidation && <ValidationRequirement />}
             {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
-            {sortedAccessRequirementIds
-              ?.map(id => accessRequirements!.find(ar => id === String(ar.id))!)
-              ?.map(accessRequirement => {
-                return (
-                  <AccessRequirementListItem
-                    key={accessRequirement.id}
-                    accessRequirement={accessRequirement}
-                    subjectId={subjectId}
-                    subjectType={subjectType}
-                    onHide={onHide}
-                    onRequestAccess={accessRequirement => {
-                      const nextStep = isSignedIn
-                        ? RequestDataStep.UPDATE_RESEARCH_PROJECT
-                        : RequestDataStep.PROMPT_LOGIN
-                      requestDataStepCallback({
-                        managedACTAccessRequirement: accessRequirement,
-                        step: nextStep,
-                      })
-                    }}
-                  />
-                )
-              })}
+            {sortedGroupedAcessRequirementsByType?.map(accessRequirement => {
+              return (
+                <AccessRequirementListItem
+                  key={accessRequirement.id}
+                  accessRequirement={accessRequirement}
+                  subjectId={subjectId}
+                  subjectType={subjectType}
+                  onHide={onHide}
+                  onRequestAccess={accessRequirement => {
+                    const nextStep = isSignedIn
+                      ? RequestDataStep.UPDATE_RESEARCH_PROJECT
+                      : RequestDataStep.PROMPT_LOGIN
+                    requestDataStepCallback({
+                      managedACTAccessRequirement: accessRequirement,
+                      step: nextStep,
+                    })
+                  }}
+                />
+              )
+            })}
           </DialogContent>
           <DialogActions>
             {customDialogActions ? (

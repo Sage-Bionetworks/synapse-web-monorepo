@@ -1,4 +1,5 @@
 import {
+  mockAccessRequirements,
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
@@ -138,61 +139,87 @@ export const HasMetRequirements: Story = {
   },
 }
 
-export const HasUnmetRequirements: Story = {
+const expandedMockAccessRequirements = [
+  ...mockAccessRequirements,
+  { ...mockManagedACTAccessRequirement, id: 21 },
+  { ...mockToUAccessRequirement, id: 22 },
+
+  { ...mockSelfSignAccessRequirement, id: 23 },
+  { ...mockACTAccessRequirement, id: 24 },
+]
+/** Verify ARs are grouped by type, and sorted by completion status */
+export const HasUnmetRequirementsOfEveryType: Story = {
   parameters: {
     msw: {
       handlers: [
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false),
-        ...getTwoFactorAuthStatusHandler(false),
+        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
+        ...getTwoFactorAuthStatusHandler(true),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          expandedMockAccessRequirements,
+        ),
         ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
           {
             accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
-            isApproved: false,
+            isApproved: true,
+            /* Current submission status. Will be undefined if no submission has been created */
+            currentSubmissionStatus: {
+              submissionId: mockApprovedSubmission.id,
+              submittedBy: mockApprovedSubmission.submittedBy,
+              modifiedOn: mockApprovedSubmission.modifiedOn,
+              state: SubmissionState.APPROVED,
+            },
           },
           {
             accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+            isApproved: true,
+          },
+
+          {
+            accessRequirementId: mockToUAccessRequirement.id.toString(),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+            isApproved: true,
+          },
+          {
+            accessRequirementId: mockACTAccessRequirement.id.toString(),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+            isApproved: true,
+          },
+          {
+            accessRequirementId: '21',
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
             isApproved: false,
           },
           {
-            accessRequirementId: mockToUAccessRequirement.id.toString(),
+            accessRequirementId: '22',
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
           {
-            accessRequirementId: mockACTAccessRequirement.id.toString(),
+            accessRequirementId: '23',
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+            isApproved: false,
+          },
+          {
+            accessRequirementId: '24',
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
         ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
-        ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockACTAccessRequirement.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
       ],
     },
   },
