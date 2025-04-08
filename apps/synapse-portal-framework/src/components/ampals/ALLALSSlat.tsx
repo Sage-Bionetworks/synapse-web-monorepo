@@ -1,8 +1,7 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography, Link } from '@mui/material'
 import { ReactComponent as ALLALSLogo } from '../../../../portals/ampals/src/config/style/ALLALSLogo.svg'
 import { IconSvg } from 'synapse-react-client'
 import backgroundImage from '../../../../portals/ampals/src/config/style/ALLALSSlatBackground.png'
-import { Link as RouterLink } from 'react-router'
 
 const AllALSSlat = () => {
   return (
@@ -62,8 +61,10 @@ const AllALSSlat = () => {
         </Stack>
         <Button
           variant="contained"
-          component={RouterLink}
-          to={'/Explore/Datasets'}
+          component={Link}
+          href="https://www.all-als.org/"
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
             padding: '6px 24px',
             whiteSpace: 'nowrap',
@@ -87,7 +88,6 @@ const AllALSSlat = () => {
                 width: '18px',
                 height: '18px',
               },
-              transform: 'rotate(90deg)',
             }}
           />
         </Button>
