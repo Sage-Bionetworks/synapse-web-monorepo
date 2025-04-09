@@ -1,11 +1,13 @@
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Link as MuiLink, Tooltip } from '@mui/material'
-import { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import { Suspense, useEffect } from 'react'
+import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { Link } from 'react-router'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { SkeletonInlineBlock } from '../Skeleton'
+import { EmptyFallbackComponent } from '../error'
 
 export type ShowDownloadV2Props = {
   to: string
@@ -67,4 +69,12 @@ export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   )
 }
 
-export default ShowDownloadV2
+export default function ShowDownloadV2WithSuspense(props: ShowDownloadV2Props) {
+  return (
+    <ErrorBoundary FallbackComponent={EmptyFallbackComponent}>
+      <Suspense fallback={<SkeletonInlineBlock width={100} />}>
+        <ShowDownloadV2 {...props} />
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
