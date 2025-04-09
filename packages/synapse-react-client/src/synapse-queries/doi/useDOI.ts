@@ -11,6 +11,7 @@ import {
   useMutation,
   UseMutationOptions,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
 
@@ -65,7 +66,8 @@ export function useCreateOrUpdateDOI(
     'mutationFn'
   >,
 ) {
-  const { synapseClient } = useSynapseContext()
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
 
   return useMutation<DoiResponse, SynapseClientError, DoiRequest>({
     ...options,
@@ -80,6 +82,26 @@ export function useCreateOrUpdateDOI(
           asyncToken: asyncJobId.token!,
         }),
       )
+    },
+    onSuccess(...args) {
+      if (options?.onSuccess) {
+        options.onSuccess(...args)
+      }
+      const doi = args[0].doi!
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDOIAssociationQueryKey(
+          doi.objectType!,
+          doi.objectId!,
+          doi.objectVersion,
+        ),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDOIQueryKey(
+          doi.objectType!,
+          doi.objectId!,
+          doi.objectVersion,
+        ),
+      })
     },
   })
 }
