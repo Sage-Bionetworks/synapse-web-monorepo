@@ -1,27 +1,18 @@
-import { Box, Link, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Stack, Typography, useTheme, Link } from '@mui/material'
+import { Link as RouterLink } from 'react-router'
 
-const MoreResources = () => {
+type ResourceConfig = {
+  title: string
+  description: string
+  link: string
+}
+
+export type MoreResourcesProps = {
+  resources: ResourceConfig[]
+}
+
+const MoreResources = ({ resources }: MoreResourcesProps) => {
   const theme = useTheme()
-  const resources = [
-    {
-      title: 'For Researchers',
-      description:
-        'Tutorials about using this portal, as well as links to external partner resources, and related ALS knowledge portals.',
-      link: 'View resources',
-    },
-    {
-      title: 'For Data Contributors',
-      description:
-        'Visit this page for instructions on how to contribute data to this portal.',
-      link: 'View resources',
-    },
-    {
-      title: 'For Persons with Lived Experience',
-      description:
-        'Visit this page for links to external resources with information about clinical trials, ongoing research, and community.',
-      link: 'View resources',
-    },
-  ]
   return (
     <Box
       sx={{
@@ -40,9 +31,17 @@ const MoreResources = () => {
       >
         More Resources
       </Typography>
-      <Box sx={{ display: 'flex', gap: '16px', width: '100%' }}>
-        {resources.map(resource => (
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '16px',
+          width: '100%',
+          flexDirection: { xs: 'column', md: 'row' },
+        }}
+      >
+        {resources.map((resource, index) => (
           <Stack
+            key={index}
             sx={{
               gap: '16px',
               background: '#FFF',
@@ -62,7 +61,11 @@ const MoreResources = () => {
             <Typography sx={{ fontSize: '14px', lineHeight: 'normal' }}>
               {resource.description}
             </Typography>
-            <Link sx={{ textDecoration: 'none', marginTop: 'auto' }}>
+            <Link
+              component={RouterLink}
+              to={encodeURI(`${resource.link}`)}
+              sx={{ textDecoration: 'none', marginTop: 'auto' }}
+            >
               <Typography
                 sx={{
                   fontSize: '14px',
@@ -71,7 +74,7 @@ const MoreResources = () => {
                   color: 'primary.main',
                 }}
               >
-                {resource.link}
+                More Resources
               </Typography>
             </Link>
           </Stack>
