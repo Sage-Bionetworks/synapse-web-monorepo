@@ -107,7 +107,7 @@ describe('it performs basic functionality', () => {
 
     await waitFor(() =>
       expect(mockCardContainer).toHaveBeenCalledWith(
-        { ...props, rowSet: truncatedQueryResults },
+        { ...props.cardConfiguration, rowSet: truncatedQueryResults },
         expect.anything(),
       ),
     )
