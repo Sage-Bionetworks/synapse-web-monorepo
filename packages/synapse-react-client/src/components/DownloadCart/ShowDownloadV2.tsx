@@ -69,12 +69,15 @@ export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   )
 }
 
-export default function ShowDownloadV2WithSuspense(props: ShowDownloadV2Props) {
+export function ShowDownloadV2(props: ShowDownloadV2Props) {
   return (
     <ErrorBoundary FallbackComponent={EmptyFallbackComponent}>
       <Suspense fallback={<SkeletonInlineBlock width={100} />}>
-        <ShowDownloadV2 {...props} />
+        <ShowDownloadV2Internal {...props} />
       </Suspense>
     </ErrorBoundary>
   )
 }
+
+export default function ShowDownloadV2
+
