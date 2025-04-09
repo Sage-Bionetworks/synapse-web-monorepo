@@ -1,9 +1,9 @@
+import { QueryOrDeprecatedSearchParams } from '@/components/CardContainerLogic/CardContainerLogic'
 import { useGetEntity } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import {
   getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
-  SQLOperator,
 } from '@/utils/functions'
 import { isTable } from '@/utils/functions/EntityTypeUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
@@ -11,7 +11,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { SynapseErrorBoundary } from '../error'
@@ -54,8 +54,6 @@ export const HAS_SELECTED_ROWS_CSS: string = 'hasSelectedRows'
 type QueryWrapperPlotNavOwnProps = {
   /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
   isInfinite?: boolean
-  sql: string
-  limit?: number
   /** Set to true when you want the query to be saved in the URL search parameters.  If you are controlling the view (such as in PortalSearch), you'll want to set this to false */
   shouldDeepLink?: boolean
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
@@ -111,16 +109,8 @@ type QueryWrapperPlotNavOwnProps = {
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
-export type SearchParams = {
-  searchParams?: Record<string, string>
-}
-export type Operator = {
-  sqlOperator?: SQLOperator
-}
-
-export type QueryWrapperPlotNavProps = SearchParams &
+export type QueryWrapperPlotNavProps = QueryOrDeprecatedSearchParams &
   PlotsContainerProps &
-  Operator &
   QueryWrapperPlotNavOwnProps
 
 type QueryWrapperPlotNavContentsProps = Pick<
@@ -286,13 +276,10 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
 
 function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const {
-    searchParams,
-    sql,
-    sqlOperator,
+    sql: deprecatedSql,
     tableConfiguration,
     isInfinite = !tableConfiguration,
     limit = DEFAULT_PAGE_SIZE,
-    initQueryJson,
     showLastUpdatedOn,
     unitDescription,
     additionalFiltersSessionStorageKey,
@@ -301,22 +288,40 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
     enabledExternalAnalysisPlatforms,
   } = props
 
+  const sql = props.query?.sql ?? deprecatedSql ?? ''
   const entityIdAndVersion = parseEntityIdAndVersionFromSqlStatement(sql)
+
   const { entityId, versionNumber } = entityIdAndVersion ?? { entityId: '' }
-  const additionalFilters = getAdditionalFilters(
-    searchParams,
-    sqlOperator,
-    additionalFiltersSessionStorageKey,
-  )
-  // use initQuery if set, otherwise use sql
-  const query: Query = initQueryJson
-    ? (JSON.parse(initQueryJson) as Query)
-    : {
-        sql,
+  const query: Query = useMemo(() => {
+    if (props.query) {
+      // use query if set
+      return props.query
+    } else if (props.initQueryJson) {
+      // Otherwise use initQueryJson
+      return JSON.parse(props.initQueryJson) as Query
+    } else {
+      // use the deprecated sql, searchParams, and sqlOperator
+      const additionalFilters = getAdditionalFilters(
+        props.searchParams,
+        props.sqlOperator,
+        additionalFiltersSessionStorageKey,
+      )
+      return {
+        sql: deprecatedSql!,
         additionalFilters,
         limit: limit,
         offset: 0,
       }
+    }
+  }, [
+    props.query,
+    props.initQueryJson,
+    props.searchParams,
+    props.sqlOperator,
+    additionalFiltersSessionStorageKey,
+    deprecatedSql,
+    limit,
+  ])
 
   const [componentKey, setComponentKey] = useState(1)
   const remount = () => {

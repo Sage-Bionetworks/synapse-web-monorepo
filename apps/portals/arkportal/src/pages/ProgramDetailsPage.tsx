@@ -1,18 +1,19 @@
-import { datasetCardConfiguration, datasetColumnAliases } from '@/config/synapseConfigs/datasets'
 import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  DetailsPageContextConsumer,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+  datasetCardConfiguration,
+  datasetColumnAliases,
+} from '@/config/synapseConfigs/datasets'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'
-import { programsCardConfiguration, programSchema, programsRgbIndex } from '../config/synapseConfigs/programs'
+import {
+  programsCardConfiguration,
+  programSchema,
+  programsRgbIndex,
+} from '../config/synapseConfigs/programs'
 import { projectsCardConfiguration } from '../config/synapseConfigs/projects'
 
 export function ProgramsDetailPage() {
@@ -22,14 +23,16 @@ export function ProgramsDetailPage() {
       <CardContainerLogic
         isHeader={true}
         isAlignToLeftNav={true}
-        {...programsCardConfiguration}
+        cardConfiguration={{
+          ...programsCardConfiguration,
+          genericCardSchema: {
+            ...programSchema,
+            title: 'Program',
+            link: 'Program',
+          },
+        }}
         rgbIndex={programsRgbIndex}
         columnAliases={columnAliases}
-        genericCardSchema={{
-          ...programSchema,
-          title: 'Program',
-          link: 'Program',
-        }}
         sql={programSql}
         searchParams={searchParams}
       />
@@ -43,7 +46,7 @@ export function ProgramsDetailPage() {
                 <DetailsPageContextConsumer columnName={'Program'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...projectsCardConfiguration}
+                      cardConfiguration={projectsCardConfiguration}
                       sql={projectsSql}
                       searchParams={{ Program: value! }}
                     />
@@ -58,11 +61,13 @@ export function ProgramsDetailPage() {
                 <DetailsPageContextConsumer columnName={'Program'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...datasetCardConfiguration}
+                      cardConfiguration={{
+                        ...datasetCardConfiguration,
+                        secondaryLabelLimit: 4,
+                      }}
                       sql={datasetsSql}
                       searchParams={{ program: value! }}
                       columnAliases={datasetColumnAliases}
-                      secondaryLabelLimit={4}
                     />
                   )}
                 </DetailsPageContextConsumer>

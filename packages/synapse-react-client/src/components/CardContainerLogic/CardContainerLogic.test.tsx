@@ -43,7 +43,7 @@ describe('it performs basic functionality', () => {
     sql,
     limit: 5,
     unitDescription: 'files',
-    type: SynapseConstants.DATASET,
+    cardConfiguration: { type: SynapseConstants.DATASET },
     rgbIndex: 2,
     columnAliases: { facetName: 'alias' },
   }

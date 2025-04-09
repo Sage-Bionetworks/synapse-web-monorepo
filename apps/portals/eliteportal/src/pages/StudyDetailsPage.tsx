@@ -101,7 +101,7 @@ export const studyDetailsPageRoutes: RouteObject[] = [
                       <CardContainerLogic
                         sqlOperator={ColumnSingleValueFilterOperator.IN}
                         sql={studiesSql}
-                        {...studyCardConfiguration}
+                        cardConfiguration={studyCardConfiguration}
                         searchParams={{ id: value }}
                       />
                     )
@@ -230,11 +230,13 @@ export default function StudyDetailsPage() {
       <CardContainerLogic
         sql={studiesSql}
         isHeader
-        {...studyCardConfiguration}
+        cardConfiguration={{
+          ...studyCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          iconOptions: { study: studyHeaderSvg },
+        }}
         columnAliases={studyColumnAliases}
         isAlignToLeftNav
-        secondaryLabelLimit={Infinity}
-        iconOptions={{ study: studyHeaderSvg }}
         searchParams={{ studyKey }}
       />
       <DetailsPage

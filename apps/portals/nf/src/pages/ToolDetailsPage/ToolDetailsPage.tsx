@@ -6,12 +6,8 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import {
-  sharePageLinkButtonDetailPageProps,
-} from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
 import {
@@ -52,9 +48,11 @@ export default function ToolDetailsPage() {
       <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
       <CardContainerLogic
         sql={toolsSql}
-        type={SynapseConstants.GENERIC_CARD}
-        genericCardSchema={toolsSchema}
-        secondaryLabelLimit={6}
+        cardConfiguration={{
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: toolsSchema,
+          secondaryLabelLimit: 6,
+        }}
         isHeader={true}
         searchParams={{ resourceId }}
       />

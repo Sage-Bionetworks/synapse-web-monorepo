@@ -38,8 +38,5 @@ export const programsCardConfiguration: CardConfiguration = {
 
 export const programsCardContainerLogicProps: CardContainerLogicProps = {
   sql: programsSql,
-  ...programsCardConfiguration,
-  genericCardSchema: {
-    ...programsCardConfiguration.genericCardSchema!,
-  },
+  cardConfiguration: programsCardConfiguration,
 }

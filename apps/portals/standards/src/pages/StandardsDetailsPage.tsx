@@ -14,8 +14,7 @@ import {
   CardConfiguration,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
-import { getAdditionalFilters } from 'synapse-react-client/utils/functions/index'
-import { DEFAULT_PAGE_SIZE } from 'synapse-react-client/utils/SynapseConstants'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { standardsDetailsPageSQL } from '../config/resources'
@@ -83,7 +82,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
       <DetailsPageContextConsumer columnName={'trainingResources'}>
         {({ value }) => (
           <CardContainerLogic
-            {...linkedStandardCardConfiguration}
+            cardConfiguration={linkedStandardCardConfiguration}
             sql={dataSql}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
@@ -101,7 +100,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
         {({ value, context }) => {
           return (
             <CardContainerLogic
-              {...linkedStandardCardConfiguration}
+              cardConfiguration={linkedStandardCardConfiguration}
               sql={dataSql}
               // need a dummy value for search to properly exclude null values and an empty string doesn't work
               searchParams={{ id: value || 'notreal' }}
@@ -136,9 +135,11 @@ export default function StandardsDetailsPage() {
             },
           ],
         }}
-        type={SynapseConstants.GENERIC_CARD}
-        genericCardSchema={standardsCardSchema}
-        secondaryLabelLimit={6}
+        cardConfiguration={{
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: standardsCardSchema,
+          secondaryLabelLimit: 6,
+        }}
         isHeader={true}
         headerCardVariant="HeaderCardV2"
       />

@@ -22,5 +22,5 @@ export const cardConfiguration: CardConfiguration = {
 
 export const toolProps: CardContainerLogicProps = {
   sql: toolsSql,
-  ...cardConfiguration,
+  cardConfiguration: cardConfiguration,
 }

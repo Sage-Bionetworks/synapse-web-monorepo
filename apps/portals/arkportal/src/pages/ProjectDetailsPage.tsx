@@ -23,13 +23,15 @@ export function ProjectDetailsPage() {
       <CardContainerLogic
         isHeader={true}
         isAlignToLeftNav={true}
-        {...projectsCardConfiguration}
+        cardConfiguration={{
+          ...projectsCardConfiguration,
+          genericCardSchema: {
+            ...projectSchema,
+            link: '',
+          },
+        }}
         rgbIndex={projectsRgbIndex}
         columnAliases={columnAliases}
-        genericCardSchema={{
-          ...projectSchema,
-          link: '',
-        }}
         sql={projectsSql}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         searchParams={searchParams}
@@ -44,11 +46,13 @@ export function ProjectDetailsPage() {
                 <DetailsPageContextConsumer columnName={'Project'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...datasetCardConfiguration}
+                      cardConfiguration={{
+                        ...datasetCardConfiguration,
+                        secondaryLabelLimit: 4,
+                      }}
                       sql={datasetsSql}
                       searchParams={{ project: value! }}
                       columnAliases={datasetColumnAliases}
-                      secondaryLabelLimit={4}
                     />
                   )}
                 </DetailsPageContextConsumer>

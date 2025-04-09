@@ -60,7 +60,7 @@ export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 
 export const toolsDetailPageProps: CardContainerLogicProps = {
   sql: toolsSql,
-  ...toolsCardConfiguration,
+  cardConfiguration: toolsCardConfiguration,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
   columnAliases,
 }

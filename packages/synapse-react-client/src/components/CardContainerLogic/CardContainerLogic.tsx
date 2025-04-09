@@ -102,20 +102,26 @@ export type ColumnIconConfigs = {
   }
 }
 
-export type CardContainerLogicProps = {
-  /** The SQL query which will be used to populate the cards */
+export type QueryOrDeprecatedSearchParams = {
+  /** The initial SQL query which will be used to populate the data in the component */
   query?: Query
   /** @deprecated use `query` */
   sql?: string
-  /** @deprecated use `query` */
-  sqlOperator?: SQLOperator
   /** Optional limit for the number of cards shown per page
    * @deprecated use `query */
   limit?: number
+  /** Applies filters to the query where the key is the column name and the value is the value to filter on.
+   * The filter function is controlled by sqlOperator.
+   * @deprecated use `query` */
+  searchParams?: Record<string, string>
+  /** Operator used in the filter created using the searchParams prop
+   * @deprecated use `query` */
+  sqlOperator?: SQLOperator
+}
+
+export type CardContainerLogicProps = QueryOrDeprecatedSearchParams & {
   /** Optional title to display above the component */
   title?: string
-  /** @deprecated use `query` */
-  searchParams?: Record<string, string>
   /**
    * If true, the card(s) will be rendered using the 'HeaderCard' component.
    * @default false
@@ -136,8 +142,8 @@ export type CardContainerLogicProps = {
   /** Optionally limit the initial number of cards shown on the first page */
   initialLimit?: number
   multiCardList?: boolean
-} & CardConfiguration &
-  Pick<
+  cardConfiguration: CardConfiguration
+} & Pick<
     QueryVisualizationWrapperProps,
     | 'rgbIndex'
     | 'unitDescription'
@@ -247,7 +253,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
             />
           )}
           <RowSetView
-            cardConfiguration={props}
+            cardConfiguration={props.cardConfiguration}
             initialLimit={props.initialLimit}
             multiCardList={props.multiCardList}
           />

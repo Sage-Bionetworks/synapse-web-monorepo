@@ -75,6 +75,6 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 
 export const publicationDetailPageProps: CardContainerLogicProps = {
   sql: publicationSql,
-  ...publicationCardConfiguration,
+  cardConfiguration: publicationCardConfiguration,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
 }

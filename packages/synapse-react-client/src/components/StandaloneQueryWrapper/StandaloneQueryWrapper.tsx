@@ -1,3 +1,4 @@
+import { QueryOrDeprecatedSearchParams } from '@/components/CardContainerLogic/CardContainerLogic'
 import { useGetEntity } from '@/synapse-queries/entity/useEntity'
 import { SynapseConstants } from '@/utils'
 import { isTable } from '@/utils/functions/EntityTypeUtils'
@@ -6,7 +7,7 @@ import {
   parseEntityIdFromSqlStatement,
 } from '@/utils/functions/SqlFunctions'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'
@@ -16,11 +17,7 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
-import {
-  Operator,
-  QueryWrapperPlotNavProps,
-  SearchParams,
-} from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { QueryWrapperPlotNavProps } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
@@ -32,7 +29,6 @@ import TopLevelControls, {
 import TotalQueryResults from '../TotalQueryResults'
 
 type StandaloneQueryWrapperOwnProps = {
-  sql: string
   showTopLevelControls?: boolean
   searchConfiguration?: Omit<
     SearchV2Props,
@@ -59,12 +55,11 @@ type StandaloneQueryWrapperOwnProps = {
   > &
   Pick<QueryWrapperPlotNavProps, 'cardConfiguration' | 'tableConfiguration'>
 
-export type StandaloneQueryWrapperProps = SynapseTableConfiguration &
-  SearchParams &
-  Operator &
+export type StandaloneQueryWrapperProps = QueryOrDeprecatedSearchParams &
+  SynapseTableConfiguration &
   StandaloneQueryWrapperOwnProps
 
-export const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
+export const generateInitQueryRequest = (query: Query): QueryBundleRequest => {
   return {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -73,15 +68,35 @@ export const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
       SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
-    entityId: parseEntityIdFromSqlStatement(sql),
+    entityId: parseEntityIdFromSqlStatement(query.sql),
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     query: {
-      sql,
       limit: DEFAULT_PAGE_SIZE,
       offset: 0,
+      ...query,
     },
   }
 }
+
+export function getQueryFromProps(props: StandaloneQueryWrapperProps) {
+  if (props.query) {
+    // use props.query if set
+    return props.query
+  } else {
+    // use the deprecated sql, searchParams, and sqlOperator
+    const additionalFilters = getAdditionalFilters(
+      props.searchParams,
+      props.sqlOperator,
+      props.additionalFiltersSessionStorageKey,
+    )
+    return {
+      sql: props.sql!,
+      additionalFilters,
+      offset: 0,
+    }
+  }
+}
+
 /**
  * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
  * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
@@ -90,10 +105,8 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
   /** @deprecated property inherited from SynapseTableProps */
   const { hideDownload } = props
   const {
-    searchParams,
-    sqlOperator,
     showAccessColumn,
-    sql,
+    sql: deprecatedSql,
     hideAddToDownloadListColumn = hideDownload,
     hideQueryCount,
     name,
@@ -102,7 +115,6 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     unitDescription = 'Results',
     rgbIndex,
     showLastUpdatedOn,
-    additionalFiltersSessionStorageKey,
     noContentPlaceholderType = showTopLevelControls
       ? NoContentPlaceholderType.INTERACTIVE
       : NoContentPlaceholderType.STATIC,
@@ -111,19 +123,15 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     shouldDeepLink,
     ...rest
   } = props
-
   const [componentKey, setComponentKey] = useState(1)
   const remount = () => {
     setComponentKey(componentKey + 1)
   }
-  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
+
+  const sql = props.query?.sql ?? deprecatedSql ?? ''
+  const query: Query = getQueryFromProps(props)
+  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(query)
   const entityId = parseEntityIdFromSqlStatement(sql)
-  derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(
-      searchParams,
-      sqlOperator,
-      additionalFiltersSessionStorageKey,
-    )
   const { data: entity } = useGetEntity(entityId)
 
   /**

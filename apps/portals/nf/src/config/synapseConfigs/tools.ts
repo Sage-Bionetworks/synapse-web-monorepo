@@ -3,6 +3,7 @@ import type {
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { toolsSql } from '../resources'
 import { columnAliases } from './commonProps'
 

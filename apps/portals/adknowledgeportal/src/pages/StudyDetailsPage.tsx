@@ -1,4 +1,9 @@
-import { dataOnStudiesPageSql, dataSql, enabledAnalysisPlatforms, studiesSql } from '@/config/resources'
+import {
+  dataOnStudiesPageSql,
+  dataSql,
+  enabledAnalysisPlatforms,
+  studiesSql,
+} from '@/config/resources'
 import studyHeaderSvg from '@/config/style/study-header.svg?url'
 import { DATA_TABLE_COLUMN_NAMES } from '@/config/synapseConfigs/data'
 import {
@@ -8,32 +13,23 @@ import {
   studyRgbIndex,
 } from '@/config/synapseConfigs/studies'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  DetailsPageContextConsumer,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import {
-  DetailsPageSectionLayoutType,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
-import {
-  MarkdownSynapseFromColumnData,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import {
-  transformStringIntoMarkdownProps,
-} from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
+import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
 import { DetailsPageProps } from '@sage-bionetworks/synapse-portal-framework/types/portal-util-types'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnMultiValueFunction, ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
 import {
   CardContainerLogic,
@@ -117,7 +113,7 @@ const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
             <CardContainerLogic
               sqlOperator={ColumnSingleValueFilterOperator.IN}
               sql={studiesSql}
-              {...studyCardConfiguration}
+              cardConfiguration={studyCardConfiguration}
               searchParams={{ [STUDY_TABLE_COLUMN_NAMES.STUDY]: value }}
             />
           )
@@ -300,14 +296,16 @@ export function StudyDetailsPage() {
     <>
       <CardContainerLogic
         isHeader={true}
-        {...studyCardConfiguration}
+        cardConfiguration={{
+          ...studyCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          iconOptions: {
+            study: studyHeaderSvg,
+          },
+        }}
         sql={studiesSql}
         columnAliases={studyColumnAliases}
         isAlignToLeftNav={true}
-        secondaryLabelLimit={Infinity}
-        iconOptions={{
-          study: studyHeaderSvg,
-        }}
         searchParams={searchParams}
       />
       <DetailsPage {...studiesDetailsPageProps}>

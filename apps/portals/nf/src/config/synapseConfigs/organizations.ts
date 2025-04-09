@@ -1,4 +1,4 @@
-import type { CardLink } from 'synapse-react-client'
+import type { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import { SynapseConstants } from 'synapse-react-client'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 

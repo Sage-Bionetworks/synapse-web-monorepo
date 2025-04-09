@@ -21,11 +21,13 @@ export function ProjectDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        {...projectCardConfiguration}
+        cardConfiguration={{
+          ...projectCardConfiguration,
+          secondaryLabelLimit: Infinity,
+        }}
         isHeader
         sql={projectsSql}
         isAlignToLeftNav
-        secondaryLabelLimit={Infinity}
         searchParams={searchParams}
       />
       <DetailsPage sql={projectsSql}>
@@ -39,7 +41,7 @@ export function ProjectDetailsPage() {
                   element: (
                     <CardContainerLogic
                       sql={studiesSql}
-                      {...studyCardConfiguration}
+                      cardConfiguration={studyCardConfiguration}
                       searchParams={{ project: id! }}
                     />
                   ),
@@ -50,7 +52,9 @@ export function ProjectDetailsPage() {
                   element: (
                     <CardContainerLogic
                       sql={peopleSql}
-                      type={SynapseConstants.MEDIUM_USER_CARD}
+                      cardConfiguration={{
+                        type: SynapseConstants.MEDIUM_USER_CARD,
+                      }}
                       searchParams={{ project: id! }}
                     />
                   ),
@@ -61,7 +65,7 @@ export function ProjectDetailsPage() {
                   element: (
                     <CardContainerLogic
                       sql={toolsSql}
-                      {...toolCardConfiguration}
+                      cardConfiguration={toolCardConfiguration}
                       searchParams={{ project: id! }}
                     />
                   ),
@@ -72,7 +76,7 @@ export function ProjectDetailsPage() {
                   element: (
                     <CardContainerLogic
                       sql={publicationsSql}
-                      {...publicationsCardConfiguration}
+                      cardConfiguration={publicationsCardConfiguration}
                       searchParams={{ project: id! }}
                     />
                   ),

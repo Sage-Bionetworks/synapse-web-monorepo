@@ -59,11 +59,13 @@ export type CommonCardProps = {
   descriptionConfig?: DescriptionConfig
   /** Optional configuration for rendering multiple icons within the card */
   columnIconOptions?: ColumnIconConfigs
+  /** Can be used to map strings to icon components. */
+  iconOptions?: IconOptions
+  /** Configuration if the card is of GENERIC_CARD (required) or DATASET (optional) type */
+  genericCardSchema?: TableToGenericCardMapping
 }
 
-export type CardConfiguration = {
-  iconOptions?: IconOptions
-} & CommonCardProps &
+export type CardConfiguration = CommonCardProps &
   (
     | StandardCardTypeConfiguration
     | GenericCardConfiguration

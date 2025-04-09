@@ -39,13 +39,15 @@ export const GenericCard: Story = {
     sql: 'SELECT * FROM syn22095937.4 order by authors asc',
     initialLimit: 2,
     limit: 5,
-    type: GENERIC_CARD,
-    genericCardSchema: {
-      type: PUBLICATION,
-      title: 'title',
-      description: 'abstract',
-      subTitle: 'authors',
-      secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: {
+        type: PUBLICATION,
+        title: 'title',
+        description: 'abstract',
+        subTitle: 'authors',
+        secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+      },
     },
     sortConfig: {
       defaultColumn: 'authors',
@@ -58,13 +60,15 @@ export const GenericCard: Story = {
 export const EmptyResults: Story = {
   args: {
     sql: "SELECT * FROM syn22095937.4 WHERE study='not a study value'",
-    type: GENERIC_CARD,
-    genericCardSchema: {
-      type: PUBLICATION,
-      title: 'title',
-      description: 'abstract',
-      subTitle: 'authors',
-      secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: {
+        type: PUBLICATION,
+        title: 'title',
+        description: 'abstract',
+        subTitle: 'authors',
+        secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
+      },
     },
   },
 }
@@ -72,7 +76,7 @@ export const EmptyResults: Story = {
 export const ObservationCard: Story = {
   args: {
     sql: `SELECT * FROM syn51735464`,
-    type: OBSERVATION_CARD,
+    cardConfiguration: { type: OBSERVATION_CARD },
     limit: 3,
   },
 }
@@ -80,7 +84,7 @@ export const ObservationCard: Story = {
 export const FunderCard: Story = {
   args: {
     sql: `SELECT * FROM syn16858699`,
-    type: FUNDER,
+    cardConfiguration: { type: FUNDER },
     limit: 3,
   },
 }
@@ -88,7 +92,7 @@ export const FunderCard: Story = {
 export const DatasetCard: Story = {
   args: {
     sql: `SELECT * FROM syn16859580`,
-    type: DATASET,
+    cardConfiguration: { type: DATASET },
     limit: 3,
   },
 }
@@ -113,8 +117,10 @@ const publicationSchema: TableToGenericCardMapping = {
 export const PublicationCard: Story = {
   args: {
     sql: `SELECT * FROM syn21868591 WHERE ( ( "grantNumber" HAS ( 'CA209988' ) ) )`,
-    type: GENERIC_CARD,
-    genericCardSchema: publicationSchema,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: publicationSchema,
+    },
   },
 }
 
@@ -132,37 +138,39 @@ const genieSelectedFacetConfigs: SelectedFacetConfig[] = [
 export const ReleaseCardLarge: Story = {
   args: {
     sql: "select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
-    type: RELEASE_CARD,
     limit: 3,
-    releaseCardConfig: {
-      cardSize: 'large',
-      prependRelease: false,
-      releaseMetadataConfig: {
-        releaseDateColumnName: 'ReleaseDate',
-        releaseEntityIdColumnName: 'id',
-        releaseNameColumnName: 'nameReleaseCard',
-      },
-      statsConfig: [
-        { columnName: 'Patients', label: 'Patients' },
-        { columnName: 'Samples', label: 'Samples' },
-      ],
-      primaryBtnConfig: {
-        label: 'Explore Data Release',
-        sourceTablePathColumnName: 'releaseExplorePath',
-        sourceTableSqlColumnName: 'exploreDataSql',
-        selectedFacetConfigs: genieSelectedFacetConfigs,
-      },
-      secondaryBtnConfig: {
-        label: 'View Data Guide',
-        sourceTablePathColumnName: 'releaseExplorePath',
-        sourceTableSqlColumnName: 'exploreDataSql',
-        selectedFacetConfigs: genieSelectedFacetConfigs,
-        staticSelectedFacets: [
-          {
-            facet: 'dataType',
-            facetValue: 'data_guide',
-          },
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'large',
+        prependRelease: false,
+        releaseMetadataConfig: {
+          releaseDateColumnName: 'ReleaseDate',
+          releaseEntityIdColumnName: 'id',
+          releaseNameColumnName: 'nameReleaseCard',
+        },
+        statsConfig: [
+          { columnName: 'Patients', label: 'Patients' },
+          { columnName: 'Samples', label: 'Samples' },
         ],
+        primaryBtnConfig: {
+          label: 'Explore Data Release',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: genieSelectedFacetConfigs,
+        },
+        secondaryBtnConfig: {
+          label: 'View Data Guide',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: genieSelectedFacetConfigs,
+          staticSelectedFacets: [
+            {
+              facet: 'dataType',
+              facetValue: 'data_guide',
+            },
+          ],
+        },
       },
     },
   },
@@ -195,30 +203,32 @@ const currentReleaseCardSql = `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHER
 export const ReleaseCardLargeMock: Story = {
   args: {
     sql: currentReleaseCardSql,
-    type: RELEASE_CARD,
     limit: 3,
-    releaseCardConfig: {
-      cardSize: 'large',
-      prependRelease: false,
-      releaseMetadataConfig: releaseMetadataConfig,
-      statsConfig: statsConfig,
-      primaryBtnConfig: {
-        label: 'Explore Current Data Release',
-        sourceTablePathColumnName: 'releaseExplorePath',
-        sourceTableSqlColumnName: 'exploreDataSql',
-        selectedFacetConfigs: selectedFacetConfigs,
-      },
-      secondaryBtnConfig: {
-        label: 'View Data Guide',
-        sourceTablePathColumnName: 'releaseExplorePath',
-        sourceTableSqlColumnName: 'exploreDataSql',
-        selectedFacetConfigs: selectedFacetConfigs,
-        staticSelectedFacets: [
-          {
-            facet: 'dataType',
-            facetValue: 'data_guide',
-          },
-        ],
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'large',
+        prependRelease: false,
+        releaseMetadataConfig: releaseMetadataConfig,
+        statsConfig: statsConfig,
+        primaryBtnConfig: {
+          label: 'Explore Current Data Release',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: selectedFacetConfigs,
+        },
+        secondaryBtnConfig: {
+          label: 'View Data Guide',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: selectedFacetConfigs,
+          staticSelectedFacets: [
+            {
+              facet: 'dataType',
+              facetValue: 'data_guide',
+            },
+          ],
+        },
       },
     },
   },
@@ -248,13 +258,15 @@ export const ReleaseCardLargeMock: Story = {
 export const ReleaseCardMediumMock: Story = {
   args: {
     sql: `SELECT * FROM ${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false`,
-    type: RELEASE_CARD,
     initialLimit: 5,
-    releaseCardConfig: {
-      cardSize: 'medium',
-      requestAccessPath: 'data access',
-      releaseMetadataConfig: releaseMetadataConfig,
-      statsConfig: statsConfig,
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'medium',
+        requestAccessPath: 'data access',
+        releaseMetadataConfig: releaseMetadataConfig,
+        statsConfig: statsConfig,
+      },
     },
   },
   loaders: [

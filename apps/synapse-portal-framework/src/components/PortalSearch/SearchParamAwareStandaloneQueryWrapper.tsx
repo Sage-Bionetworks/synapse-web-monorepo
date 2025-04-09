@@ -1,9 +1,15 @@
+import { Query } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
-import { QueryWrapper, StandaloneQueryWrapper } from 'synapse-react-client'
-import { StandaloneQueryWrapperProps } from 'synapse-react-client'
-import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
-import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
+import {
+  QueryWrapper,
+  StandaloneQueryWrapper,
+  StandaloneQueryWrapperProps,
+} from 'synapse-react-client'
+import {
+  generateInitQueryRequest,
+  getQueryFromProps,
+} from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 export type SearchParamAwareStandaloneQueryWrapperProps = {
   isVisible: boolean
@@ -37,16 +43,17 @@ export function SearchParamAwareStandaloneQueryWrapper(
     )
   }
   //else
-  const { sql } = standaloneQueryWrapperProps
-  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
-  derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(filteredSearchParams, undefined)
+  const query: Query = getQueryFromProps({
+    ...standaloneQueryWrapperProps,
+    searchParams: filteredSearchParams,
+  })
+  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(query)
   return (
     <QueryWrapper
       {...standaloneQueryWrapperProps}
       shouldDeepLink={false}
       initQueryRequest={derivedQueryRequestFromSearchParams}
-    ></QueryWrapper>
+    />
   )
 }
 

@@ -24,7 +24,7 @@ export default function InitiativeDetailsPage() {
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         isHeader
-        {...initiativeCardConfiguration}
+        cardConfiguration={initiativeCardConfiguration}
         columnAliases={columnAliases}
         sql={initiativesSql}
         searchParams={{ initiative }}
@@ -44,7 +44,7 @@ export default function InitiativeDetailsPage() {
               element: (
                 <CardContainerLogic
                   sql={studiesSql}
-                  {...studyCardConfiguration}
+                  cardConfiguration={studyCardConfiguration}
                   searchParams={{ initiative }}
                 />
               ),

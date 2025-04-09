@@ -15,11 +15,13 @@ export default function StudyDetailsPage() {
     <>
       <CardContainerLogic
         isHeader
-        {...studyCardConfiguration}
-        titleLinkConfig={undefined}
+        cardConfiguration={{
+          ...studyCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          titleLinkConfig: undefined,
+        }}
         sql={studiesSql}
         isAlignToLeftNav
-        secondaryLabelLimit={Infinity}
         searchParams={searchParams}
       />
       <DetailsPage sql={studiesSql}>
@@ -47,7 +49,7 @@ export default function StudyDetailsPage() {
                   {({ value: id }) => (
                     <CardContainerLogic
                       sql={publicationsSql}
-                      {...publicationsCardConfiguration}
+                      cardConfiguration={publicationsCardConfiguration}
                       searchParams={{ study: id! }}
                     />
                   )}

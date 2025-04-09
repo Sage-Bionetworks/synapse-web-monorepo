@@ -31,8 +31,10 @@ export default function GrantDetailsPage() {
     <>
       <CardContainerLogic
         isHeader
-        {...grantsCardConfiguration}
-        secondaryLabelLimit={Infinity}
+        cardConfiguration={{
+          ...grantsCardConfiguration,
+          secondaryLabelLimit: Infinity,
+        }}
         sql={grantsSql}
         searchParams={searchParams}
       />
@@ -51,7 +53,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
                       sql={`${projectsSql} where grantType LIKE '%U54%'`}
-                      {...projectCardConfiguration}
+                      cardConfiguration={projectCardConfiguration}
                       searchParams={{ grant: value! }}
                     />
                   )}
@@ -69,7 +71,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={peopleSql}
-                      {...peopleCardConfiguration}
+                      cardConfiguration={peopleCardConfiguration}
                       columnAliases={columnAliases}
                       searchParams={{
                         grantNumber: value!,
@@ -89,7 +91,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={publicationSql}
-                      {...publicationsCardConfiguration}
+                      cardConfiguration={publicationsCardConfiguration}
                       columnAliases={columnAliases}
                       searchParams={{
                         grantNumber: value!,
@@ -110,7 +112,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={datasetsSql}
-                      {...datasetCardConfiguration}
+                      cardConfiguration={datasetCardConfiguration}
                       columnAliases={columnAliases}
                       searchParams={{
                         grantNumber: value!,
@@ -131,7 +133,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={toolsSql}
-                      {...toolsConfiguration}
+                      cardConfiguration={toolsConfiguration}
                       columnAliases={columnAliases}
                       searchParams={{
                         grantNumber: value!,
@@ -152,7 +154,7 @@ export default function GrantDetailsPage() {
                     <CardContainerLogic
                       sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={educationSql}
-                      {...educationDetailsCardConfiguration}
+                      cardConfiguration={educationDetailsCardConfiguration}
                       columnAliases={columnAliases}
                       searchParams={{
                         grantNumber: value!,

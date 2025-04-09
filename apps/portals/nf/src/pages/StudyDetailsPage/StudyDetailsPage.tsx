@@ -68,10 +68,12 @@ export default function StudyDetailsPage() {
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         isHeader
-        {...studyCardConfiguration}
+        cardConfiguration={{
+          ...studyCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          iconOptions: studyHeaderIconOptions,
+        }}
         columnAliases={columnAliases}
-        iconOptions={studyHeaderIconOptions}
-        secondaryLabelLimit={Infinity}
         sql={studiesSql}
         searchParams={{ studyId }}
       />
