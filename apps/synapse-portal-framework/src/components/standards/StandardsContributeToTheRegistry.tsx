@@ -40,6 +40,7 @@ const StandardsContributeToTheRegistry = () => {
           alignSelf: 'center',
           border: '1px solid white',
           boxShadow: 'none !important',
+          color: 'white !important',
         }}
       >
         <Typography
