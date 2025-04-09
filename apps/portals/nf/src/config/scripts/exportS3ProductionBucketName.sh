@@ -1,1 +1,2 @@
 export S3_PRODUCTION_BUCK_LOCATION=s3://prod.nf.synapse.org
+export CF_PRODUCTION_DIST_ID=E28YRVVHKPHIB1

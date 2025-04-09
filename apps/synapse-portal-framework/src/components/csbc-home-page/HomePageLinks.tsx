@@ -1,12 +1,12 @@
-import { ComponentType, SVGProps } from 'react'
 import { Link } from 'react-router'
 import { ReactComponent as DataIconSvg } from './assets/data-icon.svg'
 import { ReactComponent as InsightIconSvg } from './assets/insight-icon.svg'
 import { ReactComponent as MethodsIconSvg } from './assets/methods-icon.svg'
 import { ReactComponent as PeopleIconSvg } from './assets/people-icon.svg'
+import SchoolIconCircle from './assets/SchoolIconCircle'
 
 type LinkProps = {
-  icon: ComponentType<SVGProps<SVGSVGElement>>
+  icon: React.ReactNode
   description: string
   title: string
   linkText: string
@@ -16,7 +16,7 @@ type LinkProps = {
 const links: LinkProps[] = [
   {
     title: 'Research',
-    icon: PeopleIconSvg,
+    icon: <PeopleIconSvg />,
     description:
       'Looking for funding or collaboration? Find active cancer research programs, connect with leading investigators, and explore opportunities to advance your your work.',
     linkText: 'Explore Grants',
@@ -24,7 +24,7 @@ const links: LinkProps[] = [
   },
   {
     title: 'Data',
-    icon: DataIconSvg,
+    icon: <DataIconSvg />,
     description:
       'Need high quality cancer datasets? Access available datasets from cancer specimens and model systems hosted across various repositories in one spot.',
     linkText: 'Explore Data',
@@ -32,7 +32,7 @@ const links: LinkProps[] = [
   },
   {
     title: 'Research Software',
-    icon: MethodsIconSvg,
+    icon: <MethodsIconSvg />,
     description:
       'Building or refining analytical tools? Or looking for an appropriate tool for your analysis? Leverage investigator developed software, models, or algorithms to explore cancer complexity and extract deeper insights.',
     linkText: 'Explore Tools',
@@ -40,11 +40,19 @@ const links: LinkProps[] = [
   },
   {
     title: 'Publications',
-    icon: InsightIconSvg,
+    icon: <InsightIconSvg />,
     description:
       'Seeking the latest research breakthroughs? Browse peer reviewed studies filtered by disease, experiment, or research theme to stay informed or guide your next steps.',
     linkText: 'Explore Publications',
     to: 'Explore/Publications',
+  },
+  {
+    title: 'Educational Resources',
+    icon: <SchoolIconCircle />,
+    description:
+      'Interested in learning more about cancer research or running your own training event? Explore existing resources and adapt templates to meet your training goals for different audiences and education levels.',
+    linkText: 'Explore Educational Resources',
+    to: 'Explore/Educational Resources',
   },
 ]
 const PortalHomePageLinks = () => {
@@ -61,11 +69,11 @@ const PortalHomePageLinks = () => {
       </p>
       <div className="link-container">
         {links.map(el => {
-          const Icon = el.icon
           return (
             <div className="link-child" key={el.linkText}>
               <h4>
-                <Icon className="icon" />
+                <span className="icon">{el.icon}</span>
+
                 {el.title}
               </h4>
               <p>{el.description}</p>

@@ -17,6 +17,7 @@ import { ReactComponent as LeftDotBlob } from './left_dot_blob_illustration.svg'
 import { ReactComponent as RightDotBlob } from './right_dot_blob_illustration.svg'
 import { ReactComponent as LeftDotBlobDark } from './left_dot_blob_dark_illustration.svg'
 import { ReactComponent as RightDotBlobDark } from './right_dot_blob_dark_illustration.svg'
+import { ReactComponent as UnderConstruction } from './underconstruction_illustration.svg'
 const Illustrations = {
   Challenges,
   CohortBuilder,
@@ -37,5 +38,6 @@ const Illustrations = {
   RightDotBlob,
   LeftDotBlobDark,
   RightDotBlobDark,
+  UnderConstruction,
 }
 export default Illustrations

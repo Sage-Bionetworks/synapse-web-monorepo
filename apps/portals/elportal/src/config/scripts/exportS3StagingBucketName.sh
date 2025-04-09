@@ -1,1 +1,0 @@
-export S3_STAGING_BUCKET_LOCATION=s3://staging-eliteportal-synapse-org-websitebucket-enedr8ccgn9x

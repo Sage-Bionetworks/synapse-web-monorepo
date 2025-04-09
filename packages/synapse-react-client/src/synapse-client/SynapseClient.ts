@@ -186,6 +186,8 @@ import {
   DownloadListQueryRequest,
   DownloadListQueryResponse,
   DownloadOrder,
+  DownloadPFBRequest,
+  DownloadPFBResult,
   EmailValidationSignedToken,
   Entity,
   EntityBundle,
@@ -386,7 +388,7 @@ export function validateDefiningSql(
 /**
  * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
  */
-export const getDownloadFromTableRequest = async (
+export const createTableCsvForDownload = async (
   request: DownloadFromTableRequest,
   accessToken: string | undefined = undefined,
 ): Promise<DownloadFromTableResult> => {
@@ -399,6 +401,26 @@ export const getDownloadFromTableRequest = async (
   return getAsyncResultBodyFromJobId(
     asyncJobId.token,
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
+ */
+export const createTablePfbForDownload = async (
+  request: DownloadPFBRequest,
+  accessToken: string | undefined = undefined,
+): Promise<DownloadPFBResult> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    `/repo/v1/entity/${request.entityId}/table/download/pfb/async/start`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/entity/${request.entityId}/table/download/pfb/async/get/${asyncJobId.token}`,
     accessToken,
   )
 }

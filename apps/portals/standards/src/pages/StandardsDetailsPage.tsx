@@ -12,18 +12,38 @@ import {
   SynapseErrorType,
   RowDataTable,
   SkeletonTable,
+  CardConfiguration,
 } from 'synapse-react-client'
-import { dataSql } from '../config/resources'
 import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { standardsDetailsPageSQL } from '../config/resources'
+const dataSql = standardsDetailsPageSQL
 
 export const standardsCardSchema: GenericCardSchema = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
-  title: 'name',
-  subTitle: 'responsibleOrgName',
+  title: 'acronym',
+  subTitle: 'standardName',
   description: 'description',
-  secondaryLabels: ['collections', 'topic', 'relevantOrgName', 'URL'],
+  link: 'url',
+  secondaryLabels: ['SDO', 'collections', 'topics'],
+}
+
+export const linkedStandardCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  genericCardSchema: {
+    type: SynapseConstants.STANDARD_DATA_MODEL,
+    title: 'acronym',
+    subTitle: 'standardName',
+    description: 'description',
+    link: '',
+  },
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Standard/DetailsPage',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
+  },
 }
 
 export const standardDetailsPageContent: DetailsPageContentType = [
@@ -39,9 +59,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 rowData={context.rowData.values ?? []}
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
-                  'name',
-                  'responsibleOrgName',
-                  'relevantOrgName',
+                  'standardName',
+                  'SDO',
+                  'organizations',
                   'isOpen',
                   'registration',
                 ]}
@@ -59,14 +79,15 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Linked Training Resources',
     title: 'Linked Training Resources',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
+      <DetailsPageContextConsumer columnName={'trainingResources'}>
         {({ value }) => (
-          <>{value}</>
-          // TODO:
-          // <CardContainerLogic
-          //   {...trainingResourcesCardContainerProps}
-          //   searchParams={{ standardId: value! }}
-          // />
+          <CardContainerLogic
+            {...linkedStandardCardConfiguration}
+            sql={dataSql}
+            // need a dummy value for search to properly exclude null values and an empty string doesn't work
+            searchParams={{ id: value || 'notreal' }}
+            sqlOperator={ColumnSingleValueFilterOperator.IN}
+          />
         )}
       </DetailsPageContextConsumer>
     ),
@@ -75,15 +96,18 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Related Standards',
     title: 'Related Standards',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {({ value }) => (
-          <>{value}</>
-          // TODO:
-          // <CardContainerLogic
-          //   {...standardCardContainerProps}
-          //   searchParams={{ standardId: value! }}
-          // />
-        )}
+      <DetailsPageContextConsumer columnName={'relatedTo'}>
+        {({ value, context }) => {
+          return (
+            <CardContainerLogic
+              {...linkedStandardCardConfiguration}
+              sql={dataSql}
+              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+              searchParams={{ id: value || 'notreal' }}
+              sqlOperator={ColumnSingleValueFilterOperator.IN}
+            />
+          )
+        }}
       </DetailsPageContextConsumer>
     ),
   },
@@ -104,6 +128,7 @@ export default function StandardsDetailsPage() {
         genericCardSchema={standardsCardSchema}
         secondaryLabelLimit={6}
         isHeader={true}
+        headerCardVariant="HeaderCardV2"
         searchParams={{ id }}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       />

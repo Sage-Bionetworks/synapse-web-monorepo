@@ -1,10 +1,4 @@
-import {
-  useGetCurrentUserProfile,
-  useGetDataAccessRequestForUpdate,
-  useSubmitDataAccessRequest,
-  useUpdateDataAccessRequest,
-} from '@/synapse-queries'
-import { useSynapseContext } from '@/utils'
+import { NewReleasesOutlined } from '@mui/icons-material'
 import {
   Alert,
   AlertProps as MuiAlertProps,
@@ -34,6 +28,13 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, useEffect, useState } from 'react'
+import {
+  useGetCurrentUserProfile,
+  useGetDataAccessRequestForUpdate,
+  useSubmitDataAccessRequest,
+  useUpdateDataAccessRequest,
+} from '../../../../synapse-queries'
+import { useSynapseContext } from '../../../../utils'
 import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextField from '../../../TextField/TextField'
@@ -70,10 +71,13 @@ function AccessorRequirementHelpText(props: {
   return link && msg ? (
     <>
       {managedACTAccessRequirement.isDUCRequired ? (
-        <>
-          This list should match those listed on your DUC.
-          <br />
-        </>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1 }}>
+          <NewReleasesOutlined sx={{ color: 'error.main' }} />
+          <div>
+            You must list the Synapse user names of all collaborators listed in
+            your Data Use Certificate (DUC).
+          </div>
+        </Box>
       ) : (
         ''
       )}

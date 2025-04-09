@@ -1,8 +1,8 @@
 import { Navigate as Redirect } from 'react-router'
-import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
-import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
-import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
-import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWrapper'
+import ChallengeDataDownloadWrapper from './challenges/ChallengeDataDownloadWrapper'
+import ChallengeDetailPageWrapper from './challenges/ChallengeDetailPageWrapper'
+import ChallengeParticipantGoogleMap from './challenges/ChallengeParticipantGoogleMap'
+import ChallengeSubmissionWrapper from './challenges/ChallengeSubmissionWrapper'
 import ComponentCollapse from './ComponentCollapse'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
@@ -13,10 +13,11 @@ import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import Ecosystem from './csbc-home-page/Ecosystem'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
-import ELBrowseToolsPage from './elportal/ELBrowseToolsPage'
-import ELContributeYourData from './elportal/ELContributeYourData'
-import ELGettingStarted from './elportal/ELGettingStarted'
-import ELSupportedByNIH from './elportal/ELSupportedByNIH'
+import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
+import ELContributeYourData from './eliteportal/ELContributeYourData'
+import ELGettingStarted from './eliteportal/ELGettingStarted'
+import AllALSSlat from './ampals/ALLALSSlat'
+import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
@@ -32,6 +33,7 @@ import RedirectToURL from './RedirectToURL'
 import RedirectWithQuery from './RedirectWithQuery'
 import SurveyToast from './SurveyToast'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
+import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 
 const PortalComponents = {
   RouteControlWrapper: ExploreWrapper,
@@ -52,6 +54,7 @@ const PortalComponents = {
   ELBrowseToolsPage,
   ELContributeYourData,
   ELGettingStarted,
+  AllALSSlat,
   ELSupportedByNIH,
   ARKWelcomePage,
   GenieHomePageHeader,
@@ -67,6 +70,7 @@ const PortalComponents = {
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,
+  RepositoryUnderReviewAlert,
 }
 
 export default PortalComponents

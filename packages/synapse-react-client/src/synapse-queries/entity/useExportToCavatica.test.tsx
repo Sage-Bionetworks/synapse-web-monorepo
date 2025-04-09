@@ -1,17 +1,18 @@
-import { renderHook, waitFor } from '@testing-library/react'
-import { useExportToCavatica } from './useExportToCavatica'
+import * as ToastMessage from '@/components/ToastMessage/ToastMessage'
 import SynapseClient from '@/synapse-client'
+import * as SynapseConstants from '@/utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import { SynapseError } from '@/utils/SynapseError'
 import {
   ColumnTypeEnum,
   DownloadFromTableResult,
   QueryBundleRequest,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { SynapseError } from '@/utils/SynapseError'
-import * as ToastMessage from '@/components/ToastMessage/ToastMessage'
+import { renderHook, waitFor } from '@testing-library/react'
 import { noop } from 'lodash-es'
-import * as SynapseConstants from '@/utils/SynapseConstants'
+import { useExportToCavatica } from './useExportToCavatica'
+
 window.open = jest.fn()
 
 const mockToastFn = jest
@@ -59,7 +60,7 @@ const testQueryRequest: QueryBundleRequest = {
 
 const mockGetDownloadFromTableRequest = jest.spyOn(
   SynapseClient,
-  'getDownloadFromTableRequest',
+  'createTableCsvForDownload',
 )
 
 describe('useExportToCavatica', () => {
@@ -75,7 +76,7 @@ describe('useExportToCavatica', () => {
 
   it('Successfully send to CAVATICA', async () => {
     const expectedSql =
-      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', id, \'.\', currentVersion) AS drs_uri, name as file_name, "id","annotation" FROM syn42'
+      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', id, \'.\', currentVersion) AS drs_uri, name as name, "id","annotation" FROM syn42'
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     const {
       result: { current: exportFunction },
@@ -100,7 +101,7 @@ describe('useExportToCavatica', () => {
       fileNameColumnName = 'fileName',
       fileVersionColumnName = 'fileVersion'
     const expectedSql =
-      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', fileId, \'.\', fileVersion) AS drs_uri, fileName as file_name, "id","annotation" FROM syn42'
+      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', fileId, \'.\', fileVersion) AS drs_uri, fileName as name, "id","annotation" FROM syn42'
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     const {
       result: { current: exportFunction },

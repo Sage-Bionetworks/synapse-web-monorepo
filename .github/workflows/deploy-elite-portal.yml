@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '.github/**' # temporarily track GH Actions changes to test
-      - 'apps/portals/elportal/**'
+      - 'apps/portals/eliteportal/**'
       - 'apps/synapse-portal-framework/**'
       - 'packages/synapse-react-client/**'
 
@@ -17,5 +17,5 @@ jobs:
       contents: read
     uses: ./.github/workflows/build-and-deploy-portal.yml
     with:
-      portal-name: elportal
+      portal-name: eliteportal
       branch-or-tag: main

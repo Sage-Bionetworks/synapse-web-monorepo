@@ -31,6 +31,7 @@ export type EnumFacetFilterProps = {
   dropdownType?: 'Icon' | 'SelectBox'
   hideCollapsible?: boolean
   sortConfig?: FacetValueSortConfig
+  defaultShowAllValues?: boolean
 }
 
 export type FacetValueSortConfig = {
@@ -45,6 +46,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     dropdownType = 'Icon',
     hideCollapsible = false,
     sortConfig,
+    defaultShowAllValues = false,
   } = props
   const {
     nextQueryRequest,
@@ -190,6 +192,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
       containerAs={containerAs}
       dropdownType={dropdownType}
       hideCollapsible={hideCollapsible}
+      defaultShowAllValues={defaultShowAllValues}
       onHoverOverValue={() => {
         // SWC-6698: delay the query execution (via the debounce) when an item is hovered over
         resetDebounceTimer()

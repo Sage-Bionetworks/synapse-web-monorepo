@@ -1,0 +1,2 @@
+export S3_STAGING_BUCKET_LOCATION=s3://staging-eliteportal-synapse-org-websitebucket-enedr8ccgn9x
+export CF_STAGING_DIST_ID=E4H3REED377EG
