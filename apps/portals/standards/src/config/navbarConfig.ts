@@ -23,4 +23,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#user-documentation',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }
