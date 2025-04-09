@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
 import {
   CookiesNotification,
+  SynapseErrorBoundary,
   SynapseToastContainer,
 } from 'synapse-react-client'
 import AppInitializer from './components/AppInitializer'
@@ -13,15 +14,17 @@ export default function App(props: PropsWithChildren) {
   useDocumentTitleFromRoutes()
 
   return (
-    <AppInitializer>
-      <SynapseToastContainer />
-      <Navbar />
-      <CookiesNotification />
-      <main className="main">
-        {props.children}
-        <Outlet />
-      </main>
-      <Footer />
-    </AppInitializer>
+    <SynapseErrorBoundary>
+      <AppInitializer>
+        <SynapseToastContainer />
+        <Navbar />
+        <CookiesNotification />
+        <main className="main">
+          {props.children}
+          <Outlet />
+        </main>
+        <Footer />
+      </AppInitializer>
+    </SynapseErrorBoundary>
   )
 }
