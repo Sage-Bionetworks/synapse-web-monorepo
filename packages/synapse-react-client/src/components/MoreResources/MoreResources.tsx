@@ -1,4 +1,4 @@
-import { Box, Stack, Typography, useTheme, Link } from '@mui/material'
+import { Box, Stack, Typography, Link, Card } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 
 type ResourceConfig = {
@@ -12,80 +12,53 @@ export type MoreResourcesProps = {
 }
 
 const MoreResources = ({ resources }: MoreResourcesProps) => {
-  const theme = useTheme()
   return (
     <Box
       sx={{
-        padding: { xs: '40px', lg: '60px 80px 80px 80px' },
-        background: `linear-gradient(0deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.90) 100%), ${theme.palette.primary.main}`,
+        display: 'flex',
+        gap: 2,
+        width: '100%',
+        flexDirection: { xs: 'column', md: 'row' },
       }}
     >
-      <Typography
-        sx={{
-          fontSize: '24px',
-          fontWeight: 600,
-          lineHeight: 'normal',
-          marginBottom: '40px',
-          textAlign: 'center',
-          color: 'grey.1000',
-        }}
-      >
-        More Resources
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '16px',
-          width: '100%',
-          flexDirection: { xs: 'column', md: 'row' },
-        }}
-      >
-        {resources.map((resource, index) => (
-          <Stack
+      {resources.map((resource, index) => {
+        const encodedURI = encodeURI(resource.link)
+        return (
+          <Card
             key={index}
             sx={{
-              gap: '16px',
-              background: '#FFF',
-              border: '1px solid',
-              borderColor: 'grey.300',
-              flex: '1 0 0',
               padding: '24px',
-              boxShadow:
-                '0px 1px 1px 0px rgba(0, 0, 0, 0.03), 0px 3px 3px 0px rgba(0, 0, 0, 0.03), 0px 9px 9px 0px rgba(0, 0, 0, 0.03)',
+              flex: '1',
             }}
           >
-            <Typography
-              sx={{
-                fontSize: '18px',
-                fontWeight: 700,
-                lineHeight: 'normal',
-                color: 'grey.900',
-              }}
-            >
-              {resource.title}
-            </Typography>
-            <Typography sx={{ fontSize: '14px', lineHeight: 'normal' }}>
-              {resource.description}
-            </Typography>
-            <Link
-              component={RouterLink}
-              to={encodeURI(`${resource.link}`)}
-              sx={{ textDecoration: 'none', marginTop: 'auto' }}
-            >
+            <Stack sx={{ height: '100%', gap: 2 }}>
+              <Typography variant={'headline3'} sx={{ lineHeight: '20px' }}>
+                {resource.title}
+              </Typography>
+              <Typography
+                variant={'body1'}
+                sx={{ fontSize: '14px', flex: '1', lineHeight: 'normal' }}
+              >
+                {resource.description}
+              </Typography>
               <Typography
                 sx={{
                   fontSize: '14px',
-                  fontWeight: 700,
-                  lineHeight: '150%',
-                  color: 'primary.main',
+                  marginTop: 'auto',
                 }}
               >
-                More Resources
+                <Link
+                  component={RouterLink}
+                  to={encodedURI}
+                  sx={{ textDecoration: 'none' }}
+                >
+                  More Resources
+                </Link>
               </Typography>
-            </Link>
-          </Stack>
-        ))}
-      </Box>
+            </Stack>
+          </Card>
+        )
+      })}
     </Box>
   )
 }

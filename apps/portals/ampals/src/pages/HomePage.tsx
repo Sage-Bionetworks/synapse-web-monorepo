@@ -6,9 +6,11 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import headerSvg from '../config/style/header.svg?url'
 import { FullWidthAlert, MoreResources } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
+import { alpha, useTheme } from '@mui/material'
 
 //TODO
 export default function HomePage() {
+  const theme = useTheme()
   const resources = [
     {
       title: 'For Researchers',
@@ -80,6 +82,21 @@ export default function HomePage() {
               },
             ]}
           /> */}
+        </SectionLayout>
+        <SectionLayout
+          title={'More Resources'}
+          centerTitle
+          ContainerProps={{
+            sx: {
+              padding: { xs: '40px', lg: '60px 80px 80px 80px' },
+              backgroundColor: alpha(theme.palette.primary.main, 0.05),
+              h2: {
+                lineHeight: 'normal',
+                margin: '0 0 40px 0',
+              },
+            },
+          }}
+        >
           <MoreResources resources={resources} />
         </SectionLayout>
       </div>
