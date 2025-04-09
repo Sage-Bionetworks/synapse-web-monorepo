@@ -25,19 +25,26 @@ export function SageResourcesPopover({
   const theme = useTheme()
   const open = Boolean(anchorEl)
   const hostname = window.location.hostname
-  const additionalFilters: ColumnSingleValueQueryFilter[] | undefined =
-    filterByType
-      ? [
-          {
-            isDefiningCondition: false,
-            concreteType:
-              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'portalType',
-            operator: ColumnSingleValueFilterOperator.EQUAL,
-            values: [filterByType],
-          },
-        ]
-      : undefined
+
+  const additionalFilters: ColumnSingleValueQueryFilter[] = [
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'isPublicized',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['true'],
+    },
+  ]
+  if (filterByType) {
+    additionalFilters.push({
+      isDefiningCondition: false,
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'portalType',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: [filterByType],
+    })
+  }
   const sourceAppConfigs = useSourceAppConfigs(
     sourceAppConfigTableID,
     additionalFilters,
@@ -96,53 +103,47 @@ export function SageResourcesPopover({
                   }
                   return true
                 })
-                .map(config => {
-                  if (config.isPublicized) {
-                    return (
-                      <Grid
-                        item
-                        xs={12}
-                        sm={6}
-                        lg={4}
-                        className="sourceAppItem"
-                        key={config.appId}
+                .map(config => (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    lg={4}
+                    className="sourceAppItem"
+                    key={config.appId}
+                    sx={{
+                      p: '30px',
+                      border: '1px solid #F1F3F5',
+                      '&:hover': {
+                        backgroundColor: '#d7dee433',
+                        cursor: 'pointer',
+                      },
+                    }}
+                  >
+                    <div
+                      onClick={() => {
+                        window.open(config.appURL, '_blank')
+                        onClose()
+                      }}
+                    >
+                      <Box
                         sx={{
-                          p: '30px',
-                          border: '1px solid #F1F3F5',
-                          '&:hover': {
-                            backgroundColor: '#d7dee433',
-                            cursor: 'pointer',
+                          pb: '10px',
+                          img: {
+                            maxHeight: '50px',
+                            height: '50px',
+                            maxWidth: '100%',
                           },
                         }}
                       >
-                        <div
-                          onClick={() => {
-                            window.open(config.appURL, '_blank')
-                            onClose()
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              pb: '10px',
-                              img: {
-                                maxHeight: '50px',
-                                height: '50px',
-                                maxWidth: '100%',
-                              },
-                            }}
-                          >
-                            {config.logo}
-                          </Box>
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {config.shortDescription}
-                          </Typography>
-                        </div>
-                      </Grid>
-                    )
-                  } else {
-                    return false
-                  }
-                })}
+                        {config.logo}
+                      </Box>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {config.shortDescription}
+                      </Typography>
+                    </div>
+                  </Grid>
+                ))}
             </Grid>
           </Grid>
         </Grid>
