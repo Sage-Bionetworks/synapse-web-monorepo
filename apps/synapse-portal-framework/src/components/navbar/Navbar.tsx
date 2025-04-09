@@ -1,6 +1,5 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Menu, MenuItem } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
