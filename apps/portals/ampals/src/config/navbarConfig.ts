@@ -53,4 +53,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.ampals.org/help/',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }
