@@ -27,6 +27,7 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
           lineHeight: 'normal',
           marginBottom: '40px',
           textAlign: 'center',
+          color: 'grey.1000',
         }}
       >
         More Resources
@@ -54,7 +55,12 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
             }}
           >
             <Typography
-              sx={{ fontSize: '18px', fontWeight: 700, lineHeight: 'normal' }}
+              sx={{
+                fontSize: '18px',
+                fontWeight: 700,
+                lineHeight: 'normal',
+                color: 'grey.900',
+              }}
             >
               {resource.title}
             </Typography>
