@@ -48,4 +48,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.adknowledgeportal.org/apd/',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

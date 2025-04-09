@@ -53,4 +53,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.cancercomplexity.synapse.org/',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

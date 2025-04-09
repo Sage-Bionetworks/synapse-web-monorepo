@@ -8,4 +8,5 @@ export const navbarConfig: NavbarConfig = {
       children: [{ name: 'Listed Challenges', path: '/#Listed Challenges' }],
     },
   ],
+  isPortalsDropdownEnabled: false,
 }
