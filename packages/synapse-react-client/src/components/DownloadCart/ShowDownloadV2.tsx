@@ -18,7 +18,7 @@ export type ShowDownloadV2Props = {
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
+function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const tooltipText = 'Click to view items in your download cart.'
@@ -79,5 +79,4 @@ export function ShowDownloadV2(props: ShowDownloadV2Props) {
   )
 }
 
-export default function ShowDownloadV2
-
+export default ShowDownloadV2
