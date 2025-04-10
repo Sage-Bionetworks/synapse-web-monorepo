@@ -1,8 +1,19 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import {
+  DoiRequest,
+  DoiResponse,
+  waitForAsyncResult,
+} from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { Doi, DoiAssociation } from '@sage-bionetworks/synapse-types'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 export function useGetDOIAssociation(
   objectId: string,
@@ -42,5 +53,55 @@ export function useGetDOI(
 
     queryFn: () =>
       SynapseClient.getDOI(accessToken, objectId, versionNumber, objectType),
+  })
+}
+
+/**
+ * Mutation hook to create/update a DOI.
+ * @param options
+ */
+export function useCreateOrUpdateDOI(
+  options?: Omit<
+    UseMutationOptions<DoiResponse, SynapseClientError, DoiRequest>,
+    'mutationFn'
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useMutation<DoiResponse, SynapseClientError, DoiRequest>({
+    ...options,
+    mutationFn: async request => {
+      const asyncJobId =
+        await synapseClient.doiServicesClient.postRepoV1DoiAsyncStart({
+          doiRequest: request,
+        })
+
+      return waitForAsyncResult(() =>
+        synapseClient.doiServicesClient.getRepoV1DoiAsyncGetAsyncToken({
+          asyncToken: asyncJobId.token!,
+        }),
+      )
+    },
+    onSuccess(...args) {
+      if (options?.onSuccess) {
+        options.onSuccess(...args)
+      }
+      const doi = args[0].doi!
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDOIAssociationQueryKey(
+          doi.objectType!,
+          doi.objectId!,
+          doi.objectVersion,
+        ),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDOIQueryKey(
+          doi.objectType!,
+          doi.objectId!,
+          doi.objectVersion,
+        ),
+      })
+    },
   })
 }
