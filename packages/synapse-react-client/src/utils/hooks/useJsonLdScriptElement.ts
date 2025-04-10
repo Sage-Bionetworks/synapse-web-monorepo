@@ -13,6 +13,7 @@ const useJsonLdScriptElement = (jsonLdString: string | undefined) => {
         head?.removeChild(script)
       }
     }
+    return
   }, [jsonLdString])
 }
 
