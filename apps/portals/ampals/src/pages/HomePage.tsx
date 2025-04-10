@@ -14,19 +14,19 @@ export default function HomePage() {
       title: 'For Researchers',
       description:
         'Tutorials about using this portal, as well as links to external partner resources, and related ALS knowledge portals.',
-      link: '/Resources/For Researchers',
+      link: encodeURI('/Resources/For Researchers'),
     },
     {
       title: 'For Data Contributors',
       description:
         'Visit this page for instructions on how to contribute data to this portal.',
-      link: '/Resources/For Contributors',
+      link: encodeURI('/Resources/For Contributors'),
     },
     {
       title: 'For Persons with Lived Experience',
       description:
         'Visit this page for links to external resources with information about clinical trials, ongoing research, and community.',
-      link: '/Resources/For Persons with Lived Experience',
+      link: encodeURI('/Resources/For Persons with Lived Experience'),
     },
   ]
   return (
