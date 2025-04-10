@@ -6,11 +6,9 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import headerSvg from '../config/style/header.svg?url'
 import { FullWidthAlert, CardGridWithLinks } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
-import { alpha, useTheme } from '@mui/material'
 
 //TODO
 export default function HomePage() {
-  const theme = useTheme()
   const moreResourcesCards = [
     {
       title: 'For Researchers',
@@ -83,25 +81,27 @@ export default function HomePage() {
             ]}
           /> */}
         </SectionLayout>
-        <SectionLayout
-          title={'More Resources'}
-          centerTitle
-          ContainerProps={{
-            sx: {
-              padding: { xs: '40px', lg: '60px 80px 80px 80px' },
-              backgroundColor: alpha(theme.palette.primary.main, 0.05),
-              h2: {
-                lineHeight: 'normal',
-                margin: '0 0 40px 0',
+        <div className={'home-bg-dark'}>
+          <SectionLayout
+            title={'More Resources'}
+            centerTitle
+            ContainerProps={{
+              sx: {
+                maxWidth: '100% !important',
+                padding: { xs: '40px', lg: '60px 80px 80px 80px' },
+                h2: {
+                  lineHeight: 'normal',
+                  margin: '0 0 40px 0',
+                },
               },
-            },
-          }}
-        >
-          <CardGridWithLinks
-            linkText={'More Resources'}
-            cards={moreResourcesCards}
-          />
-        </SectionLayout>
+            }}
+          >
+            <CardGridWithLinks
+              linkText={'More Resources'}
+              cards={moreResourcesCards}
+            />
+          </SectionLayout>
+        </div>
       </div>
     </>
   )

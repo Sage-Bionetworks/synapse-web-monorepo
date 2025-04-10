@@ -23,7 +23,6 @@ const CardGridWithLinks = ({ cards, linkText }: CardGridWithLinksProps) => {
       }}
     >
       {cards.map((card, index) => {
-        const encodedURI = encodeURI(card.link)
         return (
           <Card
             key={index}
@@ -50,7 +49,7 @@ const CardGridWithLinks = ({ cards, linkText }: CardGridWithLinksProps) => {
               >
                 <Link
                   component={RouterLink}
-                  to={encodedURI}
+                  to={card.link}
                   sx={{ textDecoration: 'none' }}
                 >
                   {linkText}
