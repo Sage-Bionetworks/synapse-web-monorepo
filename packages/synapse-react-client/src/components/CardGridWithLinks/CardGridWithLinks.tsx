@@ -1,17 +1,18 @@
 import { Box, Stack, Typography, Link, Card } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 
-type ResourceConfig = {
+type CardGridWithLinksConfig = {
   title: string
   description: string
   link: string
 }
 
-export type MoreResourcesProps = {
-  resources: ResourceConfig[]
+export type CardGridWithLinksProps = {
+  linkText: string
+  cards: CardGridWithLinksConfig[]
 }
 
-const MoreResources = ({ resources }: MoreResourcesProps) => {
+const CardGridWithLinks = ({ cards, linkText }: CardGridWithLinksProps) => {
   return (
     <Box
       sx={{
@@ -21,8 +22,8 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
         flexDirection: { xs: 'column', md: 'row' },
       }}
     >
-      {resources.map((resource, index) => {
-        const encodedURI = encodeURI(resource.link)
+      {cards.map((card, index) => {
+        const encodedURI = encodeURI(card.link)
         return (
           <Card
             key={index}
@@ -33,13 +34,13 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
           >
             <Stack sx={{ height: '100%', gap: 2 }}>
               <Typography variant={'headline3'} sx={{ lineHeight: '20px' }}>
-                {resource.title}
+                {card.title}
               </Typography>
               <Typography
                 variant={'body1'}
                 sx={{ fontSize: '14px', flex: '1', lineHeight: 'normal' }}
               >
-                {resource.description}
+                {card.description}
               </Typography>
               <Typography
                 sx={{
@@ -52,7 +53,7 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
                   to={encodedURI}
                   sx={{ textDecoration: 'none' }}
                 >
-                  More Resources
+                  {linkText}
                 </Link>
               </Typography>
             </Stack>
@@ -63,4 +64,4 @@ const MoreResources = ({ resources }: MoreResourcesProps) => {
   )
 }
 
-export default MoreResources
+export default CardGridWithLinks

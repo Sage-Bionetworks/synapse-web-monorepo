@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { MemoryRouter } from 'react-router'
-import MoreResources from './MoreResources'
+import CardGridWithLinks from './CardGridWithLinks'
 
 const meta = {
-  title: 'Home Page/MoreResources',
-  component: MoreResources,
+  title: 'Home Page/CardGridWithLinks',
+  component: CardGridWithLinks,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
@@ -16,11 +16,12 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   render: args => (
     <MemoryRouter>
-      <MoreResources {...args} />
+      <CardGridWithLinks {...args} />
     </MemoryRouter>
   ),
   args: {
-    resources: [
+    linkText: 'More Resources',
+    cards: [
       {
         title: 'Title 1',
         description: 'Description text 1.',

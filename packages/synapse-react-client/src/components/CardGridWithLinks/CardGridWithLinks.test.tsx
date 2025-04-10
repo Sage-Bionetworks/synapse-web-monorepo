@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react'
-import MoreResources, { MoreResourcesProps } from './MoreResources'
+import CardGridWithLinks, { CardGridWithLinksProps } from './CardGridWithLinks'
 import { MemoryRouter } from 'react-router'
 
-const props: MoreResourcesProps = {
-  resources: [
+const props: CardGridWithLinksProps = {
+  linkText: 'More Resources',
+  cards: [
     {
       title: 'title 1',
       description: 'desc 1',
@@ -22,20 +23,20 @@ const props: MoreResourcesProps = {
   ],
 }
 
-const renderComponent = (props: MoreResourcesProps) => {
+const renderComponent = (props: CardGridWithLinksProps) => {
   return render(
     <MemoryRouter>
-      <MoreResources {...props} />
+      <CardGridWithLinks {...props} />
     </MemoryRouter>,
   )
 }
 
-describe('MoreResources tests', () => {
+describe('CardGridWithLinks tests', () => {
   it('renders card title, description, and link text', () => {
     renderComponent(props)
-    props.resources.forEach(resource => {
-      expect(screen.getByText(resource.title)).toBeInTheDocument()
-      expect(screen.getByText(resource.description)).toBeInTheDocument()
+    props.cards.forEach(card => {
+      expect(screen.getByText(card.title)).toBeInTheDocument()
+      expect(screen.getByText(card.description)).toBeInTheDocument()
     })
     const linkText = screen.getAllByText('More Resources')
     expect(linkText.length).toBeGreaterThan(0)
@@ -44,10 +45,10 @@ describe('MoreResources tests', () => {
   it('renders link', () => {
     renderComponent(props)
     const links = screen.getAllByRole('link', { name: 'More Resources' })
-    expect(links).toHaveLength(props.resources.length)
+    expect(links).toHaveLength(props.cards.length)
 
     links.forEach((link, index) => {
-      expect(link).toHaveAttribute('href', props.resources[index].link)
+      expect(link).toHaveAttribute('href', props.cards[index].link)
     })
   })
 })
