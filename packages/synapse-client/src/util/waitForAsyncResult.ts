@@ -17,13 +17,18 @@ export async function waitForAsyncResult<
   getAsyncResult: () => Promise<T>,
   options?: { onCurrentStatusRetrieved: (response: T) => void },
 ): Promise<T> {
+  let currentDelayMs = 125 // 125ms
+  const maxDelayMs = 1000 // 1s
+
   let response = await getAsyncResult()
   while ('jobState' in response && response.jobState === 'PROCESSING') {
-    await delay(500)
+    await delay(currentDelayMs)
     response = await getAsyncResult()
     if (options?.onCurrentStatusRetrieved) {
       options.onCurrentStatusRetrieved(response)
     }
+    // Exponential backoff for the next request
+    currentDelayMs = Math.min(currentDelayMs * 2, maxDelayMs)
   }
   return response
 }

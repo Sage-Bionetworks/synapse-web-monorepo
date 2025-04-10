@@ -13,14 +13,20 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
+  isDataset,
   isTable,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { HelpTwoTone } from '@mui/icons-material'
 import {
   Alert,
   Button,
   InputLabel,
+  Link,
   MenuItem,
   Select,
   Typography,
@@ -105,8 +111,9 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     useGetCurrentUserProfile()
   const { data: entity, isLoading: isLoadingEntity } = useGetEntity(
     objectId,
-    defaultVersionNumber,
+    selectedVersionNumber,
     {
+      staleTime: Infinity,
       enabled: objectType === 'ENTITY',
       throwOnError: true,
     },
@@ -144,8 +151,9 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   A DOI without a version will always link to the newest version of this ${entityTypeDisplay},
      so the data that someone retrieves using the DOI may change over time.`
   if (entity && isTable(entity)) {
+    const tableVersionCopy = isDataset(entity) ? 'version' : 'snapshot'
     versionHelpMarkdown += `\n\nTo create a DOI that will always link to the current set of data in the ${entityTypeDisplay},
-     create a new version and mint a DOI for that version.`
+     create a new ${tableVersionCopy} and mint a DOI for that ${tableVersionCopy}.`
   }
 
   const {
@@ -208,8 +216,17 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         Note that while the DOI and its associated metadata will be publicly
         visible outside of Synapse, your data will still adhere to its existing
         access conditions. If your data is private, it will remain restricted,
-        but the DOI will still be listed.
-        {/* Once a DOI is minted, the resource will be added to the Synapse Data Catalog. */}
+        but the DOI will still be listed. Resources with DOIs may be added to
+        the{' '}
+        <Link
+          href={`${getEndpoint(
+            BackendDestinationEnum.PORTAL_ENDPOINT,
+          )}DataCatalog:0`}
+          target="_blank"
+        >
+          Synapse Data Catalog
+        </Link>
+        .
       </Typography>
       {doiCanBeAppliedToVersion && (
         <StyledFormControl className="limit-type" fullWidth sx={{ my: 2 }}>
