@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router'
 import CardGridWithLinks from './CardGridWithLinks'
 
 const meta = {
-  title: 'Home Page/CardGridWithLinks',
+  title: 'Cards/CardGridWithLinks',
   component: CardGridWithLinks,
   parameters: {
     chromatic: { viewports: [600, 1200] },
