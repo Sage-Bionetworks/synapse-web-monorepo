@@ -96,5 +96,5 @@ export const navbarConfig: NavbarConfig = {
     { name: 'News', path: 'https://news.nfdataportal.org/' },
     { name: 'Help', path: 'https://help.nf.synapse.org/NFdocs/' },
   ],
-  isPortalsDropdownEnabled: false,
+  isPortalsDropdownEnabled: true,
 }
