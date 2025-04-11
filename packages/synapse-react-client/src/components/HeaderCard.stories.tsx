@@ -21,9 +21,9 @@ export const Default: Story = {
     description:
       'This is an example study description that demonstrates the HeaderCard component.',
     values: [
-      ['Status', 'Active'],
-      ['Data Type', 'Genomics'],
-      ['Access', 'Public'],
+      { columnDisplayName: 'Status', value: 'Active' },
+      { columnDisplayName: 'Data Type', value: 'Genomics' },
+      { columnDisplayName: 'Access', value: 'Public' },
     ],
     secondaryLabelLimit: 3,
     isAlignToLeftNav: false,
@@ -49,9 +49,9 @@ export const Dicom: Story = {
     description:
       'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
     values: [
-      ['AUTHOR NAME', 'DICOM (@dicom)'],
-      ['LAT UPDATED', '2024-01-01'],
-      ['BASED ON', 'None'],
+      { columnDisplayName: 'AUTHOR NAME', value: 'DICOM (@dicom)' },
+      { columnDisplayName: 'LAT UPDATED', value: '2024-01-01' },
+      { columnDisplayName: 'BASED ON', value: 'None' },
     ],
   },
 }

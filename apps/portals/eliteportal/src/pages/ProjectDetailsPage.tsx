@@ -26,14 +26,16 @@ export default function ProjectDetailsPage() {
     <>
       <CardContainerLogic
         sql={projectsSql}
-        isHeader
-        {...projectCardConfiguration}
-        titleLinkConfig={{
-          isMarkdown: false,
-          overrideLinkURLColumnName: 'externalWebsite',
-          baseURL: 'Explore/Projects',
-          URLColumnName: '',
-          matchColumnName: '',
+        cardConfiguration={{
+          ...projectCardConfiguration,
+          titleLinkConfig: {
+            isMarkdown: false,
+            overrideLinkURLColumnName: 'externalWebsite',
+            baseURL: 'Explore/Projects',
+            URLColumnName: '',
+            matchColumnName: '',
+          },
+          isHeader: true,
         }}
         searchParams={{ shortName }}
       />
@@ -45,7 +47,7 @@ export default function ProjectDetailsPage() {
               title: 'Studies',
               element: (
                 <CardContainerLogic
-                  {...studyCardConfiguration}
+                  cardConfiguration={studyCardConfiguration}
                   sql={studiesSql}
                   searchParams={{ project: shortName }}
                 />
@@ -58,7 +60,7 @@ export default function ProjectDetailsPage() {
                 <DetailsPageContextConsumer columnName={'grant'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...publicationCardProps}
+                      cardConfiguration={publicationCardProps}
                       sql={publicationsSql}
                       searchParams={{ grant: value! }}
                       sqlOperator={ColumnMultiValueFunction.HAS}
@@ -76,7 +78,9 @@ export default function ProjectDetailsPage() {
                     <CardContainerLogic
                       sql={peopleSql}
                       limit={6}
-                      type={SynapseConstants.MEDIUM_USER_CARD}
+                      cardConfiguration={{
+                        type: SynapseConstants.MEDIUM_USER_CARD,
+                      }}
                       searchParams={{ grant: value! }}
                       sqlOperator={ColumnMultiValueFunction.HAS}
                     />
@@ -91,7 +95,7 @@ export default function ProjectDetailsPage() {
                 <DetailsPageContextConsumer columnName={'shortName'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...computationalCardConfiguration}
+                      cardConfiguration={computationalCardConfiguration}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
                       sql={computationalSql}
                       searchParams={{ project: value! }}

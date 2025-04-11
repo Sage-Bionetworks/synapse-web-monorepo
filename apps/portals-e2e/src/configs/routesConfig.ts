@@ -58,7 +58,7 @@ const routesConfig: RouteConfig = {
       'About',
       'Sign In',
     ],
-    links: ['Contribute Data', 'News', 'Help'],
+    links: ['Contribute Data', 'Help'],
   },
   stopadportal: {
     buttons: ['Help', 'Sign In'],

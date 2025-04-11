@@ -23,9 +23,11 @@ export default function EducationalResourcesDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
-        {...educationDetailsCardConfiguration}
-        secondaryLabelLimit={Infinity}
+        cardConfiguration={{
+          ...educationDetailsCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          isHeader: true,
+        }}
         sql={educationSql}
         columnAliases={columnAliases}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -46,7 +48,7 @@ export default function EducationalResourcesDetailsPage() {
                 <DetailsPageContextConsumer columnName={'grantNumber'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...grantsCardConfiguration}
+                      cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}

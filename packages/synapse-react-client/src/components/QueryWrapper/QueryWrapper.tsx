@@ -72,6 +72,7 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     combineRangeFacetConfig,
     fileIdColumnName,
     fileVersionColumnName,
+    fileNameColumnName,
   } = props
 
   const hasSelectedRows = useHasSelectedRowsAtomValue()
@@ -191,7 +192,7 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     lockedColumn,
     fileIdColumnName,
     fileVersionColumnName,
-    fileNameColumnName: fileIdColumnName,
+    fileNameColumnName,
   })
 
   /**

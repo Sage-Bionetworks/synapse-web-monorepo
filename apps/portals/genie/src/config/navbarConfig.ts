@@ -33,4 +33,5 @@ export const navbarConfig: NavbarConfig = {
       path: '/Help',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

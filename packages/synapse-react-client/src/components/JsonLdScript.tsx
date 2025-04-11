@@ -9,6 +9,6 @@ export type JsonLdScriptProps = {
  * This component will add a json ld script tag to the page when rendered.
  */
 export function JsonLdScript({ thing }: JsonLdScriptProps) {
-  useJsonLdScriptElement(thing)
+  useJsonLdScriptElement(JSON.stringify(thing))
   return <></>
 }

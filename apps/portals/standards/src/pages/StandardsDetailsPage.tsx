@@ -7,28 +7,43 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   ErrorPage,
-  GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
   RowDataTable,
   SkeletonTable,
+  CardConfiguration,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { standardsDetailsPageSQL } from '../config/resources'
-// import { ReactComponent as standardDataModelSvg } from '@sage-bionetworks/synapse-react-client/src/assets/icons/standardDataModel.svg'
 const dataSql = standardsDetailsPageSQL
 
-export const standardsCardSchema: GenericCardSchema = {
+export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
-  // include acronym somewhere?
   title: 'acronym',
   subTitle: 'standardName',
   description: 'description',
-  link: 'URL',
-  // icon: standardDataModelSvg,
-  secondaryLabels: ['SDO', 'collections', 'topic'],
+  link: 'url',
+  secondaryLabels: ['SDO', 'collections', 'topics'],
+}
+
+export const linkedStandardCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  genericCardSchema: {
+    type: SynapseConstants.STANDARD_DATA_MODEL,
+    title: 'acronym',
+    subTitle: 'standardName',
+    description: 'description',
+    link: '',
+  },
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Standard/DetailsPage',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
+  },
 }
 
 export const standardDetailsPageContent: DetailsPageContentType = [
@@ -37,29 +52,26 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'About The Standard',
     element: (
       <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ context }) => {
-            if (context.rowData && context.rowSet) {
-              return (
-                <RowDataTable
-                  rowData={context.rowData.values ?? []}
-                  headers={context.rowSet?.headers ?? []}
-                  displayedColumns={[
-                    'name',
-                    'responsibleOrgName',
-                    'relevantOrgName',
-                    'isOpen',
-                    'registration',
-                  ]}
-                  columnAliases={columnAliases}
-                />
-              )
-            } else {
-              return <SkeletonTable numRows={6} numCols={1} />
-            }
+        {({ context }) => {
+          if (context.rowData && context.rowSet) {
+            return (
+              <RowDataTable
+                rowData={context.rowData.values ?? []}
+                headers={context.rowSet?.headers ?? []}
+                displayedColumns={[
+                  'standardName',
+                  'SDO',
+                  'organizations',
+                  'isOpen',
+                  'registration',
+                ]}
+                columnAliases={columnAliases}
+              />
+            )
+          } else {
+            return <SkeletonTable numRows={6} numCols={1} />
           }
-        }
+        }}
       </DetailsPageContextConsumer>
     ),
   },
@@ -67,18 +79,16 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Linked Training Resources',
     title: 'Linked Training Resources',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ value }) => (
-            <>{value}</>
-            // TODO:
-            // <CardContainerLogic
-            //   {...trainingResourcesCardContainerProps}
-            //   searchParams={{ standardId: value! }}
-            // />
-          )
-        }
+      <DetailsPageContextConsumer columnName={'trainingResources'}>
+        {({ value }) => (
+          <CardContainerLogic
+            cardConfiguration={linkedStandardCardConfiguration}
+            sql={dataSql}
+            // need a dummy value for search to properly exclude null values and an empty string doesn't work
+            searchParams={{ id: value || 'notreal' }}
+            sqlOperator={ColumnSingleValueFilterOperator.IN}
+          />
+        )}
       </DetailsPageContextConsumer>
     ),
   },
@@ -86,18 +96,18 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'Related Standards',
     title: 'Related Standards',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {
-          // @ts-ignore
-          ({ value }) => (
-            <>{value}</>
-            // TODO:
-            // <CardContainerLogic
-            //   {...standardCardContainerProps}
-            //   searchParams={{ standardId: value! }}
-            // />
+      <DetailsPageContextConsumer columnName={'relatedTo'}>
+        {({ value, context }) => {
+          return (
+            <CardContainerLogic
+              cardConfiguration={linkedStandardCardConfiguration}
+              sql={dataSql}
+              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+              searchParams={{ id: value || 'notreal' }}
+              sqlOperator={ColumnSingleValueFilterOperator.IN}
+            />
           )
-        }
+        }}
       </DetailsPageContextConsumer>
     ),
   },
@@ -113,14 +123,25 @@ export default function StandardsDetailsPage() {
     <>
       {/* TODO: header card */}
       <CardContainerLogic
-        sql={dataSql}
-        type={SynapseConstants.GENERIC_CARD}
-        genericCardSchema={standardsCardSchema}
-        secondaryLabelLimit={6}
-        isHeader={true}
-        headerCardVariant="HeaderCardV2"
-        searchParams={{ id }}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+        query={{
+          sql: dataSql,
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+              columnName: 'id',
+              operator: ColumnSingleValueFilterOperator.EQUAL,
+              values: [id],
+            },
+          ],
+        }}
+        cardConfiguration={{
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: standardsCardSchema,
+          secondaryLabelLimit: 6,
+          isHeader: true,
+          headerCardVariant: 'HeaderCardV2',
+        }}
       />
 
       <DetailsPage sql={dataSql}>

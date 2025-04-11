@@ -1,11 +1,13 @@
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Link as MuiLink, Tooltip } from '@mui/material'
-import { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import { Suspense, useEffect } from 'react'
+import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { Link } from 'react-router'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { SkeletonInlineBlock } from '../Skeleton'
+import { EmptyFallbackComponent } from '../error'
 
 export type ShowDownloadV2Props = {
   to: string
@@ -16,7 +18,7 @@ export type ShowDownloadV2Props = {
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
+function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const tooltipText = 'Click to view items in your download cart.'
@@ -64,6 +66,16 @@ export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
     >
       {content}
     </MuiLink>
+  )
+}
+
+export function ShowDownloadV2(props: ShowDownloadV2Props) {
+  return (
+    <ErrorBoundary FallbackComponent={EmptyFallbackComponent}>
+      <Suspense fallback={<SkeletonInlineBlock width={100} />}>
+        <ShowDownloadV2Internal {...props} />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
 

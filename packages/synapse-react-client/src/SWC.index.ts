@@ -110,6 +110,7 @@ import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
 import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
 import { EntityFileBrowser } from './components/EntityFileBrowser'
+import { CreateOrUpdateDoiModal } from './components/doi/CreateOrUpdateDoiModal'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -207,6 +208,7 @@ const SynapseComponents = {
   MarkdownGithubLatestTag,
   ProjectDataAvailability,
   EntityUploadModal,
+  CreateOrUpdateDoiModal,
 }
 
 const Analytics = {

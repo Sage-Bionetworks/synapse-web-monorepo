@@ -1,11 +1,14 @@
-import { useGetEntityBundle, useGetWikiPage } from '@/synapse-queries'
+import {
+  useFileContent,
+  useGetQueryResultBundleWithAsyncStatus,
+} from '@/synapse-queries'
 import useJsonLdScriptElement from '@/utils/hooks/useJsonLdScriptElement'
-import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
-import dayjs from 'dayjs'
-import MarkdownIt from 'markdown-it'
-import { Dataset, WithContext } from 'schema-dts'
-
-const md = MarkdownIt({ html: true })
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import {
+  ColumnSingleValueFilterOperator,
+  COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  Query,
+} from '@sage-bionetworks/synapse-types'
 
 interface DatasetJsonLdScriptOption1Props {
   entityId?: string
@@ -20,12 +23,6 @@ interface DatasetJsonLdScriptOption2Props {
 export type DatasetJsonLdScriptProps =
   | DatasetJsonLdScriptOption1Props
   | DatasetJsonLdScriptOption2Props
-
-const getPlainText = (html: string): string => {
-  const divContainer = document.createElement('div')
-  divContainer.innerHTML = html
-  return divContainer.textContent || divContainer.innerText || ''
-}
 
 /**
  * This component will add a Dataset json ld script tag to the page when rendered.
@@ -46,41 +43,43 @@ export function DatasetJsonLdScript({
       version = parseInt(searchParams['version'])
     }
   }
-  const { data: entityBundle } = useGetEntityBundle(entityId!, version)
-  const wikiPageKey: WikiPageKey = {
-    ownerObjectType: ObjectType.ENTITY,
-    ownerObjectId: entityId!,
-    wikiPageId: '',
+  const query: Query = {
+    sql: 'select croissant_file_s3_object from syn65903895',
+    additionalFilters: [
+      {
+        concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        columnName: 'dataset',
+        operator: ColumnSingleValueFilterOperator.EQUAL,
+        values: [entityId!],
+      },
+    ],
   }
-  const { data: wikiPage } = useGetWikiPage(wikiPageKey)
-  const html = md.renderInline(wikiPage?.markdown ?? '')
-  const plainTextWiki = getPlainText(html)
-  const datasetDescription =
-    plainTextWiki.length > 0
-      ? plainTextWiki
-      : `${entityBundle?.entity.name} (Synapse ID: ${entityBundle?.entity.id}) is a data set on Synapse.  Synapse is a platform for supporting scientific collaborations centered around shared biomedical data sets.`
-  const annotationsObject = entityBundle?.annotations.annotations
-  const keywords = annotationsObject
-    ? Object.keys(annotationsObject).map(key => {
-        return `${key}, ${annotationsObject[key].value.join(', ')}`
-      })
-    : []
-  const myDataset: WithContext<Dataset> = {
-    '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    name: entityBundle?.entity.name,
-    description: datasetDescription,
-    url: window.location.href,
-    version: version,
-    keywords: keywords,
-    includedInDataCatalog: {
-      '@type': 'DataCatalog',
-      name: 'Synapse',
-      url: 'https://www.synapse.org',
+  if (version) {
+    query.additionalFilters!.push({
+      concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+      columnName: 'dataset_version',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: [`${version}`],
+    })
+  }
+  const { data } = useGetQueryResultBundleWithAsyncStatus({
+    entityId: entityId!,
+    query,
+    partMask: BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  })
+
+  // get raw data.  parse and then inject?  or just inject without parsing?
+  const rows = data?.responseBody?.queryResult?.queryResults?.rows
+  const row = rows && rows.length > 0 ? rows[0] : undefined
+  const croissantFileS3ObjectURL = row?.values[0]
+
+  const { data: croissantFileContent } = useFileContent(
+    croissantFileS3ObjectURL!,
+    {
+      enabled: !!croissantFileS3ObjectURL,
     },
-    isAccessibleForFree: true,
-    dateModified: dayjs(entityBundle?.entity.modifiedOn).toISOString(),
-  }
-  useJsonLdScriptElement(myDataset)
+  )
+  useJsonLdScriptElement(croissantFileContent)
   return <></>
 }
