@@ -3,7 +3,7 @@ import ExpandableContent from '../home_page/ExpandableContent'
 import QueryCount from '../QueryCount/QueryCount'
 import { Button } from '@mui/material'
 
-export default function GoalsV2Mobile({
+export default function GoalsV3Mobile({
   link,
   summary,
   countSql,
