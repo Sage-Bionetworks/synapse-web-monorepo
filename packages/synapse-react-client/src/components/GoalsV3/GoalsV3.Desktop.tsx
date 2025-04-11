@@ -9,7 +9,6 @@ export default function GoalsV3Desktop({
   countSql,
   title,
 }: GoalsV3CardProps) {
-  console.log('countSql', countSql)
   return (
     <Card
       sx={{
