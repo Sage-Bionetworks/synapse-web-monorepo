@@ -8,6 +8,7 @@ on:
         description: Which portal to deploy
         options:
           - adknowledgeportal
+          - ampals
           - arkportal
           - bsmn
           - cancercomplexity
@@ -16,6 +17,7 @@ on:
           - eliteportal
           - genie
           - nf
+          - standards
           - stopadportal
       tag:
         required: true
