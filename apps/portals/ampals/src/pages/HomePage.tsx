@@ -11,7 +11,7 @@ import {
   GoalsV3,
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
-import { goalsSql } from '@/config/resources'
+import { goalsTableEntityId } from '@/config/resources'
 
 //TODO
 export default function HomePage() {
@@ -61,7 +61,7 @@ export default function HomePage() {
           },
         }}
       >
-        <GoalsV3 entityId={goalsSql} />
+        <GoalsV3 entityId={goalsTableEntityId} />
       </SectionLayout>
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
