@@ -13,6 +13,7 @@ import {
   convertDoiToLink,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '@/utils/functions/RegularExpressions'
+import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { Collapse } from '@mui/material'
 import {
@@ -38,47 +39,75 @@ import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 
+/**
+ * Maps a table query result to a GenericCard.
+ */
 export type TableToGenericCardMapping = {
   /** The 'type' of resource a card refers to. Renders a label on the card with this string value */
   type: string
-  /** The displayed title of the card */
+  /** The column name whose data contains the title of the card */
   title: string
-  /** The column name of the card title */
+  /** The column name whose data contains the subtitle of the card */
   subTitle?: string
+  /** The column name whose data contains the description of the card */
   description?: string
+  /** If true, a 'Cite As' button will be displayed for those cards with a DOI in the 'doi' column  */
   includeCitation?: boolean
+  /** The initial citation format to use in the 'Cite As' UI */
   defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
+  /** Static text displayed in the 'Cite As' UI */
   citationBoilerplateText?: string
+  /** The column name whose data contains the value used to map to the icon */
   icon?: string
+  /** The column name whose data contains an image file handle to be displayed on the card */
   imageFileHandleColumnName?: string
+  /** Static boolean value used if the image displayed using `imageFileHandleColumnName` requires extra padding */
   thumbnailRequiresPadding?: boolean
+  /** Array of column names to be used for labels in the Card Footer */
   secondaryLabels?: string[]
+  /** Can be used to add a custom secondary label */
   customSecondaryLabelConfig?: {
+    /** The displayed label key */
     key: string
+    /** The value to display */
     value: string
+    /** Callback to determine visibility of the label
+     * @param schema the mapping of columnName to data index
+     * @param data the row data
+     */
     isVisible: (schema: Record<string, number>, data: string[]) => boolean
   }
-
+  /** Column name of the link value if the title should be linked */
   link?: string
+  /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
   /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
 }
 
 export type TableRowGenericCardProps = {
+  /** The schema that maps a table result to the GenericCard UI */
   genericCardSchema: TableToGenericCardMapping
+  /** The table's SelectColumns */
   selectColumns?: SelectColumn[]
+  /** The table's ColumnModels */
   columnModels?: ColumnModel[]
+  /** Custom mapping of icon string to React Component */
   iconOptions?: IconOptions
+  /** If true, the 'type' column will be used as the icon string to choose the icon */
   useTypeColumnForIcon?: boolean
+  /** If true, render the card as a HeaderCard */
   isHeader?: boolean
+  /** If isHeader is true, use this variant of HeaderCard */
   headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
-  // Maps columnName to index
+  /** Mapping of column name to row data index */
   schema: Record<string, number>
-  // Row values
+  /** The row data */
   data: string[]
+  /** The ID of the table row */
   rowId?: number
+  /** Configuration for mapping values for specific columns to icons */
   columnIconOptions?: ColumnIconConfigs
 } & CommonCardProps
 
@@ -152,36 +181,6 @@ export const getValueOrMultiValue = ({
     }
   }
   return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
-}
-
-/**
- * Finds the index of the given column name in the selectColumns or columnModels.
- *
- * @returns a non-negative integer if the column is found, or undefined if the column is not found
- * @param columnName
- * @param selectColumns
- * @param columnModels
- */
-export const getColumnIndex = (
-  columnName?: string,
-  selectColumns?: SelectColumn[],
-  columnModels?: ColumnModel[],
-): number | undefined => {
-  if (selectColumns) {
-    const findIndexResult = selectColumns.findIndex(
-      el => el.name === columnName,
-    )
-    if (findIndexResult != -1) {
-      return findIndexResult
-    }
-  }
-  if (columnModels) {
-    const findIndexResult = columnModels.findIndex(el => el.name === columnName)
-    if (findIndexResult != -1) {
-      return findIndexResult
-    }
-  }
-  return undefined
 }
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -315,7 +314,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     descriptionConfig,
     columnIconOptions,
   } = props
-  // GenericCard inherits properties from CommonCardProps so that the properties have the same name
+  // TableRowGenericCard inherits properties from CommonCardProps so that the properties have the same name
   // and type, but theres one nuance which is that we can't override if one specific property will be
   // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
   const genericCardSchemaDefined = genericCardSchema
