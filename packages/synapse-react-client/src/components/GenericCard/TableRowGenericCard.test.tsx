@@ -1,3 +1,9 @@
+import { CardLink } from '@/components/CardContainer/CardLink'
+import TableRowGenericCard, {
+  TableToGenericCardMapping,
+  getLinkParams,
+  TableRowGenericCardProps,
+} from './TableRowGenericCard'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import mockTableEntityData, {
   mockTableEntity,
@@ -11,32 +17,23 @@ import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
-  ColumnModel,
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { CardLink, TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '../CardContainerLogic'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import * as IconSvg from '../IconSvg/IconSvg'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import * as FileHandleLinkModule from '../widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
-import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
-import { GenericCardProps } from './GenericCard'
-import GenericCard, {
-  CARD_SHORT_DESCRIPTION_CSS,
-  GenericCardSchema,
-  getColumnIndex,
-  getLinkParams,
-  LongDescription,
-  ShortDescription,
-} from './index'
+import { CARD_SHORT_DESCRIPTION_CSS } from './CollapsibleDescription'
 
 const renderComponent = (
-  props: GenericCardProps,
+  props: TableRowGenericCardProps,
   tableType: 'TableEntity' | 'EntityView',
 ) => {
   const request = cloneDeep(mockQueryBundleRequest)
@@ -51,7 +48,7 @@ const renderComponent = (
   return render(
     <QueryWrapper initQueryRequest={request}>
       <QueryVisualizationWrapper>
-        <GenericCard {...props} />
+        <TableRowGenericCard {...props} />
       </QueryVisualizationWrapper>
     </QueryWrapper>,
     {
@@ -94,11 +91,11 @@ const commonProps = {
   icon: 'icon',
   link: 'link',
 }
-const genericCardSchema: GenericCardSchema = {
+const genericCardSchema: TableToGenericCardMapping = {
   ...commonProps,
   secondaryLabels: [labelOneColumnName, 'labelTwo'],
 }
-const genericCardSchemaHeader: GenericCardSchema = {
+const genericCardSchemaHeader: TableToGenericCardMapping = {
   ...commonProps,
 }
 const schema = {
@@ -145,7 +142,7 @@ const data = [
   MOCKED_SYNAPSE_LINK,
 ]
 
-const propsForNonHeaderMode: GenericCardProps = {
+const propsForNonHeaderMode: TableRowGenericCardProps = {
   data,
   genericCardSchema,
   schema,
@@ -154,7 +151,7 @@ const propsForNonHeaderMode: GenericCardProps = {
   columnModels: [],
 }
 
-const propsForHeaderMode: GenericCardProps = {
+const propsForHeaderMode: TableRowGenericCardProps = {
   data,
   iconOptions,
   schema,
@@ -164,7 +161,7 @@ const propsForHeaderMode: GenericCardProps = {
   columnModels: [],
 }
 
-describe('GenericCard tests', () => {
+describe('TableRowGenericCard tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(
@@ -512,73 +509,6 @@ describe('GenericCard tests', () => {
       const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
       expect(href).toEqual(expectedLink)
       expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
-    })
-  })
-
-  describe('It renders markdown for the description', () => {
-    const descriptionLinkConfig = {
-      isMarkdown: true,
-      showFullDescriptionByDefault: true,
-    }
-    const value = '# header [website](synapse.org)'
-    test('hides the short description if descriptionConfig is specified', () => {
-      const { container } = render(
-        <ShortDescription
-          description={value}
-          hasClickedShowMore={false}
-          descriptionSubTitle={''}
-          descriptionConfig={descriptionLinkConfig}
-          toggleShowMore={jest.fn()}
-        />,
-        { wrapper: createWrapper() },
-      )
-      expect(container.querySelectorAll('div')).toHaveLength(0)
-    })
-    test('shows the short description if descriptionConfig is not specified', () => {
-      const { container } = render(
-        <ShortDescription
-          description={value}
-          hasClickedShowMore={false}
-          descriptionSubTitle={''}
-          descriptionConfig={undefined}
-          toggleShowMore={jest.fn()}
-        />,
-        { wrapper: createWrapper() },
-      )
-      expect(container.querySelectorAll('div')).toHaveLength(1)
-    })
-    test('hides the long description if descriptionConfig is specified', () => {
-      const { container } = render(
-        <LongDescription
-          description={value}
-          hasClickedShowMore={false}
-          descriptionSubTitle={''}
-          descriptionConfig={descriptionLinkConfig}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const markdown = container.querySelector<HTMLElement>('.markdown')!
-      within(markdown).getByText('header', { exact: false })
-    })
-  })
-
-  describe('getColumnIndex', () => {
-    const columnModels: ColumnModel[] = [
-      { id: '1', name: 'foo', columnType: ColumnTypeEnum.STRING },
-      { id: '2', name: 'bar', columnType: ColumnTypeEnum.DOUBLE },
-    ]
-
-    it('finds the column in the selectColumns', () => {
-      expect(getColumnIndex('bar', columnModels, undefined)).toBe(1)
-    })
-    it('finds the column in the columnModels', () => {
-      expect(getColumnIndex('bar', undefined, columnModels)).toBe(1)
-    })
-    it('does not include the column', () => {
-      expect(getColumnIndex('baz', columnModels, undefined)).toBe(undefined)
-    })
-    it('the found column index is 0 (falsy)', () => {
-      expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
     })
   })
 

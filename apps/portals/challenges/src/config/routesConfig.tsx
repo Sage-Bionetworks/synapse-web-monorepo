@@ -39,8 +39,10 @@ const routes: RouteObject[] = [
                     element: (
                       <CardContainerLogic
                         sql={`${challengeProjectsSql} where Status='Active'`}
-                        {...challengeCardConfiguration}
-                        titleLinkConfig={challengeTitleLinkConfig}
+                        cardConfiguration={{
+                          ...challengeCardConfiguration,
+                          titleLinkConfig: challengeTitleLinkConfig,
+                        }}
                       />
                     ),
                   },
@@ -49,8 +51,10 @@ const routes: RouteObject[] = [
                     element: (
                       <CardContainerLogic
                         sql={`${challengeProjectsSql} where Status='Upcoming'`}
-                        {...challengeCardConfiguration}
-                        titleLinkConfig={challengeTitleLinkConfig}
+                        cardConfiguration={{
+                          ...challengeCardConfiguration,
+                          titleLinkConfig: challengeTitleLinkConfig,
+                        }}
                       />
                     ),
                   },
@@ -59,8 +63,10 @@ const routes: RouteObject[] = [
                     element: (
                       <CardContainerLogic
                         sql={`${challengeProjectsSql} where Status='Closed'`}
-                        {...challengeCardConfiguration}
-                        titleLinkConfig={challengeTitleLinkConfig}
+                        cardConfiguration={{
+                          ...challengeCardConfiguration,
+                          titleLinkConfig: challengeTitleLinkConfig,
+                        }}
                       />
                     ),
                   },

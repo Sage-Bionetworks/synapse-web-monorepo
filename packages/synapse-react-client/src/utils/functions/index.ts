@@ -11,6 +11,7 @@ import type { SQLOperator } from './SqlFunctions'
 import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
 
 export * from './TableColumnSchemaUtils'
+export { getColumnIndex } from '@/utils/functions/SqlFunctions'
 export {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,

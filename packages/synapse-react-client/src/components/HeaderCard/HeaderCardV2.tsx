@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Card,
@@ -18,7 +19,7 @@ interface CTAButton {
   href?: string
   variant?: ButtonProps['variant']
   sx?: ButtonProps['sx']
-  endIcon?: JSX.Element
+  endIcon?: React.ReactNode
   // Add other button props as needed
 }
 
@@ -34,7 +35,7 @@ export type HeaderCardV2Props = {
   /** Maximum number of secondary labels to show before "Show More" */
   secondaryLabelLimit?: number
   /** Array of label-value pairs to display in the card footer */
-  values?: string[][]
+  values?: CardLabel[]
   /** Whether to align the card to the left navigation */
   isAlignToLeftNav?: boolean
   /** Configuration for the collapsible description */
@@ -44,7 +45,7 @@ export type HeaderCardV2Props = {
   /** Target attribute for the title link */
   target?: string
   /** Icon element to display */
-  icon: JSX.Element
+  icon: React.ReactNode
   /** Optional background image URL */
   backgroundImage?: string
   /** Force values section to appear below main content */
@@ -409,7 +410,7 @@ function HeaderCardV2({
 }
 
 type MetadataTableProps = {
-  data: string[][]
+  data: CardLabel[]
 }
 
 function MetadataTable({ data }: MetadataTableProps) {
@@ -422,7 +423,7 @@ function MetadataTable({ data }: MetadataTableProps) {
     >
       <tbody>
         {data.map((item, index) => (
-          <tr key={item[2] || index}>
+          <tr key={item.columnName || index}>
             <td
               style={{
                 width: '1%',
@@ -432,7 +433,7 @@ function MetadataTable({ data }: MetadataTableProps) {
                 fontWeight: 'bold',
               }}
             >
-              {item[0]}
+              {item.columnDisplayName}
             </td>
             <td
               style={{
@@ -442,7 +443,7 @@ function MetadataTable({ data }: MetadataTableProps) {
                 wordBreak: 'break-word',
               }}
             >
-              {item[1]}
+              {item.value}
             </td>
           </tr>
         ))}

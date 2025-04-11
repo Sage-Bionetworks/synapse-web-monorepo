@@ -2,11 +2,11 @@ import experimentalDataSvg from '@/config/style/experimentalData.svg?url'
 import publicationDataSvg from '@/config/style/publicationData.svg?url'
 import type {
   CardConfiguration,
-  GenericCardSchema,
   LabelLinkConfig,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
 
@@ -36,7 +36,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
 }
 
-export const datasetSchema: GenericCardSchema = {
+export const datasetSchema: TableToGenericCardMapping = {
   type: 'Dataset',
   title: 'name',
   subTitle: 'program',

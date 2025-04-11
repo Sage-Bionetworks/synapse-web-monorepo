@@ -1,11 +1,7 @@
 import { datasetsSql } from '@/config/resources'
 import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client'
 
@@ -22,7 +18,7 @@ export default function StudyDatasetsTab() {
           title: 'Study Datasets',
           element: (
             <CardContainerLogic
-              {...datasetCardConfiguration}
+              cardConfiguration={datasetCardConfiguration}
               sql={datasetsSql}
               sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
               searchParams={{ studyId }}

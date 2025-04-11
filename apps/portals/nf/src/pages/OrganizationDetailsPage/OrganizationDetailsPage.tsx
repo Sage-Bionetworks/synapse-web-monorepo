@@ -6,9 +6,7 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { Outlet, RouteObject } from 'react-router'
 import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
 import OrganizationDataTab from './OrganizationDataTab'
@@ -35,12 +33,14 @@ function OrganizationDetailsPage() {
     <>
       <CardContainerLogic
         sql={fundersSql}
-        type={SynapseConstants.GENERIC_CARD}
-        genericCardSchema={{
-          ...organizationCardSchema,
-          imageFileHandleColumnName: 'headerLogo',
+        cardConfiguration={{
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: {
+            ...organizationCardSchema,
+            imageFileHandleColumnName: 'headerLogo',
+          },
+          isHeader: true,
         }}
-        isHeader={true}
         searchParams={searchParams}
       />
       <DetailsPage

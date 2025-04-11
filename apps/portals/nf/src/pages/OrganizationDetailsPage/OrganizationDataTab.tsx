@@ -1,12 +1,11 @@
 import { datasetsSql, filesSql } from '@/config/resources'
-import { columnAliases, searchConfiguration } from '@/config/synapseConfigs/commonProps'
+import {
+  columnAliases,
+  searchConfiguration,
+} from '@/config/synapseConfigs/commonProps'
 import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 
@@ -50,7 +49,7 @@ export default function OrganizationDataTab() {
           title: 'Datasets',
           element: (
             <CardContainerLogic
-              {...datasetCardConfiguration}
+              cardConfiguration={datasetCardConfiguration}
               sql={datasetsSql}
               initialLimit={3}
               searchParams={{ fundingAgency }}

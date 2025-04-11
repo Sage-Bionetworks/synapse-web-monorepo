@@ -3,13 +3,19 @@ import { Component, Fragment } from 'react'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
 import IconSVG from '../../IconSvg/IconSvg'
 
+export type CardLabel = {
+  columnDisplayName: string
+  value: React.ReactNode
+  columnName?: string
+}
+
 type State = {
   isShowMoreOn: boolean
   isDesktop: boolean
 }
 
 type CardFooterProps = {
-  values: any[]
+  values: CardLabel[]
   isHeader: boolean
   secondaryLabelLimit?: number
   columnIconOptions?: ColumnIconConfigs
@@ -47,28 +53,22 @@ class CardFooter extends Component<CardFooterProps, State> {
   }
 
   renderRowValue = (
-    columnName: string,
-    value: string,
-    tableColumnName: string,
+    key: string,
+    value: React.ReactNode,
+    tableColumnName?: string,
   ) => {
     const columnIconOptions = this.props.columnIconOptions
-    if (!value.match || !value.trim) {
-      // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
-      // see typeof return 'object' for that case which would be a better check.
+    if (typeof value !== 'string') {
+      // value can sometimes be a react element
       return value
     }
-    value = value.trim()
-    const doiLink = convertDoiToLink(value)
+    const valueAsString = value.trim()
+    const doiLink = convertDoiToLink(valueAsString)
 
     if (doiLink) {
       return (
-        <a
-          data-search-handle={columnName}
-          target="_blank"
-          rel="noopener noreferrer"
-          href={doiLink}
-        >
-          {value}
+        <a target="_blank" rel="noopener noreferrer" href={doiLink}>
+          {valueAsString}
         </a>
       )
     }
@@ -76,6 +76,7 @@ class CardFooter extends Component<CardFooterProps, State> {
     if (
       columnIconOptions &&
       columnIconOptions.columns &&
+      tableColumnName &&
       Object.keys(columnIconOptions.columns).includes(tableColumnName)
     ) {
       const iconProps = columnIconOptions.columns[tableColumnName][value]
@@ -95,23 +96,22 @@ class CardFooter extends Component<CardFooterProps, State> {
 
     return value
   }
-  renderRows = (values: string[][], limit: number, isDesktop: boolean) => {
-    return values.map((kv, index) => {
+  renderRows = (values: CardLabel[], limit: number, isDesktop: boolean) => {
+    return values.map((label, index) => {
+      const { columnDisplayName, value: labelValue, columnName } = label
       const hideClass = index >= limit ? 'SRC-hidden' : ''
-      const columnName = kv[0]
-      const value = this.renderRowValue(columnName, kv[1], kv[2])
+      const value = this.renderRowValue(
+        columnDisplayName,
+        labelValue,
+        columnName,
+      )
       if (isDesktop) {
         return (
           <tr className={'SRC-cardRowDesktop ' + hideClass} key={index}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}>
-              {columnName}
+              {columnDisplayName}
             </td>
-            <td
-              data-search-handle={columnName}
-              className={'SRC-row-data SRC-limitMaxWidth '}
-            >
-              {value}
-            </td>
+            <td className={'SRC-row-data SRC-limitMaxWidth '}>{value}</td>
           </tr>
         )
       }
@@ -119,16 +119,11 @@ class CardFooter extends Component<CardFooterProps, State> {
         <Fragment key={index}>
           <tr className={'SRC-cardRowMobile ' + hideClass}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}>
-              {columnName}
+              {columnDisplayName}
             </td>
           </tr>
           <tr className={'SRC-cardRowMobile ' + hideClass}>
-            <td
-              data-search-handle={columnName}
-              className="SRC-row-data SRC-limitMaxWidth"
-            >
-              {value}
-            </td>
+            <td className="SRC-row-data SRC-limitMaxWidth">{value}</td>
           </tr>
         </Fragment>
       )
@@ -138,7 +133,7 @@ class CardFooter extends Component<CardFooterProps, State> {
   render() {
     const { values, secondaryLabelLimit = 3 } = this.props
     const { isShowMoreOn, isDesktop } = this.state
-    const valuesFiltered = values.filter(el => el[1])
+    const valuesFiltered = values.filter(el => Boolean(el.value))
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
     const limit =
       !hasMoreValuesThanLimit || isShowMoreOn ? Infinity : secondaryLabelLimit

@@ -3,17 +3,14 @@ import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { toolsCardConfiguration } from '@/config/synapseConfigs/tools'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import {
-  MarkdownSynapseFromColumnData,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, NoContentPlaceholderType } from 'synapse-react-client'
+import {
+  CardContainerLogic,
+  NoContentPlaceholderType,
+} from 'synapse-react-client'
 
 export function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
@@ -51,7 +48,7 @@ export function StudyDetailsTab() {
             <CardContainerLogic
               sql={toolStudySql}
               initialLimit={3}
-              {...toolsCardConfiguration}
+              cardConfiguration={toolsCardConfiguration}
               searchParams={{ studyId }}
             />
           ),
@@ -62,7 +59,7 @@ export function StudyDetailsTab() {
           element: (
             <CardContainerLogic
               sql={publicationsSql}
-              {...publicationsCardConfiguration}
+              cardConfiguration={publicationsCardConfiguration}
               searchParams={{ studyId }}
             />
           ),
@@ -76,7 +73,7 @@ export function StudyDetailsTab() {
               sql={studiesSql}
               columnAliases={columnAliases}
               noContentPlaceholderType={NoContentPlaceholderType.HIDDEN}
-              {...studyCardConfiguration}
+              cardConfiguration={studyCardConfiguration}
               searchParams={{ studyId }}
             />
           ),

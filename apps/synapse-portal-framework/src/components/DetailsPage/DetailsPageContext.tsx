@@ -1,7 +1,8 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash'
 import { createContext, PropsWithChildren, ReactNode, useContext } from 'react'
-import { getColumnIndex } from 'synapse-react-client'
+
+import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 
 type DetailsPageContextType = {
   rowSet?: RowSet

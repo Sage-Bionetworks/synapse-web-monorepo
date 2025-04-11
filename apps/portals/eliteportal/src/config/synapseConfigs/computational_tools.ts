@@ -1,12 +1,12 @@
 import {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { computationalSql, defaultSearchConfiguration } from '../resources'
 
-const computationalSchema: GenericCardSchema = {
+const computationalSchema: TableToGenericCardMapping = {
   type: SynapseConstants.COMPUTATIONAL,
   title: 'name',
   description: 'summary',

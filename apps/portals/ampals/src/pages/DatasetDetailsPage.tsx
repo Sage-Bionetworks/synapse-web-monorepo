@@ -17,12 +17,14 @@ export default function DatasetDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        {...datasetCardConfiguration}
+        cardConfiguration={{
+          ...datasetCardConfiguration,
+          secondaryLabelLimit: 4,
+          isHeader: true,
+        }}
         sql={datasetsSql}
-        isHeader
         searchParams={searchParams}
         columnAliases={datasetColumnAliases}
-        secondaryLabelLimit={4}
       />
       <DetailsPage
         sql={datasetsSql}

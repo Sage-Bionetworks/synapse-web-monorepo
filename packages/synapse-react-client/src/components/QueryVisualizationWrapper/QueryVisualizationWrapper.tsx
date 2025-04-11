@@ -46,7 +46,8 @@ export type QueryVisualizationWrapperProps = {
    * Note that Synapse tables have no internal concept of a primary key.
    */
   rowSelectionPrimaryKey?: string[]
-  /* Look for additional filters using the given key.  If not provided, the entity ID will be used. */
+  /** Look for additional filters using the given key.  If not provided, the entity ID will be used.
+   * @deprecated - configure the filter before passing a query */
   additionalFiltersSessionStorageKey?: string
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]

@@ -1,15 +1,15 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { projectsSql } from '../resources'
 
 export const projectsRgbIndex = 9
 
-export const projectSchema: GenericCardSchema = {
+export const projectSchema: TableToGenericCardMapping = {
   type: SynapseConstants.PROJECT,
   title: 'Full Project Name',
   subTitle: 'Program',

@@ -1,5 +1,4 @@
 import { useGetEntity } from '@/synapse-queries/entity/useEntity'
-
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -8,7 +7,7 @@ import {
   FileHandleAssociation,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { CardLink } from '../CardContainerLogic'
+import { CardLink } from '../CardContainer/CardLink'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
 import ProgramsDesktop from './Programs.Desktop'

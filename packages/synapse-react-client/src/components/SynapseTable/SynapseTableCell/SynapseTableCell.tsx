@@ -1,3 +1,4 @@
+import { CardLink } from '@/components/CardContainer/CardLink'
 import { useGetEntity } from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import {
@@ -17,11 +18,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { Fragment, memo } from 'react'
-import {
-  CardLink,
-  ColumnSpecifiedLink,
-  MarkdownLink,
-} from '../../CardContainerLogic'
+import { ColumnSpecifiedLink, MarkdownLink } from '../../CardContainerLogic'
 import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
 import { EntityLink, EntityLinkProps } from '../../EntityLink'

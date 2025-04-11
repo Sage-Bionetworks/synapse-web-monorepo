@@ -1,16 +1,16 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants, TargetEnum } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { studySql } from '../resources'
 import { iconOptions } from './iconOptions'
 
 export const studiesRgbIndex = 9
 
-export const studySchema: GenericCardSchema = {
+export const studySchema: TableToGenericCardMapping = {
   type: '',
   title: 'study',
   subTitle: 'investigator',

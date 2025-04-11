@@ -1,4 +1,7 @@
+import { CardLink } from '@/components/CardContainer/CardLink'
+import { getValueOrMultiValue } from '@/components/GenericCard/TableRowGenericCard'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { getColumnIndex } from '@/utils/functions/index'
 import { Link, Tooltip } from '@mui/material'
 import {
   ColumnModel,
@@ -10,7 +13,6 @@ import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment } from 'react'
 import {
-  CardLink,
   ColumnSpecifiedLink,
   MarkdownLink,
   TargetEnum,
@@ -20,7 +22,6 @@ import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
-import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 import Linkify from './Linkify'
 
 type SynapseCardLabelProps = {

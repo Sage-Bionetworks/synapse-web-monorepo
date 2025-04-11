@@ -1,7 +1,8 @@
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { useLocation } from 'react-router'
-import { getColumnIndex } from 'synapse-react-client'
+
+import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 import { useDetailsPageContext } from './DetailsPageContext'
 
 type DetailsPageDocumentMetadataProps = {

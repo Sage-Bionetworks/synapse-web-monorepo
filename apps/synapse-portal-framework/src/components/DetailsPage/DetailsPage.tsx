@@ -1,12 +1,23 @@
 import { DetailsPageProps } from '@/types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
-import { Box, Button, Container, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { BarLoader } from 'react-spinners'
-import { SynapseConstants, SynapseQueries, SynapseUtilityFunctions } from 'synapse-react-client'
+import {
+  SynapseConstants,
+  SynapseQueries,
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'
@@ -53,9 +64,9 @@ export default function DetailsPage(props: DetailsPageProps) {
   const queryBundleRequest = useMemo(() => {
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
-      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
+      additionalFiltersSessionStorageKey,
     )
     const queryBundleRequest: QueryBundleRequest = {
       entityId,

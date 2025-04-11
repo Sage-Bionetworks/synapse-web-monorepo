@@ -106,16 +106,18 @@ export default function CollectionsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader
         isAlignToLeftNav
-        {...studiesCardConfiguration}
+        cardConfiguration={{
+          ...studiesCardConfiguration,
+          genericCardSchema: {
+            ...studySchema,
+            title: 'study',
+            link: 'id',
+          },
+          isHeader: true,
+        }}
         rgbIndex={studiesRgbIndex}
         columnAliases={columnAliases}
-        genericCardSchema={{
-          ...studySchema,
-          title: 'study',
-          link: 'id',
-        }}
         sql={studySql}
         searchParams={{ study }}
       />

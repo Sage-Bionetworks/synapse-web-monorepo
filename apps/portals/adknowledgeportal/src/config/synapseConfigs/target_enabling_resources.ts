@@ -1,9 +1,9 @@
 import {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { targetEnablingResourcesExploreSql } from '../resources'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/2501607563/AMP-AD+Target+Enabling+Resources+Schema
@@ -12,7 +12,7 @@ export const TARGET_ENABLING_RESOURCES_COLUMN_NAMES = {
   GRANT: 'grant',
 }
 
-const targetSchema: GenericCardSchema = {
+const targetSchema: TableToGenericCardMapping = {
   type: SynapseConstants.EXPERIMENTAL,
   title: 'title',
   description: 'summary',

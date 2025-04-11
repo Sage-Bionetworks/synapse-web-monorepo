@@ -1,12 +1,12 @@
 import type {
   CardConfiguration,
   CardContainerLogicProps,
-  GenericCardSchema,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { toolsSql } from '../resources'
 
-const schema: GenericCardSchema = {
+const schema: TableToGenericCardMapping = {
   type: SynapseConstants.EXTERNAL_RESOURCE,
   title: 'Name',
   description: 'Description',
@@ -22,5 +22,5 @@ export const cardConfiguration: CardConfiguration = {
 
 export const toolProps: CardContainerLogicProps = {
   sql: toolsSql,
-  ...cardConfiguration,
+  cardConfiguration: cardConfiguration,
 }

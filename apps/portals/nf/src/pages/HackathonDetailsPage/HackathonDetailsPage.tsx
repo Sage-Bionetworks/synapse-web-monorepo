@@ -7,9 +7,7 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client'
@@ -36,10 +34,12 @@ function HackathonDetailsPage() {
     <>
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        isHeader={true}
-        {...hackathonCardConfiguration}
+        cardConfiguration={{
+          ...hackathonCardConfiguration,
+          secondaryLabelLimit: Infinity,
+          isHeader: true,
+        }}
         columnAliases={{ ...columnAliases, studyStatus: 'Status' }}
-        secondaryLabelLimit={Infinity}
         sql={hackathonsSql}
         searchParams={{ id }}
       />

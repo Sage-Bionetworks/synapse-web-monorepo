@@ -7,7 +7,6 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   ErrorPage,
-  GenericCardSchema,
   SynapseConstants,
   SynapseErrorType,
   RowDataTable,
@@ -15,12 +14,13 @@ import {
   CardConfiguration,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { standardsDetailsPageSQL } from '../config/resources'
 const dataSql = standardsDetailsPageSQL
 
-export const standardsCardSchema: GenericCardSchema = {
+export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
   title: 'acronym',
   subTitle: 'standardName',
@@ -82,7 +82,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
       <DetailsPageContextConsumer columnName={'trainingResources'}>
         {({ value }) => (
           <CardContainerLogic
-            {...linkedStandardCardConfiguration}
+            cardConfiguration={linkedStandardCardConfiguration}
             sql={dataSql}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
@@ -100,7 +100,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
         {({ value, context }) => {
           return (
             <CardContainerLogic
-              {...linkedStandardCardConfiguration}
+              cardConfiguration={linkedStandardCardConfiguration}
               sql={dataSql}
               // need a dummy value for search to properly exclude null values and an empty string doesn't work
               searchParams={{ id: value || 'notreal' }}
@@ -123,14 +123,25 @@ export default function StandardsDetailsPage() {
     <>
       {/* TODO: header card */}
       <CardContainerLogic
-        sql={dataSql}
-        type={SynapseConstants.GENERIC_CARD}
-        genericCardSchema={standardsCardSchema}
-        secondaryLabelLimit={6}
-        isHeader={true}
-        headerCardVariant="HeaderCardV2"
-        searchParams={{ id }}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+        query={{
+          sql: dataSql,
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+              columnName: 'id',
+              operator: ColumnSingleValueFilterOperator.EQUAL,
+              values: [id],
+            },
+          ],
+        }}
+        cardConfiguration={{
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: standardsCardSchema,
+          secondaryLabelLimit: 6,
+          isHeader: true,
+          headerCardVariant: 'HeaderCardV2',
+        }}
       />
 
       <DetailsPage sql={dataSql}>

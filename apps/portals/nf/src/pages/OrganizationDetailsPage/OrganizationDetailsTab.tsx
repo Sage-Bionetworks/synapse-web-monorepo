@@ -1,15 +1,18 @@
 import { publicationsSql, studiesSql } from '@/config/resources'
-import { columnAliases, searchConfiguration } from '@/config/synapseConfigs/commonProps'
+import {
+  columnAliases,
+  searchConfiguration,
+} from '@/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, MarkdownSynapse, QueryWrapperPlotNav } from 'synapse-react-client'
+import {
+  CardContainerLogic,
+  MarkdownSynapse,
+  QueryWrapperPlotNav,
+} from 'synapse-react-client'
 
 export default function OrganizationDetailsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')
@@ -52,7 +55,7 @@ export default function OrganizationDetailsTab() {
             <CardContainerLogic
               sql={publicationsSql}
               initialLimit={3}
-              {...publicationsCardConfiguration}
+              cardConfiguration={publicationsCardConfiguration}
               sqlOperator={ColumnSingleValueFilterOperator.LIKE}
               searchParams={{ fundingAgency }}
             />

@@ -1,3 +1,4 @@
+import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { useState, useEffect } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -12,12 +13,12 @@ export type HeaderCardProps = {
   subTitle?: string
   description: string
   secondaryLabelLimit?: number
-  values?: string[][]
+  values?: CardLabel[]
   isAlignToLeftNav?: boolean
   descriptionConfig?: DescriptionConfig
   href?: string
   target?: string
-  icon: JSX.Element
+  icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
 }
 

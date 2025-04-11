@@ -33,13 +33,15 @@ export default function PeopleDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        {...peopleCardConfiguration}
-        iconOptions={{
-          Person: personGraySvg,
+        cardConfiguration={{
+          ...peopleCardConfiguration,
+          iconOptions: {
+            Person: personGraySvg,
+          },
+          secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
-        secondaryLabelLimit={Infinity}
         sql={peopleSql}
         columnAliases={columnAliases}
         searchParams={{ name: name }}
@@ -60,7 +62,7 @@ export default function PeopleDetailsPage() {
                   {/* TODO: How do we know if sqlOperator should be IN or EQUAL ? Can this be determined automatically? */}
                   {({ value }) => (
                     <CardContainerLogic
-                      {...grantsCardConfiguration}
+                      cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -80,7 +82,7 @@ export default function PeopleDetailsPage() {
                 <DetailsPageContextConsumer columnName={'publicationId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...publicationsCardConfiguration}
+                      cardConfiguration={publicationsCardConfiguration}
                       sql={publicationSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -101,7 +103,7 @@ export default function PeopleDetailsPage() {
                 <DetailsPageContextConsumer columnName={'datasetId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...datasetCardConfiguration}
+                      cardConfiguration={datasetCardConfiguration}
                       sql={datasetsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -122,7 +124,7 @@ export default function PeopleDetailsPage() {
                 <DetailsPageContextConsumer columnName={'toolId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...toolsConfiguration}
+                      cardConfiguration={toolsConfiguration}
                       sql={toolsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
