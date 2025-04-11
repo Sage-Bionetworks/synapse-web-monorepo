@@ -17,6 +17,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { CardContainer, CardContainerProps } from './CardContainer'
+import omit from 'lodash-es/omit'
 
 const tableId = 'syn16787123'
 const sql = `SELECT * FROM ${tableId}`
@@ -96,10 +97,9 @@ describe('CardContainer tests', () => {
       mockUserCardTableQueryResultBundle,
     )
     renderComponent({
-      ...props,
+      ...omit(props, ['genericCardSchema']),
       rowSet: mockUserCardTableQueryResultBundle.queryResult.queryResults,
       type: MEDIUM_USER_CARD,
-      genericCardSchema: undefined,
     })
 
     // Since the first user in the mock data has a user ID, their profile information will be fetched, ignoring the table data.

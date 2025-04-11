@@ -33,12 +33,14 @@ export default function PublicationsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
-        {...publicationsCardConfiguration}
-        iconOptions={{
-          Person: personGraySvg,
+        cardConfiguration={{
+          ...publicationsCardConfiguration,
+          iconOptions: {
+            Person: personGraySvg,
+          },
+          secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
-        secondaryLabelLimit={Infinity}
         sql={publicationSql}
         columnAliases={columnAliases}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -59,7 +61,7 @@ export default function PublicationsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'grantNumber'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...grantsCardConfiguration}
+                      cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -80,7 +82,7 @@ export default function PublicationsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'pubMedId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...peopleCardConfiguration}
+                      cardConfiguration={peopleCardConfiguration}
                       sql={peopleSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
@@ -101,7 +103,7 @@ export default function PublicationsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'pubMedId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...datasetCardConfiguration}
+                      cardConfiguration={datasetCardConfiguration}
                       sql={datasetsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
@@ -122,7 +124,7 @@ export default function PublicationsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'pubMedId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...toolsConfiguration}
+                      cardConfiguration={toolsConfiguration}
                       sql={toolsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}

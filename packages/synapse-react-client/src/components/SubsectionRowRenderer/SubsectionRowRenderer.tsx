@@ -62,9 +62,9 @@ function SubsectionRowRenderer({
       setIsLoading(true)
       const entityId = parseEntityIdFromSqlStatement(sql)
       const additionalFilters = getAdditionalFilters(
-        additionalFiltersSessionStorageKey,
         searchParams,
         sqlOperator,
+        additionalFiltersSessionStorageKey,
       )
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const request: QueryBundleRequest = {

@@ -3,12 +3,13 @@ import type {
   LabelLinkConfig,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { GenericCardSchema, SynapseConstants } from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client'
 import { experimentalModelsSql } from '../resources'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/1254293523/AMP-AD+Experimental+Models+Schema
 
-const experimentalSchema: GenericCardSchema = {
+const experimentalSchema: TableToGenericCardMapping = {
   type: SynapseConstants.EXPERIMENTAL,
   title: 'name',
   description: 'summary',

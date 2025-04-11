@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react'
 import { CardContainer } from '../CardContainer/CardContainer'
 import { SynapseTable, SynapseTableConfiguration } from '../SynapseTable'
-import { CardConfiguration } from '../CardContainerLogic'
+import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import LastUpdatedOn from './LastUpdatedOn'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'

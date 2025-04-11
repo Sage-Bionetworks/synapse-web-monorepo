@@ -1,10 +1,10 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
@@ -12,7 +12,7 @@ import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 1
 
-export const publicationSchema: GenericCardSchema = {
+export const publicationSchema: TableToGenericCardMapping = {
   type: SynapseConstants.PUBLICATION,
   title: 'publicationTitle',
   subTitle: 'authors',

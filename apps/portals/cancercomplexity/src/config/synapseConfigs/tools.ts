@@ -1,16 +1,16 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 6
 
-export const toolsSchema: GenericCardSchema = {
+export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.TOOL,
   title: 'toolName',
   description: 'description',

@@ -26,8 +26,5 @@ const datasetCollectionsCardConfiguration: CardConfiguration = {
 export const datasetCollectionsCardContainerLogicProps: CardContainerLogicProps =
   {
     sql: datasetCollectionsSql,
-    ...datasetCollectionsCardConfiguration,
-    genericCardSchema: {
-      ...datasetCollectionsCardConfiguration.genericCardSchema!,
-    },
+    cardConfiguration: datasetCollectionsCardConfiguration,
   }

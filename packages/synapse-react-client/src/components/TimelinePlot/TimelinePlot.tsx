@@ -56,8 +56,7 @@ export const TimelinePlot = ({
   )
   const plotContainerRef = createRef<HTMLDivElement>()
   const dimensions = useRefDimensions(plotContainerRef)
-  const queryFilters =
-    getAdditionalFilters(undefined, searchParams, sqlOperator) ?? []
+  const queryFilters = getAdditionalFilters(searchParams, sqlOperator) ?? []
   const speciesFilter: ColumnMultiValueFunctionQueryFilter | undefined = species
     ? {
         columnName: 'species',
