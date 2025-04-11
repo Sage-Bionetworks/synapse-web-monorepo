@@ -1,11 +1,13 @@
-import { Box, Typography, Link } from '@mui/material'
+import { Box, Typography, Link, useTheme } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 import Header from '../Header'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 import { AddAlertTwoTone } from '@mui/icons-material'
+import { TypeAnimation } from 'react-type-animation'
 
 const CancerComplexityHeader = () => {
+  const theme = useTheme()
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
     'Justo Turpis',
@@ -29,6 +31,59 @@ const CancerComplexityHeader = () => {
     { value: 'trainee', label: 'Trainee' },
     { value: 'patientAdvocate', label: 'Patient Advocate' },
   ]
+
+  const discoverAndExplore = (
+    <Box sx={{ color: 'grey.100' }}>
+      Discover and explore recent research&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.up('md')]: {
+            display: 'block',
+          },
+        })}
+      ></Box>
+      on&nbsp;
+      <Box
+        component={'span'}
+        sx={theme => ({
+          [theme.breakpoints.down('md')]: {
+            display: 'block',
+            minHeight: '100px',
+          },
+          [theme.breakpoints.down('sm')]: {
+            minHeight: '150px',
+          },
+        })}
+      >
+        <TypeAnimation
+          sequence={[
+            'cancer',
+            3000,
+            'metastasis',
+            3000,
+            'tumor-immune microenvironment',
+            3000,
+            'drug resistance',
+            3000,
+            'tumor heterogeneity',
+            3000,
+            'software analysis tools',
+            3000,
+            'tumor progression',
+          ]}
+          wrapper="span"
+          speed={20}
+          repeat={Infinity}
+          style={{
+            fontWeight: 700,
+            color: '#35E7C6',
+          }}
+        />
+      </Box>
+    </Box>
+  )
+
   const content = (
     <>
       <Box
@@ -47,6 +102,17 @@ const CancerComplexityHeader = () => {
           }}
         >
           Welcome to the Cancer Complexity Knowledge Portal
+        </Typography>
+        <Typography
+          variant="headline1"
+          sx={{
+            fontSize: { xs: '24px', md: '32px' },
+            fontWeight: 'bold',
+            marginBottom: '15px',
+            lineHeight: '54px',
+          }}
+        >
+          {discoverAndExplore}
         </Typography>
         <Typography
           variant="body1"
