@@ -710,7 +710,7 @@ class _GenericCard extends Component<
                 paddingRight: '40px',
               }}
             >
-              {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+              {/* PORTALS-3386 Use datasetAlias in schema to add entity to download cart */}
               {downloadCartSynIdValue && (
                 <>
                   <GenericCardActionButton
