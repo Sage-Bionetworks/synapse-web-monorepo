@@ -21,9 +21,9 @@ export const Default: Story = {
     title: 'Default HeaderCard',
     description: 'This is a default header card',
     values: [
-      ['Label 1', 'Value 1'],
-      ['Label 2', 'Value 2'],
-      ['Label 3', 'Value 3'],
+      { columnDisplayName: 'Label 1', value: 'Value 1' },
+      { columnDisplayName: 'Label 2', value: 'Value 2' },
+      { columnDisplayName: 'Label 3', value: 'Value 3' },
     ],
     secondaryLabelLimit: 3,
     isAlignToLeftNav: false,
@@ -41,9 +41,9 @@ export const DicomCard: Story = {
     description:
       'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
     values: [
-      ['AUTHOR NAME', 'DICOM (@dicom)'],
-      ['LAST UPDATED', '2024-01-01'],
-      ['BASED ON', 'None'],
+      { columnDisplayName: 'AUTHOR NAME', value: 'DICOM (@dicom)' },
+      { columnDisplayName: 'LAST UPDATED', value: '2024-01-01' },
+      { columnDisplayName: 'BASED ON', value: 'None' },
     ],
     icon: <Study />,
     ctaButtons: [
@@ -94,17 +94,19 @@ export const WithStackedLayout: Story = {
     title: 'DICOM with Stacked Layout',
     forceStackedLayout: true,
     values: [
-      ['AUTHOR NAME', 'DICOM (@dicom)'],
-      ['LAST UPDATED', '2024-01-01'],
-      ['BASED ON', 'None'],
-      [
-        'VERY LONG LABEL',
-        'This is a very long value that demonstrates why we might want to force a stacked layout. It contains lots of text that would be hard to read in a side-by-side layout.',
-      ],
-      [
-        'ANOTHER LONG ONE',
-        'More extensive content that benefits from the full width of the card when displayed in a stacked layout.',
-      ],
+      { columnDisplayName: 'AUTHOR NAME', value: 'DICOM (@dicom)' },
+      { columnDisplayName: 'LAST UPDATED', value: '2024-01-01' },
+      { columnDisplayName: 'BASED ON', value: 'None' },
+      {
+        columnDisplayName: 'VERY LONG LABEL',
+        value:
+          'This is a very long value that demonstrates why we might want to force a stacked layout. It contains lots of text that would be hard to read in a side-by-side layout.',
+      },
+      {
+        columnDisplayName: 'ANOTHER LONG ONE',
+        value:
+          'More extensive content that benefits from the full width of the card when displayed in a stacked layout.',
+      },
     ],
   },
 }
@@ -117,20 +119,22 @@ export const StudyHeaderCardV2: Story = {
     description:
       'Synodos for NF2 is a first-of-its-kind neurofibromatosis research collaboration dedicated to defeating the rare genetic disorder neurofibromatosis type 2 (NF2)...',
     values: [
-      ['Study Status', 'Completed'],
-      ['Data Status', 'Available'],
-      ['Disease Focus', 'Neurofibromatosis type 2'],
-      ['Manifestation', 'Schwannoma, Meningioma'],
-      ['Funding Agency', 'CTF'],
-      [
-        'Institutions',
-        "Johns Hopkins Medicine, Indiana University, Massachusetts General Hospital, Harvard Medical School, University of Central Florida, FLI-Leibniz-Germany, University of North Carolina, Ohio State University, Sage Bionetworks, Children's Tumor Foundation",
-      ],
-      ['On Synapse', 'syn2343195'],
-      [
-        'Grant DOI',
-        'https://doi.org/10.48105/pc.gr.88541, https://doi.org/10.48105/pc.gr.88552',
-      ],
+      { columnDisplayName: 'Study Status', value: 'Completed' },
+      { columnDisplayName: 'Data Status', value: 'Available' },
+      { columnDisplayName: 'Disease Focus', value: 'Neurofibromatosis type 2' },
+      { columnDisplayName: 'Manifestation', value: 'Schwannoma, Meningioma' },
+      { columnDisplayName: 'Funding Agency', value: 'CTF' },
+      {
+        columnDisplayName: 'Institutions',
+        value:
+          "Johns Hopkins Medicine, Indiana University, Massachusetts General Hospital, Harvard Medical School, University of Central Florida, FLI-Leibniz-Germany, University of North Carolina, Ohio State University, Sage Bionetworks, Children's Tumor Foundation",
+      },
+      { columnDisplayName: 'On Synapse', value: 'syn2343195' },
+      {
+        columnDisplayName: 'Grant DOI',
+        value:
+          'https://doi.org/10.48105/pc.gr.88541, https://doi.org/10.48105/pc.gr.88552',
+      },
     ],
     secondaryLabelLimit: 8,
     isAlignToLeftNav: false,

@@ -1,9 +1,9 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
@@ -14,7 +14,7 @@ const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
 const CUSTOM_LABEL_VALUE =
   'This file is hosted externally, follow the External Link, below'
 
-export const datasetSchema: GenericCardSchema = {
+export const datasetSchema: TableToGenericCardMapping = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',

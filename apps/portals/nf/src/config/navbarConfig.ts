@@ -79,6 +79,7 @@ export const navbarConfig: NavbarConfig = {
       name: 'About',
       path: '/About',
       children: [
+        { name: 'News', path: 'https://news.nfdataportal.org/' },
         {
           name: 'NF-OSI',
           path: 'https://help.nf.synapse.org/NFdocs/about',
@@ -93,8 +94,7 @@ export const navbarConfig: NavbarConfig = {
       name: 'Contribute Data',
       path: 'https://help.nf.synapse.org/NFdocs/how-to-share-data-an-overview',
     },
-    { name: 'News', path: 'https://news.nfdataportal.org/' },
     { name: 'Help', path: 'https://help.nf.synapse.org/NFdocs/' },
   ],
-  isPortalsDropdownEnabled: false,
+  isPortalsDropdownEnabled: true,
 }

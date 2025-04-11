@@ -1,16 +1,16 @@
 import {
   CardConfiguration,
-  GenericCardSchema,
   IconOptions,
   QueryWrapperPlotNavProps,
   SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { grantsSql } from '../resources'
 
 const rgbIndex = 3
 
-export const grantsSchema: GenericCardSchema = {
+export const grantsSchema: TableToGenericCardMapping = {
   type: 'Grant',
   title: 'grantName',
   subTitle: 'grantInstitution',

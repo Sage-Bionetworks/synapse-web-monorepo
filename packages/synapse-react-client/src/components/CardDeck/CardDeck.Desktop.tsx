@@ -2,6 +2,7 @@ import LargeButton from '@/components/styled/LargeButton'
 import classNames from 'classnames'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import { CardDeckDataProps } from './CardDeck'
+import { Link } from '@mui/material'
 
 export default function CardDeckDesktop({
   title,
@@ -60,51 +61,36 @@ export default function CardDeckDesktop({
             {' '}
             {title}{' '}
           </span>
-          {/* {link && (
-            <p className="Programs__Card__header__info__link">
-              <a
-                className="highlight-link"
-                href={link}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Visit website
-              </a>
-            </p>
-          )} */}
         </div>
       </div>
-      <div className="CardDeck__Card__summary">
+      <div
+        className={classNames(
+          `CardDeck__Card__summary`,
+          cardDeckType && `CardDeck__Card__summary--${cardDeckType}`,
+        )}
+      >
         <p> {description} </p>
-        <LargeButton
-          color="secondary"
-          variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
-          href={ctaButtonURL}
-          sx={{
-            marginLeft: 0,
-            fontSize: '14px',
-            boxShadow: 'none',
-            color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
-            ...(cardDeckType === 'b2ai' && {
-              width: '200px',
-              backgroundColor: 'white',
-            }),
-            ...(cardDeckType === 'cckp' && {
+
+        {cardDeckType === 'b2ai' ? (
+          <Link href={ctaButtonURL} underline="none">
+            {ctaButtonText}
+          </Link>
+        ) : (
+          <LargeButton
+            color="primary"
+            variant="outlined" // Update variant based on cardDeckType
+            href={ctaButtonURL}
+            sx={{
               width: '170px',
+              fontSize: '14px',
+              boxShadow: 'none',
               borderColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: 'white',
-              },
-            }),
-          }}
-        >
-          {ctaButtonText}
-        </LargeButton>
+              color: 'primary.main',
+            }}
+          >
+            {ctaButtonText}
+          </LargeButton>
+        )}
       </div>
     </div>
   )
