@@ -67,11 +67,11 @@ export default function StudyDetailsPage() {
       <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        isHeader
         cardConfiguration={{
           ...studyCardConfiguration,
           secondaryLabelLimit: Infinity,
           iconOptions: studyHeaderIconOptions,
+          isHeader: true,
         }}
         columnAliases={columnAliases}
         sql={studiesSql}

@@ -52,8 +52,7 @@ export default function ProjectDetailsPage() {
     <>
       <CardContainerLogic
         sql={projectsSql}
-        isHeader={true}
-        cardConfiguration={projectCardConfiguration}
+        cardConfiguration={{ ...projectCardConfiguration, isHeader: true }}
         searchParams={searchParams}
       />
       <DetailsPage showMenu={true} sql={projectsSql}>

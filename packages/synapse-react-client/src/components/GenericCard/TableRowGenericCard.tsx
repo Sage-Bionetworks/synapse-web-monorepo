@@ -27,11 +27,10 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
-import { ColumnIconConfigs, TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '../CardContainerLogic'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
-import { IconOptions } from '../Icon'
 import IconList from '../IconList'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -92,8 +91,6 @@ export type TableRowGenericCardProps = {
   selectColumns?: SelectColumn[]
   /** The table's ColumnModels */
   columnModels?: ColumnModel[]
-  /** Custom mapping of icon string to React Component */
-  iconOptions?: IconOptions
   /** If true, the 'type' column will be used as the icon string to choose the icon */
   useTypeColumnForIcon?: boolean
   /** If true, render the card as a HeaderCard */
@@ -107,8 +104,6 @@ export type TableRowGenericCardProps = {
   data: string[]
   /** The ID of the table row */
   rowId?: number
-  /** Configuration for mapping values for specific columns to icons */
-  columnIconOptions?: ColumnIconConfigs
 } & CommonCardProps
 
 export const getFileHandleAssociation = (
@@ -314,10 +309,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     descriptionConfig,
     columnIconOptions,
   } = props
-  // TableRowGenericCard inherits properties from CommonCardProps so that the properties have the same name
-  // and type, but theres one nuance which is that we can't override if one specific property will be
-  // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
-  const genericCardSchemaDefined = genericCardSchema
+
   const {
     link = '',
     type,
@@ -325,27 +317,26 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     defaultCitationFormat,
     citationBoilerplateText,
     downloadCartSynId,
-  } = genericCardSchemaDefined
-  const title = data[schema[genericCardSchemaDefined.title]]
+  } = genericCardSchema
+  const title = data[schema[genericCardSchema.title]]
   let subTitle =
-    genericCardSchemaDefined.subTitle &&
-    data[schema[genericCardSchemaDefined.subTitle]]
+    genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
   subTitle =
-    genericCardSchemaDefined?.subTitle &&
+    genericCardSchema.subTitle &&
     getValueOrMultiValue({
       value: subTitle,
-      columnName: genericCardSchemaDefined?.subTitle,
+      columnName: genericCardSchema.subTitle,
       selectColumns,
       columnModels,
     }).str
-  const description = data[schema[genericCardSchemaDefined.description || '']]
-  const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
+  const description = data[schema[genericCardSchema.description || '']]
+  const iconValue = data[schema[genericCardSchema.icon || '']]
   const dataTypeIconNames =
-    data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
+    data[schema[genericCardSchema.dataTypeIconNames || '']]
   const imageFileHandleIdValue =
-    data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
+    data[schema[genericCardSchema.imageFileHandleColumnName || '']]
   const titleColumnModel = columnModels?.find(
-    el => genericCardSchemaDefined.link === el.name,
+    el => genericCardSchema.link === el.name,
   )
   const titleColumnType = titleColumnModel?.columnType
   // wrap link in parens because undefined would throw an error
@@ -362,8 +353,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     value: React.ReactNode
     columnName?: string
   }[] = []
-  const { secondaryLabels = [] } = genericCardSchemaDefined
-  const customLabelConfig = genericCardSchemaDefined.customSecondaryLabelConfig
+  const { secondaryLabels = [] } = genericCardSchema
+  const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
@@ -424,7 +415,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   )
 
   const descriptionSubTitle = getColumnDisplayName(
-    genericCardSchemaDefined.description || '',
+    genericCardSchema.description || '',
   )
 
   const doiColumnIndex = getColumnIndex('doi', selectColumns, columnModels)
@@ -462,7 +453,9 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     <GenericCard
       icon={
         <GenericCardIcon
-          type={data[schema['type']]}
+          type={
+            useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
+          }
           useTypeForIcon={useTypeColumnForIcon}
           thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
           imageFileHandleId={imageFileHandleIdValue}

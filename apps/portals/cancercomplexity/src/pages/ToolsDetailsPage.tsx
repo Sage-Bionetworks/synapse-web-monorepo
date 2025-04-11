@@ -31,13 +31,13 @@ export default function ToolsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         cardConfiguration={{
           ...toolsConfiguration,
           iconOptions: {
             dataset: DatasetSvg,
           },
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         sql={toolsSql}
         columnAliases={columnAliases}

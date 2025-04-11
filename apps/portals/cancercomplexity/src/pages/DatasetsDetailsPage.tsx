@@ -31,11 +31,11 @@ export default function DatasetsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader
         cardConfiguration={{
           ...datasetCardConfiguration,
           secondaryLabelLimit: Infinity,
           iconOptions: { dataset: DatasetSvg },
+          isHeader: true,
         }}
         sql={datasetsSql}
         columnAliases={columnAliases}

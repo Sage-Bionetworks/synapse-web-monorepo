@@ -33,13 +33,13 @@ export default function PublicationsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         cardConfiguration={{
           ...publicationsCardConfiguration,
           iconOptions: {
             Person: personGraySvg,
           },
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         sql={publicationSql}
         columnAliases={columnAliases}

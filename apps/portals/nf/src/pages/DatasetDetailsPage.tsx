@@ -27,9 +27,8 @@ export default function DatasetDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        cardConfiguration={datasetCardConfiguration}
+        cardConfiguration={{ ...datasetCardConfiguration, isHeader: true }}
         sql={datasetsSql}
-        isHeader
         columnAliases={columnAliases}
         searchParams={{ id }}
       />

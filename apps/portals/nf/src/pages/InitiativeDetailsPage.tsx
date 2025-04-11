@@ -23,8 +23,7 @@ export default function InitiativeDetailsPage() {
     <>
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        isHeader
-        cardConfiguration={initiativeCardConfiguration}
+        cardConfiguration={{ ...initiativeCardConfiguration, isHeader: true }}
         columnAliases={columnAliases}
         sql={initiativesSql}
         searchParams={{ initiative }}

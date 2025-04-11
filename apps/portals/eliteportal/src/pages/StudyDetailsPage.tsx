@@ -229,11 +229,11 @@ export default function StudyDetailsPage() {
     <>
       <CardContainerLogic
         sql={studiesSql}
-        isHeader
         cardConfiguration={{
           ...studyCardConfiguration,
           secondaryLabelLimit: Infinity,
           iconOptions: { study: studyHeaderSvg },
+          isHeader: true,
         }}
         columnAliases={studyColumnAliases}
         isAlignToLeftNav

@@ -21,7 +21,6 @@ export function ProjectDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         isAlignToLeftNav={true}
         cardConfiguration={{
           ...projectsCardConfiguration,
@@ -29,6 +28,7 @@ export function ProjectDetailsPage() {
             ...projectSchema,
             link: '',
           },
+          isHeader: true,
         }}
         rgbIndex={projectsRgbIndex}
         columnAliases={columnAliases}

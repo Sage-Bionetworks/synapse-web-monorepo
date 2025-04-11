@@ -24,7 +24,6 @@ export default function ProgramDetailsPage() {
     <>
       <CardContainerLogic
         sql={programsSql}
-        isHeader={true}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         cardConfiguration={{
           ...programCardConfiguration,
@@ -32,6 +31,7 @@ export default function ProgramDetailsPage() {
             ...programCardConfiguration.genericCardSchema!,
             description: 'Long Description',
           },
+          isHeader: true,
         }}
         searchParams={searchParams}
       />

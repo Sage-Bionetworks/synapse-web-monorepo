@@ -23,10 +23,10 @@ export default function EducationalResourcesDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         cardConfiguration={{
           ...educationDetailsCardConfiguration,
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         sql={educationSql}
         columnAliases={columnAliases}

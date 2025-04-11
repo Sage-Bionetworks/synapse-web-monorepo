@@ -24,8 +24,8 @@ export function ProjectDetailsPage() {
         cardConfiguration={{
           ...projectCardConfiguration,
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
-        isHeader
         sql={projectsSql}
         isAlignToLeftNav
         searchParams={searchParams}

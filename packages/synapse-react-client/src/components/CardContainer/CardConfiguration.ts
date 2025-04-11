@@ -7,6 +7,7 @@ import {
 } from '@/components/CardContainerLogic/CardContainerLogic'
 
 import { TableToGenericCardMapping } from '@/components/GenericCard/TableRowGenericCard'
+import { HeaderCardVariant } from '@/components/HeaderCard'
 import { ReleaseCardConfig } from '@/components/ReleaseCard/index'
 import {
   DATASET,
@@ -57,12 +58,22 @@ export type CommonCardProps = {
   labelLinkConfig?: LabelLinkConfig
   /** Optional configuration for the description */
   descriptionConfig?: DescriptionConfig
-  /** Optional configuration for rendering multiple icons within the card */
+  /** Configuration for mapping values for specific columns to icons */
   columnIconOptions?: ColumnIconConfigs
   /** Can be used to map strings to icon components. */
   iconOptions?: IconOptions
   /** Configuration if the card is of GENERIC_CARD (required) or DATASET (optional) type */
   genericCardSchema?: TableToGenericCardMapping
+  /**
+   * If true, the card(s) will be rendered using the 'HeaderCard' component. Only works for GENERIC_CARD
+   * @default false
+   */
+  isHeader?: boolean
+  /**
+   * The variant of the HeaderCard to use, if `isHeader` is true
+   * @default 'HeaderCard'
+   */
+  headerCardVariant?: HeaderCardVariant
 }
 
 export type CardConfiguration = CommonCardProps &

@@ -33,7 +33,6 @@ export default function PeopleDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         cardConfiguration={{
           ...peopleCardConfiguration,
@@ -41,6 +40,7 @@ export default function PeopleDetailsPage() {
             Person: personGraySvg,
           },
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         sql={peopleSql}
         columnAliases={columnAliases}

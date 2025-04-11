@@ -295,13 +295,13 @@ export function StudyDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         cardConfiguration={{
           ...studyCardConfiguration,
           secondaryLabelLimit: Infinity,
           iconOptions: {
             study: studyHeaderSvg,
           },
+          isHeader: true,
         }}
         sql={studiesSql}
         columnAliases={studyColumnAliases}

@@ -20,9 +20,9 @@ export function DatasetDetailsPage() {
         cardConfiguration={{
           ...datasetCardConfiguration,
           secondaryLabelLimit: 4,
+          isHeader: true,
         }}
         sql={datasetsSql}
-        isHeader
         searchParams={searchParams}
         columnAliases={datasetColumnAliases}
       />

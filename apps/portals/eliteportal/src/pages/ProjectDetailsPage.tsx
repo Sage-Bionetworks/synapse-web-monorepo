@@ -26,7 +26,6 @@ export default function ProjectDetailsPage() {
     <>
       <CardContainerLogic
         sql={projectsSql}
-        isHeader
         cardConfiguration={{
           ...projectCardConfiguration,
           titleLinkConfig: {
@@ -36,6 +35,7 @@ export default function ProjectDetailsPage() {
             URLColumnName: '',
             matchColumnName: '',
           },
+          isHeader: true,
         }}
         searchParams={{ shortName }}
       />

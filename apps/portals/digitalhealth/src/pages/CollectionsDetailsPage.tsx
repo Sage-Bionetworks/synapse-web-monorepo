@@ -106,7 +106,6 @@ export default function CollectionsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader
         isAlignToLeftNav
         cardConfiguration={{
           ...studiesCardConfiguration,
@@ -115,6 +114,7 @@ export default function CollectionsDetailsPage() {
             title: 'study',
             link: 'id',
           },
+          isHeader: true,
         }}
         rgbIndex={studiesRgbIndex}
         columnAliases={columnAliases}

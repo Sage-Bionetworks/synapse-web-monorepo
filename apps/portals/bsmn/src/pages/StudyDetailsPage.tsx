@@ -14,11 +14,11 @@ export default function StudyDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader
         cardConfiguration={{
           ...studyCardConfiguration,
           secondaryLabelLimit: Infinity,
           titleLinkConfig: undefined,
+          isHeader: true,
         }}
         sql={studiesSql}
         isAlignToLeftNav

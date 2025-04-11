@@ -39,8 +39,8 @@ function OrganizationDetailsPage() {
             ...organizationCardSchema,
             imageFileHandleColumnName: 'headerLogo',
           },
+          isHeader: true,
         }}
-        isHeader={true}
         searchParams={searchParams}
       />
       <DetailsPage

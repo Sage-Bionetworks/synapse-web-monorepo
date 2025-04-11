@@ -139,9 +139,9 @@ export default function StandardsDetailsPage() {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: standardsCardSchema,
           secondaryLabelLimit: 6,
+          isHeader: true,
+          headerCardVariant: 'HeaderCardV2',
         }}
-        isHeader={true}
-        headerCardVariant="HeaderCardV2"
       />
 
       <DetailsPage sql={dataSql}>

@@ -52,8 +52,8 @@ export default function ToolDetailsPage() {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: toolsSchema,
           secondaryLabelLimit: 6,
+          isHeader: true,
         }}
-        isHeader={true}
         searchParams={{ resourceId }}
       />
       <DetailsPage

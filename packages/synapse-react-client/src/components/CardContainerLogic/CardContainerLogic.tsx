@@ -14,7 +14,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
-import { HeaderCardVariant } from '../HeaderCard'
 import { IconSvgProps } from '../IconSvg'
 import QuerySortSelector from '../QuerySortSelector'
 import {
@@ -122,16 +121,6 @@ export type QueryOrDeprecatedSearchParams = {
 export type CardContainerLogicProps = QueryOrDeprecatedSearchParams & {
   /** Optional title to display above the component */
   title?: string
-  /**
-   * If true, the card(s) will be rendered using the 'HeaderCard' component.
-   * @default false
-   */
-  isHeader?: boolean
-  /**
-   * The variant of the HeaderCard to use, if `isHeader` is true
-   * @default 'HeaderCard'
-   */
-  headerCardVariant?: HeaderCardVariant
   isAlignToLeftNav?: boolean
   /** Provide a `SortConfiguration` that can be used to render UI to toggle the sorting of the cards. */
   sortConfig?: SortConfiguration

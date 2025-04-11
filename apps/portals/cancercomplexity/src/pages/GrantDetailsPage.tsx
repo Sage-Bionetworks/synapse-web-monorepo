@@ -30,10 +30,10 @@ export default function GrantDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader
         cardConfiguration={{
           ...grantsCardConfiguration,
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         sql={grantsSql}
         searchParams={searchParams}

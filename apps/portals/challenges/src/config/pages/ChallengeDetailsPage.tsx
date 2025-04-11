@@ -436,9 +436,8 @@ export function ChallengeDetailsPage() {
     <>
       <div className={'challengeDetailPageHeaderCard'}>
         <CardContainerLogic
-          cardConfiguration={challengeCardConfiguration}
+          cardConfiguration={{ ...challengeCardConfiguration, isHeader: true }}
           sql={challengeProjectsSql}
-          isHeader
           searchParams={{ id }}
         />
       </div>

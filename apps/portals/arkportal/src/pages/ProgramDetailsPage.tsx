@@ -21,7 +21,6 @@ export function ProgramsDetailPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
         isAlignToLeftNav={true}
         cardConfiguration={{
           ...programsCardConfiguration,
@@ -30,6 +29,7 @@ export function ProgramsDetailPage() {
             title: 'Program',
             link: 'Program',
           },
+          isHeader: true,
         }}
         rgbIndex={programsRgbIndex}
         columnAliases={columnAliases}

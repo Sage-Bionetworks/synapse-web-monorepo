@@ -34,10 +34,10 @@ function HackathonDetailsPage() {
     <>
       <CardContainerLogic
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        isHeader={true}
         cardConfiguration={{
           ...hackathonCardConfiguration,
           secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
         columnAliases={{ ...columnAliases, studyStatus: 'Status' }}
         sql={hackathonsSql}

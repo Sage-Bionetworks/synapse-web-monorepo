@@ -81,7 +81,6 @@ function Card(props: { propsToPass: any; type: string }) {
 
 function CardContainerInternal(props: CardContainerProps) {
   const {
-    isHeader = false,
     unitDescription,
     type,
     secondaryLabelLimit = 3,
@@ -140,7 +139,6 @@ function CardContainerInternal(props: CardContainerProps) {
           key,
           type,
           schema,
-          isHeader,
           secondaryLabelLimit,
           rowId: rowData.rowId,
           data: rowData.values,
