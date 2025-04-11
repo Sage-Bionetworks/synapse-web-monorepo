@@ -121,3 +121,28 @@ export function getUseMutationMock<TData = any, TError = any, TVariables = any>(
     submittedAt: 0,
   } satisfies UseMutationResult<TData, TError, TVariables>
 }
+
+export function getUseMutationPendingMock<
+  TData = any,
+  TError = any,
+  TVariables = any,
+>(data?: TData, variables?: TVariables) {
+  return {
+    context: undefined,
+    data: undefined,
+    error: null,
+    failureCount: 0,
+    isError: false,
+    isIdle: false,
+    isPaused: false,
+    isSuccess: false,
+    mutate: jest.fn(),
+    mutateAsync: jest.fn().mockResolvedValue(data),
+    reset: jest.fn(),
+    status: 'pending',
+    variables: variables!,
+    failureReason: null,
+    isPending: true,
+    submittedAt: 0,
+  } satisfies UseMutationResult<TData, TError, TVariables>
+}

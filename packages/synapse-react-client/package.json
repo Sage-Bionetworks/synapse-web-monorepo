@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.9",
+  "version": "3.4.10",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -239,7 +239,6 @@
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
     "build:js": "vite build",
-    "build:umd": "vite build -c vite.config.umd.ts",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",
     "lint": "eslint src",

@@ -1,15 +1,18 @@
 import {
   getAdditionalFilters,
+  getColumnIndex,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
   QUERY_FILTERS_SESSION_STORAGE_KEY,
   SQLOperator,
 } from './SqlFunctions'
 import {
+  ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
+  ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
 
 describe('parseEntityIdFromSqlStatement', () => {
@@ -66,12 +69,12 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return undefined
-    expect(getAdditionalFilters('syn16858331', undefined, operator)).toBe(
+    expect(getAdditionalFilters(undefined, operator, 'syn16858331')).toBe(
       undefined,
     )
-    expect(getAdditionalFilters('syn16858331', {}, operator)).toBe(undefined)
+    expect(getAdditionalFilters({}, operator, 'syn16858331')).toBe(undefined)
     // if the only search params set are from the QueryWrapper, then it should return the input sql
-    expect(getAdditionalFilters('syn16858331', searchParams, operator)).toBe(
+    expect(getAdditionalFilters(searchParams, operator, 'syn16858331')).toBe(
       undefined,
     )
   })
@@ -84,7 +87,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn16858331', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn16858331')
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -103,7 +106,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -122,7 +125,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.IN
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -141,7 +144,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -160,7 +163,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -179,7 +182,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnMultiValueFunction.HAS
     // if no search params are there, then it should return the input sql
-    const actual = getAdditionalFilters('syn123', searchParams, operator)
+    const actual = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
       {
         concreteType:
@@ -198,7 +201,7 @@ describe('getAdditionalFilters', () => {
     }
     const operator: SQLOperator = ColumnMultiValueFunction.HAS_LIKE
     // if no search params are there, then it should return the input sql
-    const actual = getAdditionalFilters('syn123', searchParams, operator)
+    const actual = getAdditionalFilters(searchParams, operator, 'syn123')
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
       {
         concreteType:
@@ -233,7 +236,7 @@ describe('getAdditionalFilters', () => {
       },
     ]
 
-    const actual = getAdditionalFilters('syn123', searchParams)
+    const actual = getAdditionalFilters(searchParams, undefined, 'syn123')
     expect(actual).toStrictEqual(expectedResults)
   })
 
@@ -253,19 +256,19 @@ describe('getAdditionalFilters', () => {
       },
     ]
 
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     expect(result).toStrictEqual(expectedResults)
   })
 
   it('handles every filter type', () => {
     Object.entries(ColumnSingleValueFilterOperator).forEach(([_, operator]) => {
       expect(
-        getAdditionalFilters('syn123', { col: 'val' }, operator),
+        getAdditionalFilters({ col: 'val' }, operator, 'syn123'),
       ).toBeDefined()
     })
     Object.entries(ColumnMultiValueFunction).forEach(([_, operator]) => {
       expect(
-        getAdditionalFilters('syn123', { col: 'val' }, operator),
+        getAdditionalFilters({ col: 'val' }, operator, 'syn123'),
       ).toBeDefined()
     })
   })
@@ -290,9 +293,9 @@ describe('Local Storage QueryFilter[] tests', () => {
     )
 
     const result = getAdditionalFilters(
-      'syn123',
       {},
       ColumnSingleValueFilterOperator.EQUAL,
+      'syn123',
     )
     expect(result?.length).toStrictEqual(1)
     expect(result?.at(0)).toEqual(filter)
@@ -315,7 +318,7 @@ describe('Local Storage QueryFilter[] tests', () => {
     }
     const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
-    const result = getAdditionalFilters('syn123', searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
     const searchParamFilter: ColumnSingleValueQueryFilter = {
       concreteType:
         'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
@@ -328,5 +331,25 @@ describe('Local Storage QueryFilter[] tests', () => {
       searchParamFilter,
     ]
     expect(result).toEqual(expectedResult)
+  })
+})
+
+describe('getColumnIndex', () => {
+  const columnModels: ColumnModel[] = [
+    { id: '1', name: 'foo', columnType: ColumnTypeEnum.STRING },
+    { id: '2', name: 'bar', columnType: ColumnTypeEnum.DOUBLE },
+  ]
+
+  it('finds the column in the selectColumns', () => {
+    expect(getColumnIndex('bar', columnModels, undefined)).toBe(1)
+  })
+  it('finds the column in the columnModels', () => {
+    expect(getColumnIndex('bar', undefined, columnModels)).toBe(1)
+  })
+  it('does not include the column', () => {
+    expect(getColumnIndex('baz', columnModels, undefined)).toBe(undefined)
+  })
+  it('the found column index is 0 (falsy)', () => {
+    expect(getColumnIndex('foo', columnModels, undefined)).toBe(0)
   })
 })

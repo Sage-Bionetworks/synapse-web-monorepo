@@ -25,4 +25,5 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

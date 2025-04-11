@@ -1,6 +1,11 @@
 @use 'sass:color';
 @use 'sass:map';
 
+// CSS Variables
+:root {
+  --synapse-button-text-transform: capitalize;
+}
+
 // -----------------------------------------------------------------------------
 // This file contains all application-wide Sass variables.
 // -----------------------------------------------------------------------------

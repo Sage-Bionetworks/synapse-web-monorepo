@@ -1,3 +1,10 @@
+/**
+ * SWC.index.ts represents the entry point for the Synapse React Client library as it is published to NPM and
+ * used by SynapseWebClient.
+ *
+ * If you wish to export a component or other object to be used by SynapseWebClient, you should add it to this file.
+ */
+
 import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
@@ -103,6 +110,7 @@ import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
 import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
 import { EntityFileBrowser } from './components/EntityFileBrowser'
+import { CreateOrUpdateDoiModal } from './components/doi/CreateOrUpdateDoiModal'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -200,6 +208,7 @@ const SynapseComponents = {
   MarkdownGithubLatestTag,
   ProjectDataAvailability,
   EntityUploadModal,
+  CreateOrUpdateDoiModal,
 }
 
 const Analytics = {

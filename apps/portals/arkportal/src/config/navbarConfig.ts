@@ -28,4 +28,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.arkportal.org/help/',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

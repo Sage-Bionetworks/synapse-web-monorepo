@@ -1,10 +1,15 @@
 import personSvg from '@/config/style/Person.svg?url'
-import { CardConfiguration, GenericCardSchema, QueryWrapperPlotNavProps, SynapseConstants } from 'synapse-react-client'
+import {
+  CardConfiguration,
+  QueryWrapperPlotNavProps,
+  SynapseConstants,
+} from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { peopleSql } from '../resources'
 
 const rgbIndex = 3
 
-export const peopleSchema: GenericCardSchema = {
+export const peopleSchema: TableToGenericCardMapping = {
   type: 'Person',
   title: 'name',
   subTitle: 'lastKnownInstitution',

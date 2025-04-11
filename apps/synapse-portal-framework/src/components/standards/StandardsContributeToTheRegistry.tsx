@@ -40,6 +40,7 @@ const StandardsContributeToTheRegistry = () => {
           alignSelf: 'center',
           border: '1px solid white',
           boxShadow: 'none !important',
+          color: 'white !important',
         }}
       >
         <Typography
@@ -47,7 +48,6 @@ const StandardsContributeToTheRegistry = () => {
             fontSize: '16px',
             fontWeight: '600',
             lineHeight: '144%',
-            textTransform: 'uppercase',
           }}
         >
           {buttonText}

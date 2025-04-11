@@ -24,9 +24,10 @@ export function useExportToCavatica(
     try {
       // add drs_uri to select
       const selectColumnsList = selectColumns
-        ?.map(col => `"${col.name}"`)
+        ?.filter(col => col.name != 'name')
+        .map(col => `"${col.name}"`)
         .join(',')
-      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as file_name, ${selectColumnsList} FROM ${originalSql.slice(
+      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as name, ${selectColumnsList} FROM ${originalSql.slice(
         originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,
       )}`
       const downloadFromTableRequest: DownloadFromTableRequest = {
