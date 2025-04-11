@@ -34,25 +34,14 @@ export default function CardDeckMobile({
       ) : (
         <LargeButton
           color="secondary"
-          variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
+          variant="outlined" // Update variant based on cardDeckType
           href={ctaButtonURL}
           sx={{
+            width: '170px',
             marginLeft: 0,
             fontSize: '14px',
             boxShadow: 'none',
             color: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
-            ...(cardDeckType === 'cckp' && {
-              width: '170px',
-              borderColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: 'white',
-              },
-            }),
           }}
         >
           {ctaButtonText}

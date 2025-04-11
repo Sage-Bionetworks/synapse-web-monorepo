@@ -77,26 +77,15 @@ export default function CardDeckDesktop({
           </Link>
         ) : (
           <LargeButton
-            color="secondary"
-            variant={cardDeckType === 'cckp' ? 'outlined' : 'contained'} // Update variant based on cardDeckType
+            color="primary"
+            variant="outlined" // Update variant based on cardDeckType
             href={ctaButtonURL}
             sx={{
-              marginLeft: 0,
+              width: '170px',
               fontSize: '14px',
               boxShadow: 'none',
+              borderColor: 'primary.main',
               color: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: 'white',
-              },
-              ...(cardDeckType === 'cckp' && {
-                width: '170px',
-                borderColor: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                },
-              }),
             }}
           >
             {ctaButtonText}
