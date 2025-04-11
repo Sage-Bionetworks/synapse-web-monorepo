@@ -1,4 +1,4 @@
-import { GoalsV3DataProps } from './GoalsV3'
+import { GoalsV3CardProps } from './GoalsV3'
 import ExpandableContent from '../home_page/ExpandableContent'
 import QueryCount from '../QueryCount/QueryCount'
 import { Button } from '@mui/material'
@@ -8,15 +8,15 @@ export default function GoalsV2Mobile({
   summary,
   countSql,
   title,
-}: GoalsV3DataProps) {
+}: GoalsV3CardProps) {
   const titleElement = (
-    <div>
+    <div className="Goals__Mobile__Header">
       {countSql && (
-        <span>
+        <span className="Goals__Mobile__Header__Count">
           <QueryCount parens={false} query={{ sql: countSql }} />
         </span>
       )}
-      <span> {title} </span>
+      <span className="Goals__Mobile__Header__Title"> {title} </span>
     </div>
   )
   const content = (

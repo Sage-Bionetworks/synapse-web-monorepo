@@ -1,44 +1,59 @@
-import { GoalsV3DataProps } from './GoalsV3'
+import { GoalsV3CardProps } from './GoalsV3'
 import QueryCount from '../QueryCount/QueryCount'
-import IconButton from '@mui/material/IconButton'
-import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import { Stack, Typography } from '@mui/material'
-import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
+import { Card, CardActionArea, CardMedia } from '@mui/material'
 
 export default function GoalsV3Desktop({
   asset,
   link,
   countSql,
   title,
-}: GoalsV3DataProps) {
+}: GoalsV3CardProps) {
+  console.log('countSql', countSql)
   return (
     <Card
       sx={{
-        width: '200px',
-        maxWidth: '200px',
-        height: 'auto',
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        boxShadow: 'none',
+        display: 'flex',
+        flex: '1 0 0',
       }}
     >
-      <CardActionArea onClick={() => window.open(link)}>
+      <CardActionArea
+        onClick={() => window.open(link)}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '24px',
+          gap: '12px',
+        }}
+      >
         <CardMedia
           component="img"
-          sx={{ height: 150, width: '100%', paddingX: 2, overflow: 'visible' }}
+          sx={{ width: 24, height: 24 }}
           image={asset}
           alt={title}
         />
         <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Typography
-            variant="h6"
-            sx={{ marginRight: 1, fontSize: '16px', fontWeight: 900 }}
+            variant="headline3"
+            sx={{
+              fontSize: '21px',
+              lineHeight: '21px',
+              fontWeight: 700,
+              letterSpacing: '0.2px',
+            }}
           >
             {countSql && (
               <QueryCount parens={false} query={{ sql: countSql }} />
             )}
           </Typography>
-          <Typography variant="body1">{title}</Typography>
+          <Typography
+            variant="headline3"
+            sx={{ fontWeight: 400, lineHeight: '27px' }}
+          >
+            {title}
+          </Typography>
         </Stack>
       </CardActionArea>
     </Card>

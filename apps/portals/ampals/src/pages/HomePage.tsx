@@ -4,7 +4,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import { FullWidthAlert, GoalsV2, GoalsV3 } from 'synapse-react-client'
+import { FullWidthAlert, GoalsV3 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsSql } from '@/config/resources'
 
@@ -22,7 +22,22 @@ export default function HomePage() {
       />
       <AMPALSHeader headerSvgURL={headerSvg} />
       {/* <GoalsV2 entityId={goalsSql} dataLink={''} /> */}
-      <GoalsV3 entityId={goalsSql} title={'Our ALS Resources'} />
+      <SectionLayout
+        title={'Our ALS Resources'}
+        centerTitle
+        ContainerProps={{
+          sx: {
+            maxWidth: '100% !important',
+            padding: { xs: '40px', lg: '60px 80px 80px 80px' },
+            h2: {
+              lineHeight: 'normal',
+              margin: '0 0 40px 0',
+            },
+          },
+        }}
+      >
+        <GoalsV3 entityId={goalsSql} />
+      </SectionLayout>
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
