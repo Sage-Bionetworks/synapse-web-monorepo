@@ -32,23 +32,23 @@ export const CCPKResourcesDemo: Story = {
   },
 }
 
-export const ProgramsDemo: Story = {
-  args: {
-    entityId: 'syn17024173',
-    titleColumnName: 'Program',
-    descriptionColumnName: 'Short Description',
-    ctaButtonTextColumnName: 'ctaButtonText',
-    ctaButtonURLColumnName: 'ctaButtonURL',
-    titleIconFileHandleColumnName: 'Homepage Image',
-    headerImageFileHandleColumnName: undefined,
-    linkConfig: {
-      isMarkdown: false,
-      baseURL: 'Explore/CardDeck/DetailsPage',
-      URLColumnName: 'title',
-      matchColumnName: 'title',
-    },
-  },
-}
+// export const ProgramsDemo: Story = {
+//   args: {
+//     entityId: 'syn17024173',
+//     titleColumnName: 'Program',
+//     descriptionColumnName: 'Short Description',
+//     ctaButtonTextColumnName: 'ctaButtonText',
+//     ctaButtonURLColumnName: 'ctaButtonURL',
+//     titleIconFileHandleColumnName: 'Homepage Image',
+//     headerImageFileHandleColumnName: undefined,
+//     linkConfig: {
+//       isMarkdown: false,
+//       baseURL: 'Explore/CardDeck/DetailsPage',
+//       URLColumnName: 'title',
+//       matchColumnName: 'title',
+//     },
+//   },
+// }
 
 export const B2AIDemo: Story = {
   args: {
