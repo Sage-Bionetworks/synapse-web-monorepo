@@ -30,10 +30,10 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${dataSql} where responsibleOrgName is not null`,
+                  sql: `${dataSql} where organizations is not null`,
                   configs: [
                     {
-                      facetsToPlot: ['topic', 'responsibleOrgName'],
+                      facetsToPlot: ['topic', 'organizations'],
                       unitDescription: 'standard',
                       plotType: 'BAR',
                       columnAliases: columnAliases,
