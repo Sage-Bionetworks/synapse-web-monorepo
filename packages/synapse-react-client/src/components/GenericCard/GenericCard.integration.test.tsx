@@ -113,7 +113,7 @@ const schema = {
   image: 8,
   userIdList: 9,
   type: 10,
-  synapseLink: 11,
+  datasetAlias: 11,
 }
 
 const MOCKED_TITLE = 'MOCKED TITLE'
@@ -587,7 +587,7 @@ describe('GenericCard tests', () => {
       ...propsForNonHeaderMode,
       genericCardSchema: {
         ...genericCardSchema,
-        downloadCartSynId: 'synapseLink',
+        downloadCartSynId: 'datasetAlias',
       },
     }
 
@@ -623,7 +623,7 @@ describe('GenericCard tests', () => {
           data: dataForInvalidSynapseLink,
           genericCardSchema: {
             ...genericCardSchema,
-            downloadCartSynId: 'synapseLink',
+            downloadCartSynId: 'datasetAlias',
           },
         },
         'TableEntity',
