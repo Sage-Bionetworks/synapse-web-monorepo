@@ -68,7 +68,7 @@ function AccessorRequirementHelpText(props: {
       'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
     msg = 'All data requesters must have a validated user profile.'
   }
-  return link && msg ? (
+  return (
     <>
       {managedACTAccessRequirement.isDUCRequired ? (
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1 }}>
@@ -82,12 +82,12 @@ function AccessorRequirementHelpText(props: {
         ''
       )}
       {msg}{' '}
-      <Link href={link} target={'_blank'} rel={'noreferrer'}>
-        Learn more
-      </Link>
+      {link && (
+        <Link href={link} target={'_blank'} rel={'noreferrer'}>
+          Learn more
+        </Link>
+      )}
     </>
-  ) : (
-    <></>
   )
 }
 

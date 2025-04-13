@@ -359,6 +359,9 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       },
     })
 
+    await screen.findByText(
+      'You must list the Synapse user names of all collaborators listed in your Data Use Certificate (DUC).',
+    )
     await screen.findByRole('button', { name: DOWNLOAD_DUC_TEMPLATE_TEXT })
     await screen.findByRole('button', { name: UPLOAD_DUC_BUTTON_TEXT })
   })
@@ -373,6 +376,11 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       },
     })
 
+    expect(
+      screen.queryByText(
+        'You must list the Synapse user names of all collaborators listed in your Data Use Certificate (DUC).',
+      ),
+    ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: DOWNLOAD_DUC_TEMPLATE_TEXT }),
     ).not.toBeInTheDocument()
