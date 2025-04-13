@@ -105,6 +105,8 @@ export type DataAccessRequestAccessorsFilesFormProps = {
   onHide: () => void
   /* Callback invoked when the user clicks cancel. The unsaved, modified dataAccessRequest is returned so the calling component may prompt the user to save this data */
   onCancel: (modifiedDataAccessRequest: Request | Renewal) => void
+  /** Callback invoked when the 'Back' action button is clicked */
+  onBackClicked: () => void
 }
 
 export type AlertProps = {
@@ -132,6 +134,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     subjectType,
     researchProjectId,
     onCancel,
+    onBackClicked,
   } = props
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
@@ -581,31 +584,37 @@ export default function DataAccessRequestAccessorsFilesForm(
         {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
       </DialogContent>
       <DialogActions>
-        {
-          <>
-            <Button
-              variant="outlined"
-              disabled={submitDataAccessRequestIsPending}
-              onClick={() => {
-                if (dataAccessRequest) {
-                  // include the local state in the onCancel callback so the user may save their changes
-                  onCancel(getDataAccessRequestWithLocalState())
-                }
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              disabled={submitDataAccessRequestIsPending}
-              onClick={() => {
-                handleSubmit()
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        }
+        <Button
+          variant={'outlined'}
+          onClick={() => {
+            onBackClicked()
+          }}
+        >
+          Back
+        </Button>
+        <Box sx={{ flexGrow: 1 }}>{/* spacer */}</Box>
+
+        <Button
+          variant="outlined"
+          disabled={submitDataAccessRequestIsPending}
+          onClick={() => {
+            if (dataAccessRequest) {
+              // include the local state in the onCancel callback so the user may save their changes
+              onCancel(getDataAccessRequestWithLocalState())
+            }
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          disabled={submitDataAccessRequestIsPending}
+          onClick={() => {
+            handleSubmit()
+          }}
+        >
+          Submit
+        </Button>
       </DialogActions>
     </>
   )
