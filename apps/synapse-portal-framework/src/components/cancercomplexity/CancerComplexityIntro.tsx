@@ -1,11 +1,13 @@
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as IntroSvg } from '@/components/assets/cancerComplexityIntro.svg'
+import CancerComplexityIntroSubItem from './CancerComplexityIntroSubItem'
 
 const CancerComplexityIntro = () => {
   return (
     <>
       <Box
         sx={{
+          m: { xs: '30px 0px', lg: '50px 0px 30px 0px' },
           display: 'flex',
           justifyContent: 'center',
           flexDirection: {
@@ -21,10 +23,6 @@ const CancerComplexityIntro = () => {
               xs: '10px',
               lg: '20px',
             },
-            minWidth: {
-              xs: '100%',
-              lg: '60%',
-            },
           }}
         >
           <IntroSvg style={{ width: '100%' }} />
@@ -33,14 +31,15 @@ const CancerComplexityIntro = () => {
           sx={{
             m: {
               xs: '15px',
-              lg: '50px 40px',
+              lg: '30px 0px 0px 30px',
             },
+            width: { xs: '100%', lg: '45%' },
           }}
         >
           <Typography
             variant="headline1"
             sx={{
-              fontSize: { xs: '24px', md: '27px' },
+              fontSize: { xs: '22px', md: '25px' },
               fontWeight: 'bold',
               marginBottom: '15px',
               textTransform: 'uppercase',
@@ -60,12 +59,21 @@ const CancerComplexityIntro = () => {
             studies, advancing our understanding of cancer biology and
             accelerating innovations in prevention, diagnosis, and treatment.
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontSize: '18px', lineHeight: '144%' }}
-          >
-            Explore Find Access using new component
-          </Typography>
+          <CancerComplexityIntroSubItem
+            bulletColor="#862FB9"
+            mainText="Explore"
+            subText="Browse data, publications, and tools."
+          />
+          <CancerComplexityIntroSubItem
+            bulletColor="#F46055"
+            mainText="Find"
+            subText="Search, filter, and refine to find the right data."
+          />
+          <CancerComplexityIntroSubItem
+            bulletColor="#ECB915"
+            mainText="Access"
+            subText="Find datasets, publications, and tools."
+          />
         </Box>
       </Box>
     </>

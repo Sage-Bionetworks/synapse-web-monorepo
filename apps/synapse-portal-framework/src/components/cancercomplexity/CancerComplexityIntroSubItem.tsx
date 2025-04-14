@@ -15,12 +15,15 @@ const CancerComplexityIntroSubItem = (
         sx={{
           display: 'flex',
           justifyContent: 'start',
+          gap: '10px',
+          alignItems: 'center',
+          mt: '16px',
         }}
       >
         <Box
           sx={{
-            w: '21px',
-            h: '21px',
+            width: '21px',
+            height: '21px',
             borderRadius: '50px',
             border: `4px solid ${bulletColor}`,
             background: bulletColor,
@@ -30,17 +33,15 @@ const CancerComplexityIntroSubItem = (
         <Typography
           variant="headline1"
           sx={{
-            fontSize: { xs: '24px', md: '27px' },
+            fontSize: { xs: '16px', md: '18px' },
             fontWeight: 'bold',
-            marginBottom: '15px',
-            textTransform: 'uppercase',
           }}
         >
           {mainText}
         </Typography>
         <Typography
           variant="body1"
-          sx={{ fontSize: '16px', lineHeight: '144%' }}
+          sx={{ fontSize: '14px', lineHeight: '144%' }}
         >
           {subText}
         </Typography>

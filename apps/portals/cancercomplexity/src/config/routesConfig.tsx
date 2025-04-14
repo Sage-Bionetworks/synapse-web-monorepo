@@ -46,7 +46,9 @@ const routes: RouteObject[] = [
         element: (
           <>
             <CancerComplexityHeader />
-            <CancerComplexityIntro />
+            <SectionLayout>
+              <CancerComplexityIntro />
+            </SectionLayout>
             <div className={'home-bg-dark'}>
               <SectionLayout
                 title={'Portal Goals'}
