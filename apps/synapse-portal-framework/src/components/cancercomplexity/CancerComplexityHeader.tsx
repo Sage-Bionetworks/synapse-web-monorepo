@@ -1,4 +1,4 @@
-import { Box, Typography, Link, useTheme } from '@mui/material'
+import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 import Header from '../Header'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
@@ -7,7 +7,6 @@ import { AddAlertTwoTone } from '@mui/icons-material'
 import { TypeAnimation } from 'react-type-animation'
 
 const CancerComplexityHeader = () => {
-  const theme = useTheme()
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
     'Justo Turpis',
