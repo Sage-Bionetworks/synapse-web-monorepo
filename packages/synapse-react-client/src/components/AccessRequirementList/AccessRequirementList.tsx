@@ -371,6 +371,11 @@ export default function AccessRequirementList(
           onSubmissionCreated={() => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
           }}
+          onBackClicked={() => {
+            requestDataStepCallback({
+              step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+            })
+          }}
         />
       )
       break

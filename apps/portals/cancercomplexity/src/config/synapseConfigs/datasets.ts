@@ -39,6 +39,7 @@ export const datasetSchema: TableToGenericCardMapping = {
     'consortium',
   ],
   dataTypeIconNames: 'dataType',
+  downloadCartSynId: 'datasetAlias',
 }
 
 export const datasetCardConfiguration: CardConfiguration = {
