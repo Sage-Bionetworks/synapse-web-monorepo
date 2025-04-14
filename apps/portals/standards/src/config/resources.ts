@@ -1,6 +1,8 @@
 const DST_TABLE_ID = 'syn65676531'
 // can replace with specific version if wanted
 
+export const standardsChallengeTableId = 'syn65484830'
+
 // for the Explore page table:
 export const dataSql = `
     SELECT
