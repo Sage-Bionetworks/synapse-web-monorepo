@@ -100,7 +100,7 @@ export default function ContributeAStandard() {
       isRequired: true,
     },
     contributorGithub: {
-      // TODO: Do we even still want this field, now that you don't need a GitHub to submit a new entity?
+      // TODO: Do we even still want this field, now that you don't need a GitHub account to submit a new entity?
       componentType: TextField,
       label: 'Contributor GitHub',
       helperText: 'What is your GitHub name, without the @ symbol?',
