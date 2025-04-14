@@ -17,6 +17,7 @@ export const BasicForm: Story = {
         label: 'Entity Type',
         helperText: 'What kind of thing is this?',
         placeholder: 'Select a Category',
+        isRequired: true,
         selections: {
           DataStandardOrTool: 'Data Standard or Tool',
           DataSubstrate: 'Data Substrate',
@@ -24,7 +25,6 @@ export const BasicForm: Story = {
           Organization: 'Organization',
           UseCase: 'Use Case',
         },
-        isRequired: true,
       },
       relatedTo: {
         componentType: TextField,
