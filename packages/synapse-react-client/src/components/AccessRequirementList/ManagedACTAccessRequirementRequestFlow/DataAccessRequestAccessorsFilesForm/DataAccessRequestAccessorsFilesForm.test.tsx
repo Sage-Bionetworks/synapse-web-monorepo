@@ -129,6 +129,7 @@ const mockCreateSubmission = jest
 const mockOnHide = jest.fn()
 const mockOnCancel = jest.fn()
 const mockOnSubmissionCreated = jest.fn()
+const mockOnBackClicked = jest.fn()
 
 const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   researchProjectId: MOCK_RESEARCH_PROJECT_ID,
@@ -138,6 +139,7 @@ const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   onHide: mockOnHide,
   onCancel: mockOnCancel,
   onSubmissionCreated: mockOnSubmissionCreated,
+  onBackClicked: mockOnBackClicked,
 }
 
 function renderComponent(props: DataAccessRequestAccessorsFilesFormProps) {
@@ -566,5 +568,18 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       }),
       expect.anything(),
     )
+  })
+
+  it('invokes callback when clicking the back button', async () => {
+    mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+    renderComponent(defaultProps)
+
+    const backButton = await screen.findByRole('button', { name: 'Back' })
+
+    await userEvent.click(backButton)
+
+    await waitFor(() => {
+      expect(mockOnBackClicked).toHaveBeenCalled()
+    })
   })
 })
