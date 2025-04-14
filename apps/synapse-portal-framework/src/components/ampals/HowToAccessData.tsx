@@ -42,7 +42,7 @@ const HowToAccessData = () => {
         <Button
           variant="contained"
           component={Link}
-          sx={{ width: { xs: '100%', md: 'fit-content' }, padding: '6px 24px' }}
+          sx={{ width: { xs: '100%', sm: 'fit-content' }, padding: '6px 24px' }}
         >
           More about accessing data
         </Button>
