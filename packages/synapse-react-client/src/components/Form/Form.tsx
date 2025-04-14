@@ -7,7 +7,6 @@ import {
   MenuItem,
   FormHelperText,
   Button,
-  useTheme,
 } from '@mui/material'
 import { FormEvent, useState } from 'react'
 
@@ -24,7 +23,7 @@ type FieldConfig = {
   } // Dropdown options for 'Select' componentTypes
   additionalProperties?: {
     [id: string]: any
-  } // intentionally flexible to allow any additional properties to be added to form components
+  } // Intentionally flexible to allow any additional properties to be added to form components
   validationFunc?: (input: string) => boolean
 }
 
@@ -38,7 +37,7 @@ export type FormData = {
 
 export type FormProps = {
   fields: FieldSchema
-  onSubmit: (data: FormData) => boolean
+  onSubmit: (data: FormData) => boolean // return True on succesful submission; else False
 }
 
 type ValidFields = {
@@ -51,7 +50,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
   )
   const [formData, setFormData] = useState<FormData>(blankFormData)
 
-  // Keeps track of validity of entries for each field
+  // Keeps track of validity of users' entries for each field
   const defaultValidFields = Object.fromEntries(
     Object.keys(fields).map(id => [id, true]),
   )
@@ -59,7 +58,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
     useState<ValidFields>(defaultValidFields)
 
   const handleChange = (id: string, value: string) => {
-    // if field was in an error state, clear the error
+    // If field was in an error state, clear the error
     setValidFields((prev: ValidFields) => {
       if (prev[id]) return prev
       return { ...prev, [id]: true }
@@ -112,7 +111,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         >
           <InputLabel
             id={`${id}-label`}
-            sx={{ position: 'relative', bottom: '20px' }} // places label above the field, to match styling of the other fields
+            sx={{ position: 'relative', bottom: '20px' }} // Places label above the field, to match styling of the other fields
             error={!validFields[id]}
           >
             {config.label}

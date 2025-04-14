@@ -12,16 +12,11 @@ type Story = StoryObj<typeof meta>
 export const BasicForm: Story = {
   args: {
     fields: {
-      title: {
-        componentType: TextField,
-        label: 'Entity Title',
-        helperText: 'The name of the entity',
-        isRequired: true,
-      },
       type: {
         componentType: Select,
         label: 'Entity Type',
         helperText: 'What kind of thing is this?',
+        placeholder: 'Select a Category',
         selections: {
           DataStandardOrTool: 'Data Standard or Tool',
           DataSubstrate: 'Data Substrate',
@@ -36,6 +31,7 @@ export const BasicForm: Story = {
         label: 'Related To',
         helperText:
           '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
+        placeholder: 'e.g., "B2AI_TOPIC:5',
         isRequired: false,
         additionalProperties: {
           multiline: true,
@@ -44,7 +40,7 @@ export const BasicForm: Story = {
       },
     },
     onSubmit: () => {
-      return
+      return true
     }, //no op
   },
 }

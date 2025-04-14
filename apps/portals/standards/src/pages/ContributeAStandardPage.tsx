@@ -6,6 +6,7 @@ import Form, {
 
 export default function ContributeAStandard() {
   const onSubmit = (formData: FormData) => {
+    // TODO: implement submit handler
     console.log(formData)
     return true
   }
