@@ -1,6 +1,6 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
-import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsContributeToTheRegistry'
+import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
+import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import { dataSql } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
