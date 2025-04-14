@@ -24,7 +24,7 @@ type FieldConfig = {
   } // Dropdown options for 'Select' componentTypes
   additionalProperties?: {
     [id: string]: any
-  } // intentionally flexible
+  } // intentionally flexible to allow any additional properties to be added to form components
   validationFunc?: (input: string) => boolean
 }
 
@@ -49,17 +49,17 @@ export default function Form({ fields, onSubmit }: FormProps) {
   const blankFormData = Object.fromEntries(
     Object.keys(fields).map(id => [id, '']),
   )
-  const [formData, setFormData] = useState(blankFormData)
+  const [formData, setFormData] = useState<FormData>(blankFormData)
 
+  // Keeps track of validity of entries for each field
   const defaultValidFields = Object.fromEntries(
     Object.keys(fields).map(id => [id, true]),
   )
   const [validFields, setValidFields] =
     useState<ValidFields>(defaultValidFields)
 
-  const theme = useTheme()
-
   const handleChange = (id: string, value: string) => {
+    // if field was in an error state, clear the error
     setValidFields((prev: ValidFields) => {
       if (prev[id]) return prev
       return { ...prev, [id]: true }
@@ -74,7 +74,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
   const handleSubmission = (evt: FormEvent) => {
     evt.preventDefault()
 
-    // Error handling
+    // Validity checks
     const newValidFields: ValidFields = defaultValidFields
     for (const id of Object.keys(formData)) {
       if (fields[id].isRequired && formData[id].length === 0) {
@@ -90,8 +90,8 @@ export default function Form({ fields, onSubmit }: FormProps) {
     })
 
     let wasSuccessful = false
+    // Prevent submission if not all entries are valid
     if (!Object.values(newValidFields).some(value => value === false)) {
-      // Prevent submission if there are errors
       wasSuccessful = onSubmit(formData)
     }
 
@@ -112,7 +112,7 @@ export default function Form({ fields, onSubmit }: FormProps) {
         >
           <InputLabel
             id={`${id}-label`}
-            sx={{ position: 'relative', bottom: '20px' }}
+            sx={{ position: 'relative', bottom: '20px' }} // places label above the field, to match styling of the other fields
             error={!validFields[id]}
           >
             {config.label}
@@ -124,21 +124,19 @@ export default function Form({ fields, onSubmit }: FormProps) {
             value={formData[id]}
             onChange={e => handleChange(id, e.target.value)}
             displayEmpty
+            {...config.additionalProperties}
             renderValue={selected => {
+              // Default option to display if nothing is selected
               if (!selected) {
                 return (
-                  <span style={{ color: theme.palette.text.disabled }}>
+                  <MenuItem value="" disabled>
                     {config.placeholder}
-                  </span>
+                  </MenuItem>
                 )
               }
               return selected
             }}
-            {...config.additionalProperties}
           >
-            <MenuItem value="" disabled>
-              {config.placeholder}
-            </MenuItem>
             {Object.entries(config.selections ?? {}).map(([label, value]) => (
               <MenuItem key={value} value={value}>
                 {label}
