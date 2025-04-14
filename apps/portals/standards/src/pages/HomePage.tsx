@@ -1,6 +1,7 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/standards/StandardsContributeToTheRegistry'
+import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import { dataSql } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
@@ -13,7 +14,16 @@ export default function HomePage() {
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
-      <StandardsContributeToTheRegistry />
+      <CTASectionWrapper
+        sx={{ padding: '0px 0px 60px' }}
+        showBlobs={false}
+        themeMode={'dark'}
+        content={
+          <SectionLayout title={'Contribute to the Registry'}>
+            <StandardsContributeToTheRegistry />
+          </SectionLayout>
+        }
+      />
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'Exploring the Standards'}

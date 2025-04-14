@@ -6,8 +6,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Home',
       path: '/',
       children: [
-        { name: 'Collections', path: '/#Collections' },
-        { name: "What's New", path: "/#What's New" },
+        {
+          name: 'Contribute to the Registry',
+          path: '/#Contribute to the Registry',
+        },
+        { name: 'Exploring the Standards', path: '/#Exploring the Standards' },
       ],
     },
     {

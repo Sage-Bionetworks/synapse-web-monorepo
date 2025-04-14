@@ -1,31 +1,18 @@
 import { Button, Stack, Typography } from '@mui/material'
-import { CTASectionWrapper } from 'synapse-react-client'
 
 const StandardsContributeToTheRegistry = () => {
-  const title = 'Contribute to the registry'
   const subtitle =
     'Help expand our catalog of biomedical research data standards by contributing your own. Submit your standards through our easy submission process to share them with the community and advance data harmonization. Join us in shaping the future of biomedical research!'
   const buttonText = 'Add a STANDARD to the registry'
   const buttonLink =
     'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#submitting-a-new-standard'
 
-  const content = (
-    <Stack sx={{ gap: '20px' }}>
-      <Typography
-        variant="headline2"
-        sx={{
-          fontWeight: 700,
-          fontSize: '24px',
-          lineHeight: 'normal',
-          textTransform: 'uppercase',
-        }}
-      >
-        {title}
-      </Typography>
+  return (
+    <Stack sx={{ gap: '20px', alignItems: 'center' }}>
       <Typography
         sx={{
           lineHeight: 'normal',
-          width: '456px',
+          maxWidth: '456px',
         }}
       >
         {subtitle}
@@ -54,14 +41,6 @@ const StandardsContributeToTheRegistry = () => {
         </Typography>
       </Button>
     </Stack>
-  )
-  return (
-    <CTASectionWrapper
-      sx={{ padding: '60px 0' }}
-      showBlobs={false}
-      themeMode={'dark'}
-      content={content}
-    />
   )
 }
 
