@@ -1,5 +1,8 @@
 import { Stack, Link, Button, Box, Typography } from '@mui/material'
 import { ReactComponent as HowToAccessDataLogo } from '../../../../portals/ampals/src/config/style/howToAccessDataLogo.svg'
+import { ReactComponent as GeneExpressionOmnibusLogo } from '../../../../portals/ampals/src/config/style/geneExpressionOmnibus.svg'
+import { ReactComponent as RDCADAP } from '../../../../portals/ampals/src/config/style/RDCADAP.svg'
+import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
 const HowToAccessData = () => {
   const accessDataSteps = [
     {
@@ -23,7 +26,8 @@ const HowToAccessData = () => {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
+        flexDirection: { xs: 'column', lg: 'row' },
+        gap: { xs: '40px', lg: '80px' },
         padding: {
           xs: '40px',
           md: '60px 80px 80px 80px',
@@ -31,17 +35,23 @@ const HowToAccessData = () => {
       }}
     >
       {/* Left */}
-      <Stack>
+      <Stack sx={{ alignItems: { xs: 'center', lg: 'initial' }, gap: '20px' }}>
         <Typography variant="headline1" sx={{ lineHeight: 'normal' }}>
           How to Access Data
         </Typography>
-        <Button variant="contained" component={Link}>
+        <Button
+          variant="contained"
+          component={Link}
+          sx={{ width: { xs: '100%', md: 'fit-content' }, padding: '6px 24px' }}
+        >
           More about accessing data
         </Button>
-        <HowToAccessDataLogo />
+        <Box sx={{ marginTop: 'auto' }}>
+          <HowToAccessDataLogo />
+        </Box>
       </Stack>
       {/* Right */}
-      <Stack sx={{ gap: '20px' }}>
+      <Stack sx={{ gap: { xs: '40px', lg: '24px' } }}>
         <Box
           sx={{
             display: 'flex',
@@ -50,32 +60,43 @@ const HowToAccessData = () => {
           }}
         >
           {accessDataSteps.map((step, index) => (
-            <Stack>
+            <Stack sx={{ gap: { xs: '10px', lg: 0 } }}>
               <Box
-                sx={{
-                  padding: '13.5px 18px 13.5px 16.5px',
-                  borderRadius: '22.125px',
-                  background: 'rgba(20, 126, 248, 0.15)',
-                  width: '44px',
-                  height: '44px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: '20px',
-                }}
+                sx={theme => ({
+                  [theme.breakpoints.down('md')]: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    margin: 0,
+                    gap: '8px',
+                  },
+                })}
               >
-                <Typography
-                  variant="body1"
+                <Box
                   sx={{
-                    fontSize: '24px',
+                    padding: '13.5px 18px 13.5px 16.5px',
+                    borderRadius: '22.125px',
+                    background: 'rgba(20, 126, 248, 0.15)',
+                    width: '44px',
+                    height: '44px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: { xs: 0, md: '20px' },
                   }}
                 >
-                  {index + 1}
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontSize: '24px',
+                    }}
+                  >
+                    {index + 1}
+                  </Typography>
+                </Box>
+                <Typography variant="headline3" sx={{ lineHeight: 'normal' }}>
+                  {step.title}
                 </Typography>
               </Box>
-              <Typography variant="headline3" sx={{ lineHeight: 'normal' }}>
-                {step.title}
-              </Typography>
               <Typography sx={{ lineHeight: '22.4px' }}>
                 {step.description}
               </Typography>
@@ -87,6 +108,9 @@ const HowToAccessData = () => {
             display: 'flex',
             gap: '24px',
             flexDirection: { xs: 'column', md: 'row' },
+            alignItems: 'center',
+            padding: '20px',
+            backgroundColor: '#F4F7FA',
           }}
         >
           <Stack sx={{ gap: '10px' }}>
@@ -100,7 +124,20 @@ const HowToAccessData = () => {
               Learn more about accessing data from the ALS Knowledge Portal
             </Link>
           </Stack>
-          <Box sx={{ display: 'flex' }}>icons</Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              minWidth: { xs: 'initial', lg: '414px' },
+              gap: '16px',
+              justifyContent: { xs: 'center', lg: 'initial' },
+              alignItems: 'center',
+            }}
+          >
+            <GeneExpressionOmnibusLogo />
+            <RDCADAP />
+            <SynapseFullLogo textColor={'#2E4761'} />
+          </Box>
         </Box>
       </Stack>
     </Box>
