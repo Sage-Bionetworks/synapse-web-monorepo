@@ -32,6 +32,7 @@ const AllALSSlat = () => {
           display: 'flex',
           position: 'relative',
           flexDirection: { xs: 'column', lg: 'row' },
+          textAlign: { xs: 'center', lg: 'left' },
           gap: { xs: '20px', md: '60px' },
           alignItems: 'center',
           zIndex: 2,

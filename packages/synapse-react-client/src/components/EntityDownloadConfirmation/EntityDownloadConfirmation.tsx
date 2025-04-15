@@ -68,7 +68,7 @@ export function EntityDownloadConfirmation({
     onIsLoadingChange(isLoading)
   }, [isLoading, onIsLoadingChange])
 
-  if (isLoading || (!isLoading && entity)) {
+  if (isLoading) {
     if (
       entityConcreteType !== 'org.sagebionetworks.repo.model.Folder' &&
       entityConcreteType !==
