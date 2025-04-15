@@ -7,7 +7,12 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { Programs, RssFeedCards, ThemesPlot } from 'synapse-react-client'
+import {
+  CardDeck,
+  RssFeedCards,
+  ThemesPlot,
+  Programs,
+} from 'synapse-react-client'
 import DatasetsDetailsPage from '../pages/DatasetsDetailsPage'
 import EducationalResourcesDetailsPage from '../pages/EducationalResourcesDetailsPage'
 import GrantDetailsPage from '../pages/GrantDetailsPage'
@@ -15,7 +20,10 @@ import PeopleDetailsPage from '../pages/PeopleDetailsPage'
 import PublicationsDetailsPage from '../pages/PublicationsDetailsPage'
 import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
-import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
+import {
+  consortiaHomePageConfig,
+  goalsCardDeckConfig,
+} from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
   onIndividualThemeBarPlotPointClick,
@@ -56,6 +64,18 @@ const routes: RouteObject[] = [
                 <ConsortiaGoals />
               </SectionLayout>
             </div>
+            <div className={'home-bg-dark'}>
+              <SectionLayout
+                title={'What Resources Are Available?'}
+                centerTitle
+                ContainerProps={{
+                  className: 'home-spacer',
+                }}
+              >
+                <CardDeck {...goalsCardDeckConfig} />
+              </SectionLayout>
+            </div>
+
             <SectionLayout
               title={
                 'What Research Themes are Scientists Currently Focusing On?'

@@ -1,4 +1,4 @@
-import type { ProgramsProps } from 'synapse-react-client'
+import type { ProgramsProps, CardDeckProps } from 'synapse-react-client'
 
 export const consortiaHomePageConfig: ProgramsProps = {
   entityId: 'syn34267412',
@@ -13,6 +13,23 @@ export const consortiaHomePageConfig: ProgramsProps = {
     baseURL: 'Explore/Consortia/DetailsPage',
     URLColumnName: 'Program',
     matchColumnName: 'Program',
+  },
+}
+
+export const goalsCardDeckConfig: CardDeckProps = {
+  entityId: 'syn64943600',
+  titleColumnName: 'title',
+  descriptionColumnName: 'description',
+  ctaButtonTextColumnName: 'ctaButtonText',
+  ctaButtonURLColumnName: 'ctaButtonURL',
+  titleIconFileHandleColumnName: 'icon',
+  headerImageFileHandleColumnName: 'headerImage',
+  cardDeckType: 'cckp',
+  linkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/CardDeck/DetailsPage',
+    URLColumnName: 'title',
+    matchColumnName: 'title',
   },
 }
 
