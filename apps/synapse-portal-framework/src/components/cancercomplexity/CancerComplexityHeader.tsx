@@ -5,6 +5,7 @@ import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { TypeAnimation } from 'react-type-animation'
+import headerBackground from '../assets/cckp-header-background.jpeg'
 
 const CancerComplexityHeader = () => {
   const searchPlaceholder = 'Search for cancer related data and resources'
@@ -33,7 +34,7 @@ const CancerComplexityHeader = () => {
 
   const discoverAndExplore = (
     <Box sx={{ color: 'grey.100' }}>
-      Discover and explore recent research&nbsp;
+      Discover and explore resources&nbsp;
       <Box
         component={'span'}
         sx={theme => ({
@@ -42,7 +43,7 @@ const CancerComplexityHeader = () => {
           },
         })}
       ></Box>
-      on&nbsp;
+      about&nbsp;
       <Box
         component={'span'}
         sx={theme => ({
@@ -76,7 +77,7 @@ const CancerComplexityHeader = () => {
           repeat={Infinity}
           style={{
             fontWeight: 700,
-            color: '#35E7C6',
+            color: '#76E9F0',
           }}
         />
       </Box>
@@ -105,10 +106,10 @@ const CancerComplexityHeader = () => {
         <Typography
           variant="headline1"
           sx={{
-            fontSize: { xs: '24px', md: '32px' },
-            fontWeight: 'bold',
+            fontSize: { xs: '26px', md: '36px' },
+            fontWeight: '700',
             marginBottom: '15px',
-            lineHeight: '54px',
+            lineHeight: '42px',
           }}
         >
           {discoverAndExplore}
@@ -159,6 +160,7 @@ const CancerComplexityHeader = () => {
               justifyContent: 'center',
               alignItems: 'center',
               padding: '20px 0',
+              background: `linear-gradient(90deg, rgba(70, 61, 201, 0.90) 25%, rgba(70, 61, 201, 0.00) 100%), url(${headerBackground}) lightgray 0px -170.097px / 100% 247.253% no-repeat;`,
             }}
           >
             <Box
