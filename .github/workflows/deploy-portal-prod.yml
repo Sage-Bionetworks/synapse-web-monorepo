@@ -17,7 +17,7 @@ on:
           - eliteportal
           - genie
           - nf
-          - standards
+          - b2ai.standards
           - stopadportal
       tag:
         required: true
