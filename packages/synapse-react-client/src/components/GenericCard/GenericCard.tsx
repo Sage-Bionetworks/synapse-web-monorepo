@@ -193,6 +193,9 @@ export function GenericCard(props: GenericCardProps) {
               marginLeft: 'auto',
               paddingTop: '21px',
               paddingRight: '40px',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '10px',
             }}
           >
             {cardTopButtons}
