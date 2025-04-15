@@ -101,7 +101,7 @@ function LoginPage(props: LoginPageProps) {
                   storeLastPlace()
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
-                twoFactorAuthResetUri={`${window.location.origin}${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
+                twoFactorAuthResetUri={`${window.location.origin}/${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
               />
             </Box>
           </Box>

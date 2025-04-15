@@ -1,12 +1,17 @@
+import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
+import ChipContainer from '@/components/row_renderers/utils/ChipContainer'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { DATASET } from '@/utils/SynapseConstants'
 import { Button } from '@mui/material'
 import { ColumnModel, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { Component, MouseEvent } from 'react'
-import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
+import {
+  TableToGenericCardMapping,
+  getValueOrMultiValue,
+} from '../GenericCard/TableRowGenericCard'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import * as Utils from './utils'
+import { CardFooter, Icon } from './utils'
 
 export type DatasetProps = {
   data?: any
@@ -14,7 +19,7 @@ export type DatasetProps = {
   secondaryLabelLimit?: number
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  genericCardSchema?: GenericCardSchema
+  genericCardSchema?: TableToGenericCardMapping
   queryVisualizationContext: QueryVisualizationContextType
 }
 
@@ -60,29 +65,28 @@ class Dataset extends Component<DatasetProps, never> {
     const fundingAgency = data[schema.fundingAgency]
     const fileCount = data[schema.fileCount]
     const fileSize = calculateFriendlyFileSize(data[schema.fileSize])
-    const values = [
-      [
-        'FUNDER',
-        getValueOrMultiValue({
+    const values: CardLabel[] = [
+      {
+        columnDisplayName: 'FUNDER',
+        value: getValueOrMultiValue({
           columnName: 'fundingAgency',
           value: fundingAgency,
           selectColumns,
           columnModels,
         }).str,
-      ],
-      ['SIZE', fileSize],
-      ['FILES', fileCount],
+      },
+      { columnDisplayName: 'SIZE', value: fileSize },
+      { columnDisplayName: 'FILES', value: fileCount },
     ]
     if (genericCardSchema && genericCardSchema.secondaryLabels) {
       const { secondaryLabels } = genericCardSchema
       for (let i = 0; i < secondaryLabels.length; i++) {
         const columnName = secondaryLabels[i]
-        const value: any = data[schema[columnName]]
+        const value: string | undefined = data[schema[columnName]]
         let columnDisplayName
         if (value) {
           columnDisplayName = getColumnDisplayName(columnName)
-          const keyValue = [columnDisplayName, value, columnName]
-          values.push(keyValue)
+          values.push({ columnDisplayName, value, columnName })
         }
       }
     }
@@ -90,7 +94,7 @@ class Dataset extends Component<DatasetProps, never> {
     return (
       <div className="SRC-portalCard SRC-typeDataset  ">
         <div className="SRC-cardThumbnail">
-          <Utils.Icon type={DATASET} />
+          <Icon type={DATASET} />
           <div>{fileSize}</div>
         </div>
         <div className="SRC-cardContent SRC-dataset">
@@ -119,10 +123,10 @@ class Dataset extends Component<DatasetProps, never> {
             </div>
           </div>
           <div className="SRC-cardAnnotations">
-            <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
+            <ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
         </div>
-        <Utils.CardFooter
+        <CardFooter
           isHeader={false}
           secondaryLabelLimit={this.props.secondaryLabelLimit}
           values={values}

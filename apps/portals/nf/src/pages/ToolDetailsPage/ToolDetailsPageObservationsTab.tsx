@@ -1,12 +1,13 @@
 import { observationsSql } from '@/config/resources'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  DetailsPageContextConsumer,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, Markdown, SynapseConstants, TimelinePlot } from 'synapse-react-client'
+import {
+  CardContainerLogic,
+  Markdown,
+  SynapseConstants,
+  TimelinePlot,
+} from 'synapse-react-client'
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
 
 export default function ToolDetailsPageObservationsTab() {
@@ -38,7 +39,9 @@ export default function ToolDetailsPageObservationsTab() {
               {({ value }) => (
                 <CardContainerLogic
                   sql={`${observationsSql} WHERE observationTime IS NULL`}
-                  type={SynapseConstants.OBSERVATION_CARD}
+                  cardConfiguration={{
+                    type: SynapseConstants.OBSERVATION_CARD,
+                  }}
                   initialLimit={3}
                   searchParams={{ resourceId: value! }}
                   multiCardList

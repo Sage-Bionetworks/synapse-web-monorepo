@@ -1,14 +1,11 @@
-import { datasetCardConfiguration, datasetsRgbIndex } from '@/config/synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  datasetsRgbIndex,
+} from '@/config/synapseConfigs/datasets'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  DetailsPageContextConsumer,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import {
-  useGetPortalComponentSearchParams,
-} from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { datasetsSql, enabledAnalysisPlatforms } from 'src/config/resources'
 import { columnAliases } from 'src/config/synapseConfigs/commonProps'
@@ -30,9 +27,8 @@ export default function DatasetDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        {...datasetCardConfiguration}
+        cardConfiguration={{ ...datasetCardConfiguration, isHeader: true }}
         sql={datasetsSql}
-        isHeader
         columnAliases={columnAliases}
         searchParams={{ id }}
       />

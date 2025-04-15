@@ -1,6 +1,5 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Menu, MenuItem } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
@@ -11,7 +10,10 @@ import {
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
-import { BackendDestinationEnum, getEndpoint } from 'synapse-react-client/utils/functions/index'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'synapse-react-client/utils/functions/index'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
@@ -30,6 +32,7 @@ export type NavbarConfig = {
     path: string
     children?: { name: string; path: string }[]
   }[]
+  isPortalsDropdownEnabled: boolean
 }
 
 const synapseQuickLinks: SynapseSettingLink[] = [
@@ -56,9 +59,7 @@ export default function Navbar() {
   const isSignedIn = !!accessToken
   const navigate = useNavigate()
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
-  const isPortalsDropdownEnabled = SynapseQueries.useGetFeatureFlag(
-    FeatureFlagEnum.PORTALS_DROPDOWN,
-  )
+  const { isPortalsDropdownEnabled } = navbarConfig
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = useRef<HTMLDivElement>(null)
 

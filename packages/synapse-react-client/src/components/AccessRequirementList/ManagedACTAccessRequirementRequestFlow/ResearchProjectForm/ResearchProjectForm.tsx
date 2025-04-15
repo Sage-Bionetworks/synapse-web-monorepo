@@ -286,7 +286,7 @@ function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
         Double-check your submission before continuing!
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Here some common reasons a request is rejected:
+        Here are some common reasons a request is rejected:
       </Typography>
       <Box component="ul" sx={{ 'li::marker': { content: '"\u274C  "' } }}>
         <Typography component={'li'} variant="body1" gutterBottom>

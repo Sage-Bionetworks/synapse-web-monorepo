@@ -1,5 +1,5 @@
 // const datasetsSql = 'SELECT * FROM syn31543490'
-// export const datasetSchema: GenericCardSchema = {
+// export const datasetSchema: TableToGenericCardMapping = {
 //   type: SynapseConstants.DATASET,
 //   title: 'name',
 //   subTitle: 'institutionOrPI', // custom annotation on datasets

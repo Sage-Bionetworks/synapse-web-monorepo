@@ -31,12 +31,14 @@ export default function ToolsDetailsPage() {
   return (
     <>
       <CardContainerLogic
-        isHeader={true}
-        {...toolsConfiguration}
-        iconOptions={{
-          dataset: DatasetSvg,
+        cardConfiguration={{
+          ...toolsConfiguration,
+          iconOptions: {
+            dataset: DatasetSvg,
+          },
+          secondaryLabelLimit: Infinity,
+          isHeader: true,
         }}
-        secondaryLabelLimit={Infinity}
         sql={toolsSql}
         columnAliases={columnAliases}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -57,7 +59,7 @@ export default function ToolsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'grantNumber'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...grantsCardConfiguration}
+                      cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -76,7 +78,7 @@ export default function ToolsDetailsPage() {
                 'Individual(s) that contributed to the development of the resource',
               element: (
                 <CardContainerLogic
-                  {...peopleCardConfiguration}
+                  cardConfiguration={peopleCardConfiguration}
                   sql={peopleSql}
                   columnAliases={columnAliases}
                   sqlOperator={ColumnSingleValueFilterOperator.LIKE}
@@ -95,7 +97,7 @@ export default function ToolsDetailsPage() {
                 <DetailsPageContextConsumer columnName={'pubMedId'}>
                   {({ value }) => (
                     <CardContainerLogic
-                      {...publicationsCardConfiguration}
+                      cardConfiguration={publicationsCardConfiguration}
                       sql={publicationSql}
                       columnAliases={columnAliases}
                       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}

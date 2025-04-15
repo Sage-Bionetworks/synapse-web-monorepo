@@ -129,6 +129,7 @@ const mockCreateSubmission = jest
 const mockOnHide = jest.fn()
 const mockOnCancel = jest.fn()
 const mockOnSubmissionCreated = jest.fn()
+const mockOnBackClicked = jest.fn()
 
 const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   researchProjectId: MOCK_RESEARCH_PROJECT_ID,
@@ -138,6 +139,7 @@ const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   onHide: mockOnHide,
   onCancel: mockOnCancel,
   onSubmissionCreated: mockOnSubmissionCreated,
+  onBackClicked: mockOnBackClicked,
 }
 
 function renderComponent(props: DataAccessRequestAccessorsFilesFormProps) {
@@ -359,6 +361,9 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       },
     })
 
+    await screen.findByText(
+      'You must list the Synapse user names of all collaborators listed in your Data Use Certificate (DUC).',
+    )
     await screen.findByRole('button', { name: DOWNLOAD_DUC_TEMPLATE_TEXT })
     await screen.findByRole('button', { name: UPLOAD_DUC_BUTTON_TEXT })
   })
@@ -373,6 +378,11 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       },
     })
 
+    expect(
+      screen.queryByText(
+        'You must list the Synapse user names of all collaborators listed in your Data Use Certificate (DUC).',
+      ),
+    ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: DOWNLOAD_DUC_TEMPLATE_TEXT }),
     ).not.toBeInTheDocument()
@@ -558,5 +568,18 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       }),
       expect.anything(),
     )
+  })
+
+  it('invokes callback when clicking the back button', async () => {
+    mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+    renderComponent(defaultProps)
+
+    const backButton = await screen.findByRole('button', { name: 'Back' })
+
+    await userEvent.click(backButton)
+
+    await waitFor(() => {
+      expect(mockOnBackClicked).toHaveBeenCalled()
+    })
   })
 })

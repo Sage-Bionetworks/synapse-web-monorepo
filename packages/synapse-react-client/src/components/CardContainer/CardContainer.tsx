@@ -1,3 +1,5 @@
+import { CardConfiguration } from '@/components/CardContainer/CardConfiguration'
+import TableRowGenericCard from '@/components/GenericCard/TableRowGenericCard'
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -15,8 +17,6 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import { Suspense } from 'react'
-import { CardConfiguration } from '../CardContainerLogic'
-import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -69,7 +69,7 @@ function Card(props: { propsToPass: any; type: string }) {
     case FUNDER:
       return <Funder {...propsToPass} />
     case GENERIC_CARD:
-      return <GenericCard {...propsToPass} />
+      return <TableRowGenericCard {...propsToPass} />
     case OBSERVATION_CARD:
       return <ObservationCard {...propsToPass} />
     case RELEASE_CARD:
@@ -81,7 +81,6 @@ function Card(props: { propsToPass: any; type: string }) {
 
 function CardContainerInternal(props: CardContainerProps) {
   const {
-    isHeader = false,
     unitDescription,
     type,
     secondaryLabelLimit = 3,
@@ -140,7 +139,6 @@ function CardContainerInternal(props: CardContainerProps) {
           key,
           type,
           schema,
-          isHeader,
           secondaryLabelLimit,
           rowId: rowData.rowId,
           data: rowData.values,
@@ -167,7 +165,8 @@ function CardContainerInternal(props: CardContainerProps) {
   }
 
   const isReleaseCardMediumList =
-    type === RELEASE_CARD && rest.releaseCardConfig?.cardSize === 'medium'
+    props.type === RELEASE_CARD &&
+    props.releaseCardConfig?.cardSize === 'medium'
 
   let cardListSx = defaultListSx
   if (isReleaseCardMediumList) {

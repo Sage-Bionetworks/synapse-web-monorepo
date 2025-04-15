@@ -18,7 +18,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
-import { SynapseClient } from '../../../../index'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import ResearchProjectForm, {
