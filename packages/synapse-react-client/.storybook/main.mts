@@ -1,4 +1,4 @@
-import { StorybookConfig } from '@storybook/react-vite'
+import type { StorybookConfig } from '@storybook/react-vite'
 import { defineConfig, mergeConfig } from 'vite'
 
 const config: StorybookConfig = {

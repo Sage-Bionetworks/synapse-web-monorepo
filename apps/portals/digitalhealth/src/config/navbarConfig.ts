@@ -32,4 +32,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.dhealth.synapse.org/doc/',
     },
   ],
+  isPortalsDropdownEnabled: false,
 }

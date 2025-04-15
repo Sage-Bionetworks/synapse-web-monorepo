@@ -1,5 +1,6 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
 import {
+  CardConfiguration,
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
@@ -7,7 +8,7 @@ import { defaultSearchConfiguration, publicationsSql } from '../resources'
 
 const rgbIndex = 5
 
-export const publicationCardProps = {
+export const publicationCardProps: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.PUBLICATION,

@@ -75,7 +75,7 @@ export default function HomePage() {
             initialLimit={limit}
             columnAliases={columnAliases}
             sql={newStudiesSql}
-            {...studyCardConfiguration}
+            cardConfiguration={studyCardConfiguration}
           />
         </SectionLayout>
       </div>
@@ -101,18 +101,20 @@ export default function HomePage() {
         <CardContainerLogic
           columnAliases={columnAliases}
           sql={fundersSql}
-          type={SynapseConstants.GENERIC_CARD}
-          titleLinkConfig={organizationDetailsPageLinkConfig}
-          genericCardSchema={{
-            ...organizationCardSchema,
-            imageFileHandleColumnName: 'cardLogo',
-          }}
-          descriptionConfig={{
-            showFullDescriptionByDefault: true,
-          }}
-          ctaLinkConfig={{
-            text: 'Visit Website',
-            link: 'website',
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            titleLinkConfig: organizationDetailsPageLinkConfig,
+            genericCardSchema: {
+              ...organizationCardSchema,
+              imageFileHandleColumnName: 'cardLogo',
+            },
+            descriptionConfig: {
+              showFullDescriptionByDefault: true,
+            },
+            ctaLinkConfig: {
+              text: 'Visit Website',
+              link: 'website',
+            },
           }}
         />
       </SectionLayout>
@@ -146,31 +148,33 @@ export default function HomePage() {
       >
         <CardContainerLogic
           sql={topProjectsSql}
-          type={SynapseConstants.GENERIC_CARD}
-          genericCardSchema={{
-            type: SynapseConstants.STUDY,
-            title: 's.studyName',
-            secondaryLabels: [
-              'f.n_downloads',
-              'f.n_unique_users',
-              'f.egress_size_in_gb',
-              's.studyId',
-            ],
-            dataTypeIconNames: 's.dataType',
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            genericCardSchema: {
+              type: SynapseConstants.STUDY,
+              title: 's.studyName',
+              secondaryLabels: [
+                'f.n_downloads',
+                'f.n_unique_users',
+                'f.egress_size_in_gb',
+                's.studyId',
+              ],
+              dataTypeIconNames: 's.dataType',
+            },
+            columnIconOptions: studyColumnIconConfigs,
+            secondaryLabelLimit: 5,
+            titleLinkConfig: {
+              isMarkdown: false,
+              baseURL: 'Explore/Studies/DetailsPage',
+              URLColumnName: 'studyId',
+              matchColumnName: 's.studyId',
+            },
           }}
-          columnIconOptions={studyColumnIconConfigs}
-          secondaryLabelLimit={5}
           columnAliases={{
             'f.n_downloads': '# Downloads',
             'f.n_unique_users': '# Unique Users',
             'f.egress_size_in_gb': 'Download Volume (GB)',
             's.studyId': 'On Synapse',
-          }}
-          titleLinkConfig={{
-            isMarkdown: false,
-            baseURL: 'Explore/Studies/DetailsPage',
-            URLColumnName: 'studyId',
-            matchColumnName: 's.studyId',
           }}
         />
       </SectionLayout>

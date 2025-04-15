@@ -275,7 +275,7 @@ const TimelinePhase = ({
             searchParams={{ ['ROW_ID']: selectedRowIds.map(String).join(',') }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
             lockedColumn={{ columnName: 'ROW_ID' }}
-            type={OBSERVATION_CARD}
+            cardConfiguration={{ type: OBSERVATION_CARD }}
             initialLimit={3}
           />
         </DialogContent>

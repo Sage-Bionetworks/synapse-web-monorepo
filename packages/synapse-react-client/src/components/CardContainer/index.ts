@@ -1,4 +1,6 @@
 import { CardContainer } from './CardContainer'
 import type { CardContainerProps } from './CardContainer'
-export { CardContainer, CardContainerProps }
+import type { CardConfiguration } from './CardConfiguration'
+
+export { CardContainer, CardContainerProps, CardConfiguration }
 export default CardContainer

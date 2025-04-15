@@ -51,4 +51,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.eliteportal.org/help/',
     },
   ],
+  isPortalsDropdownEnabled: true,
 }

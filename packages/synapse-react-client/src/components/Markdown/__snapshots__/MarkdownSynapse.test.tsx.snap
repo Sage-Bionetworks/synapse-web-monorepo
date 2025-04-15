@@ -145,7 +145,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
             tabindex="0"
           >
@@ -154,7 +154,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-1xe62cs-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
             tabindex="0"
           >

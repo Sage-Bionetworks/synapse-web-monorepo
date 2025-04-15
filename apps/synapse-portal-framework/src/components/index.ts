@@ -16,6 +16,7 @@ import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
 import ELContributeYourData from './eliteportal/ELContributeYourData'
 import ELGettingStarted from './eliteportal/ELGettingStarted'
+import AllALSSlat from './ampals/ALLALSSlat'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 
@@ -53,6 +54,7 @@ const PortalComponents = {
   ELBrowseToolsPage,
   ELContributeYourData,
   ELGettingStarted,
+  AllALSSlat,
   ELSupportedByNIH,
   ARKWelcomePage,
   GenieHomePageHeader,
