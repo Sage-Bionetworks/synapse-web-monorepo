@@ -15,7 +15,7 @@ import {
 } from '@/utils/functions/RegularExpressions'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Collapse } from '@mui/material'
+import { Collapse, Link } from '@mui/material'
 import {
   ColumnModel,
   ColumnType,
@@ -69,7 +69,7 @@ export type TableToGenericCardMapping = {
     /** The displayed label key */
     key: string
     /** The value to display */
-    value: string
+    value: React.ReactNode
     /** Callback to determine visibility of the label
      * @param schema the mapping of columnName to data index
      * @param data the row data
@@ -348,6 +348,18 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     schema,
     rowId,
   )
+  let downloadCartSynIdColumnIndex: number | undefined
+  let downloadCartSynIdValue: string | undefined
+  if (downloadCartSynId) {
+    downloadCartSynIdColumnIndex = schema[downloadCartSynId]
+    downloadCartSynIdValue =
+      downloadCartSynIdColumnIndex !== undefined
+        ? data[downloadCartSynIdColumnIndex]
+        : undefined
+  }
+  downloadCartSynIdValue = downloadCartSynIdValue?.match(
+    /syn\d+/i, // regex to extract the synapse ID from the URL
+  )?.[0]
   const values: {
     columnDisplayName: string
     value: React.ReactNode
@@ -356,9 +368,24 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const { secondaryLabels = [] } = genericCardSchema
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
+  // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
-    values.push({ columnDisplayName: key, value })
+    if (downloadCartSynIdValue) {
+      values.push({
+        columnDisplayName: 'HOW TO DOWNLOAD',
+        value: (
+          <Link
+            onClick={() => setShowDownloadConfirmation(val => !val)}
+            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+          >
+            Click here to add to Synapse download cart (account required)
+          </Link>
+        ),
+      })
+    } else {
+      values.push({ columnDisplayName: key, value })
+    }
   }
 
   const isView = table && !isTableEntity(table)
@@ -422,18 +449,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const doiValue =
     doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
-  let downloadCartSynIdColumnIndex: number | undefined
-  let downloadCartSynIdValue: string | undefined
-  if (downloadCartSynId) {
-    downloadCartSynIdColumnIndex = schema[downloadCartSynId]
-    downloadCartSynIdValue =
-      downloadCartSynIdColumnIndex !== undefined
-        ? data[downloadCartSynIdColumnIndex]
-        : undefined
-  }
-  downloadCartSynIdValue = downloadCartSynIdValue?.match(
-    /syn\d+/i, // regex to extract the synapse ID from the URL
-  )?.[0]
   let ctaHref: string | undefined = undefined,
     ctaTarget: string | undefined = undefined
   if (ctaLinkConfig) {
