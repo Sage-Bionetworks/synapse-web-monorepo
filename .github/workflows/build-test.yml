@@ -83,7 +83,7 @@ jobs:
     needs: test
     name: scan-synapse-react-client
     runs-on: ubuntu-latest
-    if: github.repository == 'Sage-Bionetworks/synapse-web-monorepo'
+    if: github.event_name != 'pull_request_target'
     steps:
       - uses: actions/checkout@v4
         with:
