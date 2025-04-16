@@ -4,7 +4,6 @@ import { datasetCollectionsCardContainerLogicProps } from './synapseConfigs/data
 import { datasetQueryWrapperPlotNavProps } from './synapseConfigs/datasets'
 import { programsCardContainerLogicProps } from './synapseConfigs/programs'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs'
-import { filesQueryWrapperPlotNavProps } from './synapseConfigs/files'
 
 const explorePageRoutes: RouteObject[] = [
   {
