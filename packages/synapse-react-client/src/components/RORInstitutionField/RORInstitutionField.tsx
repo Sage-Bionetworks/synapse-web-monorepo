@@ -11,9 +11,9 @@ export type RORLinkedInstitutionFieldProps = {
 }
 
 function getOrganizationDisplayName(organization: ROROrganization) {
-  return organization.names.filter(name =>
+  return organization.names.find(name =>
     name.types.includes('ror_display'),
-  )[0]
+  )!
 }
 
 /**
