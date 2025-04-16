@@ -615,14 +615,24 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
 
   // on component update find and re-render the math/widget items accordingly
   public componentDidUpdate(prevProps: MarkdownSynapseProps) {
-    let shouldUpdate = this.props.ownerId !== prevProps.ownerId
-    shouldUpdate = shouldUpdate || this.props.wikiId !== prevProps.wikiId
+    const shouldFetchNewWikiPage =
+      this.props.ownerId !== prevProps.ownerId ||
+      this.props.wikiId !== prevProps.wikiId
+
+    const hasNewMarkdownProp = this.props.markdown !== prevProps.markdown
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
-    if (shouldUpdate) {
+    if (shouldFetchNewWikiPage) {
       this.getWikiPageMarkdown().then(() => this.processMath())
-    } else {
-      this.processMath()
+    } else if (hasNewMarkdownProp) {
+      this.setState(
+        {
+          data: { markdown: this.props.markdown },
+        },
+        () => {
+          this.processMath()
+        },
+      )
     }
   }
 

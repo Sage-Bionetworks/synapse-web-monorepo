@@ -1,4 +1,4 @@
-export const dataSql = `SELECT * FROM syn65676531` //File View?  TBD
+export const dataSql = `SELECT * FROM syn66271104`
 export const datasetsSql = 'SELECT * FROM syn64950962'
 export const filesSql = 'SELECT * FROM syn66271104'
 export const datasetCollectionsSql =

@@ -23,6 +23,7 @@ import {
 } from './synapseConfigs/onPointClick'
 import { searchPageChildRoutes } from '@/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
+import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 
 const routes: RouteObject[] = [
@@ -45,6 +46,9 @@ const routes: RouteObject[] = [
         element: (
           <>
             <CancerComplexityHeader />
+            <SectionLayout>
+              <CancerComplexityIntro />
+            </SectionLayout>
             <div className={'home-bg-dark'}>
               <SectionLayout
                 title={'Portal Goals'}
