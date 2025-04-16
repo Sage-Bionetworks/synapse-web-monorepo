@@ -25,7 +25,9 @@ export const datasetSchema: TableToGenericCardMapping = {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,
     isVisible: (schema: Record<string, number>, data: string[]) => {
-      return Boolean(data[schema['externalLink']])
+      return Boolean(
+        data[schema['externalLink']] || data[schema['datasetAlias']],
+      )
     },
   },
   secondaryLabels: [
