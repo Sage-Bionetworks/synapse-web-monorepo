@@ -78,3 +78,19 @@ jobs:
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+  sonarqube-src:
+    # For monorepos, create one sonarcloud job per project and specify its directory
+    needs: test
+    name: scan-synapse-react-client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: packages/synapse-react-client
