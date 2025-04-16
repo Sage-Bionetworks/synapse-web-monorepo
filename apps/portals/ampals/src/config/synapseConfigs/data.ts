@@ -25,6 +25,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   defaultShowSearchBox: true,
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
+    showAccessColumn: true,
   },
   // facetsToPlot: ['program', 'project'],
 }

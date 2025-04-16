@@ -24,10 +24,6 @@ const explorePageRoutes: RouteObject[] = [
     element: <QueryWrapperPlotNav {...datasetQueryWrapperPlotNavProps} />,
   },
   {
-    path: 'Files',
-    element: <QueryWrapperPlotNav {...filesQueryWrapperPlotNavProps} />,
-  },
-  {
     path: 'All Data',
     element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
   },
