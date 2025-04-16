@@ -10,23 +10,21 @@ export default function HomePage() {
   return (
     <>
       <StandardsHeader dataSql={dataSql} />
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <CardDeck
-          entityId={standardsChallengeTableId}
-          titleColumnName={'title'}
-          descriptionColumnName={'description'}
-          ctaButtonTextColumnName={'buttonText'}
-          ctaButtonURLColumnName={'buttonURL'}
-          headerImageFileHandleColumnName={'headerImage'}
-          cardDeckType="b2ai"
-          linkConfig={{
-            isMarkdown: false,
-            baseURL: 'Explore/CardDeck/DetailsPage',
-            URLColumnName: 'title',
-            matchColumnName: 'title',
-          }}
-        />
-      </SectionLayout>
+      <CardDeck
+        entityId={standardsChallengeTableId}
+        titleColumnName={'title'}
+        descriptionColumnName={'description'}
+        ctaButtonTextColumnName={'buttonText'}
+        ctaButtonURLColumnName={'buttonURL'}
+        headerImageFileHandleColumnName={'headerImage'}
+        cardDeckType="b2ai"
+        linkConfig={{
+          isMarkdown: false,
+          baseURL: 'Explore/CardDeck/DetailsPage',
+          URLColumnName: 'title',
+          matchColumnName: 'title',
+        }}
+      />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
