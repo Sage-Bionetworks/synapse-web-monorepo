@@ -44,16 +44,6 @@ export const useIsExternalFileEntity = ({
         if (externalFileHandle && isExternalFileHandle(externalFileHandle)) {
           setIsExternal(true)
         }
-        console.log(
-          'entityid',
-          entityId,
-          'fileentity',
-          fileEntity,
-          'file',
-          file,
-          'exhandle',
-          externalFileHandle,
-        )
       } catch (e) {
         console.error('Error on getting external file handle = ', e)
       }
