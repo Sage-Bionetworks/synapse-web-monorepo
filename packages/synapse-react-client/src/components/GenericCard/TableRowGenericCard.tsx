@@ -375,10 +375,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       values.push({
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
-          <Link
-            onClick={() => setShowDownloadConfirmation(val => !val)}
-            style={{ cursor: 'pointer', textDecoration: 'underline' }}
-          >
+          <Link onClick={() => setShowDownloadConfirmation(val => !val)}>
             Click here to add to Synapse download cart (account required)
           </Link>
         ),
