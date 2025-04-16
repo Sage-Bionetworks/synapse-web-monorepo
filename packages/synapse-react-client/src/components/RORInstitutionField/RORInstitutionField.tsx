@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from 'react'
+import { ROROrganization } from '@/ror-client/types/ROROrganization'
+import { useSearchRegistry } from '@/synapse-queries/ror'
 import { Autocomplete, Box, TextField, Typography } from '@mui/material'
 import { useDebouncedEffect } from '@react-hookz/web'
-import { useGetOrganization, useSearchRegistry } from '../../synapse-queries'
-import { ROROrganization } from '../../ror-client/types/ROROrganization'
+import noop from 'lodash-es/noop'
+import { useState } from 'react'
 
-type RORLinkedInstitutionFieldProps = {
-  value: string
-  onChange: (value: string) => void
+export type RORLinkedInstitutionFieldProps = {
+  value?: string
+  onChange?: (value: string | undefined, rorIdentifier?: string) => void
 }
 
 function getOrganizationDisplayName(organization: ROROrganization) {
@@ -15,64 +16,63 @@ function getOrganizationDisplayName(organization: ROROrganization) {
   )[0]
 }
 
+/**
+ * Provides a text field for entering an organization name with an autocomplete dropdown of ROR organizations, fetched from the
+ * ROR API.
+ * @param props
+ * @constructor
+ */
 export default function RORInstitutionField(
   props: RORLinkedInstitutionFieldProps,
 ) {
-  const { value = '', onChange } = props
+  const { value: valueFromProps, onChange = noop } = props
+
+  const isControlled = valueFromProps !== undefined
+
+  const [internalInputValue, setInternalInputValue] = useState('')
   const [searchValue, setSearchValue] = useState('')
 
   useDebouncedEffect(
     () => {
-      setSearchValue(value)
+      if (isControlled) {
+        setSearchValue(valueFromProps || '')
+      } else {
+        setSearchValue(internalInputValue)
+      }
     },
-    [value],
+    [valueFromProps, internalInputValue, isControlled],
     500,
   )
 
-  let rorId: string | null = null
-  if (value.startsWith('https://ror.org/')) {
-    rorId = value.split('https://ror.org/')[1]
-  }
-
-  const { data: organization, isLoading: isLoadingSelectedOrganization } =
-    useGetOrganization(rorId || '', {
-      enabled: !!rorId,
-    })
-
   const { data: searchResults, isLoading: isLoadingSearch } = useSearchRegistry(
-    searchValue,
+    `${searchValue}`,
     {
-      enabled: !rorId && searchValue.length > 0,
+      enabled: searchValue.length > 0,
     },
   )
-
-  const inputValue = useMemo(() => {
-    if (rorId) {
-      if (isLoadingSelectedOrganization) {
-        return 'Loading...'
-      } else if (organization) {
-        return getOrganizationDisplayName(organization).value
-      }
-    }
-    return value
-  }, [isLoadingSelectedOrganization, organization, rorId, value])
 
   return (
     <Autocomplete
       freeSolo
       loading={isLoadingSearch}
-      onInputChange={(_event, newValue) => onChange(newValue)}
-      onChange={(_event, newValue) => () => {
-        if (typeof newValue === 'string' || newValue === null) {
-          onChange(newValue || '')
-        } else {
-          onChange(`https://ror.org/${newValue.id}`)
+      onInputChange={(_event, newValue) => {
+        if (!isControlled) {
+          setInternalInputValue(newValue)
         }
+        onChange(newValue)
       }}
-      renderInput={params => <TextField {...params} label="Organization" />}
-      inputValue={inputValue}
+      renderInput={params => (
+        <TextField
+          {...params}
+          label="Current Affiliation"
+          placeholder={'Type to search, or enter free text.'}
+        />
+      )}
+      inputValue={isControlled ? valueFromProps : internalInputValue}
       getOptionLabel={option =>
-        typeof option === 'string' ? option : option.id
+        typeof option === 'string'
+          ? option
+          : getOrganizationDisplayName(option).value
       }
       renderOption={(props, option) => {
         const displayName = getOrganizationDisplayName(option).value
