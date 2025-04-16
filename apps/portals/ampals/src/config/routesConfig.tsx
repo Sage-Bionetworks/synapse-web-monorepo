@@ -34,6 +34,9 @@ const routes: RouteObject[] = [
                 path: 'Datasets',
               },
               {
+                path: 'Files',
+              },
+              {
                 path: 'All Data',
               },
             ]}

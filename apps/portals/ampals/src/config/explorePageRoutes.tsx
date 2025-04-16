@@ -5,6 +5,7 @@ import { datasetCollectionsCardContainerLogicProps } from './synapseConfigs/data
 import { datasetQueryWrapperPlotNavProps } from './synapseConfigs/datasets'
 import { programsCardContainerLogicProps } from './synapseConfigs/programs'
 import { FullWidthAlert } from 'synapse-react-client'
+import { filesQueryWrapperPlotNavProps } from './synapseConfigs/files'
 
 const explorePageRoutes: RouteObject[] = [
   {
@@ -22,6 +23,10 @@ const explorePageRoutes: RouteObject[] = [
   {
     path: 'Datasets',
     element: <QueryWrapperPlotNav {...datasetQueryWrapperPlotNavProps} />,
+  },
+  {
+    path: 'Files',
+    element: <QueryWrapperPlotNav {...filesQueryWrapperPlotNavProps} />,
   },
   {
     path: 'All Data',
