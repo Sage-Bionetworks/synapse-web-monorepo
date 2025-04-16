@@ -1,10 +1,9 @@
 import { RouteObject } from 'react-router'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
-// import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 import { datasetCollectionsCardContainerLogicProps } from './synapseConfigs/datasetcollections'
 import { datasetQueryWrapperPlotNavProps } from './synapseConfigs/datasets'
 import { programsCardContainerLogicProps } from './synapseConfigs/programs'
-import { FullWidthAlert } from 'synapse-react-client'
+import { dataQueryWrapperPlotNavProps } from './synapseConfigs'
 
 const explorePageRoutes: RouteObject[] = [
   {
@@ -25,17 +24,7 @@ const explorePageRoutes: RouteObject[] = [
   },
   {
     path: 'All Data',
-    // element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
-    element: (
-      <FullWidthAlert
-        sx={{ m: 0 }}
-        isGlobal={false}
-        variant={'warning'}
-        show={true}
-        title={''}
-        description={'This area is under construction'}
-      />
-    ),
+    element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
   },
 ]
 
