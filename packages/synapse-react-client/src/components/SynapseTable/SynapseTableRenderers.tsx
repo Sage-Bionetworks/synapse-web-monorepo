@@ -181,10 +181,10 @@ const getEntityOrRowVersion = (
 
 function AccessCell(props: CellContext<Row, unknown>) {
   const entityId = getEntityOrRowId(props)!
-  const externalFileHandle = useIsExternalFileEntity({ entityId })
+  const isExternalFile = useIsExternalFileEntity({ entityId })
   return (
     <div data-testid={'AccessCell'}>
-      {!externalFileHandle && (
+      {!isExternalFile && (
         <HasAccessV2
           key={entityId}
           entityId={entityId}
