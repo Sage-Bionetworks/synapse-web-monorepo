@@ -10,23 +10,27 @@ export default function HomePage() {
   return (
     <>
       <StandardsHeader dataSql={dataSql} />
-      <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <CardDeck
-          entityId={standardsChallengeTableId}
-          titleColumnName={'title'}
-          descriptionColumnName={'description'}
-          ctaButtonTextColumnName={'buttonText'}
-          ctaButtonURLColumnName={'buttonURL'}
-          headerImageFileHandleColumnName={'headerImage'}
-          cardDeckType="b2ai"
-          linkConfig={{
-            isMarkdown: false,
-            baseURL: 'Explore/CardDeck/DetailsPage',
-            URLColumnName: 'title',
-            matchColumnName: 'title',
-          }}
-        />
-      </SectionLayout>
+      <div>
+        <h2 className="title center-title">
+          Standards Related to Bridge2AI Challenges
+        </h2>
+      </div>
+      <CardDeck
+        entityId={standardsChallengeTableId}
+        titleColumnName={'title'}
+        descriptionColumnName={'description'}
+        ctaButtonTextColumnName={'buttonText'}
+        ctaButtonURLColumnName={'buttonURL'}
+        headerImageFileHandleColumnName={'headerImage'}
+        cardDeckType="b2ai"
+        linkConfig={{
+          isMarkdown: false,
+          overrideLinkURLColumnName: 'buttonURL',
+          baseURL: 'Explore/',
+          URLColumnName: '',
+          matchColumnName: '',
+        }}
+      />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
