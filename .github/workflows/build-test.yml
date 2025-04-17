@@ -83,7 +83,9 @@ jobs:
     needs: test
     name: scan-synapse-react-client
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request_target'
+    if:
+      ${{ github.even_name == 'push' || github.event_name == 'pull_request_target' &&
+      github.event.pull_request.head.repo.full_name != github.repository }}
     steps:
       - uses: actions/checkout@v4
         with:
