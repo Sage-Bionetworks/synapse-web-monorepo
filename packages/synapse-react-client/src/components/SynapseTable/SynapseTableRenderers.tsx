@@ -29,6 +29,7 @@ import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFac
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import SynapseTableCell from './SynapseTableCell'
 import { useSynapseTableContext } from './SynapseTableContext'
+import { useInView } from 'react-intersection-observer'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -179,17 +180,30 @@ const getEntityOrRowVersion = (
 }
 
 function AccessCell(props: CellContext<Row, unknown>) {
+  const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!
   const showAccessIconForInternalFilesOnly =
     props.table.options.meta?.showAccessIconForInternalFilesOnly
+  // If showAccessIconForInternalFilesOnly is true, defer rendering until the cell is in view to avoid unnecessary API calls
+  const canRenderAccessIcon =
+    !showAccessIconForInternalFilesOnly ||
+    (showAccessIconForInternalFilesOnly && inView)
+
   return (
-    <div data-testid={'AccessCell'}>
-      <HasAccessV2
-        key={entityId}
-        entityId={entityId}
-        showButtonText={false}
-        showAccessIconForInternalFilesOnly={showAccessIconForInternalFilesOnly}
-      />
+    <div
+      ref={showAccessIconForInternalFilesOnly ? ref : undefined}
+      data-testid="AccessCell"
+    >
+      {canRenderAccessIcon && (
+        <HasAccessV2
+          key={entityId}
+          entityId={entityId}
+          showButtonText={false}
+          showAccessIconForInternalFilesOnly={
+            showAccessIconForInternalFilesOnly
+          }
+        />
+      )}
     </div>
   )
 }
