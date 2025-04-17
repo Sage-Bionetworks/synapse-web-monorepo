@@ -307,6 +307,7 @@ export function HasAccessV2(props: HasAccessProps) {
   ])
 
   if (!restrictionUiTypeValue) {
+    // loading
     return <></>
   }
 
