@@ -3,6 +3,11 @@ import Form, {
   FormData,
   FieldSchema,
 } from 'synapse-react-client/components/Form/Form'
+import { JsonSchemaForm } from 'synapse-react-client/components/JsonSchemaForm/JsonSchemaForm'
+import {
+  newStandardFormSchema,
+  newStandardUiSchema,
+} from '../config/newStandardConfig'
 
 export default function ContributeAStandard() {
   const onSubmit = (formData: FormData) => {
@@ -128,10 +133,14 @@ export default function ContributeAStandard() {
       width="100%"
       padding="50px"
     >
-      <Typography variant="h3" component="h1">
+      <JsonSchemaForm
+        schema={newStandardFormSchema}
+        uiSchema={newStandardUiSchema}
+      />
+      {/* <Typography variant="h3" component="h1">
         Contribute a Standard
       </Typography>
-      <Form fields={fields} onSubmit={onSubmit} />
+      <Form fields={fields} onSubmit={onSubmit} /> */}
     </Box>
   )
 }
