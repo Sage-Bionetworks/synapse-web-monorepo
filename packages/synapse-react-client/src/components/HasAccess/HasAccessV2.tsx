@@ -153,27 +153,20 @@ function useGetIsExternalFileHandle(
   entityId: string,
   options: { enabled: boolean },
 ) {
-  const { data: entityBundle, isLoading } = useGetEntityBundle(
-    entityId,
-    undefined,
-    undefined,
-    {
-      ...options,
-      select: bundle => {
-        if (!isFileEntity(bundle.entity)) {
-          return false
-        }
-        const fileEntity = bundle.entity as FileEntity
-        const fileHandles = bundle.fileHandles as FileHandle[]
-        const fileHandle: FileHandle | undefined = fileHandles?.find(
-          fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
-        )
-        return fileHandle && implementsExternalFileHandleInterface(fileHandle)
-      },
+  return useGetEntityBundle(entityId, undefined, undefined, {
+    ...options,
+    select: bundle => {
+      if (!isFileEntity(bundle.entity)) {
+        return false
+      }
+      const fileEntity = bundle.entity as FileEntity
+      const fileHandles = bundle.fileHandles as FileHandle[]
+      const fileHandle: FileHandle | undefined = fileHandles?.find(
+        fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
+      )
+      return fileHandle && implementsExternalFileHandleInterface(fileHandle)
     },
-  )
-
-  return { isExternalFileHandle: entityBundle, isLoading }
+  })
 }
 
 /**
@@ -190,14 +183,16 @@ export function HasAccessV2(props: HasAccessProps) {
   const {
     entityId,
     showButtonText = true,
-    hideAccessIconForExternalFileHandle,
+    hideAccessIconForExternalFileHandle = false,
   } = props
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
 
-  const { isExternalFileHandle, isLoading } = useGetIsExternalFileHandle(
-    entityId,
-    { enabled: hideAccessIconForExternalFileHandle ?? false },
-  )
+  const {
+    data: isExternalFileHandle,
+    isLoading: isLoadingIsExternalFileHandle,
+  } = useGetIsExternalFileHandle(entityId, {
+    enabled: hideAccessIconForExternalFileHandle,
+  })
 
   const { accessToken } = useSynapseContext()
 
@@ -315,7 +310,7 @@ export function HasAccessV2(props: HasAccessProps) {
     iconContainer,
   ])
 
-  if (!restrictionUiTypeValue || isLoading) {
+  if (!restrictionUiTypeValue || isLoadingIsExternalFileHandle) {
     // loading
     return <></>
   }
