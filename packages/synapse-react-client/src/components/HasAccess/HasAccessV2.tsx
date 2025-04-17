@@ -144,18 +144,12 @@ export const useIsExternalFileEntity = (
   const fileHandles = entityBundle?.fileHandles
   const isFileEntity =
     entity?.concreteType === 'org.sagebionetworks.repo.model.FileEntity'
-
-  if (!isFileEntity) {
-    return
-  }
-
   const fileEntity = entity as FileEntity
-
   const fileHandle: FileHandle | undefined = fileHandles?.find(
     fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
   )
 
-  if (!fileHandle) {
+  if (!isFileEntity || !fileHandle) {
     return
   }
 
@@ -164,6 +158,18 @@ export const useIsExternalFileEntity = (
     'org.sagebionetworks.repo.model.file.ExternalFileHandle'
 
   return hasExternalFileHandle
+}
+
+const InternalOnlyAccessWrapper = ({
+  entityId,
+  children,
+}: {
+  entityId: string
+  children: React.ReactNode
+}) => {
+  const isExternalFile = useIsExternalFileEntity(entityId)
+
+  return isExternalFile ? null : <>{children}</>
 }
 
 /**
@@ -182,8 +188,6 @@ export function HasAccessV2(props: HasAccessProps) {
     showButtonText = true,
     showAccessIconForInternalFilesOnly,
   } = props
-  const isExternalFile = useIsExternalFileEntity(entityId)
-
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
 
   const { accessToken } = useSynapseContext()
@@ -302,17 +306,23 @@ export function HasAccessV2(props: HasAccessProps) {
     iconContainer,
   ])
 
-  if (
-    !restrictionUiTypeValue ||
-    (showAccessIconForInternalFilesOnly && isExternalFile)
-  ) {
-    // do not show icon
+  if (!restrictionUiTypeValue) {
     return <></>
   }
 
-  return (
+  const content = (
     <span style={{ whiteSpace: 'nowrap' }}>
       {accessRequirementsJsxOrIconContainer}
     </span>
   )
+
+  if (showAccessIconForInternalFilesOnly) {
+    return (
+      <InternalOnlyAccessWrapper entityId={entityId}>
+        {content}
+      </InternalOnlyAccessWrapper>
+    )
+  }
+
+  return content
 }
