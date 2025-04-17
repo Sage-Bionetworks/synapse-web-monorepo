@@ -16,20 +16,20 @@ export const consortiaHomePageConfig: ProgramsProps = {
   },
 }
 
-export const goalsCardDeckConfig: CardDeckProps = {
-  entityId: 'syn64943600',
+export const availableResearchCardDeckConfig: CardDeckProps = {
+  entityId: 'syn66276142',
   titleColumnName: 'title',
   descriptionColumnName: 'description',
-  ctaButtonTextColumnName: 'ctaButtonText',
-  ctaButtonURLColumnName: 'ctaButtonURL',
-  titleIconFileHandleColumnName: 'icon',
-  headerImageFileHandleColumnName: 'headerImage',
+  ctaButtonTextColumnName: 'buttonText',
+  ctaButtonURLColumnName: 'buttonURL',
+  titleIconFileHandleColumnName: 'iconImage',
   cardDeckType: 'cckp',
   linkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/CardDeck/DetailsPage',
-    URLColumnName: 'title',
-    matchColumnName: 'title',
+    URLColumnName: '',
+    matchColumnName: '',
+    overrideLinkURLColumnName: 'buttonURL',
+    baseURL: 'Explore/',
   },
 }
 

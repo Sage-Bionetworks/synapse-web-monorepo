@@ -22,7 +22,7 @@ import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import {
   consortiaHomePageConfig,
-  goalsCardDeckConfig,
+  availableResearchCardDeckConfig,
 } from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
@@ -65,7 +65,7 @@ const routes: RouteObject[] = [
               </SectionLayout>
             </div>
             <div className={'home-bg-dark'}>
-              <CardDeck {...goalsCardDeckConfig} />
+              <CardDeck {...availableResearchCardDeckConfig} />
             </div>
 
             <SectionLayout
