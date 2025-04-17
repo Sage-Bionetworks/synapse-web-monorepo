@@ -65,15 +65,7 @@ const routes: RouteObject[] = [
               </SectionLayout>
             </div>
             <div className={'home-bg-dark'}>
-              <SectionLayout
-                title={'What Resources Are Available?'}
-                centerTitle
-                ContainerProps={{
-                  className: 'home-spacer',
-                }}
-              >
-                <CardDeck {...goalsCardDeckConfig} />
-              </SectionLayout>
+              <CardDeck {...goalsCardDeckConfig} />
             </div>
 
             <SectionLayout
