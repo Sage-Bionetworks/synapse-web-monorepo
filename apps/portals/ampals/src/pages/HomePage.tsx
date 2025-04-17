@@ -9,9 +9,11 @@ import {
   FullWidthAlert,
   CardGridWithLinks,
   GoalsV3,
+  UpsetPlot,
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
-import { goalsTableEntityId } from '@/config/resources'
+import { goalsTableEntityId, upsetPlotSql } from '@/config/resources'
+import { Box, Button, Typography } from '@mui/material'
 
 //TODO
 export default function HomePage() {
@@ -63,9 +65,78 @@ export default function HomePage() {
       >
         <GoalsV3 entityId={goalsTableEntityId} />
       </SectionLayout>
-      {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <Goals entityId={'syn23518009'} />
-      </SectionLayout> */}
+      <h2>Explore the data</h2>
+      <p>
+        Use this UpSet Plot to explore the intersections of different datasets
+        available in the portal. The bars represent the overlap between
+        datasets, helping you easily identify shared data points across multiple
+        sources for more targeted research.
+      </p>
+      <Button
+        variant="contained"
+        href="https://www.all-als.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+          padding: '6px 24px',
+          whiteSpace: 'nowrap',
+          height: '38px',
+          width: { xs: '100%', md: 'fit-content' },
+          bordeRadius: '3px',
+          display: 'flex',
+          gap: '10px',
+        }}
+      >
+        <Typography
+          sx={{ fontSize: '18px', fontWeight: '600', lineHeight: '144%' }}
+        >
+          View All Datasets
+        </Typography>
+      </Button>
+      {/* <Box
+        sx={{
+          width: '100%',
+          height: '400px',
+          '& .upsetjs svg': {
+            fontFamily: "'DM Sans', sans-serif",
+          },
+          '& .upsetjs text': {
+            fontSize: '14px',
+            fill: '#333',
+          },
+          '& .upsetjs g.bars > g:first-of-type rect': {
+            fill: '#4578c6',
+          },
+          '& .upsetjs g.bars > g:not(:first-of-type) rect': {
+            fill: 'url(#diagonalHatch)',
+            fillOpacity: 0.2,
+          },
+          '& .upsetjs line': {
+            stroke: 'none',
+          },
+        }}
+      >
+        <UpsetPlot
+          sql={upsetPlotSql}
+          rgbIndex={0}
+          maxBarCount={20}
+          setName="# People per data type (all datastes)"
+          combinationName="# of Files"
+          // onClick={handleUpsetPlotClick}
+          // summaryLinkText='Explore All Data'
+          // summaryLink='/Explore/Data'
+        />
+      </Box> */}
+      <UpsetPlot
+        sql={upsetPlotSql}
+        rgbIndex={0}
+        maxBarCount={20}
+        setName="# People per data type (all datastes)"
+        combinationName="# of Files"
+        // onClick={handleUpsetPlotClick}
+        // summaryLinkText='Explore All Data'
+        // summaryLink='/Explore/Data'
+      />
       <ALLALSSlat />
 
       <div className={'home-bg-dark'}>

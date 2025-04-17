@@ -23,6 +23,7 @@ import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
+import { Box, SxProps } from '@mui/material'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -33,6 +34,7 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
+  sx?: SxProps
 } & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
@@ -53,6 +55,7 @@ export function UpsetPlot({
   summaryLinkText,
   summaryLink,
   onClick,
+  sx,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -162,7 +165,7 @@ export function UpsetPlot({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <div className="UpsetPlot">
+            <Box sx={sx} className="UpsetPlot">
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
@@ -193,7 +196,7 @@ export function UpsetPlot({
                   </LargeButton>
                 </div>
               )}
-            </div>
+            </Box>
           )}
         </SizeMe>
       )}
