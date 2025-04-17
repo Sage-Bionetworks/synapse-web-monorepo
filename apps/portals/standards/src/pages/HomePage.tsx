@@ -10,6 +10,11 @@ export default function HomePage() {
   return (
     <>
       <StandardsHeader dataSql={dataSql} />
+      <div>
+        <h2 className="title center-title">
+          Standards Related to Bridge2AI Challenges
+        </h2>
+      </div>
       <CardDeck
         entityId={standardsChallengeTableId}
         titleColumnName={'title'}
@@ -20,9 +25,10 @@ export default function HomePage() {
         cardDeckType="b2ai"
         linkConfig={{
           isMarkdown: false,
-          baseURL: 'Explore/CardDeck/DetailsPage',
-          URLColumnName: 'title',
-          matchColumnName: 'title',
+          overrideLinkURLColumnName: 'buttonURL',
+          baseURL: 'Explore/',
+          URLColumnName: '',
+          matchColumnName: '',
         }}
       />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
