@@ -1,22 +1,24 @@
 import educationalResourceSvg from '@/config/style/EducationalResource.svg?url'
 import {
   CardConfiguration,
-  GenericCardSchema,
   IconOptions,
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { educationSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 8
 
-export const educationSchema: GenericCardSchema = {
+export const educationSchema: TableToGenericCardMapping = {
   type: 'Educational Resource',
   title: 'title',
   subTitle: 'topic',
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [
     'link',
     'activityType',
@@ -64,7 +66,7 @@ export const educationQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 /**
  *  Request to show different labels on Details Page vs Explore page.
  */
-export const educationDetailsSchema: GenericCardSchema = {
+export const educationDetailsSchema: TableToGenericCardMapping = {
   type: 'Educational Resource',
   title: 'title',
   subTitle: 'topic',

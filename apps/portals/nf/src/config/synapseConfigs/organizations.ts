@@ -1,5 +1,6 @@
-import type { CardLink, GenericCardSchema } from 'synapse-react-client'
+import type { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 
 export const organizationDetailsPageLinkConfig: CardLink = {
   matchColumnName: 'abbreviation',
@@ -8,7 +9,7 @@ export const organizationDetailsPageLinkConfig: CardLink = {
   URLColumnName: 'abbreviation',
 }
 
-export const organizationCardSchema: GenericCardSchema = {
+export const organizationCardSchema: TableToGenericCardMapping = {
   title: 'organizationName',
   type: SynapseConstants.ORGANIZATION,
   description: 'summary',

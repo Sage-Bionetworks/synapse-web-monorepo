@@ -86,6 +86,13 @@ export function SynapseHomepageNavBar({
     setPortalResourcesAnchorEl(null)
   }
 
+  // Sage solutions dropdown
+  const [sageSolutionsAnchorEl, setSageSolutionsAnchorEl] =
+    useState<HTMLElement | null>(null)
+  const handleCloseSageSolutions = () => {
+    setSageSolutionsAnchorEl(null)
+  }
+
   const onLoginClicked = () => {
     // Navigate to the LoginPlace, which will set a cookie that will be used to redirect back from OneSage
     gotoPlace(LOGIN_LINK)
@@ -129,6 +136,12 @@ export function SynapseHomepageNavBar({
             onClick={event => setPortalResourcesAnchorEl(event.currentTarget)}
           >
             Portals
+          </Button>
+          <Button
+            sx={navTextButtonSx}
+            onClick={event => setSageSolutionsAnchorEl(event.currentTarget)}
+          >
+            Solutions
           </Button>
           <Button
             sx={{ ...navTextButtonSx, mr: '15px' }}
@@ -177,6 +190,14 @@ export function SynapseHomepageNavBar({
       <SageResourcesPopover
         anchorEl={portalResourcesAnchorEl}
         onClose={handleClosePortalResources}
+        filterByType="SynapsePortal"
+      />
+      <SageResourcesPopover
+        anchorEl={sageSolutionsAnchorEl}
+        onClose={handleCloseSageSolutions}
+        filterByType="SageSolution"
+        resourceName="Solutions"
+        description="Innovative tools of the Synapse ecosystem to accelerate data curation and crowd-sourced data science competitions"
       />
       {isSmallView && (
         <Box
@@ -249,6 +270,14 @@ export function SynapseHomepageNavBar({
               }}
             >
               Portals
+            </StyledMenuItem>
+            <StyledMenuItem
+              onClick={event => {
+                setSageSolutionsAnchorEl(event.currentTarget)
+                handleCloseSageSolutions()
+              }}
+            >
+              Solutions
             </StyledMenuItem>
             <StyledMenuItem
               onClick={() => {

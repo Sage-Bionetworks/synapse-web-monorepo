@@ -1,7 +1,8 @@
-import type { CardConfiguration, GenericCardSchema } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 
-export const projectsSchema: GenericCardSchema = {
+export const projectsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.PROJECT,
   title: 'projectName',
   subTitle: 'grantName',

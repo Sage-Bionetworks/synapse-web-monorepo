@@ -13,15 +13,9 @@ import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from '@/config/synapseConfigs/datasets'
 import { publicationsV2CardConfiguration } from '@/config/synapseConfigs/publications'
 import { Typography } from '@mui/material'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import {
-  MarkdownSynapseFromColumnData,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   CardContainerLogic,
@@ -120,11 +114,13 @@ export default function ToolDetailsPageDetailsTab() {
             'The first report providing a detailed characterization of a tool.',
           element: (
             <CardContainerLogic
-              {...publicationsV2CardConfiguration}
+              cardConfiguration={{
+                ...publicationsV2CardConfiguration,
+                secondaryLabelLimit: 4,
+              }}
               initialLimit={3}
               columnAliases={columnAliases}
               sql={developmentPublicationSql}
-              secondaryLabelLimit={4}
               searchParams={{ resourceId }}
             />
           ),
@@ -174,7 +170,7 @@ export default function ToolDetailsPageDetailsTab() {
             'Subsequent reports that utilize the tool outlined in the development publication.',
           element: (
             <CardContainerLogic
-              {...publicationsV2CardConfiguration}
+              cardConfiguration={publicationsV2CardConfiguration}
               initialLimit={3}
               columnAliases={columnAliases}
               sql={publicationsV2Sql}

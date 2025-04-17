@@ -138,6 +138,17 @@ export function TableRowFallbackComponent({
 }
 
 /**
+ * This error boundary fallback component does not have a UI, it only outputs the error to console.error
+ */
+export function EmptyFallbackComponent({
+  error,
+  resetErrorBoundary,
+}: FallbackProps) {
+  console.error(error)
+  return <></>
+}
+
+/**
  * ErrorBoundary component that uses the default error fallback component, unless overridden.
  * Internally uses `react-error-boundary`.
  *

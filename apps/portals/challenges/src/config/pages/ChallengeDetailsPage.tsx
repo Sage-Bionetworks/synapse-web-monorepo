@@ -24,16 +24,16 @@ import { Outlet, RouteObject } from 'react-router'
 import {
   CardConfiguration,
   CardContainerLogic,
-  CardLink,
   ErrorPage,
-  GenericCardSchema,
   NoContentAvailable,
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
+import { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { challengeProjectsSql } from '../resources'
 
-export const challengesSchema: GenericCardSchema = {
+export const challengesSchema: TableToGenericCardMapping = {
   type: 'challenge',
   title: 'name',
   subTitle: 'Status',
@@ -228,7 +228,9 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
                   <CardContainerLogic
                     sql={`SELECT * FROM ${value}`}
                     limit={6}
-                    type={SynapseConstants.MEDIUM_USER_CARD}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
                   />
                 )}
               </DetailsPageContextConsumer>
@@ -251,7 +253,9 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
                   <CardContainerLogic
                     sql={`SELECT * FROM ${value}`}
                     limit={6}
-                    type={SynapseConstants.MEDIUM_USER_CARD}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
                   />
                 )}
               </DetailsPageContextConsumer>
@@ -274,7 +278,9 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
                   <CardContainerLogic
                     sql={`SELECT * FROM ${value}`}
                     limit={6}
-                    type={SynapseConstants.MEDIUM_USER_CARD}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
                   />
                 )}
               </DetailsPageContextConsumer>
@@ -292,7 +298,9 @@ export const challengeDetailsPageTabRoutes: RouteObject[] = [
                       <CardContainerLogic
                         sql={`SELECT * FROM ${value}`}
                         limit={6}
-                        type={SynapseConstants.MEDIUM_USER_CARD}
+                        cardConfiguration={{
+                          type: SynapseConstants.MEDIUM_USER_CARD,
+                        }}
                       />
                     )
                   }
@@ -428,9 +436,8 @@ export function ChallengeDetailsPage() {
     <>
       <div className={'challengeDetailPageHeaderCard'}>
         <CardContainerLogic
-          {...challengeCardConfiguration}
+          cardConfiguration={{ ...challengeCardConfiguration, isHeader: true }}
           sql={challengeProjectsSql}
-          isHeader
           searchParams={{ id }}
         />
       </div>

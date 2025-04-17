@@ -1,28 +1,33 @@
 import type {
   CardConfiguration,
-  GenericCardSchema,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
+import { columnIconConfigs } from './commonProps'
 
 const rgbIndex = 0
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
 const CUSTOM_LABEL_VALUE =
   'This file is hosted externally, follow the External Link, below'
 
-export const datasetSchema: GenericCardSchema = {
+export const datasetSchema: TableToGenericCardMapping = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',
   includeCitation: true,
   defaultCitationFormat: 'nature',
+  citationBoilerplateText: citationBoilerplateText,
   customSecondaryLabelConfig: {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,
     isVisible: (schema: Record<string, number>, data: string[]) => {
-      return Boolean(data[schema['externalLink']])
+      return Boolean(
+        data[schema['externalLink']] || data[schema['datasetAlias']],
+      )
     },
   },
   secondaryLabels: [
@@ -35,6 +40,8 @@ export const datasetSchema: GenericCardSchema = {
     'externalLink',
     'consortium',
   ],
+  dataTypeIconNames: 'dataType',
+  downloadCartSynId: 'datasetAlias',
 }
 
 export const datasetCardConfiguration: CardConfiguration = {
@@ -65,6 +72,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     URLColumnName: 'datasetId',
     matchColumnName: 'datasetId',
   },
+  columnIconOptions: columnIconConfigs,
 }
 
 export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {

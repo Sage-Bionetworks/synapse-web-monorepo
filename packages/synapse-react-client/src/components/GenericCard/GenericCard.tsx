@@ -1,701 +1,218 @@
-import { useGetEntity } from '@/synapse-queries'
-import { SynapseConstants, SynapseContext } from '@/utils'
-import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import {
-  isDatasetCollection,
-  isTableEntity,
-} from '@/utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import {
-  convertDoiToLink,
-  SYNAPSE_ENTITY_ID_REGEX,
-} from '@/utils/functions/RegularExpressions'
+import { GenericCardTitle } from '@/components/GenericCard/GenericCardTitle'
+import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, Link, Stack } from '@mui/material'
-import {
-  ColumnModel,
-  ColumnType,
-  ColumnTypeEnum,
-  Entity,
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  SelectColumn,
-  Table,
-} from '@sage-bionetworks/synapse-types'
-import { Component, CSSProperties } from 'react'
-import {
-  CardLink,
-  ColumnIconConfigs,
-  CommonCardProps,
-  TargetEnum,
-} from '../CardContainerLogic'
-import CitationPopover from '../CitationPopover'
-import HeaderCard from '../HeaderCard'
-import { IconOptions } from '../Icon'
-import IconList from '../IconList'
-import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
-import { useQueryContext } from '../QueryContext'
-import {
-  QueryVisualizationContextType,
-  useQueryVisualizationContext,
-} from '../QueryVisualizationWrapper'
-import { CardFooter, Icon } from '../row_renderers/utils'
+import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
+import React, { CSSProperties } from 'react'
+import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
+import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
+import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
-import {
-  CHAR_COUNT_CUTOFF,
-  CollapsibleDescription,
-} from './CollapsibleDescription'
-import { SynapseCardLabel } from './SynapseCardLabel'
+import { CollapsibleDescription } from './CollapsibleDescription'
 
-export type KeyToAlias = {
-  key: string
-  alias?: string
-}
-
-export type KeyToAliasMap = {
-  [index: number]: KeyToAlias
-  [index: string]: KeyToAlias
-}
-
-export type GenericCardSchema = {
+type GenericCardProps = {
+  /** String representing the 'type' of object. This is displayed as a label on the card. */
   type: string
+  /** The title displayed on the card. */
   title: string
-  subTitle?: string
-  description?: string
-  includeCitation?: boolean
-  defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
-  citationBoilerplateText?: string
-  icon?: string
-  imageFileHandleColumnName?: string
-  thumbnailRequiresPadding?: boolean
-  secondaryLabels?: string[]
-  customSecondaryLabelConfig?: {
-    key: string
-    value: string
-    isVisible: (schema: Record<string, number>, data: string[]) => boolean
+  /** Optionally provide href/target if the title should be a link */
+  titleLinkConfiguration?: { href: string; target: string }
+  /** Optionally provide configuration if the title should be a link to a Synapse FileHandle */
+  titleAsFileHandleLinkConfiguration?: {
+    /** The FileHandleAssociation used to get access to the file handle */
+    fileHandleAssociation: FileHandleAssociation
+    /** Whether a 'download' icon should be shown */
+    showDownloadIcon: boolean
   }
-
-  link?: string
-  dataTypeIconNames?: string
-}
-
-export type GenericCardPropsInternal = {
-  selectColumns?: SelectColumn[]
-  columnModels?: ColumnModel[]
-  iconOptions?: IconOptions
-  useTypeColumnForIcon?: boolean
+  /** An optional subtitle to be displayed on the card */
+  subtitle?: string
+  /** An description to be displayed on the card */
+  description: string
+  /** An optional description subtitle to be displayed on the card */
+  descriptionSubTitle?: string
+  /** Configuration for altering the display of the description prop */
+  descriptionConfig?: DescriptionConfig
+  /** Optional slot for adding content to the top of the card */
+  cardTopContent?: React.ReactNode
+  /** Optional slot for adding action buttons to the top of the card */
+  cardTopButtons?: React.ReactNode
+  /** If true, a HeaderCard component will be rendered */
   isHeader?: boolean
-  isAlignToLeftNav?: boolean
-  // Maps columnName to index
-  schema: Record<string, number>
-  // Row values
-  data: string[]
-  rowId?: number
+  /** The variant of HeaderCard to render if `isHeader` is true */
+  headerCardVariant?: HeaderCardVariant
+  /** Set to true if the icon is an arbitrary image. The card styles will be updated to accommodate the image
+   * @default false */
+  useStylesForDisplayedImage?: boolean
+  /**
+   * The rendered icon on the card
+   */
+  icon: React.ReactNode
+  /**
+   * The card labels to be displayed in the footer of the card
+   */
+  labels?: CardLabel[]
+  /**
+   * The initial number of labels to display in the footer of the card
+   */
+  secondaryLabelLimit?: number
+  /**
+   * Options for displaying icons with the labels in the card footer
+   */
   columnIconOptions?: ColumnIconConfigs
-  table: Table | undefined
-  queryVisualizationContext: QueryVisualizationContextType
-} & CommonCardProps
-
-export type GenericCardProps = Omit<
-  GenericCardPropsInternal,
-  'table' | 'queryVisualizationContext'
->
-
-export const getFileHandleAssociation = (
-  table?: Entity,
-  fileHandleId?: string,
-  rowSynapseId?: string, // only applicable if this is an EntityView
-) => {
-  let fileHandleAssociation: FileHandleAssociation | undefined = undefined
-  if (table && fileHandleId) {
-    if (isTableEntity(table)) {
-      // The file handle is in the table
-      fileHandleAssociation = {
-        fileHandleId,
-        associateObjectId: table?.id ?? '',
-        associateObjectType: FileHandleAssociateType.TableEntity,
-      }
-    } else if (rowSynapseId) {
-      // We're looking at a view, so the FileEntity (whose ID matches the row ID) gives permission to download the file handle
-      fileHandleAssociation = {
-        fileHandleId,
-        associateObjectId: rowSynapseId,
-        associateObjectType: FileHandleAssociateType.FileEntity,
-      }
-    }
+  /**
+   * Optional configuration for displaying a CTA button on the card
+   */
+  ctaLinkConfig?: {
+    text: React.ReactNode
+    href?: string
+    target?: string
   }
-  return fileHandleAssociation
+  /**
+   * The rendered icon list on the card
+   */
+  renderedIconList?: React.ReactNode
 }
 
-export const getValueOrMultiValue = ({
-  columnName,
-  value,
-  selectColumns,
-  columnModels,
-}: {
-  columnName?: string
-  value?: string
-  selectColumns?: SelectColumn[]
-  columnModels?: ColumnModel[]
-}): ValueOrMultiValue => {
-  if (!value) {
-    return {
-      str: '',
-      strList: undefined,
-      columnModelType: undefined,
-    }
-  }
-  const selectedColumnOrUndefined =
-    selectColumns?.find(el => el.name === columnName) ||
-    columnModels?.find(el => el.name === columnName)
-  const isMultiValue = selectedColumnOrUndefined?.columnType.endsWith('_LIST')
-
-  if (isMultiValue) {
-    let val: any = value
-    let strList: any
-    try {
-      strList = JSON.parse(val)
-      val = (strList as string[]).join(', ')
-      return {
-        strList,
-        str: val,
-        columnModelType: selectedColumnOrUndefined?.columnType,
-      }
-    } catch (e) {
-      console.error(
-        'Could not parse multivalue string ',
-        val,
-        ' caught err ',
-        e,
-      )
-    }
-  }
-  return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
-}
+const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
 
 /**
- * Finds the index of the given column name in the selectColumns or columnModels.
- *
- * @returns a non-negative integer if the column is found, or undefined if the column is not found
- * @param columnName
- * @param selectColumns
- * @param columnModels
+ * Generic portal card UI component with a predefined layout
  */
-export const getColumnIndex = (
-  columnName?: string,
-  selectColumns?: SelectColumn[],
-  columnModels?: ColumnModel[],
-): number | undefined => {
-  if (selectColumns) {
-    const findIndexResult = selectColumns.findIndex(
-      el => el.name === columnName,
-    )
-    if (findIndexResult != -1) {
-      return findIndexResult
-    }
-  }
-  if (columnModels) {
-    const findIndexResult = columnModels.findIndex(el => el.name === columnName)
-    if (findIndexResult != -1) {
-      return findIndexResult
-    }
-  }
-  return undefined
-}
-
-// SWC-6115: special rendering of the version column (for Views)
-export function VersionLabel(props: { synapseId: string; version: string }) {
-  const { synapseId, version } = props
-  return (
-    <span>
-      {version}&nbsp;&nbsp;
-      <a
-        target={TargetEnum.NEW_WINDOW}
-        rel="noopener noreferrer"
-        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${synapseId}.${version}`}
-      >
-        (Show Version History on Synapse)
-      </a>
-    </span>
-  )
-}
-
-type ValueOrMultiValue = {
-  str: string
-  strList?: string[]
-  columnModelType?: ColumnType
-}
-
-export function getCardLinkHref(
-  cardLink: CardLink | undefined,
-  data: string[] | undefined,
-  schema?: Record<string, number>,
-  rowId?: number,
-): string | undefined {
-  if (cardLink) {
-    if (!data || !schema) {
-      throw Error('Must specify CardLink and data for linking to work')
-    }
-    const { matchColumnName, overrideValueWithRowID } = cardLink
-
-    // PORTALS-2088:  Return the link, unless...
-    // an overrideLinkURLColumnName has been set and its value is defined.
-    // In this case, just use the overrideLinkURLColumnName value
-    if ('overrideLinkURLColumnName' in cardLink) {
-      const { overrideLinkURLColumnName, overrideLinkURLColumnTransform } =
-        cardLink
-      if (schema[overrideLinkURLColumnName]) {
-        const indexOfOverrideLinkURLColumnName =
-          schema[overrideLinkURLColumnName]
-        const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
-        if (overrideLinkValue && overrideLinkURLColumnTransform) {
-          return overrideLinkURLColumnTransform(overrideLinkValue)
-        } else if (overrideLinkValue) {
-          return overrideLinkValue
-        }
-      }
-    }
-
-    const indexInData = schema[matchColumnName]
-    if (indexInData === undefined) {
-      console.error(
-        `Could not find match for data: ${data} with columnName ${matchColumnName}`,
-      )
-    } else if ('baseURL' in cardLink) {
-      const { baseURL, URLColumnName } = cardLink
-      const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
-      if (value) {
-        // value is defined!
-        return `/${baseURL}?${URLColumnName}=${encodeURIComponent(value)}`
-      }
-    }
-  }
-  return undefined
-}
-
-export function getLinkParams(
-  link: string,
-  cardLinkConfig: CardLink | undefined,
-  data: string[] | undefined,
-  schema?: Record<string, number>,
-  rowId?: number,
-) {
-  link = link.trim()
-  let href = link
-  const doiLink = convertDoiToLink(href)
-  let defaultTarget = TargetEnum.CURRENT_WINDOW
-  if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
-    // its a synId
-    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
-  } else if (doiLink) {
-    defaultTarget = TargetEnum.NEW_WINDOW
-    href = doiLink
-  } else if (!cardLinkConfig) {
-    defaultTarget = TargetEnum.NEW_WINDOW
-  } else if (cardLinkConfig) {
-    href = getCardLinkHref(cardLinkConfig, data, schema, rowId) ?? ''
-    if (href.includes('/DetailsPage')) {
-      defaultTarget = TargetEnum.NEW_WINDOW
-    }
-  }
-
-  const target = cardLinkConfig?.target ?? defaultTarget
-  return { href, target }
-}
-
-/**
- * Renders a card from a table query
- */
-class _GenericCard extends Component<GenericCardPropsInternal> {
-  static contextType = SynapseContext
-
-  constructor(props: GenericCardPropsInternal) {
-    super(props)
-    this.state = {
-      hasClickedShowMore: false,
-    }
-  }
-
-  getCutoff = (summary: string) => {
-    let previewText = ''
-    const summarySplit = summary.split(' ')
-    // find num words to join such that its >= char_count_cutoff
-    let i = 0
-    while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
-      previewText += `${summarySplit[i]} `
-      i += 1
-    }
-    previewText = previewText.trim()
-    return { previewText }
-  }
-
-  toggleShowMore = () => {
-    this.setState({
-      hasClickedShowMore: true,
-    })
-  }
-
-  renderTitle = ({
-    href,
-    target,
-    titleSearchHandle,
+export function GenericCard(props: GenericCardProps) {
+  const {
+    icon,
+    type,
     title,
-  }: {
-    target: string
-    titleSearchHandle: string | undefined
-    title: string
-    href: string
-  }) => {
-    if (href) {
-      return (
-        <Link
-          data-search-handle={titleSearchHandle}
-          target={target}
-          href={href}
-        >
-          {title}
-        </Link>
-      )
-    } else {
-      return <span data-search-handle={titleSearchHandle}> {title} </span>
-    }
+    titleLinkConfiguration,
+    titleAsFileHandleLinkConfiguration,
+    subtitle,
+    description,
+    descriptionSubTitle = '',
+    descriptionConfig,
+    cardTopContent,
+    cardTopButtons,
+    isHeader = false,
+    headerCardVariant,
+    useStylesForDisplayedImage = false,
+    labels = EMPTY_CARD_LABEL_ARRAY,
+    secondaryLabelLimit,
+    columnIconOptions,
+    ctaLinkConfig,
+    renderedIconList,
+  } = props
+
+  const showFooter = labels.length > 0
+
+  const style: CSSProperties = {
+    // undefined, take default value from class
+    marginTop: isHeader ? '0px' : undefined,
+    marginBottom: isHeader ? '0px' : undefined,
+    paddingBottom:
+      showFooter || useStylesForDisplayedImage ? undefined : '15px',
   }
 
-  render() {
-    const {
-      schema,
-      data,
-      rowId,
-      genericCardSchema,
-      secondaryLabelLimit,
-      selectColumns,
-      columnModels,
-      iconOptions,
-      useTypeColumnForIcon = false,
-      isHeader = false,
-      titleLinkConfig,
-      ctaLinkConfig,
-      labelLinkConfig,
-      descriptionConfig,
-      columnIconOptions,
-      table,
-      queryVisualizationContext: { getColumnDisplayName },
-    } = this.props
-    // GenericCard inherits properties from CommonCardProps so that the properties have the same name
-    // and type, but theres one nuance which is that we can't override if one specific property will be
-    // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
-    const genericCardSchemaDefined = genericCardSchema!
-    const {
-      link = '',
-      type,
-      includeCitation,
-      defaultCitationFormat,
-      citationBoilerplateText,
-    } = genericCardSchemaDefined
-    const title = data[schema[genericCardSchemaDefined.title]]
-    let subTitle =
-      genericCardSchemaDefined.subTitle &&
-      data[schema[genericCardSchemaDefined.subTitle]]
-    subTitle =
-      genericCardSchemaDefined?.subTitle &&
-      getValueOrMultiValue({
-        value: subTitle,
-        columnName: genericCardSchemaDefined?.subTitle,
-        selectColumns,
-        columnModels,
-      }).str
-    const description = data[schema[genericCardSchemaDefined.description || '']]
-    const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
-    const dataTypeIconNames =
-      data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
-    const imageFileHandleIdValue =
-      data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
-    const titleColumnModel = columnModels?.find(
-      el => genericCardSchemaDefined.link === el.name,
+  if (isHeader) {
+    return (
+      <HeaderCard
+        headerCardVariant={headerCardVariant}
+        descriptionConfig={descriptionConfig}
+        title={title}
+        subTitle={subtitle}
+        description={description}
+        type={type}
+        icon={icon}
+        values={labels}
+        href={titleLinkConfiguration?.href}
+        target={titleLinkConfiguration?.target}
+        isAlignToLeftNav={true}
+        secondaryLabelLimit={secondaryLabelLimit}
+      />
     )
-    const titleColumnType = titleColumnModel?.columnType
-    // wrap link in parens because undefined would throw an error
-    const linkValue: string = data[schema[link]] || ''
-    const { href, target } = getLinkParams(
-      linkValue,
-      titleLinkConfig,
-      data,
-      schema,
-      rowId,
-    )
-    const values: string[][] = []
-    const { secondaryLabels = [] } = genericCardSchemaDefined
-    const customLabelConfig =
-      genericCardSchemaDefined.customSecondaryLabelConfig
+  }
 
-    if (customLabelConfig?.isVisible(schema, data)) {
-      const { key, value } = customLabelConfig
-      const keyValue = [key, value]
-      values.push(keyValue)
-    }
-
-    const isView = table && !isTableEntity(table)
-    for (let i = 0; i < secondaryLabels.length; i += 1) {
-      const columnName = secondaryLabels[i]
-      let value: any = data[schema[columnName]]
-      let columnDisplayName
-      if (value) {
-        // PORTALS-2750: special rendering of the datasetSizeInBytes (for Dataset Collections)
-        if (
-          isDatasetCollection(table as Entity) &&
-          columnName === 'datasetSizeInBytes'
-        ) {
-          columnDisplayName = 'Size'
-          value = calculateFriendlyFileSize(parseInt(value))
-        } // SWC-6115: special rendering of the version column (for Views)
-        else if (isView && columnName === 'currentVersion') {
-          const synapseId = data[schema.id]
-          const version = value
-          value = VersionLabel({ synapseId, version })
-          columnDisplayName = 'Version'
-        } else {
-          const labelLink = labelLinkConfig?.find(
-            el => el.matchColumnName === columnName,
-          )
-          value = (
-            <SynapseCardLabel
-              value={value}
-              columnName={columnName}
-              labelLink={labelLink}
-              isHeader={isHeader}
-              selectColumns={selectColumns}
-              columnModels={columnModels}
-              rowData={data}
-            />
-          )
-          columnDisplayName = getColumnDisplayName(columnName)
-        }
-        const keyValue = [columnDisplayName, value, columnName]
-        values.push(keyValue)
-      }
-    }
-
-    const fileHandleId = imageFileHandleIdValue || linkValue
-
-    /**
-     * To show a direct download link to a file, we need to determine the association that gives permission to download the file.
-     */
-    const fileHandleAssociation = getFileHandleAssociation(
-      table,
-      fileHandleId,
-      data[schema.id],
-    )
-
-    const showFooter = values.length > 0
-
-    const style: CSSProperties = {
-      // undefined, take default value from class
-      marginTop: isHeader ? '0px' : undefined,
-      marginBottom: isHeader ? '0px' : undefined,
-      paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }
-    const icon: JSX.Element = (
-      <>
-        {!useTypeColumnForIcon && imageFileHandleIdValue && (
-          <div
-            className="SRC-imageThumbnail"
-            style={{
-              padding: genericCardSchemaDefined.thumbnailRequiresPadding
-                ? '21px'
-                : undefined,
+  return (
+    <div style={style} className={'SRC-portalCard'}>
+      {cardTopContent}
+      <div className={'SRC-portalCardMain'}>
+        {icon}
+        <div className="SRC-cardContent">
+          <Stack
+            sx={{
+              flexDirection: 'row',
             }}
           >
-            {fileHandleAssociation && (
-              <ImageFileHandle fileHandleAssociation={fileHandleAssociation} />
-            )}
-          </div>
-        )}
-        {!useTypeColumnForIcon && !imageFileHandleIdValue && (
-          <div className="SRC-cardThumbnail">
-            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
-          </div>
-        )}
-        {useTypeColumnForIcon && (
-          <div className="SRC-cardThumbnail">
-            <IconSvg
-              icon={
-                type2SvgIconName[
-                  data[schema['type']] as keyof typeof type2SvgIconName
-                ]
-              }
-            />
-          </div>
-        )}
-      </>
-    )
-
-    if (isHeader) {
-      return (
-        <HeaderCard
-          descriptionConfig={descriptionConfig}
-          title={title}
-          subTitle={subTitle}
-          description={description}
-          type={type}
-          icon={icon}
-          values={values}
-          href={href}
-          target={target}
-          isAlignToLeftNav={true}
-          secondaryLabelLimit={secondaryLabelLimit}
-        />
-      )
-    }
-
-    const titleSearchHandle = getColumnDisplayName(
-      genericCardSchemaDefined.title,
-    )
-    const stubTitleSearchHandle = getColumnDisplayName(
-      genericCardSchemaDefined.subTitle || '',
-    )
-    const descriptionSubTitle = getColumnDisplayName(
-      genericCardSchemaDefined.description || '',
-    )
-
-    const doiColumnIndex = getColumnIndex('doi', selectColumns, columnModels)
-    const doiValue =
-      doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
-
-    let ctaHref: string | undefined = undefined,
-      ctaTarget: string | undefined = undefined
-    if (ctaLinkConfig) {
-      const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-      const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
-        ctaLinkValue,
-        undefined, //card link config
-        data,
-        schema,
-        rowId,
-      )
-      ctaHref = newCtaHref
-      ctaTarget = newCtaTarget
-    }
-
-    return (
-      <div style={style} className={'SRC-portalCard'}>
-        <div className={'SRC-portalCardMain'}>
-          {icon}
-          <div className="SRC-cardContent">
-            <Stack
-              sx={{
-                flexDirection: 'row',
-              }}
+            <div className="SRC-type">{type}</div>
+          </Stack>
+          {renderedIconList}
+          <div>
+            <h3
+              className="SRC-boldText SRC-blackText"
+              style={{ margin: 'none' }}
             >
-              <div className="SRC-type">{type}</div>
-            </Stack>
-            {
-              // If the portal configs has columnIconOptions.columns.dataType option
-              // and the column value is not null, display the card data type icons
-              columnIconOptions?.columns?.dataType &&
-                dataTypeIconNames?.length && (
-                  <div style={{ marginTop: '20px' }}>
-                    <IconList
-                      iconConfigs={columnIconOptions.columns.dataType}
-                      iconNames={JSON.parse(dataTypeIconNames)}
-                      commonIconProps={{
-                        sx: { fontSize: '40px' },
-                      }}
-                      useBackground={true}
-                      useTheme={true}
-                    />
-                  </div>
-                )
-            }
-            <div>
-              <h3
-                className="SRC-boldText SRC-blackText"
-                style={{ margin: 'none' }}
-              >
-                {!titleLinkConfig &&
-                titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
-                fileHandleAssociation ? (
-                  <FileHandleLink
-                    fileHandleAssociation={fileHandleAssociation}
-                    showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
-                    displayValue={title}
-                  />
-                ) : (
-                  this.renderTitle({
-                    href,
-                    target,
-                    titleSearchHandle,
-                    title,
-                  })
-                )}
-              </h3>
-            </div>
-            {subTitle && (
-              <div
-                data-search-handle={stubTitleSearchHandle}
-                className="SRC-author"
-              >
-                {subTitle}
-              </div>
-            )}
-            <CollapsibleDescription
-              description={description}
-              descriptionSubTitle={descriptionSubTitle}
-              descriptionConfig={descriptionConfig}
-            />
-            {ctaLinkConfig && ctaHref && ctaTarget && (
-              <Box sx={{ mt: '20px' }}>
-                <Link
-                  target={ctaTarget}
-                  rel="noopener noreferrer"
-                  href={ctaHref}
-                >
-                  {ctaLinkConfig.text}
-                </Link>
-              </Box>
-            )}
+              {!titleAsFileHandleLinkConfiguration && (
+                <GenericCardTitle
+                  title={title}
+                  href={titleLinkConfiguration?.href}
+                  target={titleLinkConfiguration?.target}
+                />
+              )}
+              {titleAsFileHandleLinkConfiguration && (
+                <FileHandleLink
+                  fileHandleAssociation={
+                    titleAsFileHandleLinkConfiguration.fileHandleAssociation
+                  }
+                  showDownloadIcon={
+                    titleAsFileHandleLinkConfiguration.showDownloadIcon
+                  }
+                  displayValue={title}
+                />
+              )}
+            </h3>
           </div>
-          {includeCitation && (
-            <Box
-              sx={{
-                marginLeft: 'auto',
-                paddingTop: '21px',
-                paddingRight: '40px',
-              }}
-            >
-              <CitationPopover
-                title={title}
-                doi={doiValue}
-                boilerplateText={citationBoilerplateText}
-                defaultCitationFormat={defaultCitationFormat}
-              />
+          {subtitle && <div className="SRC-author">{subtitle}</div>}
+          <CollapsibleDescription
+            description={description}
+            descriptionSubTitle={descriptionSubTitle}
+            descriptionConfig={descriptionConfig}
+          />
+          {ctaLinkConfig && ctaLinkConfig.text && ctaLinkConfig.href && (
+            <Box sx={{ mt: '20px' }}>
+              <Link
+                target={ctaLinkConfig.target}
+                rel="noopener noreferrer"
+                href={ctaLinkConfig.href}
+              >
+                {ctaLinkConfig.text}
+              </Link>
             </Box>
           )}
         </div>
-        {showFooter && (
-          <CardFooter
-            isHeader={false}
-            secondaryLabelLimit={secondaryLabelLimit}
-            values={values}
-            columnIconOptions={columnIconOptions}
-            className={`${imageFileHandleIdValue ? 'hasImage' : 'hasIcon'}`}
-          />
+
+        {cardTopButtons && (
+          <Box
+            sx={{
+              marginLeft: 'auto',
+              paddingTop: '21px',
+              paddingRight: '40px',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '10px',
+            }}
+          >
+            {cardTopButtons}
+          </Box>
         )}
       </div>
-    )
-  }
-}
-
-export default function GenericCard(props: GenericCardProps) {
-  const { entityId, versionNumber } = useQueryContext()
-  const queryVisualizationContext = useQueryVisualizationContext()
-
-  const { data: table } = useGetEntity<Table>(entityId, versionNumber)
-
-  return (
-    <_GenericCard
-      {...props}
-      table={table}
-      queryVisualizationContext={queryVisualizationContext}
-    />
+      {showFooter && (
+        <CardFooter
+          isHeader={false}
+          secondaryLabelLimit={secondaryLabelLimit}
+          values={labels}
+          columnIconOptions={columnIconOptions}
+          className={useStylesForDisplayedImage ? undefined : 'hasIcon'}
+        />
+      )}
+    </div>
   )
 }
+
+export default GenericCard

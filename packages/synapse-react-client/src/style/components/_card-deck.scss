@@ -31,6 +31,7 @@
 
     &--b2ai {
       box-shadow: none;
+      margin: 20px;
     }
 
     &__header__image {
@@ -49,13 +50,18 @@
 
     &__header {
       min-height: 75px;
-      @extend %side-padding;
       display: flex;
       align-items: center;
+      padding-left: 25px;
+
+      &--b2ai {
+        padding-left: 0px;
+      }
 
       &__icon {
         img {
           width: 50px;
+          margin-right: 10px;
         }
 
         &--cckp {
@@ -73,8 +79,6 @@
       }
 
       &__info {
-        margin-left: 10px;
-
         a:hover,
         a:focus {
           text-decoration: none;
@@ -111,6 +115,11 @@
       p {
         margin-bottom: 40px;
       }
+
+      &--b2ai {
+        padding: 0px;
+        margin-bottom: 0px;
+      }
     }
   }
 
@@ -120,14 +129,17 @@
     &__Header {
       @extend %hv-center;
 
-      .iconImg {
-        width: 40px;
+      &__icon {
+        img {
+          width: auto;
+          height: 50px;
+          margin-right: 10px;
+        }
       }
 
       &__Title {
         font-weight: bold;
         font-size: 18px;
-        margin-left: 10px;
       }
     }
   }

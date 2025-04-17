@@ -68,6 +68,9 @@ importers:
       nx:
         specifier: 19.7.3
         version: 19.7.3
+      prettier:
+        specifier: ^2.8.8
+        version: 2.8.8
       rimraf:
         specifier: ^5.0.5
         version: 5.0.5
@@ -329,6 +332,61 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
+  apps/portals/ampals:
+    dependencies:
+      '@mui/material':
+        specifier: ^5.15.13
+        version: 5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@sage-bionetworks/synapse-portal-framework':
+        specifier: workspace:*
+        version: link:../../synapse-portal-framework
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../../../packages/synapse-types
+      katex:
+        specifier: ^0.16.10
+        version: 0.16.10
+      pluralize:
+        specifier: ^8.0.0
+        version: 8.0.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      synapse-react-client:
+        specifier: workspace:*
+        version: link:../../../packages/synapse-react-client
+      vite:
+        specifier: ^5.4.3
+        version: 5.4.3(@types/node@20.17.12)(sass@1.77.6)(terser@5.37.0)
+    devDependencies:
+      '@types/react':
+        specifier: 18.3.12
+        version: 18.3.12
+      '@types/react-dom':
+        specifier: 18.3.1
+        version: 18.3.1
+      sass:
+        specifier: ^1.72.0
+        version: 1.77.6
+      tslib:
+        specifier: ^2.6.2
+        version: 2.7.0
+      typescript:
+        specifier: ^5.5.2
+        version: 5.5.3
+      vite-config:
+        specifier: workspace:*
+        version: link:../../../packages/vite-config
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+
   apps/portals/arkportal:
     dependencies:
       '@sage-bionetworks/synapse-portal-framework':
@@ -371,6 +429,61 @@ importers:
       typescript:
         specifier: ^5.5.2
         version: 5.5.2
+      vite-config:
+        specifier: workspace:*
+        version: link:../../../packages/vite-config
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+
+  apps/portals/b2ai.standards:
+    dependencies:
+      '@mui/material':
+        specifier: ^5.15.13
+        version: 5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@sage-bionetworks/synapse-portal-framework':
+        specifier: workspace:*
+        version: link:../../synapse-portal-framework
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../../../packages/synapse-types
+      katex:
+        specifier: ^0.16.10
+        version: 0.16.10
+      pluralize:
+        specifier: ^8.0.0
+        version: 8.0.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      synapse-react-client:
+        specifier: workspace:*
+        version: link:../../../packages/synapse-react-client
+      vite:
+        specifier: ^5.4.3
+        version: 5.4.3(@types/node@20.17.12)(sass@1.77.6)(terser@5.37.0)
+    devDependencies:
+      '@types/react':
+        specifier: 18.3.12
+        version: 18.3.12
+      '@types/react-dom':
+        specifier: 18.3.1
+        version: 18.3.1
+      sass:
+        specifier: ^1.72.0
+        version: 1.77.6
+      tslib:
+        specifier: ^2.6.2
+        version: 2.7.0
+      typescript:
+        specifier: ^5.5.2
+        version: 5.5.3
       vite-config:
         specifier: workspace:*
         version: link:../../../packages/vite-config
@@ -757,61 +870,6 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
-  apps/portals/standards:
-    dependencies:
-      '@mui/material':
-        specifier: ^5.15.13
-        version: 5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@sage-bionetworks/synapse-portal-framework':
-        specifier: workspace:*
-        version: link:../../synapse-portal-framework
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../../../packages/synapse-types
-      katex:
-        specifier: ^0.16.10
-        version: 0.16.10
-      pluralize:
-        specifier: ^8.0.0
-        version: 8.0.0
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      synapse-react-client:
-        specifier: workspace:*
-        version: link:../../../packages/synapse-react-client
-      vite:
-        specifier: ^5.4.3
-        version: 5.4.3(@types/node@20.17.12)(sass@1.77.6)(terser@5.37.0)
-    devDependencies:
-      '@types/react':
-        specifier: 18.3.12
-        version: 18.3.12
-      '@types/react-dom':
-        specifier: 18.3.1
-        version: 18.3.1
-      sass:
-        specifier: ^1.72.0
-        version: 1.77.6
-      tslib:
-        specifier: ^2.6.2
-        version: 2.7.0
-      typescript:
-        specifier: ^5.5.2
-        version: 5.5.3
-      vite-config:
-        specifier: workspace:*
-        version: link:../../../packages/vite-config
-      vitest:
-        specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
-
   apps/portals/stopadportal:
     dependencies:
       '@sage-bionetworks/synapse-portal-framework':
@@ -1098,6 +1156,9 @@ importers:
       react-switch:
         specifier: ^7.0.0
         version: 7.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-type-animation:
+        specifier: ^3.2.0
+        version: 3.2.0(prop-types@15.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -1412,17 +1473,17 @@ importers:
         specifier: ^23.1.0
         version: 23.1.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@rjsf/core':
-        specifier: 5.17.1
-        version: 5.17.1(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0)
+        specifier: 5.24.8
+        version: 5.24.8(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0)
       '@rjsf/mui':
-        specifier: 5.17.1
-        version: 5.17.1(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/icons-material@5.15.13(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@rjsf/core@5.17.1(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0))(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0)
+        specifier: 5.24.8
+        version: 5.24.8(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/icons-material@5.15.13(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0))(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0)
       '@rjsf/utils':
-        specifier: 5.17.1
-        version: 5.17.1(react@18.2.0)
+        specifier: 5.24.8
+        version: 5.24.8(react@18.2.0)
       '@rjsf/validator-ajv8':
-        specifier: 5.17.1
-        version: 5.17.1(@rjsf/utils@5.17.1(react@18.2.0))
+        specifier: 5.24.8
+        version: 5.24.8(@rjsf/utils@5.24.8(react@18.2.0))
       '@sage-bionetworks/markdown-it-container':
         specifier: workspace:*
         version: link:../markdown-it-container
@@ -1885,7 +1946,7 @@ importers:
         version: 1.0.1
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.23.2)(postcss@8.4.39)
+        version: 10.0.1(browserslist@4.23.3)(postcss@8.4.39)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -4360,36 +4421,36 @@ packages:
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0 || ^5.0.0
 
-  '@rjsf/core@5.17.1':
-    resolution: {integrity: sha512-COZSuumwHskWN8Pz3RxdxvuQUP6M/qBMXAkIi+TSWLFLaF6SUugpLiceMT1jGemDCr7fOSTiPxjkToSsgpvueQ==}
+  '@rjsf/core@5.24.8':
+    resolution: {integrity: sha512-7YdOMl0UylldYR75rnKoQF5etibSwPQHA3rY8LEo28xyYek81ESGuqPTs37P14doBpGRL+SobggR76tYhDYO7A==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': ^5.16.x
+      '@rjsf/utils': ^5.24.x
       react: ^16.14.0 || >=17
 
-  '@rjsf/mui@5.17.1':
-    resolution: {integrity: sha512-SToKW8i8dVbYEFo6BDG1oTolfw7ywbrYcvKoFPPIOvoOUv+VJi1cVaWGQ3q0gJQjyXdYYmt5YsLiC4L388LRiA==}
+  '@rjsf/mui@5.24.8':
+    resolution: {integrity: sha512-rA5BGeZve3CznuvlAr27KUBJY2dpMX1j6Jdg3PERTUickl2uW0SnXLKu3DEHcY1s9q9kNsvSpVDb4cGZWdW/7Q==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
-      '@mui/icons-material': ^5.2.0
-      '@mui/material': ^5.2.2
-      '@rjsf/core': ^5.16.x
-      '@rjsf/utils': ^5.16.x
+      '@mui/icons-material': ^5.2.0 || ^6.0.0
+      '@mui/material': ^5.2.2 || ^6.0.0
+      '@rjsf/core': ^5.24.x
+      '@rjsf/utils': ^5.24.x
       react: '>=17'
 
-  '@rjsf/utils@5.17.1':
-    resolution: {integrity: sha512-q1Igz/cuM2hi+jiXFkoaXqdRTUFB+a0jfVKNmZlHmvPmfYeeJfcfyOTzO8dQ41fHNHUFb15ryxa/TblDQimwkA==}
+  '@rjsf/utils@5.24.8':
+    resolution: {integrity: sha512-Y/D1orNsTnIswp23QtWKq7QEme07/nSdnSJoK4gSsm2cDBkSCW+9KUsWSvmE7poqHwCn3zpbIaa3ZWEAQUJEEg==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
 
-  '@rjsf/validator-ajv8@5.17.1':
-    resolution: {integrity: sha512-KdvHsjDQ60b04fqnoqhfkiCv7E4n4NIHli8QU8dtpuUAVS/TOqDuOtDJVz6bv/rd/QNROGpxlO/OCccE0rmxLQ==}
+  '@rjsf/validator-ajv8@5.24.8':
+    resolution: {integrity: sha512-0l5/9CL2BhW5tUtP+vKg6o5Wpp5kuee5SPea3STtdBN/xbGf3dUX08jbKcvokTJt5552rFDcNjMZmu+C0H7ezQ==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': ^5.16.x
+      '@rjsf/utils': ^5.24.x
 
   '@rollup/plugin-babel@6.0.4':
     resolution: {integrity: sha512-YF7Y52kFdFT/xVSuVdjkV5ZdX/3YtmX0QulG+x0taQOtJdHYzVU61aSSkAgVJ7NOv6qPkIYiJSgSWWN/DM5sGw==}
@@ -14557,9 +14618,9 @@ snapshots:
       immutable: 4.3.5
       redux: 5.0.1
 
-  '@rjsf/core@5.17.1(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0)':
+  '@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@rjsf/utils': 5.17.1(react@18.2.0)
+      '@rjsf/utils': 5.24.8(react@18.2.0)
       lodash: 4.17.21
       lodash-es: 4.17.21
       markdown-to-jsx: 7.4.7(react@18.2.0)
@@ -14567,17 +14628,17 @@ snapshots:
       prop-types: 15.8.1
       react: 18.2.0
 
-  '@rjsf/mui@5.17.1(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/icons-material@5.15.13(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@rjsf/core@5.17.1(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0))(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0)':
+  '@rjsf/mui@5.24.8(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/icons-material@5.15.13(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0))(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@emotion/react': 11.11.4(@types/react@18.3.12)(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0)
       '@mui/icons-material': 5.15.13(@mui/material@5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.3.12)(react@18.2.0)
       '@mui/material': 5.15.13(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.4(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react@18.2.0))(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@rjsf/core': 5.17.1(@rjsf/utils@5.17.1(react@18.2.0))(react@18.2.0)
-      '@rjsf/utils': 5.17.1(react@18.2.0)
+      '@rjsf/core': 5.24.8(@rjsf/utils@5.24.8(react@18.2.0))(react@18.2.0)
+      '@rjsf/utils': 5.24.8(react@18.2.0)
       react: 18.2.0
 
-  '@rjsf/utils@5.17.1(react@18.2.0)':
+  '@rjsf/utils@5.24.8(react@18.2.0)':
     dependencies:
       json-schema-merge-allof: 0.8.1
       jsonpointer: 5.0.1
@@ -14586,11 +14647,11 @@ snapshots:
       react: 18.2.0
       react-is: 18.2.0
 
-  '@rjsf/validator-ajv8@5.17.1(@rjsf/utils@5.17.1(react@18.2.0))':
+  '@rjsf/validator-ajv8@5.24.8(@rjsf/utils@5.24.8(react@18.2.0))':
     dependencies:
-      '@rjsf/utils': 5.17.1(react@18.2.0)
-      ajv: 8.12.0
-      ajv-formats: 2.1.1(ajv@8.12.0)
+      '@rjsf/utils': 5.24.8(react@18.2.0)
+      ajv: 8.17.1
+      ajv-formats: 2.1.1(ajv@8.17.1)
       lodash: 4.17.21
       lodash-es: 4.17.21
 
@@ -21154,11 +21215,6 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
-  postcss-browser-comments@4.0.0(browserslist@4.23.2)(postcss@8.4.39):
-    dependencies:
-      browserslist: 4.23.2
-      postcss: 8.4.39
-
   postcss-browser-comments@4.0.0(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
       browserslist: 4.23.3
@@ -21171,14 +21227,6 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.39
       ts-node: 10.9.2(@types/node@20.14.10)(typescript@5.5.2)
-
-  postcss-normalize@10.0.1(browserslist@4.23.2)(postcss@8.4.39):
-    dependencies:
-      '@csstools/normalize.css': 12.1.1
-      browserslist: 4.23.2
-      postcss: 8.4.39
-      postcss-browser-comments: 4.0.0(browserslist@4.23.2)(postcss@8.4.39)
-      sanitize.css: 13.0.0
 
   postcss-normalize@10.0.1(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:

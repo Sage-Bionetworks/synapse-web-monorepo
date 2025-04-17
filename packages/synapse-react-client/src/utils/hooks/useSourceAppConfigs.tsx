@@ -3,6 +3,7 @@ import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import Palettes from '@/theme/palette/Palettes'
 import { PaletteOptions } from '@mui/material'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
+import { QueryFilter } from '@sage-bionetworks/synapse-types'
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params
@@ -31,12 +32,14 @@ export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
 
 export const useSourceAppConfigs = (
   sourceAppConfigTableID: string,
+  additionalFilters?: QueryFilter[],
 ): SourceAppConfig[] | undefined => {
   const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus({
     entityId: sourceAppConfigTableID,
     query: {
       sql: `SELECT * FROM ${sourceAppConfigTableID}`,
       limit: 75,
+      additionalFilters,
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

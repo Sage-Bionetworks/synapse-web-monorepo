@@ -198,6 +198,7 @@ const HeaderSearchBox = ({
                     '&:hover': {
                       background: lighten(theme.palette.primary.main, 0.7),
                     },
+                    textTransform: 'none',
                   }}
                 >
                   <Typography
