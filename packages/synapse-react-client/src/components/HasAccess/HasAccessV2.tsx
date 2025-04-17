@@ -23,19 +23,13 @@ import {
   implementsExternalFileHandleInterface,
   isFileEntity,
 } from '@/utils/types/IsType'
+import { useSynapseTableContext } from '../SynapseTable/SynapseTableContext'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
   className?: string
   showButtonText?: boolean
-  /**
-   * If true, the icon will not be shown if the entity is a FileEntity and the dataFileHandle is an ExternalFileHandle (caller must have permission to retrieve the dataFileHandle)
-   * NOTE: This check requires an additional API call to retrieve the file handle
-   * @default false
-   */
-
-  hideAccessIconForExternalFileHandle?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -180,11 +174,9 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const {
-    entityId,
-    showButtonText = true,
-    hideAccessIconForExternalFileHandle = false,
-  } = props
+  const { entityId, showButtonText = true } = props
+  const { hideAccessIconForExternalFileHandle = false } =
+    useSynapseTableContext()
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
 
   const {

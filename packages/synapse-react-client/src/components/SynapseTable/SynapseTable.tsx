@@ -104,8 +104,13 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const { columnsToShowInTable, NoContentPlaceholder } =
     useQueryVisualizationContext()
-  const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
-
+  const synapseTableContext = useMemo(
+    () => ({
+      columnLinks,
+      hideAccessIconForExternalFileHandle,
+    }),
+    [columnLinks, hideAccessIconForExternalFileHandle],
+  )
   const isLoggedIn = !!useSynapseContext().accessToken
 
   const [isExportTableDownloadOpen, setIsExportTableDownloadOpen] =
@@ -210,7 +215,6 @@ export function SynapseTable(props: SynapseTableProps) {
       columnVisibility: columnVisibility,
     },
     meta: {
-      hideAccessIconForExternalFileHandle,
       rowSet,
       // make the rowEntityIDColumnIndex available to all cell renderers
       rowEntityIDColumnIndex,
