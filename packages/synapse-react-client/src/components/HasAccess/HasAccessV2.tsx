@@ -1,11 +1,16 @@
 import SynapseClient from '@/synapse-client'
-import { useGetRestrictionInformation } from '@/synapse-queries'
+import {
+  useGetEntityBundle,
+  useGetRestrictionInformation,
+} from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, Theme, useTheme } from '@mui/material'
 import {
   AccessRequirement,
+  FileEntity,
+  FileHandle,
   RestrictableObjectType,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
@@ -20,6 +25,7 @@ export type HasAccessProps = {
   entityId: string
   className?: string
   showButtonText?: boolean
+  showAccessIconForInternalFilesOnly?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -127,6 +133,40 @@ export function useGetRestrictionUiType(
 }
 
 /**
+ * This hook determines if the entity is an external file entity
+ * This is only to be used in AMP ALS for now as it introduces a lot of technical debt
+ */
+export const useIsExternalFileEntity = (
+  entityId: string,
+): boolean | undefined => {
+  const { data: entityBundle } = useGetEntityBundle(entityId)
+  const entity = entityBundle?.entity
+  const fileHandles = entityBundle?.fileHandles
+  const isFileEntity =
+    entity?.concreteType === 'org.sagebionetworks.repo.model.FileEntity'
+
+  if (!isFileEntity) {
+    return
+  }
+
+  const fileEntity = entity as FileEntity
+
+  const fileHandle: FileHandle | undefined = fileHandles?.find(
+    fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
+  )
+
+  if (!fileHandle) {
+    return
+  }
+
+  const hasExternalFileHandle =
+    fileHandle.concreteType ===
+    'org.sagebionetworks.repo.model.file.ExternalFileHandle'
+
+  return hasExternalFileHandle
+}
+
+/**
  * HasAccess shows if the user has access to the file or not. If the user doesn't have access due to a restriction,
  * then a link will be shown that opens a modal with steps to request access.
  */
@@ -137,7 +177,12 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, showButtonText = true } = props
+  const {
+    entityId,
+    showButtonText = true,
+    showAccessIconForInternalFilesOnly,
+  } = props
+  const isExternalFile = useIsExternalFileEntity(entityId)
 
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
 
@@ -257,8 +302,11 @@ export function HasAccessV2(props: HasAccessProps) {
     iconContainer,
   ])
 
-  if (!restrictionUiTypeValue) {
-    // loading
+  if (
+    !restrictionUiTypeValue ||
+    (showAccessIconForInternalFilesOnly && isExternalFile)
+  ) {
+    // do not show icon
     return <></>
   }
 

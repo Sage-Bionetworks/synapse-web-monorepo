@@ -41,6 +41,7 @@ import { useTableSort } from './useTableSort'
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,
   | 'showAccessColumn'
+  | 'showAccessIconForInternalFilesOnly'
   | 'showAccessColumnHeader'
   | 'showDownloadColumn'
   | 'hideDownload'
@@ -57,6 +58,7 @@ export type SynapseTableProps = {
 
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
+  showAccessIconForInternalFilesOnly?: boolean
   showAccessColumnHeader?: boolean
   /** @deprecated use showDirectDownloadColumn */
   showDownloadColumn?: boolean
@@ -78,6 +80,7 @@ export function SynapseTable(props: SynapseTableProps) {
     rowSet,
     isLoadingNewPage,
     showAccessColumn,
+    showAccessIconForInternalFilesOnly,
     showAccessColumnHeader,
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
@@ -207,6 +210,7 @@ export function SynapseTable(props: SynapseTableProps) {
       columnVisibility: columnVisibility,
     },
     meta: {
+      showAccessIconForInternalFilesOnly,
       rowSet,
       // make the rowEntityIDColumnIndex available to all cell renderers
       rowEntityIDColumnIndex,

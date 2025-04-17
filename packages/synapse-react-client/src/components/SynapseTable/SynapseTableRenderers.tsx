@@ -29,7 +29,6 @@ import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFac
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import SynapseTableCell from './SynapseTableCell'
 import { useSynapseTableContext } from './SynapseTableContext'
-import { useIsExternalFileEntity } from '@/utils/hooks/useIsExternalFileEntity'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -181,16 +180,16 @@ const getEntityOrRowVersion = (
 
 function AccessCell(props: CellContext<Row, unknown>) {
   const entityId = getEntityOrRowId(props)!
-  const isExternalFile = useIsExternalFileEntity({ entityId })
+  const showAccessIconForInternalFilesOnly =
+    props.table.options.meta?.showAccessIconForInternalFilesOnly
   return (
     <div data-testid={'AccessCell'}>
-      {!isExternalFile && (
-        <HasAccessV2
-          key={entityId}
-          entityId={entityId}
-          showButtonText={false}
-        />
-      )}
+      <HasAccessV2
+        key={entityId}
+        entityId={entityId}
+        showButtonText={false}
+        showAccessIconForInternalFilesOnly={showAccessIconForInternalFilesOnly}
+      />
     </div>
   )
 }

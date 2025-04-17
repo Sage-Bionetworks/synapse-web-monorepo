@@ -12,6 +12,7 @@ type ColumnFilterEnumValue<TValue = unknown> = {
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     rowSet?: RowSet
+    showAccessIconForInternalFilesOnly?: boolean
     rowEntityIDColumnIndex?: number
     rowEntityVersionColumnIndex?: number
     getWrapInExpandableTd?: (cell: Cell<TData>) => boolean
