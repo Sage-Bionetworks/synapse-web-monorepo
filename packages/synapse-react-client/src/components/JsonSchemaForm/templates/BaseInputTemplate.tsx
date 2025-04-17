@@ -108,6 +108,7 @@ export default function BaseInputTemplate<
         {...(textFieldProps as TextFieldProps)}
         inputProps={{
           'aria-label': id,
+          ...uiSchema?.options,
         }}
         aria-describedby={ariaDescribedByIds<T>(id, !!schema.examples)}
       />
