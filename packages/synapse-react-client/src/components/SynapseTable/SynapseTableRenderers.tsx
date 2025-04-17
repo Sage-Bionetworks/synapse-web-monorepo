@@ -182,16 +182,16 @@ const getEntityOrRowVersion = (
 function AccessCell(props: CellContext<Row, unknown>) {
   const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!
-  const showAccessIconForInternalFilesOnly =
-    props.table.options.meta?.showAccessIconForInternalFilesOnly
-  // If showAccessIconForInternalFilesOnly is true, defer rendering until the cell is in view to avoid unnecessary API calls
+  const hideAccessIconForExternalFileHandle =
+    props.table.options.meta?.hideAccessIconForExternalFileHandle
+  // If hideAccessIconForExternalFileHandle is true, defer rendering until the cell is in view to avoid unnecessary API calls
   const canRenderAccessIcon =
-    !showAccessIconForInternalFilesOnly ||
-    (showAccessIconForInternalFilesOnly && inView)
+    !hideAccessIconForExternalFileHandle ||
+    (hideAccessIconForExternalFileHandle && inView)
 
   return (
     <div
-      ref={showAccessIconForInternalFilesOnly ? ref : undefined}
+      ref={hideAccessIconForExternalFileHandle ? ref : undefined}
       data-testid="AccessCell"
     >
       {canRenderAccessIcon && (
@@ -199,8 +199,8 @@ function AccessCell(props: CellContext<Row, unknown>) {
           key={entityId}
           entityId={entityId}
           showButtonText={false}
-          showAccessIconForInternalFilesOnly={
-            showAccessIconForInternalFilesOnly
+          hideAccessIconForExternalFileHandle={
+            hideAccessIconForExternalFileHandle
           }
         />
       )}

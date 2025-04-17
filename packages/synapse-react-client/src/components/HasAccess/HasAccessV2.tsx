@@ -19,13 +19,23 @@ import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
+import {
+  implementsExternalFileHandleInterface,
+  isFileEntity,
+} from '@/utils/types/IsType'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
   className?: string
   showButtonText?: boolean
-  showAccessIconForInternalFilesOnly?: boolean
+  /**
+   * If true, the icon will not be shown if the entity is a FileEntity and the dataFileHandle is an ExternalFileHandle (caller must have permission to retrieve the dataFileHandle)
+   * NOTE: This check requires an additional API call to retrieve the file handle
+   * @default false
+   */
+
+  hideAccessIconForExternalFileHandle?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -133,43 +143,37 @@ export function useGetRestrictionUiType(
 }
 
 /**
- * This hook determines if the entity is an external file entity
- * This is only to be used in AMP ALS for now as it introduces a lot of technical debt
+ * This hook determines if
+ * - the entity is a FileEntity, AND
+ * - the caller has permission to fetch the dataFileHandle, AND
+ * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+ * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk contexts if possible.
  */
-export const useIsExternalFileEntity = (
+function useGetIsExternalFileHandle(
   entityId: string,
-): boolean | undefined => {
-  const { data: entityBundle } = useGetEntityBundle(entityId)
-  const entity = entityBundle?.entity
-  const fileHandles = entityBundle?.fileHandles
-  const isFileEntity =
-    entity?.concreteType === 'org.sagebionetworks.repo.model.FileEntity'
-  const fileEntity = entity as FileEntity
-  const fileHandle: FileHandle | undefined = fileHandles?.find(
-    fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
+  options: { enabled: boolean },
+) {
+  const { data: entityBundle, isLoading } = useGetEntityBundle(
+    entityId,
+    undefined,
+    undefined,
+    {
+      ...options,
+      select: bundle => {
+        if (!isFileEntity(bundle.entity)) {
+          return false
+        }
+        const fileEntity = bundle.entity as FileEntity
+        const fileHandles = bundle.fileHandles as FileHandle[]
+        const fileHandle: FileHandle | undefined = fileHandles?.find(
+          fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
+        )
+        return fileHandle && implementsExternalFileHandleInterface(fileHandle)
+      },
+    },
   )
 
-  if (!isFileEntity || !fileHandle) {
-    return
-  }
-
-  const hasExternalFileHandle =
-    fileHandle.concreteType ===
-    'org.sagebionetworks.repo.model.file.ExternalFileHandle'
-
-  return hasExternalFileHandle
-}
-
-const InternalOnlyAccessWrapper = ({
-  entityId,
-  children,
-}: {
-  entityId: string
-  children: React.ReactNode
-}) => {
-  const isExternalFile = useIsExternalFileEntity(entityId)
-
-  return isExternalFile ? null : <>{children}</>
+  return { isExternalFileHandle: entityBundle, isLoading }
 }
 
 /**
@@ -186,9 +190,14 @@ export function HasAccessV2(props: HasAccessProps) {
   const {
     entityId,
     showButtonText = true,
-    showAccessIconForInternalFilesOnly,
+    hideAccessIconForExternalFileHandle,
   } = props
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
+
+  const { isExternalFileHandle, isLoading } = useGetIsExternalFileHandle(
+    entityId,
+    { enabled: hideAccessIconForExternalFileHandle ?? false },
+  )
 
   const { accessToken } = useSynapseContext()
 
@@ -306,24 +315,18 @@ export function HasAccessV2(props: HasAccessProps) {
     iconContainer,
   ])
 
-  if (!restrictionUiTypeValue) {
+  if (!restrictionUiTypeValue || isLoading) {
     // loading
     return <></>
   }
 
-  const content = (
+  if (hideAccessIconForExternalFileHandle && isExternalFileHandle) {
+    return null
+  }
+
+  return (
     <span style={{ whiteSpace: 'nowrap' }}>
       {accessRequirementsJsxOrIconContainer}
     </span>
   )
-
-  if (showAccessIconForInternalFilesOnly) {
-    return (
-      <InternalOnlyAccessWrapper entityId={entityId}>
-        {content}
-      </InternalOnlyAccessWrapper>
-    )
-  }
-
-  return content
 }
