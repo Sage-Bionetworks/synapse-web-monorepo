@@ -23,7 +23,6 @@ import {
   implementsExternalFileHandleInterface,
   isFileEntity,
 } from '@/utils/types/IsType'
-import { useSynapseTableContext } from '../SynapseTable/SynapseTableContext'
 
 export type HasAccessProps = {
   onHide?: () => void
