@@ -4,9 +4,14 @@ import {
   newStandardFormSchema,
   newStandardUiSchema,
 } from '../config/newStandardConfig'
+import { FormEvent } from 'react'
 
 export default function ContributeAStandard() {
-  const onSubmit = (formData: FormData) => {
+  const blankFormData = newStandardFormSchema.properties.map(id => [id, ''])
+  console.log(blankFormData)
+
+  const onSubmit = (evt: FormEvent) => {
+    evt.preventDefault()
     // TODO: implement submit handler
     console.log(formData)
     return true
