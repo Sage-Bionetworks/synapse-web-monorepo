@@ -3,7 +3,11 @@ import programsHomePageConfig from '@/config/synapseConfigs/programsHomePage'
 import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { FeaturedDataTabs, Programs, RssFeedCards, SynapseConstants, UserCardListRotate } from 'synapse-react-client'
+import { FeaturedDataTabs } from 'synapse-react-client/components/FeaturedDataTabs'
+import { Programs } from 'synapse-react-client/components/Programs'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export default function HomePage() {
   return (

@@ -3,23 +3,46 @@ import HomePage from '@/pages/HomePage'
 import ProgramDetailsPage from '@/pages/ProgramDetailsPage'
 import ProjectDetailsPage from '@/pages/ProjectDetailsPage'
 import {
-  StudyDetailsPage,
-  studyDetailsPageChildRoutes,
-} from '@/pages/StudyDetailsPage'
+  STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+} from '@/config/routeConstants'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
+import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import { getDoiRedirectRoute } from '@sage-bionetworks/synapse-portal-framework/shared-config/DoiRedirectRoute'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
+import { lazy } from 'react'
 import { Navigate, RouteObject } from 'react-router'
-import { SynapseFormWrapper } from 'synapse-react-client'
-import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { explorePageRoutes } from './explorePageRoutes'
 import { experimentalModelsSql, modelADStrainsSelectedFacet } from './resources'
-import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+
+// Lazy load each page component to improve initial load time
+const MarkdownSynapse = lazy(
+  () => import('synapse-react-client/components/Markdown/MarkdownSynapse'),
+)
+const SynapseFormWrapper = lazy(
+  () =>
+    import('synapse-react-client/components/SynapseForm/SynapseFormWrapper'),
+)
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const ProgramDetailsPage = lazy(() => import('@/pages/ProgramDetailsPage'))
+const ProjectDetailsPage = lazy(() => import('@/pages/ProjectDetailsPage'))
+const StudyDetailsPage = lazy(
+  () => import('@/pages/StudyDetailsPage/StudyDetailsPage'),
+)
+const ExploreWrapper = lazy(
+  () =>
+    import(
+      '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
+    ),
+)
+const StudyDataTab = lazy(() => import('@/pages/StudyDetailsPage/StudyDataTab'))
+const StudyDetailsTab = lazy(
+  () => import('@/pages/StudyDetailsPage/StudyDetailsTab'),
+)
 
 const routes: RouteObject[] = [
   {
@@ -117,7 +140,22 @@ const routes: RouteObject[] = [
       {
         path: 'Explore/Studies/DetailsPage',
         element: <StudyDetailsPage />,
-        children: studyDetailsPageChildRoutes,
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={STUDY_DETAILS_PAGE_DETAILS_TAB_PATH} />
+            ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+            element: <StudyDetailsTab />,
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+            element: <StudyDataTab />,
+          },
+        ],
       },
       {
         path: 'Analysis Platforms',

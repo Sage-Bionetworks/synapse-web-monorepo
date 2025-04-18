@@ -4,12 +4,13 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { Goals, JsonLdScript, MarkdownSynapse } from 'synapse-react-client'
+import { Goals, JsonLdScript } from 'synapse-react-client'
 import { DatasetDetailsPage } from '../pages/DatasetDetailsPage'
 import { ProgramsDetailPage } from '../pages/ProgramDetailsPage'
 import { ProjectDetailsPage } from '../pages/ProjectDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 const routes: RouteObject[] = [
   {

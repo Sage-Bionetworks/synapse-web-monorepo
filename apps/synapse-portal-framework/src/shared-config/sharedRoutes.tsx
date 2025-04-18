@@ -1,6 +1,13 @@
 import RedirectWithQuery from '@/components/RedirectWithQuery'
+import { lazy } from 'react'
 import { RouteObject } from 'react-router'
-import { DownloadCartPage, ErrorPage, SynapseErrorType } from 'synapse-react-client'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+
+const DownloadCartPage = lazy(
+  () => import('synapse-react-client/components/DownloadCart/DownloadCartPage'),
+)
 
 const routes: RouteObject[] = [
   {
