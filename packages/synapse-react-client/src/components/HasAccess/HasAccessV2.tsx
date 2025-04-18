@@ -40,6 +40,7 @@ export enum RestrictionUiType {
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
+  AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
 }
 
 const iconConfiguration: Record<
@@ -61,17 +62,20 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
   },
-
   [RestrictionUiType.AccessibleWithTerms]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: 'View Terms',
   },
-
   [RestrictionUiType.Accessible]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: '',
+  },
+  [RestrictionUiType.AccessibleExternalFileHandle]: {
+    icon: 'linkOff',
+    color: theme => theme.palette.grey[700],
+    tooltipText: 'Access controlled by an external system.',
   },
 }
 
@@ -105,6 +109,7 @@ function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
  */
 export function useGetRestrictionUiType(
   entityId: string,
+  options: { enabled: boolean },
 ): RestrictionUiType | undefined {
   const { accessToken } = useSynapseContext()
   const isSignedIn = Boolean(accessToken)
@@ -114,8 +119,22 @@ export function useGetRestrictionUiType(
     objectId: entityId,
   })
 
+  const { data: isExternalFileHandle, isLoading: isLoadingExternalFile } =
+    useGetIsExternalFileHandle(entityId, {
+      enabled: options.enabled,
+    })
+
   if (!restrictionInformation) {
     return undefined
+  }
+
+  if (options.enabled) {
+    if (isLoadingExternalFile) {
+      return undefined
+    }
+    if (isExternalFileHandle) {
+      return RestrictionUiType.AccessibleExternalFileHandle
+    }
   }
 
   if (restrictionInformation.hasUnmetAccessRequirement) {
@@ -177,12 +196,7 @@ export function HasAccessV2(props: HasAccessProps) {
   const { entityId, showButtonText = true } = props
   const { hideAccessIconForExternalFileHandle = false } =
     useSynapseTableContext()
-  const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
-
-  const {
-    data: isExternalFileHandle,
-    isLoading: isLoadingIsExternalFileHandle,
-  } = useGetIsExternalFileHandle(entityId, {
+  const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
     enabled: hideAccessIconForExternalFileHandle,
   })
 
@@ -302,13 +316,9 @@ export function HasAccessV2(props: HasAccessProps) {
     iconContainer,
   ])
 
-  if (!restrictionUiTypeValue || isLoadingIsExternalFileHandle) {
+  if (!restrictionUiTypeValue) {
     // loading
     return <></>
-  }
-
-  if (hideAccessIconForExternalFileHandle && isExternalFileHandle) {
-    return null
   }
 
   return (
