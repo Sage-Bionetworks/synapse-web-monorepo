@@ -4,7 +4,7 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { MarkdownSynapse } from 'synapse-react-client'
+import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import HomePage from '../pages/HomePage'
 import explorePageRoutes from './explorePageRoutes'
 

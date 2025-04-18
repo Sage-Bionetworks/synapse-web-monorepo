@@ -1,9 +1,5 @@
+import { lazy } from 'react'
 import { RouteObject } from 'react-router'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
 import { programsSql } from './resources'
 import { computationalToolsQueryWrapperPlotNavProps } from './synapseConfigs/computational_tools'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
@@ -15,6 +11,16 @@ import { publicationsQueryWrapperPlotNavProps } from './synapseConfigs/publicati
 import { results } from './synapseConfigs/results'
 import { studiesQueryWrapperPlotNavProps } from './synapseConfigs/studies'
 import { targetEnablingResourcesQueryWrapperPlotNavProps } from './synapseConfigs/target_enabling_resources'
+
+const CardContainerLogic = lazy(
+  () => import('synapse-react-client/components/CardContainerLogic'),
+)
+const MarkdownSynapse = lazy(
+  () => import('synapse-react-client/components/Markdown/MarkdownSynapse'),
+)
+const QueryWrapperPlotNav = lazy(
+  () => import('synapse-react-client/components/QueryWrapperPlotNav'),
+)
 
 export const explorePageRoutes: RouteObject[] = [
   {
