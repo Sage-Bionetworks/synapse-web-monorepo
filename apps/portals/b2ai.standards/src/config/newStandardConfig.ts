@@ -1,6 +1,64 @@
 import { RJSFSchema } from '@rjsf/utils'
 
+export const doiFormSchema: RJSFSchema = {
+  definitions: {
+    'org.sagebionetworks.repo.model.doi.v2.DoiResourceTypeGeneral': {
+      type: 'string',
+      enum: [
+        'Audiovisual',
+        'Collection',
+        'DataPaper',
+        'Dataset',
+        'Event',
+        'Image',
+        'InteractiveResource',
+        'Model',
+        'PhysicalObject',
+        'Service',
+        'Software',
+        'Sound',
+        'Text',
+        'Workflow',
+        'Other',
+      ],
+    },
+  },
+  type: 'object',
+  properties: {
+    titles: {
+      description: 'The title or titles of your work. One per line.',
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+      title: 'Title(s)',
+    },
+    creators: {
+      title: 'Creator(s)',
+      description:
+        'The main creators or authors of your work, in priority order. These may be the names of actual people and/or institutions.',
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+    resourceTypeGeneral: {
+      $ref: '#/definitions/org.sagebionetworks.repo.model.doi.v2.DoiResourceTypeGeneral',
+      title: 'General Resource Type',
+      description: 'The general type of content that best matches this work.',
+    },
+    publicationYear: {
+      type: 'integer',
+      title: 'Publication Year',
+      description:
+        'The year your work became or will become public. May be at most one year in the future.',
+    },
+  },
+  required: ['titles', 'creators', 'resourceTypeGeneral', 'publicationYear'],
+}
+
 export const newStandardFormSchema: RJSFSchema = {
+  definitions: {},
   title: 'Contribute A Standard',
   type: 'object',
   required: [
@@ -29,10 +87,12 @@ export const newStandardFormSchema: RJSFSchema = {
     shortName: {
       type: 'string',
       title: 'Short Name',
+      minLength: 1,
     },
     extendedName: {
       type: 'string',
       title: 'Extended Name',
+      minLength: 1,
     },
     purposeDetail: {
       type: 'string',
@@ -49,6 +109,7 @@ export const newStandardFormSchema: RJSFSchema = {
     contributorName: {
       type: 'string',
       title: 'Contributor Name',
+      minLength: 1,
     },
     contributorGithub: {
       type: 'string',
@@ -57,6 +118,7 @@ export const newStandardFormSchema: RJSFSchema = {
     contributorOrcid: {
       type: 'string',
       title: 'Contributor ORCID',
+      minLength: 1,
     },
   },
 }

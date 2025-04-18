@@ -3,17 +3,55 @@ import { JsonSchemaForm } from 'synapse-react-client/components/JsonSchemaForm/J
 import {
   newStandardFormSchema,
   newStandardUiSchema,
+  doiFormSchema,
 } from '../config/newStandardConfig'
-import { FormEvent } from 'react'
+import { useState, FormEvent } from 'react'
+import { RJSFValidationError } from '@rjsf/utils'
 
 export default function ContributeAStandard() {
-  const blankFormData = newStandardFormSchema.properties.map(id => [id, ''])
-  console.log(blankFormData)
+  const blankFormData: Record<string, string | null> = newStandardFormSchema
+    ? Object.fromEntries(
+        Object.keys(newStandardFormSchema?.properties ?? {}).map(id =>
+          id === 'type' ? [id, null] : [id, ''],
+        ),
+      )
+    : {}
 
-  const onSubmit = (evt: FormEvent) => {
+  const [formData, setFormData] = useState(blankFormData)
+
+  const getPropertyTitle = (propertyId: string): string => {
+    propertyId = propertyId.replace('.', '')
+    return newStandardFormSchema?.properties[propertyId].title || propertyId
+  }
+
+  const handleTransformErrors = (
+    errors: RJSFValidationError[],
+  ): RJSFValidationError[] => {
+    console.log(errors)
+    return errors.map((error: RJSFValidationError): RJSFValidationError => {
+      error = {
+        ...error,
+        property: getPropertyTitle(error?.property),
+      }
+
+      if (error?.name === 'minLength') {
+        error = {
+          ...error,
+          message: 'Field cannot be blank',
+        }
+      }
+
+      return error
+    })
+  }
+
+  const handleSubmit = ({ formData, errors }, evt: FormEvent) => {
     evt.preventDefault()
+
     // TODO: implement submit handler
-    console.log(formData)
+
+    // clear form data on successful submission
+    // setFormData(blankFormData)
     return true
   }
 
@@ -29,9 +67,23 @@ export default function ContributeAStandard() {
       <JsonSchemaForm
         schema={newStandardFormSchema}
         uiSchema={newStandardUiSchema}
+        formData={formData}
+        onChange={evt => {
+          console.log(evt)
+          setFormData(evt.formData)
+        }}
+        onSubmit={({ formData, errors }, evt) =>
+          handleSubmit({ formData, errors }, evt)
+        }
+        // onError={(errors: RJSFValidationError[]) => {
+        //   // invoked when submit is clicked and there are client-side validation errors
+        //   setValidationError(errors)
+        // }}
+        transformErrors={errors => handleTransformErrors(errors)}
         formContext={{
           descriptionVariant: 'expand',
         }}
+        noHtml5Validate={true}
       />
     </Box>
   )
