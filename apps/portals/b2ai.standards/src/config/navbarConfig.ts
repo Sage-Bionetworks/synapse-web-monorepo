@@ -19,8 +19,7 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Contribute A Standard',
-      // path: 'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#submitting-a-new-standard',
-      path: '/ContributeAStandard',
+      path: 'https://github.com/bridge2ai/b2ai-standards-registry/tree/main?tab=readme-ov-file#submitting-a-new-standard',
     },
     {
       name: 'Help',

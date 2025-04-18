@@ -7,8 +7,6 @@ import { RouteObject } from 'react-router'
 import { MarkdownSynapse, QueryWrapperPlotNav } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
-import ContributeAStandard from '@/pages/ContributeAStandardPage'
-import ContributeAStandardPage from '@/pages/ContributeAStandardPage'
 
 const routes: RouteObject[] = [
   {
@@ -40,10 +38,6 @@ const routes: RouteObject[] = [
       {
         path: 'Explore/Standard/DetailsPage',
         element: <StandardsDetailsPage />,
-      },
-      {
-        path: 'ContributeAStandard',
-        element: <ContributeAStandardPage />,
       },
       {
         path: 'About',
