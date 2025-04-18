@@ -75,9 +75,6 @@ export const newStandardUiSchema = {
       'What should the category be, based on the classes of the [Bridge2AI Standards Schemas](https://bridge2ai.github.io/standards-schemas)? If in doubt, leave blank.',
     'ui:enableMarkdownInDescription': true,
     'ui:placeholder': 'e.g., "NamedThing"',
-    'ui:options': {
-      fullWidth: true,
-    },
   },
   shortName: {
     'ui:description':
