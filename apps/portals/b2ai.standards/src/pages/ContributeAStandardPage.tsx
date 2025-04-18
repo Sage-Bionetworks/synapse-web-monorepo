@@ -14,9 +14,7 @@ export default function ContributeAStandard() {
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
+      className="JsonSchemaFormContainer"
       sx={{
         maxWidth: '700px',
         margin: '0 auto',
