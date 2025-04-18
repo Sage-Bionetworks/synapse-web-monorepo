@@ -4,6 +4,7 @@ import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
+import { CTACardLink } from '@/components/CardContainerLogic'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -20,6 +21,12 @@ export type HeaderCardProps = {
   target?: string
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
+  ctaLinkProps?: {
+    // just for passing on to HeaderCardV2
+    ctaLinkConfig: CTACardLink
+    ctaHref: string | undefined
+    ctaTarget?: string | undefined
+  }
 }
 
 function HeaderCard(props: HeaderCardProps) {

@@ -5,23 +5,14 @@ import {
   Card,
   Typography,
   Link,
-  Stack,
+  // Stack,
   Button,
-  ButtonProps,
+  // ButtonProps,
   useTheme,
   useMediaQuery,
 } from '@mui/material'
-import { DescriptionConfig } from '../CardContainerLogic'
+import { DescriptionConfig, CTACardLink } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-
-interface CTAButton {
-  label: string
-  href?: string
-  variant?: ButtonProps['variant']
-  sx?: ButtonProps['sx']
-  endIcon?: React.ReactNode
-  // Add other button props as needed
-}
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -50,28 +41,35 @@ export type HeaderCardV2Props = {
   backgroundImage?: string
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
-  /** Optional array of CTA buttons to display below description */
-  ctaButtons?: CTAButton[]
+  /** Optional CTA link to display below description */
+  ctaLinkProps?: {
+    ctaLinkConfig: CTACardLink
+    ctaHref: string | undefined
+    ctaTarget?: string | undefined
+  }
 }
 
 /**
- * HeaderCardV2 Component
+ * HeaderCardV2 Component   OUT OF DATE COMMENTS
  *
  * A material-UI based card component for displaying detailed information with metadata.
  * This component supports responsive layouts, background images, and dynamic content
  * organization.
  *
  * Layout Structure:
- * ┌───────────────────────────────────────────────────────────────┐
- * │ ┌─────┐  Type Label                                           │
- * │ │Icon │  Title                                                │
- * │ │     │  Subtitle                                             │
- * │ └─────┘                                                       │
- * │         Description                     Metadata              │
- * │         [Show More/Less]                --------              │
- * │                                         Label 1    Value 1    │
- * │         [CTA Buttons]                   Label 2    Value 2    │
- * └───────────────────────────────────────────────────────────────┘
+
+  ```
+┌───────────────────────────────────────────────────────────────┐
+│ ┌─────┐  Type Label                                           │
+│ │Icon │  Title                                                │
+│ │     │  Subtitle                                             │
+│ └─────┘                                                       │
+│         Description                     Metadata              │
+│         [Show More/Less]                --------              │
+│                                         Label 1    Value 1    │
+│         [External Site Button]          Label 2    Value 2    │
+└───────────────────────────────────────────────────────────────┘
+ ```
  *
  * Features:
  * - Responsive layout with configurable breakpoints
@@ -101,9 +99,7 @@ export type HeaderCardV2Props = {
  *   description="Study description"
  *   values={[['Status', 'Active'], ['Access', 'Public']]}
  *   icon={<StudyIcon />}
- *   ctaButtons={[
- *     { label: 'View Details', variant: 'contained' }
- *   ]}
+ *   ctaLinkConfig={{text: "View Standard on External Website", link: "url"}}
  * />
  * ```
 
@@ -121,7 +117,7 @@ export type HeaderCardV2Props = {
  *    - Icon: Optional, maintains aspect ratio
  *    - Main Content: Type, title, subtitle, description
  *    - Metadata: Right-aligned or stacked key-value pairs
- *    - CTA Buttons: Optional action buttons below description
+ *    - CTA Button: Optional button link to external site
  *
  * 4. Styling:
  *    - Background image support with overlay
@@ -143,7 +139,7 @@ function HeaderCardV2({
   icon,
   backgroundImage,
   forceStackedLayout = false,
-  ctaButtons,
+  ctaLinkProps,
 }: HeaderCardV2Props) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -155,8 +151,8 @@ function HeaderCardV2({
   // Refs for measuring heights
   const descriptionRef = useRef<HTMLDivElement>(null)
   const metadataRef = useRef<HTMLDivElement>(null)
-  const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
-  const [metadataHeight, setMetadataHeight] = useState<number>(0)
+  // const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
+  // const [metadataHeight, setMetadataHeight] = useState<number>(0)
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
 
   useEffect(() => {
@@ -165,12 +161,10 @@ function HeaderCardV2({
       return
     }
 
-    const dHeight = descriptionRef.current?.offsetHeight || 0
-    const mHeight = metadataRef.current?.offsetHeight || 0
-    // const { dHeight } = descriptionRef.current.getBoundingClientRect();
-    setDescriptionHeight(dHeight)
-    // const { mHight } = metadataRef.current.getBoundingClientRect();
-    setMetadataHeight(mHeight)
+    // const dHeight = descriptionRef.current?.offsetHeight || 0
+    // const mHeight = metadataRef.current?.offsetHeight || 0
+    // setDescriptionHeight(dHeight)
+    // setMetadataHeight(mHeight)
 
     const sww = () => setWindowWidth(window.innerWidth)
 
@@ -190,12 +184,6 @@ function HeaderCardV2({
     // as per https://github.com/bridge2ai/b2ai-standards-registry/issues/210#issuecomment-2773706202,
     // constrain metadata to 5-line expandable block
   }
-  console.log({
-    windowWidth,
-    useStackedLayout,
-    descriptionHeight,
-    metadataHeight,
-  })
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
@@ -230,6 +218,41 @@ function HeaderCardV2({
     }
   }, [title, description, subTitle, docTitle, docDescription])
 
+  // ctaLink stuff
+  let ctaLinkBox = null
+  if (ctaLinkProps) {
+    const { ctaLinkConfig, ctaHref, ctaTarget = '_blank' } = ctaLinkProps
+    if (ctaLinkConfig && ctaHref && ctaTarget) {
+      ctaLinkBox = (
+        <Button
+          variant="outlined"
+          component={Link}
+          href={ctaHref}
+          target={ctaTarget}
+          rel={ctaTarget === '_blank' ? 'noopener noreferrer' : undefined}
+          size="large"
+          sx={{
+            color: '#FFF',
+            '&:hover': {
+              color: '#FFF',
+              textDecorationColor: '#FFF',
+              border: '2px solid white',
+            },
+            '&:focus': { color: '#FFF' },
+            textDecorationColor: '#FFF',
+            padding: '6px 24px',
+            marginTop: '22px',
+            border: '1px solid white',
+          }}
+        >
+          {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
+          {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
+          {ctaLinkConfig.text}
+        </Button>
+      )
+    }
+  }
+
   return (
     <Card
       sx={{
@@ -260,18 +283,6 @@ function HeaderCardV2({
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      {/* <Typography
-        className="SRC-type"
-        sx={{
-          fontSize: '14px',
-          textTransform: 'uppercase',
-          fontWeight: 700,
-          color: '#000000',
-        }}
-      >
-        {type}
-      </Typography> */}
-
       <Box
         sx={{
           // align: 'center',
@@ -367,6 +378,7 @@ function HeaderCardV2({
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
             />
+            {ctaLinkBox}
           </Box>
           {values && (
             <Box
@@ -381,29 +393,6 @@ function HeaderCardV2({
             </Box>
           )}
         </Box>
-
-        {ctaButtons && ctaButtons.length > 0 && (
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            sx={{ mt: 2 }}
-          >
-            {ctaButtons.map((buttonProps, index) => (
-              <Button
-                key={index}
-                variant={buttonProps.variant || 'contained'}
-                href={buttonProps.href}
-                sx={{
-                  width: { xs: '100%', sm: 'auto' },
-                  ...(buttonProps.sx || {}),
-                }}
-                endIcon={buttonProps.endIcon}
-              >
-                {buttonProps.label}
-              </Button>
-            ))}
-          </Stack>
-        )}
       </Box>
     </Card>
   )
