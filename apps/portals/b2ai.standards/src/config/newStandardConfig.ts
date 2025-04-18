@@ -1,7 +1,6 @@
 import { RJSFSchema } from '@rjsf/utils'
 
 export const newStandardFormSchema: RJSFSchema = {
-  definitions: {},
   title: 'Contribute A Standard',
   type: 'object',
   required: [
