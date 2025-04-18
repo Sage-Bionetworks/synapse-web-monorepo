@@ -69,6 +69,9 @@ const routes: RouteObject[] = [
               </SectionLayout>
             </div>
             <div className={'home-bg-dark'}>
+              <p className={'title center-title'}>
+                What Resources Are Available
+              </p>
               <CardDeck {...availableResearchCardDeckConfig} />
             </div>
 
