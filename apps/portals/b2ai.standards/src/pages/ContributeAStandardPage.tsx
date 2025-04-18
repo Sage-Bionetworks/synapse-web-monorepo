@@ -8,6 +8,9 @@ import { useState, FormEvent } from 'react'
 import { RJSFValidationError } from '@rjsf/utils'
 
 export default function ContributeAStandard() {
+  // create default object with blank entries for all fields
+  // 'type' is a dropdown, which MUI requires be 'null' when no selection has been chosen;
+  // all others should be empty strings
   const blankFormData: Record<string, string | null> = Object.fromEntries(
     Object.keys(newStandardFormSchema?.properties ?? {}).map(id =>
       id === 'type' ? [id, null] : [id, ''],
@@ -25,8 +28,8 @@ export default function ContributeAStandard() {
     errors: RJSFValidationError[],
   ): RJSFValidationError[] => {
     return errors.reduce<RJSFValidationError[]>((acc, error) => {
-      // This error is duplicative - will occur if 'type' field does not have a selction chosen
-      // But that will also throw an 'enum'-type error, so we'll just display that one
+      // This error is duplicative - will occur if 'type' field does not have a selction chosen.
+      // But that will also throw an 'enum'-type error, so only display that instead of this
       if (error.name === 'type' && error.property === '.type') {
         return acc
       }
@@ -59,7 +62,6 @@ export default function ContributeAStandard() {
 
     // clear form data on successful submission
     setFormData(blankFormData)
-    return true
   }
 
   return (
@@ -76,16 +78,11 @@ export default function ContributeAStandard() {
         uiSchema={newStandardUiSchema}
         formData={formData}
         onChange={evt => {
-          console.log(evt)
           setFormData(evt.formData)
         }}
         onSubmit={({ formData, errors }, evt) =>
           handleSubmit({ formData, errors }, evt)
         }
-        // onError={(errors: RJSFValidationError[]) => {
-        //   // invoked when submit is clicked and there are client-side validation errors
-        //   setValidationError(errors)
-        // }}
         transformErrors={errors => handleTransformErrors(errors)}
         formContext={{
           descriptionVariant: 'expand',

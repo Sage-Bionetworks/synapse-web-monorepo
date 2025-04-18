@@ -61,7 +61,7 @@ export const newStandardFormSchema: RJSFSchema = {
     contributorOrcid: {
       type: 'string',
       title: 'Contributor ORCID',
-      minLength: 19,
+      minLength: 19, // orcids are 16 digits, split into 4 dash-separated groups. See https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier#:~:text=Format%20of%20the%20ORCID%20iD,leading%20zeros%20if%20they%20exist
     },
   },
 }
