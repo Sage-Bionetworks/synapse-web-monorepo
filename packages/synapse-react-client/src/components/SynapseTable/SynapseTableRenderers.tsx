@@ -195,6 +195,7 @@ function AccessCell(props: CellContext<Row, unknown>) {
           key={entityId}
           entityId={entityId}
           showButtonText={false}
+          showExternalAccessIcon={showExternalAccessIcon}
         />
       )}
     </div>

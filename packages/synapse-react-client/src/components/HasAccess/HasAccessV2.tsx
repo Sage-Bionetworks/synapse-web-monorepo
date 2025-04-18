@@ -30,6 +30,7 @@ export type HasAccessProps = {
   entityId: string
   className?: string
   showButtonText?: boolean
+  showExternalAccessIcon?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -193,8 +194,11 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, showButtonText = true } = props
-  const { showExternalAccessIcon = false } = useSynapseTableContext()
+  const {
+    entityId,
+    showButtonText = true,
+    showExternalAccessIcon = false,
+  } = props
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
     enabled: showExternalAccessIcon,
   })
