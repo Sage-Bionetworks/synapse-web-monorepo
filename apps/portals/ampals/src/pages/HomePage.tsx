@@ -13,7 +13,7 @@ import {
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId, upsetPlotSql } from '@/config/resources'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, styled, Typography } from '@mui/material'
 
 //TODO
 export default function HomePage() {
@@ -129,7 +129,7 @@ export default function HomePage() {
       </Box> */}
       <UpsetPlot
         sql={upsetPlotSql}
-        rgbIndex={0}
+        customColor={'#2360A6'}
         maxBarCount={20}
         setName="# People per data type (all datastes)"
         combinationName="# of Files"

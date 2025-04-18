@@ -23,18 +23,18 @@ import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { Box, SxProps } from '@mui/material'
+import { Box } from '@mui/material'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
   rgbIndex: number // color plot based on portal
+  customColor?: string
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-  sx?: SxProps
 } & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
@@ -55,7 +55,7 @@ export function UpsetPlot({
   summaryLinkText,
   summaryLink,
   onClick,
-  sx,
+  customColor,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -64,6 +64,9 @@ export function UpsetPlot({
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
 
   const { colorPalette } = getColorPalette(rgbIndex, 2)
+  const plotColor = rgbIndex ? colorPalette[0] : customColor
+  const selectionColor = rgbIndex ? colorPalette[0] : customColor
+
   const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px',
   }
@@ -165,7 +168,7 @@ export function UpsetPlot({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <Box sx={sx} className="UpsetPlot">
+            <Box className="UpsetPlot">
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
@@ -174,8 +177,8 @@ export function UpsetPlot({
                 onHover={setSelection}
                 onClick={onClick}
                 selection={selection}
-                color={colorPalette[0]}
-                selectionColor={colorPalette[0]}
+                color={plotColor}
+                selectionColor={selectionColor}
                 hasSelectionOpacity={0.3}
                 // alternatingBackgroundColor={false}
                 setName={setName?.toUpperCase()}
