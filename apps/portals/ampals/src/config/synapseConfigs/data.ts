@@ -26,7 +26,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
     showAccessColumn: true,
-    hideAccessIconForExternalFileHandle: true,
+    showExternalAccessIcon: true,
   },
   // facetsToPlot: ['program', 'project'],
 }

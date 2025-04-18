@@ -41,7 +41,7 @@ import { useTableSort } from './useTableSort'
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,
   | 'showAccessColumn'
-  | 'hideAccessIconForExternalFileHandle'
+  | 'showExternalAccessIcon'
   | 'showAccessColumnHeader'
   | 'showDownloadColumn'
   | 'hideDownload'
@@ -58,7 +58,7 @@ export type SynapseTableProps = {
 
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
-  hideAccessIconForExternalFileHandle?: boolean
+  showExternalAccessIcon?: boolean
   showAccessColumnHeader?: boolean
   /** @deprecated use showDirectDownloadColumn */
   showDownloadColumn?: boolean
@@ -80,7 +80,7 @@ export function SynapseTable(props: SynapseTableProps) {
     rowSet,
     isLoadingNewPage,
     showAccessColumn,
-    hideAccessIconForExternalFileHandle,
+    showExternalAccessIcon,
     showAccessColumnHeader,
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
@@ -107,9 +107,9 @@ export function SynapseTable(props: SynapseTableProps) {
   const synapseTableContext = useMemo(
     () => ({
       columnLinks,
-      hideAccessIconForExternalFileHandle,
+      showExternalAccessIcon,
     }),
-    [columnLinks, hideAccessIconForExternalFileHandle],
+    [columnLinks, showExternalAccessIcon],
   )
   const isLoggedIn = !!useSynapseContext().accessToken
 

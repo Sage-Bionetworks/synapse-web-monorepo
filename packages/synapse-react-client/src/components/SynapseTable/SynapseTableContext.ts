@@ -8,7 +8,7 @@ export type SynapseTableContextType = {
    * NOTE: This check requires an additional API call to retrieve the file handle
    * @default false
    */
-  hideAccessIconForExternalFileHandle?: boolean
+  showExternalAccessIcon?: boolean
 }
 
 export const SynapseTableContext = createContext<

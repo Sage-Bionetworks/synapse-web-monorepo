@@ -180,14 +180,13 @@ const getEntityOrRowVersion = (
 }
 
 function AccessCell(props: CellContext<Row, unknown>) {
-  const { hideAccessIconForExternalFileHandle } = useSynapseTableContext()
+  const { showExternalAccessIcon } = useSynapseTableContext()
   const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!
 
-  // If hideAccessIconForExternalFileHandle is true, defer rendering until the cell is in view to avoid unnecessary API calls
+  // If showExternalAccessIcon is true, defer rendering until the cell is in view to avoid unnecessary API calls
   const canRenderAccessIcon =
-    !hideAccessIconForExternalFileHandle ||
-    (hideAccessIconForExternalFileHandle && inView)
+    !showExternalAccessIcon || (showExternalAccessIcon && inView)
 
   return (
     <div ref={ref} data-testid="AccessCell">

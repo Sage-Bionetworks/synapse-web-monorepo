@@ -194,10 +194,9 @@ export function HasAccessV2(props: HasAccessProps) {
   >([])
 
   const { entityId, showButtonText = true } = props
-  const { hideAccessIconForExternalFileHandle = false } =
-    useSynapseTableContext()
+  const { showExternalAccessIcon = false } = useSynapseTableContext()
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
-    enabled: hideAccessIconForExternalFileHandle,
+    enabled: showExternalAccessIcon,
   })
 
   const { accessToken } = useSynapseContext()
