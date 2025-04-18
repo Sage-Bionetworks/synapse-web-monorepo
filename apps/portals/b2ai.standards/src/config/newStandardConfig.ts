@@ -100,6 +100,7 @@ export const newStandardUiSchema = {
     'ui:description':
       '(Optional) Is this related to another entity? Please list identifiers on separate lines.',
     'ui:placeholder': "e.g., 'B2AI_TOPIC:5'",
+    'ui:widget': 'textarea',
   },
   contributorName: {
     'ui:description': 'What is your name? This will be used for attribution.',
