@@ -58,6 +58,14 @@ export type SynapseTableProps = {
 
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
+  /**
+   * If true, the component will show enhanced UI for the case where
+   * - the entity is a FileEntity, AND
+   * - the caller has permission to fetch the dataFileHandle, AND
+   * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+   * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk  contexts if possible.
+   * @default false
+   */
   showExternalAccessIcon?: boolean
   showAccessColumnHeader?: boolean
   /** @deprecated use showDirectDownloadColumn */

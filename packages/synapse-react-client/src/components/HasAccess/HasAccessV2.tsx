@@ -3,13 +3,13 @@ import {
   useGetEntityBundle,
   useGetRestrictionInformation,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, Theme, useTheme } from '@mui/material'
 import {
   AccessRequirement,
-  FileEntity,
+  EntityBundle,
   FileHandle,
   RestrictableObjectType,
   RestrictionLevel,
@@ -23,12 +23,21 @@ import {
   implementsExternalFileHandleInterface,
   isFileEntity,
 } from '@/utils/types/IsType'
+import { UseQueryOptions } from '@tanstack/react-query'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
   className?: string
   showButtonText?: boolean
+  /**
+   * If true, the component will show enhanced UI for the case where
+   * - the entity is a FileEntity, AND
+   * - the caller has permission to fetch the dataFileHandle, AND
+   * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+   * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk  contexts if possible.
+   * @default false
+   */
   showExternalAccessIcon?: boolean
 }
 
@@ -75,7 +84,7 @@ const iconConfiguration: Record<
   [RestrictionUiType.AccessibleExternalFileHandle]: {
     icon: 'linkOff',
     color: theme => theme.palette.grey[700],
-    tooltipText: 'Access controlled by an external system.',
+    tooltipText: 'Access may be controlled by an external system.',
   },
 }
 
@@ -109,7 +118,9 @@ function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
  */
 export function useGetRestrictionUiType(
   entityId: string,
-  options: { enabled: boolean },
+  useGetIsExternalFileHandleOptions: Partial<
+    UseQueryOptions<EntityBundle, SynapseClientError, boolean>
+  >,
 ): RestrictionUiType | undefined {
   const { accessToken } = useSynapseContext()
   const isSignedIn = Boolean(accessToken)
@@ -121,20 +132,19 @@ export function useGetRestrictionUiType(
 
   const { data: isExternalFileHandle, isLoading: isLoadingExternalFile } =
     useGetIsExternalFileHandle(entityId, {
-      enabled: options.enabled,
+      enabled: useGetIsExternalFileHandleOptions.enabled,
     })
 
   if (!restrictionInformation) {
     return undefined
   }
 
-  if (options.enabled) {
-    if (isLoadingExternalFile) {
-      return undefined
-    }
-    if (isExternalFileHandle) {
-      return RestrictionUiType.AccessibleExternalFileHandle
-    }
+  if (isLoadingExternalFile) {
+    return undefined
+  }
+
+  if (isExternalFileHandle) {
+    return RestrictionUiType.AccessibleExternalFileHandle
   }
 
   if (restrictionInformation.hasUnmetAccessRequirement) {
@@ -164,7 +174,7 @@ export function useGetRestrictionUiType(
  */
 function useGetIsExternalFileHandle(
   entityId: string,
-  options: { enabled: boolean },
+  options: Partial<UseQueryOptions<EntityBundle, SynapseClientError, boolean>>,
 ) {
   return useGetEntityBundle(entityId, undefined, undefined, {
     ...options,
@@ -172,8 +182,8 @@ function useGetIsExternalFileHandle(
       if (!isFileEntity(bundle.entity)) {
         return false
       }
-      const fileEntity = bundle.entity as FileEntity
-      const fileHandles = bundle.fileHandles as FileHandle[]
+      const fileEntity = bundle.entity
+      const fileHandles = bundle.fileHandles
       const fileHandle: FileHandle | undefined = fileHandles?.find(
         fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
       )

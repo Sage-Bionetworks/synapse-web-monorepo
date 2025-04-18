@@ -184,7 +184,7 @@ function AccessCell(props: CellContext<Row, unknown>) {
   const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!
 
-  // If showExternalAccessIcon is true, defer rendering until the cell is in view to avoid unnecessary API calls
+  // If showExternalAccessIcon is true, defer rendering until the cell is in view to limit simultaneous API calls
   const canRenderAccessIcon =
     !showExternalAccessIcon || (showExternalAccessIcon && inView)
 
