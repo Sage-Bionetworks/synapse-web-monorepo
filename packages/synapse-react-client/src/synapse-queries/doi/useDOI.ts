@@ -87,21 +87,23 @@ export function useCreateOrUpdateDOI(
       if (options?.onSuccess) {
         options.onSuccess(...args)
       }
-      const doi = args[0].doi!
-      queryClient.invalidateQueries({
-        queryKey: keyFactory.getDOIAssociationQueryKey(
-          doi.objectType!,
-          doi.objectId!,
-          doi.objectVersion,
-        ),
-      })
-      queryClient.invalidateQueries({
-        queryKey: keyFactory.getDOIQueryKey(
-          doi.objectType!,
-          doi.objectId!,
-          doi.objectVersion,
-        ),
-      })
+      const requestDoi = args[1].doi
+      if (requestDoi) {
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDOIAssociationQueryKey(
+            requestDoi.objectType!,
+            requestDoi.objectId!,
+            requestDoi.objectVersion,
+          ),
+        })
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDOIQueryKey(
+            requestDoi.objectType!,
+            requestDoi.objectId!,
+            requestDoi.objectVersion,
+          ),
+        })
+      }
     },
   })
 }
